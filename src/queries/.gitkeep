@@ -1,0 +1,2 @@
+# [API] React Query wrapper — frontend-architecture.md §7.2
+# services/ 와 1:1 매칭되는 {도메인}.ts 추가 후 이 파일은 삭제 가능.

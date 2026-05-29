@@ -1,0 +1,130 @@
+/* ===========================================================================
+ * globals.css — 전역 스타일 진입점
+ * Design Ref: krds-design-system.design.md §2.1 (Component Diagram), §11
+ *
+ * 로드 순서:
+ *   1) Pretendard GOV 폰트 (variable dynamic-subset)
+ *   2) KRDS 디자인 토큰 (tokens.css)
+ *   3) Tailwind 지시문 (tailwind.css)
+ *   ※ CSS @import 는 반드시 다른 규칙보다 먼저 와야 한다.
+ * =========================================================================== */
+
+@import 'pretendard-gov/dist/web/variable/pretendardvariable-gov-dynamic-subset.css';
+@import './tokens.css';
+@import './tailwind.css';
+
+/* ---------------------------------------------------------------------------
+ * shadcn 호환 브리지
+ * Design Ref: §1.2 (비파괴적 확장), §3.2 (Token Layer Relationship)
+ *
+ * 기존 shadcn 토큰명(--primary, --border ...)을 유지하되 값만 KRDS Semantic
+ * 토큰으로 재매핑한다. 기존 layout/page 컴포넌트의 Tailwind 클래스는 무영향.
+ * 색상은 hex 완성값(KRDS 토큰) — tailwind.config.ts 는 hsl() 래퍼 없이 var() 참조.
+ * ------------------------------------------------------------------------- */
+@layer base {
+  :root {
+    --background: var(--krds-bg-default);
+    --foreground: var(--krds-text-default);
+    --card: var(--krds-bg-default);
+    --card-foreground: var(--krds-text-default);
+    --popover: var(--krds-bg-default);
+    --popover-foreground: var(--krds-text-default);
+    --primary: var(--krds-action-primary);
+    --primary-foreground: var(--krds-text-on-primary);
+    --secondary: var(--krds-action-secondary);
+    --secondary-foreground: var(--krds-text-default);
+    --muted: var(--krds-bg-subtle);
+    --muted-foreground: var(--krds-text-muted);
+    --accent: var(--krds-bg-subtle);
+    --accent-foreground: var(--krds-text-default);
+    --destructive: var(--krds-action-danger);
+    --destructive-foreground: var(--krds-text-on-primary);
+    --border: var(--krds-border-default);
+    --input: var(--krds-border-strong);
+    --ring: var(--krds-focus-ring);
+    --radius: var(--krds-radius-md);
+  }
+
+  /* 다크모드: KRDS 정밀 다크 토큰은 별도 사이클(Plan §2.2 Out of Scope).
+     현재는 gray 스케일 반전으로 임시 매핑 — 깨짐 방지 수준. */
+  .dark {
+    --background: var(--krds-color-gray-95);
+    --foreground: var(--krds-color-gray-5);
+    --card: var(--krds-color-gray-90);
+    --card-foreground: var(--krds-color-gray-5);
+    --popover: var(--krds-color-gray-90);
+    --popover-foreground: var(--krds-color-gray-5);
+    --primary: var(--krds-color-primary-40);
+    --primary-foreground: var(--krds-color-gray-95);
+    --secondary: var(--krds-color-gray-80);
+    --secondary-foreground: var(--krds-color-gray-5);
+    --muted: var(--krds-color-gray-80);
+    --muted-foreground: var(--krds-color-gray-30);
+    --accent: var(--krds-color-gray-80);
+    --accent-foreground: var(--krds-color-gray-5);
+    --destructive: var(--krds-color-danger-40);
+    --destructive-foreground: var(--krds-color-gray-95);
+    --border: var(--krds-color-gray-70);
+    --input: var(--krds-color-gray-70);
+    --ring: var(--krds-color-primary-40);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Base layer — 리셋 / 전역 기본 스타일
+ * ------------------------------------------------------------------------- */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    margin: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 스크롤바 — 글로벌 스타일
+ * Design Ref: Figma m_scrollbar(9300-29005)
+ *
+ * 스펙(Figma):
+ *   thumb : bg #d1d7e0(= --krds-border-divider) · rounded-full · 두께 8px
+ *   track : transparent (디자인 미명시 — 시각상 안 보임)
+ *
+ * 적용 범위:
+ *   - 모든 스크롤 가능 영역에 자동 적용 (별도 컴포넌트 wrap 필요 없음)
+ *   - 기존에 명시적으로 `::-webkit-scrollbar { display: none }` 을 단 곳
+ *     (TabList, SummaryInfo 의 badge swipe row 등)은 specificity 높아 그대로 숨김 유지
+ *   - Firefox: scrollbar-width/color 로 동일 효과
+ *   - 모바일(터치) 환경은 OS 가 자체 스크롤바를 그려 보통 영향 없음
+ * ------------------------------------------------------------------------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--krds-border-divider) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--krds-border-divider);
+  border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}

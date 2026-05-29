@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "ms-vscode.vscode-typescript-next",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "styled-components.vscode-styled-components",
+    "usernamehw.errorlens",
+    "steoates.autoimport",
+    "christian-kohler.path-intellisense",
+    "eamodio.gitlens",
+    "mariusalchimavicius.json-to-ts",
+    "wix.vscode-import-cost"
+  ]
+}

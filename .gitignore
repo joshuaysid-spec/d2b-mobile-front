@@ -1,0 +1,44 @@
+# dependencies
+node_modules
+
+# build output
+dist
+dist-ssr
+*.tsbuildinfo
+vite.config.d.ts
+vite.config.js
+
+# test / lint cache
+coverage
+.eslintcache
+.cache
+
+# env (예: .env.example 만 커밋)
+.env.development
+.env.production
+.env.local
+*.local
+
+# logs
+*.log
+npm-debug.log*
+
+# editor / OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*.swo
+*~
+
+# 로컬 작업 문서
+docs/
+CLAUDE.md
+*.xlsx
+
+# 로컬 도구 상태
+.claude/
+.bkit/

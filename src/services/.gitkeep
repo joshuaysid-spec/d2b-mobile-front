@@ -1,0 +1,2 @@
+# [API] 비즈니스 API 함수 — frontend-architecture.md §7.1
+# 도메인별 {도메인}.ts (예: account.ts, transfer.ts) 추가 후 이 파일은 삭제 가능.
