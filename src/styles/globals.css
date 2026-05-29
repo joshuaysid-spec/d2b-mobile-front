@@ -19,7 +19,7 @@
  *
  * 기존 shadcn 토큰명(--primary, --border ...)을 유지하되 값만 KRDS Semantic
  * 토큰으로 재매핑한다. 기존 layout/page 컴포넌트의 Tailwind 클래스는 무영향.
- * 색상은 hex 완성값(KRDS 토큰) — tailwind.config.ts 는 hsl() 래퍼 없이 var() 참조.
+ * 색상은 hex 완성값(KRDS 토큰) — @theme(tailwind.css) 는 hsl() 래퍼 없이 var() 참조.
  * ------------------------------------------------------------------------- */
 @layer base {
   :root {
@@ -43,30 +43,6 @@
     --input: var(--krds-border-strong);
     --ring: var(--krds-focus-ring);
     --radius: var(--krds-radius-md);
-  }
-
-  /* 다크모드: KRDS 정밀 다크 토큰은 별도 사이클(Plan §2.2 Out of Scope).
-     현재는 gray 스케일 반전으로 임시 매핑 — 깨짐 방지 수준. */
-  .dark {
-    --background: var(--krds-color-gray-95);
-    --foreground: var(--krds-color-gray-5);
-    --card: var(--krds-color-gray-90);
-    --card-foreground: var(--krds-color-gray-5);
-    --popover: var(--krds-color-gray-90);
-    --popover-foreground: var(--krds-color-gray-5);
-    --primary: var(--krds-color-primary-40);
-    --primary-foreground: var(--krds-color-gray-95);
-    --secondary: var(--krds-color-gray-80);
-    --secondary-foreground: var(--krds-color-gray-5);
-    --muted: var(--krds-color-gray-80);
-    --muted-foreground: var(--krds-color-gray-30);
-    --accent: var(--krds-color-gray-80);
-    --accent-foreground: var(--krds-color-gray-5);
-    --destructive: var(--krds-color-danger-40);
-    --destructive-foreground: var(--krds-color-gray-95);
-    --border: var(--krds-color-gray-70);
-    --input: var(--krds-color-gray-70);
-    --ring: var(--krds-color-primary-40);
   }
 }
 

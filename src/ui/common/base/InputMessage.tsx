@@ -15,7 +15,7 @@ import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { cn } from '@/utils/cn'
 
 const messageVariants = cva(
-  'flex w-full items-start gap-1 text-[15px] font-medium leading-[1.5]',
+  'flex w-full items-start gap-1 text-[15px] font-medium leading-normal',
   {
     variants: {
       type: {
@@ -53,7 +53,7 @@ const InputMessage = React.forwardRef<HTMLParagraphElement, InputMessageProps>(
         <span className="flex shrink-0 items-center pt-0.5">
           <Icon name={ICON_FOR_TYPE[type ?? 'info']} size={20} aria-hidden />
         </span>
-        <span className="min-w-px flex-1 break-words">{children}</span>
+        <span className="min-w-px flex-1 wrap-break-word">{children}</span>
       </p>
     )
   },

@@ -67,10 +67,10 @@ const SelectionFieldBox = React.forwardRef<HTMLButtonElement, SelectionFieldBoxP
         className={cn(
           // 그룹 박스 — button 의 focus-visible 를 받아 보더 2px 로 강조
           'group flex h-12 w-full items-center gap-krds-3 rounded-krds-8 border px-krds-6 transition-colors',
-          'has-[:focus-visible]:border-2',
+          'has-focus-visible:border-2',
           error
-            ? 'border-krds-border-danger bg-krds-bg-danger-subtle has-[:focus-visible]:border-krds-border-danger'
-            : 'border-krds-border-field bg-background has-[:focus-visible]:border-krds-action-primary-active',
+            ? 'border-krds-border-danger bg-krds-bg-danger-subtle has-focus-visible:border-krds-border-danger'
+            : 'border-krds-border-field bg-background has-focus-visible:border-krds-action-primary-active',
           disabled && 'border-krds-border-disabled bg-krds-bg-disabled-soft',
           className,
         )}
@@ -82,7 +82,7 @@ const SelectionFieldBox = React.forwardRef<HTMLButtonElement, SelectionFieldBoxP
           aria-disabled={disabled || readOnly || undefined}
           onClick={isInteractive ? onClick : undefined}
           className={cn(
-            'min-w-0 flex-1 truncate bg-transparent p-0 text-left text-krds-body-md outline-none',
+            'min-w-0 flex-1 truncate bg-transparent p-0 text-left text-krds-body-md outline-hidden',
             // 값 유무에 따라 텍스트 색만 분기 — readOnly/disabled 도 ink 유지(Figma)
             hasValue ? 'text-krds-text-ink' : 'text-krds-text-disabled',
             isInteractive ? 'cursor-pointer' : 'cursor-default',

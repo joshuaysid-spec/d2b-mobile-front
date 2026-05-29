@@ -21,7 +21,7 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
         'resize-none transition-colors',
         'placeholder:text-krds-text-disabled',
         // ring 제거 (border로 focus 표현)
-        'focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0',
+        'focus-visible:outline-hidden focus-visible:ring-0 focus-visible:ring-offset-0',
         // default / focus
         !error && [
           'border-krds-border-field bg-background',

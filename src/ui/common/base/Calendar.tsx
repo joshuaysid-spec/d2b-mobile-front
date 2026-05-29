@@ -64,9 +64,9 @@ type CellState =
 //  rangeEnd     → bg #0f316e + text white + rounded-r-full
 const cellVariants = cva(
   cn(
-    'relative inline-flex size-10 items-center justify-center text-[15px] font-medium leading-[1.5]',
+    'relative inline-flex size-10 items-center justify-center text-[15px] font-medium leading-normal',
     'transition-colors',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+    'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
   ),
   {
     variants: {
@@ -129,7 +129,7 @@ function RoundIconButton({
         'inline-flex size-10 items-center justify-center rounded-full',
         'border border-krds-border-field bg-background',
         'text-krds-text-ink hover:bg-muted/50',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+        'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
       )}
     >
       {children}
@@ -154,7 +154,7 @@ function YearMonthDropdown({
 }) {
   return (
     <div className="relative inline-flex h-[30px] items-center gap-[2px] rounded-krds-8 px-1">
-      <span className="text-[15px] font-bold leading-[1.5] text-krds-text-ink">
+      <span className="text-[15px] font-bold leading-normal text-krds-text-ink">
         {formatLabel(value)}
       </span>
       <Icon name="ExpandMore" size={14} className="text-krds-text-ink" aria-hidden />
@@ -336,7 +336,7 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
             {WEEKDAYS.map((d) => (
               <div
                 key={d}
-                className="flex h-10 items-center justify-center text-[15px] font-medium leading-[1.5] text-krds-text-ink"
+                className="flex h-10 items-center justify-center text-[15px] font-medium leading-normal text-krds-text-ink"
               >
                 {d}
               </div>
@@ -388,9 +388,9 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
               className={cn(
                 'inline-flex h-10 items-center justify-center rounded-full px-6',
                 'border border-krds-border-field bg-background',
-                'text-[15px] font-medium leading-[1.5] text-krds-action-primary-active',
+                'text-[15px] font-medium leading-normal text-krds-action-primary-active',
                 'hover:bg-krds-bg-primary-faint',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+                'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
               )}
             >
               오늘

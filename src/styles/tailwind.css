@@ -1,3 +1,201 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@plugin 'tailwindcss-animate';
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+@theme {
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-krds-bg-primary: var(--krds-bg-primary);
+  --color-krds-bg-primary-subtle: var(--krds-bg-primary-subtle);
+  --color-krds-bg-danger-subtle: var(--krds-bg-danger-subtle);
+  --color-krds-text-strong: var(--krds-text-strong);
+  --color-krds-text-muted: var(--krds-text-muted);
+  --color-krds-text-subtle: var(--krds-text-subtle);
+  --color-krds-text-disabled: var(--krds-text-disabled);
+  --color-krds-text-primary: var(--krds-text-primary);
+  --color-krds-text-danger: var(--krds-text-danger);
+  --color-krds-border-strong: var(--krds-border-strong);
+  --color-krds-border-primary: var(--krds-border-primary);
+  --color-krds-border-danger: var(--krds-border-danger);
+  --color-krds-action-primary: var(--krds-action-primary);
+  --color-krds-action-primary-hover: var(--krds-action-primary-hover);
+  --color-krds-action-primary-active: var(--krds-action-primary-active);
+  --color-krds-action-danger: var(--krds-action-danger);
+  --color-krds-action-danger-hover: var(--krds-action-danger-hover);
+  --color-krds-feedback-success: var(--krds-feedback-success);
+  --color-krds-feedback-success-bg: var(--krds-feedback-success-bg);
+  --color-krds-feedback-warning: var(--krds-feedback-warning);
+  --color-krds-feedback-warning-bg: var(--krds-feedback-warning-bg);
+  --color-krds-feedback-danger: var(--krds-feedback-danger);
+  --color-krds-feedback-danger-bg: var(--krds-feedback-danger-bg);
+  --color-krds-feedback-info: var(--krds-feedback-info);
+  --color-krds-feedback-info-bg: var(--krds-feedback-info-bg);
+  --color-krds-bg-disabled: var(--krds-bg-disabled);
+  --color-krds-bg-disabled-soft: var(--krds-bg-disabled-soft);
+  --color-krds-bg-primary-faint: var(--krds-bg-primary-faint);
+  --color-krds-bg-blue-pastel: var(--krds-d2b-blue-pastel-bg);
+  --color-krds-step-blue: var(--krds-d2b-step-blue);
+  --color-krds-border-field: var(--krds-border-field);
+  --color-krds-border-disabled: var(--krds-border-disabled);
+  --color-krds-border-divider: var(--krds-border-divider);
+  --color-krds-bg-divider: var(--krds-border-divider);
+  --color-krds-text-ink: var(--krds-text-ink);
+  --color-krds-text-disabled-soft: var(--krds-text-disabled-soft);
+  --color-krds-color-success-60: var(--krds-color-success-60);
+  --color-krds-color-warning-60: var(--krds-color-warning-60);
+
+  --font-sans:
+    Pretendard GOV Variable, Pretendard GOV, -apple-system, BlinkMacSystemFont,
+    Apple SD Gothic Neo, Malgun Gothic, sans-serif;
+
+  --text-krds-display-lg: var(--krds-font-size-display-lg);
+  --text-krds-display-lg--line-height: var(--krds-line-height-display);
+  --text-krds-display-md: var(--krds-font-size-display-md);
+  --text-krds-display-md--line-height: var(--krds-line-height-display);
+  --text-krds-display-sm: var(--krds-font-size-display-sm);
+  --text-krds-display-sm--line-height: var(--krds-line-height-display);
+  --text-krds-heading-xl: var(--krds-font-size-heading-xl);
+  --text-krds-heading-xl--line-height: var(--krds-line-height-heading);
+  --text-krds-heading-lg: var(--krds-font-size-heading-lg);
+  --text-krds-heading-lg--line-height: var(--krds-line-height-heading);
+  --text-krds-heading-md: var(--krds-font-size-heading-md);
+  --text-krds-heading-md--line-height: var(--krds-line-height-heading);
+  --text-krds-heading-sm: var(--krds-font-size-heading-sm);
+  --text-krds-heading-sm--line-height: var(--krds-line-height-heading);
+  --text-krds-heading-xs: var(--krds-font-size-heading-xs);
+  --text-krds-heading-xs--line-height: var(--krds-line-height-heading);
+  --text-krds-heading-xxs: var(--krds-font-size-heading-xxs);
+  --text-krds-heading-xxs--line-height: var(--krds-line-height-heading);
+  --text-krds-body-lg: var(--krds-font-size-body-lg);
+  --text-krds-body-lg--line-height: var(--krds-line-height-body);
+  --text-krds-body-md: var(--krds-font-size-body-md);
+  --text-krds-body-md--line-height: var(--krds-line-height-body);
+  --text-krds-body-sm: var(--krds-font-size-body-sm);
+  --text-krds-body-sm--line-height: var(--krds-line-height-body);
+  --text-krds-body-xs: var(--krds-font-size-body-xs);
+  --text-krds-body-xs--line-height: var(--krds-line-height-body);
+  --text-krds-label-lg: var(--krds-font-size-label-lg);
+  --text-krds-label-lg--line-height: var(--krds-line-height-label);
+  --text-krds-label-md: var(--krds-font-size-label-md);
+  --text-krds-label-md--line-height: var(--krds-line-height-label);
+  --text-krds-label-sm: var(--krds-font-size-label-sm);
+  --text-krds-label-sm--line-height: var(--krds-line-height-label);
+  --text-krds-label-xs: var(--krds-font-size-label-xs);
+  --text-krds-label-xs--line-height: var(--krds-line-height-label);
+
+  --spacing-krds-0: var(--krds-space-0);
+  --spacing-krds-1: var(--krds-space-1);
+  --spacing-krds-2: var(--krds-space-2);
+  --spacing-krds-3: var(--krds-space-3);
+  --spacing-krds-4: var(--krds-space-4);
+  --spacing-krds-5: var(--krds-space-5);
+  --spacing-krds-6: var(--krds-space-6);
+  --spacing-krds-7: var(--krds-space-7);
+  --spacing-krds-8: var(--krds-space-8);
+  --spacing-krds-9: var(--krds-space-9);
+  --spacing-krds-10: var(--krds-space-10);
+  --spacing-krds-11: var(--krds-space-11);
+  --spacing-krds-12: var(--krds-space-12);
+  --spacing-krds-13: var(--krds-space-13);
+  --spacing-krds-14: var(--krds-space-14);
+  --spacing-krds-15: var(--krds-space-15);
+  --spacing-krds-16: var(--krds-space-16);
+  --spacing-krds-17: var(--krds-space-17);
+  --spacing-krds-18: var(--krds-space-18);
+  --spacing-krds-19: var(--krds-space-19);
+  --spacing-krds-20: var(--krds-space-20);
+  --spacing-krds-21: var(--krds-space-21);
+  --spacing-krds-max: var(--krds-space-max);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-krds-xs: var(--krds-radius-xs);
+  --radius-krds-sm: var(--krds-radius-sm);
+  --radius-krds-md: var(--krds-radius-md);
+  --radius-krds-8: var(--krds-radius-d2b);
+  --radius-krds-lg: var(--krds-radius-lg);
+  --radius-krds-xl: var(--krds-radius-xl);
+  --radius-krds-full: var(--krds-radius-full);
+
+  --shadow-krds-1: var(--krds-shadow-1);
+  --shadow-krds-2: var(--krds-shadow-2);
+  --shadow-krds-3: var(--krds-shadow-3);
+
+  --animate-spinner-dots: spinner-dots-rotate 1s steps(8) infinite;
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes spinner-dots-rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}

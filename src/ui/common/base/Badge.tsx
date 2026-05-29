@@ -18,7 +18,7 @@ const badgeVariants = cva(
     // raw/badge 의 rounded-full / px-2.5 / text-xs / font-semibold 등을 덮어쓰기 위해 명시
     'inline-flex items-center justify-center whitespace-nowrap',
     'rounded-[4px] px-1.5 py-0.5',
-    'text-[15px] leading-[1.5]',
+    'text-[15px] leading-normal',
   ),
   {
     variants: {

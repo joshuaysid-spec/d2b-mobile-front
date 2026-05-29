@@ -51,7 +51,7 @@ function Chip1Depth({ label, state }: { label: React.ReactNode; state: StepState
       : 'border border-krds-step-blue bg-background',
   )
   const textCls = cn(
-    'text-[19px] font-bold leading-[1.5] whitespace-nowrap',
+    'text-[19px] font-bold leading-normal whitespace-nowrap',
     isDoing ? 'text-white' : 'text-krds-step-blue',
   )
   return (

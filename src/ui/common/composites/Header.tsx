@@ -95,7 +95,7 @@ const UtilityMenu = ({ icon, label, onClick }: UtilityMenuProps) => {
       className={cn(
         'inline-flex h-[66px] w-[70px] shrink-0 flex-col items-center justify-center gap-[3px] rounded-krds-8',
         'text-krds-text-ink',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring',
         'active:opacity-70',
       )}
     >
@@ -162,7 +162,7 @@ const Header = ({
             className={cn(
               'inline-flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-krds-8',
               'text-krds-text-ink',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+              'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring',
               'active:opacity-70',
             )}
           >
@@ -173,7 +173,7 @@ const Header = ({
         {variant === 'sub' && (
           // 페이지 본문(PageContainer)이 이미 <h1> 을 렌더하므로 헤더 타이틀은
           // 중복 헤딩을 피해 <span> 으로 둔다(네비게이션 chrome 라벨).
-          <span className="min-w-0 flex-1 truncate text-[19px] font-bold leading-[1.5] text-krds-text-ink">
+          <span className="min-w-0 flex-1 truncate text-[19px] font-bold leading-normal text-krds-text-ink">
             {title}
           </span>
         )}

@@ -30,11 +30,11 @@ const Checkbox = React.forwardRef<
       'border border-krds-border-primary bg-background',
       'text-krds-body-md font-medium text-krds-text-primary transition-colors',
       // 키보드 포커스 — 내부 checkbox 가 focus-visible 일 때 칩에 링
-      '[&:has(:focus-visible)]:outline-none [&:has(:focus-visible)]:ring-2 [&:has(:focus-visible)]:ring-ring [&:has(:focus-visible)]:ring-offset-2',
+      'has-focus-visible:outline-hidden has-focus-visible:ring-2 has-focus-visible:ring-ring has-focus-visible:ring-offset-2',
       // 선택됨 — raw 의 data-state=checked 를 따라감
-      '[&:has([data-state=checked])]:border-2 [&:has([data-state=checked])]:bg-krds-bg-primary-subtle [&:has([data-state=checked])]:font-bold',
+      'has-data-[state=checked]:border-2 has-data-[state=checked]:bg-krds-bg-primary-subtle has-data-[state=checked]:font-bold',
       // 비활성
-      '[&:has(:disabled)]:cursor-not-allowed [&:has(:disabled)]:border-krds-border-disabled [&:has(:disabled)]:bg-krds-bg-disabled-soft [&:has(:disabled)]:text-krds-text-disabled',
+      'has-disabled:cursor-not-allowed has-disabled:border-krds-border-disabled has-disabled:bg-krds-bg-disabled-soft has-disabled:text-krds-text-disabled',
       '[&:has(:disabled):has([data-state=checked])]:border-2 [&:has(:disabled):has([data-state=checked])]:border-krds-text-disabled [&:has(:disabled):has([data-state=checked])]:bg-krds-bg-disabled-soft',
       className,
     )}

@@ -169,8 +169,8 @@ function triggerClass(depth: Depth) {
   const base =
     'py-0 hover:no-underline [&>svg]:size-5 [&>svg]:shrink-0 text-krds-text-ink'
   return depth === 1
-    ? cn(base, 'h-[45px] px-krds-8 text-[19px] font-bold leading-[1.5]')
-    : cn(base, 'h-[34px] text-[17px] font-normal leading-[1.5]')
+    ? cn(base, 'h-[45px] px-krds-8 text-[19px] font-bold leading-normal')
+    : cn(base, 'h-[34px] text-[17px] font-normal leading-normal')
 }
 
 function contentClass(depth: Depth) {
@@ -189,8 +189,8 @@ function LeafRow({ item, depth }: { item: MenuItem; depth: Depth }) {
         onClick={item.onClick}
         className={cn(
           'flex h-[31px] w-full items-center gap-1 text-left',
-          'text-[15px] font-normal leading-[1.5] text-krds-text-muted',
-          'focus-visible:bg-krds-bg-primary-faint focus-visible:outline-none',
+          'text-[15px] font-normal leading-normal text-krds-text-muted',
+          'focus-visible:bg-krds-bg-primary-faint focus-visible:outline-hidden',
         )}
       >
         <span aria-hidden className="shrink-0">
@@ -209,8 +209,8 @@ function LeafRow({ item, depth }: { item: MenuItem; depth: Depth }) {
         onClick={item.onClick}
         className={cn(
           'flex h-[45px] w-full items-center border border-krds-border-disabled bg-background px-krds-8 text-left',
-          'text-[19px] font-bold leading-[1.5] text-krds-text-ink',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-1',
+          'text-[19px] font-bold leading-normal text-krds-text-ink',
+          'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-1',
         )}
       >
         <span className="min-w-px flex-1 truncate">{item.label}</span>
@@ -225,8 +225,8 @@ function LeafRow({ item, depth }: { item: MenuItem; depth: Depth }) {
       onClick={item.onClick}
       className={cn(
         'flex h-[34px] w-full items-center text-left',
-        'text-[17px] font-normal leading-[1.5] text-krds-text-ink',
-        'focus-visible:bg-krds-bg-primary-faint focus-visible:outline-none',
+        'text-[17px] font-normal leading-normal text-krds-text-ink',
+        'focus-visible:bg-krds-bg-primary-faint focus-visible:outline-hidden',
       )}
     >
       <span className="min-w-px flex-1 truncate">{item.label}</span>

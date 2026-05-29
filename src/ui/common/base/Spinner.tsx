@@ -100,7 +100,7 @@ const Spinner = React.forwardRef<HTMLSpanElement, SpinnerProps>(
         >
           {dots}
           <span
-            className="text-center font-bold leading-[1.5] text-krds-text-muted"
+            className="text-center font-bold leading-normal text-krds-text-muted"
             style={{ fontSize: 17 * scale, minWidth: size }}
           >
             {clamped}%

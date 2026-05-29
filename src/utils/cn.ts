@@ -20,7 +20,7 @@ import { extendTailwindMerge } from 'tailwind-merge'
 //     (Tailwind colors 키는 자동으로 bg/text/border 모두에 노출되므로 3개 그룹에
 //      동일 토큰 목록을 등록)
 //
-// 신규 krds-* 토큰을 tailwind.config.ts 에 추가할 때는 여기에도 같이 등록한다.
+// 신규 krds-* 토큰을 src/styles/tailwind.css 의 @theme 에 추가할 때는 여기에도 같이 등록한다.
 // 누락 시 같은 회귀가 다시 발생할 수 있다.
 
 const KRDS_FONT_SIZES = [
@@ -43,7 +43,7 @@ const KRDS_FONT_SIZES = [
   'krds-label-xs',
 ] as const
 
-// tailwind.config.ts `colors.krds.*` 의 모든 키. 이름은 `krds-{key}` 형태로
+// src/styles/tailwind.css @theme 의 `--color-krds-*` 키 전부. 이름은 `krds-{key}` 형태로
 // bg-/text-/border- prefix 와 자동 결합된다.
 const KRDS_COLOR_NAMES = [
   // bg roles
@@ -75,6 +75,7 @@ const KRDS_COLOR_NAMES = [
   'krds-action-primary',
   'krds-action-primary-hover',
   'krds-action-primary-active',
+  'krds-action-danger',
   'krds-action-danger-hover',
   // feedback
   'krds-feedback-success',
@@ -102,13 +103,6 @@ const twMerge = extendTailwindMerge({
     },
   },
 })
-
-// ─── 이전 구현 (롤백용 보존) ─────────────────────────────────────────────────
-// import { twMerge } from 'tailwind-merge'
-// export function cn(...inputs: ClassValue[]): string {
-//   return twMerge(clsx(inputs))
-// }
-// ────────────────────────────────────────────────────────────────────────────
 
 export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs))

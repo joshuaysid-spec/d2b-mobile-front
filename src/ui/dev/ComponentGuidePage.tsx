@@ -212,7 +212,7 @@ export function ComponentGuidePage() {
                   (items.length === 0 ? (
                     <p className="px-3 py-1 text-krds-label-xs text-krds-text-disabled">—</p>
                   ) : (
-                    <ul className="mt-0.5 flex flex-col gap-0.5">
+                    <ul className="mt-0.5 flex max-h-[60vh] flex-col gap-0.5 overflow-y-auto overscroll-contain pr-1">
                       {items.map((s) => (
                         <li key={s.id}>
                           <a
@@ -2506,7 +2506,7 @@ export function ComponentGuidePage() {
                           type="button"
                           aria-label="새로고침"
                           onClick={() => alert('refresh')}
-                          className="flex size-9 items-center justify-center rounded-krds-sm text-krds-text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-krds-focus-ring"
+                          className="flex size-9 items-center justify-center rounded-krds-sm text-krds-text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring"
                         >
                           <Icon name="Refresh" size={20} aria-hidden />
                         </button>
@@ -2514,7 +2514,7 @@ export function ComponentGuidePage() {
                           type="button"
                           aria-label="즐겨찾기"
                           onClick={() => alert('star')}
-                          className="flex size-9 items-center justify-center rounded-krds-sm text-krds-text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-krds-focus-ring"
+                          className="flex size-9 items-center justify-center rounded-krds-sm text-krds-text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring"
                         >
                           <Icon name="StarBorder" size={20} aria-hidden />
                         </button>
@@ -2804,12 +2804,12 @@ export function ComponentGuidePage() {
           >
             <Row label="기본 / 알림 dot">
               <Specimen caption="hasNotification={false} (기본)">
-                <div className="w-[360px] overflow-hidden rounded-krds-8 border border-border [&>nav]:!static [&>nav]:!w-full [&>nav]:!translate-x-0">
+                <div className="w-[360px] overflow-hidden rounded-krds-8 border border-border [&>nav]:static! [&>nav]:w-full! [&>nav]:translate-x-0!">
                   <BottomNav />
                 </div>
               </Specimen>
               <Specimen caption="hasNotification={true} — 알림 탭 빨강 dot">
-                <div className="w-[360px] overflow-hidden rounded-krds-8 border border-border [&>nav]:!static [&>nav]:!w-full [&>nav]:!translate-x-0">
+                <div className="w-[360px] overflow-hidden rounded-krds-8 border border-border [&>nav]:static! [&>nav]:w-full! [&>nav]:translate-x-0!">
                   <BottomNav hasNotification />
                 </div>
               </Specimen>

@@ -39,7 +39,7 @@ const Tag = React.forwardRef<HTMLSpanElement, TagProps>(
         className={cn(
           'inline-flex items-center justify-center gap-krds-3 rounded-krds-full border bg-background',
           'border-krds-border-field px-krds-6 py-krds-5',
-          'text-[15px] font-normal leading-[1.5] text-krds-text-ink whitespace-nowrap',
+          'text-[15px] font-normal leading-normal text-krds-text-ink whitespace-nowrap',
           className,
         )}
         {...props}

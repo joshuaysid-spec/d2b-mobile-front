@@ -40,9 +40,9 @@ const NavigationItem = React.forwardRef<HTMLButtonElement, NavigationItemProps>(
         type="button"
         className={cn(
           'flex min-h-[56px] w-full items-center gap-krds-3 py-krds-6',
-          'text-left text-[19px] font-medium leading-[1.5] text-krds-text-ink',
+          'text-left text-[19px] font-medium leading-normal text-krds-text-ink',
           'bg-background active:bg-krds-bg-primary-faint',
-          'focus-visible:outline-none focus-visible:bg-krds-bg-primary-faint',
+          'focus-visible:outline-hidden focus-visible:bg-krds-bg-primary-faint',
           'disabled:cursor-not-allowed disabled:text-krds-text-disabled',
           className,
         )}

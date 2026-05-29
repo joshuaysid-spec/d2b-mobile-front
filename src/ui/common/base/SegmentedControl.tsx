@@ -9,7 +9,7 @@ const segmentedControlVariants = cva(
   cn(
     'inline-flex h-10 items-center justify-center whitespace-nowrap rounded-full px-krds-8',
     'text-krds-body-md font-bold transition-colors',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+    'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
     'disabled:cursor-not-allowed',
   ),
   {

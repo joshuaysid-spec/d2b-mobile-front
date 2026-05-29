@@ -13,7 +13,7 @@
  * 사용 규칙 (Plan §8.2):
  *   - 컴포넌트/설정은 이 파일의 변수를 참조만 한다. 색상/수치 하드코딩 금지.
  *   - shadcn 호환 토큰(--primary, --border ...)은 globals.css에서 Semantic을 재매핑한다.
- *   - Tailwind theme는 tailwind.config.ts에서 var(--krds-*)를 참조한다.
+ *   - Tailwind 클래스는 src/styles/tailwind.css의 @theme에서 var(--krds-*)를 참조한다.
  *
  * 단위 메모:
  *   - KRDS 원본 spacing/size는 root=10px(62.5%) 기준 rem. 본 프로젝트는 root=16px이므로

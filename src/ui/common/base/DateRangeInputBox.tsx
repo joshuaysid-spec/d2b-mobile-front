@@ -120,7 +120,7 @@ function SideInput({ value, onChange, onClear, placeholder, disabled, inputProps
         maxLength={10}
         placeholder={placeholder}
         className={cn(
-          'min-w-0 flex-1 border-none bg-transparent p-0 text-center text-krds-body-md text-krds-text-ink shadow-none outline-none ring-0',
+          'min-w-0 flex-1 border-none bg-transparent p-0 text-center text-krds-body-md text-krds-text-ink shadow-none outline-hidden ring-0',
           'focus-visible:ring-0 placeholder:text-krds-text-disabled disabled:cursor-not-allowed',
         )}
       />

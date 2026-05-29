@@ -56,16 +56,16 @@ function Toast({
       aria-live="polite"
       aria-hidden={!open}
       className={cn(
-        'pointer-events-none fixed inset-x-4 bottom-4 z-[100]',
+        'pointer-events-none fixed inset-x-4 bottom-4 z-100',
         'flex items-center rounded-krds-8 px-krds-8 py-krds-5',
-        'text-[15px] font-bold leading-[1.5] text-white break-words',
+        'text-[15px] font-bold leading-normal text-white wrap-break-word',
         'transition-opacity duration-200',
         open ? 'opacity-100' : 'pointer-events-none opacity-0',
         className,
       )}
       style={{ backgroundColor: 'rgba(15, 49, 110, 0.9)' }}
     >
-      <p className="min-w-px flex-1 break-words">{children}</p>
+      <p className="min-w-px flex-1 wrap-break-word">{children}</p>
     </div>
   )
 }

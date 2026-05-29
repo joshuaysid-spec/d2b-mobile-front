@@ -138,7 +138,7 @@ const BottomSheet = ({
             <DialogTitle
               className={cn(
                 'min-w-0 flex-1',
-                'text-[19px] font-bold leading-[1.5] text-krds-text-ink',
+                'text-[19px] font-bold leading-normal text-krds-text-ink',
               )}
             >
               {title}
@@ -149,7 +149,7 @@ const BottomSheet = ({
                 // 히트 영역 44px 확보 — p-2.5(10px) 로 24+20=44, -m-2.5 로 레이아웃 시프트 상쇄.
                 // mt-[-7px] 로 Figma close pt-[3px](상단 살짝 내림) 시각 위치 보존.
                 'inline-flex shrink-0 items-center justify-center rounded-krds-8 p-2.5 -m-2.5 mt-[-7px] text-krds-text-ink',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring',
               )}
             >
               <Icon name="Close" size={24} aria-hidden />

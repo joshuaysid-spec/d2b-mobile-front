@@ -65,7 +65,7 @@ const Notice = React.forwardRef<HTMLDivElement, NoticeProps>(
           <Badge type="solid" color="red" className="shrink-0">
             {badgeLabel}
           </Badge>
-          <p className="min-w-px flex-1 break-words text-[17px] font-bold leading-[1.5] text-krds-text-ink">
+          <p className="min-w-px flex-1 wrap-break-word text-[17px] font-bold leading-normal text-krds-text-ink">
             {children}
           </p>
         </div>
@@ -90,13 +90,13 @@ const Notice = React.forwardRef<HTMLDivElement, NoticeProps>(
           className={cn(
             'flex size-10 shrink-0 items-center justify-center rounded-krds-8 text-white',
             'bg-krds-action-primary-active',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
+            'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
             'disabled:cursor-default',
           )}
         >
           <Icon name={icon} size={24} aria-hidden />
         </button>
-        <p className="min-w-px flex-1 break-words text-[17px] font-medium leading-[1.5] text-krds-text-ink">
+        <p className="min-w-px flex-1 wrap-break-word text-[17px] font-medium leading-normal text-krds-text-ink">
           {children}
         </p>
       </div>

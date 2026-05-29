@@ -109,12 +109,12 @@ const Empty = React.forwardRef<HTMLDivElement, EmptyProps>(
       >
         {iconNode}
         {message && (
-          <p className="mt-krds-5 break-words text-[17px] font-medium leading-[1.5] text-krds-text-ink">
+          <p className="mt-krds-5 wrap-break-word text-[17px] font-medium leading-normal text-krds-text-ink">
             {message}
           </p>
         )}
         {description && (
-          <p className="mt-krds-3 break-words text-[15px] leading-[1.5] text-krds-text-muted">
+          <p className="mt-krds-3 wrap-break-word text-[15px] leading-normal text-krds-text-muted">
             {description}
           </p>
         )}

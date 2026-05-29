@@ -55,7 +55,7 @@ function Table({ className, rows, bordered = true, ...props }: TableProps) {
               {/* label cell — 120 폭, 17 Medium muted */}
               <div
                 role="rowheader"
-                className="flex w-[120px] shrink-0 items-center px-krds-7 py-krds-5 text-[17px] font-medium leading-[1.5] text-krds-text-muted"
+                className="flex w-[120px] shrink-0 items-center px-krds-7 py-krds-5 text-[17px] font-medium leading-normal text-krds-text-muted"
               >
                 {row.label}
               </div>
@@ -65,10 +65,10 @@ function Table({ className, rows, bordered = true, ...props }: TableProps) {
                 className={cn(
                   'flex flex-1 min-w-px px-krds-7 py-krds-5',
                   type === 'number'
-                    ? 'items-center justify-end text-right text-[17px] leading-[1.5] text-krds-text-ink tabular-nums'
+                    ? 'items-center justify-end text-right text-[17px] leading-normal text-krds-text-ink tabular-nums'
                     : type === 'combination'
-                      ? 'flex-col items-stretch gap-krds-5 text-[17px] leading-[1.5] text-krds-text-ink'
-                      : 'items-center text-[17px] leading-[1.5] text-krds-text-ink break-words',
+                      ? 'flex-col items-stretch gap-krds-5 text-[17px] leading-normal text-krds-text-ink'
+                      : 'items-center text-[17px] leading-normal text-krds-text-ink wrap-break-word',
                 )}
               >
                 {row.value}

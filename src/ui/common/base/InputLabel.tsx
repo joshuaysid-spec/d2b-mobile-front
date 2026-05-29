@@ -23,7 +23,7 @@ const InputLabel = React.forwardRef<HTMLLabelElement, InputLabelProps>(
     <RawLabel
       ref={ref}
       className={cn(
-        'flex items-start gap-0.5 text-[17px] font-bold leading-[1.5] text-krds-text-ink',
+        'flex items-start gap-0.5 text-[17px] font-bold leading-normal text-krds-text-ink',
         className,
       )}
       {...props}
@@ -36,7 +36,7 @@ const InputLabel = React.forwardRef<HTMLLabelElement, InputLabelProps>(
           *
         </span>
       )}
-      <span className="min-w-px flex-1 break-words">{children}</span>
+      <span className="min-w-px flex-1 wrap-break-word">{children}</span>
     </RawLabel>
   ),
 )

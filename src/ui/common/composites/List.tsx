@@ -112,7 +112,7 @@ function TextRow({ item }: { item: TextListItem }) {
       )}
       <div className="flex min-w-px flex-1 flex-col gap-krds-5">
         <div className="flex w-full items-start justify-between gap-krds-5">
-          <p className="min-w-px flex-1 text-[19px] font-bold leading-[1.5] text-krds-text-ink break-words">
+          <p className="min-w-px flex-1 text-[19px] font-bold leading-normal text-krds-text-ink wrap-break-word">
             {item.title}
           </p>
           {item.switch && (
@@ -122,7 +122,7 @@ function TextRow({ item }: { item: TextListItem }) {
           )}
         </div>
         {item.description && (
-          <p className="text-[17px] font-normal leading-[1.5] text-krds-text-muted break-words">
+          <p className="text-[17px] font-normal leading-normal text-krds-text-muted wrap-break-word">
             {item.description}
           </p>
         )}
@@ -142,7 +142,7 @@ function KeyValueRow({ item }: { item: KeyValueListItem }) {
           </div>
         )}
         <div className="flex min-w-px flex-1 flex-col gap-krds-5">
-          <p className="min-w-px text-[19px] font-bold leading-[1.5] text-krds-text-ink break-words">
+          <p className="min-w-px text-[19px] font-bold leading-normal text-krds-text-ink wrap-break-word">
             {item.title}
           </p>
           {item.meta && item.meta.length > 0 && (
@@ -155,7 +155,7 @@ function KeyValueRow({ item }: { item: KeyValueListItem }) {
                       className="h-5 w-px shrink-0 bg-krds-border-divider"
                     />
                   )}
-                  <span className="text-[17px] font-normal leading-[1.5] text-krds-text-muted whitespace-nowrap">
+                  <span className="text-[17px] font-normal leading-normal text-krds-text-muted whitespace-nowrap">
                     {m}
                   </span>
                 </React.Fragment>

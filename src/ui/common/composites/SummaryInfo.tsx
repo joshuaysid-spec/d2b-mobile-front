@@ -69,7 +69,7 @@ function SummaryInfo({
           {(subtitle || actions) && (
             <div className="flex w-full items-center justify-between gap-krds-5">
               {subtitle && (
-                <span className="min-w-px flex-1 text-[17px] font-normal leading-[1.5] text-krds-text-muted break-words">
+                <span className="min-w-px flex-1 text-[17px] font-normal leading-normal text-krds-text-muted wrap-break-word">
                   {subtitle}
                 </span>
               )}
@@ -81,7 +81,7 @@ function SummaryInfo({
             </div>
           )}
           {title && (
-            <span className="text-[19px] font-bold leading-[1.5] text-krds-text-ink break-words">
+            <span className="text-[19px] font-bold leading-normal text-krds-text-ink wrap-break-word">
               {title}
             </span>
           )}
@@ -92,10 +92,10 @@ function SummaryInfo({
         <div className="flex w-full flex-col gap-1">
           {rows.map((row, i) => (
             <div key={i} className="flex items-baseline gap-krds-7">
-              <span className="shrink-0 text-[17px] leading-[1.5] text-krds-text-muted">
+              <span className="shrink-0 text-[17px] leading-normal text-krds-text-muted">
                 {row.label}
               </span>
-              <span className="min-w-px flex-1 text-right text-[17px] leading-[1.5] text-krds-text-ink break-words tabular-nums">
+              <span className="min-w-px flex-1 text-right text-[17px] leading-normal text-krds-text-ink wrap-break-word tabular-nums">
                 {row.value}
               </span>
             </div>

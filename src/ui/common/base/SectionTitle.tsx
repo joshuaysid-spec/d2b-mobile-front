@@ -19,7 +19,7 @@ type HeadingTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 const titleVariants = cva(
   cn(
     'flex w-full items-center gap-4 px-4 py-2.5 min-h-[56px]',
-    'text-[19px] font-bold leading-[1.5] text-krds-text-ink',
+    'text-[19px] font-bold leading-normal text-krds-text-ink',
   ),
   {
     variants: {
@@ -69,7 +69,7 @@ const SectionTitle = React.forwardRef<HTMLElement, SectionTitleProps>(
           className={cn(titleVariants({ bgColor }), className)}
           {...props}
         >
-          <span className="min-w-px flex-1 break-words">{children}</span>
+          <span className="min-w-px flex-1 wrap-break-word">{children}</span>
           {info && (
             <span className="flex shrink-0 items-center gap-2 whitespace-nowrap text-[17px] font-bold text-krds-action-primary-active">
               {info}

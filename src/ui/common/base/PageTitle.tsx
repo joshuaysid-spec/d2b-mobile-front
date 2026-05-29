@@ -24,7 +24,7 @@ const PageTitle = React.forwardRef<HTMLHeadingElement, PageTitleProps>(
         ref={ref}
         className={cn(
           'flex w-full items-center px-4 py-5',
-          'text-[24px] font-bold leading-[1.5] text-krds-text-ink break-words',
+          'text-[24px] font-bold leading-normal text-krds-text-ink wrap-break-word',
           className,
         )}
         {...props}

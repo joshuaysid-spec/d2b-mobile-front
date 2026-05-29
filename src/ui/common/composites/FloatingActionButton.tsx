@@ -12,7 +12,7 @@
 //   </div>
 //
 // 시각 스펙(공통 — Figma):
-//   - 48×48 원형 · bg-white · drop-shadow 0 0 5px rgba(23,43,77,0.5)
+//   - 48×48 원형 · bg-white · drop-shadow-sm 0 0 5px rgba(23,43,77,0.5)
 //   - 아이콘 30px (Add=plus / Upgrade=top, weight=bold)
 //   - 아이콘 색: ink (검정) — Figma 그대로
 import * as React from 'react'
@@ -51,7 +51,7 @@ function CircleButton({ iconName, ariaLabel, onClick }: CircleButtonProps) {
         'flex size-12 shrink-0 items-center justify-center rounded-full bg-background text-krds-text-ink',
         'drop-shadow-[0_0_5px_rgba(23,43,77,0.5)]',
         'transition-transform active:scale-95',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
+        'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
       )}
     >
       <Icon name={iconName} size={30} aria-hidden />

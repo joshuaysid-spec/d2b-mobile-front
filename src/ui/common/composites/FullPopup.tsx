@@ -109,7 +109,7 @@ const UtilityButton = ({ icon, label, onClick }: UtilityButtonProps) => {
       className={cn(
         'inline-flex h-[66px] w-[70px] shrink-0 flex-col items-center justify-center gap-[3px] rounded-krds-8',
         'text-krds-text-ink',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring',
         'active:opacity-70',
       )}
     >
@@ -184,7 +184,7 @@ const FullPopup = ({
           >
             <DialogPrimitive.Title
               className={cn(
-                'min-w-0 flex-1 truncate text-[19px] font-bold leading-[1.5] text-krds-text-ink',
+                'min-w-0 flex-1 truncate text-[19px] font-bold leading-normal text-krds-text-ink',
               )}
             >
               {title}

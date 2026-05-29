@@ -25,7 +25,7 @@ const Tab = React.forwardRef<HTMLButtonElement, TabProps>(
       aria-selected={selected}
       className={cn(
         'group inline-flex h-12 shrink-0 flex-col items-center pt-1',
-        'focus-visible:outline-none',
+        'focus-visible:outline-hidden',
         className,
       )}
       {...props}
@@ -33,7 +33,7 @@ const Tab = React.forwardRef<HTMLButtonElement, TabProps>(
       <span
         className={cn(
           'inline-flex items-center justify-center px-krds-7',
-          'text-[19px] font-bold leading-[1.5] whitespace-nowrap',
+          'text-[19px] font-bold leading-normal whitespace-nowrap',
           selected
             ? 'text-krds-action-primary'
             : 'text-krds-border-field',

@@ -228,7 +228,7 @@ const AlertModal = ({
             {title ? (
               <DialogTitle
                 className={cn(
-                  'w-full text-center text-krds-body-md font-bold leading-[1.5]',
+                  'w-full text-center text-krds-body-md font-bold leading-normal',
                   'text-krds-text-ink',
                 )}
               >
@@ -241,7 +241,7 @@ const AlertModal = ({
             {description ? (
               <DialogDescription
                 className={cn(
-                  'w-full text-center text-krds-body-md font-normal leading-[1.5]',
+                  'w-full text-center text-krds-body-md font-normal leading-normal',
                   'text-krds-text-ink',
                 )}
               >

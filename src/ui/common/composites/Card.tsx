@@ -66,7 +66,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         className={cn(
           'flex w-full flex-col gap-krds-5 rounded-krds-8 border border-krds-border-field bg-background p-krds-8 text-left',
           interactive &&
-            'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
+            'cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
           className,
         )}
         {...props}
@@ -78,12 +78,12 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         {(subtitle || title) && (
           <div className="flex flex-col gap-1">
             {subtitle && (
-              <span className="text-[17px] font-normal leading-[1.5] text-krds-text-muted">
+              <span className="text-[17px] font-normal leading-normal text-krds-text-muted">
                 {subtitle}
               </span>
             )}
             {title && (
-              <span className="text-[19px] font-bold leading-[1.5] text-krds-text-ink break-words">
+              <span className="text-[19px] font-bold leading-normal text-krds-text-ink wrap-break-word">
                 {title}
               </span>
             )}
@@ -97,11 +97,11 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
                 {rows.map((row, i) => (
                   <div key={i} className="flex items-baseline gap-krds-7">
                     {row.label != null && (
-                      <span className="shrink-0 text-[17px] leading-[1.5] text-krds-text-muted">
+                      <span className="shrink-0 text-[17px] leading-normal text-krds-text-muted">
                         {row.label}
                       </span>
                     )}
-                    <span className="min-w-px flex-1 text-right text-[17px] leading-[1.5] text-krds-text-ink break-words">
+                    <span className="min-w-px flex-1 text-right text-[17px] leading-normal text-krds-text-ink wrap-break-word">
                       {row.value}
                     </span>
                   </div>

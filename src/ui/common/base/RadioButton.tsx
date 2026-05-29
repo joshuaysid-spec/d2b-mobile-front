@@ -30,13 +30,13 @@ const RadioButton = React.forwardRef<
       'border border-krds-border-field bg-background',
       'text-krds-body-md font-medium text-primary transition-colors',
       // 키보드 포커스 — 내부 radio item 이 focus-visible 일 때 칩에 링
-      '[&:has(:focus-visible)]:outline-none [&:has(:focus-visible)]:ring-2 [&:has(:focus-visible)]:ring-ring [&:has(:focus-visible)]:ring-offset-2',
+      'has-focus-visible:outline-hidden has-focus-visible:ring-2 has-focus-visible:ring-ring has-focus-visible:ring-offset-2',
       // 선택됨 — raw 의 data-state=checked 를 따라감
-      '[&:has([data-state=checked])]:border-2 [&:has([data-state=checked])]:border-primary',
-      '[&:has([data-state=checked])]:bg-krds-bg-primary-subtle [&:has([data-state=checked])]:font-bold',
+      'has-data-[state=checked]:border-2 has-data-[state=checked]:border-primary',
+      'has-data-[state=checked]:bg-krds-bg-primary-subtle has-data-[state=checked]:font-bold',
       // 비활성
-      '[&:has(:disabled)]:cursor-not-allowed [&:has(:disabled)]:border-krds-border-disabled',
-      '[&:has(:disabled)]:bg-krds-bg-disabled-soft [&:has(:disabled)]:text-krds-text-disabled',
+      'has-disabled:cursor-not-allowed has-disabled:border-krds-border-disabled',
+      'has-disabled:bg-krds-bg-disabled-soft has-disabled:text-krds-text-disabled',
       className,
     )}
   >
@@ -52,16 +52,16 @@ const RadioButton = React.forwardRef<
       className={cn(
         'flex size-5 shrink-0 items-center justify-center rounded-full border transition-colors',
         'border-krds-border-field',
-        'group-has-[[data-state=checked]]:border-primary',
-        'group-has-[:disabled]:border-krds-border-disabled',
+        'group-has-data-[state=checked]:border-primary',
+        'group-has-disabled:border-krds-border-disabled',
       )}
       aria-hidden
     >
       <span
         className={cn(
           'hidden size-3 rounded-full bg-primary',
-          'group-has-[[data-state=checked]]:block',
-          'group-has-[:disabled]:bg-krds-border-disabled',
+          'group-has-data-[state=checked]:block',
+          'group-has-disabled:bg-krds-border-disabled',
         )}
       />
     </span>
