@@ -6,6 +6,7 @@
 import { useState } from 'react'
 
 import { cn } from '@/utils/cn'
+import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { Calendar } from '@/ui/common/base/Calendar'
@@ -87,6 +88,7 @@ const NAV = [
       { id: 'tag', label: 'Tag' },
       { id: 'tab', label: 'Tab' },
       { id: 'navigationitem', label: 'NavigationItem' },
+      { id: 'accordion', label: 'Accordion' },
       { id: 'logo', label: 'Logo' },
     ],
   },
@@ -411,6 +413,18 @@ export function ComponentGuidePage() {
                 </RadioGroup>
               </Specimen>
             </Row>
+            <Row label="showIndicator (원형 ○ 표시 유무)">
+              <Specimen caption="false (기본 · pill)">
+                <RadioGroup value="a">
+                  <RadioButton value="a" label="선택항목" />
+                </RadioGroup>
+              </Specimen>
+              <Specimen caption="true (원형 표시)">
+                <RadioGroup value="a">
+                  <RadioButton value="a" label="선택항목" showIndicator />
+                </RadioGroup>
+              </Specimen>
+            </Row>
           </Section>
 
           {/* ───────── Switch ───────── */}
@@ -485,6 +499,44 @@ export function ComponentGuidePage() {
                     선택항목
                   </SegmentedControl>
                   <SegmentedControl disabled>선택항목</SegmentedControl>
+                </div>
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── Accordion ───────── */}
+          <Section
+            id="accordion"
+            title="Accordion"
+            desc="Figma m_accordian(9300-28556) 1:1. 섹션 아코디언 — raw/accordion 래핑. 타이틀바(56h · blue(bg-primary-faint)/white · 19px Bold · chevron 20px 회전) + content(white p-16, 세로 stack gap-16). AccordionSection props: value · title · titleInfo? · variant(blue/white) · borderTop · flush."
+          >
+            <Row label="기본 (multiple · blue)">
+              <Specimen caption="2 섹션 · 독립 접기/펴기">
+                <div className="w-[360px] border border-krds-border-divider">
+                  <Accordion type="multiple" defaultValue={['a']}>
+                    <AccordionSection value="a" title="아코디언 타이틀" borderTop={false}>
+                      <p className="text-krds-body-md text-krds-text-ink">콘텐츠 영역 A</p>
+                    </AccordionSection>
+                    <AccordionSection value="b" title="아코디언 타이틀" titleInfo="총 2건">
+                      <p className="text-krds-body-md text-krds-text-ink">콘텐츠 영역 B</p>
+                    </AccordionSection>
+                  </Accordion>
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="variant=white (single · collapsible)">
+              <Specimen caption="흰색 타이틀 바">
+                <div className="w-[360px] border border-krds-border-divider">
+                  <Accordion type="single" collapsible defaultValue="w">
+                    <AccordionSection
+                      value="w"
+                      title="아코디언 타이틀"
+                      variant="white"
+                      borderTop={false}
+                    >
+                      <p className="text-krds-body-md text-krds-text-ink">콘텐츠 영역</p>
+                    </AccordionSection>
+                  </Accordion>
                 </div>
               </Specimen>
             </Row>
@@ -1359,8 +1411,22 @@ export function ComponentGuidePage() {
           <Section
             id="radiobuttongroup"
             title="RadioButtonGroup"
-            desc="RadioButton을 items 배열로 구성. direction: horizontal(기본) | vertical."
+            desc="RadioButton을 items 배열로 구성. direction: horizontal(기본) | vertical. showIndicator(기본 false)로 좌측 원형(○) 표시 여부 제어."
           >
+            <Row label="showIndicator (원형 표시)">
+              <Specimen caption="true (원형 ○)">
+                <div className="w-[260px]">
+                  <RadioButtonGroup
+                    defaultValue="a"
+                    showIndicator
+                    items={[
+                      { value: 'a', label: '항목 1' },
+                      { value: 'b', label: '항목 2' },
+                    ]}
+                  />
+                </div>
+              </Specimen>
+            </Row>
             <Row label="horizontal">
               <Specimen caption="2항목">
                 <div className="w-[260px]">

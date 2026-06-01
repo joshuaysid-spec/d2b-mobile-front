@@ -47,7 +47,8 @@ const segmentedControlVariants = cva(
 )
 
 export interface SegmentedControlProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'disabled'>,
+  extends
+    Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'disabled'>,
     VariantProps<typeof segmentedControlVariants> {}
 
 const SegmentedControl = React.forwardRef<HTMLButtonElement, SegmentedControlProps>(

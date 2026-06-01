@@ -17,12 +17,14 @@ export interface RadioButtonProps
   extends React.ComponentPropsWithoutRef<typeof RawRadioItem> {
   /** 칩에 표시할 라벨. children 으로도 받음(label 우선). */
   label?: React.ReactNode
+  /** 좌측 원형 라디오 표시(○/●) 유무. 기본 false(원형 없는 pill). true 면 표준 라디오 원형 노출. */
+  showIndicator?: boolean
 }
 
 const RadioButton = React.forwardRef<
   React.ElementRef<typeof RawRadioItem>,
   RadioButtonProps
->(({ className, label, children, ...props }, ref) => (
+>(({ className, label, children, showIndicator = false, ...props }, ref) => (
   <label
     className={cn(
       // chip base — Figma m_radiobutton: h-48 · px-10 · gap-4 · rounded-8
@@ -47,24 +49,26 @@ const RadioButton = React.forwardRef<
       className="absolute size-px overflow-hidden border-0 p-0 opacity-0 [clip:rect(0,0,0,0)]"
       {...props}
     />
-    {/* 라디오 원형 아이콘(장식) — 칩(group)의 raw 상태를 group-has 로 따라감 */}
-    <span
-      className={cn(
-        'flex size-5 shrink-0 items-center justify-center rounded-full border transition-colors',
-        'border-krds-border-field',
-        'group-has-data-[state=checked]:border-primary',
-        'group-has-disabled:border-krds-border-disabled',
-      )}
-      aria-hidden
-    >
+    {/* 라디오 원형 아이콘(장식) — showIndicator 일 때만. 칩(group)의 raw 상태를 group-has 로 따라감 */}
+    {showIndicator && (
       <span
         className={cn(
-          'hidden size-3 rounded-full bg-primary',
-          'group-has-data-[state=checked]:block',
-          'group-has-disabled:bg-krds-border-disabled',
+          'flex size-5 shrink-0 items-center justify-center rounded-full border transition-colors',
+          'border-krds-border-field',
+          'group-has-data-[state=checked]:border-primary',
+          'group-has-disabled:border-krds-border-disabled',
         )}
-      />
-    </span>
+        aria-hidden
+      >
+        <span
+          className={cn(
+            'hidden size-3 rounded-full bg-primary',
+            'group-has-data-[state=checked]:block',
+            'group-has-disabled:bg-krds-border-disabled',
+          )}
+        />
+      </span>
+    )}
     <span>{label ?? children}</span>
   </label>
 ))

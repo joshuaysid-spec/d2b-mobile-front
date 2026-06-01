@@ -12,9 +12,10 @@ import { ROUTES } from '@/constants/routes'
 const HomePage = lazy(() =>
   import('@/ui/biz/home/HomePage').then((m) => ({ default: m.HomePage })),
 )
-const ProcurementPage = lazy(() =>
-  import('@/ui/biz/procurement/ProcurementPage').then((m) => ({
-    default: m.ProcurementPage,
+// 조달계획 통합목록(MUI-OP-01-M01, 설계서 p.8) — biz/op 도메인.
+const ProcurementListPage = lazy(() =>
+  import('@/ui/biz/op/ProcurementListPage').then((m) => ({
+    default: m.ProcurementListPage,
   })),
 )
 const NoticePage = lazy(() =>
@@ -44,7 +45,7 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'procurement', element: <ProcurementPage /> },
+      { path: 'procurement', element: <ProcurementListPage /> },
       { path: 'notice', element: <NoticePage /> },
       { path: 'notification', element: <NotificationPage /> },
       { path: 'mypage', element: <MyPage /> },

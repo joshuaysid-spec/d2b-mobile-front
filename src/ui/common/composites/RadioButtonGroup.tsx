@@ -12,12 +12,17 @@ export interface RadioButtonGroupProps
   direction?: 'horizontal' | 'vertical'
   /** 각 RadioButton에 적용할 className */
   itemClassName?: RadioButtonProps['className']
+  /** 좌측 원형 라디오 표시(○/●) 유무. 기본 false(원형 없는 pill). */
+  showIndicator?: boolean
 }
 
 const RadioButtonGroup = React.forwardRef<
   React.ElementRef<typeof RadioGroup>,
   RadioButtonGroupProps
->(({ className, items, direction = 'horizontal', itemClassName, ...props }, ref) => (
+>((
+  { className, items, direction = 'horizontal', itemClassName, showIndicator = false, ...props },
+  ref,
+) => (
   <RadioGroup
     ref={ref}
     className={cn(
@@ -34,6 +39,7 @@ const RadioButtonGroup = React.forwardRef<
         value={value}
         label={label}
         disabled={disabled}
+        showIndicator={showIndicator}
         className={cn(
           direction === 'horizontal' ? 'flex-1' : 'w-full',
           itemClassName,

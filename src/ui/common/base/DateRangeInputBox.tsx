@@ -22,7 +22,10 @@ export interface DateRangeInputBoxProps {
   startPlaceholder?: string
   endPlaceholder?: string
   /** input 요소에 그대로 전달 (autoFocus 등). 양쪽 공통. */
-  inputProps?: Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'placeholder' | 'disabled'>
+  inputProps?: Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    'value' | 'onChange' | 'placeholder' | 'disabled'
+  >
   className?: string
 }
 
@@ -99,7 +102,14 @@ interface SideInputProps {
   inputProps?: DateRangeInputBoxProps['inputProps']
 }
 
-function SideInput({ value, onChange, onClear, placeholder, disabled, inputProps }: SideInputProps) {
+function SideInput({
+  value,
+  onChange,
+  onClear,
+  placeholder,
+  disabled,
+  inputProps,
+}: SideInputProps) {
   const [focused, setFocused] = React.useState(false)
   return (
     <div className="flex min-w-0 flex-1 items-center gap-krds-5">

@@ -9,7 +9,7 @@ import { Button } from '@/ui/common/base/Button'
 import { Calendar, type DateRangeValue } from '@/ui/common/base/Calendar'
 import { DateRangeInputBox } from '@/ui/common/base/DateRangeInputBox'
 import { Label } from '@/ui/common/base/Label'
-import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
+import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { cn } from '@/utils/cn'
 
@@ -33,6 +33,8 @@ export interface DateRangeInputProps {
   disabled?: boolean
   /** 프리셋 칩 — 기본: 1주일 / 1개월 / 3개월 / 기간검색 */
   presets?: DateRangePreset[]
+  /** 프리셋 칩(빠른 선택 버튼) UI 표시 여부. 기본 true. false 면 트리거 박스만 노출. */
+  showPresets?: boolean
   sheetTitle?: React.ReactNode
   fetchHolidays?: (year: number, month: number) => Promise<string[]>
   minDate?: string
@@ -82,6 +84,7 @@ const DateRangeInput = ({
   error = false,
   disabled = false,
   presets = DEFAULT_PRESETS,
+  showPresets = true,
   sheetTitle = '기간 선택',
   fetchHolidays,
   minDate,
@@ -158,19 +161,19 @@ const DateRangeInput = ({
     <div className={cn('flex w-full flex-col gap-krds-4', className)}>
       {label && <Label htmlFor={id} required={required}>{label}</Label>}
 
-      {/* 프리셋 칩 행 — 페이지에서 빠르게 선택 가능 */}
-      <div className="flex flex-wrap items-center gap-krds-5">
-        {presets.map((p, i) => (
-          <SegmentedControl
-            key={p.label}
-            selected={activePresetIdx === i}
-            disabled={disabled}
-            onClick={() => handlePagePresetClick(i)}
-          >
-            {p.label}
-          </SegmentedControl>
-        ))}
-      </div>
+      {/* 프리셋 빠른 선택 — 라디오 버튼 그룹(원형 없는 pill, showIndicator 기본 false). showPresets 로 on/off */}
+      {showPresets && (
+        <RadioButtonGroup
+          direction="horizontal"
+          value={activePresetIdx != null ? presets[activePresetIdx].label : ''}
+          onValueChange={(label) => {
+            const idx = presets.findIndex((p) => p.label === label)
+            if (idx >= 0) handlePagePresetClick(idx)
+          }}
+          disabled={disabled}
+          items={presets.map((p) => ({ value: p.label, label: p.label }))}
+        />
+      )}
 
       {/* 트리거 박스 */}
       <DateRangeInputBox
