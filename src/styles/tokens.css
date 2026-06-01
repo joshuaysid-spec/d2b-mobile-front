@@ -262,6 +262,7 @@
   --krds-text-on-primary: var(--krds-color-gray-0);
   --krds-text-on-inverse: var(--krds-color-gray-0);
   --krds-text-primary: var(--krds-d2b-blue);           /* D2B Figma */
+  --krds-text-primary-active: var(--krds-d2b-blue-dark); /* D2B Figma — active state */
   --krds-text-danger: var(--krds-color-danger-60);
 
   /* --- Border ------------------------------------------------------------- */
@@ -269,6 +270,8 @@
   --krds-border-default: var(--krds-color-gray-20);
   --krds-border-strong: var(--krds-color-gray-30);
   --krds-border-primary: var(--krds-d2b-blue);              /* D2B Figma */
+  --krds-border-tertiary: var(--krds-d2b-blue-dark);        /* D2B Figma — Button tertiary */
+  --krds-border-tertiary-active: var(--krds-d2b-blue-dark); /* D2B Figma — Button tertiary active */
   --krds-border-danger: var(--krds-d2b-danger);             /* D2B Figma */
   --krds-border-field: var(--krds-d2b-blue-border);         /* D2B Figma — 입력창 기본 보더 */
   --krds-border-disabled: var(--krds-d2b-disabled-border);  /* D2B Figma — 입력/체크박스 비활성 */
@@ -277,14 +280,13 @@
 
   /* --- Action (interactive states) --------------------------------------- */
   --krds-action-primary: var(--krds-d2b-blue);              /* D2B Figma */
-  --krds-action-primary-hover: var(--krds-d2b-blue-dark);   /* D2B Figma */
   --krds-action-primary-active: var(--krds-d2b-blue-dark);  /* D2B Figma — pressed */
   --krds-action-primary-disabled: var(--krds-color-gray-20);
   --krds-action-secondary: var(--krds-color-gray-5);
-  --krds-action-secondary-hover: var(--krds-color-gray-10);
   --krds-action-secondary-active: var(--krds-color-gray-20);
+  --krds-action-pressed: var(--krds-d2b-blue-subtle);        /* #BCD4FF — pressed state */
+  --krds-action-tertiary-active: #c9d8f3;                   /* D2B Figma — tertiary active */
   --krds-action-danger: var(--krds-d2b-danger);             /* D2B Figma */
-  --krds-action-danger-hover: var(--krds-color-danger-60);
   --krds-action-danger-active: var(--krds-color-danger-70);
 
   /* --- Feedback ----------------------------------------------------------- */

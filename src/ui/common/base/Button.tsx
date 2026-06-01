@@ -8,7 +8,6 @@ const buttonVariants = cva(
   cn(
     'inline-flex items-center justify-center gap-krds-3 whitespace-nowrap rounded-krds-8',
     'font-bold ring-offset-background transition-colors',
-    'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
     'disabled:pointer-events-none disabled:border-transparent disabled:bg-krds-bg-disabled disabled:text-krds-text-disabled',
     '[&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0',
   ),
@@ -18,9 +17,11 @@ const buttonVariants = cva(
         primary:
           'bg-primary text-white active:bg-krds-action-primary-active',
         secondary:
-          'border border-krds-border-primary bg-background text-krds-text-primary active:bg-krds-bg-primary-subtle',
+          'border border-krds-border-primary bg-background text-krds-text-primary active:bg-krds-action-pressed',
         inner:
-          'border border-krds-border-primary bg-background font-medium text-krds-text-primary active:bg-krds-bg-primary-subtle',
+          'border border-krds-border-primary bg-background font-medium text-krds-text-primary active:bg-krds-action-pressed',
+        tertiary:
+          'border border-krds-border-tertiary bg-background text-krds-text-primary-active active:bg-krds-action-tertiary-active active:border-krds-border-tertiary-active',
       },
       size: {
         default: 'h-12 min-w-[76px] px-krds-5 text-krds-body-md',
