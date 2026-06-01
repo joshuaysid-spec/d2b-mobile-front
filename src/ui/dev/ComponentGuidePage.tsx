@@ -241,7 +241,7 @@ export function ComponentGuidePage() {
           <Section
             id="button"
             title="Button"
-            desc="Figma m_button(9052-233) 1:1. variant 3종 · size 4종 · 아이콘은 children 으로 전달."
+            desc="Figma m_button(9052-233) 1:1. variant 4종 · size 4종 · 아이콘은 children 으로 전달."
           >
             <Row label="variant">
               <Specimen caption='variant="primary"'>
@@ -253,7 +253,11 @@ export function ComponentGuidePage() {
               <Specimen caption='variant="inner"'>
                 <Button variant="inner">버튼</Button>
               </Specimen>
+              <Specimen caption='variant="tertiary"'>
+                <Button variant="tertiary">버튼</Button>
+              </Specimen>
             </Row>
+
             <Row label="size">
               <Specimen caption='size="sm"'>
                 <Button size="sm">버튼</Button>
@@ -265,6 +269,7 @@ export function ComponentGuidePage() {
                 <Button size="lg">버튼</Button>
               </Specimen>
             </Row>
+            
             <Row label="아이콘">
               <Specimen caption="아이콘 앞">
                 <Button>
