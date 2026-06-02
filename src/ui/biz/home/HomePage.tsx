@@ -11,7 +11,7 @@ const MENU_LINKS: ReadonlyArray<{
   to: string
   iconName: IconName
 }> = [
-  { label: '조달계획', desc: '조달계획 목록·등록', to: ROUTES.PROCUREMENT, iconName: 'Description' },
+  { label: '조달계획', desc: '조달계획 목록·등록', to: ROUTES.OP, iconName: 'Description' },
   { label: '입찰공고', desc: '입찰공고 조회', to: ROUTES.NOTICE, iconName: 'Campaign' },
   { label: '알림', desc: '알림 내역 확인', to: ROUTES.NOTIFICATION, iconName: 'Notifications' },
   { label: '마이페이지', desc: '내 정보 및 설정', to: ROUTES.MYPAGE, iconName: 'Person' },

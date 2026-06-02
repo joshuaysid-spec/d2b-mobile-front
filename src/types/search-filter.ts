@@ -90,6 +90,6 @@ export interface SearchFilterSchema {
 
 /**
  * key → value 맵. 셸이 이 형태로 값을 관리하고 onSearch 로 돌려준다.
- * 소비자는 자기 도메인 타입(예: ProcurementSearchFilter)으로 캐스팅해 읽는다.
+ * 소비자는 자기 도메인 타입(예: OpSearchFilter)으로 캐스팅해 읽는다.
  */
 export type SearchFilterValue = Record<string, SearchFilterFieldValue>

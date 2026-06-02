@@ -13,9 +13,9 @@ const HomePage = lazy(() =>
   import('@/ui/biz/home/HomePage').then((m) => ({ default: m.HomePage })),
 )
 // 조달계획 통합목록(MUI-OP-01-M01, 설계서 p.8) — biz/op 도메인.
-const ProcurementListPage = lazy(() =>
-  import('@/ui/biz/op/ProcurementListPage').then((m) => ({
-    default: m.ProcurementListPage,
+const OpListPage = lazy(() =>
+  import('@/ui/biz/op/OpListPage').then((m) => ({
+    default: m.OpListPage,
   })),
 )
 const NoticePage = lazy(() =>
@@ -45,7 +45,7 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'procurement', element: <ProcurementListPage /> },
+      { path: 'op', element: <OpListPage /> },
       { path: 'notice', element: <NoticePage /> },
       { path: 'notification', element: <NotificationPage /> },
       { path: 'mypage', element: <MyPage /> },

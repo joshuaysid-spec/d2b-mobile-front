@@ -14,12 +14,12 @@ import type {
   SearchFilterSchema,
   SearchFilterValue,
 } from '@/types/search-filter'
-import type { ProcurementSearchFilter } from '@/types/procurement'
+import type { OpSearchFilter } from '@/types/op'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
 // 조달계획 검색 schema (Figma MUI-OP-01-M02) — 아코디언 5섹션.
-const PROCUREMENT_SEARCH: SearchFilterSchema = {
+const OP_SEARCH: SearchFilterSchema = {
   title: '검색필터',
   sections: [
     {
@@ -85,7 +85,7 @@ const PROCUREMENT_SEARCH: SearchFilterSchema = {
 }
 
 // 초기/초기화 기준값 (검색유형 조달계획 · 발주예정월 최근 1개월 · 나머지 전체/빈값)
-const DEFAULT_VALUE: ProcurementSearchFilter = {
+const DEFAULT_VALUE: OpSearchFilter = {
   srchType: 'plan',
   orderPrnmntYm: {
     start: dayjs().subtract(1, 'month').format(DATE_FORMAT),
@@ -140,19 +140,17 @@ function summarize(
   return rows
 }
 
-export function ProcurementListPage() {
+export function OpListPage() {
   const [open, setOpen] = useState(false)
-  const [filter, setFilter] = useState<SearchFilterValue>(
-    DEFAULT_VALUE as unknown as SearchFilterValue,
-  )
+  const [filter, setFilter] = useState<SearchFilterValue>(DEFAULT_VALUE)
 
   const handleSearch = (value: SearchFilterValue) => {
     setFilter(value)
     // --- API 주석 스텁 (백엔드 연동 시 활성화) ---
     // Design Ref: §4 — services/queries 실구현은 범위 외. onSearch 가 백엔드 경계.
-    // services/procurement.ts: procurementService.getList(toRequest(value))
-    // queries/procurement.ts : useProcurementList(value as ProcurementSearchFilter)
-    //   const { data } = useProcurementList(filter)  → 목록 렌더
+    // services/op.ts: opService.getList(toRequest(value))
+    // queries/op.ts : useOpList(value as OpSearchFilter)
+    //   const { data } = useOpList(filter)  → 목록 렌더
   }
 
   return (
@@ -170,7 +168,7 @@ export function ProcurementListPage() {
       {/* 적용 필터 요약 — 검증용. 실제 목록은 API 연동(주석 스텁) 후 렌더 */}
       <dl className="mt-krds-8 flex flex-col gap-krds-4 rounded-krds-8 border border-krds-border-divider p-krds-6">
         <p className="text-krds-body-sm font-bold text-krds-text-subtle">적용된 검색 조건</p>
-        {summarize(PROCUREMENT_SEARCH, filter).map((row) => (
+        {summarize(OP_SEARCH, filter).map((row) => (
           <div key={row.label} className="flex gap-krds-5 text-krds-body-md">
             <dt className="w-[80px] shrink-0 text-krds-text-subtle">{row.label}</dt>
             <dd className="min-w-0 flex-1 break-words text-krds-text-ink">{row.value}</dd>
@@ -181,9 +179,9 @@ export function ProcurementListPage() {
       <SearchFilter
         open={open}
         onOpenChange={setOpen}
-        schema={PROCUREMENT_SEARCH}
+        schema={OP_SEARCH}
         value={filter}
-        defaultValue={DEFAULT_VALUE as unknown as SearchFilterValue}
+        defaultValue={DEFAULT_VALUE}
         onSearch={handleSearch}
       />
     </PageContainer>

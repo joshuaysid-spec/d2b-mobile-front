@@ -1,7 +1,7 @@
 // frontend-architecture.md §9.2 — 라우트 경로 상수
 export const ROUTES = {
   HOME: '/',
-  PROCUREMENT: '/procurement',
+  OP: '/op',
   NOTICE: '/notice',
   NOTIFICATION: '/notification',
   MYPAGE: '/mypage',
