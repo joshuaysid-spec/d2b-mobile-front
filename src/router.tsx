@@ -18,6 +18,12 @@ const OpListPage = lazy(() =>
     default: m.OpListPage,
   })),
 )
+// 조달계획 상세(MUI-OP-01, /op/:id) — 카드 클릭 진입. 현재 빈 화면.
+const OpDetailPage = lazy(() =>
+  import('@/ui/biz/op/OpDetailPage').then((m) => ({
+    default: m.OpDetailPage,
+  })),
+)
 const NoticePage = lazy(() =>
   import('@/ui/biz/notice/NoticePage').then((m) => ({ default: m.NoticePage })),
 )
@@ -46,6 +52,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: 'op', element: <OpListPage /> },
+      { path: 'op/:id', element: <OpDetailPage /> },
       { path: 'notice', element: <NoticePage /> },
       { path: 'notification', element: <NotificationPage /> },
       { path: 'mypage', element: <MyPage /> },

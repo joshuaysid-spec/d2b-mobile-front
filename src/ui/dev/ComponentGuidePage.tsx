@@ -58,6 +58,10 @@ import { TagList } from '@/ui/common/composites/TagList'
 import { RadioGroup } from '@/ui/raw/radio-group'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { CheckboxGroup } from '@/ui/common/composites/CheckboxGroup'
+import { Infobox } from '@/ui/common/composites/Infobox'
+import { SearchCondition } from '@/ui/common/composites/SearchCondition'
+import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
+import { CardList } from '@/ui/common/composites/CardList'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 
 const NAV = [
@@ -98,6 +102,10 @@ const NAV = [
     items: [
       { id: 'radiobuttongroup', label: 'RadioButtonGroup' },
       { id: 'checkboxgroup', label: 'CheckboxGroup' },
+      { id: 'infobox', label: 'Infobox' },
+      { id: 'searchcondition', label: 'SearchCondition' },
+      { id: 'listsectionheader', label: 'ListSectionHeader' },
+      { id: 'cardlist', label: 'CardList' },
       { id: 'buttongroup', label: 'ButtonGroup' },
       { id: 'bottomsheet', label: 'BottomSheet' },
       { id: 'alertmodal', label: 'AlertModal' },
@@ -132,6 +140,9 @@ const NAV = [
 
 export function ComponentGuidePage() {
   const [clearable, setClearable] = useState('지울 수 있는 입력값')
+  const [opKeyword, setOpKeyword] = useState('')
+  const [opTargets, setOpTargets] = useState<string[]>(['name'])
+  const [opPageSize, setOpPageSize] = useState(10)
   const [dateValue, setDateValue] = useState('2026-05-01')
   const [rangeValue, setRangeValue] = useState({ start: '2026-05-01', end: '2026-05-30' })
   const [calSingle, setCalSingle] = useState<string>('2026-05-13')
@@ -1369,7 +1380,7 @@ export function ComponentGuidePage() {
               </Specimen>
               <Specimen caption="아코디언 아이콘">
                 <div className="w-[328px] rounded-krds-8 border border-border bg-background">
-                  <SectionTitle info={<Icon name="ExpandMore" size={20} />}>상세 정보</SectionTitle>
+                  <SectionTitle info={<Icon name="ArrowForwardIos" size={20} className="rotate-90" />}>상세 정보</SectionTitle>
                 </div>
               </Specimen>
               <Specimen caption="복합 (텍스트 + 아이콘)">
@@ -1564,6 +1575,165 @@ export function ComponentGuidePage() {
                       { value: 'b', label: '항목 2', disabled: true },
                     ]}
                   />
+                </div>
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── Infobox ───────── */}
+          <Section
+            id="infobox"
+            title="Infobox"
+            desc="Figma m_Infobox(9300-29649) 1:1. ⓘ+타이틀+불릿 본문. collapsible(기본, opened/closed) / static(항상 펼침). 업무도움·안내사항 등 재사용."
+          >
+            <Row label="collapsible (기본 closed)">
+              <Specimen caption="헤더 클릭 토글">
+                <div className="w-[328px]">
+                  <Infobox
+                    title="업무도움"
+                    items={[
+                      '비밀번호 자동완성기능(ex. 알패스 등)은 사용할 수 없습니다.',
+                      '1577-1118 대표전화로 전화주세요. 서비스에 로그인할 수 있도록 도와드리겠습니다.',
+                      '내용입니다.',
+                      <>
+                        내용입니다.{' '}
+                        <a href="#" className="text-primary underline">
+                          링크버튼
+                        </a>{' '}
+                        들어가는 경우
+                      </>,
+                    ]}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="defaultOpen / static">
+              <Specimen caption="defaultOpen">
+                <div className="w-[328px]">
+                  <Infobox title="업무도움" defaultOpen items={['내용입니다.', '내용입니다.']} />
+                </div>
+              </Specimen>
+              <Specimen caption="static (chevron 없음, 항상 펼침)">
+                <div className="w-[328px]">
+                  <Infobox
+                    title="안내사항"
+                    collapsible={false}
+                    items={['내용입니다.', '내용입니다.']}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── SearchCondition ───────── */}
+          <Section
+            id="searchcondition"
+            title="SearchCondition"
+            desc="Figma 검색조건(9300-36826) 1:1. 검색대상 칩(CheckboxGroup) + 필터 아이콘 버튼(→풀팝업) + 검색어 InputBox + 검색 버튼. 도메인 무관 props/콜백."
+          >
+            <Row label="기본">
+              <Specimen caption="대상 다중선택 + 검색/필터 콜백(console)">
+                <div className="w-[328px]">
+                  <SearchCondition
+                    targets={[
+                      { value: 'name', label: '조달명' },
+                      { value: 'no', label: '판단번호' },
+                    ]}
+                    selectedTargets={opTargets}
+                    onTargetsChange={setOpTargets}
+                    keyword={opKeyword}
+                    onKeywordChange={setOpKeyword}
+                    onFilterClick={() => console.log('[guide] filter open')}
+                    onSearch={() => console.log('[guide] search', { opKeyword, opTargets })}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── ListSectionHeader ───────── */}
+          <Section
+            id="listsectionheader"
+            title="ListSectionHeader"
+            desc="Figma list section_top(9300-36835) 1:1. 총건수 + page size 컴팩트 텍스트 셀렉트('10개 ∨')."
+          >
+            <Row label="기본">
+              <Specimen caption="page size 변경 → onPageSizeChange(console)">
+                <div className="w-[328px]">
+                  <ListSectionHeader
+                    total={100}
+                    pageSize={opPageSize}
+                    onPageSizeChange={(n) => {
+                      setOpPageSize(n)
+                      console.log('[guide] pageSize', n)
+                    }}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── CardList ───────── */}
+          <Section
+            id="cardlist"
+            title="CardList"
+            desc="Figma card list(9300-36838). items(Card props + id)→Card 매핑 + 빈/로딩. 데이터 미소유(페이지가 items 주입)."
+          >
+            <Row label="기본 (Card 재사용)">
+              <Specimen caption="2건 · 카드 클릭 console">
+                <div className="w-[328px]">
+                  <CardList
+                    items={[
+                      {
+                        id: '1',
+                        badges: (
+                          <>
+                            <Badge>물품</Badge>
+                            <Badge>수의계약</Badge>
+                          </>
+                        ),
+                        subtitle: '판단번호 6000A',
+                        title: "'26년 K5방독면",
+                        rows: [
+                          { label: '발주예정월', value: '2026-03' },
+                          { label: '발주기관', value: '화력총괄계약팀' },
+                          { label: '계약방법', value: '총액제' },
+                          { label: '예산금액', value: '11,616,000 원' },
+                        ],
+                        onClick: () => console.log('[guide] card 1'),
+                      },
+                      {
+                        id: '2',
+                        badges: (
+                          <>
+                            <Badge>용역</Badge>
+                            <Badge>일반경쟁</Badge>
+                          </>
+                        ),
+                        subtitle: '판단번호 6000B',
+                        title: "'26년 정보화 사업",
+                        rows: [
+                          { label: '발주예정월', value: '2026-04' },
+                          { label: '발주기관', value: '정보화팀' },
+                          { label: '계약방법', value: '총액제' },
+                          { label: '예산금액', value: '92,472,000 원' },
+                        ],
+                        onClick: () => console.log('[guide] card 2'),
+                      },
+                    ]}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="빈 목록 / 로딩">
+              <Specimen caption="empty">
+                <div className="w-[328px]">
+                  <CardList items={[]} />
+                </div>
+              </Specimen>
+              <Specimen caption="loading">
+                <div className="w-[328px]">
+                  <CardList items={[]} loading loadingCount={2} />
                 </div>
               </Specimen>
             </Row>

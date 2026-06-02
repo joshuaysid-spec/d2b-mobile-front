@@ -2,6 +2,8 @@
 export const ROUTES = {
   HOME: '/',
   OP: '/op',
+  /** 조달계획 상세 (`:id` 파라미터). 이동: `/op/${id}`. */
+  OP_DETAIL: '/op/:id',
   NOTICE: '/notice',
   NOTIFICATION: '/notification',
   MYPAGE: '/mypage',

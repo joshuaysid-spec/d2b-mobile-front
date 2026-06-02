@@ -1,5 +1,8 @@
 // Figma m_accordian(9300-28556) 1:1 — 섹션 아코디언(타이틀 바 + 접기/펴기 + 콘텐츠).
-// raw/accordion(shadcn, Radix) 래핑 + KRDS 스타일. raw 의 chevron(접힘 ▼ / 펼침 ▲ 회전) 을 그대로 사용.
+// raw/accordion(shadcn, Radix) 래핑 + KRDS 스타일.
+// chevron: raw 가 고정으로 박은 lucide ChevronDown(svg)을 [&>svg]:hidden 으로 숨기고,
+//   화살표 통일(arrow_forward_ios)에 맞춰 Material ArrowForwardIos(Icon)를 직접 렌더.
+//   90° 회전해 아래(⌄), 열림(data-state=open) 시 위(⌃)로 회전. (raw 수정 금지 — base 에서 처리)
 // 타이틀 바: h-56 · px-16 · 19px Bold · blue(bg-primary-faint) / white · 상단 1px divider.
 // 콘텐츠: bg-white · p-16 · 세로 stack gap-16.
 import * as React from 'react'
@@ -10,6 +13,7 @@ import {
   AccordionItem as RawAccordionItem,
   AccordionTrigger as RawAccordionTrigger,
 } from '@/ui/raw/accordion'
+import { Icon } from '@/ui/common/base/Icon'
 import { cn } from '@/utils/cn'
 
 // Root 는 그대로 재노출 — type('single'|'multiple') / defaultValue 는 사용처가 지정.
@@ -44,10 +48,10 @@ const AccordionSection = ({
   <RawAccordionItem value={value} className={cn('border-b-0', className)}>
     <RawAccordionTrigger
       className={cn(
-        'h-[56px] gap-krds-8 px-krds-8 py-0',
+        'group h-[56px] gap-krds-8 px-krds-8 py-0',
         'text-[19px] font-bold text-krds-text-ink hover:no-underline',
-        // raw chevron(고정 h-4 w-4=16px)을 Figma 20px 로 — 자식 svg 선택자 오버라이드
-        '[&>svg]:size-5',
+        // raw 고정 lucide chevron(svg) 숨김 — 아래 Material Icon 으로 대체
+        '[&>svg]:hidden',
         borderTop && 'border-t border-krds-border-divider',
         variant === 'blue' ? 'bg-krds-bg-primary-faint' : 'bg-white',
       )}
@@ -56,6 +60,13 @@ const AccordionSection = ({
       {titleInfo && (
         <span className="shrink-0 text-[17px] font-bold text-primary">{titleInfo}</span>
       )}
+      {/* Material 화살표(arrow_forward_ios) — 90° 회전해 아래(⌄), 열림 시 위(⌃). 크기는 size 로 조절. */}
+      <Icon
+        name="ArrowForwardIos"
+        size={20}
+        className="shrink-0 rotate-90 transition-transform duration-200 group-data-[state=open]:rotate-[270deg]"
+        aria-hidden
+      />
     </RawAccordionTrigger>
     <RawAccordionContent
       className={cn('flex flex-col gap-krds-8 bg-white', flush ? 'p-0' : 'p-krds-8')}

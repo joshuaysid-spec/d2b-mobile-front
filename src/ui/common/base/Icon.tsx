@@ -65,6 +65,7 @@ const REGISTRY = {
   Share: 'share',
   Star: 'star',
   StarBorder: 'star',
+  Tune: 'tune',
   Upgrade: 'upgrade',
   Visibility: 'visibility',
   VisibilityOff: 'visibility_off',

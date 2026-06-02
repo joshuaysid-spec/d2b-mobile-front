@@ -195,11 +195,11 @@ const Footer = ({
           유관기관 바로가기
         </span>
         <Icon
-          name="ExpandMore"
+          name="ArrowForwardIos"
           size={24}
           className={cn(
-            'shrink-0 text-krds-text-ink transition-transform',
-            accordionOpen && 'rotate-180',
+            'shrink-0 rotate-90 text-krds-text-ink transition-transform',
+            accordionOpen && 'rotate-[270deg]',
           )}
           aria-hidden
         />

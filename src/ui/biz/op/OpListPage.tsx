@@ -1,24 +1,28 @@
-// Design Ref: search-filter.design.md §5 / Figma MUI-OP-01-M02(node 9300-37302) · 설계서 p.8(조달계획 통합목록).
-// 본 사이클: 빈 목록 페이지에 [검색필터] 트리거 → 범용 SearchFilter(아코디언 풀팝업) 표시.
-// Header / BottomNav 는 AppLayout 제공 → 페이지는 콘텐츠(버튼 + 적용 요약)만 렌더.
-// 목록 조회(API)는 주석 스텁(§4) — 백엔드 연동 시 활성화.
+// 조달계획 통합목록(MUI-OP-01-M01, node 9300-36815). Design Ref: op-list-page.design.
+// 구성: 업무도움(Infobox) + 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더(총건수·page size)
+//      + 카드 리스트(CardList, Card 재사용) + 더보기 + 맨위로 FAB.
+// 데이터/페이징/검색은 페이지가 소유. 목록은 목업(OP_ITEMS), 더보기·page size·빠른검색은 API 경계 스텁
+//   (Plan SC: 핸들러 실행 + console.log 로 변수 변화 확인). 상세필터 풀팝업(SearchFilter)은 기구현.
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
+import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
-import { Icon } from '@/ui/common/base/Icon'
-import { PageContainer } from '@/ui/common/layout/PageContainer'
+import { SectionTitle } from '@/ui/common/base/SectionTitle'
+import { OpPageLayout } from '@/ui/biz/op/OpPageLayout'
+import { Infobox } from '@/ui/common/composites/Infobox'
+import { SearchCondition } from '@/ui/common/composites/SearchCondition'
+import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
+import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
+import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
-import type {
-  DateRangeValue,
-  SearchFilterSchema,
-  SearchFilterValue,
-} from '@/types/search-filter'
-import type { OpSearchFilter } from '@/types/op'
+import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
+import type { OpSearchFilter, OpPlanItem } from '@/types/op'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
-// 조달계획 검색 schema (Figma MUI-OP-01-M02) — 아코디언 5섹션.
+// 조달계획 검색 schema (Figma MUI-OP-01-M02) — 상세필터 풀팝업 5섹션.
 const OP_SEARCH: SearchFilterSchema = {
   title: '검색필터',
   sections: [
@@ -69,8 +73,18 @@ const OP_SEARCH: SearchFilterSchema = {
         { type: 'text', key: 'prcmPlanNm', label: '제목', placeholder: '제목을 입력하세요.' },
         { type: 'text', key: 'prcmNo', label: '판단번호', placeholder: '번호를 입력하세요.' },
         // 선택필드(`>`) — 클릭 시 공통팝업(자리만, 팝업 TODO)
-        { type: 'selectionField', key: 'rprsItemNm', label: '품명', placeholder: '품명을 입력하세요.' },
-        { type: 'selectionField', key: 'deptCd', label: '발주기관', placeholder: '발주기관을 입력하세요.' },
+        {
+          type: 'selectionField',
+          key: 'rprsItemNm',
+          label: '품명',
+          placeholder: '품명을 입력하세요.',
+        },
+        {
+          type: 'selectionField',
+          key: 'deptCd',
+          label: '발주기관',
+          placeholder: '발주기관을 입력하세요.',
+        },
         { type: 'text', key: 'userNm', label: '담당자', placeholder: '담당자를 입력하세요.' },
       ],
     },
@@ -92,9 +106,27 @@ const OP_SEARCH: SearchFilterSchema = {
           ],
         },
         // 기능/입찰형태/계약방법 — 옵션 추후 확정(TODO). 현재 '전체'만
-        { type: 'select', key: 'inspShcd', label: '기능', placeholder: '전체', options: [{ value: 'all', label: '전체' }] },
-        { type: 'select', key: 'bidSecd', label: '입찰형태', placeholder: '전체', options: [{ value: 'all', label: '전체' }] },
-        { type: 'select', key: 'ctrtMthdCd', label: '계약방법', placeholder: '전체', options: [{ value: 'all', label: '전체' }] },
+        {
+          type: 'select',
+          key: 'inspShcd',
+          label: '기능',
+          placeholder: '전체',
+          options: [{ value: 'all', label: '전체' }],
+        },
+        {
+          type: 'select',
+          key: 'bidSecd',
+          label: '입찰형태',
+          placeholder: '전체',
+          options: [{ value: 'all', label: '전체' }],
+        },
+        {
+          type: 'select',
+          key: 'ctrtMthdCd',
+          label: '계약방법',
+          placeholder: '전체',
+          options: [{ value: 'all', label: '전체' }],
+        },
       ],
     },
   ],
@@ -119,88 +151,193 @@ const DEFAULT_VALUE: OpSearchFilter = {
   ctrtMthdCd: 'all',
 }
 
-// 적용 필터 요약(검증용) — schema 를 순회해 필드 타입별로 사람이 읽을 값으로 변환(제네릭).
-function summarize(
-  schema: SearchFilterSchema,
-  value: SearchFilterValue,
-): { label: string; value: string }[] {
-  const rows: { label: string; value: string }[] = []
-  for (const section of schema.sections) {
-    for (const field of section.fields) {
-      const v = value[field.key]
-      let display = ''
-      if (field.type === 'radio' || field.type === 'select') {
-        display =
-          (field.options.find((o) => o.value === v)?.label as string) ??
-          String(v ?? '')
-      } else if (field.type === 'checkbox') {
-        const arr = (v as string[]) ?? []
-        display =
-          arr
-            .map((x) => (field.options.find((o) => o.value === x)?.label as string) ?? x)
-            .join(', ') || '(없음)'
-      } else if (field.type === 'dateRange') {
-        const r = v as DateRangeValue | undefined
-        display = r && (r.start || r.end) ? `${r.start} ~ ${r.end}` : '(없음)'
-      } else {
-        display = (v as string) || '(없음)'
-      }
-      const label =
-        typeof field.label === 'string'
-          ? field.label
-          : typeof section.title === 'string'
-            ? section.title
-            : field.key
-      rows.push({ label, value: display })
-    }
-  }
-  return rows
-}
+// 빠른검색 대상 칩 (조달명/판단번호)
+const SEARCH_TARGETS = [
+  { value: 'prcmNm', label: '조달명' },
+  { value: 'prcmNo', label: '판단번호' },
+]
+
+// 목업 목록 — 추후 API(opService.getList) 로 대체. Design Ref: §3.3.
+const TOTAL = 100 // 총 건수(목업 — 실제 API total)
+const OP_ITEMS: OpPlanItem[] = [
+  {
+    id: '1',
+    taskSe: '물품',
+    ctrtMthdNm: '수의계약',
+    prcmNo: '6000A',
+    title: "'26년 K5방독면",
+    orderPrnmntYm: '2026-03',
+    orderDeptNm: '화력총괄계약팀',
+    ctrtMthd: '총액제',
+    budgetAmt: 11616000,
+  },
+  {
+    id: '2',
+    taskSe: '용역',
+    ctrtMthdNm: '일반경쟁',
+    prcmNo: '6000B',
+    title: "'26년 정보화 유지보수 사업",
+    orderPrnmntYm: '2026-04',
+    orderDeptNm: '정보화팀',
+    ctrtMthd: '총액제',
+    budgetAmt: 92472000,
+  },
+  {
+    id: '3',
+    taskSe: '물품',
+    ctrtMthdNm: '제한경쟁',
+    prcmNo: '6000C',
+    title: "'26년 전투화 구매",
+    orderPrnmntYm: '2026-02',
+    orderDeptNm: '군수사령부',
+    ctrtMthd: '단가제',
+    budgetAmt: 34500000,
+  },
+  {
+    id: '4',
+    taskSe: '공사',
+    ctrtMthdNm: '수의계약',
+    prcmNo: '6000D',
+    title: "'26년 막사 보수 공사",
+    orderPrnmntYm: '2026-05',
+    orderDeptNm: '시설관리단',
+    ctrtMthd: '총액제',
+    budgetAmt: 158000000,
+  },
+  {
+    id: '5',
+    taskSe: '용역',
+    ctrtMthdNm: '수의계약',
+    prcmNo: '6000E',
+    title: "'26년 보안 관제 위탁",
+    orderPrnmntYm: '2026-03',
+    orderDeptNm: '보안운영팀',
+    ctrtMthd: '총액제',
+    budgetAmt: 47200000,
+  },
+  {
+    id: '6',
+    taskSe: '물품',
+    ctrtMthdNm: '일반경쟁',
+    prcmNo: '6000F',
+    title: "'26년 야전상의 구매",
+    orderPrnmntYm: '2026-06',
+    orderDeptNm: '피복관리소',
+    ctrtMthd: '단가제',
+    budgetAmt: 21800000,
+  },
+]
 
 export function OpListPage() {
-  const [open, setOpen] = useState(false)
+  const navigate = useNavigate()
+  const [open, setOpen] = useState(false) // 상세필터 풀팝업
   const [filter, setFilter] = useState<SearchFilterValue>(DEFAULT_VALUE)
+  const [keyword, setKeyword] = useState('') // 빠른검색어
+  const [targets, setTargets] = useState<string[]>(['prcmNm']) // 빠른검색 대상
+  const [pageSize, setPageSize] = useState(10)
+  const [page, setPage] = useState(1)
 
-  const handleSearch = (value: SearchFilterValue) => {
+  // ── API 경계 스텁 (백엔드 연동 시 services/op·queries/op 로 대체). console 로 동작 확인 ──
+  const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)
-    // --- API 주석 스텁 (백엔드 연동 시 활성화) ---
-    // Design Ref: §4 — services/queries 실구현은 범위 외. onSearch 가 백엔드 경계.
-    // services/op.ts: opService.getList(toRequest(value))
-    // queries/op.ts : useOpList(value as OpSearchFilter)
-    //   const { data } = useOpList(filter)  → 목록 렌더
+    console.log('[OpList] 상세필터 검색', value)
+    // services/op.ts: opService.getList(toRequest(value)) → 목록 재조회
+  }
+  const handleQuickSearch = () => {
+    console.log('[OpList] 빠른검색', { keyword, targets })
+  }
+  const handlePageSize = (size: number) => {
+    setPageSize(size)
+    setPage(1)
+    console.log('[OpList] pageSize →', size) // 실제로는 page=1·pageSize=size 로 재조회
+  }
+  const handleLoadMore = () => {
+    const next = page + 1
+    setPage(next)
+    console.log('[OpList] loadMore → page', next) // 실제로는 다음 페이지 fetch 후 누적
+  }
+  const handleCardClick = (id: string) => {
+    navigate(`/op/${id}`)
   }
 
+  const loaded = Math.min(page * pageSize, TOTAL)
+
+  // 목업 → Card props 매핑 (Design §3.2)
+  const cardItems: CardListItem[] = OP_ITEMS.map((it) => ({
+    id: it.id,
+    badges: (
+      <>
+        <Badge>{it.taskSe}</Badge>
+        <Badge>{it.ctrtMthdNm}</Badge>
+      </>
+    ),
+    subtitle: `판단번호 ${it.prcmNo}`,
+    title: it.title,
+    rows: [
+      { label: '발주예정월', value: it.orderPrnmntYm },
+      { label: '발주기관', value: it.orderDeptNm },
+      { label: '계약방법', value: it.ctrtMthd },
+      { label: '예산금액', value: `${it.budgetAmt.toLocaleString()} 원` },
+    ],
+    onClick: () => handleCardClick(it.id),
+  }))
+
   return (
-    <PageContainer title="조달계획 통합목록">
-      <Button
-        variant="secondary"
-        className="w-full"
-        onClick={() => setOpen(true)}
-        aria-haspopup="dialog"
-      >
-        <Icon name="Search" size={20} aria-hidden />
-        검색필터
-      </Button>
+    <OpPageLayout title="조달계획관리">
+      {/* 업무도움 — full-bleed 블루 바 (셸이 무패딩이라 -mx 불필요) */}
+      <Infobox
+        className="rounded-none"
+        title="업무도움"
+        items={[
+          '비밀번호 자동완성기능(ex. 알패스 등)은 사용할 수 없습니다.',
+          '1577-1118 대표전화로 전화주세요. 서비스에 로그인할 수 있도록 도와드리겠습니다.',
+        ]}
+      />
 
-      {/* 적용 필터 요약 — 검증용. 실제 목록은 API 연동(주석 스텁) 후 렌더 */}
-      <dl className="mt-krds-8 flex flex-col gap-krds-4 rounded-krds-8 border border-krds-border-divider p-krds-6">
-        <p className="text-krds-body-sm font-bold text-krds-text-subtle">적용된 검색 조건</p>
-        {summarize(OP_SEARCH, filter).map((row) => (
-          <div key={row.label} className="flex gap-krds-5 text-krds-body-md">
-            <dt className="w-[80px] shrink-0 text-krds-text-subtle">{row.label}</dt>
-            <dd className="min-w-0 flex-1 break-words text-krds-text-ink">{row.value}</dd>
-          </div>
-        ))}
-      </dl>
+      {/* 검색조건 — 블루 바(full-bleed) + 폼(px-4 인셋) */}
+      <SectionTitle as="h2" bgColor="blue">
+        검색조건
+      </SectionTitle>
+      <div className="px-4 py-4">
+        <SearchCondition
+          targets={SEARCH_TARGETS}
+          selectedTargets={targets}
+          onTargetsChange={setTargets}
+          keyword={keyword}
+          onKeywordChange={setKeyword}
+          onFilterClick={() => setOpen(true)}
+          onSearch={handleQuickSearch}
+        />
+      </div>
 
+      {/* 목록 — 헤더 + 카드 (px-4 인셋) */}
+      <div className="flex flex-col gap-krds-7 px-4 pb-4">
+        <ListSectionHeader total={TOTAL} pageSize={pageSize} onPageSizeChange={handlePageSize} />
+        <CardList items={cardItems} />
+      </div>
+
+      {/* 더보기 (loaded/total — 스텁) */}
+      <div className="px-4 pb-6">
+        <Button variant="secondary" className="w-full" onClick={handleLoadMore}>
+          더보기 ({loaded}/{TOTAL}건)
+        </Button>
+      </div>
+
+      {/* 맨 위로 FAB — BottomNav 위로 띄움 */}
+      <FloatingActionButton
+        className="fixed bottom-20 right-4 z-40"
+        onTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      />
+
+      {/* 상세필터 풀팝업 (필터 아이콘으로 open) */}
       <SearchFilter
         open={open}
         onOpenChange={setOpen}
         schema={OP_SEARCH}
         value={filter}
         defaultValue={DEFAULT_VALUE}
-        onSearch={handleSearch}
+        onSearch={handleFilterSearch}
       />
-    </PageContainer>
+    </OpPageLayout>
   )
 }

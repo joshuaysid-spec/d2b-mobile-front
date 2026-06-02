@@ -157,7 +157,7 @@ function YearMonthDropdown({
       <span className="text-[15px] font-bold leading-normal text-krds-text-ink">
         {formatLabel(value)}
       </span>
-      <Icon name="ExpandMore" size={14} className="text-krds-text-ink" aria-hidden />
+      <Icon name="ArrowForwardIos" size={14} className="rotate-90 text-krds-text-ink" aria-hidden />
       <select
         value={value}
         onChange={(e) => onChange(+e.target.value)}

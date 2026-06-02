@@ -67,7 +67,8 @@ function NavTab({
         cn(
           // 높이 점프 방지: 선택/비선택 모두 4px 상단 border 영역 확보.
           // 선택 시 navy, 비선택 시 transparent. 콘텐츠 위치 동일 → 모든 탭 h-77.
-          'flex h-[77px] flex-1 flex-col items-center gap-3 whitespace-nowrap border-t-4 pt-4',
+          // min-w-0: flex-1 이 라벨 min-content 아래로도 줄어들게 → 좁은 폭에서 nav 가 넘쳐 잘리지 않음.
+          'flex h-[77px] min-w-0 flex-1 flex-col items-center gap-3 border-t-4 pt-4',
           'text-[15px] font-bold leading-none',
           isActive
             ? 'border-krds-action-primary-active text-krds-action-primary-active'
@@ -85,7 +86,8 @@ function NavTab({
           </span>
         )}
       </span>
-      <span>{item.label}</span>
+      {/* 좁은 폭에선 라벨이 잘려(…) 탭이 균등 축소 — nav 가 화면 밖으로 넘치지 않음 */}
+      <span className="max-w-full truncate">{item.label}</span>
     </NavLink>
   )
 }

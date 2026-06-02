@@ -8,7 +8,7 @@
 //
 // [@radix-ui/react-select 직접 유지 — raw 로 대체 불가한 2곳]
 //   1) Trigger: raw/select 의 SelectTrigger 는 {children} 뒤에 lucide ChevronDown 을
-//      "고정 자식"으로 박아두어, Figma 칩 트리거(자체 ExpandMore 아이콘 + 회전 애니메이션 +
+//      "고정 자식"으로 박아두어, Figma 칩 트리거(자체 ArrowForwardIos 아이콘 + 회전 애니메이션 +
 //      flex-1 truncate 텍스트 래퍼) 구조로 바꿀 수 없다. → SelectPrimitive.Trigger 직접 사용.
 //   2) Item: raw/select 의 SelectItem 은 좌측에 체크마크 ItemIndicator span(pl-8)을
 //      "고정 구조"로 포함한다. KRDS 디자인은 체크 인디케이터 없이 배경/볼드로 선택을 표현하므로
@@ -70,11 +70,12 @@ const SelectBoxTrigger = React.forwardRef<
   >
     <span className="flex-1 truncate text-left">{children}</span>
     <Icon
-      name="ExpandMore"
+      name="ArrowForwardIos"
       size={20}
       className={cn(
-        'shrink-0 transition-transform duration-200',
-        'group-data-[state=open]:rotate-180',
+        // arrow_forward_ios(›) 를 90° 회전해 아래(⌄) → 열림 시 위(⌃). 화살표 아이콘 통일.
+        'shrink-0 rotate-90 transition-transform duration-200',
+        'group-data-[state=open]:rotate-[270deg]',
       )}
       aria-hidden
     />
