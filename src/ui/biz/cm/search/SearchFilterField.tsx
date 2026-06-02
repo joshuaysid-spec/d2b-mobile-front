@@ -6,6 +6,7 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { SelectionFieldBox } from '@/ui/common/base/SelectionFieldBox'
+import { CheckboxGroup } from '@/ui/common/composites/CheckboxGroup'
 import { DateInput } from '@/ui/common/composites/DateInput'
 import { DateRangeInput } from '@/ui/common/composites/DateRangeInput'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
@@ -57,12 +58,16 @@ const SearchFilterField = ({ field, value, onChange }: SearchFilterFieldProps) =
         </Field>
       )
 
-    // 업무구분 등 — 다중 선택(가로). 이번 사이클 미구현(빈 영역) → 자리만.
+    // 업무구분 등 — 다중 선택(가로 스와이프). Figma m_checkbox_button + m_button_arrow_swiper.
     case 'checkbox':
       return (
         <Field label={field.label} required={field.required}>
-          {/* TODO: 체크박스 다중선택 + 가로 스와이프(m_button_arrow_swiper) */}
-          <p className="text-krds-body-sm text-krds-text-subtle">준비 중입니다.</p>
+          <CheckboxGroup
+            swipeable={field.swipeable ?? true}
+            value={(value as string[]) ?? []}
+            onValueChange={(v) => onChange(v)}
+            items={field.options}
+          />
         </Field>
       )
 

@@ -35,6 +35,8 @@ export interface RadioFieldDef extends BaseField {
 export interface CheckboxFieldDef extends BaseField {
   type: 'checkbox' // 다중 선택 — value: string[]
   options: FieldOption[]
+  /** 가로 스크롤 + 좌우 스와이프 화살표(오버플로우 시 자동). 기본 true. */
+  swipeable?: boolean
 }
 export interface DateRangeFieldDef extends BaseField {
   type: 'dateRange' // 기간(DateRangeInput) — value: DateRangeValue

@@ -27,7 +27,6 @@
 //
 // 기본값으로 무인자 <Header /> → main + 로그인전 렌더 (AppLayout 호환).
 import * as React from 'react'
-import LoginIcon from '@mui/icons-material/Login'
 
 import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { Logo } from '@/ui/common/base/Logo'
@@ -126,7 +125,7 @@ const Header = ({
       {variant === 'main' && !isLoggedIn && (
         // Login 은 REGISTRY 미등록 → children 으로 직접 MUI 아이콘 주입.
         <UtilityMenu
-          icon={<LoginIcon sx={{ fontSize: 24 }} />}
+          icon={<Icon name="Login" size={24} />}
           label="로그인"
           onClick={onLogin}
         />

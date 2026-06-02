@@ -57,6 +57,7 @@ import { TabList } from '@/ui/common/composites/TabList'
 import { TagList } from '@/ui/common/composites/TagList'
 import { RadioGroup } from '@/ui/raw/radio-group'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
+import { CheckboxGroup } from '@/ui/common/composites/CheckboxGroup'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 
 const NAV = [
@@ -96,6 +97,7 @@ const NAV = [
     group: 'composites',
     items: [
       { id: 'radiobuttongroup', label: 'RadioButtonGroup' },
+      { id: 'checkboxgroup', label: 'CheckboxGroup' },
       { id: 'buttongroup', label: 'ButtonGroup' },
       { id: 'bottomsheet', label: 'BottomSheet' },
       { id: 'alertmodal', label: 'AlertModal' },
@@ -847,7 +849,7 @@ export function ComponentGuidePage() {
           <Section
             id="icon"
             title="Icon"
-            desc="Google Material Icons (@mui/icons-material) registry + 커스텀 children fallback. <Icon name='Search' /> 또는 <Icon><CustomSvg /></Icon>. REGISTRY 에 없는 아이콘은 children 으로 직접 전달 가능."
+            desc="Material Symbols Outlined 아이콘 폰트(self-host, 폐쇄망 대응) registry + 커스텀 children fallback. <Icon name='Search' /> 또는 <Icon><CustomSvg /></Icon>. 가변 축 fill(0/1)·weight(100~700) 제어. REGISTRY 에 없는 아이콘은 children 으로 직접 전달 가능."
           >
             <Row label="name (Material)">
               <Specimen caption='name="Search"'>
@@ -1478,6 +1480,85 @@ export function ComponentGuidePage() {
                 <div className="w-[260px]">
                   <RadioButtonGroup
                     defaultValue="a"
+                    items={[
+                      { value: 'a', label: '항목 1' },
+                      { value: 'b', label: '항목 2', disabled: true },
+                    ]}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── CheckboxGroup ───────── */}
+          <Section
+            id="checkboxgroup"
+            title="CheckboxGroup"
+            desc="Figma checkbox group container(9300-27895) 1:1. base Checkbox 칩을 items 배열로 구성한 다중 선택 그룹. direction: horizontal(기본) | vertical. swipeable(기본 false)로 가로 스크롤 + 좌우 스와이프 화살표 on/off."
+          >
+            <Row label="horizontal (기본 wrap)">
+              <Specimen caption="2항목">
+                <div className="w-[260px]">
+                  <CheckboxGroup
+                    defaultValue={['a']}
+                    items={[
+                      { value: 'a', label: '항목 1' },
+                      { value: 'b', label: '항목 2' },
+                    ]}
+                  />
+                </div>
+              </Specimen>
+              <Specimen caption="4항목 wrap">
+                <div className="w-[260px]">
+                  <CheckboxGroup
+                    defaultValue={['a', 'c']}
+                    items={[
+                      { value: 'a', label: '항목 1' },
+                      { value: 'b', label: '항목 2' },
+                      { value: 'c', label: '항목 3' },
+                      { value: 'd', label: '항목 4' },
+                    ]}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="swipeable (가로 스크롤 + 좌우 화살표)">
+              <Specimen caption="오버플로우 시 화살표 자동 노출">
+                <div className="w-[260px]">
+                  <CheckboxGroup
+                    swipeable
+                    defaultValue={['b']}
+                    items={[
+                      { value: 'a', label: '선택항목 1' },
+                      { value: 'b', label: '선택항목 2' },
+                      { value: 'c', label: '선택항목 3' },
+                      { value: 'd', label: '선택항목 4' },
+                      { value: 'e', label: '선택항목 5' },
+                    ]}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="vertical">
+              <Specimen caption="3항목">
+                <div className="w-[260px]">
+                  <CheckboxGroup
+                    defaultValue={['b']}
+                    direction="vertical"
+                    items={[
+                      { value: 'a', label: '항목 1' },
+                      { value: 'b', label: '항목 2' },
+                      { value: 'c', label: '항목 3' },
+                    ]}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="disabled">
+              <Specimen caption="개별 항목 비활성">
+                <div className="w-[260px]">
+                  <CheckboxGroup
+                    defaultValue={['a']}
                     items={[
                       { value: 'a', label: '항목 1' },
                       { value: 'b', label: '항목 2', disabled: true },

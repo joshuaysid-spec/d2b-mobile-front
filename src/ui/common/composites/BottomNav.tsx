@@ -17,9 +17,6 @@
 //   무인자 <BottomNav/> → 기본 4탭(홈/알림/고객센터/마이페이지).
 import { NavLink } from 'react-router-dom'
 
-// REGISTRY 미등록 Material 아이콘은 children 으로 직접 전달 (Icon.tsx 수정 금지).
-import HeadsetMicIcon from '@mui/icons-material/HeadsetMic'
-
 import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { ROUTES } from '@/constants/routes'
 import { cn } from '@/utils/cn'
@@ -49,7 +46,7 @@ const DEFAULT_ITEMS: NavItem[] = [
   { id: 'home', label: '홈', iconName: 'Home', to: ROUTES.HOME },
   { id: 'notification', label: '알림', iconName: 'Notifications', to: ROUTES.NOTIFICATION },
   // headset_mic 는 REGISTRY 미등록 → children 으로 직접 import (size=24 명시).
-  { id: 'support', label: '고객센터', icon: <HeadsetMicIcon sx={{ fontSize: 24 }} />, to: ROUTES.HOME },
+  { id: 'support', label: '고객센터', icon: <Icon name="HeadsetMic" size={24} />, to: ROUTES.HOME },
   // location_away 는 MUI 에 없어 Person 으로 대체 (마이페이지 인물 아이콘).
   { id: 'mypage', label: '마이페이지', iconName: 'Person', to: ROUTES.MYPAGE },
 ]

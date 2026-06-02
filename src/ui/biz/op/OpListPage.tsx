@@ -38,8 +38,24 @@ const OP_SEARCH: SearchFilterSchema = {
         },
       ],
     },
-    // 업무구분 — 비워둠(추후 체크박스 다중선택 + 가로 스와이프)
-    { key: 'taskSeNm', title: '업무구분', fields: [] },
+    // 업무구분 — 다중 선택(가로 스와이프). 코드값은 백엔드 연동 시 확정(현재 잠정).
+    {
+      key: 'taskSeNm',
+      title: '업무구분',
+      fields: [
+        {
+          type: 'checkbox',
+          key: 'taskSeNm',
+          options: [
+            { value: 'all', label: '전체' },
+            { value: 'goods', label: '물품' },
+            { value: 'service', label: '용역' },
+            { value: 'construction', label: '공사' },
+            { value: 'foreign', label: '외자' },
+          ],
+        },
+      ],
+    },
     {
       key: 'date',
       title: '일자 설정',
@@ -87,6 +103,7 @@ const OP_SEARCH: SearchFilterSchema = {
 // 초기/초기화 기준값 (검색유형 조달계획 · 발주예정월 최근 1개월 · 나머지 전체/빈값)
 const DEFAULT_VALUE: OpSearchFilter = {
   srchType: 'plan',
+  taskSeNm: ['all'], // 업무구분 기본 — 전체
   orderPrnmntYm: {
     start: dayjs().subtract(1, 'month').format(DATE_FORMAT),
     end: dayjs().format(DATE_FORMAT),

@@ -4,12 +4,22 @@
  *
  * 로드 순서:
  *   1) Pretendard GOV 폰트 (variable dynamic-subset)
- *   2) KRDS 디자인 토큰 (tokens.css)
- *   3) Tailwind 지시문 (tailwind.css)
+ *   2) Material Symbols Outlined 아이콘 폰트 (@font-face + .material-symbols-outlined 클래스 제공)
+ *   3) KRDS 디자인 토큰 (tokens.css)
+ *   4) Tailwind 지시문 (tailwind.css)
  *   ※ CSS @import 는 반드시 다른 규칙보다 먼저 와야 한다.
+ *
+ * 폰트 self-host (폐쇄망 대응 — 중요):
+ *   - 두 폰트 패키지의 woff2 는 Vite 가 dist 로 자동 복사하지 못한다(빌드 경고 "didn't resolve").
+ *     그대로 배포 시 폐쇄망에서 폰트 404 → Pretendard 폴백 / 아이콘 텍스트 깨짐.
+ *   - 해결: vite.config.ts 의 viteStaticCopy 가 node_modules 의 woff2 를 dist/assets/ 로 복사한다.
+ *     (Pretendard=assets/woff2-dynamic-subset/* · Material Symbols=assets/material-symbols-outlined.woff2)
+ *     → 아래 @import 가 인라인하는 패키지 CSS 의 상대 url(./...) 이 그대로 해석됨.
+ *   - 아이콘 실제 렌더는 src/ui/common/base/Icon.tsx 가 name→ligature 매핑으로 처리(FILL/wght 축 인라인).
  * =========================================================================== */
 
 @import 'pretendard-gov/dist/web/variable/pretendardvariable-gov-dynamic-subset.css';
+@import 'material-symbols/outlined.css';
 @import './tokens.css';
 @import './tailwind.css';
 

@@ -1,112 +1,94 @@
-// Google Material Icons 통합 컴포넌트.
-// 패턴: name 으로 REGISTRY 매칭되면 MUI 아이콘 렌더, 매칭 안 되거나 name 미주입 시 children 렌더.
+// Material Symbols Outlined(아이콘 폰트) 기반 통합 아이콘 컴포넌트.
 //
-// 새 아이콘 추가: 아래 import 한 줄 + REGISTRY 객체 한 줄 추가 (tree-shaking 유지).
-// REGISTRY 에 없는 아이콘이 일회성으로 필요하면 children 으로 직접 전달.
-//   <Icon><MyCustomSvg /></Icon>
-//   import OneOff from '@mui/icons-material/OneOff'
-//   <Icon><OneOff /></Icon>
+// 왜 폰트인가:
+//   - 디자인 원본(Figma)이 Google "Material Symbols"(신) 기준이라 @mui/icons-material(구
+//     "Material Icons")로는 모양이 1:1 로 안 맞았다. Symbols 는 가변폰트로만 제공된다.
+//   - 폰트는 `material-symbols` npm 패키지로 self-host(globals.css @import) → 폐쇄망/오프라인 OK.
+//
+// 패턴: name(PascalCase) 으로 REGISTRY 매칭되면 해당 ligature 문자열을 <span> 텍스트로 출력한다.
+//   (폰트의 'liga' 기능이 'home' → 🏠 글리프로 합자) — 기존 호출부 <Icon name="Home" /> 그대로 유지.
+//   매칭 안 되거나 name 미주입 시 children 렌더(커스텀 SVG).
+//
+// 새 아이콘 추가: REGISTRY 에 `PascalCase: 'ligature_snake_case'` 한 줄 추가.
+//   ligature 이름은 https://fonts.google.com/icons (Material Symbols) 상세의 코드명(snake_case).
+//   별도 import/번들 작업 불필요 — 폰트에 모든 글리프가 이미 포함.
+//
+// 가변 축(variable axes): FILL(0 아웃라인 / 1 채움) · wght(100~700) · GRAD · opsz.
+//   기본 아웃라인(FILL 0). 솔리드가 자연스러운 아이콘(별/하트)은 FILLED_BY_DEFAULT 로 FILL 1.
 import * as React from 'react'
-import type { SvgIconProps } from '@mui/material/SvgIcon'
 
-// --- 자주 쓰는 Material 아이콘 (필요시 확장) -------------------------------
-import AddIcon from '@mui/icons-material/Add'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-import CampaignIcon from '@mui/icons-material/Campaign'
-import CancelIcon from '@mui/icons-material/Cancel'
-import CheckIcon from '@mui/icons-material/Check'
-import CheckBoxIcon from '@mui/icons-material/CheckBox'
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import CloseIcon from '@mui/icons-material/Close'
-import DeleteIcon from '@mui/icons-material/Delete'
-import DescriptionIcon from '@mui/icons-material/Description'
-import EditIcon from '@mui/icons-material/Edit'
-import ErrorIcon from '@mui/icons-material/Error'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import FavoriteIcon from '@mui/icons-material/Favorite'
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
-import HomeIcon from '@mui/icons-material/Home'
-import InfoIcon from '@mui/icons-material/Info'
-import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
-import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
-import MenuIcon from '@mui/icons-material/Menu'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
-import NotificationsIcon from '@mui/icons-material/Notifications'
-import PersonIcon from '@mui/icons-material/Person'
-import RefreshIcon from '@mui/icons-material/Refresh'
-import RemoveIcon from '@mui/icons-material/Remove'
-import SearchIcon from '@mui/icons-material/Search'
-import SettingsIcon from '@mui/icons-material/Settings'
-import ShareIcon from '@mui/icons-material/Share'
-import StarIcon from '@mui/icons-material/Star'
-import StarBorderIcon from '@mui/icons-material/StarBorder'
-import UpgradeIcon from '@mui/icons-material/Upgrade'
-import VisibilityIcon from '@mui/icons-material/Visibility'
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
-import WarningIcon from '@mui/icons-material/Warning'
+import { cn } from '@/utils/cn'
 
+// --- name(PascalCase) → Material Symbols ligature(snake_case) --------------
+// 기존 @mui/icons-material 명명과 호환되도록 PascalCase 키를 유지한다.
+// 새 아이콘 추가: 아래에 `PascalCase: 'ligature_snake_case'` 한 줄 추가 (알파벳 순서 유지).
+//   ligature 이름은 https://fonts.google.com/icons (Material Symbols) 상세의 코드명(snake_case).
 const REGISTRY = {
-  Add: AddIcon,
-  ArrowBack: ArrowBackIcon,
-  ArrowBackIosNew: ArrowBackIosNewIcon,
-  ArrowForward: ArrowForwardIcon,
-  ArrowForwardIos: ArrowForwardIosIcon,
-  CalendarToday: CalendarTodayIcon,
-  Campaign: CampaignIcon,
-  Cancel: CancelIcon,
-  Check: CheckIcon,
-  CheckBox: CheckBoxIcon,
-  CheckBoxOutlineBlank: CheckBoxOutlineBlankIcon,
-  CheckCircle: CheckCircleIcon,
-  ChevronLeft: ChevronLeftIcon,
-  ChevronRight: ChevronRightIcon,
-  Close: CloseIcon,
-  Delete: DeleteIcon,
-  Description: DescriptionIcon,
-  Edit: EditIcon,
-  Error: ErrorIcon,
-  ExpandMore: ExpandMoreIcon,
-  Favorite: FavoriteIcon,
-  FavoriteBorder: FavoriteBorderIcon,
-  Home: HomeIcon,
-  Info: InfoIcon,
-  KeyboardDoubleArrowLeft: KeyboardDoubleArrowLeftIcon,
-  KeyboardDoubleArrowRight: KeyboardDoubleArrowRightIcon,
-  Menu: MenuIcon,
-  MoreVert: MoreVertIcon,
-  Notifications: NotificationsIcon,
-  Person: PersonIcon,
-  Refresh: RefreshIcon,
-  Remove: RemoveIcon,
-  Search: SearchIcon,
-  Settings: SettingsIcon,
-  Share: ShareIcon,
-  Star: StarIcon,
-  StarBorder: StarBorderIcon,
-  Upgrade: UpgradeIcon,
-  Visibility: VisibilityIcon,
-  VisibilityOff: VisibilityOffIcon,
-  Warning: WarningIcon,
-} as const satisfies Record<string, React.ComponentType<SvgIconProps>>
+  Add: 'add',
+  ArrowBack: 'arrow_back',
+  ArrowBackIosNew: 'arrow_back_ios_new',
+  ArrowForward: 'arrow_forward',
+  ArrowForwardIos: 'arrow_forward_ios',
+  CalendarToday: 'calendar_today',
+  Campaign: 'campaign',
+  Cancel: 'cancel',
+  Check: 'check',
+  CheckBox: 'check_box',
+  CheckBoxOutlineBlank: 'check_box_outline_blank',
+  CheckCircle: 'check_circle',
+  ChevronLeft: 'chevron_left',
+  ChevronRight: 'chevron_right',
+  Close: 'close',
+  Delete: 'delete',
+  Description: 'description',
+  Edit: 'edit',
+  Error: 'error',
+  ExpandMore: 'expand_more',
+  // Material Symbols 는 채움/아웃라인을 FILL 축으로 구분 — 'favorite'/'star' 한 ligature 로 통합.
+  // Favorite/Star 는 FILLED_BY_DEFAULT 로 채움, FavoriteBorder/StarBorder 는 아웃라인(FILL 0).
+  Favorite: 'favorite',
+  FavoriteBorder: 'favorite',
+  HeadsetMic: 'headset_mic',
+  Home: 'home',
+  Info: 'info',
+  KeyboardDoubleArrowLeft: 'keyboard_double_arrow_left',
+  KeyboardDoubleArrowRight: 'keyboard_double_arrow_right',
+  Login: 'login',
+  Menu: 'menu',
+  MoreVert: 'more_vert',
+  Notifications: 'notifications',
+  Person: 'person',
+  Refresh: 'refresh',
+  Remove: 'remove',
+  Search: 'search',
+  Settings: 'settings',
+  Share: 'share',
+  Star: 'star',
+  StarBorder: 'star',
+  Upgrade: 'upgrade',
+  Visibility: 'visibility',
+  VisibilityOff: 'visibility_off',
+  Warning: 'warning',
+} as const satisfies Record<string, string>
 
 export type IconName = keyof typeof REGISTRY
 
+/** 채움(FILL 1)이 기본 디자인인 아이콘 — 나머지는 아웃라인(FILL 0). fill prop 으로 개별 오버라이드. */
+const FILLED_BY_DEFAULT = new Set<IconName>(['Favorite', 'Star'])
+
 export interface IconProps {
-  /** Material 아이콘 이름 (REGISTRY 키). 매칭 시 해당 MUI 아이콘 렌더. */
+  /** Material Symbols 아이콘 이름 (REGISTRY 키, PascalCase). 매칭 시 해당 글리프 렌더. */
   name?: IconName
-  /** name 미주입 또는 미매칭 시 표시할 커스텀 아이콘 (lucide/SVG 등). */
+  /** name 미주입 또는 미매칭 시 표시할 커스텀 아이콘 (SVG 등). */
   children?: React.ReactNode
-  /** 픽셀 단위 사이즈. 기본 24. */
+  /** 픽셀 단위 사이즈. 기본 24. opsz 축도 이 값에 맞춤. */
   size?: number
-  /** 색상. 미주입 시 currentColor 상속(className 의 text-* 우선). 명시할 때만 sx 로 강제. */
+  /** 색상. 미주입 시 currentColor 상속(className 의 text-* 우선). 명시할 때만 강제. */
   color?: string
+  /** FILL 축. 0=아웃라인 · 1=채움. 미지정 시 아이콘별 기본값(FILLED_BY_DEFAULT). */
+  fill?: 0 | 1
+  /** wght 축(100~700). 기본 400. */
+  weight?: number
   className?: string
   'aria-label'?: string
   'aria-hidden'?: boolean
@@ -119,28 +101,42 @@ const Icon = React.forwardRef<HTMLSpanElement, IconProps>(
       children,
       size = 24,
       color,
+      fill,
+      weight = 400,
       className,
       'aria-label': ariaLabel,
       'aria-hidden': ariaHidden,
     },
     ref,
   ) => {
-    const Mui = name ? REGISTRY[name] : null
+    const ligature = name ? REGISTRY[name] : null
 
-    if (Mui) {
-      const sx: Record<string, unknown> = { fontSize: size }
-      if (color) sx.color = color
+    if (ligature && name) {
+      const resolvedFill = fill ?? (FILLED_BY_DEFAULT.has(name) ? 1 : 0)
+      const style: React.CSSProperties = {
+        fontSize: size,
+        width: size,
+        height: size,
+        lineHeight: 1,
+        fontVariationSettings: `'FILL' ${resolvedFill}, 'wght' ${weight}, 'GRAD' 0, 'opsz' ${size}`,
+      }
+      if (color) style.color = color
       return (
-        <Mui
-          ref={ref as React.Ref<SVGSVGElement>}
-          sx={sx}
-          className={className}
+        <span
+          ref={ref}
+          // material-symbols-outlined: globals.css 의 패키지 CSS 가 font-family + 'liga' 제공
+          className={cn('material-symbols-outlined shrink-0 select-none', className)}
+          style={style}
+          translate="no"
           aria-label={ariaLabel ?? (ariaHidden ? undefined : name)}
           aria-hidden={ariaHidden ?? !ariaLabel}
-        />
+        >
+          {ligature}
+        </span>
       )
     }
 
+    // REGISTRY 미매칭 / name 미주입 — children(커스텀 SVG) 렌더
     const wrapperStyle: React.CSSProperties = {
       display: 'inline-flex',
       alignItems: 'center',
