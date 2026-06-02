@@ -32,6 +32,8 @@ export interface AccordionSectionProps {
   /** 콘텐츠 패딩 제거(기본 false → p-16) */
   flush?: boolean
   className?: string
+  /** 트리거(타이틀 바) 추가 className — 글자/chevron 색 등 오버라이드(currentColor 상속). */
+  triggerClassName?: string
   children: React.ReactNode
 }
 
@@ -43,6 +45,7 @@ const AccordionSection = ({
   borderTop = true,
   flush = false,
   className,
+  triggerClassName,
   children,
 }: AccordionSectionProps) => (
   <RawAccordionItem value={value} className={cn('border-b-0', className)}>
@@ -54,6 +57,7 @@ const AccordionSection = ({
         '[&>svg]:hidden',
         borderTop && 'border-t border-krds-border-divider',
         variant === 'blue' ? 'bg-krds-bg-primary-faint' : 'bg-white',
+        triggerClassName, // 색 오버라이드 등 — text-* 는 base text-ink 보다 뒤라 우선
       )}
     >
       <span className="min-w-0 flex-1 truncate text-left">{title}</span>
@@ -69,7 +73,7 @@ const AccordionSection = ({
       />
     </RawAccordionTrigger>
     <RawAccordionContent
-      className={cn('flex flex-col gap-krds-8 bg-white', flush ? 'p-0' : 'p-krds-8')}
+      className={cn('flex flex-col gap-krds-8 bg-white pt-4', flush ? 'p-0' : 'p-krds-8')}
     >
       {children}
     </RawAccordionContent>

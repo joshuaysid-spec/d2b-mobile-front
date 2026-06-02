@@ -88,6 +88,7 @@ const SearchFilter = ({
             title={section.title}
             titleInfo={section.titleInfo}
             borderTop={i > 0}
+            variant={'blue'}
           >
             {section.fields.length === 0 ? (
               <p className="text-krds-body-sm text-krds-text-subtle">준비 중입니다.</p>

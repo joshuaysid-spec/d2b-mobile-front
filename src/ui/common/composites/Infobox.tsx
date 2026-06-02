@@ -1,17 +1,19 @@
 // Figma m_Infobox(9300-29649) 1:1.
 // ⓘ 아이콘 + 타이틀 헤더 + 본문(불릿 리스트/링크). 업무도움·안내사항 등에 재사용.
+// 재구현(v2): 자체 토글 대신 base Accordion(Radix) 위에 구성 → 부드러운 슬라이드 애니메이션 +
+//   통일된 화살표(arrow_forward_ios) + 접근성을 그대로 재사용. (raw 직접 사용 X — base AccordionSection 경유)
 // variant:
-//   collapsible(기본 true) — 우측 chevron, 헤더 클릭 토글. opened/closed.
-//   static(collapsible=false) — chevron 없음, 본문 항상 노출(헤더 비클릭).
-// 헤더 bg = primary-faint(#ecf1fa, SectionTitle blue 와 동일 토큰), 본문 bg = background.
+//   collapsible(기본 true) — Accordion 으로 접기/펴기. opened/closed.
+//   static(collapsible=false) — chevron 없이 본문 항상 노출(헤더 비클릭).
+// 헤더 = bg-primary-faint(#ecf1fa) · 글자/아이콘 딥네이비(text-action-primary-active #0f316e). 본문 = white.
 // 상태: controlled(open/onOpenChange) / uncontrolled(defaultOpen, 기본 closed).
 import * as React from 'react'
 
+import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { cn } from '@/utils/cn'
 
-export interface InfoboxProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
+export interface InfoboxProps {
   /** 헤더 타이틀 (예: '업무도움' · '안내사항'). */
   title: React.ReactNode
   /** 헤더 좌측 아이콘. 기본 'Info'. */
@@ -28,113 +30,92 @@ export interface InfoboxProps
   open?: boolean
   /** controlled 변경 콜백. */
   onOpenChange?: (open: boolean) => void
+  className?: string
 }
 
-const Infobox = React.forwardRef<HTMLDivElement, InfoboxProps>(
-  (
-    {
-      className,
-      title,
-      icon = 'Info',
-      items,
-      children,
-      collapsible = true,
-      defaultOpen = false,
-      open,
-      onOpenChange,
-      ...props
-    },
-    ref,
-  ) => {
-    const [internalOpen, setInternalOpen] = React.useState(defaultOpen)
-    const isControlled = open !== undefined
-    // static(미접힘)은 항상 펼침
-    const isOpen = !collapsible || (isControlled ? open : internalOpen)
+const VALUE = 'infobox' // Accordion item 식별자(단일 아이템)
 
-    const toggle = () => {
-      const next = !isOpen
-      if (!isControlled) setInternalOpen(next)
-      onOpenChange?.(next)
-    }
+/** 헤더 좌측 ⓘ + 타이틀 (색은 부모 currentColor = 딥네이비 상속) */
+function InfoboxLabel({ icon, title }: { icon: IconName; title: React.ReactNode }) {
+  return (
+    <span className="flex min-w-0 items-center gap-krds-5">
+      <Icon name={icon} size={20} fill={1} className="shrink-0" aria-hidden />
+      <span className="min-w-0 flex-1 truncate">{title}</span>
+    </span>
+  )
+}
 
-    const header = (
-      <>
-        <Icon
-          name={icon}
-          size={20}
-          fill={1}
-          className="shrink-0 text-krds-action-primary-active"
-          aria-hidden
-        />
-        <span className="min-w-px flex-1 text-[19px] font-bold leading-normal text-krds-action-primary-active">
-          {title}
-        </span>
-        {collapsible && (
-          <Icon
-            name="ArrowForwardIos"
-            size={20}
-            className={cn(
-              // arrow_forward_ios(›) 90° 회전 → 아래(⌄), 열림 시 위(⌃)
-              'shrink-0 rotate-90 text-krds-action-primary-active transition-transform duration-200',
-              isOpen && 'rotate-[270deg]',
-            )}
-            aria-hidden
-          />
-        )}
-      </>
-    )
-
-    const body = (isOpen && (items?.length || children)) && (
-      <div className="bg-background px-krds-8 py-krds-8">
-        {items?.length ? (
-          <ul className="flex flex-col gap-krds-5">
-            {items.map((it, i) => (
-              <li
-                key={i}
-                className="flex gap-krds-5 text-[17px] leading-normal text-krds-text-ink"
-              >
-                <span
-                  aria-hidden
-                  className="mt-[0.6em] size-1 shrink-0 rounded-full bg-krds-text-ink"
-                />
-                <span className="min-w-px flex-1 wrap-break-word">{it}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div className="text-[17px] leading-normal text-krds-text-ink">{children}</div>
-        )}
-      </div>
-    )
-
+/** 본문 — 불릿 리스트(items) 또는 자유 본문(children) */
+function InfoboxBody({
+  items,
+  children,
+}: {
+  items?: React.ReactNode[]
+  children?: React.ReactNode
+}) {
+  if (items?.length) {
     return (
-      <div
-        ref={ref}
-        className={cn('flex w-full flex-col overflow-hidden rounded-krds-8', className)}
-        {...props}
-      >
-        {collapsible ? (
-          <button
-            type="button"
-            onClick={toggle}
-            aria-expanded={isOpen}
-            className={cn(
-              'flex min-h-[56px] w-full items-center gap-krds-5 bg-krds-bg-primary-faint px-krds-8 text-left',
-              'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
-            )}
-          >
-            {header}
-          </button>
-        ) : (
-          <div className="flex min-h-[56px] w-full items-center gap-krds-5 bg-krds-bg-primary-faint px-krds-8">
-            {header}
-          </div>
-        )}
-        {body}
+      <ul className="flex flex-col gap-krds-5">
+        {items.map((it, i) => (
+          <li key={i} className="flex gap-krds-5 text-[17px] leading-normal text-krds-text-ink">
+            <span aria-hidden className="mt-[0.6em] size-1 shrink-0 rounded-full bg-krds-text-ink" />
+            <span className="min-w-px flex-1 wrap-break-word">{it}</span>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+  return <div className="text-[17px] leading-normal text-krds-text-ink">{children}</div>
+}
+
+export function Infobox({
+  title,
+  icon = 'Info',
+  items,
+  children,
+  collapsible = true,
+  defaultOpen = false,
+  open,
+  onOpenChange,
+  className,
+}: InfoboxProps) {
+  // static — chevron 없이 항상 펼침 (Accordion 미사용)
+  if (!collapsible) {
+    return (
+      <div className={cn('flex w-full flex-col overflow-hidden rounded-krds-8', className)}>
+        <div className="flex min-h-[56px] items-center gap-krds-5 bg-krds-bg-primary-faint px-krds-8 text-[19px] font-bold text-krds-action-primary-active">
+          <InfoboxLabel icon={icon} title={title} />
+        </div>
+        <div className="bg-background p-krds-8">
+          <InfoboxBody items={items}>{children}</InfoboxBody>
+        </div>
       </div>
     )
-  },
-)
-Infobox.displayName = 'Infobox'
+  }
 
-export { Infobox }
+  // collapsible — base Accordion(single, collapsible) 위에 구성
+  const controlled = open !== undefined
+  const accordionProps = controlled
+    ? { value: open ? VALUE : '', onValueChange: (v: string) => onOpenChange?.(v === VALUE) }
+    : { defaultValue: defaultOpen ? VALUE : undefined }
+
+  return (
+    <Accordion
+      type="single"
+      collapsible
+      className={cn('w-full overflow-hidden rounded-krds-8', className)}
+      {...accordionProps}
+    >
+      <AccordionSection
+        value={VALUE}
+        variant="blue"
+        borderTop={false}
+        triggerClassName="text-krds-action-primary-active" // 글자 + chevron 딥네이비
+        title={<InfoboxLabel icon={icon} title={title} />}
+      >
+        <InfoboxBody items={items}>{children}</InfoboxBody>
+      </AccordionSection>
+    </Accordion>
+  )
+}
+Infobox.displayName = 'Infobox'
