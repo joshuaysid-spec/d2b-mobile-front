@@ -926,6 +926,9 @@ export function ComponentGuidePage() {
               <Specimen caption="disabled">
                 <Icon name="Error" color="var(--krds-d2b-blue-border)" />
               </Specimen>
+              <Specimen caption='name="SoundDetection"'>
+                <Icon name="SoundDetection" color="#0054E9" fill={1} />
+              </Specimen>
             </Row>
             <Row label="children (커스텀)">
               <Specimen caption="REGISTRY 미등록 — children 사용">
