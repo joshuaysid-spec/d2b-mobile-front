@@ -10,8 +10,8 @@
 //   readOnly                     → 클릭 비활성 (cursor default, X 숨김)
 //   disabled                     → 회색 bg + 회색 보더 + 클릭 불가
 //
-// 우측 화살표(>)는 항상 표시. onClear 제공 시 (value 있고 !disabled && !readOnly)
-// X(Cancel) 버튼이 화살표 좌측에 노출.
+// 우측 화살표(>)는 항상 표시되며 텍스트 영역과 동일하게 onClick 트리거(필드 어디를 눌러도 열림).
+// onClear 제공 시 (value 있고 !disabled && !readOnly) X(Cancel) 버튼이 화살표 좌측에 노출.
 //
 // 사용 예:
 //   const [v, setV] = useState('')
@@ -75,6 +75,7 @@ const SelectionFieldBox = React.forwardRef<HTMLButtonElement, SelectionFieldBoxP
           className,
         )}
       >
+        {/* 메인 트리거 — 텍스트 + 빈 영역 클릭 시 onClick (a11y 대표 버튼, ref 부착) */}
         <button
           ref={ref}
           type="button"
@@ -82,15 +83,21 @@ const SelectionFieldBox = React.forwardRef<HTMLButtonElement, SelectionFieldBoxP
           aria-disabled={disabled || readOnly || undefined}
           onClick={isInteractive ? onClick : undefined}
           className={cn(
-            'min-w-0 flex-1 truncate bg-transparent p-0 text-left text-krds-body-md outline-hidden',
-            // 값 유무에 따라 텍스트 색만 분기 — readOnly/disabled 도 ink 유지(Figma)
-            hasValue ? 'text-krds-text-ink' : 'text-krds-text-disabled',
+            'flex min-w-0 flex-1 items-center bg-transparent p-0 text-left outline-hidden',
             isInteractive ? 'cursor-pointer' : 'cursor-default',
             disabled && 'cursor-not-allowed',
           )}
           {...props}
         >
-          {hasValue ? value : placeholder}
+          <span
+            className={cn(
+              'min-w-0 flex-1 truncate text-krds-body-md',
+              // 값 유무에 따라 텍스트 색만 분기 — readOnly/disabled 도 ink 유지(Figma)
+              hasValue ? 'text-krds-text-ink' : 'text-krds-text-disabled',
+            )}
+          >
+            {hasValue ? value : placeholder}
+          </span>
         </button>
 
         {showClear && (
@@ -104,15 +111,27 @@ const SelectionFieldBox = React.forwardRef<HTMLButtonElement, SelectionFieldBoxP
           </button>
         )}
 
-        <Icon
-          name="ArrowForwardIos"
-          size={20}
+        {/* 우측 화살표(>)도 동일 트리거 — 클릭 시 onClick. 메인 버튼의 시각적 중복이라
+            a11y 트리에선 숨김(aria-hidden + tabIndex -1)해 중복 포커스/낭독 방지. */}
+        <button
+          type="button"
+          tabIndex={-1}
           aria-hidden
+          disabled={disabled || readOnly}
+          onClick={isInteractive ? onClick : undefined}
           className={cn(
-            'shrink-0',
-            disabled ? 'text-krds-text-disabled' : 'text-krds-text-ink',
+            'shrink-0 bg-transparent p-0 outline-hidden',
+            isInteractive ? 'cursor-pointer' : 'cursor-default',
+            disabled && 'cursor-not-allowed',
           )}
-        />
+        >
+          <Icon
+            name="ArrowForwardIos"
+            size={20}
+            aria-hidden
+            className={disabled ? 'text-krds-text-disabled' : 'text-krds-text-ink'}
+          />
+        </button>
       </div>
     )
   },

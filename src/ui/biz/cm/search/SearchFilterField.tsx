@@ -23,6 +23,12 @@ export interface SearchFilterFieldProps {
   field: FieldDef
   value: SearchFilterFieldValue | undefined
   onChange: (value: SearchFilterFieldValue) => void
+  /** selectionField 터치 시 페이지로 위임(자체 팝업). 셸→페이지 콜백. */
+  onSelectionClick?: (
+    key: string,
+    current: string,
+    commit: (value: string) => void,
+  ) => void
 }
 
 const EMPTY_RANGE: DateRangeValue = { start: '', end: '' }
@@ -53,23 +59,36 @@ function SelectionFieldControl({
   field,
   value,
   onChange,
+  onSelectionClick,
 }: {
   field: SelectionFieldDef
   value: string
   onChange: (value: string) => void
+  onSelectionClick?: (
+    key: string,
+    current: string,
+    commit: (value: string) => void,
+  ) => void
 }) {
   const [open, setOpen] = React.useState(false)
   const items = field.sheetItems ?? []
   const hasSheet = items.length > 0
+
+  // 우선순위: 페이지 위임(onSelectionClick) > 내장 바텀시트(sheetItems) > 무동작
+  const handleClick = () => {
+    if (onSelectionClick) {
+      onSelectionClick(field.key, value, (v) => onChange(v))
+      return
+    }
+    if (hasSheet) setOpen(true)
+  }
 
   return (
     <Field label={field.label} required={field.required}>
       <SelectionFieldBox
         value={value}
         placeholder={field.placeholder}
-        onClick={() => {
-          if (hasSheet) setOpen(true)
-        }}
+        onClick={handleClick}
         onClear={() => onChange('')}
       />
       {hasSheet && (
@@ -94,7 +113,12 @@ function SelectionFieldControl({
   )
 }
 
-const SearchFilterField = ({ field, value, onChange }: SearchFilterFieldProps) => {
+const SearchFilterField = ({
+  field,
+  value,
+  onChange,
+  onSelectionClick,
+}: SearchFilterFieldProps) => {
   switch (field.type) {
     // 검색유형 — 세로 라디오
     case 'radio':
@@ -167,6 +191,7 @@ const SearchFilterField = ({ field, value, onChange }: SearchFilterFieldProps) =
           field={field}
           value={(value as string) ?? ''}
           onChange={onChange}
+          onSelectionClick={onSelectionClick}
         />
       )
 
