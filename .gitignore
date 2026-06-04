@@ -36,7 +36,6 @@ Desktop.ini
 
 # 로컬 작업 문서
 docs/
-CLAUDE.md
 *.xlsx
 
 # 로컬 도구 상태
