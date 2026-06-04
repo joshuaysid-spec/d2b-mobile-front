@@ -2,8 +2,9 @@
 // 폼 필드 아래 붙는 메시지 한 줄 — type=info(파랑) | type=error(빨강).
 //
 // 공통: 20px 아이콘(상단 2px 미세 정렬) + 4px gap + 15px Medium 텍스트, leading 1.5.
-// 색상은 토큰 사용 — info=krds-text-primary(D2B blue), error=krds-action-danger(D2B pink).
-// 아이콘은 Material `Info`(info) / `Cancel`(error) — KRDS sub_notice / close_mc_on 의 근사치.
+// 텍스트 색은 토큰 사용 — info=krds-text-primary(D2B blue), error=krds-action-danger(#FF265E).
+// 아이콘 — info: Material `SoundDetection`(채움 FILL=1, currentColor=#0054E9).
+//          error: 정본 SVG 에셋 `assets/images/error.svg`(분홍 원 #FF265E + 흰 X 색 baked-in).
 //
 // 사용 예:
 //   <InputMessage>안내 메시지를 표시합니다.</InputMessage>
@@ -11,8 +12,9 @@
 import * as React from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 
-import { Icon, type IconName } from '@/ui/common/base/Icon'
+import { Icon } from '@/ui/common/base/Icon'
 import { cn } from '@/utils/cn'
+import errorIcon from '@/assets/images/error.svg'
 
 const messageVariants = cva(
   'flex w-full items-start gap-1 text-[15px] font-medium leading-normal',
@@ -28,11 +30,6 @@ const messageVariants = cva(
     },
   },
 )
-
-const ICON_FOR_TYPE: Record<NonNullable<InputMessageProps['type']>, IconName> = {
-  info: 'Info',
-  error: 'Cancel',
-}
 
 export interface InputMessageProps
   extends Omit<React.HTMLAttributes<HTMLParagraphElement>, 'children'>,
@@ -51,7 +48,11 @@ const InputMessage = React.forwardRef<HTMLParagraphElement, InputMessageProps>(
         {...props}
       >
         <span className="flex shrink-0 items-center pt-0.5">
-          <Icon name={ICON_FOR_TYPE[type ?? 'info']} size={20} aria-hidden />
+          {type === 'error' ? (
+            <img src={errorIcon} alt="" width={20} height={20} aria-hidden />
+          ) : (
+            <Icon name="SoundDetection" size={20} fill={1} aria-hidden />
+          )}
         </span>
         <span className="min-w-px flex-1 wrap-break-word">{children}</span>
       </p>

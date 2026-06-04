@@ -1125,7 +1125,7 @@ export function ComponentGuidePage() {
           <Section
             id="inputmessage"
             title="InputMessage"
-            desc="Figma m_input_message(9300-27870) 1:1. 폼 필드 아래 한 줄 메시지. type=info(파랑/Info) | error(빨강/Cancel). 20px 아이콘 + 15px Medium 텍스트. error 는 role=alert."
+            desc="Figma m_input_message(9300-27870) 1:1. 폼 필드 아래 한 줄 메시지. type=info(파랑 텍스트 + SoundDetection 아이콘) | error(ink 텍스트 + error.svg 분홍원·흰X 아이콘). 20px 아이콘 + 15px Medium 텍스트. error 는 role=alert."
           >
             <Row label="type">
               <Specimen caption='type="info" (default)'>
@@ -1362,12 +1362,12 @@ export function ComponentGuidePage() {
           >
             <Row label="기본">
               <Specimen caption="페이지 제목">
-                <div className="w-[360px] rounded-krds-8 border border-border bg-background">
+                <div className="w-[360px] border-y border-border bg-background">
                   <PageTitle>페이지 제목</PageTitle>
                 </div>
               </Specimen>
               <Specimen caption='as="h2" (의미적 레벨 변경)'>
-                <div className="w-[360px] rounded-krds-8 border border-border bg-background">
+                <div className="w-[360px] border-y border-border bg-background">
                   <PageTitle as="h2">조달업무</PageTitle>
                 </div>
               </Specimen>
@@ -1382,36 +1382,36 @@ export function ComponentGuidePage() {
           >
             <Row label="bgColor">
               <Specimen caption='bgColor="white" (default)'>
-                <div className="w-[328px] rounded-krds-8 border border-border bg-background">
+                <div className="w-[328px] border-y border-border bg-background">
                   <SectionTitle>하위 영역 제목</SectionTitle>
                 </div>
               </Specimen>
               <Specimen caption='bgColor="blue"'>
-                <div className="w-[328px] rounded-krds-8 border border-border bg-background overflow-hidden">
+                <div className="w-[328px] border-y border-border bg-background overflow-hidden">
                   <SectionTitle bgColor="blue">하위 영역 제목</SectionTitle>
                 </div>
               </Specimen>
             </Row>
             <Row label="topDivider">
               <Specimen caption="topDivider 상단 1px">
-                <div className="w-[328px] border-x border-b border-border bg-background pt-6">
+                <div className="w-[328px] border-b border-border bg-background pt-6">
                   <SectionTitle topDivider>하위 영역 제목</SectionTitle>
                 </div>
               </Specimen>
             </Row>
             <Row label="info slot (우측 보조)">
               <Specimen caption="건수 표시">
-                <div className="w-[328px] rounded-krds-8 border border-border bg-background">
+                <div className="w-[328px] border-y border-border bg-background">
                   <SectionTitle info="총 2건">입찰 공고</SectionTitle>
                 </div>
               </Specimen>
               <Specimen caption="아코디언 아이콘">
-                <div className="w-[328px] rounded-krds-8 border border-border bg-background">
+                <div className="w-[328px] border-y border-border bg-background">
                   <SectionTitle info={<Icon name="ArrowForwardIos" size={20} className="rotate-90" />}>상세 정보</SectionTitle>
                 </div>
               </Specimen>
               <Specimen caption="복합 (텍스트 + 아이콘)">
-                <div className="w-[328px] rounded-krds-8 border border-border bg-background">
+                <div className="w-[328px] border-y border-border bg-background">
                   <SectionTitle
                     info={
                       <>
@@ -1465,8 +1465,8 @@ export function ComponentGuidePage() {
                     defaultValue="a"
                     showIndicator
                     items={[
-                      { value: 'a', label: '항목 1' },
-                      { value: 'b', label: '항목 2' },
+                      { value: 'a', label: '항목' },
+                      { value: 'b', label: '항목' },
                     ]}
                   />
                 </div>
@@ -1477,22 +1477,24 @@ export function ComponentGuidePage() {
                 <div className="w-[260px]">
                   <RadioButtonGroup
                     defaultValue="a"
+                    showIndicator
                     items={[
-                      { value: 'a', label: '항목 1' },
-                      { value: 'b', label: '항목 2' },
+                      { value: 'a', label: '항목' },
+                      { value: 'b', label: '항목' },
                     ]}
                   />
                 </div>
               </Specimen>
-              <Specimen caption="4항목 wrap">
-                <div className="w-[260px]">
+              <Specimen caption="4항목 한 줄">
+                <div className="w-[360px]">
                   <RadioButtonGroup
                     defaultValue="a"
+                    showIndicator
                     items={[
-                      { value: 'a', label: '항목 1' },
-                      { value: 'b', label: '항목 2' },
-                      { value: 'c', label: '항목 3' },
-                      { value: 'd', label: '항목 4' },
+                      { value: 'a', label: '항목' },
+                      { value: 'b', label: '항목' },
+                      { value: 'c', label: '항목' },
+                      { value: 'd', label: '항목' },
                     ]}
                   />
                 </div>
@@ -1504,10 +1506,11 @@ export function ComponentGuidePage() {
                   <RadioButtonGroup
                     defaultValue="b"
                     direction="vertical"
+                    showIndicator
                     items={[
-                      { value: 'a', label: '항목 1' },
-                      { value: 'b', label: '항목 2' },
-                      { value: 'c', label: '항목 3' },
+                      { value: 'a', label: '항목' },
+                      { value: 'b', label: '항목' },
+                      { value: 'c', label: '항목' },
                     ]}
                   />
                 </div>
@@ -1515,13 +1518,24 @@ export function ComponentGuidePage() {
             </Row>
             <Row label="disabled">
               <Specimen caption="개별 항목 비활성">
-                <div className="w-[260px]">
+                <div className="flex w-[300px] items-start gap-2">
                   <RadioButtonGroup
+                    className="flex-[2]"
                     defaultValue="a"
+                    showIndicator
                     items={[
-                      { value: 'a', label: '항목 1' },
-                      { value: 'b', label: '항목 2', disabled: true },
+                      { value: 'a', label: '항목' },
+                      { value: 'b', label: '항목', disabled: true },
                     ]}
+                  />
+                  {/* 선택(checked)된 채로 disabled — 단일선택 제약상 별도 그룹으로 표현.
+                      회색 비활성 톤은 RadioButton 컴포넌트가 처리(disabled 가 checked 강조를 덮음).
+                      flex-1 : 옆 그룹(flex-[2], 2칩)과 비율 맞춰 칩 너비 동일. */}
+                  <RadioButtonGroup
+                    className="flex-1"
+                    defaultValue="c"
+                    showIndicator
+                    items={[{ value: 'c', label: '항목', disabled: true }]}
                   />
                 </div>
               </Specimen>

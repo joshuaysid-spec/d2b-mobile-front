@@ -28,17 +28,18 @@ const RadioButton = React.forwardRef<
   <label
     className={cn(
       // chip base — Figma m_radiobutton: h-48 · px-10 · gap-4 · rounded-8
-      'group inline-flex h-12 cursor-pointer select-none items-center justify-center gap-krds-3 rounded-krds-8 px-krds-6',
-      'border border-krds-border-field bg-background',
+      'group inline-flex h-12 min-w-[74px] cursor-pointer select-none items-center justify-center gap-krds-3 rounded-krds-8 px-krds-6',
+      'border border-krds-border-primary bg-background',
       'text-krds-body-md font-medium text-primary transition-colors',
       // 키보드 포커스 — 내부 radio item 이 focus-visible 일 때 칩에 링
       'has-focus-visible:outline-hidden has-focus-visible:ring-2 has-focus-visible:ring-ring has-focus-visible:ring-offset-2',
       // 선택됨 — raw 의 data-state=checked 를 따라감
       'has-data-[state=checked]:border-2 has-data-[state=checked]:border-primary',
       'has-data-[state=checked]:bg-krds-bg-primary-subtle has-data-[state=checked]:font-bold',
-      // 비활성
-      'has-disabled:cursor-not-allowed has-disabled:border-krds-border-disabled',
-      'has-disabled:bg-krds-bg-disabled-soft has-disabled:text-krds-text-disabled',
+      // 비활성 — checked+disabled 조합에서도 회색이 우선하도록 ! 로 강제(선택 강조 위에 덮음)
+      // border 색은 #8E8E8E(krds-text-disabled), bg 는 #F0F0F0(krds-bg-disabled-soft)
+      'has-disabled:cursor-not-allowed has-disabled:!border-krds-text-disabled',
+      'has-disabled:!bg-krds-bg-disabled-soft has-disabled:text-krds-text-disabled',
       className,
     )}
   >
@@ -56,7 +57,7 @@ const RadioButton = React.forwardRef<
           'flex size-5 shrink-0 items-center justify-center rounded-full border transition-colors',
           'border-krds-border-field',
           'group-has-data-[state=checked]:border-primary',
-          'group-has-disabled:border-krds-border-disabled',
+          'group-has-disabled:!border-krds-text-disabled',
         )}
         aria-hidden
       >
@@ -64,7 +65,7 @@ const RadioButton = React.forwardRef<
           className={cn(
             'hidden size-3 rounded-full bg-primary',
             'group-has-data-[state=checked]:block',
-            'group-has-disabled:bg-krds-border-disabled',
+            'group-has-disabled:bg-krds-text-disabled',
           )}
         />
       </span>

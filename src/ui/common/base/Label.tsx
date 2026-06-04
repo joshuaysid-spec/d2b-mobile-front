@@ -6,7 +6,7 @@ import { cn } from '@/utils/cn'
 
 const labelVariants = cva(
   cn(
-    'text-krds-body-sm font-medium text-foreground',
+    'text-krds-body-sm font-bold text-foreground',
     'peer-disabled:cursor-not-allowed peer-disabled:text-krds-text-disabled',
   ),
 )
