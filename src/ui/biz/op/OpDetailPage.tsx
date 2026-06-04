@@ -123,7 +123,9 @@ export function OpDetailPage() {
   }
 
   return (
-    <div ref={rootRef} className="flex w-full flex-col">
+    // overflow-anchor:none — 축소 시 infolist 높이 변화로 브라우저가 스크롤 위치를 보정(scroll anchoring)
+    //   하면서 임계값을 다시 넘나들어 collapse 가 진동(겹침·깜빡임)하던 문제 차단.
+    <div ref={rootRef} className="flex w-full flex-col [overflow-anchor:none]">
       {/* 상단 블록 — sticky 고정. 스크롤 시 요약정보가 축소(infolist 숨김)되며 높이 감소. */}
       <div className="sticky top-0 z-20 bg-white">
         <SummaryInfo
