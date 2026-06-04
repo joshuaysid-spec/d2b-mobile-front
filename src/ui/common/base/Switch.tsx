@@ -34,11 +34,14 @@ const Switch = React.forwardRef<
         'peer h-7 w-14 border-0 px-1',
         // 트랙 색: KRDS (raw 의 data-[state=checked]:bg-primary 는 유지, unchecked/disabled 만 보정)
         'data-[state=unchecked]:bg-krds-bg-primary-subtle',
-        'data-disabled:cursor-not-allowed data-disabled:bg-krds-bg-disabled data-disabled:opacity-100',
+        // disabled 트랙 #D8D8D8 — data-[state=unchecked/checked]:bg-* 와 동순위라 !important 로 우선.
+        'data-disabled:cursor-not-allowed data-disabled:bg-krds-bg-disabled! data-disabled:opacity-100',
         // thumb(자식 span) 보정 — raw 의 baked translate-x-5 를 !important 로 28px 슬라이드로 교체.
         // raw 의 translate-x 클래스는 span 자신의 data-state 로 토글되므로 동일하게 key 한다.
         '[&>span]:translate-x-0! data-[state=checked]:[&>span]:translate-x-7!',
         '[&>span]:bg-white!',
+        // disabled thumb 색 — 흰색 대신 #8E8E8E(krds-text-disabled). data 변형이 후순위라 우선.
+        'data-disabled:[&>span]:bg-krds-text-disabled!',
         className,
       )}
       {...props}
