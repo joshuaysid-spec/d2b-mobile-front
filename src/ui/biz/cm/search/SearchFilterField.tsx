@@ -6,14 +6,17 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { SelectionFieldBox } from '@/ui/common/base/SelectionFieldBox'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { CheckboxGroup } from '@/ui/common/composites/CheckboxGroup'
 import { DateInput } from '@/ui/common/composites/DateInput'
 import { DateRangeInput } from '@/ui/common/composites/DateRangeInput'
+import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import type {
   DateRangeValue,
   SearchFilterField as FieldDef,
   SearchFilterFieldValue,
+  SelectionFieldDef,
 } from '@/types/search-filter'
 
 export interface SearchFilterFieldProps {
@@ -39,6 +42,55 @@ function Field({
       {label != null && <InputLabel required={required ?? false}>{label}</InputLabel>}
       {children}
     </div>
+  )
+}
+
+// 대표품명/발주기관 등 — 선택 트리거(`>`). 터치 시 BottomSheet(슬롯) 안에 NavigationItemList 를
+// 조립해 띄운다(A안 슬롯 조합). 목록(sheetItems)은 사용 화면의 schema 에 하드코딩되며, 항목 선택 시
+// 그 label 이 필드 값으로 채워진다. sheetItems 미지정 시 추후 커스텀 팝업(P71 등) 연계 자리.
+// (open 상태가 필요해 별도 컴포넌트로 분리 — 디스패처 switch 안에서는 hook 불가.)
+function SelectionFieldControl({
+  field,
+  value,
+  onChange,
+}: {
+  field: SelectionFieldDef
+  value: string
+  onChange: (value: string) => void
+}) {
+  const [open, setOpen] = React.useState(false)
+  const items = field.sheetItems ?? []
+  const hasSheet = items.length > 0
+
+  return (
+    <Field label={field.label} required={field.required}>
+      <SelectionFieldBox
+        value={value}
+        placeholder={field.placeholder}
+        onClick={() => {
+          if (hasSheet) setOpen(true)
+        }}
+        onClear={() => onChange('')}
+      />
+      {hasSheet && (
+        <BottomSheet
+          open={open}
+          onOpenChange={setOpen}
+          title={field.sheetTitle ?? field.label ?? '선택'}
+        >
+          <NavigationItemList
+            items={items.map((opt) => ({
+              id: opt.value,
+              label: opt.label,
+              onClick: () => {
+                onChange(opt.label)
+                setOpen(false)
+              },
+            }))}
+          />
+        </BottomSheet>
+      )}
+    </Field>
   )
 }
 
@@ -108,19 +160,14 @@ const SearchFilterField = ({ field, value, onChange }: SearchFilterFieldProps) =
         </Field>
       )
 
-    // 대표품명/발주기관 등 — 선택 트리거(`>`), 클릭 시 공통팝업(자리만, 팝업 TODO)
+    // 대표품명/발주기관 등 — 선택 트리거(`>`). 터치 → 선택 바텀시트(목록은 화면 schema 에 하드코딩)
     case 'selectionField':
       return (
-        <Field label={field.label} required={field.required}>
-          <SelectionFieldBox
-            value={(value as string) ?? ''}
-            placeholder={field.placeholder}
-            onClick={() => {
-              // TODO: 공통팝업 연계(품목별 검색 MUI-OP-01-P71 / 발주부서 검색 MUI-BD-01-P04)
-            }}
-            onClear={() => onChange('')}
-          />
-        </Field>
+        <SelectionFieldControl
+          field={field}
+          value={(value as string) ?? ''}
+          onChange={onChange}
+        />
       )
 
     // 구분설정 — 드롭다운

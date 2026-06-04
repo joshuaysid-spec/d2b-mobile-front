@@ -52,8 +52,16 @@ export interface TextFieldDef extends BaseField {
   placeholder?: string
 }
 export interface SelectionFieldDef extends BaseField {
-  type: 'selectionField' // 선택 트리거(SelectionFieldBox, `>` 팝업) — value: string
+  type: 'selectionField' // 선택 트리거(SelectionFieldBox, `>`) — value: string
   placeholder?: string
+  /** 터치 시 뜨는 선택 바텀시트 제목. 미지정 시 label 사용. */
+  sheetTitle?: ReactNode
+  /**
+   * 선택 바텀시트(NavigationItemList)에 띄울 목록 — 사용 화면의 schema 에 하드코딩.
+   * 주어지면 selectionField 터치 시 BottomSheet 가 열리고, 항목 선택 시 그 label 이
+   * 필드 값으로 채워진다. 없으면 터치 무동작(추후 커스텀 팝업 연계용 자리).
+   */
+  sheetItems?: { value: string; label: string }[]
 }
 export interface SelectFieldDef extends BaseField {
   type: 'select' // 드롭다운(SelectBox) — value: string

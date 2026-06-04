@@ -72,18 +72,35 @@ const OP_SEARCH: SearchFilterSchema = {
       fields: [
         { type: 'text', key: 'prcmPlanNm', label: '제목', placeholder: '제목을 입력하세요.' },
         { type: 'text', key: 'prcmNo', label: '판단번호', placeholder: '번호를 입력하세요.' },
-        // 선택필드(`>`) — 클릭 시 공통팝업(자리만, 팝업 TODO)
+        // 선택필드(`>`) — 터치 시 선택 바텀시트. 목록은 이 화면에 인라인 하드코딩(별도 ts 분리 X).
+        // 추후 P71 품목별 검색 풀팝업으로 대체 가능(sheetItems 제거 + onClick 연계).
         {
           type: 'selectionField',
           key: 'rprsItemNm',
           label: '품명',
           placeholder: '품명을 입력하세요.',
+          sheetTitle: '품명 선택',
+          sheetItems: [
+            { value: 'gasmask', label: 'K5 방독면' },
+            { value: 'boots', label: '전투화' },
+            { value: 'jacket', label: '야전상의' },
+            { value: 'helmet', label: '방탄헬멧' },
+            { value: 'vest', label: '방탄복' },
+          ],
         },
         {
           type: 'selectionField',
           key: 'deptCd',
           label: '발주기관',
           placeholder: '발주기관을 입력하세요.',
+          sheetTitle: '발주기관 선택',
+          sheetItems: [
+            { value: 'fire', label: '화력총괄계약팀' },
+            { value: 'it', label: '정보화팀' },
+            { value: 'logi', label: '군수사령부' },
+            { value: 'facility', label: '시설관리단' },
+            { value: 'security', label: '보안운영팀' },
+          ],
         },
         { type: 'text', key: 'userNm', label: '담당자', placeholder: '담당자를 입력하세요.' },
       ],
