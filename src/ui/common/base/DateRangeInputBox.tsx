@@ -1,10 +1,16 @@
 // Figma m_date_range_input_box(9052-1558) 1:1 — 5 state(default/filled/focus/error/error_focus).
-// 한 박스 안에 [시작일 input] [~] [종료일 input]. 외곽 border/bg 는 두 input 공통(focus-within 이면 양쪽 어느 한 쪽에 focus 가 있는 상태).
+// 한 박스 안에 [시작일 input] [~] [종료일 input]. 외곽 border/bg 는 두 input 공통(focus-within).
+// withCalendar 면 어느 한 쪽 input 클릭/focus 시 박스 바로 아래에 range 모드 Calendar 드롭다운.
 import * as React from 'react'
 
+import {
+  Calendar,
+  type DateRangeValue as CalendarRangeValue,
+} from '@/ui/common/base/Calendar'
 import { Icon } from '@/ui/common/base/Icon'
 import { Input as RawInput } from '@/ui/raw/input'
 import { cn } from '@/utils/cn'
+import { formatDateInput } from '@/utils/format'
 
 export interface DateRangeValue {
   start: string
@@ -26,6 +32,10 @@ export interface DateRangeInputBoxProps {
     React.InputHTMLAttributes<HTMLInputElement>,
     'value' | 'onChange' | 'placeholder' | 'disabled'
   >
+  /** true 면 input 클릭/focus 시 박스 바로 아래에 range 모드 Calendar 드롭다운 노출. */
+  withCalendar?: boolean
+  /** Calendar 공휴일 fetcher (withCalendar 일 때만 전달). */
+  fetchHolidays?: (year: number, month: number) => Promise<string[]>
   className?: string
 }
 
@@ -40,53 +50,95 @@ const DateRangeInputBox = React.forwardRef<HTMLDivElement, DateRangeInputBoxProp
       startPlaceholder = '시작일 선택',
       endPlaceholder = '종료일 선택',
       inputProps,
+      withCalendar = false,
+      fetchHolidays,
       className,
     },
     ref,
   ) => {
+    const wrapRef = React.useRef<HTMLDivElement>(null)
+    React.useImperativeHandle(ref, () => wrapRef.current as HTMLDivElement)
+    const [open, setOpen] = React.useState(false)
+
+    // 숫자만 허용 + YYYY-MM-DD 하이픈 자동 마킹 (controlled 라 마스킹 결과가 그대로 반영됨)
     const handleStart = (e: React.ChangeEvent<HTMLInputElement>) =>
-      onChange?.({ start: e.target.value, end: value.end })
+      onChange?.({ start: formatDateInput(e.target.value), end: value.end })
     const handleEnd = (e: React.ChangeEvent<HTMLInputElement>) =>
-      onChange?.({ start: value.start, end: e.target.value })
+      onChange?.({ start: value.start, end: formatDateInput(e.target.value) })
+
+    const openCalendar = () => {
+      if (withCalendar && !disabled) setOpen(true)
+    }
+
+    // Calendar(range) 선택 → value 반영. 시작·종료 모두 정해지면 닫기.
+    const handleCalendarChange = (v: string | CalendarRangeValue) => {
+      if (typeof v === 'string') return
+      onChange?.({ start: v.start ?? '', end: v.end ?? '' })
+      if (v.start && v.end) setOpen(false)
+    }
+
+    // 외부 클릭 시 닫기
+    React.useEffect(() => {
+      if (!open) return
+      const onDocDown = (e: MouseEvent) => {
+        if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+          setOpen(false)
+        }
+      }
+      document.addEventListener('mousedown', onDocDown)
+      return () => document.removeEventListener('mousedown', onDocDown)
+    }, [open])
 
     return (
-      <div
-        ref={ref}
-        className={cn(
-          'group flex h-12 w-full items-center justify-center gap-krds-5 rounded-krds-8 border px-krds-6 transition-colors',
-          error
-            ? 'border-krds-border-danger bg-krds-bg-danger-subtle focus-within:border-2'
-            : 'border-krds-border-field bg-background focus-within:border-2 focus-within:border-krds-action-primary-active',
-          disabled && 'border-krds-border-disabled bg-krds-bg-disabled-soft',
-          className,
-        )}
-      >
-        <SideInput
-          value={value.start}
-          onChange={handleStart}
-          onClear={() => onClear?.('start')}
-          placeholder={startPlaceholder}
-          disabled={disabled}
-          inputProps={inputProps}
-        />
-        <span
+      <div ref={wrapRef} className={cn('relative', className)}>
+        <div
           className={cn(
-            'shrink-0 text-krds-body-md',
-            value.start || value.end ? 'text-krds-text-ink' : 'text-krds-text-ink',
-            disabled && 'text-krds-text-disabled',
+            'group flex h-12 w-full items-center justify-center gap-krds-5 rounded-krds-8 border px-krds-6 transition-colors',
+            error
+              ? 'border-krds-border-danger bg-krds-bg-danger-subtle focus-within:border-2'
+              : 'border-krds-border-field bg-background focus-within:border-2 focus-within:border-krds-action-primary-active',
+            disabled && 'border-krds-border-disabled bg-krds-bg-disabled-soft',
           )}
-          aria-hidden
         >
-          ~
-        </span>
-        <SideInput
-          value={value.end}
-          onChange={handleEnd}
-          onClear={() => onClear?.('end')}
-          placeholder={endPlaceholder}
-          disabled={disabled}
-          inputProps={inputProps}
-        />
+          <SideInput
+            value={value.start}
+            onChange={handleStart}
+            onClear={() => onClear?.('start')}
+            onOpen={openCalendar}
+            placeholder={startPlaceholder}
+            disabled={disabled}
+            inputProps={inputProps}
+          />
+          <span
+            className={cn(
+              'shrink-0 text-krds-body-md text-krds-text-ink',
+              disabled && 'text-krds-text-disabled',
+            )}
+            aria-hidden
+          >
+            ~
+          </span>
+          <SideInput
+            value={value.end}
+            onChange={handleEnd}
+            onClear={() => onClear?.('end')}
+            onOpen={openCalendar}
+            placeholder={endPlaceholder}
+            disabled={disabled}
+            inputProps={inputProps}
+          />
+        </div>
+
+        {withCalendar && open && !disabled && (
+          <div className="absolute top-full left-0 z-50 mt-1 w-[328px] rounded-krds-lg border border-border bg-background p-3 shadow-krds-2">
+            <Calendar
+              mode="range"
+              value={{ start: value.start || null, end: value.end || null }}
+              onChange={handleCalendarChange}
+              fetchHolidays={fetchHolidays}
+            />
+          </div>
+        )}
       </div>
     )
   },
@@ -97,6 +149,7 @@ interface SideInputProps {
   value: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onClear: () => void
+  onOpen: () => void
   placeholder: string
   disabled: boolean
   inputProps?: DateRangeInputBoxProps['inputProps']
@@ -106,19 +159,22 @@ function SideInput({
   value,
   onChange,
   onClear,
+  onOpen,
   placeholder,
   disabled,
   inputProps,
 }: SideInputProps) {
   const [focused, setFocused] = React.useState(false)
   return (
-    <div className="flex min-w-0 flex-1 items-center gap-krds-5">
+    <div className="relative flex min-w-0 flex-1 items-center">
       <RawInput
         {...inputProps}
         value={value}
         onChange={onChange}
+        onClick={onOpen}
         onFocus={(e) => {
           setFocused(true)
+          onOpen()
           inputProps?.onFocus?.(e)
         }}
         onBlur={(e) => {
@@ -140,7 +196,9 @@ function SideInput({
           aria-label="입력 내용 지우기"
           onMouseDown={(e) => e.preventDefault()} // blur 방지 — 클리어 후 input 유지
           onClick={onClear}
-          className="shrink-0 text-krds-text-disabled"
+          // absolute 오버레이 — 레이아웃 폭을 안 먹어 input 풀폭 유지(텍스트 안 잘림 + 가운데 정렬).
+          // top-1/2 -translate-y-1/2 로 수직 중앙 고정.
+          className="absolute top-1/2 right-0 flex shrink-0 -translate-y-1/2 items-center text-krds-text-disabled"
         >
           <Icon name="Close" size={20} aria-hidden />
         </button>

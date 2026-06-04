@@ -29,15 +29,18 @@ export interface SpinnerProps {
 
 // 48-grid 기준 8 dot 위치(시계방향, 12시 → 1.5시 → 3시 → ... → 10.5시).
 // {top, left, rotateDeg} — 4×12 막대를 회전시켜 해당 각도 방향으로 배치.
+// 각 막대 중심 (left+2, top+6) 을 그리드 중심 (24,24) 기준 반경 18 동심원 위에 둔다:
+//   cx = 24 + 18·sinθ, cy = 24 − 18·cosθ  →  left = cx−2, top = cy−6
+// (동심원이어야 부모 회전 시 dot 링이 중심에서 안 흔들림)
 const DOTS: Array<{ top: number; left: number; rotate: number }> = [
   { top: 0,     left: 22,    rotate: 0 },     // 12시
-  { top: 5.62,  left: 31.07, rotate: 45 },    // 1.5시
-  { top: 22,    left: 36,    rotate: 90 },    // 3시
-  { top: 31.07, left: 31.07, rotate: 135 },   // 4.5시
+  { top: 5.27,  left: 34.73, rotate: 45 },    // 1.5시
+  { top: 18,    left: 40,    rotate: 90 },    // 3시
+  { top: 30.73, left: 34.73, rotate: 135 },   // 4.5시
   { top: 36,    left: 22,    rotate: 180 },   // 6시
-  { top: 31.07, left: 5.62,  rotate: 225 },   // 7.5시
-  { top: 22,    left: 0,     rotate: 270 },   // 9시
-  { top: 5.62,  left: 5.62,  rotate: 315 },   // 10.5시
+  { top: 30.73, left: 9.27,  rotate: 225 },   // 7.5시
+  { top: 18,    left: 4,     rotate: 270 },   // 9시
+  { top: 5.27,  left: 9.27,  rotate: 315 },   // 10.5시
 ]
 
 const Spinner = React.forwardRef<HTMLSpanElement, SpinnerProps>(

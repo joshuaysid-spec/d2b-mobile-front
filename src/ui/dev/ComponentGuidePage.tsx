@@ -775,6 +775,18 @@ export function ComponentGuidePage() {
                 </div>
               </Specimen>
             </Row>
+            <Row label="withCalendar (클릭 시 달력)">
+              <Specimen caption="single 모드 — input 클릭 시 바로 아래 달력">
+                <div className="w-[260px]">
+                  <DateInputBox
+                    withCalendar
+                    value={dateValue}
+                    onChange={(e) => setDateValue(e.target.value)}
+                    onClear={() => setDateValue('')}
+                  />
+                </div>
+              </Specimen>
+            </Row>
           </Section>
 
           {/* ───────── DateRangeInputBox ───────── */}
@@ -806,6 +818,18 @@ export function ComponentGuidePage() {
               <Specimen caption="disabled">
                 <div className="w-[280px]">
                   <DateRangeInputBox value={{ start: '2026-05-01', end: '2026-05-30' }} disabled />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="withCalendar (클릭 시 달력)">
+              <Specimen caption="range 모드 — input 클릭 시 바로 아래 달력(start~end)">
+                <div className="w-[280px]">
+                  <DateRangeInputBox
+                    withCalendar
+                    value={rangeValue}
+                    onChange={setRangeValue}
+                    onClear={(side) => setRangeValue((v) => ({ ...v, [side]: '' }))}
+                  />
                 </div>
               </Specimen>
             </Row>
@@ -892,13 +916,13 @@ export function ComponentGuidePage() {
             </Row>
             <Row label="color">
               <Specimen caption="primary">
-                <Icon name="Notifications" color="var(--krds-text-primary)" />
+                <Icon name="CheckCircle" color="var(--krds-d2b-blue-check)" />
               </Specimen>
               <Specimen caption="danger">
-                <Icon name="Warning" color="var(--krds-feedback-danger)" />
+                <Icon name="Warning" color="var(--krds-d2b-pink)" />
               </Specimen>
               <Specimen caption="disabled">
-                <Icon name="Info" color="var(--krds-text-disabled)" />
+                <Icon name="Error" color="var(--krds-d2b-blue-border)" />
               </Specimen>
             </Row>
             <Row label="children (커스텀)">

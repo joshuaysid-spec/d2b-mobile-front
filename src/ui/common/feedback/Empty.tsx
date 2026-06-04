@@ -11,8 +11,8 @@
 //   액션 영역(Button 등)
 //
 // variant — 아이콘 시멘틱:
-//   - 'info'(default) = Error 아이콘(느낌표 원) · 색은 D2B blue-border #c1d1ee — Figma alert_error
-//   - 'check'         = CheckCircle 아이콘 · 색은 success-60 — Figma check_circle (성공/완료 상태)
+//   - 'info'(default) = Error 아이콘(채워진 느낌표 원, FILL 1) · 색은 D2B blue-border #c1d1ee — Figma Icon-alert
+//   - 'check'         = CheckCircle 아이콘(배경 있는 채움, FILL 1) · 색은 D2B blue-check #8eb7ff — Figma check_circle (성공/완료 상태)
 //   - 커스텀 아이콘은 `icon` prop 으로 전달 (variant 무시)
 //
 // 사용 예:
@@ -57,7 +57,13 @@ const VARIANT_ICON: Record<EmptyVariant, IconName> = {
 
 const VARIANT_COLOR: Record<EmptyVariant, string> = {
   info: 'var(--krds-d2b-blue-border)',
-  check: 'var(--krds-color-success-60)',
+  check: 'var(--krds-d2b-blue-check)',
+}
+
+// 아이콘 FILL 축 — info(검색결과 없음)·check(완료) 모두 배경 채움(FILL 1).
+const VARIANT_FILL: Record<EmptyVariant, 0 | 1> = {
+  info: 1,
+  check: 1,
 }
 
 const Empty = React.forwardRef<HTMLDivElement, EmptyProps>(
@@ -81,7 +87,15 @@ const Empty = React.forwardRef<HTMLDivElement, EmptyProps>(
 
     const iconNode = (() => {
       if (icon == null) {
-        return <Icon name={VARIANT_ICON[variant]} size={iconSize} color={color} aria-hidden />
+        return (
+          <Icon
+            name={VARIANT_ICON[variant]}
+            size={iconSize}
+            color={color}
+            fill={VARIANT_FILL[variant]}
+            aria-hidden
+          />
+        )
       }
       if (typeof icon === 'string') {
         return <Icon name={icon as IconName} size={iconSize} color={color} aria-hidden />

@@ -1,7 +1,7 @@
 // Figma m_date_range_picker_calendar(9052-1421) + m_date_picker_date_select_button(9052-1393, 11 state)
 // + m_date_picker_year_month_dropdown(9052-1418) + m_date_picker_today_button(9052-1528) 1:1.
 //
-// 헤더: [« ‹] [년 ▼ 월 ▼] [› »]  — 4개의 40px round 버튼 + 2개의 작은 드롭다운.
+// 헤더: [‹] [년 ▼ 월 ▼] [›]  — 2개의 40px round 버튼(월 이동) + 2개의 작은 드롭다운.
 // 셀: 40×40 rounded-full, 15px Medium 텍스트. 11 state.
 // 공휴일: fetchHolidays prop 으로 외부 주입 (useQuery 가 ['holidays', year, month] 키로 자동 캐시·refetch).
 import * as React from 'react'
@@ -277,17 +277,16 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
     return (
       <div
         ref={ref}
-        className={cn('flex w-[328px] select-none flex-col bg-background', className)}
+        // 부모 폭을 넘지 않도록 w-full + max-w-328(Figma 폭). mx-auto 로 캡 시 가운데.
+        className={cn(
+          'mx-auto flex w-full max-w-[328px] select-none flex-col bg-background',
+          className,
+        )}
       >
-        {/* Month Navigation: [«][‹]  [년▼ 월▼]  [›][»] */}
-        <div className="flex w-full items-center justify-between">
+        {/* Month Navigation: [‹]  [년▼ 월▼]  [›]
+            아래 날짜 그리드(7×40px=280)와 같은 280px·가운데 정렬 → ‹/› 버튼이 양끝 열과 맞음. */}
+        <div className="mx-auto flex w-full max-w-[280px] items-center justify-between">
           <div className="flex items-center gap-1">
-            <RoundIconButton
-              onClick={() => setCursor(cursor.subtract(1, 'year'))}
-              ariaLabel="이전 년"
-            >
-              <Icon name="KeyboardDoubleArrowLeft" size={20} aria-hidden />
-            </RoundIconButton>
             <RoundIconButton
               onClick={() => setCursor(cursor.subtract(1, 'month'))}
               ariaLabel="이전 달"
@@ -320,17 +319,13 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
             >
               <Icon name="ChevronRight" size={20} aria-hidden />
             </RoundIconButton>
-            <RoundIconButton
-              onClick={() => setCursor(cursor.add(1, 'year'))}
-              ariaLabel="다음 년"
-            >
-              <Icon name="KeyboardDoubleArrowRight" size={20} aria-hidden />
-            </RoundIconButton>
           </div>
         </div>
 
-        {/* Calendar Body: px-24 py-16 + gap-8 — 그리드는 7×40px 고정으로 셀 인접면이 항상 flush */}
-        <div className="flex w-full flex-col items-center gap-2 px-6 py-4">
+        {/* Calendar Body: py-16 + gap-8 — 7×40px(280) 그리드는 items-center 로 가운데.
+            좌우 패딩은 두지 않는다(자연 여백 = (폭−280)/2; 328px 에서 24px = 기존 px-6 과 동일).
+            px 를 고정하면 부모가 좁을 때 오버플로 → 제거해 폭에 맞춰 여백이 줄게 함. */}
+        <div className="flex w-full flex-col items-center gap-2 py-4">
           {/* Day container — 일/월/.../토 */}
           <div className="grid grid-cols-[repeat(7,40px)]">
             {WEEKDAYS.map((d) => (
