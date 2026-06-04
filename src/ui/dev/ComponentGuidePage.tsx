@@ -62,6 +62,7 @@ import { Infobox } from '@/ui/common/composites/Infobox'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { CardList } from '@/ui/common/composites/CardList'
+import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 
 const NAV = [
@@ -106,6 +107,7 @@ const NAV = [
       { id: 'searchcondition', label: 'SearchCondition' },
       { id: 'listsectionheader', label: 'ListSectionHeader' },
       { id: 'cardlist', label: 'CardList' },
+      { id: 'filedownloadlist', label: 'FileDownloadList' },
       { id: 'buttongroup', label: 'ButtonGroup' },
       { id: 'bottomsheet', label: 'BottomSheet' },
       { id: 'alertmodal', label: 'AlertModal' },
@@ -1708,6 +1710,35 @@ export function ComponentGuidePage() {
                       setOpPageSize(n)
                       console.log('[guide] pageSize', n)
                     }}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── FileDownloadList ───────── */}
+          <Section
+            id="filedownloadlist"
+            title="FileDownloadList"
+            desc="Figma m_file_download(9300-36444) 1:1. 파일 행(파일명+용량 박스 + 다운로드 아이콘 버튼) + 구분선 + 일괄 다운로드 버튼. files / onDownloadAll 주입. onDownloadAll 미주입 시 일괄 버튼 미노출."
+          >
+            <Row label="기본 (2건 + 일괄 다운로드)">
+              <Specimen caption="다운로드 클릭 → console">
+                <div className="w-[328px]">
+                  <FileDownloadList
+                    files={[
+                      {
+                        name: '첨부파일명.hwp',
+                        size: '786KB',
+                        onDownload: () => console.log('[guide] download 1'),
+                      },
+                      {
+                        name: '첨부파일명.hwp',
+                        size: '786KB',
+                        onDownload: () => console.log('[guide] download 2'),
+                      },
+                    ]}
+                    onDownloadAll={() => console.log('[guide] download all')}
                   />
                 </div>
               </Specimen>

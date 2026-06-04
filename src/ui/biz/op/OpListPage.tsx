@@ -339,10 +339,12 @@ export function OpListPage() {
         </Button>
       </div>
 
-      {/* 맨 위로 FAB — BottomNav 위로 띄움 */}
+      {/* 맨 위로 FAB — BottomNav 위로 띄움. 스크롤 주체는 AppLayout 의 #app-scroll(main). */}
       <FloatingActionButton
         className="fixed bottom-20 right-4 z-40"
-        onTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        onTop={() =>
+          document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
+        }
       />
 
       {/* 상세필터 풀팝업 (필터 아이콘으로 open) */}

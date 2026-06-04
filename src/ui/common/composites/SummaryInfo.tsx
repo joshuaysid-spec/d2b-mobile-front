@@ -34,8 +34,7 @@ export interface SummaryInfoRow {
   value: React.ReactNode
 }
 
-export interface SummaryInfoProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
+export interface SummaryInfoProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   /** 상단 가로 뱃지 행 — <Badge> 들 묶음. overflow 시 우측 화살표 자동. */
   badges?: React.ReactNode
   /** title 위 작은 회색 텍스트 (17 Regular muted). */
@@ -46,6 +45,11 @@ export interface SummaryInfoProps
   actions?: React.ReactNode
   /** 하단 라벨/데이터 행. 라벨 좌측 muted, 값 우측 ink. */
   rows?: SummaryInfoRow[]
+  /**
+   * 축소 모드 — infolist(rows)를 숨겨 헤더 높이를 줄인다(Figma 9300-43029, 스크롤 시).
+   * 배지·subtitle·title 은 유지. 기본 false.
+   */
+  collapsed?: boolean
 }
 
 function SummaryInfo({
@@ -55,13 +59,11 @@ function SummaryInfo({
   title,
   actions,
   rows,
+  collapsed = false,
   ...props
 }: SummaryInfoProps) {
   return (
-    <div
-      className={cn('flex w-full flex-col gap-krds-8 p-krds-8', className)}
-      {...props}
-    >
+    <div className={cn('flex w-full flex-col gap-krds-8 p-krds-8', className)} {...props}>
       {badges && <BadgeSwipeRow>{badges}</BadgeSwipeRow>}
 
       {(subtitle || title || actions) && (
@@ -73,11 +75,7 @@ function SummaryInfo({
                   {subtitle}
                 </span>
               )}
-              {actions && (
-                <div className="flex shrink-0 items-center gap-krds-5">
-                  {actions}
-                </div>
-              )}
+              {actions && <div className="flex shrink-0 items-center gap-krds-5">{actions}</div>}
             </div>
           )}
           {title && (
@@ -88,18 +86,30 @@ function SummaryInfo({
         </div>
       )}
 
+      {/* infolist — collapsed 시 grid-rows 0fr 로 매끄럽게 접힘(즉시 unmount 점프 방지).
+          상위 flex gap 으로 인한 잔여 간격을 없애려 접힘 시 -mt 로 위 gap 을 상쇄. */}
       {rows && rows.length > 0 && (
-        <div className="flex w-full flex-col gap-1">
-          {rows.map((row, i) => (
-            <div key={i} className="flex items-baseline gap-krds-7">
-              <span className="shrink-0 text-[17px] leading-normal text-krds-text-muted">
-                {row.label}
-              </span>
-              <span className="min-w-px flex-1 text-right text-[17px] leading-normal text-krds-text-ink wrap-break-word tabular-nums">
-                {row.value}
-              </span>
+        <div
+          aria-hidden={collapsed}
+          className={cn(
+            'grid transition-all duration-200 ease-out motion-reduce:transition-none',
+            collapsed ? 'grid-rows-[0fr] -mt-krds-8 opacity-0' : 'grid-rows-[1fr] opacity-100',
+          )}
+        >
+          <div className="overflow-hidden">
+            <div className="flex w-full flex-col gap-1">
+              {rows.map((row, i) => (
+                <div key={i} className="flex items-baseline gap-krds-7">
+                  <span className="shrink-0 text-[17px] leading-normal text-krds-text-muted">
+                    {row.label}
+                  </span>
+                  <span className="min-w-px flex-1 text-right text-[17px] leading-normal text-krds-text-ink wrap-break-word tabular-nums">
+                    {row.value}
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       )}
     </div>
@@ -146,16 +156,13 @@ function BadgeSwipeRow({ children }: { children: React.ReactNode }) {
             aria-hidden
             className="h-full w-4"
             style={{
-              background:
-                'linear-gradient(to right, rgba(255,255,255,0), var(--background) 70%)',
+              background: 'linear-gradient(to right, rgba(255,255,255,0), var(--background) 70%)',
             }}
           />
           <button
             type="button"
             aria-label="다음 뱃지로 스크롤"
-            onClick={() =>
-              scrollerRef.current?.scrollBy({ left: 120, behavior: 'smooth' })
-            }
+            onClick={() => scrollerRef.current?.scrollBy({ left: 120, behavior: 'smooth' })}
             className="pointer-events-auto flex size-8 shrink-0 items-center justify-center rounded-full bg-background text-krds-text-ink"
           >
             <Icon name="ChevronRight" size={20} aria-hidden />

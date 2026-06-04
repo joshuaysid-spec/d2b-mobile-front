@@ -41,6 +41,7 @@ const REGISTRY = {
   Close: 'close',
   Delete: 'delete',
   Description: 'description',
+  Download: 'download',
   Edit: 'edit',
   Error: 'error',
   ExpandMore: 'expand_more',

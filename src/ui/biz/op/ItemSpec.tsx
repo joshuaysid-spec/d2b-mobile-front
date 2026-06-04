@@ -3,10 +3,11 @@
 //   + 안내문 + 더보기. 재고번호 행의 [보기] → 목록정보조회 팝업(P75/P76) 스텁.
 // 단가·금액은 비공개('- 원'). 데이터는 목업 — 추후 API(opService.getItemSpecs)로 대체.
 // 미반영(추후): + 플로팅 버튼 → 출력물 바텀시트(MUI-BD-01-P17, OZ리포트).
-import { useState } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
+import { PageTitle } from '@/ui/common/base/PageTitle'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
@@ -143,8 +144,8 @@ function buildRows(item: SpecItem, onView: (invtNo: string) => void): TableRow[]
   ]
 }
 
-// 품목 1건 카드 — 기본 4행 + 펼쳐보기/접기
-function SpecItemCard({
+// 품목 1건 카드 — 기본 4행 + 펼쳐보기/접기. memo: 부모(ItemSpec) 리렌더 시 스킵(item/onView 안정).
+const SpecItemCard = memo(function SpecItemCard({
   item,
   onView,
 }: {
@@ -152,7 +153,7 @@ function SpecItemCard({
   onView: (invtNo: string) => void
 }) {
   const [expanded, setExpanded] = useState(false)
-  const allRows = buildRows(item, onView)
+  const allRows = useMemo(() => buildRows(item, onView), [item, onView])
   const rows = expanded ? allRows : allRows.slice(0, DEFAULT_VISIBLE)
 
   return (
@@ -173,21 +174,22 @@ function SpecItemCard({
       </button>
     </div>
   )
-}
+})
 
 export function ItemSpec() {
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
 
   // 재고번호 보기 → 목록정보조회 팝업(P75/P76) 스텁
-  const handleView = (invtNo: string) => {
+  const handleView = useCallback((invtNo: string) => {
     console.log('[M04] 목록정보조회(P75/P76) 열기', invtNo)
-  }
+  }, [])
 
   const loaded = Math.min(page * pageSize, TOTAL)
 
   return (
     <div className="flex flex-col gap-krds-7 pb-6">
+      <PageTitle as="h2">품목명세서</PageTitle>
       <div className="px-4">
         <ListSectionHeader
           total={TOTAL}

@@ -93,10 +93,7 @@ const UtilityButton = ({ icon, label, onClick }: UtilityButtonProps) => {
     typeof icon === 'string' ? (
       <Icon name={icon as IconName} size={24} aria-hidden />
     ) : (
-      <span
-        aria-hidden
-        className="inline-flex h-[24px] w-[24px] items-center justify-center"
-      >
+      <span aria-hidden className="inline-flex h-[24px] w-[24px] items-center justify-center">
         {icon}
       </span>
     )
@@ -163,7 +160,7 @@ const FullPopup = ({
             'fixed inset-0 z-50 flex flex-col bg-background',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             'data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom',
-            'duration-300 ease-out',
+            'duration-100 ease-out',
             className,
           )}
         >

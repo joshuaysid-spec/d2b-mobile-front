@@ -7,10 +7,12 @@ import { useEffect, useRef, useState } from 'react'
 
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
+import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
+import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
-import { SummaryInfo, type SummaryInfoRow } from '@/ui/biz/op/SummaryInfo'
+import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
 import { DetailContent } from '@/ui/biz/op/DetailContent'
 import { ItemSpec } from '@/ui/biz/op/ItemSpec'
 import { VendorOpinion } from '@/ui/biz/op/VendorOpinion'
@@ -54,13 +56,34 @@ const STEPS: StepItem[] = [
 ]
 
 // ── 요약정보 (목업) ────────────────────────────────────────────────────────
-const SUMMARY_BADGES = ['물품', '수의계약']
 const SUMMARY_ROWS: SummaryInfoRow[] = [
   { label: '발주예정월', value: '2026-03' },
   { label: '발주기관', value: '화력총괄계약팀' },
   { label: '계약방법', value: '총액제' },
   { label: '예산금액', value: '11,616,000 원' },
 ]
+
+// 요약정보 액션 슬롯용 유틸 아이콘 버튼 (37×37, border)
+function SummaryUtilButton({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: IconName
+  label: string
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      className="flex size-[37px] shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-field bg-background text-krds-text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring active:opacity-70"
+    >
+      <Icon name={icon} size={24} aria-hidden />
+    </button>
+  )
+}
 
 export function OpDetailPage() {
   const [tab, setTab] = useState('detail')
@@ -71,11 +94,13 @@ export function OpDetailPage() {
   const scrollerRef = useRef<HTMLElement | Window | null>(null) // 맨위로 FAB 용
 
   useEffect(() => {
-    // 스크롤 컨테이너(AppLayout 의 main, overflow-y-auto) 를 조상에서 탐색.
+    // 실제로 스크롤되는 조상 탐색 — overflow-y 가 auto/scroll 이고 내용이 넘치는(scrollHeight>clientHeight) 요소.
+    // 조건 없이 overflow 스타일만 보면, AppLayout 의 main 처럼 overflow-y-auto 이지만 height 가
+    // 콘텐츠만큼 늘어나 실제론 window 가 스크롤되는 경우를 잘못 집어 scrollTo 가 무효가 된다.
     let node: HTMLElement | null | undefined = rootRef.current?.parentElement
     while (node) {
       const oy = getComputedStyle(node).overflowY
-      if (oy === 'auto' || oy === 'scroll') break
+      if ((oy === 'auto' || oy === 'scroll') && node.scrollHeight > node.clientHeight) break
       node = node.parentElement
     }
     const scroller: HTMLElement | Window = node ?? window
@@ -98,17 +123,40 @@ export function OpDetailPage() {
   }
 
   return (
-    <div ref={rootRef} className="flex w-full flex-col">
+    // overflow-anchor:none — 축소 시 infolist 높이 변화로 브라우저가 스크롤 위치를 보정(scroll anchoring)
+    //   하면서 임계값을 다시 넘나들어 collapse 가 진동(겹침·깜빡임)하던 문제 차단.
+    <div ref={rootRef} className="flex w-full flex-col [overflow-anchor:none]">
       {/* 상단 블록 — sticky 고정. 스크롤 시 요약정보가 축소(infolist 숨김)되며 높이 감소. */}
       <div className="sticky top-0 z-20 bg-white">
         <SummaryInfo
           collapsed={collapsed}
-          badges={SUMMARY_BADGES}
-          meta="판단번호 6000A"
+          badges={
+            <>
+              <Badge type="pastel" color="blue">
+                물품
+              </Badge>
+              <Badge type="pastel" color="blue">
+                수의계약
+              </Badge>
+            </>
+          }
+          subtitle="판단번호 6000A"
           title="'26년 K5방독면"
+          actions={
+            <>
+              <SummaryUtilButton
+                icon="NotificationAdd"
+                label="알림 추가"
+                onClick={() => console.log('[OpDetail] 알림 추가')}
+              />
+              <SummaryUtilButton
+                icon="Print"
+                label="인쇄"
+                onClick={() => console.log('[OpDetail] 인쇄')}
+              />
+            </>
+          }
           rows={SUMMARY_ROWS}
-          onNotify={() => console.log('[OpDetail] 알림 추가')}
-          onPrint={() => console.log('[OpDetail] 인쇄')}
         />
 
         {/* 진행 단계 */}

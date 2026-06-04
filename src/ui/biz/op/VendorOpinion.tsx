@@ -2,7 +2,7 @@
 // 제목(PageTitle) + 헤더(총건수 + 의견등록 버튼) + 의견 카드 목록(OpinionCard, 일부 답변 포함) + 더보기.
 // 동작(스텁): 의견등록→등록 팝업 / 카드 클릭→상세 팝업 / 비공개는 "비공개 글입니다" 안내.
 // 데이터는 목업 — 추후 API(opService.getOpinions)로 대체.
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { PageTitle } from '@/ui/common/base/PageTitle'
@@ -82,17 +82,28 @@ export function VendorOpinion() {
   const pageSize = 10
   const loaded = Math.min(page * pageSize, TOTAL)
 
-  const handleRegister = () => {
+  const handleRegister = useCallback(() => {
     console.log('[M05] 의견등록 팝업 호출')
-  }
-  const handleOpen = (item: OpinionItem) => {
+  }, [])
+  const handleOpen = useCallback((item: OpinionItem) => {
     // 비공개 정보는 작성자만 접근 — 안내 모달(스텁)
     if (!item.opinion.isPublic) {
       console.log('[M05] 비공개 글입니다.')
       return
     }
     console.log('[M05] 의견 상세보기 팝업', item.id)
-  }
+  }, [])
+
+  // 카드별 안정 콜백 — memo(OpinionCard) 가 부모 리렌더 시 스킵되도록 1회 계산.
+  const cards = useMemo(
+    () =>
+      MOCK.map((item) => ({
+        item,
+        onOpen: () => handleOpen(item),
+        onReply: () => console.log('[M05] 답변 상세 팝업', item.id),
+      })),
+    [handleOpen],
+  )
 
   return (
     <div className="flex flex-col gap-krds-7 pb-6">
@@ -110,13 +121,13 @@ export function VendorOpinion() {
 
       {/* 의견 카드 목록 */}
       <div className="flex flex-col gap-krds-7 px-4">
-        {MOCK.map((item) => (
+        {cards.map(({ item, onOpen, onReply }) => (
           <OpinionCard
             key={item.id}
             opinion={item.opinion}
             reply={item.reply}
-            onOpinionClick={() => handleOpen(item)}
-            onReplyClick={() => console.log('[M05] 답변 상세 팝업', item.id)}
+            onOpinionClick={onOpen}
+            onReplyClick={onReply}
           />
         ))}
       </div>
