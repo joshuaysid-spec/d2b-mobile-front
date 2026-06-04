@@ -74,8 +74,15 @@ const REGISTRY = {
 
 export type IconName = keyof typeof REGISTRY
 
-/** 채움(FILL 1)이 기본 디자인인 아이콘 — 나머지는 아웃라인(FILL 0). fill prop 으로 개별 오버라이드. */
-const FILLED_BY_DEFAULT = new Set<IconName>(['Favorite', 'Star'])
+/** 채움(FILL 1)이 기본 디자인인 아이콘 — 나머지는 아웃라인(FILL 0). fill prop 으로 개별 오버라이드.
+ *  별/하트(솔리드가 자연스러움) + 상태 아이콘(성공/경고/에러 — Empty·AlertModal 처럼 채움이 기본). */
+const FILLED_BY_DEFAULT = new Set<IconName>([
+  'CheckCircle',
+  'Error',
+  'Favorite',
+  'Star',
+  'Warning',
+])
 
 export interface IconProps {
   /** Material Symbols 아이콘 이름 (REGISTRY 키, PascalCase). 매칭 시 해당 글리프 렌더. */

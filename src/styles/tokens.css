@@ -142,6 +142,7 @@
   --krds-d2b-blue-border: #c1d1ee;      /* 입력창 기본 보더 */
   --krds-d2b-danger: #ff265e;           /* 에러 보더 */
   --krds-d2b-danger-subtle: #fff5f7;    /* 에러 배경 */
+  --krds-d2b-pink: #ff6d93;             /* Icon danger 데모 핑크 */
   --krds-d2b-disabled-bg: #d8d8d8;      /* 버튼 비활성 배경 */
   --krds-d2b-disabled-bg-soft: #f0f0f0; /* 입력/체크박스 비활성 배경 */
   --krds-d2b-disabled-border: #c6c6c6;  /* 입력/체크박스 비활성 보더 */
@@ -149,6 +150,7 @@
   --krds-d2b-ink: #1d1d1d;              /* 본문 입력 텍스트 */
   --krds-d2b-blue-faint: #ecf1fa;       /* 캘린더 today bg / range middle bg */
   --krds-d2b-blue-disabled: #b2c2df;    /* 캘린더 disabled/otherMonth 텍스트 */
+  --krds-d2b-blue-check: #8eb7ff;       /* Empty check(완료) 아이콘 */
   --krds-d2b-blue-pastel-bg: #f5f9ff;   /* Badge pastel blue 배경 */
   --krds-d2b-divider: #d1d7e0;          /* SectionTitle / 영역 구분선 (gray-20 #cdd1d5 와 다른 Figma 실측값) */
   --krds-d2b-step-blue: #3271e3;        /* StepBar 전용 파랑 (D2B blue #0054e9 와 다른 Figma 별도 톤) */
