@@ -27,6 +27,16 @@ export interface SearchFilterProps {
   onSearch: (value: SearchFilterValue) => void
   /** 초기화 클릭 시 추가 동작 (옵션) */
   onReset?: () => void
+  /**
+   * selectionField(`>`) 터치 시 호출 — 사용 페이지가 자체 팝업(예: 품목별/생산자 검색)을 열고,
+   * 결과 선택 시 commit(value) 로 해당 필드 값을 주입한다. (셸은 도메인·팝업을 모름)
+   * 주입 시 field.sheetItems(내장 바텀시트)보다 우선.
+   */
+  onSelectionClick?: (
+    key: string,
+    current: string,
+    commit: (value: string) => void,
+  ) => void
 }
 
 const SearchFilter = ({
@@ -37,6 +47,7 @@ const SearchFilter = ({
   defaultValue,
   onSearch,
   onReset,
+  onSelectionClick,
 }: SearchFilterProps) => {
   const [draft, setDraft] = React.useState<SearchFilterValue>(value ?? defaultValue)
 
@@ -99,6 +110,7 @@ const SearchFilter = ({
                   field={field}
                   value={draft[field.key]}
                   onChange={(v) => setField(field.key, v)}
+                  onSelectionClick={onSelectionClick}
                 />
               ))
             )}

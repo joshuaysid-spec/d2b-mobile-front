@@ -3,7 +3,7 @@
 //      + 카드 리스트(CardList, Card 재사용) + 더보기 + 맨위로 FAB.
 // 데이터/페이징/검색은 페이지가 소유. 목록은 목업(OP_ITEMS), 더보기·page size·빠른검색은 API 경계 스텁
 //   (Plan SC: 핸들러 실행 + console.log 로 변수 변화 확인). 상세필터 풀팝업(SearchFilter)은 기구현.
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
@@ -17,6 +17,8 @@ import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
+import { ItemSearchPopup } from '@/ui/biz/op/ItemSearchPopup'
+import { ProducerSearchPopup } from '@/ui/biz/op/ProducerSearchPopup'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
 import type { OpSearchFilter, OpPlanItem } from '@/types/op'
 
@@ -72,35 +74,20 @@ const OP_SEARCH: SearchFilterSchema = {
       fields: [
         { type: 'text', key: 'prcmPlanNm', label: '제목', placeholder: '제목을 입력하세요.' },
         { type: 'text', key: 'prcmNo', label: '판단번호', placeholder: '번호를 입력하세요.' },
-        // 선택필드(`>`) — 터치 시 선택 바텀시트. 목록은 이 화면에 인라인 하드코딩(별도 ts 분리 X).
-        // 추후 P71 품목별 검색 풀팝업으로 대체 가능(sheetItems 제거 + onClick 연계).
+        // 선택필드(`>`) — 터치 시 페이지가 검색 팝업을 연다(onSelectionClick).
+        //   품명     → 품목별 검색 (MUI-OP-01-P71)
+        //   발주기관 → 생산자 검색 (MUI-OP-01-P72)
         {
           type: 'selectionField',
           key: 'rprsItemNm',
           label: '품명',
           placeholder: '품명을 입력하세요.',
-          sheetTitle: '품명 선택',
-          sheetItems: [
-            { value: 'gasmask', label: 'K5 방독면' },
-            { value: 'boots', label: '전투화' },
-            { value: 'jacket', label: '야전상의' },
-            { value: 'helmet', label: '방탄헬멧' },
-            { value: 'vest', label: '방탄복' },
-          ],
         },
         {
           type: 'selectionField',
           key: 'deptCd',
           label: '발주기관',
           placeholder: '발주기관을 입력하세요.',
-          sheetTitle: '발주기관 선택',
-          sheetItems: [
-            { value: 'fire', label: '화력총괄계약팀' },
-            { value: 'it', label: '정보화팀' },
-            { value: 'logi', label: '군수사령부' },
-            { value: 'facility', label: '시설관리단' },
-            { value: 'security', label: '보안운영팀' },
-          ],
         },
         { type: 'text', key: 'userNm', label: '담당자', placeholder: '담당자를 입력하세요.' },
       ],
@@ -254,6 +241,18 @@ export function OpListPage() {
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
 
+  // selectionField → 검색 팝업(P71/P72). commit 은 클릭된 필드의 onChange(드래프트 주입) 보관.
+  const [itemSearchOpen, setItemSearchOpen] = useState(false) // P71 품목별 검색
+  const [producerSearchOpen, setProducerSearchOpen] = useState(false) // P72 생산자 검색
+  const commitRef = useRef<((value: string) => void) | null>(null)
+
+  // 품명(rprsItemNm)→P71 / 발주기관(deptCd)→P72. 선택 결과는 commitRef 로 필터 필드에 주입.
+  const handleSelectionClick = (key: string, _current: string, commit: (v: string) => void) => {
+    commitRef.current = commit
+    if (key === 'rprsItemNm') setItemSearchOpen(true)
+    else if (key === 'deptCd') setProducerSearchOpen(true)
+  }
+
   // ── API 경계 스텁 (백엔드 연동 시 services/op·queries/op 로 대체). console 로 동작 확인 ──
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)
@@ -354,6 +353,19 @@ export function OpListPage() {
         value={filter}
         defaultValue={DEFAULT_VALUE}
         onSearch={handleFilterSearch}
+        onSelectionClick={handleSelectionClick}
+      />
+
+      {/* 검색어 selectionField 연계 팝업 — 결과 선택 시 commitRef 로 해당 필드에 값 주입 */}
+      <ItemSearchPopup
+        open={itemSearchOpen}
+        onOpenChange={setItemSearchOpen}
+        onSelect={(v) => commitRef.current?.(v)}
+      />
+      <ProducerSearchPopup
+        open={producerSearchOpen}
+        onOpenChange={setProducerSearchOpen}
+        onSelect={(v) => commitRef.current?.(v)}
       />
     </OpPageLayout>
   )
