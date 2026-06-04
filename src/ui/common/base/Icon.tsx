@@ -63,6 +63,7 @@ const REGISTRY = {
   Search: 'search',
   Settings: 'settings',
   Share: 'share',
+  SoundDetection: 'sound_detection_loud_sound',
   Star: 'star',
   StarBorder: 'star',
   Tune: 'tune',
@@ -150,7 +151,7 @@ const Icon = React.forwardRef<HTMLSpanElement, IconProps>(
       alignItems: 'center',
       justifyContent: 'center',
       width: size,
-      height: size,
+      height: size, 
       lineHeight: 1,
     }
     if (color) wrapperStyle.color = color
