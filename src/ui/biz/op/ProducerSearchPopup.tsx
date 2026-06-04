@@ -1,7 +1,7 @@
 // 생산자 검색 (MUI-OP-01-P72, 문서 slide 58-59). 검색필터의 '발주기관' selectionField 에서 호출.
 // 생산자명으로 생산자 목록(CAGE 코드)을 조회 → 결과 클릭 시 생산자명을 호출 필드로 반환.
 // BottomSheet 기반(하단 시트). 목록은 목업(추후 API: opService.searchProducers 로 대체).
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
@@ -37,10 +37,15 @@ export function ProducerSearchPopup({
   const [prdctnNm, setPrdctnNm] = useState('')
   const [results, setResults] = useState<ProducerResult[] | null>(null) // null = 검색 전
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setPrdctnNm('')
     setResults(null)
-  }
+  }, [])
+
+  // 닫히면 다음 진입을 위해 초기화 (재진입 시 이전 검색 결과 잔존 방지)
+  useEffect(() => {
+    if (!open) reset()
+  }, [open, reset])
 
   // Like 검색(목업) — 추후 opService.searchProducers 로 대체.
   const handleSearch = () => {

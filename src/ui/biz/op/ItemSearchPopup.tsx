@@ -2,7 +2,7 @@
 // 요구년도(필수)·품명·재고번호·부품번호로 품목을 조회 → 결과 클릭 시 품명을 호출 필드로 반환.
 // BottomSheet 기반(하단 시트). 목록은 목업(추후 API: opService.searchItems 로 대체).
 // "가상 키패드"는 하이브리드 네이티브 영역 — 웹은 디바이스 기본 키보드 사용(별도 구현 X).
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 
 import { InputBox } from '@/ui/common/base/InputBox'
@@ -39,13 +39,18 @@ export function ItemSearchPopup({ open, onOpenChange, onSelect }: ItemSearchPopu
   const [prtsNo, setPrtsNo] = useState('')
   const [results, setResults] = useState<ItemResult[] | null>(null) // null = 검색 전
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setYear(String(dayjs().year()))
     setItemNm('')
     setInvtNo('')
     setPrtsNo('')
     setResults(null)
-  }
+  }, [])
+
+  // 닫히면 다음 진입을 위해 초기화 (재진입 시 이전 검색 결과 잔존 방지)
+  useEffect(() => {
+    if (!open) reset()
+  }, [open, reset])
 
   // Like 검색(목업) — 입력된 필드만 부분일치. 추후 opService.searchItems 로 대체.
   const handleSearch = () => {

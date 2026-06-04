@@ -46,6 +46,11 @@ export interface SummaryInfoProps
   actions?: React.ReactNode
   /** 하단 라벨/데이터 행. 라벨 좌측 muted, 값 우측 ink. */
   rows?: SummaryInfoRow[]
+  /**
+   * 축소 모드 — infolist(rows)를 숨겨 헤더 높이를 줄인다(Figma 9300-43029, 스크롤 시).
+   * 배지·subtitle·title 은 유지. 기본 false.
+   */
+  collapsed?: boolean
 }
 
 function SummaryInfo({
@@ -55,6 +60,7 @@ function SummaryInfo({
   title,
   actions,
   rows,
+  collapsed = false,
   ...props
 }: SummaryInfoProps) {
   return (
@@ -88,7 +94,7 @@ function SummaryInfo({
         </div>
       )}
 
-      {rows && rows.length > 0 && (
+      {rows && rows.length > 0 && !collapsed && (
         <div className="flex w-full flex-col gap-1">
           {rows.map((row, i) => (
             <div key={i} className="flex items-baseline gap-krds-7">

@@ -2,6 +2,8 @@
 // 의견 카드: 배지(공개/비공개) + 회사명(17 Medium) + 제목(19 Bold) + infolist(이름/입력일시).
 // 답변(reply): 분기 아이콘(ㄴ)으로 들여쓰기 + 카드(배지에 '답변' solid 추가) — 의견 바로 아래 표시.
 // rounded-12 + 옅은 그림자 카드(기존 Card 의 rounded-8 과 달라 셸을 직접 구성). 배지는 Badge 재사용.
+import { memo } from 'react'
+
 import { Badge } from '@/ui/common/base/Badge'
 import { Icon } from '@/ui/common/base/Icon'
 import { cn } from '@/utils/cn'
@@ -96,7 +98,7 @@ function CardShell({
   )
 }
 
-export function OpinionCard({
+export const OpinionCard = memo(function OpinionCard({
   opinion,
   reply,
   onOpinionClick,
@@ -117,5 +119,5 @@ export function OpinionCard({
       )}
     </div>
   )
-}
+})
 OpinionCard.displayName = 'OpinionCard'
