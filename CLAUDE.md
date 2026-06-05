@@ -263,6 +263,7 @@ import { Icon } from '@/ui/common/base/Icon'
 - 상단: `useCollapsibleHeader()` + sticky 블록(요약 `SummaryInfo` + 스텝 `StepBar` + 탭 `TabList`).
 - 탭 콘텐츠는 **탭별 컴포넌트로 분리**(같은 biz 폴더), 페이지는 `renderTabContent(tab)` switch 로 렌더. (예: `DetailContent`/`ItemSpec`/`VendorOpinion`/`ContractTerms`/`Attachment`)
 - 각 탭 콘텐츠 = `PageTitle`(탭명) + `Accordion`/`AccordionSection` + `Table`(rows 데이터 구동). 표·필드는 **데이터로 구동**(라벨/값을 배열로) — 국내/국외/공사 변형은 데이터만 갈아끼움.
+- **목록 `key` 는 안정적 고유 식별자(`id`·고유 문자열)를 쓴다. 배열 인덱스 `key={i}` 금지** — 동적 목록(API 연동) 에서 삽입/삭제/정렬 시 React 가 다른 항목을 같은 노드로 오인 재사용해 입력값·포커스·애니메이션이 꼬인다. 고유 ID 가 없으면 데이터 타입에 `id` 를 추가한다(예: `FileDownloadItem.id` — 파일명은 중복 가능). (전역 적용, 상세화면 한정 아님)
 
 **2) 기존 컴포넌트 재사용 — 신규 생성 최소화 (사용자 반복 지시).**
 화면/팝업은 반드시 기존 공통부터 조립한다: `FullPopup`·`BottomSheet`·`AlertModal`·`Accordion`·`Table`·`InputBox`·`TextArea`·`InputLabel`·`InputMessage`·`RadioButtonGroup`·`ButtonGroup`·`FileDownloadList`·`SummaryInfo`·`StepBar`·`TabList`. 신규는 **도메인 전용 조립물**(예: `OpinionCard`, `*Sheet`, `*Popup`)만. 신규 생성 전 `common/composites`·`base` 중복 확인 필수.
