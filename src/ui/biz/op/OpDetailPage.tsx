@@ -12,7 +12,9 @@ import { Button } from '@/ui/common/base/Button'
 import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
+import { NotifyApplySheet } from '@/ui/biz/op/NotifyApplySheet'
 import { DetailContent } from '@/ui/biz/op/DetailContent'
 import { ItemSpec } from '@/ui/biz/op/ItemSpec'
 import { VendorOpinion } from '@/ui/biz/op/VendorOpinion'
@@ -90,6 +92,11 @@ export function OpDetailPage() {
   // 스크롤 시 요약정보 축소(infolist 숨김). 상단 블록(요약+스텝+탭)은 sticky 로 고정.
   const [collapsed, setCollapsed] = useState(false)
   const [outputOpen, setOutputOpen] = useState(false) // + 버튼 → 출력물 바텀시트(P17)
+  const [notifyOpen, setNotifyOpen] = useState(false) // 알림 아이콘 → 알림신청 바텀시트(P10)
+
+  // 출력 버튼 — 서류 출력 확인 모달(MUI-BD-01-P14) 표시. 확인 시 OZ 리포트 호출(콘솔 스텁).
+  const [outputModalOpen, setOutputModalOpen] = useState(false)
+  const handleOutput = () => setOutputModalOpen(true)
   const rootRef = useRef<HTMLDivElement>(null)
   const scrollerRef = useRef<HTMLElement | Window | null>(null) // 맨위로 FAB 용
 
@@ -146,14 +153,10 @@ export function OpDetailPage() {
             <>
               <SummaryUtilButton
                 icon="NotificationAdd"
-                label="알림 추가"
-                onClick={() => console.log('[OpDetail] 알림 추가')}
+                label="알림 신청"
+                onClick={() => setNotifyOpen(true)}
               />
-              <SummaryUtilButton
-                icon="Print"
-                label="인쇄"
-                onClick={() => console.log('[OpDetail] 인쇄')}
-              />
+              <SummaryUtilButton icon="Print" label="출력" onClick={handleOutput} />
             </>
           }
           rows={SUMMARY_ROWS}
@@ -172,6 +175,23 @@ export function OpDetailPage() {
 
       {/* 탭 콘텐츠 (탭별 컴포넌트) */}
       {renderTabContent(tab)}
+
+      {/* 알림 아이콘 → 입찰공고 알림신청 바텀시트 (P10) */}
+      <NotifyApplySheet open={notifyOpen} onOpenChange={setNotifyOpen} />
+
+      {/* 출력 — 서류 출력 확인 모달 (MUI-BD-01-P14) */}
+      <AlertModal
+        open={outputModalOpen}
+        onOpenChange={setOutputModalOpen}
+        variant="info"
+        title="서류 출력 확인"
+        description="OZ 리포트가 실행되며, 로딩에 약간의 시간이 소요됩니다. 서류 출력을 진행할까요?"
+        secondaryAction={{ label: '취소' }}
+        primaryAction={{
+          label: '확인',
+          onClick: () => console.log('[출력] 서류 출력 확인 → OZ 리포트 호출 (loginYn = y 상태)'),
+        }}
+      />
 
       {/* 플로팅 버튼 — 맨위로(항상) + 추가(품목명세서 탭: 출력물 바텀시트) */}
       <FloatingActionButton

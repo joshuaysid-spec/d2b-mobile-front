@@ -7,6 +7,8 @@ import { useCallback, useMemo, useState } from 'react'
 import { Button } from '@/ui/common/base/Button'
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { OpinionCard, type OpinionData } from '@/ui/biz/op/OpinionCard'
+import { OpinionDetailPopup } from '@/ui/biz/op/OpinionDetailPopup'
+import { OpinionFormPopup } from '@/ui/biz/op/OpinionFormPopup'
 
 interface OpinionItem {
   id: string
@@ -82,16 +84,24 @@ export function VendorOpinion() {
   const pageSize = 10
   const loaded = Math.min(page * pageSize, TOTAL)
 
-  const handleRegister = useCallback(() => {
-    console.log('[M05] 의견등록 팝업 호출')
-  }, [])
+  // 팝업 — 등록/수정(P07) · 상세/답변상세(P06)
+  const [formOpen, setFormOpen] = useState(false)
+  const [detailOpen, setDetailOpen] = useState(false)
+  const [detailVariant, setDetailVariant] = useState<'opinion' | 'reply'>('opinion')
+
+  const handleRegister = useCallback(() => setFormOpen(true), [])
   const handleOpen = useCallback((item: OpinionItem) => {
     // 비공개 정보는 작성자만 접근 — 안내 모달(스텁)
     if (!item.opinion.isPublic) {
       console.log('[M05] 비공개 글입니다.')
       return
     }
-    console.log('[M05] 의견 상세보기 팝업', item.id)
+    setDetailVariant('opinion')
+    setDetailOpen(true)
+  }, [])
+  const handleReply = useCallback(() => {
+    setDetailVariant('reply')
+    setDetailOpen(true)
   }, [])
 
   // 카드별 안정 콜백 — memo(OpinionCard) 가 부모 리렌더 시 스킵되도록 1회 계산.
@@ -100,9 +110,9 @@ export function VendorOpinion() {
       MOCK.map((item) => ({
         item,
         onOpen: () => handleOpen(item),
-        onReply: () => console.log('[M05] 답변 상세 팝업', item.id),
+        onReply: () => handleReply(),
       })),
-    [handleOpen],
+    [handleOpen, handleReply],
   )
 
   return (
@@ -146,6 +156,21 @@ export function VendorOpinion() {
           더보기 ({loaded}/{TOTAL})
         </Button>
       </div>
+
+      {/* 의견등록/수정 (P07) */}
+      <OpinionFormPopup open={formOpen} onOpenChange={setFormOpen} />
+
+      {/* 의견 상세 / 답변 상세 (P06) — 수정 클릭 시 등록/수정(P07) 진입 */}
+      <OpinionDetailPopup
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        variant={detailVariant}
+        onEdit={() => {
+          setDetailOpen(false)
+          setFormOpen(true)
+        }}
+        onDelete={() => console.log('[M05] 삭제 확인 모달 (스텁)')}
+      />
     </div>
   )
 }

@@ -1,10 +1,13 @@
 // 조달계획 상세 - '상세내용' 탭 콘텐츠 (MUI-OP-01-M03, 문서 slide 22·24 [물품/용역]).
 // 제목(PageTitle) + 아코디언 4개(집행계획·판단내역·연관정보·문의처) with 테이블.
 // 데이터는 목업 — 추후 API(opService.getDetail)로 대체.
+import { useState } from 'react'
+
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { SelectionFieldBox } from '@/ui/common/base/SelectionFieldBox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { RelatedPlanSheet } from '@/ui/biz/op/RelatedPlanSheet'
 
 // ── 집행계획 (목업 — 문서 slide22 [물품/용역]) ──────────────────────────────
 const EXEC_ROWS: TableRow[] = [
@@ -65,10 +68,8 @@ const CONTACT_ROWS: TableRow[] = [
 ]
 
 export function DetailContent() {
-  // 연관 사전규격 보기 — P13 팝업 연계 자리(스텁)
-  const handleSpecView = () => {
-    console.log('[OpDetail] 연관 사전규격상세(P13) 열기')
-  }
+  // 연관정보 클릭 → 연관조달계획상세(MUI-OP-01-P12) 바텀시트
+  const [relatedOpen, setRelatedOpen] = useState(false)
 
   return (
     <>
@@ -85,12 +86,18 @@ export function DetailContent() {
           <Table rows={DECISION_ROWS} />
         </AccordionSection>
         <AccordionSection value="related" title="연관정보">
-          <SelectionFieldBox value="사전규격번호 2026-0001 공개" onClick={handleSpecView} />
+          <SelectionFieldBox
+            value="조달계획번호 2026-00590"
+            onClick={() => setRelatedOpen(true)}
+          />
         </AccordionSection>
         <AccordionSection value="contact" title="문의처">
           <Table rows={CONTACT_ROWS} />
         </AccordionSection>
       </Accordion>
+
+      {/* 연관조달계획상세 바텀시트 (P12) */}
+      <RelatedPlanSheet open={relatedOpen} onOpenChange={setRelatedOpen} />
     </>
   )
 }
