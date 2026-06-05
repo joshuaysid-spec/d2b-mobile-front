@@ -91,7 +91,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         )}
 
         {(rows || trailing) && (
-          <div className="flex w-full items-start gap-krds-7">
+          <div className="flex w-full items-center gap-krds-7">
             {rows && rows.length > 0 && (
               <div className="flex min-w-px flex-1 flex-col gap-1">
                 {rows.map((row, i) => (

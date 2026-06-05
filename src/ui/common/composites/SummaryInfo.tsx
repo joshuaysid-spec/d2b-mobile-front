@@ -120,11 +120,13 @@ SummaryInfo.displayName = 'SummaryInfo'
 // ─── badge swipe row (overflow 감지 + 우측 화살표 자동) ──────────────────────
 function BadgeSwipeRow({ children }: { children: React.ReactNode }) {
   const scrollerRef = React.useRef<HTMLDivElement>(null)
+  const [canScrollLeft, setCanScrollLeft] = React.useState(false)
   const [canScrollRight, setCanScrollRight] = React.useState(false)
 
   const updateState = React.useCallback(() => {
     const el = scrollerRef.current
     if (!el) return
+    setCanScrollLeft(el.scrollLeft > 1)
     setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1)
   }, [])
 
@@ -150,15 +152,30 @@ function BadgeSwipeRow({ children }: { children: React.ReactNode }) {
       >
         {children}
       </div>
+      {canScrollLeft && (
+        <div
+          className="pointer-events-none absolute inset-y-0 left-0 flex items-center justify-start pr-10"
+          style={{
+            background: 'linear-gradient(to left, rgba(255,255,255,0), var(--background) 60%)',
+          }}
+        >
+          <button
+            type="button"
+            aria-label="이전 뱃지로 스크롤"
+            onClick={() => scrollerRef.current?.scrollBy({ left: -120, behavior: 'smooth' })}
+            className="pointer-events-auto flex size-8 shrink-0 items-center justify-center rounded-full bg-background text-krds-text-ink"
+          >
+            <Icon name="ChevronLeft" size={20} aria-hidden />
+          </button>
+        </div>
+      )}
       {canScrollRight && (
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center">
-          <div
-            aria-hidden
-            className="h-full w-4"
-            style={{
-              background: 'linear-gradient(to right, rgba(255,255,255,0), var(--background) 70%)',
-            }}
-          />
+        <div
+          className="pointer-events-none absolute inset-y-0 right-0 flex items-center justify-end pl-10"
+          style={{
+            background: 'linear-gradient(to right, rgba(255,255,255,0), var(--background) 60%)',
+          }}
+        >
           <button
             type="button"
             aria-label="다음 뱃지로 스크롤"

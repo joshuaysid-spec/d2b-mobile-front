@@ -104,7 +104,11 @@ function Level({
   setOpen: (next: string[]) => void
 }) {
   const toggleIds = items.filter(hasKids).map((i) => i.id)
-  const wrapClass = cn('flex w-full flex-col', depth === 1 && 'gap-krds-7')
+  // 1depth 박스 사이 12px, 그 이하 서브 메뉴 사이 8px(krds-5).
+  const wrapClass = cn(
+    'flex w-full flex-col',
+    depth === 1 ? 'gap-krds-7' : 'gap-krds-5',
+  )
 
   if (toggleIds.length === 0) {
     return (
@@ -158,9 +162,10 @@ function Level({
 
 // ─── 스타일 (Figma 1:1) ──────────────────────────────────────────────────────
 function itemClass(depth: Depth) {
-  // raw AccordionItem 기본 border-b 제거. 1depth 만 박스 테두리.
+  // raw AccordionItem 기본 border-b 제거. 1depth 만 박스 테두리 + radius 12px.
+  // overflow-hidden 으로 trigger border-b 가 둥근 모서리 밖으로 새지 않게 클립.
   return depth === 1
-    ? 'border border-krds-border-disabled bg-background'
+    ? 'overflow-hidden rounded-[12px] border border-krds-border-divider bg-background shadow-[0px_0px_10px_0px_#172B4D1A]'
     : 'border-0'
 }
 
@@ -168,16 +173,27 @@ function triggerClass(depth: Depth) {
   // raw 기본(py-4 font-medium hover:underline) 오버라이드 + chevron 20px.
   const base =
     'py-0 hover:no-underline [&>svg]:size-5 [&>svg]:shrink-0 text-krds-text-ink'
-  return depth === 1
-    ? cn(base, 'h-[45px] px-krds-8 text-[19px] font-bold leading-normal')
-    : cn(base, 'h-[34px] text-[17px] font-normal leading-normal')
+  if (depth === 1)
+    return cn(base, 'h-[45px] px-krds-8 text-[19px] font-bold leading-normal')
+  // depth 2 는 bold, depth 3 는 normal.
+  return cn(
+    base,
+    'h-[34px] text-[17px] leading-normal',
+    depth === 2 ? 'font-bold' : 'font-normal',
+  )
 }
 
 function contentClass(depth: Depth) {
   // raw AccordionContent 내부 div 기본 pb-4 pt-0 → 좌측 16px 들여쓰기 + 패딩 조정.
+  // 1depth: 서브 메뉴 wrapper 상단에 divider(첫 서브 메뉴 위 경계) + 상하 12px 여백.
+  // 닫힌 상태에선 content 가 unmount 되어 border 가 안 보이므로 줄 겹침 없음.
+  // pr-4(16px): depth2 chevron 을 depth1 trigger(px-krds-8=16px) chevron 과 우측 정렬.
+  // ⚠️ raw 내부 div 가 `pt-0 pb-4` 를 박는데, twMerge 가 커스텀 `py-krds-7` 을
+  //    padding 그룹으로 인식 못 해 pt-0 이 안 지워진다. arbitrary 값(토큰 참조)으로
+  //    줘야 twMerge 가 충돌로 인식해 pt-0/pb-4 를 덮어쓴다.
   return depth === 1
-    ? 'pl-4 pr-0 pt-krds-3 pb-krds-5'
-    : 'pl-4 pr-0 pt-krds-3 pb-0'
+    ? 'border-t border-krds-border-divider pl-4 pr-4 py-[var(--krds-space-7)]'
+    : 'pl-2 pr-0 pt-krds-3 pb-0'
 }
 
 // ─── leaf 행 ─────────────────────────────────────────────────────────────────
@@ -189,13 +205,14 @@ function LeafRow({ item, depth }: { item: MenuItem; depth: Depth }) {
         onClick={item.onClick}
         className={cn(
           'flex h-[31px] w-full items-center gap-1 text-left',
-          'text-[15px] font-normal leading-normal text-krds-text-muted',
+          'text-[15px] font-normal leading-normal text-krds-text-ink',
           'focus-visible:bg-krds-bg-primary-faint focus-visible:outline-hidden',
         )}
       >
-        <span aria-hidden className="shrink-0">
-          ·
-        </span>
+        <span
+          aria-hidden
+          className="size-1 shrink-0 rounded-full bg-krds-border-disabled"
+        />
         <span className="min-w-px flex-1 truncate">{item.label}</span>
       </button>
     )
@@ -208,7 +225,7 @@ function LeafRow({ item, depth }: { item: MenuItem; depth: Depth }) {
         type="button"
         onClick={item.onClick}
         className={cn(
-          'flex h-[45px] w-full items-center border border-krds-border-disabled bg-background px-krds-8 text-left',
+          'flex h-[45px] w-full items-center rounded-[12px] border border-krds-border-divider bg-background px-krds-8 text-left shadow-[0px_0px_10px_0px_#172B4D1A]',
           'text-[19px] font-bold leading-normal text-krds-text-ink',
           'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-1',
         )}
@@ -225,7 +242,7 @@ function LeafRow({ item, depth }: { item: MenuItem; depth: Depth }) {
       onClick={item.onClick}
       className={cn(
         'flex h-[34px] w-full items-center text-left',
-        'text-[17px] font-normal leading-normal text-krds-text-ink',
+        'text-[17px] font-bold leading-normal text-krds-text-ink',
         'focus-visible:bg-krds-bg-primary-faint focus-visible:outline-hidden',
       )}
     >
