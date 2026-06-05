@@ -42,6 +42,7 @@
   --color-krds-text-muted: var(--krds-text-muted);
   --color-krds-text-subtle: var(--krds-text-subtle);
   --color-krds-text-disabled: var(--krds-text-disabled);
+  --color-krds-text-info: var(--krds-text-info);
   --color-krds-text-primary: var(--krds-text-primary);
   --color-krds-text-primary-active: var(--krds-text-primary-active);
   --color-krds-text-danger: var(--krds-text-danger);

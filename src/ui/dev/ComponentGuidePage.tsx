@@ -1562,15 +1562,14 @@ export function ComponentGuidePage() {
                   />
                 </div>
               </Specimen>
-              <Specimen caption="4항목 wrap">
-                <div className="w-[260px]">
+              <Specimen caption="3항목 wrap">
+                <div className="w-[328px]">
                   <CheckboxGroup
                     defaultValue={['a', 'c']}
                     items={[
                       { value: 'a', label: '항목 1' },
                       { value: 'b', label: '항목 2' },
                       { value: 'c', label: '항목 3' },
-                      { value: 'd', label: '항목 4' },
                     ]}
                   />
                 </div>
@@ -1609,13 +1608,14 @@ export function ComponentGuidePage() {
               </Specimen>
             </Row>
             <Row label="disabled">
-              <Specimen caption="개별 항목 비활성">
-                <div className="w-[260px]">
+              <Specimen caption="개별 항목 비활성 (비활성 / 비활성+선택)">
+                <div className="w-[328px]">
                   <CheckboxGroup
-                    defaultValue={['a']}
+                    defaultValue={['a', 'c']}
                     items={[
                       { value: 'a', label: '항목 1' },
                       { value: 'b', label: '항목 2', disabled: true },
+                      { value: 'c', label: '항목 3', disabled: true },
                     ]}
                   />
                 </div>

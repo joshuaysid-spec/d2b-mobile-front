@@ -66,7 +66,11 @@ const ListSectionHeader = React.forwardRef<HTMLDivElement, ListSectionHeaderProp
             aria-hidden
           />
         </SelectPrimitive.Trigger>
-        <SelectContent className="rounded-krds-8 border-krds-border-field bg-background shadow-krds-2">
+        {/* align="end": dropdown 우측 끝을 트리거(화살표) 우측에 맞춰 오른쪽 오버플로우 방지 */}
+        <SelectContent
+          align="end"
+          className="rounded-krds-8 border-krds-border-field bg-background shadow-krds-2"
+        >
           <SelectGroup>
             {pageSizeOptions.map((n) => (
               <SelectBoxItem key={n} value={String(n)}>

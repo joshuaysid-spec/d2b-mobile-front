@@ -60,6 +60,7 @@ const KRDS_COLOR_NAMES = [
   'krds-text-muted',
   'krds-text-subtle',
   'krds-text-disabled',
+  'krds-text-info',
   'krds-text-primary',
   'krds-text-danger',
   'krds-text-ink',

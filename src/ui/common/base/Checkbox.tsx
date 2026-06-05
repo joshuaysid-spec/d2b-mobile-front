@@ -35,7 +35,8 @@ const Checkbox = React.forwardRef<
       'has-data-[state=checked]:border-2 has-data-[state=checked]:bg-krds-bg-primary-subtle has-data-[state=checked]:font-bold',
       // 비활성
       'has-disabled:cursor-not-allowed has-disabled:border-krds-border-disabled has-disabled:bg-krds-bg-disabled-soft has-disabled:text-krds-text-disabled',
-      '[&:has(:disabled):has([data-state=checked])]:border-2 [&:has(:disabled):has([data-state=checked])]:border-krds-text-disabled [&:has(:disabled):has([data-state=checked])]:bg-krds-bg-disabled-soft',
+      // 비활성+선택 — border/check 아이콘(currentColor)/텍스트 모두 #8e8e8e(krds-text-disabled). 가장 높은 specificity 로 명시 고정.
+      '[&:has(:disabled):has([data-state=checked])]:border-2 [&:has(:disabled):has([data-state=checked])]:border-krds-text-disabled [&:has(:disabled):has([data-state=checked])]:bg-krds-bg-disabled-soft [&:has(:disabled):has([data-state=checked])]:text-krds-text-disabled',
       className,
     )}
   >

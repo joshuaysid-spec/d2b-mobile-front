@@ -34,6 +34,8 @@ export interface AccordionSectionProps {
   className?: string
   /** 트리거(타이틀 바) 추가 className — 글자/chevron 색 등 오버라이드(currentColor 상속). */
   triggerClassName?: string
+  /** 콘텐츠 영역 추가 className — 배경/텍스트 색 등 오버라이드(기본 bg-white). */
+  contentClassName?: string
   children: React.ReactNode
 }
 
@@ -46,6 +48,7 @@ const AccordionSection = ({
   flush = false,
   className,
   triggerClassName,
+  contentClassName,
   children,
 }: AccordionSectionProps) => (
   <RawAccordionItem value={value} className={cn('border-b-0', className)}>
@@ -73,7 +76,7 @@ const AccordionSection = ({
       />
     </RawAccordionTrigger>
     <RawAccordionContent
-      className={cn('flex flex-col gap-krds-8 bg-white pt-4', flush ? 'p-0' : 'p-krds-8')}
+      className={cn('flex flex-col gap-krds-8 bg-white pt-4', flush ? 'p-0' : 'p-krds-8', contentClassName)}
     >
       {children}
     </RawAccordionContent>
