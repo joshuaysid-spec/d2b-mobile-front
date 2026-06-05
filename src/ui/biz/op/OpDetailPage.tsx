@@ -3,8 +3,9 @@
 //   + 탭 콘텐츠(탭별 컴포넌트 분리: DetailContent / ItemSpec / VendorOpinion / ContractTerms / Attachment).
 // 데이터는 목업 — 추후 API(opService.getDetail)로 대체.
 // 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당이라 본문은 콘텐츠만 렌더.
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 
+import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Badge } from '@/ui/common/base/Badge'
@@ -89,50 +90,17 @@ function SummaryUtilButton({
 
 export function OpDetailPage() {
   const [tab, setTab] = useState('detail')
-  // 스크롤 시 요약정보 축소(infolist 숨김). 상단 블록(요약+스텝+탭)은 sticky 로 고정.
-  const [collapsed, setCollapsed] = useState(false)
+  // 스크롤 시 상단 블록(요약+스텝+탭) 축소 + sticky 동작 — 로직은 훅에서. (overflow-anchor 진동방지 포함)
+  const { collapsed, rootRef, scrollToTop } = useCollapsibleHeader()
   const [outputOpen, setOutputOpen] = useState(false) // + 버튼 → 출력물 바텀시트(P17)
   const [notifyOpen, setNotifyOpen] = useState(false) // 알림 아이콘 → 알림신청 바텀시트(P10)
 
   // 출력 버튼 — 서류 출력 확인 모달(MUI-BD-01-P14) 표시. 확인 시 OZ 리포트 호출(콘솔 스텁).
   const [outputModalOpen, setOutputModalOpen] = useState(false)
   const handleOutput = () => setOutputModalOpen(true)
-  const rootRef = useRef<HTMLDivElement>(null)
-  const scrollerRef = useRef<HTMLElement | Window | null>(null) // 맨위로 FAB 용
-
-  useEffect(() => {
-    // 실제로 스크롤되는 조상 탐색 — overflow-y 가 auto/scroll 이고 내용이 넘치는(scrollHeight>clientHeight) 요소.
-    // 조건 없이 overflow 스타일만 보면, AppLayout 의 main 처럼 overflow-y-auto 이지만 height 가
-    // 콘텐츠만큼 늘어나 실제론 window 가 스크롤되는 경우를 잘못 집어 scrollTo 가 무효가 된다.
-    let node: HTMLElement | null | undefined = rootRef.current?.parentElement
-    while (node) {
-      const oy = getComputedStyle(node).overflowY
-      if ((oy === 'auto' || oy === 'scroll') && node.scrollHeight > node.clientHeight) break
-      node = node.parentElement
-    }
-    const scroller: HTMLElement | Window = node ?? window
-    scrollerRef.current = scroller
-    const getTop = () =>
-      scroller === window ? window.scrollY : (scroller as HTMLElement).scrollTop
-    // 히스테리시스 — 펼침→접힘 72px, 접힘→펼침 16px (경계 떨림 방지).
-    const onScroll = () => {
-      const top = getTop()
-      setCollapsed((c) => (c ? top > 16 : top > 72))
-    }
-    onScroll()
-    scroller.addEventListener('scroll', onScroll, { passive: true })
-    return () => scroller.removeEventListener('scroll', onScroll)
-  }, [])
-
-  // 맨위로 — 스크롤 컨테이너를 최상단으로
-  const handleTop = () => {
-    scrollerRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
-  }
 
   return (
-    // overflow-anchor:none — 축소 시 infolist 높이 변화로 브라우저가 스크롤 위치를 보정(scroll anchoring)
-    //   하면서 임계값을 다시 넘나들어 collapse 가 진동(겹침·깜빡임)하던 문제 차단.
-    <div ref={rootRef} className="flex w-full flex-col [overflow-anchor:none]">
+    <div ref={rootRef} className="flex w-full flex-col">
       {/* 상단 블록 — sticky 고정. 스크롤 시 요약정보가 축소(infolist 숨김)되며 높이 감소. */}
       <div className="sticky top-0 z-20 bg-white">
         <SummaryInfo
@@ -196,7 +164,7 @@ export function OpDetailPage() {
       {/* 플로팅 버튼 — 맨위로(항상) + 추가(품목명세서 탭: 출력물 바텀시트) */}
       <FloatingActionButton
         className="fixed bottom-20 right-4 z-40"
-        onTop={handleTop}
+        onTop={scrollToTop}
         onPlus={tab === 'item' ? () => setOutputOpen(true) : undefined}
         plusLabel="출력물"
       />
