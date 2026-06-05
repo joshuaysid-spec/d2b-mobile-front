@@ -11,7 +11,7 @@
 //   disabled                     → 회색 bg + 회색 보더 + 클릭 불가
 //
 // 우측 화살표(>)는 항상 표시되며 텍스트 영역과 동일하게 onClick 트리거(필드 어디를 눌러도 열림).
-// onClear 제공 시 (value 있고 !disabled && !readOnly) X(Cancel) 버튼이 화살표 좌측에 노출.
+// onClear 제공 시 (value 있고 !disabled && !readOnly) X 버튼(연파랑 원 #C1D1EE + 흰 X)이 화살표 좌측에 노출.
 //
 // 사용 예:
 //   const [v, setV] = useState('')
@@ -105,9 +105,18 @@ const SelectionFieldBox = React.forwardRef<HTMLButtonElement, SelectionFieldBoxP
             type="button"
             aria-label="선택 초기화"
             onClick={onClear}
-            className="shrink-0 text-krds-text-disabled"
+            className="flex shrink-0 items-center justify-center"
           >
-            <Icon name="Cancel" size={20} aria-hidden />
+            {/* X = 연파랑 원(#C1D1EE=border-field) + 흰 X(#FFFFFF). 폰트 글리프는 단색이라 합성. */}
+            <span className="flex size-5 items-center justify-center rounded-full bg-krds-border-field">
+              <Icon
+                name="Close"
+                size={14}
+                weight={700}
+                className="text-white"
+                aria-hidden
+              />
+            </span>
           </button>
         )}
 
@@ -120,7 +129,7 @@ const SelectionFieldBox = React.forwardRef<HTMLButtonElement, SelectionFieldBoxP
           disabled={disabled || readOnly}
           onClick={isInteractive ? onClick : undefined}
           className={cn(
-            'shrink-0 bg-transparent p-0 outline-hidden',
+            'flex shrink-0 items-center justify-center bg-transparent p-0 outline-hidden',
             isInteractive ? 'cursor-pointer' : 'cursor-default',
             disabled && 'cursor-not-allowed',
           )}

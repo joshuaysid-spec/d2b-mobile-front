@@ -51,7 +51,7 @@ const SelectBoxTrigger = React.forwardRef<
     ref={ref}
     className={cn(
       'group flex h-12 w-full items-center gap-krds-3 rounded-krds-8 border px-krds-6',
-      'text-krds-body-md text-primary transition-colors',
+      'text-krds-body-md text-krds-text-ink transition-colors',
       'focus:outline-hidden focus-visible:outline-hidden',
       'data-placeholder:text-krds-text-disabled',
       !error && [
@@ -91,10 +91,10 @@ const SelectBoxItem = React.forwardRef<
     ref={ref}
     className={cn(
       'flex h-10 w-full cursor-default select-none items-center',
-      'rounded-krds-sm px-krds-6 text-krds-body-md text-primary outline-hidden',
+      'rounded-krds-sm px-krds-6 text-krds-body-md text-krds-text-ink outline-hidden',
       'data-highlighted:bg-krds-bg-primary-subtle',
-      'data-[state=checked]:bg-krds-bg-primary-subtle data-[state=checked]:font-bold',
-      'data-disabled:pointer-events-none data-disabled:text-krds-text-disabled',
+      'data-[state=checked]:bg-krds-bg-primary-subtle data-[state=checked]:font-bold data-[state=checked]:text-krds-text-primary',
+      'data-disabled:pointer-events-none data-disabled:bg-krds-bg-disabled-soft data-disabled:text-krds-text-disabled',
       className,
     )}
     {...props}

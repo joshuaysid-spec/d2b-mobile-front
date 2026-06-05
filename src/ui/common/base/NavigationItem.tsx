@@ -1,7 +1,7 @@
 // Figma m_navigation item(9300-28612) 1:1.
 // 리스트 행 — 좌측 19px Medium 텍스트 + 우측 ArrowForwardIos(20px) + min-h 56 + py 10.
 // state=default(bg white) / pressed(bg #ecf1fa = bg-primary-faint) — :active 로 처리.
-// borderTop / borderBottom 옵션 (1px #d1d7e0 = border-divider).
+// 버튼 상단 1px border(border-divider #d1d7e0). borderTop 옵션 켜지면 SectionDivider 로 대체(선 중복 방지).
 //
 // 사용 예:
 //   <NavigationItem onClick={() => goto('/foo')}>바로가기 이름</NavigationItem>
@@ -40,6 +40,8 @@ const NavigationItem = React.forwardRef<HTMLButtonElement, NavigationItemProps>(
         type="button"
         className={cn(
           'flex min-h-[56px] w-full items-center gap-krds-3 py-krds-6',
+          // 버튼 상단 1px border. borderTop 옵션이 SectionDivider 를 그릴 땐 빼서 선 중복(2px) 방지.
+          !borderTop && 'border-t border-krds-border-divider',
           'text-left text-[19px] font-medium leading-normal text-krds-text-ink',
           'bg-background active:bg-krds-bg-primary-faint',
           'focus-visible:outline-hidden focus-visible:bg-krds-bg-primary-faint',

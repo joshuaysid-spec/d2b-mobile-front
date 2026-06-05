@@ -1,6 +1,7 @@
 // Figma m_tag(9300-27119) 1:1.
-// 칩형 태그 — bg-white + 1px field 보더 + rounded-full · 15px Regular ink 텍스트.
-// closable prop 또는 onClose 핸들러 제공 시 우측 20px X(Cancel) 아이콘 노출 + 클릭 시 onClose 호출.
+// 칩형 태그 — 높이 39px · bg-white + 1px field 보더 + rounded-full · 15px Regular ink 텍스트.
+// closable prop 또는 onClose 핸들러 제공 시 우측 X 아이콘 노출 + 클릭 시 onClose 호출.
+//   X 아이콘 = 연파랑 원(#C1D1EE=krds-border-field) 안에 흰 X(#FFFFFF=text-white).
 //
 // 사용 예:
 //   <Tag>태그</Tag>
@@ -37,8 +38,8 @@ const Tag = React.forwardRef<HTMLSpanElement, TagProps>(
       <span
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center gap-krds-3 rounded-krds-full border bg-background',
-          'border-krds-border-field px-krds-6 py-krds-5',
+          'inline-flex h-[39px] items-center justify-center gap-krds-3 rounded-krds-full border bg-background',
+          'border-krds-border-field px-krds-6',
           'text-[15px] font-normal leading-normal text-krds-text-ink whitespace-nowrap',
           className,
         )}
@@ -51,9 +52,17 @@ const Tag = React.forwardRef<HTMLSpanElement, TagProps>(
             aria-label={closeLabel}
             onClick={onClose}
             disabled={!onClose}
-            className="shrink-0 text-krds-text-disabled-soft disabled:cursor-default"
+            className="shrink-0 disabled:cursor-default"
           >
-            <Icon name="Cancel" size={20} aria-hidden />
+            <span className="flex size-5 items-center justify-center rounded-full bg-krds-border-field">
+              <Icon
+                name="Close"
+                size={14}
+                weight={700}
+                className="text-white"
+                aria-hidden
+              />
+            </span>
           </button>
         )}
       </span>
