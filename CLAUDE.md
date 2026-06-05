@@ -244,6 +244,39 @@ import { Icon } from '@/ui/common/base/Icon'
 
 **import 방법:** `import type { Account } from '@/types/domain'`
 
+## 스크롤 시 축소되는 sticky 헤더 — 훅 재사용
+
+스크롤하면 상단 요약/헤더가 축소(collapse)되며 sticky 로 고정되는 동작은 **`src/hooks/useCollapsibleHeader.ts`** 에 있다. **페이지에서 직접 다시 구현하지 말고 이 훅에서 가져다 쓴다.**
+
+- 반환 `{ collapsed, rootRef, scrollToTop }`:
+  - `collapsed` → `<SummaryInfo collapsed={collapsed} />` 등 축소 대상에 전달
+  - `rootRef` → 페이지 루트 `<div ref={rootRef}>` 에 부착(스크롤 컨테이너 탐지 기준점)
+  - `scrollToTop` → 맨위로 FAB `onTop`
+- **마크업(요약+스텝+탭 sticky 블록)은 페이지가 직접 소유**하고, 갈라지면 안 되는 **로직만** 훅에서 공유한다(국내/국외·사전규격 등 여러 상세 화면 공통 — 래퍼 컴포넌트 한 겹 안 씌움).
+- 훅이 ① 실제 스크롤 컨테이너(`main#app-scroll` 또는 window) 탐지 ② 히스테리시스 임계로 collapse 토글 ③ **scroll-anchoring 진동 차단**(`rootRef` 에 `overflow-anchor:none` 자동 적용)까지 처리하므로 페이지에 따로 쓰지 않는다.
+  - 스크롤 주체가 `main#app-scroll` 인 이유는 `AppLayout`(내부 스크롤 셸) 참고 — `window.scrollTo` 금지.
+- 적용 예: `src/ui/biz/op/OpDetailPage.tsx`.
+
+## 상세(detail) 화면 & 팝업 컨벤션 — 조달계획 상세(M03~) 작업에서 확립
+
+**1) 다중 탭 상세 화면 구조.**
+- 상단: `useCollapsibleHeader()` + sticky 블록(요약 `SummaryInfo` + 스텝 `StepBar` + 탭 `TabList`).
+- 탭 콘텐츠는 **탭별 컴포넌트로 분리**(같은 biz 폴더), 페이지는 `renderTabContent(tab)` switch 로 렌더. (예: `DetailContent`/`ItemSpec`/`VendorOpinion`/`ContractTerms`/`Attachment`)
+- 각 탭 콘텐츠 = `PageTitle`(탭명) + `Accordion`/`AccordionSection` + `Table`(rows 데이터 구동). 표·필드는 **데이터로 구동**(라벨/값을 배열로) — 국내/국외/공사 변형은 데이터만 갈아끼움.
+
+**2) 기존 컴포넌트 재사용 — 신규 생성 최소화 (사용자 반복 지시).**
+화면/팝업은 반드시 기존 공통부터 조립한다: `FullPopup`·`BottomSheet`·`AlertModal`·`Accordion`·`Table`·`InputBox`·`TextArea`·`InputLabel`·`InputMessage`·`RadioButtonGroup`·`ButtonGroup`·`FileDownloadList`·`SummaryInfo`·`StepBar`·`TabList`. 신규는 **도메인 전용 조립물**(예: `OpinionCard`, `*Sheet`, `*Popup`)만. 신규 생성 전 `common/composites`·`base` 중복 확인 필수.
+- **팝업 종류 선택**: 선택/검색/짧은 입력 → `BottomSheet` · 상세/긴 폼(여러 섹션) → `FullPopup` · 단순 확인(예/아니오) → `AlertModal`.
+- 읽기전용 표시 필드는 `InputBox`/`TextArea` 에 `disabled` 로 재사용.
+- 액션 버튼은 시트 `footer` 슬롯에 둔다(스크롤 본문에 두면 overflow 로 하단 border 잘림).
+
+**3) 목업 + API 경계 스텁.**
+데이터는 파일 내 목업 상수, 핸들러는 `console.log` + `// 추후 API: opService.xxx` 주석으로 경계 표시. (실제 fetch/라우팅 미구현 자리를 명확히)
+
+**4) 유사 화면 = 페이지를 함부로 나누지 않는다 (API 다른 건 분리 사유 아님).**
+- **같은 구조 + API/값/라벨만 다름**(국내·국외 조달계획상세) → **1 페이지** + `type` 파라미터로 service 선택 + config 로 라벨/탭 차이 흡수. 페이지 복제 금지.
+- **다른 도메인 + 레이아웃만 유사**(조달계획상세 vs 사전규격상세) → **페이지 분리하되 로직은 공유**: 갈라지면 안 되는 동작(`useCollapsibleHeader`)은 훅으로, 마크업은 각 페이지가 소유. 래퍼 셸 컴포넌트로 한 겹 더 씌우지 않는다(과잉 prop 방지).
+
 ## PDCA / 문서
 
 - bkit PDCA 워크플로우 사용. 기능별 plan/design 문서: `docs/01-plan/features/`, `docs/02-design/features/`.
