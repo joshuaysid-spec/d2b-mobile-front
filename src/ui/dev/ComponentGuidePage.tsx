@@ -3256,12 +3256,12 @@ export function ComponentGuidePage() {
           >
             <Row label="기본 / 알림 dot">
               <Specimen caption="hasNotification={false} (기본)">
-                <div className="w-[360px] overflow-hidden rounded-krds-8 border border-border [&>nav]:static! [&>nav]:w-full! [&>nav]:translate-x-0!">
+                <div className="w-[360px] [&>nav]:static! [&>nav]:w-full! [&>nav]:translate-x-0!">
                   <BottomNav />
                 </div>
               </Specimen>
               <Specimen caption="hasNotification={true} — 알림 탭 빨강 dot">
-                <div className="w-[360px] overflow-hidden rounded-krds-8 border border-border [&>nav]:static! [&>nav]:w-full! [&>nav]:translate-x-0!">
+                <div className="w-[360px] [&>nav]:static! [&>nav]:w-full! [&>nav]:translate-x-0!">
                   <BottomNav hasNotification />
                 </div>
               </Specimen>
@@ -3276,7 +3276,7 @@ export function ComponentGuidePage() {
           >
             <Row label="기본 (아코디언 펼침 + SNS 5종)">
               <Specimen caption="defaultAccordionOpen + snsLinks 5개">
-                <div className="w-[360px] overflow-hidden rounded-krds-8 border border-border">
+                <div className="w-[360px]">
                   <Footer
                     snsLinks={[
                       { type: 'instagram', href: '#' },
@@ -3291,7 +3291,7 @@ export function ComponentGuidePage() {
             </Row>
             <Row label="아코디언 접힘 (defaultAccordionOpen={false})">
               <Specimen caption="유관기관 목록 접힌 상태로 시작">
-                <div className="w-[360px] overflow-hidden rounded-krds-8 border border-border">
+                <div className="w-[360px]">
                   <Footer defaultAccordionOpen={false} />
                 </div>
               </Specimen>

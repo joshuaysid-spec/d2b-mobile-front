@@ -44,7 +44,7 @@ interface BottomNavProps {
 // NOTE(스캐폴드): '고객센터' 라우트가 아직 없어 ROUTES.HOME 으로 둠. 확정 시 교체할 것.
 const DEFAULT_ITEMS: NavItem[] = [
   { id: 'home', label: '홈', iconName: 'Home', to: ROUTES.HOME },
-  { id: 'notification', label: '알림', iconName: 'Notifications', to: ROUTES.NOTIFICATION },
+  { id: 'notification', label: '알림', iconName: 'NotificationsActive', to: ROUTES.NOTIFICATION },
   // headset_mic 는 REGISTRY 미등록 → children 으로 직접 import (size=24 명시).
   { id: 'support', label: '고객센터', icon: <Icon name="HeadsetMic" size={24} />, to: ROUTES.HOME },
   // location_away 는 MUI 에 없어 Person 으로 대체 (마이페이지 인물 아이콘).
@@ -71,11 +71,11 @@ function NavTab({ item, showDot }: { item: NavItem; showDot: boolean }) {
       }
     >
       <span className="relative inline-flex">
-        <Icon name={item.iconName} size={24} aria-hidden>
+        <Icon name={item.iconName} size={27} aria-hidden>
           {item.icon}
         </Icon>
         {showDot && (
-          <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-krds-feedback-danger">
+          <span className="absolute right-0 top-0 size-[11px] rounded-full border-2 border-white bg-krds-feedback-danger">
             <span className="sr-only">새 알림 있음</span>
           </span>
         )}
@@ -96,7 +96,7 @@ function BottomNav({
       className={cn(
         'fixed bottom-0 left-1/2 z-10 flex w-full max-w-[480px] -translate-x-1/2',
         'border-t border-krds-border-divider bg-white pb-[env(safe-area-inset-bottom)]',
-        'shadow-[0_-5px_5px_rgba(23,43,77,0.1)]',
+        'shadow-[0px_-5px_10px_rgba(23,43,77,0.1)]',
       )}
     >
       {items.map((item) => (

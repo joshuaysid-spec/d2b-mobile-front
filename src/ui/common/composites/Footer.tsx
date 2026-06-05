@@ -25,14 +25,19 @@
 //   | defaultAccordionOpen | boolean                       | true                            |
 //   | className            | string                        | -                               |
 //
-// SNS 브랜드 SVG 는 우리 REGISTRY 에 없음 → 임시로 Material `Share` 아이콘 + aria-label 로 처리.
-// 실제 브랜드 SVG 확정 시 SNS_ICON 매핑의 children 만 교체하면 됨(아래 TODO 참고).
+// SNS 버튼은 브랜드 SVG(assets/images: instagram/youtube/imgX/facebook/blog)를 SNS_META 로 매핑.
 import * as React from 'react'
 
 import { Logo } from '@/ui/common/base/Logo'
 import { Icon } from '@/ui/common/base/Icon'
 import { SectionDivider } from '@/ui/common/base/SectionDivider'
 import { cn } from '@/utils/cn'
+import branchIcon from '@/assets/images/branch.svg'
+import instagramIcon from '@/assets/images/instagram.svg'
+import youtubeIcon from '@/assets/images/youtube.svg'
+import xIcon from '@/assets/images/imgX.svg'
+import facebookIcon from '@/assets/images/facebook.svg'
+import blogIcon from '@/assets/images/blog.svg'
 
 export interface FooterLink {
   label: string
@@ -79,14 +84,13 @@ const DEFAULT_POLICY_LINKS: FooterLink[] = [
 // 개인정보처리방침은 Figma 상 Bold 강조.
 const EMPHASIZED_POLICY = '개인정보처리방침'
 
-// SNS 메타 — 브랜드 SVG 부재로 현재는 aria-label 만 정확하고 아이콘은 임시 Material.
-// TODO(브랜드 에셋): 실제 SVG 확정 시 아래 render 의 <Icon> children 을 브랜드 SVG 로 교체.
-const SNS_META: Record<FooterSnsType, { label: string }> = {
-  instagram: { label: '인스타그램' },
-  youtube: { label: '유튜브' },
-  x: { label: 'X (트위터)' },
-  facebook: { label: '페이스북' },
-  blog: { label: '네이버 블로그' },
+// SNS 메타 — 브랜드 SVG 매핑(label = aria-label, icon = 브랜드 SVG).
+const SNS_META: Record<FooterSnsType, { label: string; icon: string }> = {
+  instagram: { label: '인스타그램', icon: instagramIcon },
+  youtube: { label: '유튜브', icon: youtubeIcon },
+  x: { label: 'X (트위터)', icon: xIcon },
+  facebook: { label: '페이스북', icon: facebookIcon },
+  blog: { label: '네이버 블로그', icon: blogIcon },
 }
 
 // --- 내부 인라인 컴포넌트 (별도 파일 분리 금지) -----------------------------
@@ -95,13 +99,8 @@ const SNS_META: Record<FooterSnsType, { label: string }> = {
 function RelatedSiteRow({ link }: { link: FooterLink }) {
   const content = (
     <>
-      {/* branch 아이콘 대체: 12px 영역의 작은 분기 마커 (REGISTRY 미등록 → 데코 dot) */}
-      <span
-        aria-hidden
-        className="flex h-3 w-3 shrink-0 items-center justify-center"
-      >
-        <span className="h-1 w-1 rounded-full bg-krds-text-muted" />
-      </span>
+      {/* branch 분기 마커 (branch.svg, 12×12) */}
+      <img src={branchIcon} alt="" width={12} height={12} aria-hidden className="shrink-0" />
       <span className="flex-1 text-[17px] font-medium leading-snug text-krds-text-ink">
         {link.label}
       </span>
@@ -131,7 +130,7 @@ function RelatedSiteRow({ link }: { link: FooterLink }) {
   )
 }
 
-/** SNS 원형 버튼. 브랜드 SVG 부재 → 임시 Material 아이콘 + 정확한 aria-label. */
+/** SNS 원형 버튼. 브랜드 SVG + 정확한 aria-label. */
 function SnsButton({ link }: { link: FooterSnsLink }) {
   const meta = SNS_META[link.type]
   return (
@@ -142,8 +141,7 @@ function SnsButton({ link }: { link: FooterSnsLink }) {
       rel="noopener noreferrer"
       className="flex h-10 w-10 items-center justify-center rounded-full border border-krds-border-divider bg-krds-bg-primary-faint text-krds-text-ink"
     >
-      {/* TODO(브랜드 에셋): 실제 SNS 브랜드 SVG 로 교체. 현재는 임시 Material 아이콘. */}
-      <Icon name="Share" size={20} aria-hidden />
+      <img src={meta.icon} alt="" width={45} height={45} aria-hidden className="shrink-0" />
     </a>
   )
 }
@@ -221,19 +219,26 @@ const Footer = ({
         {/* 2. 기관 정보 */}
         <div className="flex flex-col gap-2 text-[17px] leading-relaxed text-krds-text-ink">
           <p className="break-keep">
-            <span className="font-bold">본청</span>{' '}
+            <span className="font-bold">본청</span>
+            <br />
             <span className="font-normal">
-              (35222) 대전광역시 서구 월평중로 21 방위사업청
+              (35222)
+              <br />
+              대전광역시 서구 월평중로 21 방위사업청
             </span>
           </p>
           <p className="break-keep">
-            <span className="font-bold">분청</span>{' '}
+            <span className="font-bold">분청</span>
+            <br />
             <span className="font-normal">
-              (13809) 경기도 과천시 관문로 47 정부과천청사 3동, 4동
+              (13809)
+              <br />
+              경기도 과천시 관문로 47 정부과천청사 3동, 4동
             </span>
           </p>
           <p className="break-keep">
-            <span className="font-bold">대표전화 1577-1118</span>{' '}
+            <span className="font-bold">대표전화 1577-1118</span>
+            <br />
             <span className="font-normal">
               (고객지원 내선 1번, 평일 : 09:00 ~ 18:00)
             </span>
