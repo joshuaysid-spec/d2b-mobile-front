@@ -62,6 +62,8 @@ import { Infobox } from '@/ui/common/composites/Infobox'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { CardList } from '@/ui/common/composites/CardList'
+import { CarouselIndicator } from '@/ui/common/composites/CarouselIndicator'
+import { Carousel } from '@/ui/common/composites/Carousel'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 
@@ -107,6 +109,8 @@ const NAV = [
       { id: 'searchcondition', label: 'SearchCondition' },
       { id: 'listsectionheader', label: 'ListSectionHeader' },
       { id: 'cardlist', label: 'CardList' },
+      { id: 'carouselindicator', label: 'CarouselIndicator' },
+      { id: 'carousel', label: 'Carousel' },
       { id: 'filedownloadlist', label: 'FileDownloadList' },
       { id: 'buttongroup', label: 'ButtonGroup' },
       { id: 'bottomsheet', label: 'BottomSheet' },
@@ -184,6 +188,7 @@ export function ComponentGuidePage() {
   const [toastShortOpen, setToastShortOpen] = useState(false)
   const [toastLongOpen, setToastLongOpen] = useState(false)
   const [toastManualOpen, setToastManualOpen] = useState(false)
+  const [carouselPage, setCarouselPage] = useState(1)
 
   // 좌측 목차(메뉴) 그룹별 접힘/펼침 — 기본 전체 접힘으로 메뉴를 짧게.
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({})
@@ -1806,6 +1811,51 @@ export function ComponentGuidePage() {
               <Specimen caption="loading">
                 <div className="w-[328px]">
                   <CardList items={[]} loading loadingCount={2} />
+                </div>
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── CarouselIndicator ───────── */}
+          <Section
+            id="carouselindicator"
+            title="CarouselIndicator"
+            desc="Figma carousel(7077:85329 / 7077:85434). 현재/전체 숫자(현재=primary) + 이전/다음 화살표. 메인 홈 주요서비스·배너 공통."
+          >
+            <Row label="목업 (정적 · 핸들러 없음 → 화살표 비활성)">
+              <Specimen caption="1 / 2">
+                <CarouselIndicator current={1} total={2} />
+              </Specimen>
+            </Row>
+            <Row label="인터랙티브 (이전/다음)">
+              <Specimen caption={`${carouselPage} / 3`}>
+                <CarouselIndicator
+                  current={carouselPage}
+                  total={3}
+                  onPrev={() => setCarouselPage((p) => Math.max(1, p - 1))}
+                  onNext={() => setCarouselPage((p) => Math.min(3, p + 1))}
+                />
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── Carousel ───────── */}
+          <Section
+            id="carousel"
+            title="Carousel"
+            desc="scroll-snap 스와이프 + 화살표(CarouselIndicator 통합). pages(ReactNode[]) 주입. 메인 홈 서비스·배너."
+          >
+            <Row label="스와이프 / 화살표 (3페이지)">
+              <Specimen caption="드래그 또는 ◀▶">
+                <div className="w-[328px]">
+                  <Carousel
+                    ariaLabel="데모"
+                    pages={['A', 'B', 'C'].map((t) => (
+                      <div className="flex h-24 items-center justify-center rounded-2xl bg-krds-bg-primary-faint text-[22px] font-bold text-krds-action-primary">
+                        페이지 {t}
+                      </div>
+                    ))}
+                  />
                 </div>
               </Specimen>
             </Row>

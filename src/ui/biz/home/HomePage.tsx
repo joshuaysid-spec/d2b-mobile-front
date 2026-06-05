@@ -1,44 +1,235 @@
-import { Link } from 'react-router-dom'
+// 앱 메인 홈(MUI-MS-01-M07, 로그인 전). Design Ref: home-m07.design.
+// 구성(위→아래): 빠른조달검색 + 주요 서비스 바로가기 + 공지사항 + 배너 + 처음 방문 안내 + Footer + 맨위로 FAB.
+// Header/BottomNav 는 AppLayout 셸이 제공 → 본 페이지는 콘텐츠만 렌더.
+//
+// 데이터는 목업 상수, 동작은 API/라우팅 경계 스텁(console.log + '// 추후 …' 주석) 또는 기존 라우트 이동.
+// 캐러셀은 목업(정적), 이미지는 placeholder. 검색필터는 기존 SearchFilter(FullPopup) 재사용.
+import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { Icon, type IconName } from '@/ui/common/base/Icon'
-import { PageContainer } from '@/ui/common/layout/PageContainer'
+import { Footer } from '@/ui/common/composites/Footer'
+import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
+import {
+  QuickProcurementSearch,
+  type SearchTarget,
+} from '@/ui/biz/home/QuickProcurementSearch'
+import {
+  ServiceShortcutGrid,
+  type ServiceShortcut,
+} from '@/ui/biz/home/ServiceShortcutGrid'
+import {
+  HomeNoticeSection,
+  type NoticeItem,
+  type NoticeTab,
+} from '@/ui/biz/home/HomeNoticeSection'
+import { HomeBanner, type BannerSlide } from '@/ui/biz/home/HomeBanner'
+import { FirstVisitGuide, type GuideItem } from '@/ui/biz/home/FirstVisitGuide'
+import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
 import { ROUTES } from '@/constants/routes'
 
-// 홈 = 링크 허브. 각 링크 클릭 시 해당 빈 페이지로 이동한다.
-const MENU_LINKS: ReadonlyArray<{
-  label: string
-  desc: string
-  to: string
-  iconName: IconName
-}> = [
-  { label: '조달계획', desc: '조달계획 목록·등록', to: ROUTES.OP, iconName: 'Description' },
-  { label: '입찰공고', desc: '입찰공고 조회', to: ROUTES.NOTICE, iconName: 'Campaign' },
-  { label: '알림', desc: '알림 내역 확인', to: ROUTES.NOTIFICATION, iconName: 'Notifications' },
-  { label: '마이페이지', desc: '내 정보 및 설정', to: ROUTES.MYPAGE, iconName: 'Person' },
+// ── 검색필터 schema (빠른조달검색 필터 버튼 → 풀팝업). 최소 구성, 추후 입찰공고 필터로 확장 ──
+const HOME_FILTER: SearchFilterSchema = {
+  title: '검색필터',
+  sections: [
+    {
+      key: 'taskSe',
+      title: '업무구분',
+      fields: [
+        {
+          type: 'checkbox',
+          key: 'taskSe',
+          options: [
+            { value: 'all', label: '전체' },
+            { value: 'goods', label: '물품' },
+            { value: 'service', label: '용역' },
+            { value: 'construction', label: '공사' },
+            { value: 'foreign', label: '외자' },
+          ],
+        },
+      ],
+    },
+  ],
+}
+const DEFAULT_FILTER: SearchFilterValue = { taskSe: ['all'] }
+
+// ── 목업 데이터 (추후 API 로 대체) ──────────────────────────────────────────
+// 서비스 바로가기 — 페이지당 6개(3열×2행). 7개 이상이면 캐러셀로 2페이지(1/2).
+const SERVICE_LABELS = [
+  '조달',
+  '입찰공고',
+  '개찰',
+  '계약',
+  '실적증명서',
+  '국내/국외 조달원 등록증',
+  'SMS서비스 신청',
+  '자료실',
+  '업무캘린더',
+]
+
+const NOTICE_SAMPLE: NoticeItem[] = [
+  {
+    id: 'n1',
+    title:
+      "'26년도 현존전력 성능 극대화 「해군전술 C4I체계(KNCCS) 전투효율성 개선사업」 규격입찰요청서(안) 사전 공개",
+    date: '2026-03-11',
+  },
+  {
+    id: 'n2',
+    title:
+      "'26년 대공표적기 용역업체 적합성평가(미스트랄, 신궁지원용역)를 위한 신청 안내문",
+    date: '2026-03-09',
+  },
+  {
+    id: 'n3',
+    title: '5.56mm 총류탄 발사약통 물품 구매 요구서(안) 사전 공개',
+    date: '2026-03-09',
+  },
+]
+
+const NOTICE_TABS: NoticeTab[] = [
+  { value: 'dapa', label: '방위사업청', items: NOTICE_SAMPLE },
+  { value: 'unit', label: '수요부대', items: NOTICE_SAMPLE },
+  { value: 'general', label: '일반', items: NOTICE_SAMPLE },
+]
+
+// 배너 — 통이미지 여러 장(목업, 에셋 미제공 → placeholder). 스와이프/화살표로 전환.
+const BANNERS: BannerSlide[] = [
+  { id: 'b1', alt: '방위사업청 익명신고센터 안내 배너' },
+  { id: 'b2', alt: '국방조달 안내 배너' },
+  { id: 'b3', alt: '전자입찰 이용 안내 배너' },
 ]
 
 export function HomePage() {
+  const navigate = useNavigate()
+
+  // 빠른조달검색
+  const [target, setTarget] = useState<SearchTarget>('name')
+  const [keyword, setKeyword] = useState('')
+
+  // 검색필터 풀팝업
+  const [filterOpen, setFilterOpen] = useState(false)
+  const [filterValue, setFilterValue] = useState<SearchFilterValue>(DEFAULT_FILTER)
+
+  // 공지 탭
+  const [noticeTab, setNoticeTab] = useState('dapa')
+
+  // 설정값이 기본과 다르면 ON (설계서 rule 5)
+  const filterActive = useMemo(
+    () => JSON.stringify(filterValue) !== JSON.stringify(DEFAULT_FILTER),
+    [filterValue],
+  )
+
+  // ── 동작 스텁 (백엔드/추가 화면 연동 시 교체) ──
+  const handleSearch = () => {
+    console.log('[Home] 빠른조달검색', { target, keyword, filterValue })
+    // 추후: 입찰공고 통합목록(UI-BD-01-M01) 이동 + 검색어/필터 적용
+  }
+  const handleFilterSearch = (value: SearchFilterValue) => {
+    setFilterValue(value)
+    console.log('[Home] 검색필터 적용', value)
+  }
+
+  // 서비스 바로가기 — 일부는 기존 라우트, 나머지는 스텁
+  const handleService = (label: string) => {
+    if (label === '조달') {
+      navigate(ROUTES.OP)
+      return
+    }
+    if (label === '입찰공고') {
+      navigate(ROUTES.NOTICE)
+      return
+    }
+    console.log('[Home] 서비스 바로가기', label) // 추후: 각 서비스 화면 이동
+  }
+
+  const handleNoticeMore = () => {
+    console.log('[Home] 공지 더보기', noticeTab) // 추후: 공지 목록 화면 이동
+  }
+  const handleNoticeItem = (item: NoticeItem) => {
+    console.log('[Home] 공지 상세', item.id) // 추후: 공지 상세 화면 이동
+  }
+  const handleGuideDetail = (id: string) => {
+    console.log('[Home] 이용안내', id) // 추후: 사전준비/국내·국외 조달안내 화면 이동
+  }
+
+  const serviceItems: ServiceShortcut[] = SERVICE_LABELS.map((label, i) => ({
+    id: `svc-${i}`,
+    label,
+    onClick: () => handleService(label),
+  }))
+
+  const guideItems: GuideItem[] = [
+    {
+      id: 'g-ready',
+      iconName: 'DeveloperGuide',
+      title: '사전준비안내',
+      desc: '인증서 신청/발급, 업체 등록, 사용자 등록 안내',
+      onDetail: () => handleGuideDetail('ready'),
+    },
+    {
+      id: 'g-domestic',
+      iconName: 'AssignmentInd',
+      title: '국내조달안내',
+      desc: '국방조달참여, 전자입찰, 대금청구에 대한 절차 안내',
+      onDetail: () => handleGuideDetail('domestic'),
+    },
+    {
+      id: 'g-foreign',
+      iconName: 'Public',
+      title: '국외조달안내',
+      desc: '국외조달원등록 및 변경, 전자입찰에 대한 절차 안내',
+      onDetail: () => handleGuideDetail('foreign'),
+    },
+  ]
+
   return (
-    <PageContainer title="홈">
-      <ul className="space-y-3">
-        {MENU_LINKS.map(({ label, desc, to, iconName }) => (
-          <li key={to}>
-            <Link
-              to={to}
-              className="flex items-center gap-3 rounded-lg border border-border bg-card p-4 active:bg-accent"
-            >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground">
-                <Icon name={iconName} size={20} aria-hidden />
-              </span>
-              <span className="flex flex-1 flex-col">
-                <span className="text-sm font-semibold text-card-foreground">{label}</span>
-                <span className="text-xs text-muted-foreground">{desc}</span>
-              </span>
-              <Icon name="ChevronRight" size={16} className="text-muted-foreground" aria-hidden />
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </PageContainer>
+    <div className="flex flex-col">
+      {/* 빠른조달검색 — full-bleed(자체 bg/패딩) */}
+      <QuickProcurementSearch
+        target={target}
+        onTargetChange={setTarget}
+        keyword={keyword}
+        onKeywordChange={setKeyword}
+        onSearch={handleSearch}
+        onOpenFilter={() => setFilterOpen(true)}
+        filterActive={filterActive}
+      />
+
+      {/* 중간 섹션 — px-4 인셋 + 세로 간격(디자인 섹션 간 40px) */}
+      <div className="flex flex-col gap-10 px-4 pb-10 pt-6">
+        <ServiceShortcutGrid items={serviceItems} />
+        <HomeNoticeSection
+          tabs={NOTICE_TABS}
+          activeTab={noticeTab}
+          onTabChange={setNoticeTab}
+          onMore={handleNoticeMore}
+          onItemClick={handleNoticeItem}
+        />
+        <HomeBanner banners={BANNERS} />
+        <FirstVisitGuide items={guideItems} />
+      </div>
+
+      {/* Footer — full-bleed */}
+      <Footer />
+
+      {/* 맨 위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main) */}
+      <FloatingActionButton
+        className="fixed bottom-20 right-4 z-40"
+        onTop={() =>
+          document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+      />
+
+      {/* 검색필터 풀팝업 */}
+      <SearchFilter
+        open={filterOpen}
+        onOpenChange={setFilterOpen}
+        schema={HOME_FILTER}
+        value={filterValue}
+        defaultValue={DEFAULT_FILTER}
+        onSearch={handleFilterSearch}
+      />
+    </div>
   )
 }

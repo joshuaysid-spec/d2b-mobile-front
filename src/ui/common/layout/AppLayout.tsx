@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom'
 import { BottomNav } from '@/ui/common/composites/BottomNav'
 import { Header } from '@/ui/common/composites/Header'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
+import { useAuthStore } from '@/stores/authStore'
 
 // 모바일 앱 셸 — Header(고정 크롬) + 본문(Outlet, 내부 스크롤) + BottomNav(fixed).
 // 스크롤 구조: 외곽을 h-dvh + overflow-hidden 으로 뷰포트에 고정하고, main 만 min-h-0 + overflow-y-auto
@@ -12,6 +13,8 @@ import { PageLoading } from '@/ui/common/feedback/PageLoading'
 // 본문(Outlet)은 lazy chunk 라서 Suspense 로 감싸 PageLoading 표시.
 // 에러(청크 로드 실패·렌더 throw)는 router 의 errorElement(ErrorPage)가 처리한다.
 export function AppLayout() {
+  // 알림 dot 은 전역 store 에서 구독해 주입(BottomNav 은 범용이라 도메인 store 를 모름).
+  const hasUnread = useAuthStore((s) => s.hasUnread)
   return (
     <div className="mx-auto flex h-dvh w-full max-w-[480px] flex-col overflow-hidden bg-background">
       <Header />
@@ -20,7 +23,7 @@ export function AppLayout() {
           <Outlet />
         </Suspense>
       </main>
-      <BottomNav />
+      <BottomNav hasNotification={hasUnread} />
     </div>
   )
 }
