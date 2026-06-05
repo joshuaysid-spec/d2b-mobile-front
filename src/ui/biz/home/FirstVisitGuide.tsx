@@ -46,6 +46,8 @@ const FirstVisitGuide = ({ items }: FirstVisitGuideProps) => {
               <button
                 type="button"
                 onClick={item.onDetail}
+                // 동일 텍스트 링크 3개 구분(WCAG 2.4.4) — 접근명에 항목 제목 포함.
+                aria-label={`${item.title} 자세히보기`}
                 className="inline-flex w-fit items-center gap-1 text-[17px] font-medium text-krds-action-primary focus-visible:outline-hidden"
               >
                 자세히보기

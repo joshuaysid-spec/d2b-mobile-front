@@ -52,9 +52,12 @@ const Carousel = ({
         role="group"
         aria-label={ariaLabel}
         aria-roledescription="캐러셀"
+        // 가로 스크롤 영역에 키보드 접근(WCAG 2.1.1) — 화살표키로 좌우 스크롤. 포커스 링은 인디케이터로 충분히 표시되므로 outline 만 유지.
+        tabIndex={0}
         className={cn(
           'flex w-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden',
           'scrollbar-none [&::-webkit-scrollbar]:hidden',
+          'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
         )}
         style={{ scrollbarWidth: 'none' }}
       >
