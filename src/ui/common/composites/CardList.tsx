@@ -4,6 +4,7 @@
 import * as React from 'react'
 
 import { Card, type CardProps } from '@/ui/common/composites/Card'
+import { Icon } from '@/ui/common/base/Icon'
 import { cn } from '@/utils/cn'
 
 /** 카드 1건 = Card props + 고유 id(key/상세 라우팅). */
@@ -13,40 +14,28 @@ export interface CardListItem extends Omit<CardProps, 'className'> {
 
 export interface CardListProps extends React.HTMLAttributes<HTMLDivElement> {
   items: CardListItem[]
-  /** 로딩 중 — 스켈레톤 노출. */
+  /** 로딩 중 — 빈 목록과 동일한 안내 노출. */
   loading?: boolean
-  /** 로딩 스켈레톤 개수. 기본 3. */
-  loadingCount?: number
   /** 빈 목록 안내. 기본 '데이터가 없습니다.'. */
   emptyText?: React.ReactNode
 }
 
 const CardList = React.forwardRef<HTMLDivElement, CardListProps>(
   (
-    { className, items, loading = false, loadingCount = 3, emptyText = '데이터가 없습니다.', ...props },
+    { className, items, loading = false, emptyText = '데이터가 없습니다.', ...props },
     ref,
   ) => {
-    if (loading) {
-      return (
-        <div ref={ref} className={cn('flex w-full flex-col gap-krds-8', className)} {...props}>
-          {Array.from({ length: loadingCount }).map((_, i) => (
-            <div
-              key={i}
-              className="h-[200px] w-full animate-pulse rounded-krds-8 bg-muted"
-              aria-hidden
-            />
-          ))}
-        </div>
-      )
-    }
-
-    if (items.length === 0) {
+    if (loading || items.length === 0) {
       return (
         <div
           ref={ref}
-          className={cn('flex w-full items-center justify-center py-10', className)}
+          className={cn(
+            'flex w-full flex-col items-center justify-center gap-krds-8 py-10 text-center',
+            className,
+          )}
           {...props}
         >
+          <Icon name="Error" size={34} className="text-[#C1D1EE]" aria-hidden />
           <p className="text-krds-body-md text-krds-text-subtle">{emptyText}</p>
         </div>
       )
