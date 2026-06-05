@@ -7,8 +7,8 @@
 //   'number'       — 17px Regular ink 우측 정렬 (숫자/금액 표시)
 //   'combination'  — value 가 ReactNode — 그대로 렌더 (여러 줄, 버튼, Input 등 자유 컨텐츠)
 //
-// 행 사이에 1px divider(border-divider, #d1d7e0) 자동.
-// label 은 17px Medium muted, value 는 17px Regular ink (combination 은 컨테이너만 제공).
+// 행 사이에 1px divider(border-field, #c1d1ee) 자동.
+// label 셀 배경 bg-primary-faint(#ecf1fa), 17px Medium muted, value 는 17px Regular ink (combination 은 컨테이너만 제공).
 //
 // 사용 예:
 //   <Table
@@ -43,45 +43,51 @@ function Table({ className, rows, bordered = true, ...props }: TableProps) {
   return (
     <div
       role="table"
-      className={cn('flex w-full flex-col bg-background', className)}
+      className={cn(
+        'flex w-full flex-col bg-background',
+        // 외곽선은 상/하 1px 만(border-y, 좌우 없음). 행/열 구분선은 cell 의 border 로 처리 →
+        // 인접 경계가 같은 1px 선을 공유해 어디서도 2px 로 겹쳐 보이지 않는다(border-field #c1d1ee).
+        bordered && 'border-y border-krds-border-field',
+        className,
+      )}
       {...props}
     >
-      {bordered && <span aria-hidden className="h-px w-full bg-krds-border-divider" />}
       {rows.map((row, i) => {
         const type = row.type ?? 'default'
         return (
-          <React.Fragment key={i}>
-            <div role="row" className="flex w-full items-stretch">
-              {/* label cell — 120 폭, 17 Medium muted */}
-              <div
-                role="rowheader"
-                className="flex w-[120px] shrink-0 items-center px-krds-7 py-krds-5 text-[17px] font-medium leading-normal text-krds-text-muted"
-              >
-                {row.label}
-              </div>
-              {/* value cell */}
-              <div
-                role="cell"
-                className={cn(
-                  'flex flex-1 min-w-px px-krds-7 py-krds-5',
-                  type === 'number'
-                    ? 'items-center justify-end text-right text-[17px] leading-normal text-krds-text-ink tabular-nums'
-                    : type === 'combination'
-                      ? 'flex-col items-stretch gap-krds-5 text-[17px] leading-normal text-krds-text-ink'
-                      : 'items-center text-[17px] leading-normal text-krds-text-ink wrap-break-word',
-                )}
-              >
-                {row.value}
-              </div>
+          <div
+            role="row"
+            key={i}
+            className={cn(
+              'flex w-full items-stretch',
+              // 행 사이 구분선 — 첫 행 제외(외곽 top 과 겹쳐 2px 되는 것 방지)
+              i > 0 && 'border-t border-krds-border-field',
+            )}
+          >
+            {/* label cell — 120 폭, bg-primary-faint(#ecf1fa) · 우측 1px 구분선 · 17 Medium muted */}
+            <div
+              role="rowheader"
+              className="flex w-[120px] shrink-0 items-center border-r border-krds-border-field bg-krds-bg-primary-faint px-krds-7 py-krds-5 text-[17px] font-medium leading-normal text-krds-text-muted"
+            >
+              {row.label}
             </div>
-            <span aria-hidden className="h-px w-full bg-krds-border-divider" />
-          </React.Fragment>
+            {/* value cell */}
+            <div
+              role="cell"
+              className={cn(
+                'flex flex-1 min-w-px px-krds-7 py-krds-5',
+                type === 'number'
+                  ? 'items-center justify-end text-right text-[17px] leading-normal text-krds-text-ink tabular-nums'
+                  : type === 'combination'
+                    ? 'flex-col items-stretch gap-krds-5 text-[17px] leading-normal text-krds-text-ink'
+                    : 'items-center text-[17px] leading-normal text-krds-text-ink wrap-break-word',
+              )}
+            >
+              {row.value}
+            </div>
+          </div>
         )
       })}
-      {/* 마지막 divider 는 위 map 이 항상 그리므로 bordered=false 일 때만 마지막 한 줄 숨김 */}
-      {!bordered && (
-        <style>{`/* bordered=false 시 마지막 divider 숨김 — 컨테이너가 직접 처리 */`}</style>
-      )}
     </div>
   )
 }

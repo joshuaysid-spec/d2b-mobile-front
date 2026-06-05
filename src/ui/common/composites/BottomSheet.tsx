@@ -108,6 +108,8 @@ const BottomSheet = ({
             'fixed inset-0 z-50 bg-black/50',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+            // 시트 슬라이드와 동일 타이밍/커브로 딤 페이드 동기화
+            'duration-300 ease-[cubic-bezier(0,0,0.2,1)]',
           )}
         />
         {/* Content — 하단 고정 + 슬라이드인 위치 제어가 필요해 primitive 로 직접 구성. */}
@@ -128,8 +130,14 @@ const BottomSheet = ({
             'rounded-t-[16px] shadow-krds-3',
             'pt-[20px] px-[16px]',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
-            'data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom',
-            'duration-200',
+            // -full(=100%) 필수: bare slide-*-bottom 은 0.25rem(4px)만 이동 → 닫힐 때 4px 만 꿈틀하고 언마운트되어
+            // "멈칫하다 사라지는" 느낌. -full 로 시트 높이만큼 화면 아래까지 실제로 슬라이드.
+            'data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full',
+            // 부드러운 시트 모션:
+            //  - will-change-transform: 시트를 GPU 합성 레이어로 승격 → 시작 프레임 hitch(멈칫) 제거, transform 애니메이션이 메인스레드 레이아웃 없이 돔.
+            //  - ease-[cubic-bezier(0,0,0.2,1)]: 즉시 출발(시작 지연 없음) + 완만한 감속(꼬리 과하지 않음)으로 걸림 없이 올라오고 내려감.
+            //  - tailwindcss-animate 가 duration/ease 를 animation 속성에도 적용.
+            'duration-300 ease-[cubic-bezier(0,0,0.2,1)] will-change-transform',
             className,
           )}
         >

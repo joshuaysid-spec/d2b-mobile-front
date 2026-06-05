@@ -94,7 +94,8 @@ const Notice = React.forwardRef<HTMLDivElement, NoticeProps>(
             'disabled:cursor-default',
           )}
         >
-          <Icon name={icon} size={24} aria-hidden />
+          {/* FILL 1 = 채움(solid). 색은 버튼 text-white(currentColor) → #ffffff 로 채워짐. */}
+          <Icon name={icon} size={24} fill={1} aria-hidden />
         </button>
         <p className="min-w-px flex-1 wrap-break-word text-[17px] font-medium leading-normal text-krds-text-ink">
           {children}

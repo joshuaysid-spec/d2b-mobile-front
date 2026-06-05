@@ -101,7 +101,7 @@ const DateRangeInput = ({
     if (open) {
       setTemp(value ?? EMPTY_RANGE)
       setTempError(false)
-      setActivePresetIdx(null)
+      // activePresetIdx 는 여기서 초기화하지 않는다 — 시트 취소 시 이전 선택 칩이 풀리지 않도록.
     }
   }, [open, value])
 
@@ -149,6 +149,9 @@ const DateRangeInput = ({
       return
     }
     onChange?.(temp)
+    // 시트에서 직접 기간을 고른 것 = 'custom'(기간검색) 선택 → 해당 프리셋 칩 활성화.
+    const customIdx = presets.findIndex((p) => 'custom' in p)
+    setActivePresetIdx(customIdx >= 0 ? customIdx : null)
     setOpen(false)
   }
 
@@ -171,6 +174,13 @@ const DateRangeInput = ({
             if (idx >= 0) handlePagePresetClick(idx)
           }}
           disabled={disabled}
+          // flex-nowrap: 프리셋 칩들은 한 줄 유지(아래로 안 떨어짐).
+          className="flex-nowrap"
+          // 칩이 내용 너비를 확보(텍스트 넘침 X)한 뒤 grow 로 행을 꽉 채움 → 버튼 행 너비 = 아래 input 과 동일.
+          //  - min-w-0: base 의 min-w-[74px] 바닥 제거(작은 칩이 행을 input 보다 넓게 밀어내던 원인) — 직접 width 미지정.
+          //  - px-krds-5: 패딩 살짝 축소해 4칩이 컨테이너(320) 안에 들어오게.
+          //  - flex-[1_0_auto]: 줄지 않고(텍스트 보존) 남는 폭만큼 늘어 행을 채움.
+          itemClassName="flex-[1_0_auto] min-w-0 whitespace-nowrap px-krds-5"
           items={presets.map((p) => ({ value: p.label, label: p.label }))}
         />
       )}

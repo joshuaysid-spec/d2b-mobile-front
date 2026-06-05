@@ -41,7 +41,15 @@ export interface StepBarProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 // ─── 1depth chip (pill) ──────────────────────────────────────────────────────
-function Chip1Depth({ label, state }: { label: React.ReactNode; state: StepState }) {
+function Chip1Depth({
+  label,
+  state,
+  className,
+}: {
+  label: React.ReactNode
+  state: StepState
+  className?: string
+}) {
   // done-red 는 1depth 에 정의된 디자인 없음 → done 처럼 처리
   const isDoing = state === 'doing'
   const wrapCls = cn(
@@ -49,6 +57,7 @@ function Chip1Depth({ label, state }: { label: React.ReactNode; state: StepState
     isDoing
       ? 'bg-krds-action-danger'
       : 'border border-krds-step-blue bg-background',
+    className,
   )
   const textCls = cn(
     'text-[19px] font-bold leading-normal whitespace-nowrap',
@@ -82,10 +91,12 @@ function Dot1Depth({ state }: { state: StepState }) {
 function Row2Depth({
   label,
   state,
+  isFirst,
   isLast,
 }: {
   label: React.ReactNode
   state: StepState
+  isFirst: boolean
   isLast: boolean
 }) {
   // dot 색
@@ -113,11 +124,19 @@ function Row2Depth({
     <div className="flex w-full items-center gap-krds-3">
       {/* connector + dot column — 너비 40px (pl-20 + dot center) */}
       <div className="relative flex h-11 shrink-0 items-start pl-5 pr-3">
-        {/* 세로 connector 라인. 마지막 항목은 안 그림 */}
+        {/* 세로 connector 라인(#C1D1EE=border-field) — dot 중심(22px) 기준 위/아래 반쪽.
+            위쪽: 첫 항목이 아니면(윗 알약/dot 과 연결). 아래쪽: 마지막 항목이 아니면(아랫 항목과 연결).
+            항목 사이 gap 0 + 1depth 알약(전체너비, dot 내장)이 노드 → 조달계획~대금청구 끊김 없이 이어짐. */}
+        {!isFirst && (
+          <span
+            aria-hidden
+            className="absolute left-[20px] top-0 h-[22px] w-0.5 bg-krds-border-field"
+          />
+        )}
         {!isLast && (
           <span
             aria-hidden
-            className="absolute left-[21px] top-0 h-full w-0.5 bg-krds-border-field"
+            className="absolute left-[20px] top-[22px] h-[22px] w-0.5 bg-krds-border-field"
           />
         )}
         {/* dot — 14×14, top 15px (Figma) */}
@@ -159,29 +178,32 @@ function StepBar({
     )
   }
 
-  // vertical — depth 별로 1depth chip / 2depth row 선택
-  // 같은 depth=2 항목 끼리만 connector 가 이어지도록 isLast 계산:
-  //   "현재 항목이 depth=2 이고, 그 다음 항목도 depth=2" 일 때만 connector 표시.
+  // vertical — 연속 rail 타임라인. 항목 사이 gap 0(선 연속), 1depth 는 full-width 알약(dot 내장),
+  // 2depth 는 dot+텍스트(좌측 connector). connector 가 모든 항목을 위/아래로 이어 끊기지 않는다.
   return (
     <div
-      className={cn('flex w-full flex-col items-stretch gap-krds-3', className)}
+      className={cn('flex w-full flex-col items-stretch', className)}
       role="list"
       aria-label="진행 단계"
       {...props}
     >
       {items.map((item, i) => {
         const depth = item.depth ?? 1
-        const next = items[i + 1]
-        const isLastInGroup = depth !== 2 || !next || (next.depth ?? 1) !== 2
         return (
           <div key={i} role="listitem" className="w-full">
             {depth === 1 ? (
-              <Chip1Depth label={item.label} state={item.state} />
+              // full-width 알약 + dot 을 connector(x≈21)에 맞춰 pl-krds-7(12px)
+              <Chip1Depth
+                label={item.label}
+                state={item.state}
+                className="flex w-full pl-krds-7 gap-krds-5"
+              />
             ) : (
               <Row2Depth
                 label={item.label}
                 state={item.state}
-                isLast={isLastInGroup}
+                isFirst={i === 0}
+                isLast={i === items.length - 1}
               />
             )}
           </div>

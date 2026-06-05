@@ -101,15 +101,17 @@ const VARIANT_ICON: Record<
 > = {
   check: {
     name: 'CheckCircle',
-    color: 'var(--krds-color-success-60)',
+    color: 'var(--krds-d2b-blue-check)',
   },
+  // 삭제(error) — Warning 아이콘(FILLED_BY_DEFAULT 라 채움) · 색은 pink(#ff6d93).
   error: {
-    name: 'Error',
-    color: 'var(--krds-action-danger)',
+    name: 'Warning',
+    color: 'var(--krds-d2b-pink)',
   },
+  // info — 완료(check) 와 동일하게 CheckCircle · blue-check.
   info: {
-    name: 'Info',
-    color: 'var(--krds-feedback-info)',
+    name: 'CheckCircle',
+    color: 'var(--krds-d2b-blue-check)',
   },
 }
 

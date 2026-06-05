@@ -33,7 +33,7 @@ export interface CheckboxGroupProps extends Omit<
   /** horizontal 일 때 wrap 대신 가로 스크롤 + 좌우 화살표 노출. 기본 false. */
   swipeable?: boolean
   /** 그룹 전체 비활성 */
-  disabled?: boolean
+disabled?: boolean
   /** 각 Checkbox 칩에 적용할 className */
   itemClassName?: string
 }
@@ -157,6 +157,8 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
         disabled={disabled || itemDisabled}
         onCheckedChange={(c) => toggle(v, c === true)}
         className={cn(
+          // 칩 최소 너비 — 가장 작은 체크박스도 104px 보장 (Figma)
+          'min-w-[104px]',
           useSwiper ? 'shrink-0' : direction === 'horizontal' && 'flex-1',
           itemClassName,
         )}
@@ -181,7 +183,8 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
             onScroll={updateArrows}
             // 스크롤바 숨김 — globals.css 의 전역 스크롤바(* {…})는 unlayered 라 Tailwind 유틸 클래스
             // ([scrollbar-width:none])로는 못 이김. 인라인 style(scrollbarWidth)은 이긴다(TabList/SummaryInfo 동일 패턴).
-            className="flex items-center gap-2 overflow-x-auto scroll-smooth [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            // p-1: 선택 시 border-2 / 포커스 링(ring-2 + offset-2 = 4px)이 스크롤 끝(특히 마지막 칩 우측)에서 잘리지 않도록 여백 확보
+            className="flex items-center gap-2 overflow-x-auto p-1 scroll-smooth [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             style={{ scrollbarWidth: 'none' }}
           >
             {chips}

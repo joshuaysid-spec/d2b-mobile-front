@@ -5,7 +5,8 @@
 // variant:
 //   collapsible(기본 true) — Accordion 으로 접기/펴기. opened/closed.
 //   static(collapsible=false) — chevron 없이 본문 항상 노출(헤더 비클릭).
-// 헤더 = bg-primary-faint(#ecf1fa) · 글자/아이콘 딥네이비(text-action-primary-active #0f316e). 본문 = white.
+// 헤더 = bg-primary-faint(#ecf1fa) · 글자/아이콘 딥네이비(text-action-primary-active #0f316e) · 상단 border-divider(#d1d7e0).
+// 본문(dropdown) = bg-primary-faint(#ecf1fa) · 텍스트 slate(text-info #425679). 모서리는 각짐(radius 없음).StepBar
 // 상태: controlled(open/onOpenChange) / uncontrolled(defaultOpen, 기본 closed).
 import * as React from 'react'
 
@@ -57,15 +58,15 @@ function InfoboxBody({
     return (
       <ul className="flex flex-col gap-krds-5">
         {items.map((it, i) => (
-          <li key={i} className="flex gap-krds-5 text-[17px] leading-normal text-krds-text-ink">
-            <span aria-hidden className="mt-[0.6em] size-1 shrink-0 rounded-full bg-krds-text-ink" />
+          <li key={i} className="flex gap-krds-5 text-[17px] leading-normal text-krds-text-info">
+            <span aria-hidden className="mt-[0.6em] size-1 shrink-0 rounded-full bg-krds-text-info" />
             <span className="min-w-px flex-1 wrap-break-word">{it}</span>
           </li>
         ))}
       </ul>
     )
   }
-  return <div className="text-[17px] leading-normal text-krds-text-ink">{children}</div>
+  return <div className="text-[17px] leading-normal text-krds-text-info">{children}</div>
 }
 
 export function Infobox({
@@ -82,11 +83,11 @@ export function Infobox({
   // static — chevron 없이 항상 펼침 (Accordion 미사용)
   if (!collapsible) {
     return (
-      <div className={cn('flex w-full flex-col overflow-hidden rounded-krds-8', className)}>
-        <div className="flex min-h-[56px] items-center gap-krds-5 bg-krds-bg-primary-faint px-krds-8 text-[19px] font-bold text-krds-action-primary-active">
+      <div className={cn('flex w-full flex-col overflow-hidden', className)}>
+        <div className="flex min-h-[56px] items-center gap-krds-5 border-t border-krds-border-divider bg-krds-bg-primary-faint px-krds-8 text-[19px] font-bold text-krds-action-primary-active">
           <InfoboxLabel icon={icon} title={title} />
         </div>
-        <div className="bg-background p-krds-8">
+        <div className="bg-krds-bg-primary-faint p-krds-8">
           <InfoboxBody items={items}>{children}</InfoboxBody>
         </div>
       </div>
@@ -103,14 +104,15 @@ export function Infobox({
     <Accordion
       type="single"
       collapsible
-      className={cn('w-full overflow-hidden rounded-krds-8', className)}
+      className={cn('w-full overflow-hidden', className)}
       {...accordionProps}
     >
       <AccordionSection
         value={VALUE}
         variant="blue"
-        borderTop={false}
+        borderTop // 상단 border-divider(#d1d7e0)
         triggerClassName="text-krds-action-primary-active" // 글자 + chevron 딥네이비
+        contentClassName="bg-krds-bg-primary-faint" // dropdown 본문 배경 #ecf1fa
         title={<InfoboxLabel icon={icon} title={title} />}
       >
         <InfoboxBody items={items}>{children}</InfoboxBody>

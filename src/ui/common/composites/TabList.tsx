@@ -123,21 +123,21 @@ function TabList({
       {showLeft && (
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pt-krds-8">
           <div className="pointer-events-auto flex h-12 items-center">
-            <button
-              type="button"
-              aria-label="이전 탭으로 스크롤"
-              onClick={() => scrollBy(-160)}
-              className="flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-background text-krds-text-ink"
-            >
-              <Icon name="ArrowBackIosNew" size={20} aria-hidden />
-            </button>
+            {/* 버튼 뒤(사각 모서리 포함)는 흰색으로 덮어 탭이 비치지 않게 */}
+            <span className="flex h-full items-center bg-background">
+              <button
+                type="button"
+                aria-label="이전 탭으로 스크롤"
+                onClick={() => scrollBy(-160)}
+                className="flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-background text-krds-text-ink"
+              >
+                <Icon name="ArrowBackIosNew" size={20} aria-hidden />
+              </button>
+            </span>
+            {/* 탭 위로 흰색→투명 그라데이션 fade — 화살표 안쪽 탭이 서서히 사라지게 */}
             <div
               aria-hidden
-              className="h-full w-5"
-              style={{
-                background:
-                  'linear-gradient(to right, var(--background) 30%, rgba(255,255,255,0.25))',
-              }}
+              className="h-full w-5 bg-gradient-to-r from-background to-transparent"
             />
           </div>
         </div>
@@ -146,22 +146,22 @@ function TabList({
       {showRight && (
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pt-krds-8">
           <div className="pointer-events-auto flex h-12 items-center">
+            {/* 탭 위로 투명→흰색 그라데이션 fade — 화살표 안쪽 탭이 서서히 사라지게 */}
             <div
               aria-hidden
-              className="h-full w-5"
-              style={{
-                background:
-                  'linear-gradient(to right, rgba(255,255,255,0.25), var(--background) 72%)',
-              }}
+              className="h-full w-5 bg-gradient-to-r from-transparent to-background"
             />
-            <button
-              type="button"
-              aria-label="다음 탭으로 스크롤"
-              onClick={() => scrollBy(160)}
-              className="flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-background text-krds-text-ink"
-            >
-              <Icon name="ArrowForwardIos" size={20} aria-hidden />
-            </button>
+            {/* 버튼 뒤(사각 모서리 포함)는 흰색으로 덮어 탭이 비치지 않게 */}
+            <span className="flex h-full items-center bg-background">
+              <button
+                type="button"
+                aria-label="다음 탭으로 스크롤"
+                onClick={() => scrollBy(160)}
+                className="flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-background text-krds-text-ink"
+              >
+                <Icon name="ArrowForwardIos" size={20} aria-hidden />
+              </button>
+            </span>
           </div>
         </div>
       )}
