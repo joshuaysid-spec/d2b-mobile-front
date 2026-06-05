@@ -34,6 +34,7 @@ import { Button } from '@/ui/common/base/Button'
 import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { Switch } from '@/ui/common/base/Switch'
 import { cn } from '@/utils/cn'
+import mobileIcon from '@/assets/images/mobile.svg'
 
 interface TextListItem {
   layout: 'text'
@@ -107,7 +108,7 @@ function TextRow({ item }: { item: TextListItem }) {
     <div className="flex w-full items-start gap-krds-5">
       {item.icon && (
         <div className="flex shrink-0 items-center pt-0.5">
-          <Icon name={item.icon} size={24} aria-hidden />
+          <img src={mobileIcon} alt="" width={24} height={24} aria-hidden />
         </div>
       )}
       <div className="flex min-w-px flex-1 flex-col gap-krds-5">
@@ -138,7 +139,7 @@ function KeyValueRow({ item }: { item: KeyValueListItem }) {
       <div className="flex w-full items-start gap-krds-5">
         {item.icon && (
           <div className="flex shrink-0 items-center pt-0.5">
-            <Icon name={item.icon} size={24} aria-hidden />
+            <Icon name="NotificationsActive" size={24} aria-hidden />
           </div>
         )}
         <div className="flex min-w-px flex-1 flex-col gap-krds-5">

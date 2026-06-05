@@ -150,7 +150,14 @@ const Header = ({
         className,
       )}
     >
-      <div className="flex h-[72px] items-center border-b border-krds-border-divider pl-[16px]">
+      <div
+        className={cn(
+          'flex h-[72px] items-center border-b border-krds-border-divider',
+          // main(Logo)은 좌측 16px. sub 는 뒤로가기 버튼(44px 박스에 20px 아이콘
+          // 중앙정렬 → 좌측 12px 여백)을 감안해 pl-1(4px) → 아이콘 시각 시작점 16px.
+          variant === 'main' ? 'pl-[16px]' : 'pl-1',
+        )}
+      >
         {variant === 'main' ? (
           <Logo />
         ) : (

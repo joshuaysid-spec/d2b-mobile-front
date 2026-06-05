@@ -2898,19 +2898,27 @@ export function ComponentGuidePage() {
                       <>
                         <button
                           type="button"
-                          aria-label="새로고침"
-                          onClick={() => alert('refresh')}
-                          className="flex size-9 items-center justify-center rounded-krds-sm text-krds-text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring"
+                          aria-label="알림 신청"
+                          onClick={() => alert('notify')}
+                          className="flex size-[37px] items-center justify-center rounded-krds-8 border border-krds-border-field text-krds-text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring"
                         >
-                          <Icon name="Refresh" size={20} aria-hidden />
+                          <Icon name="NotificationAdd" size={24} aria-hidden />
                         </button>
                         <button
                           type="button"
                           aria-label="즐겨찾기"
                           onClick={() => alert('star')}
-                          className="flex size-9 items-center justify-center rounded-krds-sm text-krds-text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring"
+                          className="flex size-[37px] items-center justify-center rounded-krds-8 border border-krds-border-field text-krds-text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring"
                         >
-                          <Icon name="StarBorder" size={20} aria-hidden />
+                          <Icon name="KidStar" size={24} aria-hidden />
+                        </button>
+                        <button
+                          type="button"
+                          aria-label="출력"
+                          onClick={() => alert('print')}
+                          className="flex size-[37px] items-center justify-center rounded-krds-8 border border-krds-border-field text-krds-text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring"
+                        >
+                          <Icon name="Print" size={24} aria-hidden />
                         </button>
                       </>
                     }
@@ -3155,19 +3163,19 @@ export function ComponentGuidePage() {
           >
             <Row label="main — 로그인 전 / 후">
               <Specimen caption="variant='main' isLoggedIn={false} (기본)">
-                <div className="w-[360px] overflow-hidden rounded-krds-8 border border-border">
+                <div className="w-[360px]">
                   <Header onLogin={() => console.log('[Header] login')} />
                 </div>
               </Specimen>
               <Specimen caption="variant='main' isLoggedIn={true}">
-                <div className="w-[360px] overflow-hidden rounded-krds-8 border border-border">
+                <div className="w-[360px]">
                   <Header isLoggedIn />
                 </div>
               </Specimen>
             </Row>
             <Row label="sub — depth top / lower">
               <Specimen caption="variant='sub' depth='top' (통합검색+전체메뉴)">
-                <div className="w-[360px] overflow-hidden rounded-krds-8 border border-border">
+                <div className="w-[360px]">
                   <Header
                     variant="sub"
                     title="메뉴 타이틀"
@@ -3177,7 +3185,7 @@ export function ComponentGuidePage() {
                 </div>
               </Specimen>
               <Specimen caption="variant='sub' depth='lower' (홈+전체메뉴)">
-                <div className="w-[360px] overflow-hidden rounded-krds-8 border border-border">
+                <div className="w-[360px]">
                   <Header
                     variant="sub"
                     title="긴 메뉴 타이틀이 들어가면 말줄임 처리됩니다 가나다라마바사"

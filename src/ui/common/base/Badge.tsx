@@ -94,8 +94,15 @@ export interface BadgeProps
     VariantProps<typeof badgeVariants> {}
 
 function Badge({ className, type, color, ...props }: BadgeProps) {
+  // raw badge 의 default variant 는 `bg-primary hover:bg-primary/80` 을 박는데,
+  // hover:* 는 tailwind-merge 가 별도 그룹으로 보고 남겨두기 때문에 호버 시 색이 바뀐다.
+  // 라벨은 비상호작용 요소이므로 호버 bg 가 없는 raw `outline` variant 를 기반으로 깐다.
   return (
-    <RawBadge className={cn(badgeVariants({ type, color, className }))} {...props} />
+    <RawBadge
+      variant="outline"
+      className={cn(badgeVariants({ type, color, className }))}
+      {...props}
+    />
   )
 }
 
