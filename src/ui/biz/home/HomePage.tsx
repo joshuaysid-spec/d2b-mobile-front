@@ -185,6 +185,9 @@ export function HomePage() {
 
   return (
     <div className="flex flex-col">
+      {/* 페이지 대표 제목(WCAG 1.3.1/2.4.6) — 시각상 로고가 브랜드라 sr-only 로 제공 */}
+      <h1 className="sr-only">국방전자조달 메인 홈</h1>
+
       {/* 빠른조달검색 — full-bleed(자체 bg/패딩) */}
       <QuickProcurementSearch
         target={target}
