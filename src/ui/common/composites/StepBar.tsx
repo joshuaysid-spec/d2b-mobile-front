@@ -19,6 +19,7 @@
 //
 // vertical 모드는 2depth connector 가 항목 사이를 잇는다(마지막 항목은 connector 안 그림).
 // horizontal 은 1depth chip 만 가로 나열 (디자인상 horizontal-2depth 없음).
+//   - 항목 3개 이상이면 TabList 처럼 가로 스크롤 + 좌/우 화살표 버튼이 활성화된다.
 import * as React from 'react'
 
 import { Icon } from '@/ui/common/base/Icon'
@@ -34,10 +35,17 @@ export interface StepItem {
   depth?: StepDepth
 }
 
+export type StepBarScrollButtons = 'auto' | 'always' | 'none'
+
 export interface StepBarProps extends React.HTMLAttributes<HTMLDivElement> {
   items: StepItem[]
   /** 기본 'vertical'. */
   orientation?: 'vertical' | 'horizontal'
+  /**
+   * horizontal 모드 좌/우 스크롤 화살표 노출 정책. 기본 'auto'.
+   * 항목이 3개 미만이면(스크롤 불필요) 화살표는 표시되지 않는다.
+   */
+  scrollButtons?: StepBarScrollButtons
 }
 
 // ─── 1depth chip (pill) ──────────────────────────────────────────────────────
@@ -154,20 +162,68 @@ function Row2Depth({
   )
 }
 
-// ─── StepBar ────────────────────────────────────────────────────────────────
-function StepBar({
+// ─── horizontal (가로 스크롤 + 좌/우 화살표) ──────────────────────────────────
+// 항목 3개 이상이면 TabList 패턴(overflow-x-auto + ResizeObserver 로 화살표 자동 노출)으로
+// 가로 스크롤한다. 항목 2개 이하면 스크롤 불필요 → 단순 가로 나열(flex-wrap).
+function StepBarHorizontal({
   className,
   items,
-  orientation = 'vertical',
+  scrollButtons = 'auto',
   ...props
-}: StepBarProps) {
-  if (orientation === 'horizontal') {
-    return (
+}: Omit<StepBarProps, 'orientation'>) {
+  const scrollerRef = React.useRef<HTMLDivElement>(null)
+  const [canScrollLeft, setCanScrollLeft] = React.useState(false)
+  const [canScrollRight, setCanScrollRight] = React.useState(false)
+
+  // 3개 미만이면 스크롤·화살표 자체를 끈다.
+  const scrollable = items.length >= 3
+
+  // 스크롤 가능 여부 측정 — resize/scroll 시 갱신.
+  const updateScrollState = React.useCallback(() => {
+    const el = scrollerRef.current
+    if (!el) return
+    setCanScrollLeft(el.scrollLeft > 0)
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1)
+  }, [])
+
+  React.useEffect(() => {
+    if (!scrollable) return
+    updateScrollState()
+    const el = scrollerRef.current
+    if (!el) return
+    el.addEventListener('scroll', updateScrollState, { passive: true })
+    const ro = new ResizeObserver(updateScrollState)
+    ro.observe(el)
+    return () => {
+      el.removeEventListener('scroll', updateScrollState)
+      ro.disconnect()
+    }
+  }, [updateScrollState, items.length, scrollable])
+
+  const showLeft =
+    scrollable &&
+    (scrollButtons === 'always' || (scrollButtons === 'auto' && canScrollLeft))
+  const showRight =
+    scrollable &&
+    (scrollButtons === 'always' || (scrollButtons === 'auto' && canScrollRight))
+
+  const scrollBy = (delta: number) => {
+    scrollerRef.current?.scrollBy({ left: delta, behavior: 'smooth' })
+  }
+
+  return (
+    <div className={cn('relative w-full bg-background', className)} {...props}>
       <div
-        className={cn('flex flex-wrap items-center gap-krds-5', className)}
+        ref={scrollerRef}
         role="list"
         aria-label="진행 단계"
-        {...props}
+        className={cn(
+          'flex w-full items-center gap-krds-5',
+          scrollable
+            ? 'overflow-x-auto overflow-y-hidden scrollbar-none [&::-webkit-scrollbar]:hidden'
+            : 'flex-wrap',
+        )}
+        style={scrollable ? { scrollbarWidth: 'none' } : undefined}
       >
         {items.map((item, i) => (
           <div key={i} role="listitem">
@@ -175,6 +231,72 @@ function StepBar({
           </div>
         ))}
       </div>
+
+      {showLeft && (
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
+          <div className="pointer-events-auto flex h-10 items-center">
+            {/* 버튼 뒤(사각 모서리 포함)는 흰색으로 덮어 칩이 비치지 않게 */}
+            <span className="flex h-full items-center bg-background">
+              <button
+                type="button"
+                aria-label="이전 단계로 스크롤"
+                onClick={() => scrollBy(-160)}
+                className="flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-background text-krds-text-ink"
+              >
+                <Icon name="ArrowBackIosNew" size={20} aria-hidden />
+              </button>
+            </span>
+            {/* 칩 위로 흰색→투명 그라데이션 fade — 화살표 안쪽 칩이 서서히 사라지게 */}
+            <div
+              aria-hidden
+              className="h-full w-5 bg-gradient-to-r from-background to-transparent"
+            />
+          </div>
+        </div>
+      )}
+
+      {showRight && (
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center">
+          <div className="pointer-events-auto flex h-10 items-center">
+            {/* 칩 위로 투명→흰색 그라데이션 fade — 화살표 안쪽 칩이 서서히 사라지게 */}
+            <div
+              aria-hidden
+              className="h-full w-5 bg-gradient-to-r from-transparent to-background"
+            />
+            {/* 버튼 뒤(사각 모서리 포함)는 흰색으로 덮어 칩이 비치지 않게 */}
+            <span className="flex h-full items-center bg-background">
+              <button
+                type="button"
+                aria-label="다음 단계로 스크롤"
+                onClick={() => scrollBy(160)}
+                className="flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-background text-krds-text-ink"
+              >
+                <Icon name="ArrowForwardIos" size={20} aria-hidden />
+              </button>
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── StepBar ────────────────────────────────────────────────────────────────
+function StepBar({
+  className,
+  items,
+  orientation = 'vertical',
+  scrollButtons,
+  ...props
+}: StepBarProps) {
+  if (orientation === 'horizontal') {
+    return (
+      <StepBarHorizontal
+        className={className}
+        items={items}
+        scrollButtons={scrollButtons}
+        {...props}
+      />
     )
   }
 

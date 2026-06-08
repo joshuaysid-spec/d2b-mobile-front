@@ -2497,6 +2497,38 @@ export function ComponentGuidePage() {
                 </div>
               </Specimen>
             </Row>
+            <Row label="horizontal — 항목 3개 이상 시 가로 스크롤 + 좌/우 화살표 (TabList 패턴)">
+              <Specimen caption="좁은 컨테이너 → overflow 시 화살표 자동 노출 (scrollButtons='auto')">
+                <div className="w-[320px]">
+                  <StepBar
+                    orientation="horizontal"
+                    items={[
+                      { label: '조달계획', state: 'done' },
+                      { label: '사전규격', state: 'done' },
+                      { label: '입찰', state: 'doing' },
+                      { label: '계약', state: 'todo' },
+                      { label: '이행', state: 'todo' },
+                      { label: '대금사후', state: 'todo' },
+                    ]}
+                  />
+                </div>
+              </Specimen>
+              <Specimen caption="scrollButtons='none' — 화살표 없이 스와이프만">
+                <div className="w-[320px]">
+                  <StepBar
+                    orientation="horizontal"
+                    scrollButtons="none"
+                    items={[
+                      { label: '조달계획', state: 'done' },
+                      { label: '사전규격', state: 'done' },
+                      { label: '입찰', state: 'doing' },
+                      { label: '계약', state: 'todo' },
+                      { label: '이행', state: 'todo' },
+                    ]}
+                  />
+                </div>
+              </Specimen>
+            </Row>
             <Row label="state 4종 (atomic 단독 노출)">
               <Specimen caption="1depth — done / doing / todo">
                 <div className="flex flex-wrap gap-2">
