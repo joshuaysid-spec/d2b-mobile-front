@@ -33,13 +33,16 @@ const RadioButton = React.forwardRef<
       'text-krds-body-md font-medium text-primary transition-colors',
       // 키보드 포커스 — 내부 radio item 이 focus-visible 일 때 칩에 링
       'has-focus-visible:outline-hidden has-focus-visible:ring-2 has-focus-visible:ring-ring has-focus-visible:ring-offset-2',
-      // 선택됨 — raw 의 data-state=checked 를 따라감
-      'has-data-[state=checked]:border-2 has-data-[state=checked]:border-primary',
+      // 선택됨 — raw 의 data-state=checked 를 따라감.
+      // 굵은 테두리는 border-width 변경(레이아웃 이동) 대신 inset box-shadow 로 표현 → 텍스트 밀림 없음.
+      'has-data-[state=checked]:border-primary has-data-[state=checked]:shadow-[inset_0_0_0_1px_var(--krds-border-primary)]',
       'has-data-[state=checked]:bg-krds-bg-primary-subtle has-data-[state=checked]:font-bold',
       // 비활성 — checked+disabled 조합에서도 회색이 우선하도록 ! 로 강제(선택 강조 위에 덮음)
       // border 색은 #8E8E8E(krds-text-disabled), bg 는 #F0F0F0(krds-bg-disabled-soft)
       'has-disabled:cursor-not-allowed has-disabled:!border-krds-text-disabled',
       'has-disabled:!bg-krds-bg-disabled-soft has-disabled:text-krds-text-disabled',
+      // 비활성+선택 — inset shadow 색도 회색으로 덮음(선택 primary shadow 위에).
+      '[&:has(:disabled):has([data-state=checked])]:shadow-[inset_0_0_0_1px_var(--krds-text-disabled)]',
       className,
     )}
   >

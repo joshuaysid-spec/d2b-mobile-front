@@ -81,11 +81,19 @@ function TabList({
     }
   }, [updateScrollState, items.length])
 
-  // 활성 탭이 바뀌면 화면에 보이도록 자동 스크롤.
+  // 활성 탭이 가로 스크롤러 밖이면 보이도록 자동 스크롤.
+  // scrollIntoView 는 조상(페이지 #app-scroll)까지 세로로 끌어와 새로고침 시 페이지가
+  // 내려가는 현상을 유발하므로, 스크롤러 내부에서 수평 방향만 직접 이동한다(보이면 no-op).
   React.useEffect(() => {
+    const scroller = scrollerRef.current
     const tabEl = tabRefs.current[value]
-    if (!tabEl) return
-    tabEl.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' })
+    if (!scroller || !tabEl) return
+    const tabRect = tabEl.getBoundingClientRect()
+    const scRect = scroller.getBoundingClientRect()
+    let delta = 0
+    if (tabRect.left < scRect.left) delta = tabRect.left - scRect.left
+    else if (tabRect.right > scRect.right) delta = tabRect.right - scRect.right
+    if (delta !== 0) scroller.scrollBy({ left: delta, behavior: 'smooth' })
   }, [value])
 
   const showLeft =

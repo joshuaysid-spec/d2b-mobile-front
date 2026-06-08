@@ -36,6 +36,12 @@ export interface CheckboxGroupProps extends Omit<
 disabled?: boolean
   /** 각 Checkbox 칩에 적용할 className */
   itemClassName?: string
+  /**
+   * 상단 '전체' 선택 체크박스 노출. true 또는 { label } 객체.
+   * - 체크 → 모든(비활성 제외) 항목 선택 / 해제 → 모두 해제
+   * - 개별 항목이 모두 선택되면 '전체'가 자동 체크, 하나라도 빠지면 자동 해제(파생 상태)
+   */
+  selectAll?: boolean | { label?: React.ReactNode }
 }
 
 /** Figma m_button_arrow_swiper — 40px 원형 화살표 + 그라데이션 페이드 */
@@ -101,6 +107,7 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
       swipeable = false,
       disabled,
       itemClassName,
+      selectAll,
       ...props
     },
     ref,
@@ -110,14 +117,46 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
     const isControlled = value !== undefined
     const selected = isControlled ? value : internal
 
-    const toggle = React.useCallback(
-      (itemValue: string, checked: boolean) => {
-        const next = checked ? [...selected, itemValue] : selected.filter((v) => v !== itemValue)
+    const commit = React.useCallback(
+      (next: string[]) => {
         if (!isControlled) setInternal(next)
         onValueChange?.(next)
       },
-      [selected, isControlled, onValueChange],
+      [isControlled, onValueChange],
     )
+
+    const toggle = React.useCallback(
+      (itemValue: string, checked: boolean) => {
+        commit(checked ? [...selected, itemValue] : selected.filter((v) => v !== itemValue))
+      },
+      [selected, commit],
+    )
+
+    // ── '전체' 선택 ──────────────────────────────────────────────
+    // 토글 대상 = 비활성 제외 항목 값. '전체' 체크 여부는 별도 상태 없이 selected 에서 파생한다
+    // (모두 선택 → 체크 / 하나라도 빠지면 해제). 개별 변경에도 자동으로 일관 유지.
+    const allValues = React.useMemo(
+      () => items.filter((i) => !i.disabled).map((i) => i.value),
+      [items],
+    )
+    const allChecked =
+      allValues.length > 0 && allValues.every((v) => selected.includes(v))
+
+    const toggleAll = React.useCallback(
+      (checked: boolean) => {
+        // 비활성 외 값만 일괄 추가/제거. (비활성 항목의 기존 선택은 건드리지 않음)
+        commit(
+          checked
+            ? Array.from(new Set([...selected, ...allValues]))
+            : selected.filter((v) => !allValues.includes(v)),
+        )
+      },
+      [selected, allValues, commit],
+    )
+
+    const showSelectAll = !!selectAll
+    const selectAllLabel =
+      (typeof selectAll === 'object' && selectAll.label) || '전체'
 
     // ── 스와이프(가로 스크롤) 상태 ────────────────────────────────
     const scrollRef = React.useRef<HTMLDivElement>(null)
@@ -148,6 +187,26 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
       el.scrollBy({ left: (dir === 'left' ? -1 : 1) * el.clientWidth * 0.8, behavior: 'smooth' })
     }
 
+    const chipClassName = cn(
+      // 칩 최소 너비 — 가장 작은 체크박스도 74px 보장
+      'min-w-[74px]',
+      // swiper 는 줄어들지 않게 shrink-0. horizontal wrap 은 flex-1 로 늘리지 않고 74px 기준 유지.
+      useSwiper && 'shrink-0',
+      itemClassName,
+    )
+
+    // '전체' 마스터 칩 — selectAll 일 때만. allChecked(파생)로 체크 상태 표시.
+    const masterChip = showSelectAll ? (
+      <Checkbox
+        key="__all__"
+        label={selectAllLabel}
+        checked={allChecked}
+        disabled={disabled || allValues.length === 0}
+        onCheckedChange={(c) => toggleAll(c === true)}
+        className={chipClassName}
+      />
+    ) : null
+
     const chips = items.map(({ value: v, label, disabled: itemDisabled }) => (
       <Checkbox
         key={v}
@@ -156,13 +215,7 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
         checked={selected.includes(v)}
         disabled={disabled || itemDisabled}
         onCheckedChange={(c) => toggle(v, c === true)}
-        className={cn(
-          // 칩 최소 너비 — 가장 작은 체크박스도 74px 보장
-          'min-w-[74px]',
-          // swiper 는 줄어들지 않게 shrink-0. horizontal wrap 은 flex-1 로 늘리지 않고 74px 기준 유지.
-          useSwiper && 'shrink-0',
-          itemClassName,
-        )}
+        className={chipClassName}
       />
     ))
 
@@ -170,6 +223,7 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
     if (direction === 'vertical') {
       return (
         <div ref={ref} className={cn('flex flex-col gap-2 [&>label]:w-full', className)} {...props}>
+          {masterChip}
           {chips}
         </div>
       )
@@ -188,6 +242,7 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
             className="flex items-center gap-2 overflow-x-auto p-1 scroll-smooth [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             style={{ scrollbarWidth: 'none' }}
           >
+            {masterChip}
             {chips}
           </div>
           {canLeft && <ArrowSwiper side="left" onClick={() => scrollBy('left')} />}
@@ -199,6 +254,7 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
     // 가로 wrap (기본)
     return (
       <div ref={ref} className={cn('flex flex-wrap gap-2', className)} {...props}>
+        {masterChip}
         {chips}
       </div>
     )

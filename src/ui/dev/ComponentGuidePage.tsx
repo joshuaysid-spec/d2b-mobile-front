@@ -1553,7 +1553,7 @@ export function ComponentGuidePage() {
           <Section
             id="checkboxgroup"
             title="CheckboxGroup"
-            desc="Figma checkbox group container(9300-27895) 1:1. base Checkbox 칩을 items 배열로 구성한 다중 선택 그룹. direction: horizontal(기본) | vertical. swipeable(기본 false)로 가로 스크롤 + 좌우 스와이프 화살표 on/off."
+            desc="Figma checkbox group container(9300-27895) 1:1. base Checkbox 칩을 items 배열로 구성한 다중 선택 그룹. direction: horizontal(기본) | vertical. swipeable(기본 false)로 가로 스크롤 + 좌우 스와이프 화살표 on/off. selectAll 로 상단 '전체' 칩 노출 — 전체↔개별 자동 동기화."
           >
             <Row label="horizontal (기본 wrap)">
               <Specimen caption="2항목">
@@ -1621,6 +1621,34 @@ export function ComponentGuidePage() {
                       { value: 'a', label: '항목 1' },
                       { value: 'b', label: '항목 2', disabled: true },
                       { value: 'c', label: '항목 3', disabled: true },
+                    ]}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="selectAll (상단 '전체' 칩 — 전체↔개별 자동 동기화)">
+              <Specimen caption="‘전체’ 체크/해제 → 모두 / 개별 모두 체크 시 ‘전체’ 자동 체크">
+                <div className="w-[328px]">
+                  <CheckboxGroup
+                    selectAll
+                    defaultValue={['a']}
+                    items={[
+                      { value: 'a', label: '항목 1' },
+                      { value: 'b', label: '항목 2' },
+                      { value: 'c', label: '항목 3' },
+                    ]}
+                  />
+                </div>
+              </Specimen>
+              <Specimen caption="vertical + selectAll">
+                <div className="w-[260px]">
+                  <CheckboxGroup
+                    selectAll
+                    direction="vertical"
+                    items={[
+                      { value: 'a', label: '항목 1' },
+                      { value: 'b', label: '항목 2' },
+                      { value: 'c', label: '항목 3' },
                     ]}
                   />
                 </div>
@@ -1843,13 +1871,28 @@ export function ComponentGuidePage() {
           <Section
             id="carousel"
             title="Carousel"
-            desc="scroll-snap 스와이프 + 화살표(CarouselIndicator 통합). pages(ReactNode[]) 주입. 메인 홈 서비스·배너."
+            desc="scroll-snap 스와이프 + 화살표(CarouselIndicator 통합). pages(ReactNode[]) 주입. autoPlayInterval(ms) 주입 시 자동 슬라이드(끝→처음 순환, 조작 중 일시정지). 메인 홈 서비스·배너."
           >
             <Row label="스와이프 / 화살표 (3페이지)">
               <Specimen caption="드래그 또는 ◀▶">
                 <div className="w-[328px]">
                   <Carousel
                     ariaLabel="데모"
+                    pages={['A', 'B', 'C'].map((t) => (
+                      <div className="flex h-24 items-center justify-center rounded-2xl bg-krds-bg-primary-faint text-[22px] font-bold text-krds-action-primary">
+                        페이지 {t}
+                      </div>
+                    ))}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="자동 슬라이드 (autoPlayInterval=5000)">
+              <Specimen caption="5초마다 자동 전환 · 조작 중 일시정지 · 끝→처음 순환">
+                <div className="w-[328px]">
+                  <Carousel
+                    ariaLabel="자동 슬라이드 데모"
+                    autoPlayInterval={5000}
                     pages={['A', 'B', 'C'].map((t) => (
                       <div className="flex h-24 items-center justify-center rounded-2xl bg-krds-bg-primary-faint text-[22px] font-bold text-krds-action-primary">
                         페이지 {t}

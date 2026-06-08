@@ -21,6 +21,13 @@ export interface CarouselIndicatorProps {
   onPrev?: () => void
   /** 다음 페이지. 미주입/끝 페이지면 비활성. */
   onNext?: () => void
+  /**
+   * 자동 슬라이드 재생 상태. `onTogglePlay` 와 함께 주입하면 숫자 박스와 화살표 사이에
+   * 재생/일시정지 토글 버튼이 노출된다.
+   */
+  playing?: boolean
+  /** 재생/일시정지 토글 핸들러. 주입 시에만 토글 버튼 표시. */
+  onTogglePlay?: () => void
   className?: string
 }
 
@@ -62,6 +69,8 @@ const CarouselIndicator = ({
   total,
   onPrev,
   onNext,
+  playing,
+  onTogglePlay,
   className,
 }: CarouselIndicatorProps) => {
   const atStart = current <= 1
@@ -78,6 +87,22 @@ const CarouselIndicator = ({
           <span className="text-krds-text-ink"> / {total}</span>
         </span>
       </div>
+
+      {/* 재생/일시정지 토글 — 숫자 박스와 화살표 사이 (onTogglePlay 주입 시에만) */}
+      {onTogglePlay && (
+        <button
+          type="button"
+          aria-label={playing ? '자동 슬라이드 일시정지' : '자동 슬라이드 재생'}
+          aria-pressed={playing}
+          onClick={onTogglePlay}
+          className={cn(
+            'flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-white text-krds-text-ink',
+            'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
+          )}
+        >
+          <Icon name={playing ? 'Pause' : 'PlayArrow'} size={20} aria-hidden />
+        </button>
+      )}
 
       {/* 이전/다음 화살표 */}
       <div className="flex items-center gap-krds-5">

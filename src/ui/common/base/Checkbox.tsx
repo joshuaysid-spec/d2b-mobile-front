@@ -26,17 +26,20 @@ const Checkbox = React.forwardRef<
   <label
     className={cn(
       // 칩(pill) 기본 — 기본 너비 74px(min-w), 내용이 길면 줄바꿈 없이 가로로 늘어나 아래로 안 넘침
-      'inline-flex h-12 min-w-[74px] cursor-pointer select-none items-center justify-center gap-krds-3 rounded-krds-8 px-krds-6',
+      // relative: 숨은 input(absolute)의 containing block 을 칩으로 고정 → 스와이프 스크롤러 안에서
+      //           칩 클릭 시 input 포커스가 스크롤러를 왼쪽 끝으로 당기는 현상 방지.
+      'relative inline-flex h-12 min-w-[74px] cursor-pointer select-none items-center justify-center gap-krds-3 rounded-krds-8 px-krds-6',
       'border border-krds-border-primary bg-background',
       'text-krds-body-md font-medium text-krds-text-primary transition-colors',
       // 키보드 포커스 — 내부 checkbox 가 focus-visible 일 때 칩에 링
       'has-focus-visible:outline-hidden has-focus-visible:ring-2 has-focus-visible:ring-ring has-focus-visible:ring-offset-2',
-      // 선택됨 — raw 의 data-state=checked 를 따라감
-      'has-data-[state=checked]:border-2 has-data-[state=checked]:bg-krds-bg-primary-subtle has-data-[state=checked]:font-bold',
+      // 선택됨 — raw 의 data-state=checked 를 따라감.
+      // 굵은 테두리는 border-width 변경(레이아웃 이동) 대신 inset box-shadow 로 표현 → 텍스트 밀림 없음.
+      'has-data-[state=checked]:shadow-[inset_0_0_0_1px_var(--krds-border-primary)] has-data-[state=checked]:bg-krds-bg-primary-subtle has-data-[state=checked]:font-bold',
       // 비활성
       'has-disabled:cursor-not-allowed has-disabled:border-krds-border-disabled has-disabled:bg-krds-bg-disabled-soft has-disabled:text-krds-text-disabled',
       // 비활성+선택 — border/check 아이콘(currentColor)/텍스트 모두 #8e8e8e(krds-text-disabled). 가장 높은 specificity 로 명시 고정.
-      '[&:has(:disabled):has([data-state=checked])]:border-2 [&:has(:disabled):has([data-state=checked])]:border-krds-text-disabled [&:has(:disabled):has([data-state=checked])]:bg-krds-bg-disabled-soft [&:has(:disabled):has([data-state=checked])]:text-krds-text-disabled',
+      '[&:has(:disabled):has([data-state=checked])]:shadow-[inset_0_0_0_1px_var(--krds-text-disabled)] [&:has(:disabled):has([data-state=checked])]:border-krds-text-disabled [&:has(:disabled):has([data-state=checked])]:bg-krds-bg-disabled-soft [&:has(:disabled):has([data-state=checked])]:text-krds-text-disabled',
       className,
     )}
   >
