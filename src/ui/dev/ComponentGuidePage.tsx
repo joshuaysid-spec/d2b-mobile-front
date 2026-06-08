@@ -3241,7 +3241,7 @@ export function ComponentGuidePage() {
           <Section
             id="header"
             title="Header"
-            desc="Figma Header(9300-26861) 1:1. 앱 상단 헤더. variant(main|sub) · main 은 isLoggedIn 으로 로그인 버튼 토글 · sub 는 depth(top|lower)로 우측 유틸(통합검색+전체메뉴 / 홈+전체메뉴) + 뒤로가기·타이틀. utility menu(70×66) 인라인 아톰. Logo·Icon base 재사용. sticky top-0 + safe-area-top. 미리보기는 360px 프레임."
+            desc="Figma Header(9300-26861) 1:1. 앱 상단 헤더. variant(main|sub) · main 은 isLoggedIn 으로 로그인 버튼 토글 · sub 는 util(search|home)로 우측 유틸(통합검색+전체메뉴 / 홈+전체메뉴) + 뒤로가기·타이틀. utility menu(70×66) 인라인 아톰. Logo·Icon base 재사용. sticky top-0 + safe-area-top. 미리보기는 360px 프레임."
           >
             <Row label="main — 로그인 전 / 후">
               <Specimen caption="variant='main' isLoggedIn={false} (기본)">
@@ -3255,23 +3255,23 @@ export function ComponentGuidePage() {
                 </div>
               </Specimen>
             </Row>
-            <Row label="sub — depth top / lower">
-              <Specimen caption="variant='sub' depth='top' (통합검색+전체메뉴)">
+            <Row label="sub — util search / home">
+              <Specimen caption="variant='sub' util='search' (통합검색+전체메뉴)">
                 <div className="w-[360px]">
                   <Header
                     variant="sub"
                     title="메뉴 타이틀"
-                    depth="top"
+                    util="search"
                     onBack={() => console.log('[Header] back')}
                   />
                 </div>
               </Specimen>
-              <Specimen caption="variant='sub' depth='lower' (홈+전체메뉴)">
+              <Specimen caption="variant='sub' util='home' (홈+전체메뉴)">
                 <div className="w-[360px]">
                   <Header
                     variant="sub"
                     title="긴 메뉴 타이틀이 들어가면 말줄임 처리됩니다 가나다라마바사"
-                    depth="lower"
+                    util="home"
                     onBack={() => console.log('[Header] back')}
                     onHome={() => console.log('[Header] home')}
                   />

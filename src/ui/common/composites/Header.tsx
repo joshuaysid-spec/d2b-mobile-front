@@ -8,8 +8,8 @@
 // 4가지 상태:
 //   1) variant='main' · isLoggedIn=false → [Logo] ········· [로그인][통합검색][전체메뉴]
 //   2) variant='main' · isLoggedIn=true  → [Logo] ················· [통합검색][전체메뉴]
-//   3) variant='sub'  · depth='top'      → [뒤로][타이틀 flex-1] ·· [통합검색][전체메뉴]
-//   4) variant='sub'  · depth='lower'    → [뒤로][타이틀 flex-1] ······· [홈][전체메뉴]
+//   3) variant='sub'  · util='search'    → [뒤로][타이틀 flex-1] ·· [통합검색][전체메뉴]
+//   4) variant='sub'  · util='home'      → [뒤로][타이틀 flex-1] ······· [홈][전체메뉴]
 //
 // Props (개별 props):
 // ┌────────────┬──────────────────────────┬──────────────────────────────────────────────┐
@@ -17,9 +17,9 @@
 // │ isLoggedIn │ boolean = false          │ main 전용. false→로그인 버튼 노출, true→숨김    │
 // │ onLogin    │ () => void               │ main 전용. 로그인 버튼 클릭                   │
 // │ title      │ ReactNode                │ sub 전용. 타이틀(19 Bold ink, flex-1 truncate) │
-// │ depth      │ 'top' | 'lower' = 'top'  │ sub 전용. top→통합검색+전체메뉴 / lower→홈+전체메뉴 │
+// │ util       │ 'home'|'search'='search' │ sub 전용. search→통합검색+전체메뉴 / home→홈+전체메뉴 │
 // │ onBack     │ () => void               │ sub 전용. 뒤로가기                            │
-// │ onHome     │ () => void               │ sub 전용. lower depth 홈                      │
+// │ onHome     │ () => void               │ sub 전용. util='home' 홈                      │
 // │ onSearch   │ () => void               │ 공통. 통합검색                                │
 // │ onMenu     │ () => void               │ 공통. 전체메뉴                                │
 // │ className  │ string                   │ header 추가 클래스                            │
@@ -45,11 +45,11 @@ export interface HeaderProps {
   // --- sub 전용 ---
   /** sub 타이틀(19 Bold ink, flex-1 truncate). */
   title?: React.ReactNode
-  /** sub 깊이. 기본 'top'. top→통합검색+전체메뉴 / lower→홈+전체메뉴. */
-  depth?: 'top' | 'lower'
+  /** sub 우측 유틸. 기본 'search'. search→통합검색+전체메뉴 / home→홈+전체메뉴. */
+  util?: 'home' | 'search'
   /** 뒤로가기 클릭. */
   onBack?: () => void
-  /** lower depth 홈 클릭. */
+  /** util='home' 홈 클릭. */
   onHome?: () => void
 
   // --- 공통 utility ---
@@ -112,7 +112,7 @@ const Header = ({
   isLoggedIn = false,
   onLogin,
   title,
-  depth = 'top',
+  util = 'search',
   onBack,
   onHome,
   onSearch,
@@ -131,7 +131,7 @@ const Header = ({
         />
       )}
 
-      {variant === 'sub' && depth === 'lower' ? (
+      {variant === 'sub' && util === 'home' ? (
         <UtilityMenu icon="Home" label="홈" onClick={onHome} />
       ) : (
         <UtilityMenu icon="Search" label="통합검색" onClick={onSearch} />

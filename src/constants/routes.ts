@@ -4,6 +4,8 @@ export const ROUTES = {
   OP: '/op',
   /** 조달계획 상세 (`:id` 파라미터). 이동: `/op/${id}`. */
   OP_DETAIL: '/op/:id',
+  /** 사전규격 상세 (`:id` 파라미터). 이동: `/op/spec/${id}`. */
+  OP_SPEC_DETAIL: '/op/spec/:id',
   NOTICE: '/notice',
   NOTIFICATION: '/notification',
   MYPAGE: '/mypage',

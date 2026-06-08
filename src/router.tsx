@@ -57,9 +57,22 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'op', element: <PrcmPlanIntgListPage /> },
-      { path: 'op/:id', element: <PrcmPlanDtlPage /> },
-      { path: 'op/spec/:id', element: <BfhdSpcfctDtlPage /> },
+      // 2뎁스(메뉴) → sub/util='search'(뒤로+타이틀+통합검색) · 상세 → sub/util='home'(뒤로+타이틀+홈)
+      {
+        path: 'op',
+        element: <PrcmPlanIntgListPage />,
+        handle: { header: { variant: 'sub', util: 'search', title: '조달계획' } },
+      },
+      {
+        path: 'op/:id',
+        element: <PrcmPlanDtlPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '조달계획 상세' } },
+      },
+      {
+        path: 'op/spec/:id',
+        element: <BfhdSpcfctDtlPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '사전규격 상세' } },
+      },
       { path: 'notice', element: <NoticePage /> },
       { path: 'notification', element: <NotificationPage /> },
       { path: 'mypage', element: <MyPage /> },
