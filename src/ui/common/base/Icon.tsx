@@ -58,6 +58,7 @@ const REGISTRY = {
   KeyboardDoubleArrowLeft: 'keyboard_double_arrow_left',
   KeyboardDoubleArrowRight: 'keyboard_double_arrow_right',
   KidStar: 'kid_star',
+  LocationAway: 'location_away',
   Login: 'login',
   Menu: 'menu',
   MoreVert: 'more_vert',
