@@ -1,7 +1,7 @@
 // 조달계획 통합목록(MUI-OP-01-M01, node 9300-36815). Design Ref: op-list-page.design.
 // 구성: 업무도움(Infobox) + 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더(총건수·page size)
 //      + 카드 리스트(CardList, Card 재사용) + 더보기 + 맨위로 FAB.
-// 데이터/페이징/검색은 페이지가 소유. 목록은 목업(OP_ITEMS), 더보기·page size·빠른검색은 API 경계 스텁
+// 데이터/페이징/검색은 페이지가 소유. 목록은 목업(dlt_prcmPlanList), 더보기·page size·빠른검색은 API 경계 스텁
 //   (Plan SC: 핸들러 실행 + console.log 로 변수 변화 확인). 상세필터 풀팝업(SearchFilter)은 기구현.
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -161,12 +161,16 @@ const SEARCH_TARGETS = [
   { value: 'prcmNo', label: '판단번호' },
 ]
 
-// 목업 목록 — 추후 API(opService.getList) 로 대체. Design Ref: §3.3.
+// 조달계획 통합목록 데이터(dlt_prcmPlanList, 기획서 p15 1.4) — 목업, 추후 API(opService.getList).
+// 데모용으로 srchType(plan/spec/annual)·taskSeNm('국외' 포함)을 섞어 라우팅 분기를 모두 확인 가능.
+// (실제로는 srchType 별 별도 조회 — 여기선 1개 변수에 혼합)
 const TOTAL = 100 // 총 건수(목업 — 실제 API total)
-const OP_ITEMS: OpPlanItem[] = [
+const dlt_prcmPlanList: OpPlanItem[] = [
+  // 조달계획 · 국내(물품/용역/공사) → /op/:id (국내 분기)
   {
     id: '1',
-    taskSe: '물품',
+    srchType: 'plan',
+    taskSeNm: '물품',
     ctrtMthdNm: '수의계약',
     prcmNo: '6000A',
     title: "'26년 K5방독면",
@@ -177,7 +181,8 @@ const OP_ITEMS: OpPlanItem[] = [
   },
   {
     id: '2',
-    taskSe: '용역',
+    srchType: 'plan',
+    taskSeNm: '용역',
     ctrtMthdNm: '일반경쟁',
     prcmNo: '6000B',
     title: "'26년 정보화 유지보수 사업",
@@ -188,47 +193,54 @@ const OP_ITEMS: OpPlanItem[] = [
   },
   {
     id: '3',
-    taskSe: '물품',
+    srchType: 'plan',
+    taskSeNm: '공사',
     ctrtMthdNm: '제한경쟁',
     prcmNo: '6000C',
-    title: "'26년 전투화 구매",
-    orderPrnmntYm: '2026-02',
-    orderDeptNm: '군수사령부',
-    ctrtMthd: '단가제',
-    budgetAmt: 34500000,
-  },
-  {
-    id: '4',
-    taskSe: '공사',
-    ctrtMthdNm: '수의계약',
-    prcmNo: '6000D',
     title: "'26년 막사 보수 공사",
-    orderPrnmntYm: '2026-05',
+    orderPrnmntYm: '2026-02',
     orderDeptNm: '시설관리단',
     ctrtMthd: '총액제',
     budgetAmt: 158000000,
   },
+  // 조달계획 · 국외 → /op/:id (국외 분기)
+  {
+    id: '4',
+    srchType: 'plan',
+    taskSeNm: '국외',
+    ctrtMthdNm: '일반경쟁',
+    prcmNo: '6000D',
+    title: "'26년 야간투시경 해외구매",
+    orderPrnmntYm: '2026-05',
+    orderDeptNm: '해외조달팀',
+    ctrtMthd: '단가제',
+    budgetAmt: 540000000,
+  },
+  // 사전규격 · 국내 → /op/spec/:id
   {
     id: '5',
-    taskSe: '용역',
-    ctrtMthdNm: '수의계약',
+    srchType: 'spec',
+    taskSeNm: '용역',
+    ctrtMthdNm: '일반경쟁',
     prcmNo: '6000E',
-    title: "'26년 보안 관제 위탁",
+    title: "'26년 통신장비 사전규격",
     orderPrnmntYm: '2026-03',
-    orderDeptNm: '보안운영팀',
+    orderDeptNm: '통신정보팀',
     ctrtMthd: '총액제',
     budgetAmt: 47200000,
   },
+  // 연간조달계획 · 국외(고정) → /op/:id (국외 분기)
   {
     id: '6',
-    taskSe: '물품',
+    srchType: 'annual',
+    taskSeNm: '국외',
     ctrtMthdNm: '일반경쟁',
     prcmNo: '6000F',
-    title: "'26년 야전상의 구매",
+    title: "'26년 연간 군수품 해외조달",
     orderPrnmntYm: '2026-06',
-    orderDeptNm: '피복관리소',
+    orderDeptNm: '해외조달팀',
     ctrtMthd: '단가제',
-    budgetAmt: 21800000,
+    budgetAmt: 880000000,
   },
 ]
 
@@ -262,18 +274,28 @@ export function PrcmPlanIntgListPage() {
     setPage(next)
     console.log('[OpList] loadMore → page', next) // 실제로는 다음 페이지 fetch 후 누적
   }
-  const handleCardClick = (id: string) => {
-    navigate(`/op/${id}`)
+  // 카드 클릭 라우팅 — 사전규격→사전규격상세(/op/spec/:id), 국외→국외상세(/op/ovs/:id),
+  // 그 외(국내 조달계획)→조달계획상세(/op/:id).
+  const handleCardClick = (item: OpPlanItem) => {
+    if (item.srchType === 'spec') {
+      navigate(`/op/spec/${item.id}`)
+      return
+    }
+    if (item.taskSeNm === '국외') {
+      navigate(`/op/ovs/${item.id}`)
+      return
+    }
+    navigate(`/op/${item.id}`)
   }
 
   const loaded = Math.min(page * pageSize, TOTAL)
 
   // 목업 → Card props 매핑 (Design §3.2)
-  const cardItems: CardListItem[] = OP_ITEMS.map((it) => ({
+  const cardItems: CardListItem[] = dlt_prcmPlanList.map((it) => ({
     id: it.id,
     badges: (
       <>
-        <Badge>{it.taskSe}</Badge>
+        <Badge>{it.taskSeNm}</Badge>
         <Badge>{it.ctrtMthdNm}</Badge>
       </>
     ),
@@ -285,7 +307,7 @@ export function PrcmPlanIntgListPage() {
       { label: '계약방법', value: it.ctrtMthd },
       { label: '예산금액', value: `${it.budgetAmt.toLocaleString()} 원` },
     ],
-    onClick: () => handleCardClick(it.id),
+    onClick: () => handleCardClick(it),
   }))
 
   return (

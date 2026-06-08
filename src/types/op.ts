@@ -6,12 +6,20 @@ import type { SearchFilterValue } from '@/types/search-filter'
 
 export type OpSearchFilter = SearchFilterValue
 
-// 조달계획 통합목록 카드 1건 (목업/추후 API 응답 매핑) — Design Ref: op-list-page.design §3.1
+/**
+ * 검색유형 — 기획서 srchType. 조달계획/사전규격/연간조달계획.
+ * 카드 클릭 라우팅 분기에 사용: 'spec' → 사전규격상세(/op/spec/:id), 그 외 → 조달계획상세(/op/:id).
+ */
+export type OpSrchType = 'plan' | 'spec' | 'annual'
+
+// 조달계획 통합목록 데이터(dlt_prcmPlanList, 기획서 p15 1.4) 카드 1건 (목업/추후 API 매핑).
 export interface OpPlanItem {
   /** 카드 식별자 (상세 라우팅 키) */
   id: string
-  /** 업무구분 뱃지 (예: '물품') */
-  taskSe: string
+  /** 검색유형 — 'spec'(사전규격)이면 사전규격상세로 라우팅. */
+  srchType: OpSrchType
+  /** 업무구분(taskSeNm) — 물품/용역/공사/국외. '국외'면 국외 조달(국내/국외 분기 기준). */
+  taskSeNm: string
   /** 계약방법 뱃지 (예: '수의계약') */
   ctrtMthdNm: string
   /** 판단번호 (예: '6000A') — 카드 subtitle(주요 정보) */

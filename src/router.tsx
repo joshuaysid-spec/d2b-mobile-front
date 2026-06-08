@@ -30,6 +30,12 @@ const BfhdSpcfctDtlPage = lazy(() =>
     default: m.BfhdSpcfctDtlPage,
   })),
 )
+// 국외 조달계획 상세(MUI-OP-01-M73, /op/ovs/:id) — biz/op/ovsPrcmPlanDtl.
+const OvsPrcmPlanDtlPage = lazy(() =>
+  import('@/ui/biz/op/ovsPrcmPlanDtl/OvsPrcmPlanDtlPage').then((m) => ({
+    default: m.OvsPrcmPlanDtlPage,
+  })),
+)
 const NoticePage = lazy(() =>
   import('@/ui/biz/notice/NoticePage').then((m) => ({ default: m.NoticePage })),
 )
@@ -72,6 +78,11 @@ export const router = createBrowserRouter([
         path: 'op/spec/:id',
         element: <BfhdSpcfctDtlPage />,
         handle: { header: { variant: 'sub', util: 'home', title: '사전규격 상세' } },
+      },
+      {
+        path: 'op/ovs/:id',
+        element: <OvsPrcmPlanDtlPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '국외 조달계획 상세' } },
       },
       { path: 'notice', element: <NoticePage /> },
       { path: 'notification', element: <NotificationPage /> },

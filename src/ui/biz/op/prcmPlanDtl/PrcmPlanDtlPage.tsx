@@ -3,9 +3,11 @@
 //   + 탭 콘텐츠(탭별 컴포넌트 분리: PrcmPlanDtl / PrcmPlanDtl_PrdList / PrcmPlanDtl_OpnnList / PrcmPlanDtl_spclCtrt / PrcmPlanDtl_Doc).
 // 데이터는 목업 — 추후 API(opService.getDetail)로 대체.
 // 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당이라 본문은 콘텐츠만 렌더.
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
+import { opService } from '@/services/op'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Badge } from '@/ui/common/base/Badge'
@@ -98,6 +100,12 @@ export function PrcmPlanDtlPage() {
   // 출력 버튼 — 서류 출력 확인 모달(MUI-BD-01-P14) 표시. 확인 시 OZ 리포트 호출(콘솔 스텁).
   const [outputModalOpen, setOutputModalOpen] = useState(false)
   const handleOutput = () => setOutputModalOpen(true)
+
+  // 국내 조달계획 상세 조회(스텁). 국외(taskSeNm='국외')는 별도 페이지(/op/ovs/:id)로 분리됨.
+  const { id } = useParams()
+  useEffect(() => {
+    opService.getDomesticPlanDetail(id ?? '')
+  }, [id])
 
   return (
     <div ref={rootRef} className="flex w-full flex-col">
