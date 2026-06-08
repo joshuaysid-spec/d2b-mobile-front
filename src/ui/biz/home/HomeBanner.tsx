@@ -23,13 +23,13 @@ function BannerImage({ slide }: { slide: BannerSlide }) {
       src={slide.src}
       alt={slide.alt}
       objectFit="cover"
-      className="aspect-[328/448] w-full rounded-2xl"
+      className="aspect-[328/448] w-full rounded-2xl border border-krds-border-field"
     />
   ) : (
     <div
       aria-label={slide.alt}
       role="img"
-      className="flex aspect-[328/448] w-full items-center justify-center rounded-2xl bg-krds-bg-primary-faint text-[17px] font-bold text-krds-border-field"
+      className="flex aspect-[328/448] w-full items-center justify-center rounded-2xl border border-krds-border-field bg-krds-bg-primary-faint text-[17px] font-bold text-krds-border-field"
     >
       배너
     </div>
@@ -55,6 +55,8 @@ const HomeBanner = ({ banners }: HomeBannerProps) => {
     <section>
       <Carousel
         ariaLabel="배너"
+        autoPlayInterval={10000}
+        transitionDuration={900}
         pages={banners.map((slide) => (
           <div className="px-0.5">
             <BannerImage slide={slide} />

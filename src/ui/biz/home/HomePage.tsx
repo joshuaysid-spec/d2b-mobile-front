@@ -4,7 +4,7 @@
 //
 // 데이터는 목업 상수, 동작은 API/라우팅 경계 스텁(console.log + '// 추후 …' 주석) 또는 기존 라우트 이동.
 // 캐러셀은 목업(정적), 이미지는 placeholder. 검색필터는 기존 SearchFilter(FullPopup) 재사용.
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Footer } from '@/ui/common/composites/Footer'
@@ -63,7 +63,7 @@ const HOME_FILTER: SearchFilterSchema = {
 const DEFAULT_FILTER: SearchFilterValue = { taskSe: ['all'] }
 
 // ── 목업 데이터 (추후 API 로 대체) ──────────────────────────────────────────
-// 서비스 바로가기 — 페이지당 6개(3열×2행). 7개 이상이면 캐러셀로 2페이지(1/2).
+// 서비스 바로가기 — 3열×2행 6개(슬라이드 없음, 단일 그리드).
 const SERVICE_LABELS = [
   '조달',
   '입찰공고',
@@ -71,9 +71,6 @@ const SERVICE_LABELS = [
   '계약',
   '실적증명서',
   '국내/국외 조달원 등록증',
-  'SMS서비스 신청',
-  '자료실',
-  '업무캘린더',
 ]
 
 // 서비스 라벨 → 아이콘 에셋. 미정의 라벨은 placeholder 박스 유지.
@@ -84,6 +81,17 @@ const SERVICE_ICONS: Record<string, string> = {
   계약: contractIcon,
   실적증명서: pcIcon,
   '국내/국외 조달원 등록증': rcIcon,
+}
+
+// 표시 라벨 오버라이드(줄바꿈 등). 키 매칭/아이콘은 원래 문자열 라벨 그대로 사용.
+const SERVICE_LABEL_DISPLAY: Record<string, ReactNode> = {
+  '국내/국외 조달원 등록증': (
+    <>
+      국내/국외
+      <br />
+      조달원 등록증
+    </>
+  ),
 }
 
 const NOTICE_SAMPLE: NoticeItem[] = [
@@ -174,7 +182,7 @@ export function HomePage() {
 
   const serviceItems: ServiceShortcut[] = SERVICE_LABELS.map((label, i) => ({
     id: `svc-${i}`,
-    label,
+    label: SERVICE_LABEL_DISPLAY[label] ?? label,
     iconSrc: SERVICE_ICONS[label],
     onClick: () => handleService(label),
   }))
