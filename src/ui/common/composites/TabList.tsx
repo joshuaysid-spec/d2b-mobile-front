@@ -42,6 +42,8 @@ export interface TabListProps
   onChange: (value: string) => void
   /** 좌/우 스크롤 화살표 노출 정책. 기본 'auto'. */
   scrollButtons?: TabListScrollButtons
+  /** true 면 탭들을 flex-1 로 균등 분할(가로 꽉 채움). 스크롤/화살표는 비활성. */
+  fitted?: boolean
 }
 
 function TabList({
@@ -50,6 +52,7 @@ function TabList({
   value,
   onChange,
   scrollButtons = 'auto',
+  fitted = false,
   ...props
 }: TabListProps) {
   const scrollerRef = React.useRef<HTMLDivElement>(null)
@@ -86,9 +89,11 @@ function TabList({
   }, [value])
 
   const showLeft =
-    scrollButtons === 'always' || (scrollButtons === 'auto' && canScrollLeft)
+    !fitted &&
+    (scrollButtons === 'always' || (scrollButtons === 'auto' && canScrollLeft))
   const showRight =
-    scrollButtons === 'always' || (scrollButtons === 'auto' && canScrollRight)
+    !fitted &&
+    (scrollButtons === 'always' || (scrollButtons === 'auto' && canScrollRight))
 
   const scrollBy = (delta: number) => {
     scrollerRef.current?.scrollBy({ left: delta, behavior: 'smooth' })
@@ -102,7 +107,13 @@ function TabList({
       <div
         ref={scrollerRef}
         role="tablist"
-        className="flex w-full items-center gap-krds-5 overflow-x-auto overflow-y-hidden scrollbar-none [&::-webkit-scrollbar]:hidden"
+        className={cn(
+          'flex w-full items-center gap-krds-5 scrollbar-none [&::-webkit-scrollbar]:hidden',
+          // fitted = 균등 분할(스크롤 없음) / 기본 = 가로 스크롤
+          fitted
+            ? 'overflow-hidden'
+            : 'overflow-x-auto overflow-y-hidden',
+        )}
         style={{ scrollbarWidth: 'none' }}
       >
         {items.map((item) => (
@@ -114,6 +125,7 @@ function TabList({
             selected={item.value === value}
             disabled={item.disabled}
             onClick={() => onChange(item.value)}
+            className={fitted ? 'flex-1' : undefined}
           >
             {item.label}
           </Tab>

@@ -27,6 +27,15 @@ import { HomeBanner, type BannerSlide } from '@/ui/biz/home/HomeBanner'
 import { FirstVisitGuide, type GuideItem } from '@/ui/biz/home/FirstVisitGuide'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
 import { ROUTES } from '@/constants/routes'
+import opIcon from '@/assets/images/opIcon.svg'
+import bdIcon from '@/assets/images/bdIcon.svg'
+import tgIcon from '@/assets/images/tgIcon.svg'
+import contractIcon from '@/assets/images/contractIcon.svg'
+import rcIcon from '@/assets/images/rcIcon.svg'
+import pcIcon from '@/assets/images/pcIcon.svg'
+import mainBanner1 from '@/assets/images/mainBanner1.svg'
+import mainBanner2 from '@/assets/images/mainBanner2.svg'
+import mainBanner3 from '@/assets/images/mainBanner3.svg'
 
 // ── 검색필터 schema (빠른조달검색 필터 버튼 → 풀팝업). 최소 구성, 추후 입찰공고 필터로 확장 ──
 const HOME_FILTER: SearchFilterSchema = {
@@ -67,6 +76,16 @@ const SERVICE_LABELS = [
   '업무캘린더',
 ]
 
+// 서비스 라벨 → 아이콘 에셋. 미정의 라벨은 placeholder 박스 유지.
+const SERVICE_ICONS: Record<string, string> = {
+  조달: opIcon,
+  입찰공고: bdIcon,
+  개찰: tgIcon,
+  계약: contractIcon,
+  실적증명서: pcIcon,
+  '국내/국외 조달원 등록증': rcIcon,
+}
+
 const NOTICE_SAMPLE: NoticeItem[] = [
   {
     id: 'n1',
@@ -95,9 +114,9 @@ const NOTICE_TABS: NoticeTab[] = [
 
 // 배너 — 통이미지 여러 장(목업, 에셋 미제공 → placeholder). 스와이프/화살표로 전환.
 const BANNERS: BannerSlide[] = [
-  { id: 'b1', alt: '방위사업청 익명신고센터 안내 배너' },
-  { id: 'b2', alt: '국방조달 안내 배너' },
-  { id: 'b3', alt: '전자입찰 이용 안내 배너' },
+  { id: 'b1', src: mainBanner1, alt: '방위사업청 익명신고센터 안내 배너' },
+  { id: 'b2', src: mainBanner2, alt: '국방조달 안내 배너' },
+  { id: 'b3', src: mainBanner3, alt: '전자입찰 이용 안내 배너' },
 ]
 
 export function HomePage() {
@@ -156,6 +175,7 @@ export function HomePage() {
   const serviceItems: ServiceShortcut[] = SERVICE_LABELS.map((label, i) => ({
     id: `svc-${i}`,
     label,
+    iconSrc: SERVICE_ICONS[label],
     onClick: () => handleService(label),
   }))
 
@@ -176,7 +196,7 @@ export function HomePage() {
     },
     {
       id: 'g-foreign',
-      iconName: 'Public',
+      iconName: 'AssignmentGlobe',
       title: '국외조달안내',
       desc: '국외조달원등록 및 변경, 전자입찰에 대한 절차 안내',
       onDetail: () => handleGuideDetail('foreign'),
@@ -214,11 +234,19 @@ export function HomePage() {
       </div>
 
       {/* Footer — full-bleed */}
-      <Footer />
+      <Footer
+        snsLinks={[
+          { type: 'instagram', href: '#' },
+          { type: 'youtube', href: '#' },
+          { type: 'x', href: '#' },
+          { type: 'facebook', href: '#' },
+          { type: 'blog', href: '#' },
+        ]}
+      />
 
       {/* 맨 위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main) */}
       <FloatingActionButton
-        className="fixed bottom-20 right-4 z-40"
+        className="fixed bottom-[95px] right-4 z-40"
         onTop={() =>
           document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
         }

@@ -187,7 +187,7 @@ const Footer = ({
         aria-expanded={accordionOpen}
         aria-controls="footer-related-sites"
         onClick={() => setAccordionOpen((v) => !v)}
-        className="flex h-14 w-full items-center justify-between bg-krds-bg-primary-faint px-4 text-left"
+        className="flex h-14 w-full items-center justify-between border-b border-krds-border-divider bg-krds-bg-primary-faint px-4 text-left"
       >
         <span className="text-[19px] font-bold leading-snug text-krds-text-ink">
           유관기관 바로가기
@@ -211,8 +211,8 @@ const Footer = ({
         </div>
       )}
 
-      {/* B. 콘텐츠 영역 */}
-      <div className="flex flex-col gap-6 bg-krds-bg-primary-faint px-4 py-6">
+      {/* B. 콘텐츠 영역 — 상단 34px / 하단 44px(하단 +10px 추가) */}
+      <div className="flex flex-col gap-6 bg-krds-bg-primary-faint px-4 pt-[34px] pb-[44px]">
         {/* 1. 로고 */}
         <Logo size="footer" />
 

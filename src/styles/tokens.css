@@ -152,6 +152,7 @@
   --krds-d2b-blue-disabled: #b2c2df;    /* 캘린더 disabled/otherMonth 텍스트 */
   --krds-d2b-blue-slate: #425679;       /* Infobox 본문 텍스트 (primary-faint 위 슬레이트) */
   --krds-d2b-blue-check: #8eb7ff;       /* Empty check(완료) 아이콘 */
+  --krds-d2b-blue-light: #a7c4f7;       /* 서비스 바로가기 아이콘 박스 보더 */
   --krds-d2b-blue-pastel-bg: #f5f9ff;   /* Badge pastel blue 배경 */
   --krds-d2b-divider: #d1d7e0;          /* SectionTitle / 영역 구분선 (gray-20 #cdd1d5 와 다른 Figma 실측값) */
   --krds-d2b-step-blue: #3271e3;        /* StepBar 전용 파랑 (D2B blue #0054e9 와 다른 Figma 별도 톤) */
@@ -274,6 +275,7 @@
   --krds-border-default: var(--krds-color-gray-20);
   --krds-border-strong: var(--krds-color-gray-30);
   --krds-border-primary: var(--krds-d2b-blue);              /* D2B Figma */
+  --krds-border-primary-soft: var(--krds-d2b-blue-light);   /* D2B Figma — 서비스 바로가기 아이콘 박스 */
   --krds-border-tertiary: var(--krds-d2b-blue-dark);        /* D2B Figma — Button tertiary */
   --krds-border-tertiary-active: var(--krds-d2b-blue-dark); /* D2B Figma — Button tertiary active */
   --krds-border-danger: var(--krds-d2b-danger);             /* D2B Figma */

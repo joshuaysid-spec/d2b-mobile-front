@@ -29,6 +29,7 @@ const REGISTRY = {
   ArrowBackIosNew: 'arrow_back_ios_new',
   ArrowForward: 'arrow_forward',
   ArrowForwardIos: 'arrow_forward_ios',
+  AssignmentGlobe: 'assignment_globe',
   AssignmentInd: 'assignment_ind',
   CalendarToday: 'calendar_today',
   Campaign: 'campaign',
