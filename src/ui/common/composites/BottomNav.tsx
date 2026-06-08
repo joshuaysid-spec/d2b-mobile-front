@@ -30,6 +30,12 @@ interface NavItem {
   /** REGISTRY 미등록 아이콘은 직접 전달 (Icon children 로 렌더). */
   icon?: React.ReactNode
   to: string
+  /**
+   * true 면 NavLink 가 active 매칭돼도 선택 스타일을 적용하지 않는다.
+   * 전용 라우트가 아직 없어 다른 탭과 같은 경로(예: '/')를 임시로 가리키는 탭이
+   * 그 경로에서 함께 active 로 표시되는 것을 막는 용도. 라우트 확정 시 제거.
+   */
+  noActive?: boolean
 }
 
 interface BottomNavProps {
@@ -46,9 +52,9 @@ const DEFAULT_ITEMS: NavItem[] = [
   { id: 'home', label: '홈', iconName: 'Home', to: ROUTES.HOME },
   { id: 'notification', label: '알림', iconName: 'NotificationsActive', to: ROUTES.NOTIFICATION },
   // headset_mic 는 REGISTRY 미등록 → children 으로 직접 import (size=24 명시).
-  { id: 'support', label: '고객센터', icon: <Icon name="HeadsetMic" size={24} />, to: ROUTES.HOME },
-  // location_away 는 MUI 에 없어 Person 으로 대체 (마이페이지 인물 아이콘).
-  { id: 'mypage', label: '마이페이지', iconName: 'Person', to: ROUTES.MYPAGE },
+  // 전용 라우트 미확정 → 임시로 HOME 을 가리키되, noActive 로 홈에서 함께 active 되는 것 방지.
+  { id: 'support', label: '고객센터', icon: <Icon name="HeadsetMic" size={24} />, to: ROUTES.HOME, noActive: true },
+  { id: 'mypage', label: '마이페이지', iconName: 'LocationAway', to: ROUTES.MYPAGE },
 ]
 
 // 탭 1개 — 아토믹을 별도 파일로 분리하지 않고 BottomNav 내부 컴포넌트로 처리.
@@ -57,18 +63,21 @@ function NavTab({ item, showDot }: { item: NavItem; showDot: boolean }) {
     <NavLink
       to={item.to}
       end={item.to === ROUTES.HOME}
-      className={({ isActive }) =>
-        cn(
+      // noActive 탭은 경로가 매칭돼도 '현재 페이지'가 아니므로 aria-current 도 끔.
+      aria-current={item.noActive ? undefined : 'page'}
+      className={({ isActive }) => {
+        const active = isActive && !item.noActive
+        return cn(
           // 높이 점프 방지: 선택/비선택 모두 4px 상단 border 영역 확보.
           // 선택 시 navy, 비선택 시 transparent. 콘텐츠 위치 동일 → 모든 탭 h-77.
           // min-w-0: flex-1 이 라벨 min-content 아래로도 줄어들게 → 좁은 폭에서 nav 가 넘쳐 잘리지 않음.
           'flex h-[77px] min-w-0 flex-1 flex-col items-center gap-1.5 border-t-4 pt-4',
           'text-[15px] font-bold leading-none',
-          isActive
+          active
             ? 'border-krds-action-primary-active text-krds-action-primary-active'
             : 'border-transparent text-krds-text-ink',
         )
-      }
+      }}
     >
       <span className="relative inline-flex">
         <Icon name={item.iconName} size={27} aria-hidden>
