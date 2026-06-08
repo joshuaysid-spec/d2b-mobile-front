@@ -3327,17 +3327,17 @@ export function ComponentGuidePage() {
           <Section
             id="bottomnav"
             title="BottomNav"
-            desc="Figma Tab bar(9300-27700) 1:1. 하단 고정 탭바. 4탭(홈/알림/고객센터/마이페이지) · 선택 시 navy border-top-4 + navy 색(비선택 transparent border 로 높이 점프 방지) · hasNotification 으로 알림 탭 빨강 dot · 아토믹 인라인 · safe-area-bottom. 실제론 fixed bottom-0 — 미리보기는 프레임 안에 정적 렌더(현재 라우트가 /guide 라 선택 탭 없음)."
+            desc="Figma Tab bar(9300-27700) 1:1. 하단 고정 탭바. 4탭(홈/알림/고객센터/마이페이지) · 선택 시 상단 4px #0F316E border + #ECF1FA 배경 + navy 색(비선택 transparent border 로 높이 점프 방지) · hasNotification 으로 알림 탭 빨강 dot · 아토믹 인라인 · safe-area-bottom. 실제론 fixed bottom-0 — 미리보기는 프레임 안에 정적 렌더. 라우트 밖(/guide)이라 activeId 로 선택 탭을 강제해 디자인을 보여줌."
           >
-            <Row label="기본 / 알림 dot">
-              <Specimen caption="hasNotification={false} (기본)">
+            <Row label="기본(홈 active) / 알림 dot">
+              <Specimen caption="activeId='home' — 홈 탭 선택 디자인(상단 border + #ECF1FA 배경)">
                 <div className="w-[360px] [&>nav]:static! [&>nav]:w-full! [&>nav]:translate-x-0!">
-                  <BottomNav />
+                  <BottomNav activeId="home" />
                 </div>
               </Specimen>
-              <Specimen caption="hasNotification={true} — 알림 탭 빨강 dot">
+              <Specimen caption="activeId='notification' + hasNotification — 알림 탭 active(dot 테두리 = 배경색)">
                 <div className="w-[360px] [&>nav]:static! [&>nav]:w-full! [&>nav]:translate-x-0!">
-                  <BottomNav hasNotification />
+                  <BottomNav activeId="notification" hasNotification />
                 </div>
               </Specimen>
             </Row>

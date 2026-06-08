@@ -140,6 +140,7 @@ const SearchFilterField = ({
         <Field label={field.label} required={field.required}>
           <CheckboxGroup
             swipeable={field.swipeable ?? true}
+            selectAll={field.selectAll}
             value={(value as string[]) ?? []}
             onValueChange={(v) => onChange(v)}
             items={field.options}

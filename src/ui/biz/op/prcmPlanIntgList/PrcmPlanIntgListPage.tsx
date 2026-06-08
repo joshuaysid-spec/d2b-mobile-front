@@ -50,8 +50,8 @@ const OP_SEARCH: SearchFilterSchema = {
         {
           type: 'checkbox',
           key: 'taskSeNm',
+          selectAll: true, // 상단 '전체' 칩(전체↔개별 자동 동기화) — options 에 별도 '전체' 없음
           options: [
-            { value: 'all', label: '전체' },
             { value: 'goods', label: '물품' },
             { value: 'service', label: '용역' },
             { value: 'construction', label: '공사' },
@@ -139,7 +139,7 @@ const OP_SEARCH: SearchFilterSchema = {
 // 초기/초기화 기준값 (검색유형 조달계획 · 발주예정월 최근 1개월 · 나머지 전체/빈값)
 const DEFAULT_VALUE: OpSearchFilter = {
   srchType: 'plan',
-  taskSeNm: ['all'], // 업무구분 기본 — 전체
+  taskSeNm: ['goods', 'service', 'construction', 'foreign'], // 업무구분 기본 — 전체(모든 항목)
   orderPrnmntYm: {
     start: dayjs().subtract(1, 'month').format(DATE_FORMAT),
     end: dayjs().format(DATE_FORMAT),

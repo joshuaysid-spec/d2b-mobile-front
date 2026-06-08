@@ -48,8 +48,8 @@ const HOME_FILTER: SearchFilterSchema = {
         {
           type: 'checkbox',
           key: 'taskSe',
+          selectAll: true, // 상단 '전체' 칩(전체↔개별 자동 동기화) — options 에 별도 '전체' 없음
           options: [
-            { value: 'all', label: '전체' },
             { value: 'goods', label: '물품' },
             { value: 'service', label: '용역' },
             { value: 'construction', label: '공사' },
@@ -60,7 +60,10 @@ const HOME_FILTER: SearchFilterSchema = {
     },
   ],
 }
-const DEFAULT_FILTER: SearchFilterValue = { taskSe: ['all'] }
+// 기본 — 업무구분 전체 선택(모든 항목). selectAll 칩이 '전체' 체크로 표시된다.
+const DEFAULT_FILTER: SearchFilterValue = {
+  taskSe: ['goods', 'service', 'construction', 'foreign'],
+}
 
 // ── 목업 데이터 (추후 API 로 대체) ──────────────────────────────────────────
 // 서비스 바로가기 — 3열×2행 6개(슬라이드 없음, 단일 그리드).

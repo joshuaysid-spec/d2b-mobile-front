@@ -44,6 +44,11 @@ export interface CheckboxFieldDef extends BaseField {
   options: FieldOption[]
   /** 가로 스크롤 + 좌우 스와이프 화살표(오버플로우 시 자동). 기본 true. */
   swipeable?: boolean
+  /**
+   * 상단 '전체' 칩 — 체크 시 모든 항목 선택/해제, 개별↔전체 자동 동기화(CheckboxGroup.selectAll).
+   * true 또는 { label } 객체. 사용 시 options 에 별도 '전체' 항목을 두지 않는다.
+   */
+  selectAll?: boolean | { label?: ReactNode }
 }
 export interface DateRangeFieldDef extends BaseField {
   type: 'dateRange' // 기간(DateRangeInput) — value: DateRangeValue
