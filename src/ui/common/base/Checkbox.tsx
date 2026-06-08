@@ -25,8 +25,8 @@ const Checkbox = React.forwardRef<
 >(({ className, label, children, ...props }, ref) => (
   <label
     className={cn(
-      // 칩(pill) 기본
-      'inline-flex h-12 cursor-pointer select-none items-center justify-center gap-krds-3 rounded-krds-8 px-krds-6',
+      // 칩(pill) 기본 — 기본 너비 74px(min-w), 내용이 길면 줄바꿈 없이 가로로 늘어나 아래로 안 넘침
+      'inline-flex h-12 min-w-[74px] cursor-pointer select-none items-center justify-center gap-krds-3 rounded-krds-8 px-krds-6',
       'border border-krds-border-primary bg-background',
       'text-krds-body-md font-medium text-krds-text-primary transition-colors',
       // 키보드 포커스 — 내부 checkbox 가 focus-visible 일 때 칩에 링
@@ -47,8 +47,8 @@ const Checkbox = React.forwardRef<
       className="absolute size-px overflow-hidden border-0 p-0 opacity-0 [clip:rect(0,0,0,0)]"
       {...props}
     />
-    <Icon name="Check" size={20} className="shrink-0" aria-hidden />
-    <span>{label ?? children}</span>
+    <Icon name="Check" size={24} className="shrink-0" aria-hidden />
+    <span className="whitespace-nowrap">{label ?? children}</span>
   </label>
 ))
 Checkbox.displayName = 'Checkbox'

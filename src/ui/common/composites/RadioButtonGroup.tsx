@@ -41,7 +41,8 @@ const RadioButtonGroup = React.forwardRef<
         disabled={disabled}
         showIndicator={showIndicator}
         className={cn(
-          direction === 'horizontal' ? 'flex-1' : 'w-full',
+          // vertical 은 풀폭 + 왼쪽정렬(justify-start 로 base 의 justify-center 덮음)
+          direction === 'horizontal' ? 'flex-1' : 'w-full justify-start',
           itemClassName,
         )}
       />

@@ -157,9 +157,10 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
         disabled={disabled || itemDisabled}
         onCheckedChange={(c) => toggle(v, c === true)}
         className={cn(
-          // 칩 최소 너비 — 가장 작은 체크박스도 104px 보장 (Figma)
-          'min-w-[104px]',
-          useSwiper ? 'shrink-0' : direction === 'horizontal' && 'flex-1',
+          // 칩 최소 너비 — 가장 작은 체크박스도 74px 보장
+          'min-w-[74px]',
+          // swiper 는 줄어들지 않게 shrink-0. horizontal wrap 은 flex-1 로 늘리지 않고 74px 기준 유지.
+          useSwiper && 'shrink-0',
           itemClassName,
         )}
       />
