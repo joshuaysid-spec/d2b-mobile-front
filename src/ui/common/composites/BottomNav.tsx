@@ -44,6 +44,11 @@ interface BottomNavProps {
   hasNotification?: boolean
   /** dot 을 표시할 탭 id. 기본 'notification'. */
   notificationTabId?: string
+  /**
+   * active 탭을 라우트와 무관하게 강제 지정(해당 id 탭만 active). 미지정 시 현재 라우트로 판정.
+   * 라우트 밖 미리보기(컴포넌트 가이드 등)에서 선택 디자인을 보여줄 때 사용.
+   */
+  activeId?: string
 }
 
 // 기본 4탭. to 는 ROUTES 매핑.
@@ -58,39 +63,62 @@ const DEFAULT_ITEMS: NavItem[] = [
 ]
 
 // 탭 1개 — 아토믹을 별도 파일로 분리하지 않고 BottomNav 내부 컴포넌트로 처리.
-function NavTab({ item, showDot }: { item: NavItem; showDot: boolean }) {
+// activeOverride: undefined=라우트로 판정 / true|false=강제 지정(가이드 미리보기 등).
+function NavTab({
+  item,
+  showDot,
+  activeOverride,
+}: {
+  item: NavItem
+  showDot: boolean
+  activeOverride?: boolean
+}) {
+  const computeActive = (isActive: boolean) =>
+    activeOverride ?? (isActive && !item.noActive)
   return (
     <NavLink
       to={item.to}
       end={item.to === ROUTES.HOME}
       // noActive 탭은 경로가 매칭돼도 '현재 페이지'가 아니므로 aria-current 도 끔.
       aria-current={item.noActive ? undefined : 'page'}
-      className={({ isActive }) => {
-        const active = isActive && !item.noActive
-        return cn(
+      className={({ isActive }) =>
+        cn(
           // 높이 점프 방지: 선택/비선택 모두 4px 상단 border 영역 확보.
-          // 선택 시 navy, 비선택 시 transparent. 콘텐츠 위치 동일 → 모든 탭 h-77.
+          // 선택 시 상단 4px #0F316E border + #ECF1FA 배경, 비선택 시 transparent. 콘텐츠 위치 동일 → 모든 탭 h-77.
           // min-w-0: flex-1 이 라벨 min-content 아래로도 줄어들게 → 좁은 폭에서 nav 가 넘쳐 잘리지 않음.
           'flex h-[77px] min-w-0 flex-1 flex-col items-center gap-1.5 border-t-4 pt-4',
           'text-[15px] font-bold leading-none',
-          active
-            ? 'border-krds-action-primary-active text-krds-action-primary-active'
+          computeActive(isActive)
+            ? 'border-krds-action-primary-active bg-krds-bg-primary-faint text-krds-action-primary-active'
             : 'border-transparent text-krds-text-ink',
         )
-      }}
+      }
     >
-      <span className="relative inline-flex">
-        <Icon name={item.iconName} size={27} aria-hidden>
-          {item.icon}
-        </Icon>
-        {showDot && (
-          <span className="absolute right-0 top-0 size-[11px] rounded-full border-2 border-white bg-krds-feedback-danger">
-            <span className="sr-only">새 알림 있음</span>
-          </span>
-        )}
-      </span>
-      {/* 좁은 폭에선 라벨이 잘려(…) 탭이 균등 축소 — nav 가 화면 밖으로 넘치지 않음 */}
-      <span className="max-w-full truncate">{item.label}</span>
+      {({ isActive }) => {
+        const active = computeActive(isActive)
+        return (
+          <>
+            <span className="relative inline-flex">
+              <Icon name={item.iconName} size={27} aria-hidden>
+                {item.icon}
+              </Icon>
+              {showDot && (
+                <span
+                  className={cn(
+                    'absolute right-0 top-0 size-[11px] rounded-full border-2 bg-krds-feedback-danger',
+                    // active 시 배경(#ECF1FA)에 묻히도록 dot 테두리도 배경색과 동일하게.
+                    active ? 'border-krds-bg-primary-faint' : 'border-white',
+                  )}
+                >
+                  <span className="sr-only">새 알림 있음</span>
+                </span>
+              )}
+            </span>
+            {/* 좁은 폭에선 라벨이 잘려(…) 탭이 균등 축소 — nav 가 화면 밖으로 넘치지 않음 */}
+            <span className="max-w-full truncate">{item.label}</span>
+          </>
+        )
+      }}
     </NavLink>
   )
 }
@@ -99,6 +127,7 @@ function BottomNav({
   items = DEFAULT_ITEMS,
   hasNotification = false,
   notificationTabId = 'notification',
+  activeId,
 }: BottomNavProps) {
   return (
     <nav
@@ -113,6 +142,8 @@ function BottomNav({
           key={item.id}
           item={item}
           showDot={hasNotification && item.id === notificationTabId}
+          // activeId 지정 시 라우트 무시하고 해당 탭만 active 로 강제(미리보기용).
+          activeOverride={activeId != null ? item.id === activeId : undefined}
         />
       ))}
     </nav>
