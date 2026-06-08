@@ -7,7 +7,7 @@ import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { SelectionFieldBox } from '@/ui/common/base/SelectionFieldBox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import { RelatedPlanSheet } from '@/ui/biz/op/RelatedPlanSheet'
+import { AnlPrcmPlanDtlSheet } from '@/ui/biz/op/prcmPlanDtl/AnlPrcmPlanDtlSheet'
 
 // ── 집행계획 (목업 — 문서 slide22 [물품/용역]) ──────────────────────────────
 const EXEC_ROWS: TableRow[] = [
@@ -67,7 +67,7 @@ const CONTACT_ROWS: TableRow[] = [
   },
 ]
 
-export function DetailContent() {
+export function PrcmPlanDtl() {
   // 연관정보 클릭 → 연관조달계획상세(MUI-OP-01-P12) 바텀시트
   const [relatedOpen, setRelatedOpen] = useState(false)
 
@@ -97,8 +97,8 @@ export function DetailContent() {
       </Accordion>
 
       {/* 연관조달계획상세 바텀시트 (P12) */}
-      <RelatedPlanSheet open={relatedOpen} onOpenChange={setRelatedOpen} />
+      <AnlPrcmPlanDtlSheet open={relatedOpen} onOpenChange={setRelatedOpen} />
     </>
   )
 }
-DetailContent.displayName = 'DetailContent'
+PrcmPlanDtl.displayName = 'PrcmPlanDtl'

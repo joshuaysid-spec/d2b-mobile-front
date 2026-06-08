@@ -1,6 +1,6 @@
 // 조달계획 상세 (MUI-OP-01-M03, Figma 9300-37444). 카드 클릭 → /op/:id 진입.
 // 구성(Figma contents area): 요약정보(SummaryInfo) + 스텝바(StepBar) + 탭(TabList)
-//   + 탭 콘텐츠(탭별 컴포넌트 분리: DetailContent / ItemSpec / VendorOpinion / ContractTerms / Attachment).
+//   + 탭 콘텐츠(탭별 컴포넌트 분리: PrcmPlanDtl / PrcmPlanDtl_PrdList / PrcmPlanDtl_OpnnList / PrcmPlanDtl_spclCtrt / PrcmPlanDtl_Doc).
 // 데이터는 목업 — 추후 API(opService.getDetail)로 대체.
 // 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당이라 본문은 콘텐츠만 렌더.
 import { useState } from 'react'
@@ -15,12 +15,12 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
-import { NotifyApplySheet } from '@/ui/biz/op/NotifyApplySheet'
-import { DetailContent } from '@/ui/biz/op/DetailContent'
-import { ItemSpec } from '@/ui/biz/op/ItemSpec'
-import { VendorOpinion } from '@/ui/biz/op/VendorOpinion'
-import { ContractTerms } from '@/ui/biz/op/ContractTerms'
-import { Attachment } from '@/ui/biz/op/Attachment'
+import { PrcmPlan_NotiAplySheet } from '@/ui/biz/op/prcmPlanDtl/PrcmPlan_NotiAplySheet'
+import { PrcmPlanDtl } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl'
+import { PrcmPlanDtl_PrdList } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_PrdList'
+import { PrcmPlanDtl_OpnnList } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_OpnnList'
+import { PrcmPlanDtl_spclCtrt } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_spclCtrt'
+import { PrcmPlanDtl_Doc } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_Doc'
 
 // ── 탭 (Figma m_tab) ──────────────────────────────────────────────────────
 const TABS: TabItem[] = [
@@ -35,15 +35,15 @@ const TABS: TabItem[] = [
 function renderTabContent(tab: string) {
   switch (tab) {
     case 'detail':
-      return <DetailContent />
+      return <PrcmPlanDtl />
     case 'item':
-      return <ItemSpec />
+      return <PrcmPlanDtl_PrdList />
     case 'opinion':
-      return <VendorOpinion />
+      return <PrcmPlanDtl_OpnnList />
     case 'contract':
-      return <ContractTerms />
+      return <PrcmPlanDtl_spclCtrt />
     case 'file':
-      return <Attachment />
+      return <PrcmPlanDtl_Doc />
     default:
       return null
   }
@@ -88,7 +88,7 @@ function SummaryUtilButton({
   )
 }
 
-export function OpDetailPage() {
+export function PrcmPlanDtlPage() {
   const [tab, setTab] = useState('detail')
   // 스크롤 시 상단 블록(요약+스텝+탭) 축소 + sticky 동작 — 로직은 훅에서. (overflow-anchor 진동방지 포함)
   const { collapsed, rootRef, scrollToTop } = useCollapsibleHeader()
@@ -145,7 +145,7 @@ export function OpDetailPage() {
       {renderTabContent(tab)}
 
       {/* 알림 아이콘 → 입찰공고 알림신청 바텀시트 (P10) */}
-      <NotifyApplySheet open={notifyOpen} onOpenChange={setNotifyOpen} />
+      <PrcmPlan_NotiAplySheet open={notifyOpen} onOpenChange={setNotifyOpen} />
 
       {/* 출력 — 서류 출력 확인 모달 (MUI-BD-01-P14) */}
       <AlertModal

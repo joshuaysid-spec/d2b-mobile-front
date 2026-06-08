@@ -74,13 +74,13 @@ function SelectionFieldControl({
   const items = field.sheetItems ?? []
   const hasSheet = items.length > 0
 
-  // 우선순위: 페이지 위임(onSelectionClick) > 내장 바텀시트(sheetItems) > 무동작
+  // 우선순위: 내장 바텀시트(sheetItems, 자기완결) > 위임(onSelectionClick — 셸의 공통 검색시트/외부 팝업) > 무동작
   const handleClick = () => {
-    if (onSelectionClick) {
-      onSelectionClick(field.key, value, (v) => onChange(v))
+    if (hasSheet) {
+      setOpen(true)
       return
     }
-    if (hasSheet) setOpen(true)
+    onSelectionClick?.(field.key, value, (v) => onChange(v))
   }
 
   return (

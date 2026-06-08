@@ -1,14 +1,14 @@
 // 조달계획 상세 - '업체의견' 탭 콘텐츠 (MUI-OP-01-M05, 문서 slide26).
-// 제목(PageTitle) + 헤더(총건수 + 의견등록 버튼) + 의견 카드 목록(OpinionCard, 일부 답변 포함) + 더보기.
+// 제목(PageTitle) + 헤더(총건수 + 의견등록 버튼) + 의견 카드 목록(PrcmPlanDtl_OpnnCard, 일부 답변 포함) + 더보기.
 // 동작(스텁): 의견등록→등록 팝업 / 카드 클릭→상세 팝업 / 비공개는 "비공개 글입니다" 안내.
 // 데이터는 목업 — 추후 API(opService.getOpinions)로 대체.
 import { useCallback, useMemo, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { PageTitle } from '@/ui/common/base/PageTitle'
-import { OpinionCard, type OpinionData } from '@/ui/biz/op/OpinionCard'
-import { OpinionDetailPopup } from '@/ui/biz/op/OpinionDetailPopup'
-import { OpinionFormPopup } from '@/ui/biz/op/OpinionFormPopup'
+import { PrcmPlanDtl_OpnnCard, type OpinionData } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_OpnnCard'
+import { PrcmPlanDtl_OpnnDtlPopup } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_OpnnDtlPopup'
+import { PrcmPlanDtl_OpnnRegPopup } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_OpnnRegPopup'
 
 interface OpinionItem {
   id: string
@@ -79,7 +79,7 @@ const MOCK: OpinionItem[] = [
   },
 ]
 
-export function VendorOpinion() {
+export function PrcmPlanDtl_OpnnList() {
   const [page, setPage] = useState(1)
   const pageSize = 10
   const loaded = Math.min(page * pageSize, TOTAL)
@@ -104,7 +104,7 @@ export function VendorOpinion() {
     setDetailOpen(true)
   }, [])
 
-  // 카드별 안정 콜백 — memo(OpinionCard) 가 부모 리렌더 시 스킵되도록 1회 계산.
+  // 카드별 안정 콜백 — memo(PrcmPlanDtl_OpnnCard) 가 부모 리렌더 시 스킵되도록 1회 계산.
   const cards = useMemo(
     () =>
       MOCK.map((item) => ({
@@ -132,7 +132,7 @@ export function VendorOpinion() {
       {/* 의견 카드 목록 */}
       <div className="flex flex-col gap-krds-7 px-4">
         {cards.map(({ item, onOpen, onReply }) => (
-          <OpinionCard
+          <PrcmPlanDtl_OpnnCard
             key={item.id}
             opinion={item.opinion}
             reply={item.reply}
@@ -158,10 +158,10 @@ export function VendorOpinion() {
       </div>
 
       {/* 의견등록/수정 (P07) */}
-      <OpinionFormPopup open={formOpen} onOpenChange={setFormOpen} />
+      <PrcmPlanDtl_OpnnRegPopup open={formOpen} onOpenChange={setFormOpen} />
 
       {/* 의견 상세 / 답변 상세 (P06) — 수정 클릭 시 등록/수정(P07) 진입 */}
-      <OpinionDetailPopup
+      <PrcmPlanDtl_OpnnDtlPopup
         open={detailOpen}
         onOpenChange={setDetailOpen}
         variant={detailVariant}
@@ -174,4 +174,4 @@ export function VendorOpinion() {
     </div>
   )
 }
-VendorOpinion.displayName = 'VendorOpinion'
+PrcmPlanDtl_OpnnList.displayName = 'PrcmPlanDtl_OpnnList'

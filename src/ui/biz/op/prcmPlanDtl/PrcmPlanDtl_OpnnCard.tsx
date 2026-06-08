@@ -21,7 +21,7 @@ export interface OpinionData {
   datetime: string
 }
 
-export interface OpinionCardProps {
+export interface PrcmPlanDtl_OpnnCardProps {
   opinion: OpinionData
   /** 답변 — 있으면 ㄴ 들여쓰기 카드로 의견 바로 아래 표시 */
   reply?: OpinionData
@@ -98,12 +98,12 @@ function CardShell({
   )
 }
 
-export const OpinionCard = memo(function OpinionCard({
+export const PrcmPlanDtl_OpnnCard = memo(function PrcmPlanDtl_OpnnCard({
   opinion,
   reply,
   onOpinionClick,
   onReplyClick,
-}: OpinionCardProps) {
+}: PrcmPlanDtl_OpnnCardProps) {
   return (
     <div className="flex w-full flex-col gap-1">
       <CardShell data={opinion} onClick={onOpinionClick} />
@@ -120,4 +120,4 @@ export const OpinionCard = memo(function OpinionCard({
     </div>
   )
 })
-OpinionCard.displayName = 'OpinionCard'
+PrcmPlanDtl_OpnnCard.displayName = 'PrcmPlanDtl_OpnnCard'

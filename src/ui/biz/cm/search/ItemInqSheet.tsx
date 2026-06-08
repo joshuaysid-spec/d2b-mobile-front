@@ -25,14 +25,14 @@ const MOCK_ITEMS: ItemResult[] = [
   { invtNo: '841511009876', prtsNo: '880220-00045-210', itemNm: '야전상의 단추' },
 ]
 
-export interface ItemSearchPopupProps {
+export interface ItemInqSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   /** 결과 선택 시 호출 — 선택한 품명을 호출 필드로 반환. */
   onSelect: (itemNm: string) => void
 }
 
-export function ItemSearchPopup({ open, onOpenChange, onSelect }: ItemSearchPopupProps) {
+export function ItemInqSheet({ open, onOpenChange, onSelect }: ItemInqSheetProps) {
   const [year, setYear] = useState(String(dayjs().year())) // 요구년도 — 당해년도 기본(On-Load)
   const [itemNm, setItemNm] = useState('')
   const [invtNo, setInvtNo] = useState('')

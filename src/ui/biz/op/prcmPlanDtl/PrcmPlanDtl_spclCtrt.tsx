@@ -59,7 +59,7 @@ const ARTICLES: Article[] = [
   },
 ]
 
-export function ContractTerms() {
+export function PrcmPlanDtl_spclCtrt() {
   return (
     <div className="flex flex-col gap-krds-7 pb-6">
       <PageTitle as="h2">계약특수조건</PageTitle>
@@ -93,4 +93,4 @@ export function ContractTerms() {
     </div>
   )
 }
-ContractTerms.displayName = 'ContractTerms'
+PrcmPlanDtl_spclCtrt.displayName = 'PrcmPlanDtl_spclCtrt'

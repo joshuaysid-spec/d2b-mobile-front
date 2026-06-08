@@ -3,22 +3,20 @@
 //      + 카드 리스트(CardList, Card 재사용) + 더보기 + 맨위로 FAB.
 // 데이터/페이징/검색은 페이지가 소유. 목록은 목업(OP_ITEMS), 더보기·page size·빠른검색은 API 경계 스텁
 //   (Plan SC: 핸들러 실행 + console.log 로 변수 변화 확인). 상세필터 풀팝업(SearchFilter)은 기구현.
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
-import { OpPageLayout } from '@/ui/biz/op/OpPageLayout'
+import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
-import { ItemSearchPopup } from '@/ui/biz/op/ItemSearchPopup'
-import { ProducerSearchPopup } from '@/ui/biz/op/ProducerSearchPopup'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
 import type { OpSearchFilter, OpPlanItem } from '@/types/op'
 
@@ -74,20 +72,22 @@ const OP_SEARCH: SearchFilterSchema = {
       fields: [
         { type: 'text', key: 'prcmPlanNm', label: '제목', placeholder: '제목을 입력하세요.' },
         { type: 'text', key: 'prcmNo', label: '판단번호', placeholder: '번호를 입력하세요.' },
-        // 선택필드(`>`) — 터치 시 페이지가 검색 팝업을 연다(onSelectionClick).
-        //   품명     → 품목별 검색 (MUI-OP-01-P71)
-        //   발주기관 → 생산자 검색 (MUI-OP-01-P72)
+        // 선택필드(`>`) — 터치 시 SearchFilter 셸이 공통 검색시트를 직접 연다(searchSheet).
+        //   품명     → 품목별조회 (MUI-OP-01-P71, ItemInqSheet)
+        //   발주기관 → 생산자조회 (MUI-OP-01-P72, PrdcrInqSheet)
         {
           type: 'selectionField',
           key: 'rprsItemNm',
           label: '품명',
           placeholder: '품명을 입력하세요.',
+          searchSheet: 'item',
         },
         {
           type: 'selectionField',
           key: 'deptCd',
           label: '발주기관',
           placeholder: '발주기관을 입력하세요.',
+          searchSheet: 'producer',
         },
         { type: 'text', key: 'userNm', label: '담당자', placeholder: '담당자를 입력하세요.' },
       ],
@@ -232,7 +232,7 @@ const OP_ITEMS: OpPlanItem[] = [
   },
 ]
 
-export function OpListPage() {
+export function PrcmPlanIntgListPage() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false) // 상세필터 풀팝업
   const [filter, setFilter] = useState<SearchFilterValue>(DEFAULT_VALUE)
@@ -241,17 +241,7 @@ export function OpListPage() {
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
 
-  // selectionField → 검색 팝업(P71/P72). commit 은 클릭된 필드의 onChange(드래프트 주입) 보관.
-  const [itemSearchOpen, setItemSearchOpen] = useState(false) // P71 품목별 검색
-  const [producerSearchOpen, setProducerSearchOpen] = useState(false) // P72 생산자 검색
-  const commitRef = useRef<((value: string) => void) | null>(null)
-
-  // 품명(rprsItemNm)→P71 / 발주기관(deptCd)→P72. 선택 결과는 commitRef 로 필터 필드에 주입.
-  const handleSelectionClick = (key: string, _current: string, commit: (v: string) => void) => {
-    commitRef.current = commit
-    if (key === 'rprsItemNm') setItemSearchOpen(true)
-    else if (key === 'deptCd') setProducerSearchOpen(true)
-  }
+  // 검색어 selectionField(품명/발주기관) 의 검색시트는 SearchFilter 셸이 직접 연다(searchSheet).
 
   // ── API 경계 스텁 (백엔드 연동 시 services/op·queries/op 로 대체). console 로 동작 확인 ──
   const handleFilterSearch = (value: SearchFilterValue) => {
@@ -299,7 +289,9 @@ export function OpListPage() {
   }))
 
   return (
-    <OpPageLayout title="조달계획관리">
+    // 조달계획관리 공통 셸(PageTitle + full-bleed 플러시 스택). 과거 OpPageLayout 래퍼를 인라인.
+    <div className="flex w-full flex-col">
+      <PageTitle>조달계획관리</PageTitle>
       {/* 업무도움 — full-bleed 블루 바 (셸이 무패딩이라 -mx 불필요) */}
       <Infobox
         className="rounded-none"
@@ -355,20 +347,7 @@ export function OpListPage() {
         value={filter}
         defaultValue={DEFAULT_VALUE}
         onSearch={handleFilterSearch}
-        onSelectionClick={handleSelectionClick}
       />
-
-      {/* 검색어 selectionField 연계 팝업 — 결과 선택 시 commitRef 로 해당 필드에 값 주입 */}
-      <ItemSearchPopup
-        open={itemSearchOpen}
-        onOpenChange={setItemSearchOpen}
-        onSelect={(v) => commitRef.current?.(v)}
-      />
-      <ProducerSearchPopup
-        open={producerSearchOpen}
-        onOpenChange={setProducerSearchOpen}
-        onSelect={(v) => commitRef.current?.(v)}
-      />
-    </OpPageLayout>
+    </div>
   )
 }

@@ -31,12 +31,12 @@ const DECISION_ROWS: TableRow[] = [
   { label: '공사개요', value: '25-19차 병영기본시설 연차별 예산조정' },
 ]
 
-export interface RelatedPlanSheetProps {
+export interface AnlPrcmPlanDtlSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export function RelatedPlanSheet({ open, onOpenChange }: RelatedPlanSheetProps) {
+export function AnlPrcmPlanDtlSheet({ open, onOpenChange }: AnlPrcmPlanDtlSheetProps) {
   return (
     <BottomSheet
       open={open}
@@ -61,4 +61,4 @@ export function RelatedPlanSheet({ open, onOpenChange }: RelatedPlanSheetProps) 
     </BottomSheet>
   )
 }
-RelatedPlanSheet.displayName = 'RelatedPlanSheet'
+AnlPrcmPlanDtlSheet.displayName = 'AnlPrcmPlanDtlSheet'

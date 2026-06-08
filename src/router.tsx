@@ -12,16 +12,22 @@ import { ROUTES } from '@/constants/routes'
 const HomePage = lazy(() =>
   import('@/ui/biz/home/HomePage').then((m) => ({ default: m.HomePage })),
 )
-// 조달계획 통합목록(MUI-OP-01-M01, 설계서 p.8) — biz/op 도메인.
-const OpListPage = lazy(() =>
-  import('@/ui/biz/op/OpListPage').then((m) => ({
-    default: m.OpListPage,
+// 조달계획 통합목록(MUI-OP-01-M01, 설계서 p.8) — biz/op/prcmPlanIntgList.
+const PrcmPlanIntgListPage = lazy(() =>
+  import('@/ui/biz/op/prcmPlanIntgList/PrcmPlanIntgListPage').then((m) => ({
+    default: m.PrcmPlanIntgListPage,
   })),
 )
-// 조달계획 상세(MUI-OP-01, /op/:id) — 카드 클릭 진입. 현재 빈 화면.
-const OpDetailPage = lazy(() =>
-  import('@/ui/biz/op/OpDetailPage').then((m) => ({
-    default: m.OpDetailPage,
+// 조달계획 상세(MUI-OP-01-M03, /op/:id) — biz/op/prcmPlanDtl.
+const PrcmPlanDtlPage = lazy(() =>
+  import('@/ui/biz/op/prcmPlanDtl/PrcmPlanDtlPage').then((m) => ({
+    default: m.PrcmPlanDtlPage,
+  })),
+)
+// 사전규격 상세(MUI-OP-01-M11, /op/spec/:id) — biz/op/bfhdSpcfctDtl.
+const BfhdSpcfctDtlPage = lazy(() =>
+  import('@/ui/biz/op/bfhdSpcfctDtl/BfhdSpcfctDtlPage').then((m) => ({
+    default: m.BfhdSpcfctDtlPage,
   })),
 )
 const NoticePage = lazy(() =>
@@ -51,8 +57,9 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'op', element: <OpListPage /> },
-      { path: 'op/:id', element: <OpDetailPage /> },
+      { path: 'op', element: <PrcmPlanIntgListPage /> },
+      { path: 'op/:id', element: <PrcmPlanDtlPage /> },
+      { path: 'op/spec/:id', element: <BfhdSpcfctDtlPage /> },
       { path: 'notice', element: <NoticePage /> },
       { path: 'notification', element: <NotificationPage /> },
       { path: 'mypage', element: <MyPage /> },

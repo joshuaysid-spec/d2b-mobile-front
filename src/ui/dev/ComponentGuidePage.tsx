@@ -1810,7 +1810,7 @@ export function ComponentGuidePage() {
               </Specimen>
               <Specimen caption="loading">
                 <div className="w-[328px]">
-                  <CardList items={[]} loading loadingCount={2} />
+                  <CardList items={[]} loading />
                 </div>
               </Specimen>
             </Row>

@@ -22,18 +22,18 @@ const MOCK_PRODUCERS: ProducerResult[] = [
   { cage: '00004', prdctnNm: 'STOUGHTON YOUTH COMMISSION' },
 ]
 
-export interface ProducerSearchPopupProps {
+export interface PrdcrInqSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   /** 결과 선택 시 호출 — 선택한 생산자명을 호출 필드로 반환. */
   onSelect: (prdctnNm: string) => void
 }
 
-export function ProducerSearchPopup({
+export function PrdcrInqSheet({
   open,
   onOpenChange,
   onSelect,
-}: ProducerSearchPopupProps) {
+}: PrdcrInqSheetProps) {
   const [prdctnNm, setPrdctnNm] = useState('')
   const [results, setResults] = useState<ProducerResult[] | null>(null) // null = 검색 전
 

@@ -136,6 +136,19 @@ import { Icon } from '@/ui/common/base/Icon'
 | `src/ui/raw/` | **kebab-case / lowercase** | `button.tsx`, `radio-group.tsx`, `switch.tsx` | shadcn CLI 출력 그대로 — 임의로 바꾸지 말 것. `components.json` `aliases.ui` 가 이 경로를 지정. |
 | `src/ui/common/base/` | **PascalCase** (한 단어 = 그대로, 복합어 = 단어 경계마다 대문자) | `Button.tsx`, `Checkbox.tsx`, `InputBox.tsx`, `RadioButton.tsx`, `SegmentedControl.tsx`, `TextArea.tsx` | 파일명 = 주요 export 컴포넌트명. |
 | `src/ui/common/composites/` | **PascalCase**, 그룹/리스트는 보통 `XxxGroup` | `ButtonGroup.tsx`, `RadioButtonGroup.tsx` | base + 도메인 합성. |
+| `src/ui/biz/{도메인}/` | **설계서 화면 ID 기반 PascalCase** | `prcmPlanIntgList/PrcmPlanIntgListPage.tsx`, `prcmPlanDtl/PrcmPlanDtl_PrdList.tsx` | 아래 "설계서 화면 ID → 파일명 변환 규칙" 참고. |
+
+**설계서 화면 ID → 파일명 변환 규칙 (biz 도메인 화면):**
+
+- `src/ui/biz/{도메인}/` 의 화면(페이지·탭·팝업·시트)은 **설계서(사용자인터페이스설계서) 영문 화면 ID 를 따른다.**
+- 규칙: **설계서 화면 ID 를 그대로 쓰되 첫 글자만 대문자로** 올려 PascalCase 규약을 만족시킨다. **언더스코어·내부 대소문자는 설계서 그대로 보존**(설계서 ↔ 코드 1:1 추적).
+  - `prcmPlanDtl_PrdList` → `PrcmPlanDtl_PrdList` · `prcmPlanDtl_spclCtrt` → `PrcmPlanDtl_spclCtrt` · `prcmPlanDtl_OpnnDtl` → `PrcmPlanDtl_OpnnDtl`
+- **폴더명 = 화면 ID(camelCase 그대로)**, 그 안의 파일/컴포넌트 = 위 규칙(첫 글자 대문자). 폴더(`prcmPlanDtl`)와 파일(`PrcmPlanDtl`)이 대소문자만 다른 중첩은 허용.
+- **페이지**(통합목록 컨테이너 등)는 화면 ID + `Page` 접미사: `PrcmPlanIntgListPage`, `PrcmPlanDtlPage`. (접미사 덕에 같은 ID 의 탭 콘텐츠 `PrcmPlanDtl` 과 충돌 안 함 — 탭에는 `Content` 등 군더더기 접미사 붙이지 말 것.)
+- 설계서 ID 가 없는 하위 조립물(예: 의견 카드)은 가장 가까운 상위 화면 ID 에서 파생: `PrcmPlanDtl_OpnnCard`.
+- **컨테이너 타입 접미사** — 풀페이지 팝업은 `Popup`, 바텀시트는 `Sheet` 를 ID 뒤에 **언더스코어 없이** 붙여 종류를 드러낸다: `PrcmPlanDtl_OpnnDtlPopup`(P06 의견상세, 풀팝업) · `PrcmPlan_NotiAplySheet`(P10 알림신청, 바텀시트) · `AnlPrcmPlanDtlSheet`(P12 연관조달, 바텀시트). 탭 콘텐츠·페이지엔 안 붙임(페이지는 `Page`). ⚠️ 컨테이너가 BottomSheet 면 반드시 `Sheet`(과거 `*SearchPopup` 처럼 바텀시트인데 `Popup` 붙이지 말 것).
+- 파일명 = 주요 export 컴포넌트명 = `displayName` 문자열 모두 동일하게 맞춘다. 공유 데이터 타입(`OpinionData` 등)은 화면 ID 로 바꾸지 않는다.
+- 화면 ID 출처: 설계서 각 "화면 목록" 표(화면ID/한글명/영문ID).
 
 **Figma → 파일명 변환 규칙:**
 

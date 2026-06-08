@@ -27,7 +27,7 @@ function SectionHeader({ title, count }: { title: string; count: number }) {
   )
 }
 
-export function Attachment() {
+export function BfhdSpcfctDtl_Doc() {
   return (
     <div className="flex flex-col gap-8 pb-6">
       <PageTitle as="h2">첨부파일</PageTitle>
@@ -52,4 +52,4 @@ export function Attachment() {
     </div>
   )
 }
-Attachment.displayName = 'Attachment'
+BfhdSpcfctDtl_Doc.displayName = 'BfhdSpcfctDtl_Doc'

@@ -12,6 +12,13 @@ export interface DateRangeValue {
 /** 필드 하나의 값 — 단일 문자열 / 다중 선택(checkbox) / 기간 */
 export type SearchFilterFieldValue = string | string[] | DateRangeValue
 
+/**
+ * 공통 검색 바텀시트 종류 — selectionField 가 SearchFilter 셸에서 직접 여는 검색 시트.
+ * 'item'=품목별조회(MUI-OP-01-P71, ItemInqSheet) · 'producer'=생산자조회(P72, PrdcrInqSheet).
+ * 시트 구현은 biz/cm/search 에 있으며, 종류만 config 로 선언한다(도메인 문자열 하드코딩 회피).
+ */
+export type SearchSheetKind = 'item' | 'producer'
+
 // ── 필드 정의 — `type` 으로 분기되는 discriminated union ──────────────────
 interface FieldOption {
   value: string
@@ -62,6 +69,12 @@ export interface SelectionFieldDef extends BaseField {
    * 필드 값으로 채워진다. 없으면 터치 무동작(추후 커스텀 팝업 연계용 자리).
    */
   sheetItems?: { value: string; label: string }[]
+  /**
+   * 공통 검색 시트(품목별/생산자 조회)를 SearchFilter 셸이 직접 연다. 지정 시 터치하면
+   * 해당 시트가 뜨고, 선택 결과가 이 필드 값으로 주입된다(페이지는 관여 안 함).
+   * sheetItems(내장 nav 시트)가 있으면 그쪽이 우선.
+   */
+  searchSheet?: SearchSheetKind
 }
 export interface SelectFieldDef extends BaseField {
   type: 'select' // 드롭다운(SelectBox) — value: string

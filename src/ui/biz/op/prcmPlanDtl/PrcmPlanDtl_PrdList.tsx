@@ -144,7 +144,7 @@ function buildRows(item: SpecItem, onView: (invtNo: string) => void): TableRow[]
   ]
 }
 
-// 품목 1건 카드 — 기본 4행 + 펼쳐보기/접기. memo: 부모(ItemSpec) 리렌더 시 스킵(item/onView 안정).
+// 품목 1건 카드 — 기본 4행 + 펼쳐보기/접기. memo: 부모(PrcmPlanDtl_PrdList) 리렌더 시 스킵(item/onView 안정).
 const SpecItemCard = memo(function SpecItemCard({
   item,
   onView,
@@ -176,7 +176,7 @@ const SpecItemCard = memo(function SpecItemCard({
   )
 })
 
-export function ItemSpec() {
+export function PrcmPlanDtl_PrdList() {
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
 
@@ -232,4 +232,4 @@ export function ItemSpec() {
     </div>
   )
 }
-ItemSpec.displayName = 'ItemSpec'
+PrcmPlanDtl_PrdList.displayName = 'PrcmPlanDtl_PrdList'

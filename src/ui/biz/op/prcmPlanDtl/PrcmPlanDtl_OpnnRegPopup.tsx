@@ -42,14 +42,14 @@ function Field({
   )
 }
 
-export interface OpinionFormPopupProps {
+export interface PrcmPlanDtl_OpnnRegPopupProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   /** 저장 콜백(추후 API). 저장 후 자동 닫힘. */
   onSave?: () => void
 }
 
-export function OpinionFormPopup({ open, onOpenChange, onSave }: OpinionFormPopupProps) {
+export function PrcmPlanDtl_OpnnRegPopup({ open, onOpenChange, onSave }: PrcmPlanDtl_OpnnRegPopupProps) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [isPublic, setIsPublic] = useState('public') // 공개/비공개
@@ -177,4 +177,4 @@ export function OpinionFormPopup({ open, onOpenChange, onSave }: OpinionFormPopu
     </FullPopup>
   )
 }
-OpinionFormPopup.displayName = 'OpinionFormPopup'
+PrcmPlanDtl_OpnnRegPopup.displayName = 'PrcmPlanDtl_OpnnRegPopup'

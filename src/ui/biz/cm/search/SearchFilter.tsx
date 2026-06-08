@@ -8,10 +8,13 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { SearchFilterField } from './SearchFilterField'
+import { ItemInqSheet } from './ItemInqSheet'
+import { PrdcrInqSheet } from './PrdcrInqSheet'
 import type {
   SearchFilterSchema,
   SearchFilterFieldValue,
   SearchFilterValue,
+  SearchSheetKind,
 } from '@/types/search-filter'
 
 export interface SearchFilterProps {
@@ -28,9 +31,9 @@ export interface SearchFilterProps {
   /** 초기화 클릭 시 추가 동작 (옵션) */
   onReset?: () => void
   /**
-   * selectionField(`>`) 터치 시 호출 — 사용 페이지가 자체 팝업(예: 품목별/생산자 검색)을 열고,
-   * 결과 선택 시 commit(value) 로 해당 필드 값을 주입한다. (셸은 도메인·팝업을 모름)
-   * 주입 시 field.sheetItems(내장 바텀시트)보다 우선.
+   * selectionField(`>`) 터치 시 호출 — field.searchSheet(셸 내장 공통 검색시트)에 해당하지 않는
+   * 커스텀 팝업을 외부에서 열고 싶을 때만 사용. searchSheet 가 지정된 필드는 셸이 직접 처리하므로
+   * 이 콜백은 호출되지 않는다(페이지는 보통 SearchFilter 하나만 import 하면 됨).
    */
   onSelectionClick?: (
     key: string,
@@ -50,6 +53,38 @@ const SearchFilter = ({
   onSelectionClick,
 }: SearchFilterProps) => {
   const [draft, setDraft] = React.useState<SearchFilterValue>(value ?? defaultValue)
+
+  // 공통 검색시트(품목별/생산자) — selectionField.searchSheet 가 셸에서 직접 연다.
+  // sheet 가 set 되면 해당 시트가 열리고, 선택 결과는 sheet.commit 으로 해당 필드에 주입된다.
+  const [sheet, setSheet] = React.useState<{
+    kind: SearchSheetKind
+    commit: (value: string) => void
+  } | null>(null)
+
+  // schema 의 selectionField 중 searchSheet 가 지정된 key → 시트 종류 매핑.
+  const sheetKindByKey = React.useMemo(() => {
+    const map: Record<string, SearchSheetKind> = {}
+    schema.sections.forEach((s) =>
+      s.fields.forEach((f) => {
+        if (f.type === 'selectionField' && f.searchSheet) map[f.key] = f.searchSheet
+      }),
+    )
+    return map
+  }, [schema])
+
+  // 필드의 selectionField 터치 → searchSheet 지정이면 셸이 직접 열고, 아니면 외부 콜백 위임.
+  const handleSelectionClick = (
+    key: string,
+    current: string,
+    commit: (value: string) => void,
+  ) => {
+    const kind = sheetKindByKey[key]
+    if (kind) {
+      setSheet({ kind, commit })
+      return
+    }
+    onSelectionClick?.(key, current, commit)
+  }
 
   // open 시 확정값으로 동기화 — 미확정 편집 폐기, 재진입 시 직전 검색값 복원.
   React.useEffect(() => {
@@ -73,6 +108,7 @@ const SearchFilter = ({
   const openKeys = schema.sections.filter((s) => s.defaultOpen !== false).map((s) => s.key)
 
   return (
+    <>
     <FullPopup
       open={open}
       onOpenChange={onOpenChange}
@@ -110,7 +146,7 @@ const SearchFilter = ({
                   field={field}
                   value={draft[field.key]}
                   onChange={(v) => setField(field.key, v)}
-                  onSelectionClick={onSelectionClick}
+                  onSelectionClick={handleSelectionClick}
                 />
               ))
             )}
@@ -118,6 +154,29 @@ const SearchFilter = ({
         ))}
       </Accordion>
     </FullPopup>
+
+      {/* 공통 검색 바텀시트 — selectionField.searchSheet 가 셸에서 직접 연다(페이지 관여 X). */}
+      <ItemInqSheet
+        open={sheet?.kind === 'item'}
+        onOpenChange={(o) => {
+          if (!o) setSheet(null)
+        }}
+        onSelect={(v) => {
+          sheet?.commit(v)
+          setSheet(null)
+        }}
+      />
+      <PrdcrInqSheet
+        open={sheet?.kind === 'producer'}
+        onOpenChange={(o) => {
+          if (!o) setSheet(null)
+        }}
+        onSelect={(v) => {
+          sheet?.commit(v)
+          setSheet(null)
+        }}
+      />
+    </>
   )
 }
 SearchFilter.displayName = 'SearchFilter'

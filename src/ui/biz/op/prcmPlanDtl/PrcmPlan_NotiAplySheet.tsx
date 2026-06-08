@@ -26,12 +26,12 @@ const GUIDE = [
   },
 ]
 
-export interface NotifyApplySheetProps {
+export interface PrcmPlan_NotiAplySheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export function NotifyApplySheet({ open, onOpenChange }: NotifyApplySheetProps) {
+export function PrcmPlan_NotiAplySheet({ open, onOpenChange }: PrcmPlan_NotiAplySheetProps) {
   const [phone, setPhone] = useState('')
   const [agree, setAgree] = useState('no') // 수신동의 기본값: 동의 안함
 
@@ -107,4 +107,4 @@ export function NotifyApplySheet({ open, onOpenChange }: NotifyApplySheetProps) 
     </BottomSheet>
   )
 }
-NotifyApplySheet.displayName = 'NotifyApplySheet'
+PrcmPlan_NotiAplySheet.displayName = 'PrcmPlan_NotiAplySheet'
