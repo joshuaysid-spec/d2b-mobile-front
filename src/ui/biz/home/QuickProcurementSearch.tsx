@@ -8,6 +8,8 @@
 // 데이터/동작은 페이지 소유 — 본 컴포넌트는 controlled(값+핸들러 주입).
 import { Icon } from '@/ui/common/base/Icon'
 import { cn } from '@/utils/cn'
+import logoText from '@/assets/images/logoText.svg'
+import filterMain from '@/assets/images/filterMain.svg'
 
 /** 빠른검색 대상 — 공고명 | G2B 공고번호 (OR, 단일선택). */
 export type SearchTarget = 'name' | 'g2bNo'
@@ -57,7 +59,7 @@ function TargetChip({
           : 'border-krds-action-primary bg-white text-krds-action-primary',
       )}
     >
-      <Icon name="Check" size={20} aria-hidden />
+      <Icon name="Check" size={25} aria-hidden />
       {label}
     </button>
   )
@@ -78,13 +80,12 @@ const QuickProcurementSearch = ({
   return (
     <section className="flex w-full flex-col items-center bg-krds-bg-primary-faint px-4 pb-6 pt-5">
       <div className="flex w-full max-w-[328px] flex-col items-center">
-        {/* 로고 — placeholder (실제 '빠른조달검색' 로고 에셋 추후 교체) */}
-        <div
-          aria-label="빠른조달검색"
-          className="flex h-10 items-center justify-center rounded-md text-[17px] font-bold text-krds-action-primary"
-        >
-          빠른조달검색
-        </div>
+        {/* 로고 — 빠른조달검색 브랜드 이미지(logoText.svg) */}
+        <img
+          src={logoText}
+          alt="빠른조달검색"
+          className="my-2.5 h-auto w-[140px]"
+        />
 
         {/* OR칩 + 검색필터 버튼 */}
         <div
@@ -101,21 +102,18 @@ const QuickProcurementSearch = ({
             />
           ))}
 
-          {/* 검색필터 버튼 (42px) — filterActive 면 파란 채움 ON */}
+          {/* 검색필터 버튼 (42px) — 흰 배경 + filterMain.svg 아이콘 */}
           <button
             type="button"
             aria-label="검색필터"
             aria-pressed={filterActive}
             onClick={onOpenFilter}
             className={cn(
-              'flex size-[42px] shrink-0 items-center justify-center rounded-full border',
+              'flex size-[42px] shrink-0 items-center justify-center rounded-full border border-krds-action-primary bg-white',
               'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
-              filterActive
-                ? 'border-krds-action-primary bg-krds-action-primary text-white'
-                : 'border-krds-action-primary bg-white text-krds-action-primary',
             )}
           >
-            <Icon name="FilterAlt" size={20} fill={filterActive ? 1 : 0} aria-hidden />
+            <img src={filterMain} alt="" aria-hidden className="size-5" />
           </button>
         </div>
 

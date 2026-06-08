@@ -30,7 +30,7 @@ const FirstVisitGuide = ({ items }: FirstVisitGuideProps) => {
               <Icon
                 name={item.iconName}
                 size={24}
-                className="text-krds-action-primary"
+                className="text-krds-text-ink"
                 aria-hidden
               />
               <span className="text-[19px] font-bold leading-normal text-krds-text-ink">
@@ -48,7 +48,7 @@ const FirstVisitGuide = ({ items }: FirstVisitGuideProps) => {
                 onClick={item.onDetail}
                 // 동일 텍스트 링크 3개 구분(WCAG 2.4.4) — 접근명에 항목 제목 포함.
                 aria-label={`${item.title} 자세히보기`}
-                className="inline-flex w-fit items-center gap-1 text-[17px] font-medium text-krds-action-primary focus-visible:outline-hidden"
+                className="inline-flex w-fit items-center gap-1 text-[17px] font-medium text-krds-text-ink focus-visible:outline-hidden"
               >
                 자세히보기
                 <Icon name="TrendingFlat" size={20} aria-hidden />

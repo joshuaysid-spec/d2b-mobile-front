@@ -52,21 +52,25 @@ const HomeNoticeSection = ({
 
       {/* 탭 */}
       <TabList
+        fitted
         items={tabs.map((t) => ({ value: t.value, label: t.label }))}
         value={activeTab}
         onChange={onTabChange}
       />
 
-      {/* 공지 카드 리스트 */}
-      <ul className="flex flex-col">
+      {/* 공지 카드 리스트 — 항목별 카드: #D1D7E0 테두리 + 16px 패딩 + 그림자(#172B4D 10%) */}
+      <ul className="flex flex-col gap-4">
         {active?.items.map((item) => (
-          <li key={item.id}>
+          <li
+            key={item.id}
+            className="rounded-krds-8 border border-krds-border-divider p-4 shadow-[0_0_10px_rgba(23,43,77,0.1)]"
+          >
             <button
               type="button"
               onClick={() => onItemClick(item)}
-              className="flex w-full flex-col gap-2 border-b border-krds-border-divider py-4 text-left focus-visible:outline-hidden"
+              className="flex w-full flex-col gap-2 text-left focus-visible:outline-hidden"
             >
-              <span className="line-clamp-2 text-[19px] font-bold leading-normal text-krds-text-ink">
+              <span className="line-clamp-2 text-[19px] font-medium leading-normal text-krds-text-ink">
                 {item.title}
               </span>
               <span className="text-[17px] leading-normal text-krds-text-muted">

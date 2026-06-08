@@ -7,6 +7,8 @@ export interface ServiceShortcut {
   /** 안정적 고유 키. */
   id: string
   label: string
+  /** 아이콘 이미지 src. 없으면 placeholder 박스 표시. */
+  iconSrc?: string
   onClick?: () => void
 }
 
@@ -26,7 +28,7 @@ function chunk<T>(arr: T[], size: number): T[][] {
 // 한 페이지(3열 그리드).
 function GridPage({ items }: { items: ServiceShortcut[] }) {
   return (
-    <ul className="grid grid-cols-3 gap-x-2 gap-y-6 px-1">
+    <ul className="grid h-full grid-cols-3 content-start gap-x-2 gap-y-6 rounded-krds-xl bg-krds-bg-primary-faint px-5 py-[30px]">
       {items.map((item) => (
         <li key={item.id} className="flex justify-center">
           <button
@@ -34,12 +36,16 @@ function GridPage({ items }: { items: ServiceShortcut[] }) {
             onClick={item.onClick}
             className="flex w-full flex-col items-center gap-2 focus-visible:outline-hidden"
           >
-            {/* 아이콘 placeholder — 실제 에셋 확정 시 교체 */}
+            {/* 아이콘 — iconSrc 있으면 이미지, 없으면 placeholder 박스(에셋 확정 시 교체) */}
             <span
               aria-hidden
-              className="flex size-[60px] items-center justify-center rounded-2xl bg-krds-bg-primary-faint"
+              className="flex size-[60px] items-center justify-center rounded-2xl border border-krds-border-primary-soft bg-white"
             >
-              <span className="size-10 rounded-lg bg-krds-border-field" />
+              {item.iconSrc ? (
+                <img src={item.iconSrc} alt="" className="size-10" />
+              ) : (
+                <span className="size-10 rounded-lg bg-krds-border-field" />
+              )}
             </span>
             <span className="text-center text-[17px] font-medium leading-snug text-krds-text-ink">
               {item.label}
@@ -65,6 +71,7 @@ const ServiceShortcutGrid = ({
 
       <Carousel
         ariaLabel="주요 서비스 바로가기"
+        className="gap-5"
         pages={pages.map((pageItems) => (
           <GridPage items={pageItems} />
         ))}

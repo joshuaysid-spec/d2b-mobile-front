@@ -68,6 +68,7 @@ const KRDS_COLOR_NAMES = [
   // border roles
   'krds-border-strong',
   'krds-border-primary',
+  'krds-border-primary-soft',
   'krds-border-danger',
   'krds-border-field',
   'krds-border-disabled',
