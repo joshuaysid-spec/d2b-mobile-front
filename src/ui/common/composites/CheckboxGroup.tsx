@@ -212,12 +212,15 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
       itemClassName,
     )
 
-    // '전체' 마스터 칩 — selectAll 일 때만. allChecked(파생)로 체크 상태 표시.
+    // '전체' 마스터 칩 — selectAll 일 때만. 체크 상태는 allChecked(파생).
+    // 단 '전체'가 비활성(selectAllDisabled)이면 체크 해제 상태로 표시한다.
+    //   (allChecked 는 '비활성 제외 항목' 기준이라, 선택 가능 항목이 모두 선택되면 true 가 되어
+    //    비활성인데도 체크된 두꺼운 스타일로 보이던 문제 방지)
     const masterChip = showSelectAll ? (
       <Checkbox
         key="__all__"
         label={selectAllLabel}
-        checked={allChecked}
+        checked={selectAllDisabled ? false : allChecked}
         disabled={disabled || allValues.length === 0 || selectAllDisabled}
         onCheckedChange={(c) => toggleAll(c === true)}
         className={chipClassName}
