@@ -17,81 +17,198 @@ import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
-import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
-import type { OpSearchFilter, OpPlanItem } from '@/types/op'
+import type {
+  SearchFilterSchema,
+  SearchFilterSection,
+  SearchFilterValue,
+} from '@/types/search-filter'
+import type { OpSearchFilter, OpPlanItem, OpSrchType } from '@/types/op'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
-// 조달계획 검색 schema (Figma MUI-OP-01-M02) — 상세필터 풀팝업 5섹션.
-const OP_SEARCH: SearchFilterSchema = {
-  title: '검색필터',
-  sections: [
+// ── MUI-OP-01-M02 검색필터 schema (설계서 p11~13) ─────────────────────────────────
+// 검색유형(srchType)에 따라 날짜·검색어·구분설정 섹션이 통째로 바뀐다. SearchFilter 에 정적 객체가
+// 아니라 resolver(buildOpSearchSchema)로 넘겨, draft.srchType 변경 시마다 재구성되도록 한다.
+//   - 조달계획(plan, p11) : 월 설정 / 검색어 5(제목·판단번호·대표품명·발주기관·담당자) / 구분설정 4 / 업무구분 전체
+//   - 사전규격(spec, p12) : 일자 설정 + 공개일 설정 / 검색어 4(품명 없음) / 구분설정 없음 / 업무구분 '국외' 비활성
+//   - 연간조달(annual,p13): 연도 설정 / 검색어 4(군구분·품질등급·재고번호·부품번호) / 구분설정 4 / 업무구분 '국외'만 활성
+
+// 진행상태 드롭다운 옵션 (조달계획·연간조달 공통)
+const PROGRESS_OPTIONS = [
+  { value: 'all', label: '전체' },
+  { value: 'plan', label: '조달계획' },
+  { value: 'posted', label: '공고게시' },
+  { value: 'waiting', label: '계약대기' },
+  { value: 'done', label: '계약완료' },
+]
+// 옵션 미확정 드롭다운 자리 — 현재 '전체'만(TODO: 백엔드 코드값 확정 시 채움)
+const ALL_ONLY = [{ value: 'all', label: '전체' }]
+
+// 검색유형 — 항상 첫 섹션(고정). 원형 라디오(○) · 필수.
+const SRCH_TYPE_SECTION: SearchFilterSection = {
+  key: 'srchType',
+  title: '검색유형',
+  fields: [
     {
+      type: 'radio',
       key: 'srchType',
-      title: '검색유형',
-      fields: [
-        {
-          type: 'radio',
-          key: 'srchType',
-          showIndicator: true, // 검색유형은 원형 라디오(○) 표시 — Figma M02
-          options: [
-            { value: 'plan', label: '조달계획' },
-            { value: 'spec', label: '사전규격' },
-            { value: 'annual', label: '연간조달계획' },
-          ],
-        },
+      required: true,
+      showIndicator: true, // 검색유형은 원형 라디오(○) 표시 — 설계서 M02
+      options: [
+        { value: 'plan', label: '조달계획' },
+        { value: 'spec', label: '사전규격' },
+        { value: 'annual', label: '연간조달계획' },
       ],
     },
-    // 업무구분 — 다중 선택(가로 스와이프). 코드값은 백엔드 연동 시 확정(현재 잠정).
-    {
-      key: 'taskSeNm',
-      title: '업무구분',
-      fields: [
-        {
-          type: 'checkbox',
-          key: 'taskSeNm',
-          selectAll: true, // 상단 '전체' 칩(전체↔개별 자동 동기화) — options 에 별도 '전체' 없음
-          options: [
-            { value: 'goods', label: '물품' },
-            { value: 'service', label: '용역' },
-            { value: 'construction', label: '공사' },
-            { value: 'foreign', label: '외자' },
-          ],
-        },
-      ],
-    },
+  ],
+}
+
+// 업무구분 — 라벨/값은 동일, 검색유형별 활성/비활성만 다름.
+//   spec: '국외' 비활성(사전규격은 국외 없음) · annual: '국외'만 활성(타 항목 비활성)
+function taskSection(type: OpSrchType): SearchFilterSection {
+  return {
+    key: 'taskSeNm',
+    title: '업무구분',
+    fields: [
+      {
+        type: 'checkbox',
+        key: 'taskSeNm',
+        required: true,
+        // '전체' 칩 — 비활성 제외 항목과 자동 동기화. 연간조달은 국외만 선택 가능하므로 '전체'도 비활성.
+        selectAll: type === 'annual' ? { disabled: true } : true,
+        options: [
+          // 연간조달: 국외만 활성(타 항목 비활성) · 사전규격: 국외 없음(비활성)
+          { value: 'goods', label: '물품', disabled: type === 'annual' },
+          { value: 'service', label: '용역', disabled: type === 'annual' },
+          { value: 'construction', label: '공사', disabled: type === 'annual' },
+          { value: 'foreign', label: '국외', disabled: type === 'spec' },
+        ],
+      },
+    ],
+  }
+}
+
+// 날짜 섹션 — 유형별로 완전히 다름.
+function dateSections(type: OpSrchType): SearchFilterSection[] {
+  if (type === 'spec') {
+    // 사전규격: 일자 설정(접수기간) + 공개일 설정(단일, 기본값 없음)
+    return [
+      {
+        key: 'date',
+        title: '일자 설정',
+        fields: [{ type: 'dateRange', key: 'rcptPeriod', required: true }],
+      },
+      {
+        key: 'opnDt',
+        title: '공개일 설정',
+        fields: [{ type: 'date', key: 'opnDt', placeholder: '날짜를 선택하세요.' }],
+      },
+    ]
+  }
+  if (type === 'annual') {
+    // 연간조달: 연도 설정(지시년도) — 단일 연도 직접 입력
+    return [
+      {
+        key: 'date',
+        title: '연도 설정',
+        fields: [
+          {
+            type: 'text',
+            key: 'stdYr',
+            label: '지시년도',
+            required: true,
+            placeholder: '지시년도를 입력하세요.',
+          },
+        ],
+      },
+    ]
+  }
+  // 조달계획: 월 설정(발주예정월). TODO: 월 단위(YYYY-MM) 피커로 교체 — date-input 개선 시
+  return [
     {
       key: 'date',
-      title: '일자 설정',
-      // TODO: 발주예정월 월 단위(YYYY-MM) 피커로 교체 — date-input 개선 시
-      fields: [{ type: 'dateRange', key: 'orderPrnmntYm' }],
+      title: '월 설정',
+      fields: [{ type: 'dateRange', key: 'orderPrnmntYm', required: true }],
     },
-    {
+  ]
+}
+
+// 검색어 섹션 — 유형별 필드 구성 다름.
+// 선택필드(`>`) 는 SearchFilter 셸이 공통 검색시트를 직접 연다(searchSheet):
+//   'item' → 품목별조회(P71, ItemInqSheet) · 'producer' → 생산자조회(P72, PrdcrInqSheet)
+function keywordSection(type: OpSrchType): SearchFilterSection {
+  if (type === 'annual') {
+    // 연간조달: 군구분·품질등급·재고번호(품목별조회)·부품번호
+    return {
       key: 'keyword',
       title: '검색어 (일부 입력 가능)',
       fields: [
-        { type: 'text', key: 'prcmPlanNm', label: '제목', placeholder: '제목을 입력하세요.' },
-        { type: 'text', key: 'prcmNo', label: '판단번호', placeholder: '번호를 입력하세요.' },
-        // 선택필드(`>`) — 터치 시 SearchFilter 셸이 공통 검색시트를 직접 연다(searchSheet).
-        //   품명     → 품목별조회 (MUI-OP-01-P71, ItemInqSheet)
-        //   발주기관 → 생산자조회 (MUI-OP-01-P72, PrdcrInqSheet)
+        { type: 'text', key: 'mlSvcNm', label: '군구분', placeholder: '군구분을 입력하세요.' },
+        { type: 'text', key: 'qltyGradeNm', label: '품질등급', placeholder: '품질등급을 입력하세요.' },
         {
           type: 'selectionField',
-          key: 'rprsItemNm',
-          label: '품명',
-          placeholder: '품명을 입력하세요.',
+          key: 'stockNo',
+          label: '재고번호',
+          placeholder: '재고번호를 선택하세요.',
           searchSheet: 'item',
         },
-        {
-          type: 'selectionField',
-          key: 'deptCd',
-          label: '발주기관',
-          placeholder: '발주기관을 입력하세요.',
-          searchSheet: 'producer',
-        },
-        { type: 'text', key: 'userNm', label: '담당자', placeholder: '담당자를 입력하세요.' },
+        { type: 'text', key: 'partNo', label: '부품번호', placeholder: '부품번호를 입력하세요.' },
       ],
+    }
+  }
+  // plan / spec 공통(제목·판단번호·발주기관·담당자). 대표품명은 조달계획만(설계서 p12 "품명 검색 삭제").
+  const fields: SearchFilterSection['fields'] = [
+    { type: 'text', key: 'prcmPlanNm', label: '제목', placeholder: '제목을 입력하세요.' },
+    { type: 'text', key: 'prcmNo', label: '판단번호', placeholder: '번호를 입력하세요.' },
+  ]
+  if (type === 'plan') {
+    fields.push({
+      type: 'selectionField',
+      key: 'rprsItemNm',
+      label: '품명',
+      placeholder: '품명을 입력하세요.',
+      searchSheet: 'item',
+    })
+  }
+  fields.push(
+    {
+      type: 'selectionField',
+      key: 'deptCd',
+      label: '발주기관',
+      placeholder: '발주기관을 입력하세요.',
+      searchSheet: 'producer',
     },
+    { type: 'text', key: 'userNm', label: '담당자', placeholder: '담당자를 입력하세요.' },
+  )
+  return { key: 'keyword', title: '검색어 (일부 입력 가능)', fields }
+}
+
+// 구분설정 섹션 — 조달계획/연간조달만. 사전규격은 구분설정 없음(설계서 p12).
+function categorySections(type: OpSrchType): SearchFilterSection[] {
+  if (type === 'spec') return []
+  if (type === 'annual') {
+    // 연간조달: 부서/기능/진행상태/품류
+    return [
+      {
+        key: 'category',
+        title: '구분설정',
+        fields: [
+          { type: 'select', key: 'deptSeCd', label: '부서', placeholder: '전체', options: ALL_ONLY },
+          { type: 'select', key: 'functnCd', label: '기능', placeholder: '전체', options: ALL_ONLY },
+          {
+            type: 'select',
+            key: 'implPrgrsStcd',
+            label: '진행상태',
+            placeholder: '전체',
+            options: PROGRESS_OPTIONS,
+          },
+          { type: 'select', key: 'prdClsfCd', label: '품류', placeholder: '전체', options: ALL_ONLY },
+        ],
+      },
+    ]
+  }
+  // 조달계획: 진행상태/기능/입찰형태/계약방법
+  return [
     {
       key: 'category',
       title: '구분설정',
@@ -101,49 +218,61 @@ const OP_SEARCH: SearchFilterSchema = {
           key: 'implPrgrsStcd',
           label: '진행상태',
           placeholder: '전체',
-          options: [
-            { value: 'all', label: '전체' },
-            { value: 'plan', label: '조달계획' },
-            { value: 'posted', label: '공고게시' },
-            { value: 'waiting', label: '계약대기' },
-            { value: 'done', label: '계약완료' },
-          ],
+          options: PROGRESS_OPTIONS,
         },
-        // 기능/입찰형태/계약방법 — 옵션 추후 확정(TODO). 현재 '전체'만
-        {
-          type: 'select',
-          key: 'inspShcd',
-          label: '기능',
-          placeholder: '전체',
-          options: [{ value: 'all', label: '전체' }],
-        },
-        {
-          type: 'select',
-          key: 'bidSecd',
-          label: '입찰형태',
-          placeholder: '전체',
-          options: [{ value: 'all', label: '전체' }],
-        },
-        {
-          type: 'select',
-          key: 'ctrtMthdCd',
-          label: '계약방법',
-          placeholder: '전체',
-          options: [{ value: 'all', label: '전체' }],
-        },
+        { type: 'select', key: 'inspShcd', label: '기능', placeholder: '전체', options: ALL_ONLY },
+        { type: 'select', key: 'bidSecd', label: '입찰형태', placeholder: '전체', options: ALL_ONLY },
+        { type: 'select', key: 'ctrtMthdCd', label: '계약방법', placeholder: '전체', options: ALL_ONLY },
       ],
     },
-  ],
+  ]
 }
 
-// 초기/초기화 기준값 (검색유형 조달계획 · 발주예정월 최근 1개월 · 나머지 전체/빈값)
+// 최종 resolver — draft 의 검색유형으로 섹션 조립. SearchFilter 에 함수째 넘긴다.
+function buildOpSearchSchema(value: SearchFilterValue): SearchFilterSchema {
+  const type = (value.srchType as OpSrchType) ?? 'plan'
+  return {
+    title: '검색필터',
+    sections: [
+      SRCH_TYPE_SECTION,
+      taskSection(type),
+      ...dateSections(type),
+      keywordSection(type),
+      ...categorySections(type),
+    ],
+  }
+}
+
+// 검색유형별 업무구분 기본값 — 검색유형 전환 시 normalize 로 이 값으로 교체한다.
+const TASK_DEFAULT_BY_TYPE: Record<OpSrchType, string[]> = {
+  plan: ['goods', 'service', 'construction', 'foreign'], // 전체
+  spec: ['goods', 'service', 'construction'], // 국외 없음
+  annual: ['foreign'], // 국외만
+}
+
+// 검색유형이 바뀌면 종속 필드(업무구분)를 새 유형 기본값으로 교체. 그 외 변경은 그대로 통과.
+// (도메인 로직이라 SearchFilter 가 아닌 페이지가 소유 → normalize prop 으로 주입)
+function normalizeOpSearch(
+  next: SearchFilterValue,
+  prev: SearchFilterValue,
+): SearchFilterValue {
+  if (next.srchType === prev.srchType) return next
+  const type = (next.srchType as OpSrchType) ?? 'plan'
+  return { ...next, taskSeNm: TASK_DEFAULT_BY_TYPE[type] }
+}
+
+const RECENT_1M = () => ({
+  start: dayjs().subtract(1, 'month').format(DATE_FORMAT),
+  end: dayjs().format(DATE_FORMAT),
+})
+
+// 초기/초기화 기준값 — 검색유형 조달계획. 유형 전환 시 normalize 가 종속 필드를 보정하므로,
+// 여기엔 모든 유형의 키를 한 벌씩 담아둔다(전환 후 빈값으로 떨어지지 않게).
 const DEFAULT_VALUE: OpSearchFilter = {
   srchType: 'plan',
-  taskSeNm: ['goods', 'service', 'construction', 'foreign'], // 업무구분 기본 — 전체(모든 항목)
-  orderPrnmntYm: {
-    start: dayjs().subtract(1, 'month').format(DATE_FORMAT),
-    end: dayjs().format(DATE_FORMAT),
-  },
+  taskSeNm: TASK_DEFAULT_BY_TYPE.plan,
+  // 조달계획 — 월 설정(최근 1개월)
+  orderPrnmntYm: RECENT_1M(),
   prcmPlanNm: '',
   prcmNo: '',
   rprsItemNm: '',
@@ -153,6 +282,18 @@ const DEFAULT_VALUE: OpSearchFilter = {
   inspShcd: 'all',
   bidSecd: 'all',
   ctrtMthdCd: 'all',
+  // 사전규격 — 일자 설정(최근 1개월) + 공개일(없음)
+  rcptPeriod: RECENT_1M(),
+  opnDt: '',
+  // 연간조달 — 연도/검색어/구분설정
+  stdYr: dayjs().format('YYYY'),
+  mlSvcNm: '',
+  qltyGradeNm: '',
+  stockNo: '',
+  partNo: '',
+  deptSeCd: 'all',
+  functnCd: 'all',
+  prdClsfCd: 'all',
 }
 
 // 빠른검색 대상 칩 (조달명/판단번호)
@@ -412,10 +553,13 @@ export function PrcmPlanIntgListPage() {
       />
 
       {/* 상세필터 풀팝업 (필터 아이콘으로 open) */}
+      {/* 검색유형(조달계획/사전규격/연간조달)에 따라 섹션이 달라짐 — schema 를 resolver 로,
+          유형 전환 시 업무구분 보정은 normalize 로 처리(설계서 MUI-OP-01-M02 p11~13). */}
       <SearchFilter
         open={open}
         onOpenChange={setOpen}
-        schema={OP_SEARCH}
+        schema={buildOpSearchSchema}
+        normalize={normalizeOpSearch}
         value={filter}
         defaultValue={DEFAULT_VALUE}
         onSearch={handleFilterSearch}

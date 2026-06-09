@@ -43,11 +43,13 @@ disabled?: boolean
   /** 각 Checkbox 칩에 적용할 className */
   itemClassName?: string
   /**
-   * 상단 '전체' 선택 체크박스 노출. true 또는 { label } 객체.
+   * 상단 '전체' 선택 체크박스 노출. true 또는 { label, disabled } 객체.
    * - 체크 → 모든(비활성 제외) 항목 선택 / 해제 → 모두 해제
    * - 개별 항목이 모두 선택되면 '전체'가 자동 체크, 하나라도 빠지면 자동 해제(파생 상태)
+   * - disabled: '전체' 칩만 비활성(개별 항목 disabled 와 별개). 선택 가능 항목이 하나뿐이라
+   *   '전체' 조작이 무의미할 때 등.
    */
-  selectAll?: boolean | { label?: React.ReactNode }
+  selectAll?: boolean | { label?: React.ReactNode; disabled?: boolean }
 }
 
 /** Figma m_button_arrow_swiper — 40px 원형 화살표 + 그라데이션 페이드 */
@@ -170,6 +172,8 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
     const showSelectAll = !!selectAll && !single
     const selectAllLabel =
       (typeof selectAll === 'object' && selectAll.label) || '전체'
+    // '전체' 칩만 별도 비활성 (개별 항목 disabled 와 무관)
+    const selectAllDisabled = typeof selectAll === 'object' && !!selectAll.disabled
 
     // ── 스와이프(가로 스크롤) 상태 ────────────────────────────────
     const scrollRef = React.useRef<HTMLDivElement>(null)
@@ -214,7 +218,7 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
         key="__all__"
         label={selectAllLabel}
         checked={allChecked}
-        disabled={disabled || allValues.length === 0}
+        disabled={disabled || allValues.length === 0 || selectAllDisabled}
         onCheckedChange={(c) => toggleAll(c === true)}
         className={chipClassName}
       />

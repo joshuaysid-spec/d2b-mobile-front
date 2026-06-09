@@ -12,6 +12,7 @@ import { ItemInqSheet } from './ItemInqSheet'
 import { PrdcrInqSheet } from './PrdcrInqSheet'
 import type {
   SearchFilterSchema,
+  SearchFilterSchemaResolver,
   SearchFilterFieldValue,
   SearchFilterValue,
   SearchSheetKind,
@@ -20,14 +21,24 @@ import type {
 export interface SearchFilterProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  /** 그릴 아코디언/필드 정의 (도메인이 주입) */
-  schema: SearchFilterSchema
+  /**
+   * 그릴 아코디언/필드 정의 (도메인이 주입).
+   * - 정적 객체: 항상 같은 섹션/필드.
+   * - resolver 함수: 현재 입력값(draft)에 따라 섹션/필드가 달라짐(검색유형 분기 등, MUI-OP-01-M02).
+   */
+  schema: SearchFilterSchema | SearchFilterSchemaResolver
   /** 확정값 — 재진입 시 이 값으로 복원 (controlled) */
   value?: SearchFilterValue
   /** 초기/초기화 기준값 */
   defaultValue: SearchFilterValue
   /** 검색 클릭 시 호출 + 팝업 닫힘 */
   onSearch: (value: SearchFilterValue) => void
+  /**
+   * 필드 편집으로 draft 가 바뀔 때마다 호출돼 "보정된 draft"를 돌려주는 훅(옵션).
+   * 검색유형처럼 한 필드가 바뀌면 종속 필드(업무구분 등)를 그 유형 기본값으로 갈아끼울 때 사용.
+   * (도메인 로직이라 소비자가 주입 — 셸은 어떤 key 가 종속인지 모른다.)
+   */
+  normalize?: (next: SearchFilterValue, prev: SearchFilterValue) => SearchFilterValue
   /** 초기화 클릭 시 추가 동작 (옵션) */
   onReset?: () => void
   /**
@@ -49,10 +60,15 @@ const SearchFilter = ({
   value,
   defaultValue,
   onSearch,
+  normalize,
   onReset,
   onSelectionClick,
 }: SearchFilterProps) => {
   const [draft, setDraft] = React.useState<SearchFilterValue>(value ?? defaultValue)
+
+  // 정적 schema 면 그대로, resolver 면 현재 draft 로 매 렌더 재계산 → 검색유형 변경 시 섹션/필드가 바뀜.
+  const resolved: SearchFilterSchema =
+    typeof schema === 'function' ? schema(draft) : schema
 
   // 공통 검색시트(품목별/생산자) — selectionField.searchSheet 가 셸에서 직접 연다.
   // sheet 가 set 되면 해당 시트가 열리고, 선택 결과는 sheet.commit 으로 해당 필드에 주입된다.
@@ -61,16 +77,14 @@ const SearchFilter = ({
     commit: (value: string) => void
   } | null>(null)
 
-  // schema 의 selectionField 중 searchSheet 가 지정된 key → 시트 종류 매핑.
-  const sheetKindByKey = React.useMemo(() => {
-    const map: Record<string, SearchSheetKind> = {}
-    schema.sections.forEach((s) =>
-      s.fields.forEach((f) => {
-        if (f.type === 'selectionField' && f.searchSheet) map[f.key] = f.searchSheet
-      }),
-    )
-    return map
-  }, [schema])
+  // resolved schema 의 selectionField 중 searchSheet 가 지정된 key → 시트 종류 매핑.
+  // (동적 schema 라 매 렌더 재계산 — 섹션 수가 적어 비용 무시 가능)
+  const sheetKindByKey: Record<string, SearchSheetKind> = {}
+  resolved.sections.forEach((s) =>
+    s.fields.forEach((f) => {
+      if (f.type === 'selectionField' && f.searchSheet) sheetKindByKey[f.key] = f.searchSheet
+    }),
+  )
 
   // 필드의 selectionField 터치 → searchSheet 지정이면 셸이 직접 열고, 아니면 외부 콜백 위임.
   const handleSelectionClick = (
@@ -92,7 +106,11 @@ const SearchFilter = ({
   }, [open, value, defaultValue])
 
   const setField = (key: string, v: SearchFilterFieldValue) =>
-    setDraft((cur) => ({ ...cur, [key]: v }))
+    setDraft((cur) => {
+      const next = { ...cur, [key]: v }
+      // normalize 가 있으면 종속 필드 보정(예: 검색유형 변경 → 업무구분 기본값 교체).
+      return normalize ? normalize(next, cur) : next
+    })
 
   const handleReset = () => {
     setDraft(defaultValue)
@@ -105,14 +123,18 @@ const SearchFilter = ({
   }
 
   // 초기 열림 섹션(defaultOpen !== false) → Radix multiple defaultValue
-  const openKeys = schema.sections.filter((s) => s.defaultOpen !== false).map((s) => s.key)
+  const openKeys = resolved.sections.filter((s) => s.defaultOpen !== false).map((s) => s.key)
+  // 섹션 구성이 바뀌면(검색유형 전환) Accordion 을 remount 해 새 섹션의 기본 열림 상태를 재적용한다.
+  // (Radix defaultValue 는 mount 시 1회만 적용되므로, 동적 섹션은 key 변경으로 다시 열어줌.
+  //  섹션 key 집합이 같으면 remount 안 돼 사용자가 접/펴둔 상태 보존)
+  const accordionKey = resolved.sections.map((s) => s.key).join('|')
 
   return (
     <>
     <FullPopup
       open={open}
       onOpenChange={onOpenChange}
-      title={schema.title ?? '검색필터'}
+      title={resolved.title ?? '검색필터'}
       rightActions={[
         { icon: 'Refresh', label: '초기화', onClick: handleReset },
         { icon: 'Close', label: '닫기', onClick: () => onOpenChange(false) },
@@ -127,8 +149,8 @@ const SearchFilter = ({
         />
       }
     >
-      <Accordion type="multiple" defaultValue={openKeys} className="w-full">
-        {schema.sections.map((section, i) => (
+      <Accordion key={accordionKey} type="multiple" defaultValue={openKeys} className="w-full">
+        {resolved.sections.map((section, i) => (
           <AccordionSection
             key={section.key}
             value={section.key}
