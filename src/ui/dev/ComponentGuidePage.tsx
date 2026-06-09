@@ -1762,6 +1762,21 @@ export function ComponentGuidePage() {
                 </div>
               </Specimen>
             </Row>
+            <Row label="background">
+              <Specimen caption="배경 바: bg #ECF1FA + 상단 1px #D1D7E0 + 높이 56px + 좌측 텍스트 #0F316E">
+                <div className="w-[328px]">
+                  <ListSectionHeader
+                    variant="background"
+                    total={100}
+                    pageSize={opPageSize}
+                    onPageSizeChange={(n) => {
+                      setOpPageSize(n)
+                      console.log('[guide] pageSize', n)
+                    }}
+                  />
+                </div>
+              </Specimen>
+            </Row>
           </Section>
 
           {/* ───────── FileDownloadList ───────── */}

@@ -529,9 +529,15 @@ export function PrcmPlanIntgListPage() {
         />
       </div>
 
-      {/* 목록 — 헤더 + 카드 (px-4 인셋) */}
-      <div className="flex flex-col gap-krds-7 px-4 pb-4">
-        <ListSectionHeader total={total} pageSize={pageSize} onPageSizeChange={handlePageSize} />
+      {/* 목록 헤더 — background 바(full-bleed, 자체 px-4) */}
+      <ListSectionHeader
+        variant="background"
+        total={total}
+        pageSize={pageSize}
+        onPageSizeChange={handlePageSize}
+      />
+      {/* 카드 (px-4 인셋) */}
+      <div className="flex flex-col gap-krds-7 px-4 pb-4 pt-krds-7">
         <CardList items={cardItems} />
       </div>
 

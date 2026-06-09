@@ -236,6 +236,7 @@
   --krds-shadow-1: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --krds-shadow-2: 0 2px 8px 0 rgba(0, 0, 0, 0.08);
   --krds-shadow-3: 0 8px 16px 0 rgba(0, 0, 0, 0.12);
+  --krds-shadow-card: 0 0 10px 0 rgba(23, 43, 77, 0.1); /* D2B Figma — 카드 그림자 #172B4D 10% */
 
   /* =========================================================================
    * 2. SEMANTIC TOKENS  (Primitive를 var()로 참조만 — 직접 값 금지)

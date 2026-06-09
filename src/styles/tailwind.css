@@ -159,6 +159,7 @@
   --shadow-krds-1: var(--krds-shadow-1);
   --shadow-krds-2: var(--krds-shadow-2);
   --shadow-krds-3: var(--krds-shadow-3);
+  --shadow-krds-card: var(--krds-shadow-card);
 
   --animate-spinner-dots: spinner-dots-rotate 1s steps(8) infinite;
   --animate-accordion-down: accordion-down 0.2s ease-out;

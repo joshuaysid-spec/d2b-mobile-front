@@ -79,7 +79,10 @@ const FloatingActionButton = React.forwardRef<
     return (
       <div
         ref={ref}
-        className={cn('inline-flex flex-col items-center', className)}
+        // mb-[20px]: 모든 화면 공통으로 bottom 위치를 20px 더 올린다(하단 여백 추가).
+        //   사용처의 fixed bottom-* 은 margin-box 기준이라, margin-bottom 이 버튼을 그만큼 위로 띄움.
+        //   (bottom-* 과 다른 CSS 속성이라 사용처 className 과 충돌하지 않고 공통 적용됨)
+        className={cn('mb-[20px] inline-flex flex-col items-center', className)}
         style={{ gap }}
       >
         {onTop && (

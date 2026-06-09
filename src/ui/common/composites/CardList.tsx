@@ -44,7 +44,7 @@ const CardList = React.forwardRef<HTMLDivElement, CardListProps>(
     return (
       <div ref={ref} className={cn('flex w-full flex-col gap-krds-8', className)} {...props}>
         {items.map(({ id, ...cardProps }) => (
-          <Card key={id} {...cardProps} />
+          <Card key={id} className="shadow-krds-card" {...cardProps} />
         ))}
       </div>
     )

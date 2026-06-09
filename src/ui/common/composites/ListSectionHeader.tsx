@@ -5,13 +5,36 @@
 //   (RadioButtonGroup/CheckboxGroup 처럼 composites 에서 raw 사용 — 승인된 패턴)
 import * as React from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
+import { cva, type VariantProps } from 'class-variance-authority'
 
 import { Icon } from '@/ui/common/base/Icon'
 import { SelectBoxItem } from '@/ui/common/base/SelectBox'
 import { Select, SelectContent, SelectGroup, SelectValue } from '@/ui/raw/select'
 import { cn } from '@/utils/cn'
 
-export interface ListSectionHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+// 두 가지 버전:
+//   default    — 투명 배경(현행). 목록 인셋 영역에서 사용.
+//   background  — 배경 바(Figma): bg #ECF1FA(krds-bg-primary-faint) + 상단 1px #D1D7E0(krds-border-divider)
+//                + 고정 높이 56px + 좌측 텍스트 #0F316E(krds-text-primary-active)
+const listSectionHeaderVariants = cva('flex w-full items-center justify-between gap-krds-5', {
+  variants: {
+    variant: {
+      default: 'min-h-[56px]',
+      background: 'h-[56px] border-t border-krds-border-divider bg-krds-bg-primary-faint px-4',
+    },
+  },
+  defaultVariants: { variant: 'default' },
+})
+
+// 좌측 "총 N건" 텍스트 색 — 버전별로 다름.
+const totalTextColor: Record<NonNullable<VariantProps<typeof listSectionHeaderVariants>['variant']>, string> = {
+  default: 'text-krds-text-ink',
+  background: 'text-krds-text-primary-active',
+}
+
+export interface ListSectionHeaderProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof listSectionHeaderVariants> {
   /** 총 건수 — "총 {total}{unit}". */
   total: number
   /** 현재 page size. */
@@ -33,19 +56,22 @@ const ListSectionHeader = React.forwardRef<HTMLDivElement, ListSectionHeaderProp
       pageSizeOptions = [10, 20, 50],
       onPageSizeChange,
       unit = '건',
+      variant = 'default',
       ...props
     },
     ref,
   ) => (
     <div
       ref={ref}
-      className={cn(
-        'flex min-h-[56px] w-full items-center justify-between gap-krds-5',
-        className,
-      )}
+      className={cn(listSectionHeaderVariants({ variant }), className)}
       {...props}
     >
-      <span className="text-[17px] font-bold leading-normal text-krds-text-ink">
+      <span
+        className={cn(
+          'text-[17px] font-bold leading-normal',
+          totalTextColor[variant ?? 'default'],
+        )}
+      >
         총 {total.toLocaleString()}
         {unit}
       </span>
@@ -60,9 +86,9 @@ const ListSectionHeader = React.forwardRef<HTMLDivElement, ListSectionHeaderProp
         >
           <SelectValue />
           <Icon
-            name="ArrowForwardIos"
-            size={20}
-            className="shrink-0 rotate-90 transition-transform duration-200 group-data-[state=open]:rotate-[270deg]"
+            name="ArrowDropDown"
+            size={25}
+            className="shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180"
             aria-hidden
           />
         </SelectPrimitive.Trigger>

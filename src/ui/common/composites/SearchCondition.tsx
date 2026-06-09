@@ -68,7 +68,7 @@ const SearchCondition = React.forwardRef<HTMLDivElement, SearchConditionProps>(
           aria-label="상세 검색 필터"
           onClick={onFilterClick}
           className={cn(
-            'flex size-12 shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-field bg-background text-krds-text-primary',
+            'flex size-12 shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-primary bg-background text-krds-text-primary',
             'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
           )}
         >
