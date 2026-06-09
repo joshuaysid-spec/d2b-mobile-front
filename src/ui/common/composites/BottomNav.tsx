@@ -52,13 +52,11 @@ interface BottomNavProps {
 }
 
 // 기본 4탭. to 는 ROUTES 매핑.
-// NOTE(스캐폴드): '고객센터' 라우트가 아직 없어 ROUTES.HOME 으로 둠. 확정 시 교체할 것.
 const DEFAULT_ITEMS: NavItem[] = [
   { id: 'home', label: '홈', iconName: 'Home', to: ROUTES.HOME },
   { id: 'notification', label: '알림', iconName: 'NotificationsActive', to: ROUTES.NOTIFICATION },
   // headset_mic 는 REGISTRY 미등록 → children 으로 직접 import (size=24 명시).
-  // 전용 라우트 미확정 → 임시로 HOME 을 가리키되, noActive 로 홈에서 함께 active 되는 것 방지.
-  { id: 'support', label: '고객센터', icon: <Icon name="HeadsetMic" size={24} />, to: ROUTES.HOME, noActive: true },
+  { id: 'support', label: '고객센터', icon: <Icon name="HeadsetMic" size={24} />, to: ROUTES.SUPPORT },
   { id: 'mypage', label: '마이페이지', iconName: 'LocationAway', to: ROUTES.MYPAGE },
 ]
 

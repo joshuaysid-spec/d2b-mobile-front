@@ -8,6 +8,7 @@ export const ROUTES = {
   OP_SPEC_DETAIL: '/op/spec/:id',
   NOTICE: '/notice',
   NOTIFICATION: '/notification',
+  SUPPORT: '/support',
   MYPAGE: '/mypage',
   /** 개발자용 컴포넌트 가이드 (PC 해상도, 모바일 셸 미적용). */
   GUIDE: '/guide',

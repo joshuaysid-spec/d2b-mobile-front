@@ -44,6 +44,9 @@ const NotificationPage = lazy(() =>
     default: m.NotificationPage,
   })),
 )
+const SupportPage = lazy(() =>
+  import('@/ui/biz/support/SupportPage').then((m) => ({ default: m.SupportPage })),
+)
 const MyPage = lazy(() =>
   import('@/ui/biz/mypage/MyPage').then((m) => ({ default: m.MyPage })),
 )
@@ -86,6 +89,7 @@ export const router = createBrowserRouter([
       },
       { path: 'notice', element: <NoticePage /> },
       { path: 'notification', element: <NotificationPage /> },
+      { path: 'support', element: <SupportPage /> },
       { path: 'mypage', element: <MyPage /> },
       // 매칭 안 되는 경로 → 404 (errorElement 가 isRouteErrorResponse 404 로 렌더)
       { path: '*', element: <ErrorPage /> },
