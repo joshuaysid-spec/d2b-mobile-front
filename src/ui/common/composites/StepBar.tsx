@@ -18,7 +18,8 @@
 //     todo   : dot bg field grey, 텍스트 ink 17 Regular
 //
 // vertical 모드는 2depth connector 가 항목 사이를 잇는다(마지막 항목은 connector 안 그림).
-// horizontal 은 1depth chip 만 가로 나열 (디자인상 horizontal-2depth 없음).
+// horizontal 은 1depth chip 을 가로 나열하고, 칩 사이를 8px×1px step-blue 연결선(Figma line)으로 잇는다
+//   (디자인상 horizontal-2depth 없음).
 //   - 항목 3개 이상이면 TabList 처럼 가로 스크롤 + 좌/우 화살표 버튼이 활성화된다.
 import * as React from 'react'
 
@@ -218,17 +219,24 @@ function StepBarHorizontal({
         role="list"
         aria-label="진행 단계"
         className={cn(
-          'flex w-full items-center gap-krds-5',
+          // 칩 사이 간격은 연결선(아래 8px line)이 담당 → 가로 gap 0. wrap 시 줄 간격만 부여.
+          'flex w-full items-center',
           scrollable
             ? 'overflow-x-auto overflow-y-hidden scrollbar-none [&::-webkit-scrollbar]:hidden'
-            : 'flex-wrap',
+            : 'flex-wrap gap-y-krds-5',
         )}
         style={scrollable ? { scrollbarWidth: 'none' } : undefined}
       >
         {items.map((item, i) => (
-          <div key={i} role="listitem">
-            <Chip1Depth label={item.label} state={item.state} />
-          </div>
+          <React.Fragment key={i}>
+            {/* 칩 사이 연결선 — Figma 8px×1px step-blue. 첫 칩 앞엔 없음(i>0). 인접 상태와 무관히 파란선. */}
+            {i > 0 && (
+              <span aria-hidden className="h-px w-krds-5 shrink-0 bg-krds-step-blue" />
+            )}
+            <div role="listitem">
+              <Chip1Depth label={item.label} state={item.state} />
+            </div>
+          </React.Fragment>
         ))}
       </div>
 
