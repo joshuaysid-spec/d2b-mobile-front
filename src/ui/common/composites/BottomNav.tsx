@@ -86,7 +86,7 @@ function NavTab({
           // 높이 점프 방지: 선택/비선택 모두 4px 상단 border 영역 확보.
           // 선택 시 상단 4px #0F316E border + #ECF1FA 배경, 비선택 시 transparent. 콘텐츠 위치 동일 → 모든 탭 h-77.
           // min-w-0: flex-1 이 라벨 min-content 아래로도 줄어들게 → 좁은 폭에서 nav 가 넘쳐 잘리지 않음.
-          'flex h-[77px] min-w-0 flex-1 flex-col items-center gap-1.5 border-t-4 pt-4',
+          'flex h-[77px] min-w-0 flex-1 flex-col items-center gap-1.5 border-t-4 pt-[13px]',
           'text-[15px] font-bold leading-none',
           computeActive(isActive)
             ? 'border-krds-action-primary-active bg-krds-bg-primary-faint text-krds-action-primary-active'

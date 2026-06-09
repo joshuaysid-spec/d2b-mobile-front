@@ -20,6 +20,11 @@ import { extendTailwindMerge } from 'tailwind-merge'
 //     (Tailwind colors 키는 자동으로 bg/text/border 모두에 노출되므로 3개 그룹에
 //      동일 토큰 목록을 등록)
 //
+//   - krds-* radius 7종         → 'rounded' 그룹
+//     (커스텀 radius `rounded-krds-8` 은 twMerge 가 인식 못해 raw shadcn 의 기본
+//      `rounded-md` 와 충돌 해소가 안 됨 → 두 클래스가 모두 DOM 에 남아 `rounded-md`
+//      가 이겨 8px 가 안 먹는 회귀(2026-06-09). radius 도 색/폰트처럼 등록 필요.)
+//
 // 신규 krds-* 토큰을 src/styles/tailwind.css 의 @theme 에 추가할 때는 여기에도 같이 등록한다.
 // 누락 시 같은 회귀가 다시 발생할 수 있다.
 
@@ -62,6 +67,7 @@ const KRDS_COLOR_NAMES = [
   'krds-text-disabled',
   'krds-text-info',
   'krds-text-primary',
+  'krds-text-primary-active',
   'krds-text-danger',
   'krds-text-ink',
   'krds-text-disabled-soft',
@@ -95,6 +101,18 @@ const KRDS_COLOR_NAMES = [
   'krds-step-blue',
 ] as const
 
+// src/styles/tailwind.css @theme 의 `--radius-krds-*` 키 전부. `rounded-krds-*` 형태로
+// rounded 유틸과 결합된다. (raw shadcn 의 기본 rounded-md 충돌 해소용)
+const KRDS_RADII = [
+  'krds-xs',
+  'krds-sm',
+  'krds-md',
+  'krds-8',
+  'krds-lg',
+  'krds-xl',
+  'krds-full',
+] as const
+
 const twMerge = extendTailwindMerge({
   extend: {
     classGroups: {
@@ -102,6 +120,7 @@ const twMerge = extendTailwindMerge({
       'text-color': [{ text: [...KRDS_COLOR_NAMES] }],
       'bg-color': [{ bg: [...KRDS_COLOR_NAMES] }],
       'border-color': [{ border: [...KRDS_COLOR_NAMES] }],
+      rounded: [{ rounded: [...KRDS_RADII] }],
     },
   },
 })
