@@ -38,7 +38,7 @@ export interface UseCollapsibleHeaderReturn {
 export function useCollapsibleHeader(
   options: UseCollapsibleHeaderOptions = {},
 ): UseCollapsibleHeaderReturn {
-  const { collapseAt = 72, expandAt = 16 } = options
+  const { collapseAt = 80, expandAt = 16 } = options
   const [collapsed, setCollapsed] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const scrollerRef = useRef<HTMLElement | Window | null>(null)
