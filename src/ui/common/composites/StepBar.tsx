@@ -243,8 +243,8 @@ function StepBarHorizontal({
       {showLeft && (
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
           <div className="pointer-events-auto flex h-10 items-center">
-            {/* 버튼 뒤(사각 모서리 포함)는 흰색으로 덮어 칩이 비치지 않게 */}
-            <span className="flex h-full items-center bg-background">
+            {/* 버튼 뒤(사각 모서리 포함)는 배경색(#ECF1FA)으로 덮어 칩이 비치지 않게 */}
+            <span className="flex h-full items-center bg-krds-bg-primary-faint">
               <button
                 type="button"
                 aria-label="이전 단계로 스크롤"
@@ -254,10 +254,10 @@ function StepBarHorizontal({
                 <Icon name="ArrowBackIosNew" size={20} aria-hidden />
               </button>
             </span>
-            {/* 칩 위로 흰색→투명 그라데이션 fade — 화살표 안쪽 칩이 서서히 사라지게 */}
+            {/* 칩 위로 #ECF1FA→투명 그라데이션 fade — 화살표 안쪽 칩이 서서히 사라지게 */}
             <div
               aria-hidden
-              className="h-full w-5 bg-gradient-to-r from-background to-transparent"
+              className="h-full w-5 bg-gradient-to-r from-krds-bg-primary-faint to-transparent"
             />
           </div>
         </div>
@@ -266,13 +266,13 @@ function StepBarHorizontal({
       {showRight && (
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center">
           <div className="pointer-events-auto flex h-10 items-center">
-            {/* 칩 위로 투명→흰색 그라데이션 fade — 화살표 안쪽 칩이 서서히 사라지게 */}
+            {/* 칩 위로 투명→#ECF1FA 그라데이션 fade — 화살표 안쪽 칩이 서서히 사라지게 */}
             <div
               aria-hidden
-              className="h-full w-5 bg-gradient-to-r from-transparent to-background"
+              className="h-full w-5 bg-gradient-to-r from-transparent to-krds-bg-primary-faint"
             />
-            {/* 버튼 뒤(사각 모서리 포함)는 흰색으로 덮어 칩이 비치지 않게 */}
-            <span className="flex h-full items-center bg-background">
+            {/* 버튼 뒤(사각 모서리 포함)는 배경색(#ECF1FA)으로 덮어 칩이 비치지 않게 */}
+            <span className="flex h-full items-center bg-krds-bg-primary-faint">
               <button
                 type="button"
                 aria-label="다음 단계로 스크롤"

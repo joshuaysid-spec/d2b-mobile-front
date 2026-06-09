@@ -138,9 +138,19 @@ export function PrcmPlanDtlPage() {
           rows={SUMMARY_ROWS}
         />
 
-        {/* 진행 단계 */}
-        <div className="px-4 py-4">
-          <StepBar orientation="horizontal" items={STEPS} />
+        {/* 진행 단계 — 스크롤 축소(collapsed) 시 StepBar 도 함께 접힘(grid-rows 0fr 전환, SummaryInfo 와 동일 방식).
+            배경 #ECF1FA 밴드(패딩 포함). StepBar 루트는 흰 bg 라 bg-transparent 로 덮어 밴드가 비치게. */}
+        <div
+          aria-hidden={collapsed}
+          className={`grid transition-all duration-200 ease-out motion-reduce:transition-none ${
+            collapsed ? 'grid-rows-[0fr] opacity-0' : 'grid-rows-[1fr] opacity-100'
+          }`}
+        >
+          <div className="overflow-hidden">
+            <div className="bg-krds-bg-primary-faint px-4 py-4">
+              <StepBar orientation="horizontal" items={STEPS} className="bg-transparent" />
+            </div>
+          </div>
         </div>
 
         {/* 탭 */}
