@@ -186,8 +186,8 @@ function SideInput({
         maxLength={10}
         placeholder={placeholder}
         className={cn(
-          'min-w-0 flex-1 border-none bg-transparent p-0 text-center text-krds-body-md text-krds-text-ink shadow-none outline-hidden ring-0',
-          'focus-visible:ring-0 placeholder:text-krds-text-disabled disabled:cursor-not-allowed',
+          'min-w-0 flex-1 border-none bg-transparent p-0 text-center text-krds-body-md text-krds-text-ink shadow-none outline-hidden ring-0 ring-offset-0',
+          'focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-krds-text-disabled disabled:cursor-not-allowed',
         )}
       />
       {focused && value && !disabled && (
