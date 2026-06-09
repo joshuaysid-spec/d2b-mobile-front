@@ -41,10 +41,12 @@ const Tab = React.forwardRef<HTMLButtonElement, TabProps>(
       >
         {children}
       </span>
+      {/* 3px 하단 border — mt-auto 로 탭(h-12) 맨 아래에 붙인다(아래 여백 0).
+          → TabList 하단 divider 와 맞닿아 떨어져 보이지 않음. */}
       <span
         aria-hidden
         className={cn(
-          'mt-krds-7 h-[3px] w-full',
+          'mt-auto h-[3px] w-full',
           selected ? 'bg-krds-action-primary' : 'bg-krds-border-field',
         )}
       />

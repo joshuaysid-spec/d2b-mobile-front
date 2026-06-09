@@ -28,7 +28,7 @@ const listSectionHeaderVariants = cva('flex w-full items-center justify-between 
 
 // 좌측 "총 N건" 텍스트 색 — 버전별로 다름.
 const totalTextColor: Record<NonNullable<VariantProps<typeof listSectionHeaderVariants>['variant']>, string> = {
-  default: 'text-krds-text-ink',
+  default: 'text-krds-text-primary-active',
   background: 'text-krds-text-primary-active',
 }
 

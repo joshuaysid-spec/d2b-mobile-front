@@ -128,7 +128,7 @@ export function ItemInqSheet({ open, onOpenChange, onSelect }: ItemInqSheetProps
         {/* 검색 결과 (dl_resultList) — 행 클릭 시 품명 반환 */}
         {results !== null && (
           <div className="flex flex-col gap-krds-5">
-            <p className="text-krds-body-sm text-krds-text-subtle">총 {results.length}건</p>
+            <p className="text-krds-body-sm text-krds-text-primary-active">총 {results.length}건</p>
             {results.length === 0 ? (
               <p className="py-6 text-center text-krds-body-md text-krds-text-subtle">
                 검색 결과가 없습니다.

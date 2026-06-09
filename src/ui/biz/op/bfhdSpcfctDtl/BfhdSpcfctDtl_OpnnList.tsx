@@ -121,7 +121,7 @@ export function BfhdSpcfctDtl_OpnnList() {
 
       {/* 헤더 — 총건수 + 의견등록 */}
       <div className="flex items-center justify-between gap-krds-5 px-4">
-        <span className="text-[17px] font-bold leading-normal text-krds-text-ink">
+        <span className="text-[17px] font-bold leading-normal text-krds-text-primary-active">
           총 {TOTAL.toLocaleString()}건
         </span>
         <Button variant="secondary" size="sm" onClick={handleRegister}>

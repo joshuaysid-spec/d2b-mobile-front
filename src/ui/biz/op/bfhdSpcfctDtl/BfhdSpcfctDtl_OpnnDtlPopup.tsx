@@ -71,6 +71,7 @@ export function BfhdSpcfctDtl_OpnnDtlPopup({
         <AccordionSection
           value="content"
           title={isReply ? '답변내역' : '업체의견'}
+          variant="blue"
           borderTop={false}
         >
           <Field label="제목">
@@ -86,11 +87,11 @@ export function BfhdSpcfctDtl_OpnnDtlPopup({
           )}
         </AccordionSection>
 
-        <AccordionSection value="files" title="첨부서류" titleInfo="총 2건">
+        <AccordionSection value="files" title="첨부서류" titleInfo="총 2건" variant="blue">
           <FileDownloadList files={FILES} onDownloadAll={() => console.log('[P06] 일괄 다운로드')} />
         </AccordionSection>
 
-        <AccordionSection value="author" title="작성자 정보">
+        <AccordionSection value="author" title="작성자 정보" variant="blue">
           {isReply ? (
             <>
               <Field label="담당자">

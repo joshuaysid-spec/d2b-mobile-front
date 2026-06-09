@@ -75,7 +75,8 @@ function Table({ className, rows, bordered = true, ...props }: TableProps) {
             <div
               role="cell"
               className={cn(
-                'flex flex-1 min-w-px px-krds-7 py-krds-5',
+                // value 셀 안 버튼(보기/선택 등)은 최소 폭 74px (Figma)
+                'flex flex-1 min-w-px px-krds-7 py-krds-5 [&_button]:min-w-[74px]',
                 type === 'number'
                   ? 'items-center justify-end text-right text-[17px] leading-normal text-krds-text-ink tabular-nums'
                   : type === 'combination'

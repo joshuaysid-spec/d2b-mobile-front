@@ -6,7 +6,7 @@
 //   ┌─ Header (h-72, bg-krds-bg-primary-faint, border-b krds-border-divider)
 //   │   title(19 Bold ink, flex-1 truncate) │ utilities (각 70w × 66h: [초기화]?[닫기])
 //   ├─ Body  — flex-1 overflow-y-auto bg-background
-//   └─ Footer (옵션) — pb safe-area
+//   └─ Footer (옵션) — 16px 패딩 + 상단 1px #D1D7E0(border-divider) + bg #ECF1FA(bg-primary-faint), pb safe-area
 //
 // Props:
 // ┌──────────────┬─────────────────────────────────┬──────────────────────────────────────────┐
@@ -202,11 +202,11 @@ const FullPopup = ({
           {/* Body — flex-1 scrollable */}
           <div className="flex-1 overflow-y-auto bg-background">{children}</div>
 
-          {/* Footer — 옵션, safe-area-bottom 보호 */}
+          {/* Footer — 옵션. 16px 패딩 + 상단 1px #D1D7E0(border-divider) + bg #ECF1FA(bg-primary-faint), safe-area-bottom 보호 */}
           {footer && (
             <div
               className={cn(
-                'shrink-0 bg-background px-krds-8 pt-krds-5',
+                'shrink-0 border-t border-krds-border-divider bg-krds-bg-primary-faint px-krds-8 pt-krds-8',
                 'pb-[max(16px,env(safe-area-inset-bottom))]',
               )}
             >

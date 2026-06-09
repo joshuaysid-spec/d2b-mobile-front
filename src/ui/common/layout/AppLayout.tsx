@@ -86,7 +86,12 @@ export function AppLayout() {
         onBack={handleBack}
         onHome={() => navigate(ROUTES.HOME)}
       />
-      <main ref={scrollRef} id="app-scroll" className="min-h-0 flex-1 overflow-y-auto pb-16">
+      {/* 하단 여백 = BottomNav 높이(탭 77px + border-t 1px + safe-area)와 동일하게 맞춰 콘텐츠가 안 가리게. */}
+      <main
+        ref={scrollRef}
+        id="app-scroll"
+        className="min-h-0 flex-1 overflow-y-auto pb-[calc(78px+env(safe-area-inset-bottom))]"
+      >
         <Suspense fallback={<PageLoading />}>
           <Outlet />
         </Suspense>

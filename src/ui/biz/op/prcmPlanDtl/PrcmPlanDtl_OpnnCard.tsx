@@ -5,8 +5,8 @@
 import { memo } from 'react'
 
 import { Badge } from '@/ui/common/base/Badge'
-import { Icon } from '@/ui/common/base/Icon'
 import { cn } from '@/utils/cn'
+import branchIcon from '@/assets/images/branch.svg'
 
 export interface OpinionData {
   /** 공개 여부 — true=공개(파랑 배지) / false=비공개(빨강 배지) */
@@ -34,10 +34,10 @@ export interface PrcmPlanDtl_OpnnCardProps {
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex w-full items-start gap-krds-5">
-      <span className="min-w-px flex-1 text-[17px] leading-normal text-krds-text-muted">
+      <span className="shrink-0 text-[17px] leading-normal text-krds-text-muted">
         {label}
       </span>
-      <span className="min-w-px flex-1 text-right text-[17px] leading-normal text-krds-text-muted">
+      <span className="min-w-px flex-1 whitespace-nowrap text-right text-[17px] leading-normal text-krds-text-muted">
         {value}
       </span>
     </div>
@@ -105,12 +105,12 @@ export const PrcmPlanDtl_OpnnCard = memo(function PrcmPlanDtl_OpnnCard({
   onReplyClick,
 }: PrcmPlanDtl_OpnnCardProps) {
   return (
-    <div className="flex w-full flex-col gap-1">
+    <div className="flex w-full flex-col gap-[6px]">
       <CardShell data={opinion} onClick={onOpinionClick} />
       {reply && (
         <div className="flex w-full items-start gap-krds-5">
-          <span className="shrink-0 pt-krds-5 text-krds-text-muted" aria-hidden>
-            <Icon name="SubdirectoryArrowRight" size={16} />
+          <span className="shrink-0 pt-krds-5" aria-hidden>
+            <img src={branchIcon} alt="" width={16} height={16} className="shrink-0" />
           </span>
           <div className="min-w-px flex-1">
             <CardShell data={reply} isReply onClick={onReplyClick} />

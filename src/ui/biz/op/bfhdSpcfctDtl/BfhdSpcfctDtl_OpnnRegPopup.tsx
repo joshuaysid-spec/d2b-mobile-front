@@ -83,7 +83,7 @@ export function BfhdSpcfctDtl_OpnnRegPopup({ open, onOpenChange, onSave }: BfhdS
     >
       <Accordion type="multiple" defaultValue={['op', 'files', 'author']} className="w-full">
         {/* 업체의견 */}
-        <AccordionSection value="op" title="업체의견" borderTop={false}>
+        <AccordionSection value="op" title="업체의견" variant="blue" borderTop={false}>
           <Field label="제목" required>
             <InputBox
               value={title}
@@ -117,7 +117,7 @@ export function BfhdSpcfctDtl_OpnnRegPopup({ open, onOpenChange, onSave }: BfhdS
         </AccordionSection>
 
         {/* 첨부서류 — 삭제 + 파일추가 (다운로드 없음) */}
-        <AccordionSection value="files" title="첨부서류" titleInfo={`총 ${files.length}건`}>
+        <AccordionSection value="files" title="첨부서류" titleInfo={`총 ${files.length}건`} variant="blue">
           <div className="flex w-full flex-col gap-krds-5">
             {files.map((file) => (
               <div key={file.id} className="flex w-full items-center gap-krds-5">
@@ -146,7 +146,7 @@ export function BfhdSpcfctDtl_OpnnRegPopup({ open, onOpenChange, onSave }: BfhdS
         </AccordionSection>
 
         {/* 작성자 정보 — 업체명/사번/성명 readonly, 전화/이메일 입력 */}
-        <AccordionSection value="author" title="작성자 정보">
+        <AccordionSection value="author" title="작성자 정보" variant="blue">
           <Field label="업체명">
             <InputBox value="㈜길동주식회사" disabled />
           </Field>

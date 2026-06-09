@@ -31,8 +31,14 @@ export interface UseCollapsibleHeaderReturn {
   collapsed: boolean
   /** 루트 요소에 부착 — 스크롤 컨테이너 탐지 기준점 + overflow-anchor 적용 대상. */
   rootRef: RefObject<HTMLDivElement>
-  /** 스크롤 컨테이너를 최상단으로(맨위로 FAB). */
+  /** 스크롤 컨테이너를 최상단으로 + 헤더 펼침(맨위로 FAB). */
   scrollToTop: () => void
+  /**
+   * 본문을 맨 위로 보내되 **현재 접힘(collapsed)이면 접힘을 유지**한다(탭 전환용).
+   * top=0 은 보통 펼침으로 판정되지만, 접힘 상태였다면 사용자가 다시 collapseAt 만큼
+   * 내릴 때까지 접힘을 핀(pin) 고정 → 탭 바꿔도 헤더가 도로 펼쳐지지 않는다.
+   */
+  goToContentTop: () => void
 }
 
 export function useCollapsibleHeader(
@@ -42,6 +48,14 @@ export function useCollapsibleHeader(
   const [collapsed, setCollapsed] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const scrollerRef = useRef<HTMLElement | Window | null>(null)
+  // 콜백에서 최신 collapsed 를 읽기 위한 미러 ref.
+  const collapsedRef = useRef(false)
+  // 접힘 핀 — true 동안은 top 이 작아도(=top 으로 올라가도) 펼치지 않고 접힘 유지.
+  const pinnedRef = useRef(false)
+
+  useEffect(() => {
+    collapsedRef.current = collapsed
+  }, [collapsed])
 
   useEffect(() => {
     // 축소 시 높이 변화로 브라우저가 스크롤 위치를 보정(scroll anchoring)하면서 임계값을 다시
@@ -62,6 +76,13 @@ export function useCollapsibleHeader(
       scroller === window ? window.scrollY : (scroller as HTMLElement).scrollTop
     const onScroll = () => {
       const top = getTop()
+      // 접힘 핀 동안: 사용자가 collapseAt 넘게 내리면 핀 해제(이후 정상 로직), 그 전까진 접힘 유지.
+      // → 작은 스크롤로 펼침 깜빡임 없이, 탭 전환 직후 top=0 에서도 접힘이 풀리지 않는다.
+      if (pinnedRef.current) {
+        if (top > collapseAt) pinnedRef.current = false
+        setCollapsed(true)
+        return
+      }
       setCollapsed((c) => (c ? top > expandAt : top > collapseAt))
     }
     onScroll()
@@ -70,8 +91,16 @@ export function useCollapsibleHeader(
   }, [collapseAt, expandAt])
 
   const scrollToTop = useCallback(() => {
+    // 맨위로 FAB — 펼침 의도이므로 핀 해제.
+    pinnedRef.current = false
     scrollerRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
 
-  return { collapsed, rootRef, scrollToTop }
+  const goToContentTop = useCallback(() => {
+    // 접힘 상태였으면 접힘 유지(핀), 펼침이었으면 그대로 펼침 유지.
+    if (collapsedRef.current) pinnedRef.current = true
+    scrollerRef.current?.scrollTo({ top: 0 })
+  }, [])
+
+  return { collapsed, rootRef, scrollToTop, goToContentTop }
 }

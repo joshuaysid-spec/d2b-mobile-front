@@ -20,7 +20,7 @@ function SectionHeader({ title, count }: { title: string; count: number }) {
   return (
     <div className="flex items-center justify-between gap-krds-5">
       <span className="text-[19px] font-bold leading-normal text-krds-text-ink">{title}</span>
-      <span className="shrink-0 text-[17px] leading-normal text-krds-text-muted">
+      <span className="shrink-0 text-[17px] leading-normal text-krds-text-primary-active">
         총 {count}건
       </span>
     </div>

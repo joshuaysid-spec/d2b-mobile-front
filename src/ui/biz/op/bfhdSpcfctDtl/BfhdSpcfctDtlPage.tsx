@@ -79,7 +79,7 @@ function SummaryUtilButton({
 export function BfhdSpcfctDtlPage() {
   const [tab, setTab] = useState('detail')
   // 스크롤 시 상단 블록(요약+스텝+탭) 축소 + sticky 동작 — 로직은 훅에서. (overflow-anchor 진동방지 포함)
-  const { collapsed, rootRef, scrollToTop } = useCollapsibleHeader()
+  const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
   // 출력 버튼 — 서류 출력 확인 모달(MUI-BD-01-P14) 표시. 확인 시 OZ 리포트 호출(콘솔 스텁).
   const [outputModalOpen, setOutputModalOpen] = useState(false)
@@ -88,7 +88,13 @@ export function BfhdSpcfctDtlPage() {
   return (
     <div ref={rootRef} className="flex w-full flex-col">
       {/* 상단 블록 — sticky 고정. 스크롤 시 요약정보가 축소(infolist 숨김)되며 높이 감소. */}
-      <div className="sticky top-0 z-20 bg-white">
+      {/* 축소(collapsed=위에 붙음) 시 하단(=TabList 아래) 1px #D1D7E0 divider 노출.
+          항상 border-b 를 두되 색만 transparent↔divider 로 전환(1px 점프 방지 + transition). */}
+      <div
+        className={`sticky top-0 z-20 border-b bg-white transition-colors ${
+          collapsed ? 'border-krds-border-divider' : 'border-transparent'
+        }`}
+      >
         <SummaryInfo
           collapsed={collapsed}
           badges={
@@ -126,7 +132,15 @@ export function BfhdSpcfctDtlPage() {
 
         {/* 탭 */}
         <div className="px-4">
-          <TabList value={tab} onChange={setTab} items={TABS} />
+          {/* 탭 전환 시 본문을 맨 위로 — 단, 접힘(collapsed) 상태였으면 헤더는 접힌 채 유지(goToContentTop). */}
+          <TabList
+            value={tab}
+            onChange={(next) => {
+              setTab(next)
+              goToContentTop()
+            }}
+            items={TABS}
+          />
         </div>
       </div>
 

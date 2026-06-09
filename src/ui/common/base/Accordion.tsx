@@ -65,7 +65,7 @@ const AccordionSection = ({
     >
       <span className="min-w-0 flex-1 truncate text-left">{title}</span>
       {titleInfo && (
-        <span className="shrink-0 text-[17px] font-bold text-primary">{titleInfo}</span>
+        <span className="shrink-0 text-[17px] font-bold text-krds-text-primary-active">{titleInfo}</span>
       )}
       {/* Material 화살표(arrow_forward_ios) — 90° 회전해 아래(⌄), 열림 시 위(⌃). 크기는 size 로 조절. */}
       <Icon
