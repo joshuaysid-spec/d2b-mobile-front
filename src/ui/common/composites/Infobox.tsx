@@ -83,7 +83,13 @@ export function Infobox({
   // static — chevron 없이 항상 펼침 (Accordion 미사용)
   if (!collapsible) {
     return (
-      <div className={cn('flex w-full flex-col overflow-hidden', className)}>
+      <div
+        className={cn(
+          // 상단 border 는 헤더(border-t), 하단도 동일하게 border-b 로 마감.
+          'flex w-full flex-col overflow-hidden border-b border-krds-border-divider',
+          className,
+        )}
+      >
         <div className="flex min-h-[56px] items-center gap-krds-5 border-t border-krds-border-divider bg-krds-bg-primary-faint px-krds-8 text-[19px] font-bold text-krds-action-primary-active">
           <InfoboxLabel icon={icon} title={title} />
         </div>
@@ -104,7 +110,11 @@ export function Infobox({
     <Accordion
       type="single"
       collapsible
-      className={cn('w-full overflow-hidden', className)}
+      // 상단 border 는 AccordionSection(borderTop), 하단도 동일하게 border-b 로 마감.
+      className={cn(
+        'w-full overflow-hidden border-b border-krds-border-divider',
+        className,
+      )}
       {...accordionProps}
     >
       <AccordionSection
