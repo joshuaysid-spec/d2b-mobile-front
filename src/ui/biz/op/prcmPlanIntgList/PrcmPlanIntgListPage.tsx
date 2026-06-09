@@ -3,7 +3,7 @@
 //      + 카드 리스트(CardList, Card 재사용) + 더보기 + 맨위로 FAB.
 // 데이터/페이징/검색은 페이지가 소유. 목록은 목업(dlt_prcmPlanList), 더보기·page size·빠른검색은 API 경계 스텁
 //   (Plan SC: 핸들러 실행 + console.log 로 변수 변화 확인). 상세필터 풀팝업(SearchFilter)은 기구현.
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
@@ -244,14 +244,32 @@ const dlt_prcmPlanList: OpPlanItem[] = [
   },
 ]
 
+// ⚠️⚠️ 임시 목업 — API 연동 시 이 상수(MOCK_LIST)와 아래 컴포넌트 안의 filteredList/visibleList 로직을
+//   통째로 삭제하고 다시 짠다. ⚠️⚠️
+// 지금은 "보유한 6건"을 TOTAL(100)건으로 부풀려, 더보기 누를 때마다 page*pageSize 만큼 잘라 보여준다
+//   (그래서 더보기 1번 = 카드 10개씩 추가되는 것처럼 보임). 검색도 이 배열을 클라이언트에서 필터.
+// 변경 예정: 보유 데이터를 부풀려 슬라이스/필터하는 대신, 서버 API(opService.getList)로
+//   "다음 페이지/검색결과를 새로 fetch 해 누적"하는 로직으로 교체한다.
+//   → MOCK_LIST · filteredList(useMemo) · visibleList(slice) 모두 제거 대상.
+const MOCK_LIST: OpPlanItem[] = Array.from({ length: TOTAL }, (_, i) => {
+  const base = dlt_prcmPlanList[i % dlt_prcmPlanList.length]
+  // id·prcmNo 는 고유해야 하므로 인덱스로 구분 (key 안정성 + 판단번호 검색 데모용)
+  return { ...base, id: String(i + 1), prcmNo: `${base.prcmNo}-${i + 1}` }
+})
+
 export function PrcmPlanIntgListPage() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false) // 상세필터 풀팝업
   const [filter, setFilter] = useState<SearchFilterValue>(DEFAULT_VALUE)
-  const [keyword, setKeyword] = useState('') // 빠른검색어
-  const [targets, setTargets] = useState<string[]>(['prcmNm']) // 빠른검색 대상
+  const [keyword, setKeyword] = useState('') // 빠른검색어(입력 중)
+  const [targets, setTargets] = useState<string[]>(['prcmNm']) // 빠른검색 대상(single — 1개만)
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
+  // 빠른검색 '적용' 상태 — 검색 버튼(또는 Enter)을 눌렀을 때만 확정된다.
+  // (입력 중에는 목록이 걸러지지 않고, 검색을 실행해야 dlt_prcmPlanList 가 필터됨)
+  const [appliedSearch, setAppliedSearch] = useState<{ keyword: string; target: string } | null>(
+    null,
+  )
 
   // 검색어 selectionField(품명/발주기관) 의 검색시트는 SearchFilter 셸이 직접 연다(searchSheet).
 
@@ -262,7 +280,13 @@ export function PrcmPlanIntgListPage() {
     // services/op.ts: opService.getList(toRequest(value)) → 목록 재조회
   }
   const handleQuickSearch = () => {
-    console.log('[OpList] 빠른검색', { keyword, targets })
+    // 검색대상(targets)은 single 칩이라 항상 1개만 선택됨 — 첫 값을 검색 기준으로 사용.
+    const target = targets[0] ?? 'prcmNm'
+    setAppliedSearch({ keyword: keyword.trim(), target })
+    setPage(1) // 새 검색은 첫 페이지부터
+    console.log('[OpList] 빠른검색', { keyword, target })
+    // 실제로는 opService.getList({ keyword, searchTarget: target, ... }) 로 서버 검색.
+    // 현재는 목업(dlt_prcmPlanList)을 클라이언트에서 필터(아래 filteredList) 한다.
   }
   const handlePageSize = (size: number) => {
     setPageSize(size)
@@ -288,10 +312,34 @@ export function PrcmPlanIntgListPage() {
     navigate(`/op/${item.id}`)
   }
 
-  const loaded = Math.min(page * pageSize, TOTAL)
+  // ── ⚠️ 임시 목업 검색/페이징 (API 연동 시 이 블록 통째로 삭제 후 재작성) ⚠️ ──────────
+  // [현재] 보유한 MOCK_LIST 를 클라이언트에서 필터(검색) + 슬라이스(더보기) 한다.
+  //   filteredList: SEARCH_TARGET(검색대상)에 따라 검색 필드를 바꿔 부분일치(대소문자 무시)로 거름.
+  //     - 'prcmNm'(조달명)  → 카드 제목(it.title)
+  //     - 'prcmNo'(판단번호) → 판단번호(it.prcmNo)
+  //     아직 검색 실행 전(appliedSearch null)이거나 검색어가 비면 전체(MOCK_LIST).
+  //   visibleList: 더보기 누른 만큼(page*pageSize=loaded)만 잘라서 노출 → 더보기 1번에 10개씩 추가.
+  // [변경 예정] 위 "보유 데이터 필터 + 슬라이스" 대신, 검색·더보기 모두 서버 API 호출로 교체:
+  //   opService.getList({ page, pageSize, keyword, searchTarget }) 결과를 받아 누적/치환한다.
+  //   → filteredList(useMemo) · visibleList(slice) 제거하고 fetch 한 데이터로 cardItems 를 만든다.
+  const filteredList = useMemo(() => {
+    if (!appliedSearch || !appliedSearch.keyword) return MOCK_LIST
+    const kw = appliedSearch.keyword.toLowerCase()
+    return MOCK_LIST.filter((it) => {
+      const field = appliedSearch.target === 'prcmNo' ? it.prcmNo : it.title
+      return field.toLowerCase().includes(kw)
+    })
+  }, [appliedSearch])
+
+  // 검색이 적용되면 총건수·더보기는 걸러진 결과 기준, 아니면 목업 TOTAL(서버 total) 기준.
+  const isSearching = !!appliedSearch && !!appliedSearch.keyword
+  const total = isSearching ? filteredList.length : TOTAL
+  const loaded = Math.min(page * pageSize, total)
+  // 더보기 누른 만큼만 노출 (10개씩 추가). API 연동 시엔 서버가 페이지 단위로 주므로 slice 불필요.
+  const visibleList = filteredList.slice(0, loaded)
 
   // 목업 → Card props 매핑 (Design §3.2)
-  const cardItems: CardListItem[] = dlt_prcmPlanList.map((it) => ({
+  const cardItems: CardListItem[] = visibleList.map((it) => ({
     id: it.id,
     badges: (
       <>
@@ -342,16 +390,18 @@ export function PrcmPlanIntgListPage() {
 
       {/* 목록 — 헤더 + 카드 (px-4 인셋) */}
       <div className="flex flex-col gap-krds-7 px-4 pb-4">
-        <ListSectionHeader total={TOTAL} pageSize={pageSize} onPageSizeChange={handlePageSize} />
+        <ListSectionHeader total={total} pageSize={pageSize} onPageSizeChange={handlePageSize} />
         <CardList items={cardItems} />
       </div>
 
-      {/* 더보기 (loaded/total — 스텁) */}
-      <div className="px-4 pb-6">
-        <Button variant="secondary" className="w-full" onClick={handleLoadMore}>
-          더보기 ({loaded}/{TOTAL}건)
-        </Button>
-      </div>
+      {/* 더보기 (loaded/total — 스텁). 검색 중이면 걸러진 건수 기준. 모두 노출됐으면 숨김. */}
+      {loaded < total && (
+        <div className="px-4 pb-6">
+          <Button variant="secondary" className="w-full" onClick={handleLoadMore}>
+            더보기 ({loaded}/{total}건)
+          </Button>
+        </div>
+      )}
 
       {/* 맨 위로 FAB — BottomNav 위로 띄움. 스크롤 주체는 AppLayout 의 #app-scroll(main). */}
       <FloatingActionButton

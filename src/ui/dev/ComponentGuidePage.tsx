@@ -1553,7 +1553,7 @@ export function ComponentGuidePage() {
           <Section
             id="checkboxgroup"
             title="CheckboxGroup"
-            desc="Figma checkbox group container(9300-27895) 1:1. base Checkbox 칩을 items 배열로 구성한 다중 선택 그룹. direction: horizontal(기본) | vertical. swipeable(기본 false)로 가로 스크롤 + 좌우 스와이프 화살표 on/off. selectAll 로 상단 '전체' 칩 노출 — 전체↔개별 자동 동기화."
+            desc="Figma checkbox group container(9300-27895) 1:1. base Checkbox 칩을 items 배열로 구성한 다중 선택 그룹. direction: horizontal(기본) | vertical. swipeable(기본 false)로 가로 스크롤 + 좌우 스와이프 화살표 on/off. selectAll 로 상단 '전체' 칩 노출 — 전체↔개별 자동 동기화. single 로 라디오처럼 1개만 선택(selectAll 무시)."
           >
             <Row label="horizontal (기본 wrap)">
               <Specimen caption="2항목">
@@ -1649,6 +1649,21 @@ export function ComponentGuidePage() {
                       { value: 'a', label: '항목 1' },
                       { value: 'b', label: '항목 2' },
                       { value: 'c', label: '항목 3' },
+                    ]}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="single (라디오처럼 1개만 선택 — 모양은 체크박스)">
+              <Specimen caption="다른 항목 체크 시 기존 선택 자동 해제 (재클릭 시 해제 가능)">
+                <div className="w-[328px]">
+                  <CheckboxGroup
+                    single
+                    defaultValue={['a']}
+                    items={[
+                      { value: 'a', label: '조달명' },
+                      { value: 'b', label: '판단번호' },
+                      { value: 'c', label: '담당자' },
                     ]}
                   />
                 </div>

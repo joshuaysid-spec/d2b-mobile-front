@@ -32,6 +32,12 @@ export interface CheckboxGroupProps extends Omit<
   direction?: 'horizontal' | 'vertical'
   /** horizontal 일 때 wrap 대신 가로 스크롤 + 좌우 화살표 노출. 기본 false. */
   swipeable?: boolean
+  /**
+   * 라디오처럼 한 번에 하나만 선택. 다른 항목을 체크하면 기존 선택이 자동 해제된다.
+   * (모양은 체크박스 그대로 — 선택된 항목을 다시 누르면 해제되어 선택 없음 상태 가능)
+   * `selectAll` 과 함께 쓰면 '전체' 의미가 없으므로 selectAll 은 무시된다.
+   */
+  single?: boolean
   /** 그룹 전체 비활성 */
 disabled?: boolean
   /** 각 Checkbox 칩에 적용할 className */
@@ -105,6 +111,7 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
       onValueChange,
       direction = 'horizontal',
       swipeable = false,
+      single = false,
       disabled,
       itemClassName,
       selectAll,
@@ -127,9 +134,14 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
 
     const toggle = React.useCallback(
       (itemValue: string, checked: boolean) => {
+        if (single) {
+          // 라디오 동작: 체크 → 그 항목만 / 현재 항목 해제 → 선택 없음
+          commit(checked ? [itemValue] : [])
+          return
+        }
         commit(checked ? [...selected, itemValue] : selected.filter((v) => v !== itemValue))
       },
-      [selected, commit],
+      [single, selected, commit],
     )
 
     // ── '전체' 선택 ──────────────────────────────────────────────
@@ -154,7 +166,8 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
       [selected, allValues, commit],
     )
 
-    const showSelectAll = !!selectAll
+    // single(라디오 동작)에서는 '전체' 선택이 모순이므로 무시한다.
+    const showSelectAll = !!selectAll && !single
     const selectAllLabel =
       (typeof selectAll === 'object' && selectAll.label) || '전체'
 

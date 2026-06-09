@@ -13,8 +13,10 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { CheckboxGroup } from '@/ui/common/composites/CheckboxGroup'
 import { cn } from '@/utils/cn'
 
-export interface SearchConditionProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
+export interface SearchConditionProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'onChange'
+> {
   /** 검색대상 칩 목록 (예: 조달명/판단번호). */
   targets: { value: string; label: React.ReactNode }[]
   /** 선택된 검색대상 값. */
@@ -59,6 +61,7 @@ const SearchCondition = React.forwardRef<HTMLDivElement, SearchConditionProps>(
           items={targets}
           value={selectedTargets}
           onValueChange={onTargetsChange}
+          single={true}
         />
         <button
           type="button"
