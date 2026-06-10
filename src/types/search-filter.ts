@@ -17,7 +17,7 @@ export type SearchFilterFieldValue = string | string[] | DateRangeValue
  * 'item'=품목별조회(MUI-OP-01-P71, ItemInqSheet) · 'producer'=생산자조회(P72, PrdcrInqSheet).
  * 시트 구현은 biz/cm/search 에 있으며, 종류만 config 로 선언한다(도메인 문자열 하드코딩 회피).
  */
-export type SearchSheetKind = 'item' | 'producer'
+export type SearchSheetKind = 'item' | 'producer' | 'dept'
 
 // ── 필드 정의 — `type` 으로 분기되는 discriminated union ──────────────────
 interface FieldOption {
@@ -51,10 +51,21 @@ export interface CheckboxFieldDef extends BaseField {
    */
   selectAll?: boolean | { label?: ReactNode; disabled?: boolean }
 }
+/** DateRangeInput 프리셋 칩 정의 — DateRangePreset 와 구조 호환(레이어링 위해 inline). */
+export type DateRangePresetDef =
+  | { label: string; days: number }
+  | { label: string; months: number }
+  | { label: string; custom: true }
 export interface DateRangeFieldDef extends BaseField {
   type: 'dateRange' // 기간(DateRangeInput) — value: DateRangeValue
   /** 빠른선택 프리셋 칩(1주일/1개월/…) 표시 여부. 기본 true. */
   showPresets?: boolean
+  /** 프리셋 칩 목록 커스텀. 미지정 시 DateRangeInput 기본(1주일/1개월/3개월/기간검색). */
+  presets?: DateRangePresetDef[]
+}
+export interface YearFieldDef extends BaseField {
+  type: 'year' // 연도 선택 피커(YearInput, 휠) — value: string 'YYYY'
+  placeholder?: string
 }
 export interface DateFieldDef extends BaseField {
   type: 'date' // 단일 날짜(DateInput) — value: string
@@ -87,14 +98,20 @@ export interface SelectFieldDef extends BaseField {
   options: FieldOption[]
   placeholder?: string
 }
+export interface SegmentFieldDef extends BaseField {
+  type: 'segment' // 세그먼트(SegmentedControl) — 옵션 중 택1. value: string. 단일 옵션이면 라벨/지표.
+  options: FieldOption[]
+}
 
 export type SearchFilterField =
   | RadioFieldDef
   | CheckboxFieldDef
   | DateRangeFieldDef
   | DateFieldDef
+  | YearFieldDef
   | TextFieldDef
   | SelectionFieldDef
+  | SegmentFieldDef
   | SelectFieldDef
 
 // ── 아코디언 섹션 ────────────────────────────────────────────────────────

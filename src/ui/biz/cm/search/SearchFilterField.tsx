@@ -4,6 +4,7 @@ import * as React from 'react'
 
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
+import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { SelectionFieldBox } from '@/ui/common/base/SelectionFieldBox'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
@@ -12,6 +13,7 @@ import { DateInput } from '@/ui/common/composites/DateInput'
 import { DateRangeInput } from '@/ui/common/composites/DateRangeInput'
 import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
+import { YearInput } from '@/ui/common/composites/YearInput'
 import type {
   DateRangeValue,
   SearchFilterField as FieldDef,
@@ -134,6 +136,18 @@ const SearchFilterField = ({
         </Field>
       )
 
+    // 일자 설정 상단 등 — 세그먼트(택1). 단일 옵션이면 날짜 유형 라벨/지표(발주예정월·접수기간).
+    case 'segment':
+      return (
+        <Field label={field.label} required={field.required}>
+          <SegmentedControl
+            items={field.options}
+            value={(value as string) ?? field.options[0]?.value}
+            onValueChange={(v) => onChange(v)}
+          />
+        </Field>
+      )
+
     // 업무구분 등 — 다중 선택(가로 스와이프). Figma m_checkbox_button + m_button_arrow_swiper.
     case 'checkbox':
       return (
@@ -156,6 +170,19 @@ const SearchFilterField = ({
             value={(value as DateRangeValue) ?? EMPTY_RANGE}
             onChange={(r) => onChange(r)}
             showPresets={field.showPresets}
+            presets={field.presets}
+          />
+        </Field>
+      )
+
+    // 연도만 선택 — YearInput(트리거 → 바텀시트 연도 휠)
+    case 'year':
+      return (
+        <Field label={field.label} required={field.required}>
+          <YearInput
+            value={(value as string) ?? ''}
+            onChange={(v) => onChange(v)}
+            placeholder={field.placeholder}
           />
         </Field>
       )

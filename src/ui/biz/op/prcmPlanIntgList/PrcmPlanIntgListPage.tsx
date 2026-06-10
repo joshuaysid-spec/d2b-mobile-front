@@ -21,6 +21,7 @@ import type {
   SearchFilterSchema,
   SearchFilterSection,
   SearchFilterValue,
+  DateRangePresetDef,
 } from '@/types/search-filter'
 import type { OpSearchFilter, OpPlanItem, OpSrchType } from '@/types/op'
 
@@ -88,20 +89,27 @@ function taskSection(type: OpSrchType): SearchFilterSection {
   }
 }
 
+// 일자 설정 프리셋 칩 — 1개월/3개월/6개월/기간검색 (설계서 일자설정). 기본 프리셋(1주일~) 대신 사용.
+const DATE_PRESETS: DateRangePresetDef[] = [
+  { label: '1개월', months: 1 },
+  { label: '3개월', months: 3 },
+  { label: '6개월', months: 6 },
+  { label: '기간검색', custom: true },
+]
+
 // 날짜 섹션 — 유형별로 완전히 다름.
 function dateSections(type: OpSrchType): SearchFilterSection[] {
   if (type === 'spec') {
-    // 사전규격: 일자 설정(접수기간) + 공개일 설정(단일, 기본값 없음)
+    // 사전규격: 일자 설정(접수기간)만. 공개일 설정은 검색어 뒤로(opnDtSection, buildOpSearchSchema 에서 배치).
     return [
       {
         key: 'date',
         title: '일자 설정',
-        fields: [{ type: 'dateRange', key: 'rcptPeriod', required: true }],
-      },
-      {
-        key: 'opnDt',
-        title: '공개일 설정',
-        fields: [{ type: 'date', key: 'opnDt', placeholder: '날짜를 선택하세요.' }],
+        fields: [
+          // 상단 세그먼트 — 날짜 유형 지표(사전규격=접수기간). Figma m_segmented control
+          { type: 'segment', key: 'dateType', options: [{ value: 'rcptPeriod', label: '접수기간' }] },
+          { type: 'dateRange', key: 'rcptPeriod', required: true, presets: DATE_PRESETS },
+        ],
       },
     ]
   }
@@ -112,12 +120,12 @@ function dateSections(type: OpSrchType): SearchFilterSection[] {
         key: 'date',
         title: '연도 설정',
         fields: [
+          // 연도만 선택하는 데이트피커(YearInput, 휠). required 없음.
           {
-            type: 'text',
+            type: 'year',
             key: 'stdYr',
             label: '지시년도',
-            required: true,
-            placeholder: '지시년도를 입력하세요.',
+            placeholder: '지시년도를 선택하세요.',
           },
         ],
       },
@@ -128,9 +136,22 @@ function dateSections(type: OpSrchType): SearchFilterSection[] {
     {
       key: 'date',
       title: '월 설정',
-      fields: [{ type: 'dateRange', key: 'orderPrnmntYm', required: true }],
+      fields: [
+        // 상단 세그먼트 — 날짜 유형 지표(조달계획=발주예정월). Figma m_segmented control
+        { type: 'segment', key: 'dateType', options: [{ value: 'orderPrnmntYm', label: '발주예정월' }] },
+        { type: 'dateRange', key: 'orderPrnmntYm', required: true, presets: DATE_PRESETS },
+      ],
     },
   ]
+}
+
+// 공개일 설정 섹션 — 사전규격 전용. 검색어 뒤에 배치. 날짜 필드 라벨은 '일자설정'.
+function opnDtSection(): SearchFilterSection {
+  return {
+    key: 'opnDt',
+    title: '공개일 설정',
+    fields: [{ type: 'date', key: 'opnDt', label: '일자설정', placeholder: '날짜를 선택하세요.' }],
+  }
 }
 
 // 검색어 섹션 — 유형별 필드 구성 다름.
@@ -138,7 +159,7 @@ function dateSections(type: OpSrchType): SearchFilterSection[] {
 //   'item' → 품목별조회(P71, ItemInqSheet) · 'producer' → 생산자조회(P72, PrdcrInqSheet)
 function keywordSection(type: OpSrchType): SearchFilterSection {
   if (type === 'annual') {
-    // 연간조달: 군구분·품질등급·재고번호(품목별조회)·부품번호
+    // 연간조달: 군구분·품질등급·재고번호·부품번호 + 품목(품목별검색)·생산자(생산자검색)
     return {
       key: 'keyword',
       title: '검색어 (일부 입력 가능)',
@@ -153,30 +174,47 @@ function keywordSection(type: OpSrchType): SearchFilterSection {
           searchSheet: 'item',
         },
         { type: 'text', key: 'partNo', label: '부품번호', placeholder: '부품번호를 입력하세요.' },
+        // 품목 → 품목별조회(P71) · 생산자 → 생산자조회(P72)
+        {
+          type: 'selectionField',
+          key: 'itemNm',
+          label: '품목',
+          placeholder: '품목을 검색하세요.',
+          searchSheet: 'item',
+        },
+        {
+          type: 'selectionField',
+          key: 'prdctnNm',
+          label: '생산자',
+          placeholder: '생산자를 검색하세요.',
+          searchSheet: 'producer',
+        },
       ],
     }
   }
-  // plan / spec 공통(제목·판단번호·발주기관·담당자). 대표품명은 조달계획만(설계서 p12 "품명 검색 삭제").
+  // plan / spec 공통(제목·판단번호·발주기관·담당자). 대표품명은 조달계획만.
   const fields: SearchFilterSection['fields'] = [
     { type: 'text', key: 'prcmPlanNm', label: '제목', placeholder: '제목을 입력하세요.' },
     { type: 'text', key: 'prcmNo', label: '판단번호', placeholder: '번호를 입력하세요.' },
   ]
   if (type === 'plan') {
+    // 대표품명 → 품목별조회(P71)
     fields.push({
       type: 'selectionField',
       key: 'rprsItemNm',
-      label: '품명',
-      placeholder: '품명을 입력하세요.',
+      label: '대표품명',
+      placeholder: '대표품명을 입력하세요.',
       searchSheet: 'item',
     })
   }
   fields.push(
+    // 발주기관 → 발주부서(기관)검색(MUI-BD-01-P04, DeptInqSheet)
     {
       type: 'selectionField',
       key: 'deptCd',
       label: '발주기관',
       placeholder: '발주기관을 입력하세요.',
-      searchSheet: 'producer',
+      searchSheet: 'dept',
     },
     { type: 'text', key: 'userNm', label: '담당자', placeholder: '담당자를 입력하세요.' },
   )
@@ -207,7 +245,7 @@ function categorySections(type: OpSrchType): SearchFilterSection[] {
       },
     ]
   }
-  // 조달계획: 진행상태/기능/입찰형태/계약방법
+  // 조달계획: 진행상태만(기능/입찰형태/계약방법 삭제 — 설계서 수정)
   return [
     {
       key: 'category',
@@ -220,9 +258,6 @@ function categorySections(type: OpSrchType): SearchFilterSection[] {
           placeholder: '전체',
           options: PROGRESS_OPTIONS,
         },
-        { type: 'select', key: 'inspShcd', label: '기능', placeholder: '전체', options: ALL_ONLY },
-        { type: 'select', key: 'bidSecd', label: '입찰형태', placeholder: '전체', options: ALL_ONLY },
-        { type: 'select', key: 'ctrtMthdCd', label: '계약방법', placeholder: '전체', options: ALL_ONLY },
       ],
     },
   ]
@@ -231,15 +266,14 @@ function categorySections(type: OpSrchType): SearchFilterSection[] {
 // 최종 resolver — draft 의 검색유형으로 섹션 조립. SearchFilter 에 함수째 넘긴다.
 function buildOpSearchSchema(value: SearchFilterValue): SearchFilterSchema {
   const type = (value.srchType as OpSrchType) ?? 'plan'
+  // 사전규격: 일자설정 → 검색어 → 공개일설정 (공개일이 검색어 뒤). 그 외: 날짜 → 검색어 → 구분설정.
+  const sections =
+    type === 'spec'
+      ? [SRCH_TYPE_SECTION, taskSection(type), ...dateSections(type), keywordSection(type), opnDtSection()]
+      : [SRCH_TYPE_SECTION, taskSection(type), ...dateSections(type), keywordSection(type), ...categorySections(type)]
   return {
     title: '검색필터',
-    sections: [
-      SRCH_TYPE_SECTION,
-      taskSection(type),
-      ...dateSections(type),
-      keywordSection(type),
-      ...categorySections(type),
-    ],
+    sections,
   }
 }
 
@@ -282,24 +316,32 @@ const DEFAULT_VALUE: OpSearchFilter = {
   inspShcd: 'all',
   bidSecd: 'all',
   ctrtMthdCd: 'all',
-  // 사전규격 — 일자 설정(최근 1개월) + 공개일(없음)
+  // 사전규격 — 일자 설정(최근 1개월) + 공개일(기본 당일)
   rcptPeriod: RECENT_1M(),
-  opnDt: '',
+  opnDt: dayjs().format(DATE_FORMAT),
   // 연간조달 — 연도/검색어/구분설정
   stdYr: dayjs().format('YYYY'),
   mlSvcNm: '',
   qltyGradeNm: '',
   stockNo: '',
   partNo: '',
+  itemNm: '',
+  prdctnNm: '',
   deptSeCd: 'all',
   functnCd: 'all',
   prdClsfCd: 'all',
 }
 
-// 빠른검색 대상 칩 (조달명/판단번호)
+// 빠른검색 대상 칩 — 검색유형별로 다름(설계서 p11).
+//   기본(조달계획/사전규격): 조달명 · 판단번호
+//   연간조달계획: 재고번호 · 조달요구번호 (기본 선택 = 재고번호)
 const SEARCH_TARGETS = [
   { value: 'prcmNm', label: '조달명' },
   { value: 'prcmNo', label: '판단번호' },
+]
+const ANNUAL_SEARCH_TARGETS = [
+  { value: 'stockNo', label: '재고번호' },
+  { value: 'prcmReqNo', label: '조달요구번호' },
 ]
 
 // 조달계획 통합목록 데이터(dlt_prcmPlanList, 기획서 p15 1.4) — 목업, 추후 API(opService.getList).
@@ -414,8 +456,17 @@ export function PrcmPlanIntgListPage() {
 
   // 검색어 selectionField(품명/발주기관) 의 검색시트는 SearchFilter 셸이 직접 연다(searchSheet).
 
+  // 검색유형이 연간조달이면 빠른검색 대상 칩을 재고번호/조달요구번호로 교체(설계서 p11).
+  const isAnnual = filter.srchType === 'annual'
+  const searchTargets = isAnnual ? ANNUAL_SEARCH_TARGETS : SEARCH_TARGETS
+
   // ── API 경계 스텁 (백엔드 연동 시 services/op·queries/op 로 대체). console 로 동작 확인 ──
   const handleFilterSearch = (value: SearchFilterValue) => {
+    // 검색유형이 바뀌면 빠른검색 대상을 그 유형 기본값으로 리셋(연간조달=재고번호, 그 외=조달명).
+    // (이전 선택 'prcmNm' 등이 새 유형 칩에 없어 비활성으로 남는 것 방지)
+    if (value.srchType !== filter.srchType) {
+      setTargets([value.srchType === 'annual' ? 'stockNo' : 'prcmNm'])
+    }
     setFilter(value)
     console.log('[OpList] 상세필터 검색', value)
     // services/op.ts: opService.getList(toRequest(value)) → 목록 재조회
@@ -458,6 +509,7 @@ export function PrcmPlanIntgListPage() {
   //   filteredList: SEARCH_TARGET(검색대상)에 따라 검색 필드를 바꿔 부분일치(대소문자 무시)로 거름.
   //     - 'prcmNm'(조달명)  → 카드 제목(it.title)
   //     - 'prcmNo'(판단번호) → 판단번호(it.prcmNo)
+  //     - 연간조달 'stockNo'(재고번호)/'prcmReqNo'(조달요구번호) → 목업에 필드 없어 prcmNo 로 대체(API 연동 시 매핑)
   //     아직 검색 실행 전(appliedSearch null)이거나 검색어가 비면 전체(MOCK_LIST).
   //   visibleList: 더보기 누른 만큼(page*pageSize=loaded)만 잘라서 노출 → 더보기 1번에 10개씩 추가.
   // [변경 예정] 위 "보유 데이터 필터 + 슬라이스" 대신, 검색·더보기 모두 서버 API 호출로 교체:
@@ -467,7 +519,8 @@ export function PrcmPlanIntgListPage() {
     if (!appliedSearch || !appliedSearch.keyword) return MOCK_LIST
     const kw = appliedSearch.keyword.toLowerCase()
     return MOCK_LIST.filter((it) => {
-      const field = appliedSearch.target === 'prcmNo' ? it.prcmNo : it.title
+      // 조달명만 제목 검색, 나머지(판단번호·재고번호·조달요구번호)는 prcmNo 검색(목업 한계).
+      const field = appliedSearch.target === 'prcmNm' ? it.title : it.prcmNo
       return field.toLowerCase().includes(kw)
     })
   }, [appliedSearch])
@@ -519,7 +572,7 @@ export function PrcmPlanIntgListPage() {
       </SectionTitle>
       <div className="px-4 py-4">
         <SearchCondition
-          targets={SEARCH_TARGETS}
+          targets={searchTargets}
           selectedTargets={targets}
           onTargetsChange={setTargets}
           keyword={keyword}

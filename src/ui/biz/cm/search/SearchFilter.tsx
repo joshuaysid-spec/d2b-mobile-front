@@ -10,6 +10,7 @@ import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { SearchFilterField } from './SearchFilterField'
 import { ItemInqSheet } from './ItemInqSheet'
 import { PrdcrInqSheet } from './PrdcrInqSheet'
+import { DeptInqSheet } from './DeptInqSheet'
 import type {
   SearchFilterSchema,
   SearchFilterSchemaResolver,
@@ -190,6 +191,16 @@ const SearchFilter = ({
       />
       <PrdcrInqSheet
         open={sheet?.kind === 'producer'}
+        onOpenChange={(o) => {
+          if (!o) setSheet(null)
+        }}
+        onSelect={(v) => {
+          sheet?.commit(v)
+          setSheet(null)
+        }}
+      />
+      <DeptInqSheet
+        open={sheet?.kind === 'dept'}
         onOpenChange={(o) => {
           if (!o) setSheet(null)
         }}
