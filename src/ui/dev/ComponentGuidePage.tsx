@@ -289,7 +289,7 @@ export function ComponentGuidePage() {
                 <Button size="lg">버튼</Button>
               </Specimen>
             </Row>
-            
+
             <Row label="아이콘">
               <Specimen caption="아이콘 앞">
                 <Button>
@@ -489,42 +489,53 @@ export function ComponentGuidePage() {
           <Section
             id="segmentedcontrol"
             title="SegmentedControl"
-            desc="Figma m_segmented control_option(9052-1309) 1:1. 단일 옵션(아톰). 트랙은 사용처에서 합성. props: children(텍스트), selected, disabled."
+            desc="Figma m_segmented control(9300-28006) 1:1. 트랙 + 옵션을 합친 단일 선택 컨트롤. items + value/defaultValue + onValueChange(선택 value 방출). RadioButtonGroup 과 동일한 controlled/uncontrolled 패턴. disabled 로 그룹 전체 비활성, itemClassName='flex-1' 로 균등 분할."
           >
-            <Row label="state">
-              <Specimen caption="unselected (default)">
-                <div className="rounded-full bg-krds-bg-primary-subtle p-1">
-                  <SegmentedControl>선택항목</SegmentedControl>
-                </div>
+            <Row label="기본 (uncontrolled, value 방출)">
+              <Specimen caption="2-option (클릭 시 onValueChange)">
+                <SegmentedControl
+                  defaultValue="a"
+                  onValueChange={(v) => console.log('[SegmentedControl]', v)}
+                  items={[
+                    { value: 'a', label: '선택항목' },
+                    { value: 'b', label: '선택항목' },
+                  ]}
+                />
               </Specimen>
-              <Specimen caption="selected">
-                <SegmentedControl selected>선택항목</SegmentedControl>
-              </Specimen>
-              <Specimen caption="disabled + selected">
-                <SegmentedControl selected disabled>
-                  선택항목
-                </SegmentedControl>
-              </Specimen>
-              <Specimen caption="disabled + unselected">
-                <div className="rounded-full bg-krds-bg-disabled-soft p-1">
-                  <SegmentedControl disabled>선택항목</SegmentedControl>
-                </div>
+              <Specimen caption="3-option">
+                <SegmentedControl
+                  defaultValue="b"
+                  items={[
+                    { value: 'a', label: '전체' },
+                    { value: 'b', label: '진행중' },
+                    { value: 'c', label: '완료' },
+                  ]}
+                />
               </Specimen>
             </Row>
-            <Row label="적용예시 (트랙 합성)">
-              <Specimen caption="default 트랙 (2-option)">
-                <div className="inline-flex rounded-full bg-krds-bg-primary-subtle">
-                  <SegmentedControl selected>선택항목</SegmentedControl>
-                  <SegmentedControl>선택항목</SegmentedControl>
-                </div>
+            <Row label="disabled (그룹 전체)">
+              <Specimen caption="비활성 트랙">
+                <SegmentedControl
+                  disabled
+                  defaultValue="a"
+                  items={[
+                    { value: 'a', label: '선택항목' },
+                    { value: 'b', label: '선택항목' },
+                  ]}
+                />
               </Specimen>
-              <Specimen caption="disabled 트랙">
-                <div className="inline-flex rounded-full bg-krds-bg-disabled-soft">
-                  <SegmentedControl selected disabled>
-                    선택항목
-                  </SegmentedControl>
-                  <SegmentedControl disabled>선택항목</SegmentedControl>
-                </div>
+            </Row>
+            <Row label="full-width 균등 분할 (itemClassName)">
+              <Specimen caption="flex-1 로 옵션 균등">
+                <SegmentedControl
+                  defaultValue="a"
+                  className="flex w-[280px]"
+                  itemClassName="flex-1"
+                  items={[
+                    { value: 'a', label: '국내' },
+                    { value: 'b', label: '국외' },
+                  ]}
+                />
               </Specimen>
             </Row>
           </Section>
@@ -1108,14 +1119,14 @@ export function ComponentGuidePage() {
           <Section
             id="inputlabel"
             title="InputLabel"
-            desc="Figma m_input_label(9300-27867) 1:1. Input 위에 붙는 17px Bold 라벨. required 디폴트 true — 좌측 빨강 *. Label(15px Medium)은 라디오/체크박스 옆 짧은 칩 라벨용으로 분리."
+            desc="Figma m_input_label(9300-27867) 1:1. Input 위에 붙는 17px Bold 라벨. required 디폴트 false — 필수 필드에만 required 로 좌측 빨강 * 를 켠다. Label(15px Medium)은 라디오/체크박스 옆 짧은 칩 라벨용으로 분리."
           >
             <Row label="기본 / 필수">
-              <Specimen caption="required (default)">
+              <Specimen caption="기본 (default, 별표 없음)">
                 <InputLabel>레이블</InputLabel>
               </Specimen>
-              <Specimen caption="required={false}">
-                <InputLabel required={false}>레이블</InputLabel>
+              <Specimen caption="required (필수, 빨강 *)">
+                <InputLabel required>레이블</InputLabel>
               </Specimen>
             </Row>
             <Row label="InputBox 결합">
@@ -1414,7 +1425,11 @@ export function ComponentGuidePage() {
               </Specimen>
               <Specimen caption="아코디언 아이콘">
                 <div className="w-[328px] border-y border-border bg-background">
-                  <SectionTitle info={<Icon name="ArrowForwardIos" size={20} className="rotate-90" />}>상세 정보</SectionTitle>
+                  <SectionTitle
+                    info={<Icon name="ArrowForwardIos" size={20} className="rotate-90" />}
+                  >
+                    상세 정보
+                  </SectionTitle>
                 </div>
               </Specimen>
               <Specimen caption="복합 (텍스트 + 아이콘)">

@@ -1,5 +1,6 @@
 // Figma m_input_label(9300-27867) 1:1.
-// Input 위에 붙는 17px Bold 라벨. required=true 면 좌측 빨강 `*` 표시 (Figma 디폴트 ON).
+// Input 위에 붙는 17px Bold 라벨. required=true 면 좌측 빨강 `*` 표시.
+// 기본값은 false(별표 없음) — 필수 필드에만 명시적으로 required 를 준다.
 //
 // 기존 Label(15px Medium) 과 의도가 다르다 — Label 은 라디오/체크박스 옆 짧은 칩 라벨,
 // InputLabel 은 InputBox/SelectBox/TextArea/DateInput 위에 올리는 폼 필드 라벨.
@@ -14,12 +15,12 @@ import { cn } from '@/utils/cn'
 
 export interface InputLabelProps
   extends React.ComponentPropsWithoutRef<typeof RawLabel> {
-  /** 필수 입력 표시 (`*`). Figma 디폴트 true. */
+  /** 필수 입력 표시 (`*`). 기본 false — 필수 필드에만 true 로 켠다. */
   required?: boolean
 }
 
 const InputLabel = React.forwardRef<HTMLLabelElement, InputLabelProps>(
-  ({ className, required = true, children, ...props }, ref) => (
+  ({ className, required = false, children, ...props }, ref) => (
     <RawLabel
       ref={ref}
       className={cn(

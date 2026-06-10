@@ -11,14 +11,22 @@ import { InputLabel } from '@/ui/common/base/InputLabel'
 import { TextArea } from '@/ui/common/base/TextArea'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
-import {
-  FileDownloadList,
-  type FileDownloadItem,
-} from '@/ui/common/composites/FileDownloadList'
+import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
+import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
 
 const FILES: FileDownloadItem[] = [
-  { id: 'f1', name: '첨부파일명.hwp', size: '786KB', onDownload: () => console.log('[P06] 다운로드 1') },
-  { id: 'f2', name: '첨부파일명.hwp', size: '786KB', onDownload: () => console.log('[P06] 다운로드 2') },
+  {
+    id: 'f1',
+    name: '첨부파일명.hwp',
+    size: '786KB',
+    onDownload: () => console.log('[P06] 다운로드 1'),
+  },
+  {
+    id: 'f2',
+    name: '첨부파일명.hwp',
+    size: '786KB',
+    onDownload: () => console.log('[P06] 다운로드 2'),
+  },
 ]
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -82,13 +90,24 @@ export function BfhdSpcfctDtl_OpnnDtlPopup({
           </Field>
           {!isReply && (
             <Field label="공개여부">
-              <InputBox value="공개" disabled />
+              <SegmentedControl
+                disabled
+                defaultValue="Y"
+                onValueChange={(v) => console.log('[SegmentedControl]', v)}
+                items={[
+                  { value: 'Y', label: '공개' },
+                  { value: 'N', label: '비공개' },
+                ]}
+              />
             </Field>
           )}
         </AccordionSection>
 
         <AccordionSection value="files" title="첨부서류" titleInfo="총 2건" variant="blue">
-          <FileDownloadList files={FILES} onDownloadAll={() => console.log('[P06] 일괄 다운로드')} />
+          <FileDownloadList
+            files={FILES}
+            onDownloadAll={() => console.log('[P06] 일괄 다운로드')}
+          />
         </AccordionSection>
 
         <AccordionSection value="author" title="작성자 정보" variant="blue">

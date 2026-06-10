@@ -13,6 +13,7 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
+import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
 
 interface UploadFile {
   id: string
@@ -49,7 +50,11 @@ export interface BfhdSpcfctDtl_OpnnRegPopupProps {
   onSave?: () => void
 }
 
-export function BfhdSpcfctDtl_OpnnRegPopup({ open, onOpenChange, onSave }: BfhdSpcfctDtl_OpnnRegPopupProps) {
+export function BfhdSpcfctDtl_OpnnRegPopup({
+  open,
+  onOpenChange,
+  onSave,
+}: BfhdSpcfctDtl_OpnnRegPopupProps) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [isPublic, setIsPublic] = useState('public') // 공개/비공개
@@ -104,20 +109,24 @@ export function BfhdSpcfctDtl_OpnnRegPopup({ open, onOpenChange, onSave }: BfhdS
             </p>
           </Field>
           <Field label="공개여부" required>
-            <RadioButtonGroup
-              showIndicator
-              value={isPublic}
-              onValueChange={setIsPublic}
+            <SegmentedControl
+              defaultValue="Y"
+              onValueChange={(v) => console.log('[SegmentedControl]', v)}
               items={[
-                { value: 'public', label: '공개' },
-                { value: 'private', label: '비공개' },
+                { value: 'Y', label: '공개' },
+                { value: 'N', label: '비공개' },
               ]}
             />
           </Field>
         </AccordionSection>
 
         {/* 첨부서류 — 삭제 + 파일추가 (다운로드 없음) */}
-        <AccordionSection value="files" title="첨부서류" titleInfo={`총 ${files.length}건`} variant="blue">
+        <AccordionSection
+          value="files"
+          title="첨부서류"
+          titleInfo={`총 ${files.length}건`}
+          variant="blue"
+        >
           <div className="flex w-full flex-col gap-krds-5">
             {files.map((file) => (
               <div key={file.id} className="flex w-full items-center gap-krds-5">
