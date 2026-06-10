@@ -17,7 +17,7 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
-import { PrcmPlan_NotiAplySheet } from '@/ui/biz/op/prcmPlanDtl/PrcmPlan_NotiAplySheet'
+import { PrcmPlan_NotiAplyPopup } from '@/ui/biz/op/prcmPlanDtl/PrcmPlan_NotiAplyPopup'
 import { PrcmPlanDtl } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl'
 import { PrcmPlanDtl_PrdList } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_PrdList'
 import { PrcmPlanDtl_OpnnList } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_OpnnList'
@@ -176,8 +176,8 @@ export function PrcmPlanDtlPage() {
       {/* 탭 콘텐츠 (탭별 컴포넌트) */}
       {renderTabContent(tab)}
 
-      {/* 알림 아이콘 → 입찰공고 알림신청 바텀시트 (P10) */}
-      <PrcmPlan_NotiAplySheet open={notifyOpen} onOpenChange={setNotifyOpen} />
+      {/* 알림 아이콘 → 입찰공고 알림신청 풀팝업 (P10) */}
+      <PrcmPlan_NotiAplyPopup open={notifyOpen} onOpenChange={setNotifyOpen} />
 
       {/* 출력 — 서류 출력 확인 모달 (MUI-BD-01-P14) */}
       <AlertModal
