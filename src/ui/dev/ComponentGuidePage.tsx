@@ -359,17 +359,17 @@ export function ComponentGuidePage() {
             <Row label="state">
               <Specimen caption="default (placeholder)">
                 <div className="w-[260px]">
-                  <InputBox placeholder="내용을 입력하세요." />
+                  <InputBox aria-label="입력 예시 (default)" placeholder="내용을 입력하세요." />
                 </div>
               </Specimen>
               <Specimen caption="error">
                 <div className="w-[260px]">
-                  <InputBox defaultValue="내용이 표시됩니다." error />
+                  <InputBox aria-label="입력 예시 (error)" defaultValue="내용이 표시됩니다." error />
                 </div>
               </Specimen>
               <Specimen caption="disabled">
                 <div className="w-[260px]">
-                  <InputBox defaultValue="내용입니다." disabled />
+                  <InputBox aria-label="입력 예시 (disabled)" defaultValue="내용입니다." disabled />
                 </div>
               </Specimen>
             </Row>
@@ -377,6 +377,7 @@ export function ComponentGuidePage() {
               <Specimen caption="onClear — focus 시 X 노출">
                 <div className="w-[260px]">
                   <InputBox
+                    aria-label="입력 예시 (clearable)"
                     value={clearable}
                     onChange={(e) => setClearable(e.target.value)}
                     onClear={() => setClearable('')}
@@ -396,17 +397,17 @@ export function ComponentGuidePage() {
             <Row label="state">
               <Specimen caption="default (placeholder)">
                 <div className="w-[260px]">
-                  <TextArea placeholder="내용을 입력하세요." />
+                  <TextArea aria-label="텍스트영역 예시 (default)" placeholder="내용을 입력하세요." />
                 </div>
               </Specimen>
               <Specimen caption="error">
                 <div className="w-[260px]">
-                  <TextArea defaultValue="내용이 표시됩니다." error />
+                  <TextArea aria-label="텍스트영역 예시 (error)" defaultValue="내용이 표시됩니다." error />
                 </div>
               </Specimen>
               <Specimen caption="disabled">
                 <div className="w-[260px]">
-                  <TextArea defaultValue="내용이 표시됩니다." disabled />
+                  <TextArea aria-label="텍스트영역 예시 (disabled)" defaultValue="내용이 표시됩니다." disabled />
                 </div>
               </Specimen>
             </Row>
@@ -462,16 +463,16 @@ export function ComponentGuidePage() {
           >
             <Row label="state">
               <Specimen caption="unchecked">
-                <Switch />
+                <Switch aria-label="스위치 예시 (unchecked)" />
               </Specimen>
               <Specimen caption="defaultChecked">
-                <Switch defaultChecked />
+                <Switch aria-label="스위치 예시 (checked)" defaultChecked />
               </Specimen>
               <Specimen caption="disabled (unchecked)">
-                <Switch disabled />
+                <Switch aria-label="스위치 예시 (disabled)" disabled />
               </Specimen>
               <Specimen caption="disabled + checked">
-                <Switch disabled defaultChecked />
+                <Switch aria-label="스위치 예시 (disabled checked)" disabled defaultChecked />
               </Specimen>
             </Row>
             <Row label="label">
@@ -1300,11 +1301,16 @@ export function ComponentGuidePage() {
             desc="Figma tab_atomic(9300-28533/28537) 1:1. 단일 탭 atom — h-48 · 19px Bold + 3px 하단 border. selected=false 면 border-field 회색, selected=true 면 D2B blue. 보통은 직접 쓰지 않고 TabList 가 매핑."
           >
             <Row label="selected">
+              {/* Tab(role=tab)은 tablist 부모가 필요(axe aria-required-parent) — 데모용 래퍼. */}
               <Specimen caption="selected=false (default)">
-                <Tab>탭제목</Tab>
+                <div role="tablist" aria-label="탭 예시">
+                  <Tab>탭제목</Tab>
+                </div>
               </Specimen>
               <Specimen caption="selected=true (활성)">
-                <Tab selected>탭제목</Tab>
+                <div role="tablist" aria-label="탭 예시">
+                  <Tab selected>탭제목</Tab>
+                </div>
               </Specimen>
             </Row>
           </Section>

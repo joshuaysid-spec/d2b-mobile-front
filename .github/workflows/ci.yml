@@ -1,0 +1,51 @@
+name: CI
+
+# push / PR 마다 GitHub 가 임시 VM 에서 자동 실행(우리 서버 불필요).
+# 폐쇄망 이관 시 이 파일만 삭제하면 CI 제거 — 앱/배포물과 무관.
+on:
+  push:
+  pull_request:
+
+# 같은 브랜치에 새 push 가 오면 이전 실행 취소(시간 절약).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      # 싼 검사 먼저(빠르게 실패) → 무거운 E2E 는 마지막.
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E + a11y (Playwright + axe)
+        run: npm run test:e2e
+
+      # 실패해도 리포트/스크린샷을 아티팩트로 올려 Actions 페이지에서 다운로드 가능.
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

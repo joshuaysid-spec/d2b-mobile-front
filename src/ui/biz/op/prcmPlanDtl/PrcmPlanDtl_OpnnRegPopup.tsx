@@ -12,7 +12,6 @@ import { TextArea } from '@/ui/common/base/TextArea'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
-import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
 
 interface UploadFile {
@@ -57,7 +56,7 @@ export function PrcmPlanDtl_OpnnRegPopup({
 }: PrcmPlanDtl_OpnnRegPopupProps) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [isPublic, setIsPublic] = useState('public') // 공개/비공개
+  const [isPublic] = useState('Y') // 공개/비공개 — 현재 표시 전용(SegmentedControl disabled)
   const [files, setFiles] = useState<UploadFile[]>(INITIAL_FILES)
   const [phone, setPhone] = useState('010-1234-5678')
   const [email, setEmail] = useState('abcde@naver.com')

@@ -202,6 +202,8 @@ const DateRangeInput = ({
               openSheet()
             }
           },
+          // 읽기전용 + dialog 트리거 → combobox 패턴(input 에 aria-haspopup/expanded 만 두면 axe 위반)
+          role: 'combobox',
           'aria-haspopup': 'dialog',
           'aria-expanded': open,
         }}

@@ -13,6 +13,11 @@ coverage
 .eslintcache
 .cache
 
+# playwright (E2E) 산출물
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
 # env (예: .env.example 만 커밋)
 .env.development
 .env.production

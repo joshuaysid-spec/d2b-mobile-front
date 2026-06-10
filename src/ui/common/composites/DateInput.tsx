@@ -130,6 +130,9 @@ const DateInput = ({
         placeholder={placeholder}
         error={error}
         disabled={disabled}
+        // 읽기전용 + 클릭 시 날짜 dialog 를 여는 트리거 → combobox 패턴.
+        // (role 없이 input 에 aria-haspopup/expanded 만 주면 axe aria-allowed-attr 위반)
+        role="combobox"
         aria-haspopup="dialog"
         aria-expanded={open}
         className={cn(!disabled && 'cursor-pointer')}
