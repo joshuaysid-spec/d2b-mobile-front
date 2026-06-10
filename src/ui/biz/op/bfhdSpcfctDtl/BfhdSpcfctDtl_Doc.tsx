@@ -1,6 +1,6 @@
 // 사전규격 상세 - '첨부파일' 탭 콘텐츠 (MUI-OP-01-M09_첨부서류, Figma 9300-42569).
 // 제목(PageTitle) + 섹션 2개(집행계획 첨부파일 / 조달판단 첨부파일) — 각 섹션 = SectionTitle(제목 + 총건수 info slot)
-//   + FileDownloadList(파일 행 + 일괄 다운로드). 데이터는 목업 — 추후 API.
+//   + FileDownloadList(파일 행 — 개별 다운로드만, 일괄 다운로드 버튼 없음). 데이터는 목업 — 추후 API.
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import {
@@ -28,10 +28,7 @@ export function BfhdSpcfctDtl_Doc() {
           집행계획 첨부파일
         </SectionTitle>
         <div className="px-4">
-          <FileDownloadList
-            files={EXEC_FILES}
-            onDownloadAll={() => console.log('[M09] 집행계획 일괄 다운로드')}
-          />
+          <FileDownloadList files={EXEC_FILES} />
         </div>
       </section>
 
@@ -41,10 +38,7 @@ export function BfhdSpcfctDtl_Doc() {
           조달판단 첨부파일
         </SectionTitle>
         <div className="px-4">
-          <FileDownloadList
-            files={JUDGE_FILES}
-            onDownloadAll={() => console.log('[M09] 조달판단 일괄 다운로드')}
-          />
+          <FileDownloadList files={JUDGE_FILES} />
         </div>
       </section>
     </div>
