@@ -10,6 +10,8 @@ import dayjs, { type Dayjs } from 'dayjs'
 import { cva } from 'class-variance-authority'
 
 import { Icon } from '@/ui/common/base/Icon'
+import { SelectBox } from '@/ui/common/base/SelectBox'
+import { WheelPicker, type WheelColumn } from '@/ui/common/base/WheelPicker'
 import { cn } from '@/utils/cn'
 
 export type CalendarMode = 'single' | 'range'
@@ -34,6 +36,10 @@ export interface CalendarProps {
   initialMonth?: string
   /** 하단 "오늘" 버튼 표시 여부 (Figma m_date_picker_today_button) */
   showTodayButton?: boolean
+  /**
+   * 상단 년/월 선택 UI — 'wheel'(기본): 토글 → 휠 피커 · 'select': base SelectBox 드롭다운(년/월).
+   */
+  yearMonthMode?: 'wheel' | 'select'
   className?: string
 }
 
@@ -137,43 +143,6 @@ function RoundIconButton({
   )
 }
 
-// 년/월 드롭다운 — Figma m_date_picker_year_month_dropdown
-// native <select> 를 appearance-none 으로 만들고 chevron 을 별도 렌더.
-function YearMonthDropdown({
-  value,
-  onChange,
-  options,
-  formatLabel,
-  ariaLabel,
-}: {
-  value: number
-  onChange: (v: number) => void
-  options: number[]
-  formatLabel: (v: number) => string
-  ariaLabel: string
-}) {
-  return (
-    <div className="relative inline-flex h-[30px] items-center gap-[2px] rounded-krds-8 px-1">
-      <span className="text-[15px] font-bold leading-normal text-krds-text-ink">
-        {formatLabel(value)}
-      </span>
-      <Icon name="ArrowForwardIos" size={14} className="rotate-90 text-krds-text-ink" aria-hidden />
-      <select
-        value={value}
-        onChange={(e) => onChange(+e.target.value)}
-        aria-label={ariaLabel}
-        className="absolute inset-0 cursor-pointer appearance-none opacity-0"
-      >
-        {options.map((o) => (
-          <option key={o} value={o}>
-            {formatLabel(o)}
-          </option>
-        ))}
-      </select>
-    </div>
-  )
-}
-
 const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
   (
     {
@@ -186,6 +155,7 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       maxDate,
       initialMonth,
       showTodayButton = false,
+      yearMonthMode = 'wheel',
       className,
     },
     ref,
@@ -199,6 +169,11 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
 
     const year = cursor.year()
     const month = cursor.month() + 1
+
+    // 상단 년/월 토글 → 휠 피커. 열리면 날짜 그리드 대신 휠(년/월/일)을 보여준다.
+    // wheelDate = 휠이 가리키는 Y-M-D (년/월은 네비게이션, 일 컬럼 선택 시 commit).
+    const [wheelOpen, setWheelOpen] = React.useState(false)
+    const [wheelDate, setWheelDate] = React.useState<Dayjs>(cursor)
 
     const { data: holidays = [] } = useQuery({
       queryKey: ['holidays', year, month],
@@ -274,6 +249,63 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       [],
     )
 
+    // ── 휠 피커(년/월/일) ──────────────────────────────────────────────
+    // 토글 시 wheelDate 를 현재 선택(단일)·cursor 로 초기화.
+    const toggleWheel = () => {
+      if (!wheelOpen) {
+        const base =
+          mode === 'single' && isSingle(value) && value ? dayjs(value) : cursor
+        setWheelDate(base)
+      }
+      setWheelOpen((o) => !o)
+    }
+
+    // 일 컬럼은 wheelDate 의 년/월에 따라 길이가 달라짐(28~31). select 모드에선 휠 미사용 → 계산 skip.
+    const wheelColumns: WheelColumn[] = React.useMemo(() => {
+      if (yearMonthMode !== 'wheel') return []
+      const days = wheelDate.daysInMonth()
+      return [
+        { key: 'year', ariaLabel: '연도', width: 100, items: yearOptions.map((y) => ({ value: y, label: `${y}년` })) },
+        { key: 'month', ariaLabel: '월', width: 80, items: monthOptions.map((m) => ({ value: m, label: `${m}월` })) },
+        {
+          key: 'day',
+          ariaLabel: '일',
+          width: 80,
+          items: Array.from({ length: days }, (_, i) => ({ value: i + 1, label: `${i + 1}일` })),
+        },
+      ]
+    }, [yearMonthMode, wheelDate, yearOptions, monthOptions])
+
+    const wheelValue = {
+      year: wheelDate.year(),
+      month: wheelDate.month() + 1,
+      day: wheelDate.date(),
+    }
+
+    // 년/월 변경 = 네비게이션(그리드 월 이동, commit 없음) · 일 변경 = 날짜 선택(commit).
+    const handleWheelChange = (key: string, v: number) => {
+      if (key === 'day') {
+        const d = wheelDate.date(v)
+        setWheelDate(d)
+        setCursor(d)
+        handleSelect(d) // 단일=선택, 범위=start→end
+        return
+      }
+      // 년/월 변경 시 day 가 말일을 넘으면 클램프(예: 1/31 → 2월 = 28/29일)
+      const base = (key === 'year' ? wheelDate.year(v) : wheelDate.month(v - 1)).date(1)
+      const day = Math.min(wheelDate.date(), base.daysInMonth())
+      const next = base.date(day)
+      setWheelDate(next)
+      setCursor(next)
+    }
+
+    // select 모드 — 년/월 SelectBox 변경 시 cursor 이동(day 클램프).
+    const navigateYearMonth = (key: 'year' | 'month', v: number) => {
+      const base = (key === 'year' ? cursor.year(v) : cursor.month(v - 1)).date(1)
+      const day = Math.min(cursor.date(), base.daysInMonth())
+      setCursor(base.date(day))
+    }
+
     return (
       <div
         ref={ref}
@@ -283,49 +315,87 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
           className,
         )}
       >
-        {/* Month Navigation: [‹]  [년▼ 월▼]  [›]
-            아래 날짜 그리드(7×40px=280)와 같은 280px·가운데 정렬 → ‹/› 버튼이 양끝 열과 맞음. */}
-        <div className="mx-auto flex w-full max-w-[280px] items-center justify-between">
-          <div className="flex items-center gap-1">
-            <RoundIconButton
-              onClick={() => setCursor(cursor.subtract(1, 'month'))}
-              ariaLabel="이전 달"
-            >
-              <Icon name="ChevronLeft" size={20} aria-hidden />
-            </RoundIconButton>
+        {/* Month Navigation —
+            · yearMonthMode='select': [년 SelectBox] [월 SelectBox] (base SelectBox, 화살표 없음)
+            · yearMonthMode='wheel'(기본): [‹] [YYYY년 M월 ▼ 토글] [›] · 토글로 그리드↔휠 전환(휠 열림 시 ‹/› 숨김) */}
+        {yearMonthMode === 'select' ? (
+          <div className="mx-auto flex w-full max-w-[280px] items-center gap-2">
+            <div className="flex-1">
+              <SelectBox
+                value={String(year)}
+                onValueChange={(v) => navigateYearMonth('year', +v)}
+                items={yearOptions.map((y) => ({ value: String(y), label: `${y}년` }))}
+              />
+            </div>
+            <div className="flex-1">
+              <SelectBox
+                value={String(month)}
+                onValueChange={(v) => navigateYearMonth('month', +v)}
+                items={monthOptions.map((m) => ({ value: String(m), label: `${m}월` }))}
+              />
+            </div>
           </div>
+        ) : (
+          <div className="mx-auto flex w-full max-w-[280px] items-center justify-between">
+            <div className="flex items-center gap-1">
+              {!wheelOpen && (
+                <RoundIconButton
+                  onClick={() => setCursor(cursor.subtract(1, 'month'))}
+                  ariaLabel="이전 달"
+                >
+                  <Icon name="ChevronLeft" size={20} aria-hidden />
+                </RoundIconButton>
+              )}
+            </div>
 
-          <div className="flex items-center gap-1">
-            <YearMonthDropdown
-              value={year}
-              onChange={(y) => setCursor(cursor.year(y))}
-              options={yearOptions}
-              formatLabel={(v) => `${v}년`}
-              ariaLabel="년 선택"
-            />
-            <YearMonthDropdown
-              value={month}
-              onChange={(m) => setCursor(cursor.month(m - 1))}
-              options={monthOptions}
-              formatLabel={(v) => `${v}월`}
-              ariaLabel="월 선택"
-            />
-          </div>
-
-          <div className="flex items-center gap-1">
-            <RoundIconButton
-              onClick={() => setCursor(cursor.add(1, 'month'))}
-              ariaLabel="다음 달"
+            {/* 년/월 토글 — Figma m_date_picker_year_month_dropdown. 누르면 휠 피커 펼침/접힘. */}
+            <button
+              type="button"
+              onClick={toggleWheel}
+              aria-expanded={wheelOpen}
+              aria-label={wheelOpen ? '년월 선택 휠 닫기' : '년월 선택 휠 열기'}
+              className={cn(
+                'inline-flex h-[30px] items-center gap-[2px] rounded-krds-8 px-1',
+                'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+              )}
             >
-              <Icon name="ChevronRight" size={20} aria-hidden />
-            </RoundIconButton>
+              <span className="text-[15px] font-bold leading-normal text-krds-text-ink">
+                {year}년 {month}월
+              </span>
+              <Icon
+                name="ExpandMore"
+                size={18}
+                className={cn('text-krds-text-ink transition-transform', wheelOpen && 'rotate-180')}
+                aria-hidden
+              />
+            </button>
+
+            <div className="flex items-center gap-1">
+              {!wheelOpen && (
+                <RoundIconButton
+                  onClick={() => setCursor(cursor.add(1, 'month'))}
+                  ariaLabel="다음 달"
+                >
+                  <Icon name="ChevronRight" size={20} aria-hidden />
+                </RoundIconButton>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Calendar Body: py-16 + gap-8 — 7×40px(280) 그리드는 items-center 로 가운데.
             좌우 패딩은 두지 않는다(자연 여백 = (폭−280)/2; 328px 에서 24px = 기존 px-6 과 동일).
             px 를 고정하면 부모가 좁을 때 오버플로 → 제거해 폭에 맞춰 여백이 줄게 함. */}
         <div className="flex w-full flex-col items-center gap-2 py-4">
+          {wheelOpen ? (
+            /* 휠 피커(년/월/일) — 그리드 대신. Figma m_date_wheel picker */
+            <WheelPicker
+              columns={wheelColumns}
+              value={wheelValue}
+              onChange={handleWheelChange}
+            />
+          ) : (
+          <>
           {/* Day container — 일/월/.../토 */}
           <div className="grid grid-cols-[repeat(7,40px)]">
             {WEEKDAYS.map((d) => (
@@ -372,10 +442,12 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
               )
             })}
           </div>
+          </>
+          )}
         </div>
 
-        {/* 오늘 버튼 — Figma m_date_picker_today_button */}
-        {showTodayButton && (
+        {/* 오늘 버튼 — Figma m_date_picker_today_button (휠 열림 시 숨김) */}
+        {showTodayButton && !wheelOpen && (
           <div className="flex w-full items-center">
             <button
               type="button"

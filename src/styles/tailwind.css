@@ -79,6 +79,7 @@
   --color-krds-bg-divider: var(--krds-border-divider);
   --color-krds-text-ink: var(--krds-text-ink);
   --color-krds-text-disabled-soft: var(--krds-text-disabled-soft);
+  --color-krds-text-disabled-faint: var(--krds-text-disabled-faint);
   --color-krds-color-success-60: var(--krds-color-success-60);
   --color-krds-color-warning-60: var(--krds-color-warning-60);
 

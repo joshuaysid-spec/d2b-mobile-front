@@ -32,6 +32,8 @@ export interface DateInputProps {
   /** 캘린더 선택 가능 최소/최대 날짜 */
   minDate?: string
   maxDate?: string
+  /** 캘린더 상단 년/월 선택 UI — 'wheel'(기본, 휠) | 'select'(SelectBox). Calendar 로 전달. */
+  yearMonthMode?: 'wheel' | 'select'
   className?: string
   id?: string
 }
@@ -56,6 +58,7 @@ const DateInput = ({
   fetchHolidays,
   minDate,
   maxDate,
+  yearMonthMode = 'wheel',
   className,
   id,
 }: DateInputProps) => {
@@ -170,6 +173,7 @@ const DateInput = ({
             fetchHolidays={fetchHolidays}
             minDate={minDate}
             maxDate={maxDate}
+            yearMonthMode={yearMonthMode}
           />
         </div>
       </BottomSheet>

@@ -71,6 +71,7 @@ const KRDS_COLOR_NAMES = [
   'krds-text-danger',
   'krds-text-ink',
   'krds-text-disabled-soft',
+  'krds-text-disabled-faint',
   // border roles
   'krds-border-strong',
   'krds-border-primary',

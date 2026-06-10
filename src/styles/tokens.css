@@ -264,6 +264,7 @@
   --krds-text-subtle: var(--krds-color-gray-50);
   --krds-text-disabled: var(--krds-d2b-disabled-fg);   /* D2B Figma */
   --krds-text-disabled-soft: var(--krds-d2b-blue-disabled); /* D2B Figma — 캘린더 disabled/otherMonth */
+  --krds-text-disabled-faint: var(--krds-d2b-disabled-border); /* D2B Figma — 휠 피커 미선택 항목(#c6c6c6, disabled-border 와 값 동일해 재사용) */
   --krds-text-info: var(--krds-d2b-blue-slate);        /* D2B Figma — Infobox 본문 텍스트 */
   --krds-text-on-primary: var(--krds-color-gray-0);
   --krds-text-on-inverse: var(--krds-color-gray-0);

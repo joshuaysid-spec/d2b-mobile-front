@@ -10,6 +10,7 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { Calendar } from '@/ui/common/base/Calendar'
+import { WheelPicker } from '@/ui/common/base/WheelPicker'
 import { Checkbox } from '@/ui/common/base/Checkbox'
 import { DateInputBox } from '@/ui/common/base/DateInputBox'
 import { DateRangeInputBox } from '@/ui/common/base/DateRangeInputBox'
@@ -82,6 +83,7 @@ const NAV = [
       { id: 'dateinputbox', label: 'DateInputBox' },
       { id: 'daterangeinputbox', label: 'DateRangeInputBox' },
       { id: 'calendar', label: 'Calendar' },
+      { id: 'wheelpicker', label: 'WheelPicker' },
       { id: 'icon', label: 'Icon' },
       { id: 'image', label: 'Image' },
       { id: 'badge', label: 'Badge' },
@@ -857,7 +859,7 @@ export function ComponentGuidePage() {
           <Section
             id="calendar"
             title="Calendar"
-            desc="Figma m_date_range_picker_calendar(9052-1421) + m_date_picker_date_select_button(11 state) 1:1. 단일/범위 모드. 공휴일은 fetchHolidays prop 으로 외부 주입 + React Query 가 월별 자동 fetch/refetch."
+            desc="Figma m_date_range_picker_calendar(9052-1421) + m_date_picker_date_select_button(11 state) 1:1. 단일/범위 모드. 공휴일은 fetchHolidays prop 으로 외부 주입 + React Query 가 월별 자동 fetch/refetch. 상단 년/월 UI 는 yearMonthMode='wheel'(기본, 토글→휠) | 'select'(SelectBox) 선택."
           >
             <Row label="mode: single">
               <Specimen caption="단일 날짜 선택">
@@ -881,6 +883,18 @@ export function ComponentGuidePage() {
                 </div>
               </Specimen>
             </Row>
+            <Row label="yearMonthMode: select (base SelectBox)">
+              <Specimen caption="상단 년/월을 휠 대신 SelectBox 로">
+                <div className="w-[328px] rounded-krds-lg border border-border bg-background p-3">
+                  <Calendar
+                    mode="single"
+                    yearMonthMode="select"
+                    value={calSingle}
+                    onChange={(v) => setCalSingle(v as string)}
+                  />
+                </div>
+              </Specimen>
+            </Row>
             <Row label="fetchHolidays (mock)">
               <Specimen caption="공휴일 mock — 5/5, 5/25 빨강 표시">
                 <div className="w-[328px] rounded-krds-lg border border-border bg-background p-3">
@@ -893,6 +907,28 @@ export function ComponentGuidePage() {
                     }
                     scheduledDates={['2026-05-10', '2026-05-20']}
                   />
+                </div>
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── WheelPicker ───────── */}
+          <Section
+            id="wheelpicker"
+            title="WheelPicker"
+            desc="Figma m_date_wheel picker(9300-29375) 1:1. iOS 스타일 휠 — 컬럼별 세로 스크롤(scroll-snap), 중앙 밴드(bg-primary-faint)에 오는 값이 선택(navy)·나머지는 회색. columns + value + onChange(컬럼키, 값). Calendar 의 상단 년/월 토글이 이 휠을 펼친다."
+          >
+            <Row label="년/월/일 (date)">
+              <Specimen caption="스크롤하면 중앙값이 선택됨">
+                <div className="rounded-krds-lg border border-border bg-background px-4 py-2">
+                  <WheelPickerDemo withDay />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="년/월 (month)">
+              <Specimen caption="2-column">
+                <div className="rounded-krds-lg border border-border bg-background px-4 py-2">
+                  <WheelPickerDemo />
                 </div>
               </Specimen>
             </Row>
@@ -3498,6 +3534,43 @@ function Specimen({ caption, children }: SpecimenProps) {
     <div className="flex flex-col items-start gap-2">
       <div className="flex min-h-[48px] items-center">{children}</div>
       <code className="text-krds-label-xs text-krds-text-subtle">{caption}</code>
+    </div>
+  )
+}
+
+// WheelPicker 데모 — controlled 라 로컬 상태로 구동. 년/월 또는 년/월/일 컬럼.
+function WheelPickerDemo({ withDay }: { withDay?: boolean }) {
+  const [val, setVal] = useState<Record<string, number>>(
+    withDay ? { year: 2025, month: 8, day: 4 } : { year: 2025, month: 8 },
+  )
+  const columns = [
+    {
+      key: 'year',
+      ariaLabel: '연도',
+      width: 100,
+      items: Array.from({ length: 11 }, (_, i) => ({ value: 2016 + i, label: `${2016 + i}년` })),
+    },
+    {
+      key: 'month',
+      ariaLabel: '월',
+      width: 80,
+      items: Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: `${i + 1}월` })),
+    },
+    ...(withDay
+      ? [
+          {
+            key: 'day',
+            ariaLabel: '일',
+            width: 80,
+            items: Array.from({ length: 31 }, (_, i) => ({ value: i + 1, label: `${i + 1}일` })),
+          },
+        ]
+      : []),
+  ]
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <WheelPicker columns={columns} value={val} onChange={(k, v) => setVal((p) => ({ ...p, [k]: v }))} />
+      <code className="text-krds-label-xs text-krds-text-subtle">{JSON.stringify(val)}</code>
     </div>
   )
 }
