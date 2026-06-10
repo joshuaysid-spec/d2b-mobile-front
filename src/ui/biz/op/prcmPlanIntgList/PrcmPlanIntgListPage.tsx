@@ -345,7 +345,8 @@ const ANNUAL_SEARCH_TARGETS = [
 ]
 
 // 조달계획 통합목록 데이터(dlt_prcmPlanList, 기획서 p15 1.4) — 목업, 추후 API(opService.getList).
-// 데모용으로 srchType(plan/spec/annual)·taskSeNm('국외' 포함)을 섞어 라우팅 분기를 모두 확인 가능.
+// 검색유형별 업무구분: plan=물품/용역/공사/국외 · spec=물품/용역/공사(국외 없음) · annual=국외만.
+// 카드 클릭 라우팅은 srchType 으로만 분기(handleCardClick): plan→/op/:id, spec→/op/spec/:id, annual→/op/ovs/:id.
 // (실제로는 srchType 별 별도 조회 — 여기선 1개 변수에 혼합)
 const TOTAL = 100 // 총 건수(목업 — 실제 API total)
 const dlt_prcmPlanList: OpPlanItem[] = [
@@ -386,7 +387,7 @@ const dlt_prcmPlanList: OpPlanItem[] = [
     ctrtMthd: '총액제',
     budgetAmt: 158000000,
   },
-  // 조달계획 · 국외 → /op/:id (국외 분기)
+  // 조달계획 · 국외(업무구분) — srchType=plan 이므로 조달계획상세(/op/:id)로 이동
   {
     id: '4',
     srchType: 'plan',
@@ -399,7 +400,7 @@ const dlt_prcmPlanList: OpPlanItem[] = [
     ctrtMthd: '단가제',
     budgetAmt: 540000000,
   },
-  // 사전규격 · 국내 → /op/spec/:id
+  // 사전규격 · 국내(물품/용역/공사 — 국외 없음) → /op/spec/:id
   {
     id: '5',
     srchType: 'spec',
@@ -412,7 +413,31 @@ const dlt_prcmPlanList: OpPlanItem[] = [
     ctrtMthd: '총액제',
     budgetAmt: 47200000,
   },
-  // 연간조달계획 · 국외(고정) → /op/:id (국외 분기)
+  {
+    id: '7',
+    srchType: 'spec',
+    taskSeNm: '물품',
+    ctrtMthdNm: '수의계약',
+    prcmNo: '6000G',
+    title: "'26년 전투화 사전규격",
+    orderPrnmntYm: '2026-04',
+    orderDeptNm: '피복관리팀',
+    ctrtMthd: '총액제',
+    budgetAmt: 33500000,
+  },
+  {
+    id: '8',
+    srchType: 'spec',
+    taskSeNm: '공사',
+    ctrtMthdNm: '제한경쟁',
+    prcmNo: '6000H',
+    title: "'26년 정비고 증축 사전규격",
+    orderPrnmntYm: '2026-05',
+    orderDeptNm: '시설관리단',
+    ctrtMthd: '총액제',
+    budgetAmt: 210000000,
+  },
+  // 연간조달계획 · 국외만 → /op/ovs/:id (국외 분기)
   {
     id: '6',
     srchType: 'annual',
@@ -468,6 +493,8 @@ export function PrcmPlanIntgListPage() {
       setTargets([value.srchType === 'annual' ? 'stockNo' : 'prcmNm'])
     }
     setFilter(value)
+    setPage(1) // 필터(검색유형 등) 적용 시 첫 페이지부터
+    setAppliedSearch(null) // 빠른검색어 초기화(유형 바뀌면 이전 키워드 필터 해제)
     console.log('[OpList] 상세필터 검색', value)
     // services/op.ts: opService.getList(toRequest(value)) → 목록 재조회
   }
@@ -490,18 +517,17 @@ export function PrcmPlanIntgListPage() {
     setPage(next)
     console.log('[OpList] loadMore → page', next) // 실제로는 다음 페이지 fetch 후 누적
   }
-  // 카드 클릭 라우팅 — 사전규격→사전규격상세(/op/spec/:id), 국외→국외상세(/op/ovs/:id),
-  // 그 외(국내 조달계획)→조달계획상세(/op/:id).
+  // 카드 클릭 라우팅 — 검색유형(srchType)으로만 분기(taskSeNm 하드코딩 분기 제거).
+  //   조달계획(plan)  → 조달계획상세 (/op/:id)      ※ 국외 업무구분이어도 항상 조달계획상세
+  //   사전규격(spec)  → 사전규격상세 (/op/spec/:id)
+  //   연간조달(annual) → 국외 상세   (/op/ovs/:id)   ※ 연간조달 = 국외 → 항상 국외 상세
+  const ROUTE_BY_SRCH_TYPE: Record<OpSrchType, (id: string) => string> = {
+    plan: (id) => `/op/${id}`,
+    spec: (id) => `/op/spec/${id}`,
+    annual: (id) => `/op/ovs/${id}`,
+  }
   const handleCardClick = (item: OpPlanItem) => {
-    if (item.srchType === 'spec') {
-      navigate(`/op/spec/${item.id}`)
-      return
-    }
-    if (item.taskSeNm === '국외') {
-      navigate(`/op/ovs/${item.id}`)
-      return
-    }
-    navigate(`/op/${item.id}`)
+    navigate((ROUTE_BY_SRCH_TYPE[item.srchType] ?? ROUTE_BY_SRCH_TYPE.plan)(item.id))
   }
 
   // ── ⚠️ 임시 목업 검색/페이징 (API 연동 시 이 블록 통째로 삭제 후 재작성) ⚠️ ──────────
@@ -516,18 +542,21 @@ export function PrcmPlanIntgListPage() {
   //   opService.getList({ page, pageSize, keyword, searchTarget }) 결과를 받아 누적/치환한다.
   //   → filteredList(useMemo) · visibleList(slice) 제거하고 fetch 한 데이터로 cardItems 를 만든다.
   const filteredList = useMemo(() => {
-    if (!appliedSearch || !appliedSearch.keyword) return MOCK_LIST
+    // ① 검색유형(srchType) 필터 — 적용된 검색유형의 데이터만 노출(기본 조달계획). 목록은 항상 한 유형만.
+    const srchType = (filter.srchType as OpSrchType) ?? 'plan'
+    const byType = MOCK_LIST.filter((it) => it.srchType === srchType)
+    // ② 빠른검색 키워드 필터(검색 실행 시에만)
+    if (!appliedSearch || !appliedSearch.keyword) return byType
     const kw = appliedSearch.keyword.toLowerCase()
-    return MOCK_LIST.filter((it) => {
+    return byType.filter((it) => {
       // 조달명만 제목 검색, 나머지(판단번호·재고번호·조달요구번호)는 prcmNo 검색(목업 한계).
       const field = appliedSearch.target === 'prcmNm' ? it.title : it.prcmNo
       return field.toLowerCase().includes(kw)
     })
-  }, [appliedSearch])
+  }, [appliedSearch, filter.srchType])
 
-  // 검색이 적용되면 총건수·더보기는 걸러진 결과 기준, 아니면 목업 TOTAL(서버 total) 기준.
-  const isSearching = !!appliedSearch && !!appliedSearch.keyword
-  const total = isSearching ? filteredList.length : TOTAL
+  // 총건수·더보기는 항상 걸러진(검색유형+검색어) 결과 기준.
+  const total = filteredList.length
   const loaded = Math.min(page * pageSize, total)
   // 더보기 누른 만큼만 노출 (10개씩 추가). API 연동 시엔 서버가 페이지 단위로 주므로 slice 불필요.
   const visibleList = filteredList.slice(0, loaded)
@@ -578,6 +607,7 @@ export function PrcmPlanIntgListPage() {
           keyword={keyword}
           onKeywordChange={setKeyword}
           onFilterClick={() => setOpen(true)}
+          filterActive // 이 화면은 검색유형 필터가 항상 적용 중 → 필터 버튼 always on
           onSearch={handleQuickSearch}
         />
       </div>

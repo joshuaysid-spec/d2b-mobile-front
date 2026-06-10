@@ -27,6 +27,8 @@ export interface SearchConditionProps extends Omit<
   onKeywordChange: (value: string) => void
   /** 필터 아이콘 클릭 → 상세 필터 풀팝업 open(소비자 위임). */
   onFilterClick: () => void
+  /** 필터 버튼 활성(on) 상태 — 필터가 적용 중임을 강조. 기본 false(off). */
+  filterActive?: boolean
   /** 검색 버튼 클릭. */
   onSearch: () => void
   /** 검색어 placeholder. 기본 '내용을 입력하세요.'. */
@@ -45,6 +47,7 @@ const SearchCondition = React.forwardRef<HTMLDivElement, SearchConditionProps>(
       keyword,
       onKeywordChange,
       onFilterClick,
+      filterActive = false,
       onSearch,
       placeholder = '내용을 입력하세요.',
       searchOnEnter = true,
@@ -66,10 +69,16 @@ const SearchCondition = React.forwardRef<HTMLDivElement, SearchConditionProps>(
         <button
           type="button"
           aria-label="상세 검색 필터"
+          aria-pressed={filterActive}
           onClick={onFilterClick}
           className={cn(
-            'flex size-12 shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-primary bg-background text-krds-text-primary',
+            'flex size-12 shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-primary text-krds-text-primary',
             'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
+            // 검색대상 칩(조달명/판단번호) 선택 스타일과 동일하게:
+            //   off: 흰 배경 · on: bg-primary-subtle + inset primary 보더(두꺼운 테두리 효과)
+            filterActive
+              ? 'bg-krds-bg-primary-subtle shadow-[inset_0_0_0_1px_var(--krds-border-primary)]'
+              : 'bg-background',
           )}
         >
           <Icon name="Tune" size={24} aria-hidden />
