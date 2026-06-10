@@ -2,7 +2,8 @@
 // 하위 영역/아코디언/테이블 타이틀. 19px Bold, min-h 56px, padding 10px 16px.
 // bgColor: white(기본) | blue(#ecf1fa) — 강조 영역.
 // topDivider: 상단에 SectionDivider(1px) 추가.
-// 우측 info slot: children 으로 보조 요소 전달(건수 표시, 아코디언 아이콘 등) — 17px, krds-action-primary-active.
+// 우측 info slot: children 으로 보조 요소 전달(건수 표시, 아코디언 아이콘 등) — 17px, 텍스트 #0F316E(krds-text-primary-active).
+//   info 가 있으면 타이틀바 전체 배경이 #ECF1FA(krds-bg-primary-faint) 로 강조됨.
 //
 // 사용 예:
 //   <SectionTitle>하위 영역 제목</SectionTitle>
@@ -43,7 +44,7 @@ export interface SectionTitleProps
   topDivider?: boolean
   /** 본문(좌측 타이틀 텍스트). */
   children: React.ReactNode
-  /** 우측 슬롯 — 보조 요소(건수, 아이콘 등). 17px / krds-action-primary-active. */
+  /** 우측 슬롯 — 보조 요소(건수, 아이콘 등). 17px / 텍스트 #0F316E. 있으면 타이틀바 전체 배경 #ECF1FA. */
   info?: React.ReactNode
 }
 
@@ -66,12 +67,17 @@ const SectionTitle = React.forwardRef<HTMLElement, SectionTitleProps>(
         {topDivider && <SectionDivider />}
         <Tag
           ref={ref}
-          className={cn(titleVariants({ bgColor }), className)}
+          className={cn(
+            titleVariants({ bgColor }),
+            // info 슬롯이 있으면 타이틀바 전체 배경을 #ECF1FA 로 강조.
+            info && 'bg-krds-bg-primary-faint',
+            className,
+          )}
           {...props}
         >
           <span className="min-w-px flex-1 wrap-break-word">{children}</span>
           {info && (
-            <span className="flex shrink-0 items-center gap-2 whitespace-nowrap text-[17px] font-bold text-krds-action-primary-active">
+            <span className="flex shrink-0 items-center gap-2 whitespace-nowrap text-[17px] font-bold text-krds-text-primary-active">
               {info}
             </span>
           )}
