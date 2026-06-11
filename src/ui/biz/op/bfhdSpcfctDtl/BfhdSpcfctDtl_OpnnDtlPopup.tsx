@@ -104,10 +104,8 @@ export function BfhdSpcfctDtl_OpnnDtlPopup({
         </AccordionSection>
 
         <AccordionSection value="files" title="첨부서류" titleInfo="총 2건" variant="blue">
-          <FileDownloadList
-            files={FILES}
-            onDownloadAll={() => console.log('[P06] 일괄 다운로드')}
-          />
+          {/* 일괄 다운로드 버튼 미노출 — onDownloadAll 미주입(개별 다운로드만). */}
+          <FileDownloadList files={FILES} />
         </AccordionSection>
 
         <AccordionSection value="author" title="작성자 정보" variant="blue">

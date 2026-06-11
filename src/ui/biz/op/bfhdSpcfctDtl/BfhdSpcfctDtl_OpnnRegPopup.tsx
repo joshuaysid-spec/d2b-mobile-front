@@ -56,7 +56,7 @@ export function BfhdSpcfctDtl_OpnnRegPopup({
 }: BfhdSpcfctDtl_OpnnRegPopupProps) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [isPublic] = useState('Y') // 공개/비공개 — 현재 표시 전용(SegmentedControl disabled)
+  const [isPublic, setIsPublic] = useState('Y') // 공개/비공개 — 등록/수정 시 선택 가능(기본 공개)
   const [files, setFiles] = useState<UploadFile[]>(INITIAL_FILES)
   const [phone, setPhone] = useState('010-1234-5678')
   const [email, setEmail] = useState('abcde@naver.com')
@@ -109,8 +109,8 @@ export function BfhdSpcfctDtl_OpnnRegPopup({
           </Field>
           <Field label="공개여부" required>
             <SegmentedControl
-              defaultValue="Y"
-              onValueChange={(v) => console.log('[SegmentedControl]', v)}
+              value={isPublic}
+              onValueChange={setIsPublic}
               items={[
                 { value: 'Y', label: '공개' },
                 { value: 'N', label: '비공개' },
