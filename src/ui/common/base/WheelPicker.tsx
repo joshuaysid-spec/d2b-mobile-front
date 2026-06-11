@@ -81,7 +81,9 @@ function WheelColumnList({
       aria-label={column.ariaLabel ?? column.key}
       onScroll={handleScroll}
       className={cn(
-        'h-[259px] snap-y snap-mandatory overflow-y-auto overscroll-contain',
+        // relative z-[1]: 중앙 하이라이트 밴드(absolute)가 painting order 상 컬럼(비positioned) 위에
+        //   덮여 선택값 글자(#0F316E)를 가리던 문제 해소 — 컬럼을 밴드보다 위로 올린다.
+        'relative z-[1] h-[259px] snap-y snap-mandatory overflow-y-auto overscroll-contain',
         'scrollbar-none [&::-webkit-scrollbar]:hidden',
       )}
       style={{ scrollbarWidth: 'none', width: column.width ?? 80 }}
