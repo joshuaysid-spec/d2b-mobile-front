@@ -922,14 +922,21 @@ export function ComponentGuidePage() {
             <Row label="년/월/일 (date)">
               <Specimen caption="스크롤하면 중앙값이 선택됨">
                 <div className="rounded-krds-lg border border-border bg-background px-4 py-2">
-                  <WheelPickerDemo withDay />
+                  <WheelPickerDemo mode="date" />
                 </div>
               </Specimen>
             </Row>
             <Row label="년/월 (month)">
               <Specimen caption="2-column">
                 <div className="rounded-krds-lg border border-border bg-background px-4 py-2">
-                  <WheelPickerDemo />
+                  <WheelPickerDemo mode="month" />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="년 (year)">
+              <Specimen caption="1-column">
+                <div className="rounded-krds-lg border border-border bg-background px-4 py-2">
+                  <WheelPickerDemo mode="year" />
                 </div>
               </Specimen>
             </Row>
@@ -3544,28 +3551,41 @@ function Specimen({ caption, children }: SpecimenProps) {
   )
 }
 
-// WheelPicker 데모 — controlled 라 로컬 상태로 구동. 년/월 또는 년/월/일 컬럼.
+// WheelPicker 데모 — controlled 라 로컬 상태로 구동.
+// mode 로 컬럼 구성: 'year'=년만 · 'month'=년/월 · 'date'=년/월/일.
 // 일 컬럼은 선택된 년/월의 실제 일수(28~31, 윤년 반영)만큼만 노출하고,
 // 년/월이 바뀌어 일이 말일을 넘으면 클램프한다(실제 Calendar 휠과 동일한 거동).
-function WheelPickerDemo({ withDay }: { withDay?: boolean }) {
+function WheelPickerDemo({ mode = 'month' }: { mode?: 'date' | 'month' | 'year' }) {
+  const withMonth = mode === 'date' || mode === 'month'
+  const withDay = mode === 'date'
   const [val, setVal] = useState<Record<string, number>>(
-    withDay ? { year: 2025, month: 8, day: 4 } : { year: 2025, month: 8 },
+    mode === 'date'
+      ? { year: 2025, month: 8, day: 4 }
+      : mode === 'month'
+        ? { year: 2025, month: 8 }
+        : { year: 2025 },
   )
   // new Date(y, m, 0).getDate() = m월(1-based)의 말일 → 윤년 2월(29) 포함 정확.
-  const daysInMonth = new Date(val.year, val.month, 0).getDate()
+  const daysInMonth = new Date(val.year, val.month ?? 1, 0).getDate()
   const columns = [
     {
       key: 'year',
       ariaLabel: '연도',
       width: 100,
+      // 년만 있는 단일 컬럼(year)일 땐 가운데 정렬, 년/월·년/월/일은 기존 우측 정렬.
+      align: mode === 'year' ? ('center' as const) : ('end' as const),
       items: Array.from({ length: 11 }, (_, i) => ({ value: 2016 + i, label: `${2016 + i}년` })),
     },
-    {
-      key: 'month',
-      ariaLabel: '월',
-      width: 80,
-      items: Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: `${i + 1}월` })),
-    },
+    ...(withMonth
+      ? [
+          {
+            key: 'month',
+            ariaLabel: '월',
+            width: 80,
+            items: Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: `${i + 1}월` })),
+          },
+        ]
+      : []),
     ...(withDay
       ? [
           {

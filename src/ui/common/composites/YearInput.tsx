@@ -106,6 +106,7 @@ const YearInput = ({
               key: 'year',
               ariaLabel: '연도',
               width: 120,
+              align: 'center', // 단일 컬럼(년) — 연도 텍스트 가운데 정렬
               items: years.map((y) => ({ value: y, label: `${y}년` })),
             },
           ]}

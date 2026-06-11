@@ -24,6 +24,8 @@ export interface WheelColumn {
   width?: number
   /** 스크린리더용 라벨. 미지정 시 key. (예: '연도'·'월'·'일') */
   ariaLabel?: string
+  /** 항목 텍스트 정렬. 기본 'end'(우측). 단일 컬럼(년만 등)은 'center' 권장. */
+  align?: 'end' | 'center'
 }
 
 export interface WheelPickerProps {
@@ -97,7 +99,9 @@ function WheelColumnList({
             aria-selected={i === idx}
             onClick={() => onChange(it.value)}
             className={cn(
-              'flex h-[37px] w-full snap-center items-center justify-end pr-4 text-[19px] font-bold leading-normal whitespace-nowrap',
+              'flex h-[37px] w-full snap-center items-center text-[19px] font-bold leading-normal whitespace-nowrap',
+              // 정렬 — 기본 우측(pr-4 여백), align='center' 면 가운데(여백 없음).
+              column.align === 'center' ? 'justify-center' : 'justify-end pr-4',
               i === idx ? 'text-krds-action-primary-active' : 'text-krds-text-disabled-faint',
             )}
           >
