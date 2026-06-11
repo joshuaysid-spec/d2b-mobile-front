@@ -75,8 +75,10 @@ function Table({ className, rows, bordered = true, ...props }: TableProps) {
             <div
               role="cell"
               className={cn(
-                // value 셀 안 버튼(보기/선택 등)은 최소 폭 74px (Figma)
-                'flex flex-1 min-w-px px-krds-7 py-krds-5 [&_button]:min-w-[74px]',
+                // value 셀 안 버튼(보기/선택 등)은 콘텐츠 폭 + 최소 폭 74px (Figma).
+                // combination 셀은 flex-col items-stretch 라 w-fit 가 없으면 버튼이 풀폭으로 늘어나
+                // min-width 가 무의미해진다 → w-fit 로 콘텐츠 폭으로 줄이고 74px 를 하한으로 둔다.
+                'flex flex-1 min-w-px px-krds-7 py-krds-5 [&_button]:w-fit [&_button]:min-w-[74px]',
                 type === 'number'
                   ? 'items-center justify-end text-right text-[17px] leading-normal text-krds-text-ink tabular-nums'
                   : type === 'combination'

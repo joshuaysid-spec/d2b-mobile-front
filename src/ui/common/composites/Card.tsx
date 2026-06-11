@@ -6,8 +6,8 @@
 //   badges    — <Badge> 들 묶음(ReactNode). 상단 row(wrap, gap 8).
 //   subtitle  — "주요 정보" 같은 작은 윗줄 (17px Regular muted).
 //   title     — 큰 카드 제목 (19px Bold ink, 멀티라인 가능).
-//   rows      — [{ label, value }] 라벨/데이터 행. label 17 Regular muted 좌, value 17 ink 우.
-//               value 가 ReactNode 라 자유 (Badge, 금액, 링크 등).
+//   rows      — [{ label, value }] 라벨/데이터 행. label 17 Regular muted 좌, value 17 ink.
+//               value 정렬: 기본 우측, type2(trailing 있음)는 좌측. value 가 ReactNode 라 자유.
 //   trailing  — 카드 우측 끝 슬롯 (옆 Badge/화살표 아이콘 등). rows 와 가로 정렬.
 //   footer    — 카드 하단 영역 (ButtonGroup, 액션 등).
 //   onClick   — 카드 전체 클릭 핸들러. 주어지면 button 처럼 동작 + hover/focus 스타일.
@@ -101,7 +101,13 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
                         {row.label}
                       </span>
                     )}
-                    <span className="min-w-px flex-1 text-right text-[17px] leading-normal text-krds-text-ink wrap-break-word">
+                    <span
+                      className={cn(
+                        'min-w-px flex-1 text-[17px] leading-normal text-krds-text-ink wrap-break-word',
+                        // type2(compact, trailing 있음)는 데이터를 왼쪽 정렬, 그 외 타입은 우측 정렬.
+                        trailing ? 'text-left' : 'text-right',
+                      )}
+                    >
                       {row.value}
                     </span>
                   </div>
