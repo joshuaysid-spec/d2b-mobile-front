@@ -162,7 +162,7 @@ export function BfhdSpcfctDtlPage() {
       />
 
       {/* 플로팅 버튼 — 맨위로(사전규격은 품목명세서 출력 FAB 없음). */}
-      <FloatingActionButton className="fixed bottom-20 right-4 z-40" onTop={scrollToTop} />
+      <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />
     </div>
   )
 }

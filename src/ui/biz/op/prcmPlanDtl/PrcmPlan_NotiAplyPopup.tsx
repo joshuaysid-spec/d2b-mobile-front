@@ -3,6 +3,7 @@
 // 기존 컴포넌트 활용: FullPopup · InputBox · InputLabel · InputMessage · RadioButtonGroup · ButtonGroup.
 import { useState } from 'react'
 
+import { formatPhoneInput } from '@/utils/format'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { InputMessage } from '@/ui/common/base/InputMessage'
@@ -82,8 +83,9 @@ export function PrcmPlan_NotiAplyPopup({ open, onOpenChange }: PrcmPlan_NotiAply
             <InputBox
               value={phone}
               inputMode="tel"
+              maxLength={13}
               placeholder="번호를 입력하세요."
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => setPhone(formatPhoneInput(e.target.value))}
               onClear={() => setPhone('')}
             />
             <InputMessage>

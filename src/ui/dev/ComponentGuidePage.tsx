@@ -3316,7 +3316,7 @@ export function ComponentGuidePage() {
           <Section
             id="floatingactionbutton"
             title="FloatingActionButton"
-            desc="Figma m_button_plus(9300-26913) + m_button_top(9300-26911) 통합. 48 원형 + 흰 배경 + 30px Material 아이콘(Add/Upgrade) + drop-shadow. 핸들러 prop(onPlus/onTop)으로 1개/2개 노출 자동 분기. 두 개일 때 세로 스택(top 위 / plus 아래). 위치(fixed 등)는 사용처 책임."
+            desc="Figma m_button_plus(9300-26913) + m_button_top(9300-26911) 통합. 48 원형 + 흰 배경 + 30px Material 아이콘(Add/Upgrade) + drop-shadow. 핸들러 prop(onPlus/onTop)으로 1개/2개 노출 자동 분기. 두 개일 때 세로 스택(top 위 / plus 아래). 좌우/z-index 는 사용처(fixed bottom-0 등) 책임이고, 하단 간격은 컴포넌트가 BottomNav 유무에 맞춰 자동(있으면 그 위 10px, 없으면 화면 하단 10px)."
           >
             <Row label="노출 (핸들러 유무)">
               <Specimen caption="plus 1개 (onPlus 만)">

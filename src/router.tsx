@@ -65,12 +65,14 @@ export const router = createBrowserRouter([
     element: <AppLayout />,
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <HomePage /> },
+      // BottomNav 노출 = 홈/알림/고객센터/마이페이지 4개 메뉴에만(showBottomNav).
+      { index: true, element: <HomePage />, handle: { showBottomNav: true } },
       // 2뎁스(메뉴) → sub/util='search'(뒤로+타이틀+통합검색) · 상세 → sub/util='home'(뒤로+타이틀+홈)
       {
         path: 'op',
         element: <PrcmPlanIntgListPage />,
-        handle: { header: { variant: 'sub', util: 'search', title: '조달계획' } },
+        // 목록 → 상세 → 뒤로 시 스크롤 복원 대신 항상 맨 위(scrollReset).
+        handle: { header: { variant: 'sub', util: 'search', title: '조달계획' }, scrollReset: true },
       },
       {
         path: 'op/:id',
@@ -87,10 +89,14 @@ export const router = createBrowserRouter([
         element: <OvsPrcmPlanDtlPage />,
         handle: { header: { variant: 'sub', util: 'home', title: '국외 조달계획 상세' } },
       },
-      { path: 'notice', element: <NoticePage /> },
-      { path: 'notification', element: <NotificationPage /> },
-      { path: 'support', element: <SupportPage /> },
-      { path: 'mypage', element: <MyPage /> },
+      { path: 'notice', element: <NoticePage />, handle: { scrollReset: true } },
+      {
+        path: 'notification',
+        element: <NotificationPage />,
+        handle: { scrollReset: true, showBottomNav: true },
+      },
+      { path: 'support', element: <SupportPage />, handle: { showBottomNav: true } },
+      { path: 'mypage', element: <MyPage />, handle: { showBottomNav: true } },
       // 매칭 안 되는 경로 → 404 (errorElement 가 isRouteErrorResponse 404 로 렌더)
       { path: '*', element: <ErrorPage /> },
     ],

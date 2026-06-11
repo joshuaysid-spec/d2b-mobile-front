@@ -6,8 +6,10 @@
 //   <FloatingActionButton onTop={...} onPlus={...} />      // 둘 다 (세로 스택: top 위 / plus 아래)
 //   <FloatingActionButton />                               // 노출 0 (null 반환)
 //
-// 위치는 사용처 책임 — 컴포넌트는 inline-flex 세로 스택만 제공한다.
-//   <div className="fixed bottom-4 right-4 z-50">
+// 위치(좌우/z-index)는 사용처 책임 — 컴포넌트는 inline-flex 세로 스택을 제공하고,
+// 하단 간격만 스스로 책임진다(아래 marginBottom): BottomNav 가 있으면 그 위 10px,
+// 없으면 화면 하단 10px(둘 다 safe-area 보정). → 사용처는 bottom-0 으로 앵커만 잡으면 된다.
+//   <div className="fixed bottom-0 right-4 z-50">
 //     <FloatingActionButton onPlus={...} onTop={...} />
 //   </div>
 //
@@ -18,6 +20,7 @@
 import * as React from 'react'
 
 import { Icon, type IconName } from '@/ui/common/base/Icon'
+import { BOTTOM_NAV_HEIGHT, useBottomNavVisible } from '@/ui/common/layout/bottomNavContext'
 import { cn } from '@/utils/cn'
 
 export interface FloatingActionButtonProps {
@@ -74,16 +77,21 @@ const FloatingActionButton = React.forwardRef<
     },
     ref,
   ) => {
+    const bottomNavVisible = useBottomNavVisible()
     if (!onPlus && !onTop) return null
+
+    // 하단 간격(margin-bottom) — 사용처가 bottom-0 으로 앵커하면 이 margin 이 버튼을 위로 띄운다.
+    //   BottomNav 있음: 그 위 10px → nav 높이(78px) + 10px + safe-area
+    //   BottomNav 없음: 화면 하단 10px → 10px + safe-area
+    const liftBottom = bottomNavVisible
+      ? `calc(${BOTTOM_NAV_HEIGHT + 10}px + env(safe-area-inset-bottom))`
+      : `calc(10px + env(safe-area-inset-bottom))`
 
     return (
       <div
         ref={ref}
-        // mb-[20px]: 모든 화면 공통으로 bottom 위치를 20px 더 올린다(하단 여백 추가).
-        //   사용처의 fixed bottom-* 은 margin-box 기준이라, margin-bottom 이 버튼을 그만큼 위로 띄움.
-        //   (bottom-* 과 다른 CSS 속성이라 사용처 className 과 충돌하지 않고 공통 적용됨)
-        className={cn('mb-[20px] inline-flex flex-col items-center', className)}
-        style={{ gap }}
+        className={cn('inline-flex flex-col items-center', className)}
+        style={{ gap, marginBottom: liftBottom }}
       >
         {onTop && (
           <CircleButton iconName="Upgrade" ariaLabel={topLabel} onClick={onTop} />

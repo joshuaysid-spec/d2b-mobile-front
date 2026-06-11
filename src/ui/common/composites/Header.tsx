@@ -41,6 +41,8 @@ export interface HeaderProps {
   isLoggedIn?: boolean
   /** 로그인 버튼 클릭. */
   onLogin?: () => void
+  /** main 로고 클릭 → 홈 이동. 주어지면 로고가 버튼이 된다(미지정 시 비클릭 이미지). */
+  onLogo?: () => void
 
   // --- sub 전용 ---
   /** sub 타이틀(19 Bold ink, flex-1 truncate). */
@@ -111,6 +113,7 @@ const Header = ({
   variant = 'main',
   isLoggedIn = false,
   onLogin,
+  onLogo,
   title,
   util = 'search',
   onBack,
@@ -159,7 +162,18 @@ const Header = ({
         )}
       >
         {variant === 'main' ? (
-          <Logo />
+          onLogo ? (
+            <button
+              type="button"
+              onClick={onLogo}
+              aria-label="홈으로"
+              className="inline-flex shrink-0 items-center rounded-krds-8 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring active:opacity-70"
+            >
+              <Logo />
+            </button>
+          ) : (
+            <Logo />
+          )
         ) : (
           <button
             type="button"

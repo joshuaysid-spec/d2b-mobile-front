@@ -494,6 +494,7 @@ export function PrcmPlanIntgListPage() {
     }
     setFilter(value)
     setPage(1) // 필터(검색유형 등) 적용 시 첫 페이지부터
+    setKeyword('') // 검색필터 팝업에서 '검색' 실행 시 빠른검색 입력값 비움(닫기는 유지 — handleSearch 만 호출됨)
     setAppliedSearch(null) // 빠른검색어 초기화(유형 바뀌면 이전 키워드 필터 해제)
     console.log('[OpList] 상세필터 검색', value)
     // services/op.ts: opService.getList(toRequest(value)) → 목록 재조회
@@ -635,7 +636,7 @@ export function PrcmPlanIntgListPage() {
 
       {/* 맨 위로 FAB — BottomNav 위로 띄움. 스크롤 주체는 AppLayout 의 #app-scroll(main). */}
       <FloatingActionButton
-        className="fixed bottom-20 right-4 z-40"
+        className="fixed bottom-0 right-4 z-40"
         onTop={() =>
           document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
         }

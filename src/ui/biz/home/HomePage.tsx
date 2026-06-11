@@ -60,9 +60,9 @@ const HOME_FILTER: SearchFilterSchema = {
     },
   ],
 }
-// 기본 — 업무구분 전체 선택(모든 항목). selectAll 칩이 '전체' 체크로 표시된다.
+// 기본 — 업무구분 아무것도 선택 안 함(빈 배열). selectAll '전체' 칩도 미체크로 표시된다.
 const DEFAULT_FILTER: SearchFilterValue = {
-  taskSe: ['goods', 'service', 'construction', 'foreign'],
+  taskSe: [],
 }
 
 // ── 목업 데이터 (추후 API 로 대체) ──────────────────────────────────────────
@@ -257,7 +257,7 @@ export function HomePage() {
 
       {/* 맨 위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main) */}
       <FloatingActionButton
-        className="fixed bottom-20 right-4 z-40"
+        className="fixed bottom-0 right-4 z-40"
         onTop={() =>
           document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
         }

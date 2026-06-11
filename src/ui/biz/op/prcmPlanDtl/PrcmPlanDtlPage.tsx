@@ -195,7 +195,7 @@ export function PrcmPlanDtlPage() {
 
       {/* 플로팅 버튼 — 맨위로(항상) + 추가(품목명세서 탭: 출력물 바텀시트) */}
       <FloatingActionButton
-        className="fixed bottom-20 right-4 z-40"
+        className="fixed bottom-0 right-4 z-40"
         onTop={scrollToTop}
         onPlus={tab === 'item' ? () => setOutputOpen(true) : undefined}
         plusLabel="출력물"
