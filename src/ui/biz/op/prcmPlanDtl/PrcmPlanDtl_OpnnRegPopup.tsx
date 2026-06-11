@@ -4,13 +4,12 @@
 import * as React from 'react'
 import { useState } from 'react'
 
-import { Button } from '@/ui/common/base/Button'
-import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { TextArea } from '@/ui/common/base/TextArea'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
+import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
 
@@ -126,31 +125,16 @@ export function PrcmPlanDtl_OpnnRegPopup({
           titleInfo={`총 ${files.length}건`}
           variant="blue"
         >
-          <div className="flex w-full flex-col gap-krds-5">
-            {files.map((file) => (
-              <div key={file.id} className="flex w-full items-center gap-krds-5">
-                <div className="flex h-12 min-w-px flex-1 items-center gap-krds-3 overflow-hidden rounded-krds-8 border border-krds-border-disabled bg-krds-bg-disabled-soft px-krds-5">
-                  <span className="truncate text-[17px] leading-normal text-krds-text-ink">
-                    {file.name}
-                  </span>
-                  <span className="shrink-0 text-[17px] leading-normal text-krds-text-muted">
-                    [{file.size}]
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  aria-label={`${file.name} 삭제`}
-                  onClick={() => removeFile(file.id)}
-                  className="flex size-12 shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-primary bg-background text-krds-text-primary"
-                >
-                  <Icon name="Close" size={20} aria-hidden />
-                </button>
-              </div>
-            ))}
-            <Button variant="inner" className="w-full" onClick={addFile}>
-              파일 추가
-            </Button>
-          </div>
+          {/* 업로드 목록 — FileDownloadList 의 삭제(X) 변형(onRemove) + 하단 '파일 추가' 버튼(onAddFile) */}
+          <FileDownloadList
+            files={files.map((file) => ({
+              id: file.id,
+              name: file.name,
+              size: file.size,
+              onRemove: () => removeFile(file.id),
+            }))}
+            onAddFile={addFile}
+          />
         </AccordionSection>
 
         {/* 작성자 정보 — 업체명/사번/성명 readonly, 전화/이메일 입력 */}

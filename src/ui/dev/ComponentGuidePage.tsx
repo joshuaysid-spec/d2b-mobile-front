@@ -1847,7 +1847,7 @@ export function ComponentGuidePage() {
           <Section
             id="filedownloadlist"
             title="FileDownloadList"
-            desc="Figma m_file_download(9300-36444) 1:1. 파일 행(파일명+용량 박스 + 다운로드 아이콘 버튼) + 구분선 + 일괄 다운로드 버튼. files / onDownloadAll 주입. onDownloadAll 미주입 시 일괄 버튼 미노출."
+            desc="Figma m_file_download(9300-36444) 1:1. 파일 행(파일명+용량 박스 + 다운로드 아이콘 버튼) + 구분선 + 하단 버튼. files / onDownloadAll(일괄 다운로드) 주입. 항목에 onRemove 주입 시 X(삭제) 버튼 노출, onAddFile 주입 시 하단에 '파일 추가' 버튼 노출(업로드 목록 용도)."
           >
             <Row label="기본 (2건 + 일괄 다운로드)">
               <Specimen caption="다운로드 클릭 → console">
@@ -1866,6 +1866,27 @@ export function ComponentGuidePage() {
                       },
                     ]}
                     onDownloadAll={() => console.log('[guide] download all')}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="업로드 목록 (onRemove + onAddFile)">
+              <Specimen caption="X 삭제 버튼 + 하단 구분선·'파일 추가' 버튼">
+                <div className="w-[328px]">
+                  <FileDownloadList
+                    files={[
+                      {
+                        name: '첨부파일명.hwp',
+                        size: '786KB',
+                        onRemove: () => console.log('[guide] remove 1'),
+                      },
+                      {
+                        name: '첨부파일명.hwp',
+                        size: '786KB',
+                        onRemove: () => console.log('[guide] remove 2'),
+                      },
+                    ]}
+                    onAddFile={() => console.log('[guide] add file')}
                   />
                 </div>
               </Specimen>

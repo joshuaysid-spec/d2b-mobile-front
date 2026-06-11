@@ -74,11 +74,9 @@ const SearchCondition = React.forwardRef<HTMLDivElement, SearchConditionProps>(
           className={cn(
             'flex size-12 shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-primary text-krds-text-primary',
             'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
-            // 검색대상 칩(조달명/판단번호) 선택 스타일과 동일하게:
-            //   off: 흰 배경 · on: bg-primary-subtle + inset primary 보더(두꺼운 테두리 효과)
-            filterActive
-              ? 'bg-krds-bg-primary-subtle shadow-[inset_0_0_0_1px_var(--krds-border-primary)]'
-              : 'bg-background',
+            // on/off 동일 — 흰 배경 + 1px primary 보더(위 border). on 의 inset shadow 는
+            // 흰 배경 전환 후 보더가 2px 로 보이는 문제가 있어 제거(aria-pressed 로 상태만 노출).
+            'bg-background',
           )}
         >
           <Icon name="Tune" size={24} aria-hidden />

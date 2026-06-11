@@ -13,11 +13,12 @@ import * as React from 'react'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { cn } from '@/utils/cn'
+import systemInfoIcon from '@/assets/images/systemInfo.svg'
 
 export interface InfoboxProps {
   /** 헤더 타이틀 (예: '업무도움' · '안내사항'). */
   title: React.ReactNode
-  /** 헤더 좌측 아이콘. 기본 'Info'. */
+  /** 헤더 좌측 아이콘(Material). 미지정 시 systemInfo.svg(ⓘ 딥네이비 채움) 이미지. */
   icon?: IconName
   /** 본문 불릿 항목들. 각 항목은 ReactNode(링크 포함 가능). children 과 택1. */
   items?: React.ReactNode[]
@@ -36,11 +37,15 @@ export interface InfoboxProps {
 
 const VALUE = 'infobox' // Accordion item 식별자(단일 아이템)
 
-/** 헤더 좌측 ⓘ + 타이틀 (색은 부모 currentColor = 딥네이비 상속) */
-function InfoboxLabel({ icon, title }: { icon: IconName; title: React.ReactNode }) {
+/** 헤더 좌측 ⓘ + 타이틀. icon(Material) 지정 시 그걸 쓰고, 기본은 systemInfo.svg 이미지. */
+function InfoboxLabel({ icon, title }: { icon?: IconName; title: React.ReactNode }) {
   return (
     <span className="flex min-w-0 items-center gap-krds-5">
-      <Icon name={icon} size={20} fill={1} className="shrink-0" aria-hidden />
+      {icon ? (
+        <Icon name={icon} size={20} fill={1} className="shrink-0" aria-hidden />
+      ) : (
+        <img src={systemInfoIcon} alt="" aria-hidden className="size-[22px] shrink-0" />
+      )}
       <span className="min-w-0 flex-1 truncate">{title}</span>
     </span>
   )
@@ -71,7 +76,7 @@ function InfoboxBody({
 
 export function Infobox({
   title,
-  icon = 'Info',
+  icon,
   items,
   children,
   collapsible = true,

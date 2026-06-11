@@ -1,7 +1,9 @@
 // Figma m_file_download(9300-36444) — 다운로드 파일 리스트.
 // 파일 행(파일명 + 용량 박스 + 다운로드 아이콘 버튼) N개 + 구분선 + '일괄 다운로드' 버튼.
-// (업로드 변형 m_file_upload_list 의 추가/삭제·메시지는 미구현 — 다운로드 용도에 집중. 추후 확장.)
-// 데이터 무소유 — 사용처가 files / onDownloadAll 주입.
+// 업로드 변형: 항목에 onRemove 를 주면 다운로드 버튼 옆에 X(삭제) 아이콘 버튼이 추가된다
+//   (onDownload 없이 onRemove 만 주면 삭제 버튼만 — 업로드 목록 용도).
+//   하단 버튼은 onDownloadAll(다운로드 변형) 또는 onAddFile(업로드 변형) 로 — 구분선 + 풀폭 버튼.
+// 데이터 무소유 — 사용처가 files / onDownloadAll / onAddFile 주입.
 import * as React from 'react'
 
 import { Button } from '@/ui/common/base/Button'
@@ -18,6 +20,8 @@ export interface FileDownloadItem {
   size?: string
   /** 개별 다운로드 클릭 */
   onDownload?: () => void
+  /** 개별 삭제(X) 클릭 — 주어지면 다운로드 버튼 옆에 X 아이콘 버튼 노출(업로드 목록 용도). */
+  onRemove?: () => void
 }
 
 export interface FileDownloadListProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -26,9 +30,27 @@ export interface FileDownloadListProps extends React.HTMLAttributes<HTMLDivEleme
   onDownloadAll?: () => void
   /** 일괄 다운로드 버튼 라벨. 기본 '일괄 다운로드'. */
   downloadAllLabel?: React.ReactNode
+  /** '파일 추가' 클릭(업로드 변형). 미주입 시 버튼 미노출. */
+  onAddFile?: () => void
+  /** 파일 추가 버튼 라벨. 기본 '파일 추가'. */
+  addFileLabel?: React.ReactNode
+  /** 행 아이콘(다운로드/삭제) 크기(px). 기본 23. */
+  iconSize?: number
 }
 
-function FileRow({ name, size, onDownload }: FileDownloadItem) {
+// 행 우측 아이콘 버튼 공통 스타일 (48×48, border-primary) — 다운로드/삭제 동일
+const ROW_ICON_BUTTON = cn(
+  'flex size-12 shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-primary bg-background text-krds-text-primary',
+  'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2 active:bg-krds-action-pressed',
+)
+
+function FileRow({
+  name,
+  size,
+  onDownload,
+  onRemove,
+  iconSize = 23,
+}: FileDownloadItem & { iconSize?: number }) {
   return (
     <div className="flex w-full items-center gap-krds-5">
       {/* 파일명 + 용량 (읽기전용 회색 박스) */}
@@ -40,18 +62,28 @@ function FileRow({ name, size, onDownload }: FileDownloadItem) {
           </span>
         )}
       </div>
-      {/* 다운로드 아이콘 버튼 (48×48, border-primary) */}
-      <button
-        type="button"
-        aria-label={`${name} 다운로드`}
-        onClick={onDownload}
-        className={cn(
-          'flex size-12 shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-primary bg-background text-krds-text-primary',
-          'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2 active:bg-krds-action-pressed',
-        )}
-      >
-        <Icon name="Download" size={20} aria-hidden />
-      </button>
+      {/* 다운로드 아이콘 버튼 */}
+      {onDownload && (
+        <button
+          type="button"
+          aria-label={`${name} 다운로드`}
+          onClick={onDownload}
+          className={ROW_ICON_BUTTON}
+        >
+          <Icon name="Download" size={iconSize} aria-hidden />
+        </button>
+      )}
+      {/* 삭제(X) 아이콘 버튼 — onRemove 있을 때만 */}
+      {onRemove && (
+        <button
+          type="button"
+          aria-label={`${name} 삭제`}
+          onClick={onRemove}
+          className={ROW_ICON_BUTTON}
+        >
+          <Icon name="Close" size={iconSize} aria-hidden />
+        </button>
+      )}
     </div>
   )
 }
@@ -61,20 +93,32 @@ function FileDownloadList({
   files,
   onDownloadAll,
   downloadAllLabel = '일괄 다운로드',
+  onAddFile,
+  addFileLabel = '파일 추가',
+  iconSize,
   ...props
 }: FileDownloadListProps) {
   return (
     <div className={cn('flex w-full flex-col gap-krds-8', className)} {...props}>
       <div className="flex w-full flex-col gap-krds-5">
         {files.map((file, i) => (
-          <FileRow key={file.id ?? i} {...file} />
+          <FileRow key={file.id ?? i} {...file} iconSize={iconSize} />
         ))}
       </div>
+      {/* 하단 버튼 — 구분선 + 풀폭 버튼. 다운로드 변형(일괄 다운로드) / 업로드 변형(파일 추가) */}
       {onDownloadAll && (
         <>
           <SectionDivider />
           <Button variant="inner" className="w-full" onClick={onDownloadAll}>
             {downloadAllLabel}
+          </Button>
+        </>
+      )}
+      {onAddFile && (
+        <>
+          <SectionDivider />
+          <Button variant="inner" className="w-full" onClick={onAddFile}>
+            {addFileLabel}
           </Button>
         </>
       )}
