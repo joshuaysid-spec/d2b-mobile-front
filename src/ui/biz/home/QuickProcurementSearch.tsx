@@ -128,7 +128,11 @@ const QuickProcurementSearch = ({
             }}
             placeholder={placeholder}
             aria-label={placeholder}
-            className="min-w-px flex-1 bg-transparent text-[22px] font-bold leading-snug text-krds-text-ink outline-hidden placeholder:text-krds-border-field"
+            // 입력값은 22px 유지. placeholder 는 공고명=기본(22px), G2B 공고번호일 때만 17px 로 줄여 안 잘리게.
+            className={cn(
+              'min-w-px flex-1 bg-transparent text-[22px] font-bold leading-snug text-krds-text-ink outline-hidden placeholder:text-krds-border-field',
+              target === 'g2bNo' && 'placeholder:text-[19px]',
+            )}
           />
           <button
             type="button"

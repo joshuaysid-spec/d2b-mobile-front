@@ -3545,10 +3545,14 @@ function Specimen({ caption, children }: SpecimenProps) {
 }
 
 // WheelPicker 데모 — controlled 라 로컬 상태로 구동. 년/월 또는 년/월/일 컬럼.
+// 일 컬럼은 선택된 년/월의 실제 일수(28~31, 윤년 반영)만큼만 노출하고,
+// 년/월이 바뀌어 일이 말일을 넘으면 클램프한다(실제 Calendar 휠과 동일한 거동).
 function WheelPickerDemo({ withDay }: { withDay?: boolean }) {
   const [val, setVal] = useState<Record<string, number>>(
     withDay ? { year: 2025, month: 8, day: 4 } : { year: 2025, month: 8 },
   )
+  // new Date(y, m, 0).getDate() = m월(1-based)의 말일 → 윤년 2월(29) 포함 정확.
+  const daysInMonth = new Date(val.year, val.month, 0).getDate()
   const columns = [
     {
       key: 'year',
@@ -3568,14 +3572,24 @@ function WheelPickerDemo({ withDay }: { withDay?: boolean }) {
             key: 'day',
             ariaLabel: '일',
             width: 80,
-            items: Array.from({ length: 31 }, (_, i) => ({ value: i + 1, label: `${i + 1}일` })),
+            items: Array.from({ length: daysInMonth }, (_, i) => ({ value: i + 1, label: `${i + 1}일` })),
           },
         ]
       : []),
   ]
+  // 년/월 변경 시 day 가 새 달의 말일을 넘으면 클램프(예: 1/31 → 2월 = 28/29일).
+  const handleChange = (k: string, v: number) =>
+    setVal((p) => {
+      const next = { ...p, [k]: v }
+      if (withDay && (k === 'year' || k === 'month')) {
+        const max = new Date(next.year, next.month, 0).getDate()
+        if (next.day > max) next.day = max
+      }
+      return next
+    })
   return (
     <div className="flex flex-col items-center gap-2">
-      <WheelPicker columns={columns} value={val} onChange={(k, v) => setVal((p) => ({ ...p, [k]: v }))} />
+      <WheelPicker columns={columns} value={val} onChange={handleChange} />
       <code className="text-krds-label-xs text-krds-text-subtle">{JSON.stringify(val)}</code>
     </div>
   )
