@@ -45,3 +45,4 @@ docs/_local/
 # 로컬 도구 상태
 .claude/
 .bkit/
+.omc/
