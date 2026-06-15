@@ -10,6 +10,59 @@
 - 아키텍처 단일 기준 문서: `docs/frontend-architecture.md` (폴더 구조 · 네이밍 · 의존성 방향 규칙)
 - Node 설치됨 (v24). `npm run lint` / `npm run build` 로 검증 가능.
 
+## 새 페이지 작성 절차 (기획서 → 화면)
+
+> 여럿이 기획서 보고 페이지를 칠 때의 표준 순서. **새 컴포넌트를 만들지 말고 `/guide` 의 기존 공통을 조립**하는 게 기본.
+
+**문서 위치:**
+- 설계서(=기획서) 원본: **`docs/spec/`** (조달계획 pptx 등). 위치·화면목록·슬라이드 오프셋·추출법은 `docs/spec/README.md`.
+  - slide5 "화면 목록" = 화면ID↔영문ID↔한글명 → 폴더/파일명 근거. "기획서 pXX" = `slide(XX+1).xml`.
+- 기능별 plan/design: `docs/01-plan/features/`, `docs/02-design/features/`.
+
+**순서:**
+1. **설계서에서 화면 확인** — 담당 화면의 화면ID·구성(섹션/필드/탭)·동작을 `docs/spec/` 에서 읽는다.
+2. **`/guide` 에서 쓸 컴포넌트 고르기** — 브라우저로 `/guide`(ComponentGuidePage) 열어 공통 base/composites 카탈로그 확인. **여기 있는 걸 조립**(FullPopup·BottomSheet·AlertModal·Accordion·Table·InputBox·TextArea·RadioButtonGroup·CheckboxGroup·ButtonGroup·FileDownloadList·SummaryInfo·StepBar·TabList 등). 신규 생성 전 `common/composites`·`base` 중복 확인 필수.
+3. **폴더/파일 생성** — "파일 명명 규칙"의 화면ID→파일명 변환 + 도메인 폴더 코드(op/bd/ct/...) 준수.
+4. **조립 + 목업** — 표/필드는 데이터 배열로 구동. 데이터는 파일 내 목업 상수, 핸들러는 `console.log` + `// 추후 API: xxxService.yyy` 주석으로 경계 표시.
+5. **`router.tsx` 등록** — `lazy()` + `errorElement={<ErrorPage />}` + `handle`(아래 "라우트 handle 레퍼런스").
+6. **검증** — `npm run lint && npm run build`. chunk size 확인.
+
+**Figma 는 선택(대부분 불필요):**
+- 대부분의 페이지 작업 = `/guide` 조립이라 **Figma MCP 안 써도 된다.**
+- Figma MCP 가 필요한 경우 = **`/guide` 에 없는 새 공통 컴포넌트를 디자인 원본대로 새로 만들 때**뿐.
+- **Figma MCP 연결 안 될 때:**
+  - 새 컴포넌트가 꼭 필요한 게 아니면 → `/guide` 의 가장 가까운 기존 컴포넌트로 진행.
+  - 정말 새 비주얼이 필요한데 Figma 를 못 읽으면 → **픽셀값 임의 추측 금지.** 기존 토큰(`tokens.css`)·컴포넌트로 근사하거나, 사용자에게 디자인 확인(스크린샷/값) 요청 후 진행.
+  - Figma 데이터는 웹 fetch 불가 — 반드시 데스크톱 앱 + Dev Mode MCP (file key 등은 "Figma" 섹션).
+
+## 라우트 handle 레퍼런스
+
+`router.tsx` 각 라우트의 `handle` 객체로 헤더·스크롤·바텀네비 동작을 선언한다. 타입: `src/types/navigation.ts`(`RouteHandle`). AppLayout 이 매칭된 라우트들의 handle 을 읽어 적용.
+
+| 필드 | 값 | 용도 |
+|------|----|----|
+| `header` | `{ variant?: 'main'\|'sub', util?: 'home'\|'search', title?: ReactNode }` | 전역 Header 설정. `variant:'sub'`=뒤로+타이틀(없으면 'main'=로고), `util:'search'`=우측 통합검색(보통 2뎁스), `util:'home'`=우측 홈(보통 상세). |
+| `scrollReset` | `boolean` | 뒤로(POP)로 복귀 시 스크롤 복원 대신 항상 맨 위. 목록 화면에 true. |
+| `showBottomNav` | `boolean` | 하단 BottomNav 노출. **홈/알림/고객센터/마이페이지에만 true.** 생략=숨김(opt-in). |
+
+**⚠️ 세 필드는 `handle` 직속 형제다 — `header` 안에 넣지 말 것.**
+`showBottomNav`/`scrollReset` 을 `header: {...}` 안에 넣으면 AppLayout 은 `handle.showBottomNav` 를 읽으므로 **무시되어 동작 안 함**(자주 하는 실수). `header` 는 헤더 설정 전용.
+
+```tsx
+{
+  path: 'op',
+  element: <PrcmPlanIntgListPage />,
+  errorElement: <ErrorPage />,
+  handle: {
+    header: { variant: 'sub', util: 'search', title: '조달계획' },
+    scrollReset: true,     // ← header 밖, handle 직속
+    // showBottomNav 생략 = 숨김
+  },
+},
+```
+
+- **상세(3뎁스) 화면은 `showBottomNav` 생략** → 자동 숨김. 굳이 `false` 도 안 적어도 됨(opt-in).
+
 ## 코드 스플리팅 컨벤션 — 대형 프로젝트 필수
 
 **1) 새 페이지는 반드시 `React.lazy()` 로 추가한다.**
