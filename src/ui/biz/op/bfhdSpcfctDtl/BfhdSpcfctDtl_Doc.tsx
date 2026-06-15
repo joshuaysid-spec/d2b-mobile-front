@@ -19,7 +19,8 @@ const JUDGE_FILES: FileDownloadItem[] = [
 
 export function BfhdSpcfctDtl_Doc() {
   return (
-    <div className="flex flex-col gap-8 pb-6">
+    // pb 는 우하단 FAB(48px + bottom 10px) 가 마지막 다운로드 버튼을 가리지 않도록 그만큼 비워둠.
+    <div className="flex flex-col gap-8 pb-[72px]">
       <PageTitle as="h2">첨부파일</PageTitle>
 
       {/* 집행계획 첨부파일 */}
