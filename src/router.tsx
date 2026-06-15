@@ -47,9 +47,7 @@ const NotificationPage = lazy(() =>
 const SupportPage = lazy(() =>
   import('@/ui/biz/cm/support/SupportPage').then((m) => ({ default: m.SupportPage })),
 )
-const MyPage = lazy(() =>
-  import('@/ui/biz/cm/mypage/MyPage').then((m) => ({ default: m.MyPage })),
-)
+const MyPage = lazy(() => import('@/ui/biz/cm/mypage/MyPage').then((m) => ({ default: m.MyPage })))
 const ComponentGuidePage = lazy(() =>
   import('@/ui/dev/ComponentGuidePage').then((m) => ({
     default: m.ComponentGuidePage,
@@ -72,12 +70,18 @@ export const router = createBrowserRouter([
         path: 'op',
         element: <PrcmPlanIntgListPage />,
         // 목록 → 상세 → 뒤로 시 스크롤 복원 대신 항상 맨 위(scrollReset).
-        handle: { header: { variant: 'sub', util: 'search', title: '조달계획' }, scrollReset: true },
+        handle: {
+          header: { variant: 'sub', util: 'search', title: '조달계획' },
+          scrollReset: true,
+          showBottomNav: true,
+        },
       },
       {
         path: 'op/:id',
         element: <PrcmPlanDtlPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '조달계획 상세' } },
+        handle: {
+          header: { variant: 'sub', util: 'home', title: '조달계획 상세' },
+        },
       },
       {
         path: 'op/spec/:id',

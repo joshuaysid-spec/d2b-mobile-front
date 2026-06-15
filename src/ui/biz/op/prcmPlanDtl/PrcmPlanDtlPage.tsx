@@ -10,7 +10,6 @@ import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { opService } from '@/services/op'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
-import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
@@ -127,16 +126,7 @@ export function PrcmPlanDtlPage() {
       >
         <SummaryInfo
           collapsed={collapsed}
-          badges={
-            <>
-              <Badge type="pastel" color="blue">
-                물품
-              </Badge>
-              <Badge type="pastel" color="blue">
-                수의계약
-              </Badge>
-            </>
-          }
+          badges={[{ label: '물품' }, { label: '수의계약' }]}
           subtitle="판단번호 6000A"
           title="'26년 K5방독면"
           actions={
@@ -156,9 +146,9 @@ export function PrcmPlanDtlPage() {
             배경 #ECF1FA 밴드(패딩 포함). StepBar 루트는 흰 bg 라 bg-transparent 로 덮어 밴드가 비치게. */}
         <div
           aria-hidden={collapsed}
-          className={`grid transition-all duration-200 ease-out motion-reduce:transition-none ${
-            collapsed ? 'grid-rows-[0fr] opacity-0' : 'grid-rows-[1fr] opacity-100'
-          }`}
+          className={`grid transition-all duration-200 ease-out motion-reduce:transition-none 
+            ${collapsed ? 'grid-rows-[0fr] opacity-0' : 'grid-rows-[1fr] opacity-100'}
+            `}
         >
           <div className="overflow-hidden">
             <div className="bg-krds-bg-primary-faint px-4 py-4">

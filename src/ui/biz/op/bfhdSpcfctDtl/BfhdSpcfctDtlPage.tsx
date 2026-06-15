@@ -7,7 +7,6 @@ import { useState } from 'react'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
-import { Badge } from '@/ui/common/base/Badge'
 import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
@@ -97,16 +96,7 @@ export function BfhdSpcfctDtlPage() {
       >
         <SummaryInfo
           collapsed={collapsed}
-          badges={
-            <>
-              <Badge type="pastel" color="blue">
-                물품
-              </Badge>
-              <Badge type="pastel" color="blue">
-                수의계약
-              </Badge>
-            </>
-          }
+          badges={[{ label: '물품' }, { label: '수의계약' }]}
           subtitle="판단번호 6000A"
           title="'26년 K5방독면"
           actions={

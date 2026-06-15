@@ -8,6 +8,7 @@ import * as React from 'react'
 
 import { Checkbox } from '@/ui/common/base/Checkbox'
 import { Icon } from '@/ui/common/base/Icon'
+import { useScrollSelectedIntoView } from '@/hooks/useScrollSelectedIntoView'
 import { cn } from '@/utils/cn'
 
 export interface CheckboxGroupItem {
@@ -197,6 +198,14 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
       ro.observe(el)
       return () => ro.disconnect()
     }, [useSwiper, updateArrows, items])
+
+    // 초기 스크롤: '첫(가장 왼쪽) 선택 항목'을 보이게 한다(범용 규칙 — useScrollSelectedIntoView 주석 참고).
+    // 스크롤러 직속 자식 = [masterChip?(전체), ...chips] 순서이므로, master 가 있으면 +1 오프셋.
+    const firstSelectedItemIndex = React.useMemo(() => {
+      const i = items.findIndex((it) => selected.includes(it.value))
+      return i < 0 ? undefined : i + (showSelectAll ? 1 : 0)
+    }, [items, selected, showSelectAll])
+    useScrollSelectedIntoView(scrollRef, firstSelectedItemIndex, { enabled: useSwiper })
 
     const scrollBy = (dir: 'left' | 'right') => {
       const el = scrollRef.current

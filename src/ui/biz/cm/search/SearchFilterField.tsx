@@ -26,11 +26,7 @@ export interface SearchFilterFieldProps {
   value: SearchFilterFieldValue | undefined
   onChange: (value: SearchFilterFieldValue) => void
   /** selectionField 터치 시 페이지로 위임(자체 팝업). 셸→페이지 콜백. */
-  onSelectionClick?: (
-    key: string,
-    current: string,
-    commit: (value: string) => void,
-  ) => void
+  onSelectionClick?: (key: string, current: string, commit: (value: string) => void) => void
 }
 
 const EMPTY_RANGE: DateRangeValue = { start: '', end: '' }
@@ -66,11 +62,7 @@ function SelectionFieldControl({
   field: SelectionFieldDef
   value: string
   onChange: (value: string) => void
-  onSelectionClick?: (
-    key: string,
-    current: string,
-    commit: (value: string) => void,
-  ) => void
+  onSelectionClick?: (key: string, current: string, commit: (value: string) => void) => void
 }) {
   const [open, setOpen] = React.useState(false)
   const items = field.sheetItems ?? []

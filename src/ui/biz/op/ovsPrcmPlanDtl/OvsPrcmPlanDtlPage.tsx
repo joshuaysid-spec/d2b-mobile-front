@@ -8,7 +8,6 @@ import { useParams } from 'react-router-dom'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
-import { Badge } from '@/ui/common/base/Badge'
 import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
@@ -99,16 +98,7 @@ export function OvsPrcmPlanDtlPage() {
       >
         <SummaryInfo
           collapsed={collapsed}
-          badges={
-            <>
-              <Badge type="pastel" color="blue">
-                국외
-              </Badge>
-              <Badge type="pastel" color="blue">
-                일반경쟁
-              </Badge>
-            </>
-          }
+          badges={[{ label: '국외' }, { label: '일반경쟁' }]}
           subtitle="조달요구번호 A-2026-0001"
           title="'26년 야간투시경 해외구매"
           actions={

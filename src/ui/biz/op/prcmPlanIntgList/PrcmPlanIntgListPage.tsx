@@ -107,7 +107,11 @@ function dateSections(type: OpSrchType): SearchFilterSection[] {
         title: '일자 설정',
         fields: [
           // 상단 세그먼트 — 날짜 유형 지표(사전규격=접수기간). Figma m_segmented control
-          { type: 'segment', key: 'dateType', options: [{ value: 'rcptPeriod', label: '접수기간' }] },
+          {
+            type: 'segment',
+            key: 'dateType',
+            options: [{ value: 'rcptPeriod', label: '접수기간' }],
+          },
           { type: 'dateRange', key: 'rcptPeriod', required: true, presets: DATE_PRESETS },
         ],
       },
@@ -138,7 +142,11 @@ function dateSections(type: OpSrchType): SearchFilterSection[] {
       title: '월 설정',
       fields: [
         // 상단 세그먼트 — 날짜 유형 지표(조달계획=발주예정월). Figma m_segmented control
-        { type: 'segment', key: 'dateType', options: [{ value: 'orderPrnmntYm', label: '발주예정월' }] },
+        {
+          type: 'segment',
+          key: 'dateType',
+          options: [{ value: 'orderPrnmntYm', label: '발주예정월' }],
+        },
         { type: 'dateRange', key: 'orderPrnmntYm', required: true, presets: DATE_PRESETS },
       ],
     },
@@ -165,7 +173,12 @@ function keywordSection(type: OpSrchType): SearchFilterSection {
       title: '검색어 (일부 입력 가능)',
       fields: [
         { type: 'text', key: 'mlSvcNm', label: '군구분', placeholder: '군구분을 입력하세요.' },
-        { type: 'text', key: 'qltyGradeNm', label: '품질등급', placeholder: '품질등급을 입력하세요.' },
+        {
+          type: 'text',
+          key: 'qltyGradeNm',
+          label: '품질등급',
+          placeholder: '품질등급을 입력하세요.',
+        },
         {
           type: 'selectionField',
           key: 'stockNo',
@@ -231,8 +244,20 @@ function categorySections(type: OpSrchType): SearchFilterSection[] {
         key: 'category',
         title: '구분설정',
         fields: [
-          { type: 'select', key: 'deptSeCd', label: '부서', placeholder: '전체', options: ALL_ONLY },
-          { type: 'select', key: 'functnCd', label: '기능', placeholder: '전체', options: ALL_ONLY },
+          {
+            type: 'select',
+            key: 'deptSeCd',
+            label: '부서',
+            placeholder: '전체',
+            options: ALL_ONLY,
+          },
+          {
+            type: 'select',
+            key: 'functnCd',
+            label: '기능',
+            placeholder: '전체',
+            options: ALL_ONLY,
+          },
           {
             type: 'select',
             key: 'implPrgrsStcd',
@@ -240,7 +265,13 @@ function categorySections(type: OpSrchType): SearchFilterSection[] {
             placeholder: '전체',
             options: PROGRESS_OPTIONS,
           },
-          { type: 'select', key: 'prdClsfCd', label: '품류', placeholder: '전체', options: ALL_ONLY },
+          {
+            type: 'select',
+            key: 'prdClsfCd',
+            label: '품류',
+            placeholder: '전체',
+            options: ALL_ONLY,
+          },
         ],
       },
     ]
@@ -269,8 +300,20 @@ function buildOpSearchSchema(value: SearchFilterValue): SearchFilterSchema {
   // 사전규격: 일자설정 → 검색어 → 공개일설정 (공개일이 검색어 뒤). 그 외: 날짜 → 검색어 → 구분설정.
   const sections =
     type === 'spec'
-      ? [SRCH_TYPE_SECTION, taskSection(type), ...dateSections(type), keywordSection(type), opnDtSection()]
-      : [SRCH_TYPE_SECTION, taskSection(type), ...dateSections(type), keywordSection(type), ...categorySections(type)]
+      ? [
+          SRCH_TYPE_SECTION,
+          taskSection(type),
+          ...dateSections(type),
+          keywordSection(type),
+          opnDtSection(),
+        ]
+      : [
+          SRCH_TYPE_SECTION,
+          taskSection(type),
+          ...dateSections(type),
+          keywordSection(type),
+          ...categorySections(type),
+        ]
   return {
     title: '검색필터',
     sections,
@@ -286,10 +329,7 @@ const TASK_DEFAULT_BY_TYPE: Record<OpSrchType, string[]> = {
 
 // 검색유형이 바뀌면 종속 필드(업무구분)를 새 유형 기본값으로 교체. 그 외 변경은 그대로 통과.
 // (도메인 로직이라 SearchFilter 가 아닌 페이지가 소유 → normalize prop 으로 주입)
-function normalizeOpSearch(
-  next: SearchFilterValue,
-  prev: SearchFilterValue,
-): SearchFilterValue {
+function normalizeOpSearch(next: SearchFilterValue, prev: SearchFilterValue): SearchFilterValue {
   if (next.srchType === prev.srchType) return next
   const type = (next.srchType as OpSrchType) ?? 'plan'
   return { ...next, taskSeNm: TASK_DEFAULT_BY_TYPE[type] }
@@ -585,7 +625,7 @@ export function PrcmPlanIntgListPage() {
   return (
     // 조달계획관리 공통 셸(PageTitle + full-bleed 플러시 스택). 과거 OpPageLayout 래퍼를 인라인.
     <div className="flex w-full flex-col">
-      <PageTitle>조달계획관리</PageTitle>
+      {/* <PageTitle>조달계획관리</PageTitle> */}
       {/* 업무도움 — full-bleed 블루 바 (셸이 무패딩이라 -mx 불필요) */}
       <Infobox
         className="rounded-none"

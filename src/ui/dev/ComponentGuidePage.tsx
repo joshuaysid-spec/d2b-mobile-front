@@ -3123,15 +3123,7 @@ export function ComponentGuidePage() {
               <Specimen caption="조달 카드 — 7뱃지 + 판단번호/제목 + 액션 2개 + 4행">
                 <div className="w-[360px] rounded-krds-8 border border-border bg-background">
                   <SummaryInfo
-                    badges={
-                      <>
-                        {Array.from({ length: 7 }).map((_, i) => (
-                          <Badge key={i} type="pastel" color="blue">
-                            구분명
-                          </Badge>
-                        ))}
-                      </>
-                    }
+                    badges={Array.from({ length: 7 }, () => ({ label: '구분명' }))}
                     subtitle="판단번호 4000A"
                     title="2026 K5 방독면 수리부속(구매)"
                     actions={
@@ -3192,15 +3184,7 @@ export function ComponentGuidePage() {
               <Specimen caption="좁은 폭에서 화살표 노출">
                 <div className="w-[280px] rounded-krds-8 border border-border bg-background">
                   <SummaryInfo
-                    badges={
-                      <>
-                        {Array.from({ length: 6 }).map((_, i) => (
-                          <Badge key={i} type="pastel" color="blue">
-                            구분명
-                          </Badge>
-                        ))}
-                      </>
-                    }
+                    badges={Array.from({ length: 6 }, () => ({ label: '구분명' }))}
                     subtitle="주요 정보"
                     title="좁은 폭이라 뱃지가 overflow"
                     rows={[{ label: '레이블', value: '데이터' }]}
