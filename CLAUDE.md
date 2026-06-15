@@ -138,6 +138,24 @@ import { Icon } from '@/ui/common/base/Icon'
 | `src/ui/common/composites/` | **PascalCase**, 그룹/리스트는 보통 `XxxGroup` | `ButtonGroup.tsx`, `RadioButtonGroup.tsx` | base + 도메인 합성. |
 | `src/ui/biz/{도메인}/` | **설계서 화면 ID 기반 PascalCase** | `prcmPlanIntgList/PrcmPlanIntgListPage.tsx`, `prcmPlanDtl/PrcmPlanDtl_PrdList.tsx` | 아래 "설계서 화면 ID → 파일명 변환 규칙" 참고. |
 
+**biz 도메인 폴더 코드 (`src/ui/biz/{도메인}/`):**
+
+도메인 폴더명은 아래 약어로 **고정**한다(백엔드 API 도메인과 일치). 새 화면은 반드시 해당 도메인 폴더 아래에 둔다.
+
+| 폴더 | 도메인 |
+|------|--------|
+| `op` | 조달 |
+| `bd` | 입찰 |
+| `ct` | 계약 |
+| `ex` | 이행 |
+| `wm` | 대금청구/사후 |
+| `ts` | 업무지원 |
+| `st` | 통계 |
+| `cm` | 공통관리 |
+| `fb` | dapa-fpbis (영문) |
+
+> **공통관리(`cm`)**: 특정 업무 도메인에 속하지 않는 공통 화면은 전부 `cm/` 아래에 둔다 — `cm/home`(메인) · `cm/mypage` · `cm/notice` · `cm/notification` · `cm/support` · `cm/auth` · `cm/terms` · `cm/error` · `cm/search`. (메인/마이페이지/공지/알림/고객센터를 `biz/` 최상위에 두지 말 것.)
+
 **설계서 화면 ID → 파일명 변환 규칙 (biz 도메인 화면):**
 
 - `src/ui/biz/{도메인}/` 의 화면(페이지·탭·팝업·시트)은 **설계서(사용자인터페이스설계서) 영문 화면 ID 를 따른다.**

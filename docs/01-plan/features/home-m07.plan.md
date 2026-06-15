@@ -25,7 +25,7 @@ project-version: 0.1.0
 | Perspective | Content |
 |-------------|---------|
 | **Problem** | `HomePage.tsx` 가 4개 링크만 있는 임시 허브 — 실제 메인 홈(빠른검색·서비스 바로가기·공지·배너·안내)이 없다. |
-| **Solution** | Header/BottomNav/Footer/TabList/Image/FAB 등 기존 공통을 재사용하고, `biz/home` 도메인 조립 컴포넌트(빠른조달검색·서비스그리드·공지섹션·배너·처음방문안내) + 공통 `CarouselIndicator` 1종만 신규 제작해 페이지를 구성. |
+| **Solution** | Header/BottomNav/Footer/TabList/Image/FAB 등 기존 공통을 재사용하고, `biz/cm/home` 도메인 조립 컴포넌트(빠른조달검색·서비스그리드·공지섹션·배너·처음방문안내) + 공통 `CarouselIndicator` 1종만 신규 제작해 페이지를 구성. |
 | **Function/UX Effect** | 사용자가 홈에서 공고를 빠르게 검색(공고명/공고번호 OR + 필터), 주요 서비스로 바로 이동, 최근 공지 3건 확인, 배너·이용안내 열람. |
 | **Core Value** | Figma 1:1 + 기존 컴포넌트 최대 재사용. 캐러셀 인디케이터를 공통화해 다른 화면에서도 재사용 가능한 자산 확보. |
 
@@ -39,7 +39,7 @@ project-version: 0.1.0
 | **WHO** | 앱 기동 후 진입하는 모바일(웹뷰) 사용자 (로그인 전 상태 우선) |
 | **RISK** | 실제 이미지 에셋(로고·서비스아이콘·배너) 미제공 → placeholder · 검색/이동 동작은 목업 스텁 |
 | **SUCCESS** | Figma 1:1 · lint 0 err · build 성공 · 컴포넌트 가이드 등록 · 검색/필터/이동 핸들러 동작(console.log/라우팅) |
-| **SCOPE** | ① 공통 `CarouselIndicator` → ② biz/home 조립 컴포넌트 5종 → ③ `HomePage` 전면 교체(목업+스텁) |
+| **SCOPE** | ① 공통 `CarouselIndicator` → ② biz/cm/home 조립 컴포넌트 5종 → ③ `HomePage` 전면 교체(목업+스텁) |
 
 ---
 
@@ -47,7 +47,7 @@ project-version: 0.1.0
 
 ### 1.1 Purpose
 
-앱 메인 홈 화면(Figma MUI-MS-01-M07, node `7077-85163`, 로그인 전)을 구현한다. 현재 `src/ui/biz/home/HomePage.tsx`(임시 링크 허브)를 **빠른조달검색 + 주요 서비스 바로가기 + 공지사항 + 배너 + 처음 방문 안내 + 푸터** 로 전면 교체한다.
+앱 메인 홈 화면(Figma MUI-MS-01-M07, node `7077-85163`, 로그인 전)을 구현한다. 현재 `src/ui/biz/cm/home/HomePage.tsx`(임시 링크 허브)를 **빠른조달검색 + 주요 서비스 바로가기 + 공지사항 + 배너 + 처음 방문 안내 + 푸터** 로 전면 교체한다.
 
 ### 1.2 Background
 
@@ -61,7 +61,7 @@ project-version: 0.1.0
 
 - Figma: MUI-MS-01-M07 메인 홈(로그인 전) — node `7077-85163`. 하위: 빠른조달검색 `7077:85210`, 주요서비스 `7077:85249`, 공지사항 `7077:85348`, 배너(알림판) `7077:85383`, 처음방문 `7077:85457`, 푸터 `7077:85504`
 - 설계서: `D2BA-AP-3CD-0601.사용자인터페이스설계서-00공통-모바일_v0.6.pptx` (slide 20 — M07 메인 홈, slide 21 — 이벤트)
-- 코드: `src/ui/biz/home/HomePage.tsx`, `src/ui/common/composites/{Header,Footer,BottomNav,TabList,FloatingActionButton}.tsx`, `src/ui/biz/cm/search/SearchFilter.tsx`
+- 코드: `src/ui/biz/cm/home/HomePage.tsx`, `src/ui/common/composites/{Header,Footer,BottomNav,TabList,FloatingActionButton}.tsx`, `src/ui/biz/cm/search/SearchFilter.tsx`
 
 ---
 
@@ -70,11 +70,11 @@ project-version: 0.1.0
 ### 2.1 In Scope
 
 - [ ] `CarouselIndicator` 컴포넌트 (신규 **공통 composite**) — `현재 / 전체` 숫자 + 이전/다음 화살표. 주요서비스·배너 두 곳 재사용. (목업: page=1 고정, 핸들러 optional)
-- [ ] `QuickProcurementSearch` (신규, biz/home) — 로고 placeholder + OR칩(공고명/G2B공고번호, 단일선택 check pill) + 검색필터 버튼(설정값 있으면 파란 ON·없으면 OFF) + 검색입력(선택칩 따라 placeholder 변경) + 검색 버튼
-- [ ] `ServiceShortcutGrid` (신규, biz/home) — 아이콘(placeholder 박스) + 라벨 그리드 3열 + `CarouselIndicator`(1/2). 항목: 조달/입찰공고/개찰/계약/실적증명서/국내외 조달원 등록증
-- [ ] `HomeNoticeSection` (신규, biz/home) — 섹션타이틀 + 더보기 + `TabList`(방위사업청/수요부대/일반) + 공지 카드 3개(제목+날짜)
-- [ ] `HomeBanner` (신규, biz/home) — 배너 **통이미지 하나**(Image, placeholder) + `CarouselIndicator`(1/3)
-- [ ] `FirstVisitGuide` (신규, biz/home) — 섹션타이틀 + 가이드 행 3개(아이콘+제목+설명+자세히보기 링크): 사전준비안내/국내조달안내/국외조달안내
+- [ ] `QuickProcurementSearch` (신규, biz/cm/home) — 로고 placeholder + OR칩(공고명/G2B공고번호, 단일선택 check pill) + 검색필터 버튼(설정값 있으면 파란 ON·없으면 OFF) + 검색입력(선택칩 따라 placeholder 변경) + 검색 버튼
+- [ ] `ServiceShortcutGrid` (신규, biz/cm/home) — 아이콘(placeholder 박스) + 라벨 그리드 3열 + `CarouselIndicator`(1/2). 항목: 조달/입찰공고/개찰/계약/실적증명서/국내외 조달원 등록증
+- [ ] `HomeNoticeSection` (신규, biz/cm/home) — 섹션타이틀 + 더보기 + `TabList`(방위사업청/수요부대/일반) + 공지 카드 3개(제목+날짜)
+- [ ] `HomeBanner` (신규, biz/cm/home) — 배너 **통이미지 하나**(Image, placeholder) + `CarouselIndicator`(1/3)
+- [ ] `FirstVisitGuide` (신규, biz/cm/home) — 섹션타이틀 + 가이드 행 3개(아이콘+제목+설명+자세히보기 링크): 사전준비안내/국내조달안내/국외조달안내
 - [ ] `HomePage` 전면 교체 — 위 컴포넌트 조합 + `Footer` + 맨위로 FAB(onTop) + **목업 상수**
 - [ ] 검색/필터/서비스이동/공지이동/자세히보기 → **스텁 핸들러(console.log + `// 추후: …` 주석)** 또는 기존 라우트 이동
 - [ ] 검색필터 버튼 → 기존 `SearchFilter` 풀팝업 연동(스키마 최소), 적용값 유무로 ON/OFF 토글
@@ -143,7 +143,7 @@ project-version: 0.1.0
 | 이미지 에셋 부재로 placeholder 가 디자인과 시각 차이 | Low | High | placeholder 를 디자인 영역 크기/비율로 맞춤, src prop 으로 추후 무손실 교체 |
 | 캐러셀을 실제 슬라이드로 오해 | Low | Medium | design/do 에 목업(정적)임 명시, 인디케이터는 시각/스텁 |
 | 검색필터 ON/OFF 판정 로직 모호 | Medium | Medium | "defaultValue 와 다른 값이 적용되면 ON" 으로 정의(설계서 명시) |
-| biz/home 조립 컴포넌트가 과도하게 잘게 쪼개짐 | Low | Medium | 화면 전용 조립물은 biz/home 에만, 공통화는 CarouselIndicator 1종으로 한정 |
+| biz/cm/home 조립 컴포넌트가 과도하게 잘게 쪼개짐 | Low | Medium | 화면 전용 조립물은 biz/cm/home 에만, 공통화는 CarouselIndicator 1종으로 한정 |
 | HomePage 교체로 기존 라우트 영향 | Low | Low | export 시그니처 유지(named export `HomePage`), router 변경 불필요 |
 
 ---
@@ -156,7 +156,7 @@ project-version: 0.1.0
 |----------|------|--------------------|
 | `HomePage.tsx` | Page | 임시 링크 허브 → 메인 홈 전면 교체(named export 유지) |
 | `CarouselIndicator.tsx` | Component (공통) | 신규 common/composites |
-| `biz/home/*` | Component | 신규 5종(QuickProcurementSearch·ServiceShortcutGrid·HomeNoticeSection·HomeBanner·FirstVisitGuide) |
+| `biz/cm/home/*` | Component | 신규 5종(QuickProcurementSearch·ServiceShortcutGrid·HomeNoticeSection·HomeBanner·FirstVisitGuide) |
 | `ComponentGuidePage.tsx` | Dev | 공통 `CarouselIndicator` 데모 등록 |
 
 ### 6.2 Current Consumers
@@ -202,14 +202,14 @@ project-version: 0.1.0
 
 ```
 HomePage (페이지 — 검색/필터/탭/이동 상태·핸들러 + 목업 소유)
-├── QuickProcurementSearch   OR칩 + 필터버튼(→SearchFilter) + 검색입력 + 검색   (신규 biz/home)
-├── ServiceShortcutGrid      아이콘그리드 3열 → Carousel(스와이프, 1/2)           (신규 biz/home)
+├── QuickProcurementSearch   OR칩 + 필터버튼(→SearchFilter) + 검색입력 + 검색   (신규 biz/cm/home)
+├── ServiceShortcutGrid      아이콘그리드 3열 → Carousel(스와이프, 1/2)           (신규 biz/cm/home)
 │     └── Carousel → CarouselIndicator                                            (신규 공통)
-├── HomeNoticeSection        섹션타이틀+더보기 + TabList(3) + 공지카드 3          (신규 biz/home)
+├── HomeNoticeSection        섹션타이틀+더보기 + TabList(3) + 공지카드 3          (신규 biz/cm/home)
 │     └── TabList                                                                 (기존)
-├── HomeBanner               통이미지(Image) → Carousel(스와이프, 1/3)            (신규 biz/home)
+├── HomeBanner               통이미지(Image) → Carousel(스와이프, 1/3)            (신규 biz/cm/home)
 │     └── Carousel → (Image × N) + CarouselIndicator                              (신규 공통)
-├── FirstVisitGuide          섹션타이틀 + 가이드행 3                               (신규 biz/home)
+├── FirstVisitGuide          섹션타이틀 + 가이드행 3                               (신규 biz/cm/home)
 ├── Footer                                                                        (기존)
 └── 맨위로 FAB (onTop, #app-scroll)                                               (기존)
 ```
@@ -229,7 +229,7 @@ HomePage (페이지 — 검색/필터/탭/이동 상태·핸들러 + 목업 소�
 | Category | Current State | To Apply |
 |----------|---------------|----------|
 | Naming | exists | composites=PascalCase, biz=XxxPage/도메인조립명, key=안정 ID |
-| Folder | exists | 공통=common/composites, 화면전용=biz/home |
+| Folder | exists | 공통=common/composites, 화면전용=biz/cm/home |
 | 아이콘 | exists | `Icon`(Material Symbols) — lucide/@mui 금지 |
 | 라우팅 | exists | 변경 없음(홈 index 유지) |
 
@@ -243,7 +243,7 @@ HomePage (페이지 — 검색/필터/탭/이동 상태·핸들러 + 목업 소�
 
 1. [ ] Design 문서 작성 (`home-m07.design.md`) — 3가지 설계안 + 선택, 컴포넌트 props 스펙
 2. [ ] 공통 `CarouselIndicator` 구현 → 가이드 등록
-3. [ ] biz/home 조립 컴포넌트 5종 구현
+3. [ ] biz/cm/home 조립 컴포넌트 5종 구현
 4. [ ] `HomePage` 전면 교체 + 목업 + 스텁 + Footer + FAB
 
 ---

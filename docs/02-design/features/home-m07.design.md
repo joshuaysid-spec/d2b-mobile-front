@@ -21,7 +21,7 @@ plan-ref: docs/01-plan/features/home-m07.plan.md
 | **WHO** | 앱 기동 후 진입 모바일(웹뷰) 사용자(로그인 전) |
 | **RISK** | 이미지 에셋 미제공(placeholder) · 동작 목업 스텁 |
 | **SUCCESS** | Figma 1:1 · lint/build OK · 가이드 등록 · 핸들러 동작 |
-| **SCOPE** | 공통 CarouselIndicator → biz/home 5종 → HomePage 교체 |
+| **SCOPE** | 공통 CarouselIndicator → biz/cm/home 5종 → HomePage 교체 |
 
 ---
 
@@ -35,7 +35,7 @@ Figma node `7077-85163`(MUI-MS-01-M07) 1:1. Header/BottomNav 는 `AppLayout` 셸
 |--------|------|:----:|:----:|:----:|
 | A. 최소변경 | HomePage 한 파일에 모든 섹션 인라인 | 낮음 | 낮음(거대 단일파일) | ☐ |
 | B. 클린 | 모든 섹션·칩·행을 atomic 으로 풀분해 + 공통화 | 높음 | 높음(과분해 prop drilling) | ☐ |
-| **C. 실용 균형** | 화면 전용 조립물은 `biz/home` 섹션 컴포넌트로, **반복되는 캐러셀 인디케이터만 공통화**. 칩/행 등은 섹션 파일 내부 인라인 | 중간 | 높음 | ☑ |
+| **C. 실용 균형** | 화면 전용 조립물은 `biz/cm/home` 섹션 컴포넌트로, **반복되는 캐러셀 인디케이터만 공통화**. 칩/행 등은 섹션 파일 내부 인라인 | 중간 | 높음 | ☑ |
 
 > **선택: Option C.** CLAUDE.md "상세화면 컨벤션"(마크업은 페이지/섹션 소유, 공통화는 갈라지면 안 되는 것만) 및 메모리 `check-composites-before-creating` 와 정합. 사용자 결정(캐러셀 공통화·나머지 도메인 조립)과 일치.
 
@@ -76,7 +76,7 @@ interface CarouselIndicatorProps {
 - 첫/끝 페이지에서 해당 화살표 `disabled`(목업은 current=1 고정 → prev disabled).
 - 색·간격은 KRDS 토큰. h-40.
 
-### 3.2 `QuickProcurementSearch` (신규 — `biz/home`)
+### 3.2 `QuickProcurementSearch` (신규 — `biz/cm/home`)
 
 Figma `7077:85210`(bg `--krds-bg-primary-faint` `#ecf1fa`, rounded, pt-20 pb-24 px-16).
 
@@ -99,7 +99,7 @@ interface QuickProcurementSearchProps {
 - 검색입력: 흰bg + 3px 파란보더 + rounded-full + drop-shadow. placeholder = `target==='name' ? '공고명을 입력해주세요.' : 'G2B 공고번호를 입력해주세요.'`. 우측 검색 아이콘 버튼.
 - 칩/필터/입력은 파일 내부 인라인(별도 atomic 분리 안 함).
 
-### 3.3 `ServiceShortcutGrid` (신규 — `biz/home`)
+### 3.3 `ServiceShortcutGrid` (신규 — `biz/cm/home`)
 
 Figma `7077:85249`. 섹션타이틀 "주요 서비스 바로가기" + 3열 그리드를 `itemsPerPage`(기본 6=3열×2행)로 나눠 `Carousel` 로 스와이프.
 
@@ -114,7 +114,7 @@ interface ServiceShortcutGridProps {
 - 각 항목: 60×60 아이콘 placeholder 박스(rounded) + 라벨(중앙, 멀티라인 허용). 3열, row-gap.
 - 6항목 초과면 Carousel 이 2페이지(1/2) — 스와이프/화살표 전환.
 
-### 3.4 `HomeNoticeSection` (신규 — `biz/home`)
+### 3.4 `HomeNoticeSection` (신규 — `biz/cm/home`)
 
 Figma `7077:85348`. 섹션타이틀 "공지사항" + 더보기 + `TabList`(방위사업청/수요부대/일반) + 공지카드 3.
 
@@ -133,7 +133,7 @@ interface HomeNoticeSectionProps {
 - 더보기: `button_text`(텍스트 + Add 아이콘) 우상단.
 - 공지카드: 제목(2줄 클램프, 19 Bold) + 날짜(17 muted). 하단 divider 행. 클릭=onItemClick. **key=item.id**.
 
-### 3.5 `HomeBanner` (신규 — `biz/home`)
+### 3.5 `HomeBanner` (신규 — `biz/cm/home`)
 
 Figma `7077:85383`(알림판). 배너 **통이미지**(각 1장, Image) 여러 장을 `Carousel` 로 스와이프.
 
@@ -145,7 +145,7 @@ interface HomeBannerProps { banners: BannerSlide[] }
 - 통이미지: rounded 박스, 비율 고정(약 328×448 → aspect 유지). src 없으면 placeholder 박스(중앙 라벨 "배너").
 - 3장 → Carousel 인디케이터 1/3, 스와이프/화살표 전환.
 
-### 3.6 `FirstVisitGuide` (신규 — `biz/home`)
+### 3.6 `FirstVisitGuide` (신규 — `biz/cm/home`)
 
 Figma `7077:85457`. 섹션타이틀 "처음 방문하셨나요?" + 가이드 행 3.
 
@@ -157,7 +157,7 @@ interface FirstVisitGuideProps { items: GuideItem[] }
 - 행: 아이콘(24, Icon) + 제목(19 Bold) + 설명(17) + 자세히보기(button_text + TrendingFlat 아이콘).
 - 기본 3항목: 사전준비안내/국내조달안내/국외조달안내. (아이콘은 REGISTRY 매핑 — DeveloperGuide/AssignmentInd/AssignmentGlobe 미등록 시 근접 아이콘 대체, 필요 시 REGISTRY 추가)
 
-### 3.7 `HomePage` (교체 — `biz/home`)
+### 3.7 `HomePage` (교체 — `biz/cm/home`)
 
 목업·상태·핸들러 소유, 위 6개 + Footer + FAB 조합.
 

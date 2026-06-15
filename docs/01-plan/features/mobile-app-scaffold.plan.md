@@ -72,7 +72,7 @@ projectVersion: 0.1.0
 - [ ] path alias `@/` 설정 (vite.config.ts ↔ tsconfig.json 동기화)
 - [ ] 인프라 최소 골격: `lib/apiClient.ts`, `lib/queryClient.ts`, `bridge/` mock 뼈대
 - [ ] 레이아웃: `ui/common/layout/` — `BottomNav.tsx`, `Header.tsx`, `PageContainer.tsx`
-- [ ] `ui/biz/home/HomePage.tsx` — 4개 메뉴 링크를 가진 링크 허브
+- [ ] `ui/biz/cm/home/HomePage.tsx` — 4개 메뉴 링크를 가진 링크 허브
 - [ ] 빈 페이지 4종: `procurement`, `notice`, `notification`, `mypage` (각 `*Page.tsx`)
 - [ ] 라우트 5개: `/`, `/procurement`, `/notice`, `/notification`, `/mypage`
 - [ ] `constants/routes.ts` 경로 상수

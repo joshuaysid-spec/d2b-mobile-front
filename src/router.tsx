@@ -10,7 +10,7 @@ import { ROUTES } from '@/constants/routes'
 // 모든 페이지는 React.lazy 로 코드 스플리팅 — 첫 진입 시 해당 페이지 chunk 만 다운로드.
 // 페이지가 named export 이므로 .then(m => ({ default: m.X })) 로 default 매핑 필요.
 const HomePage = lazy(() =>
-  import('@/ui/biz/home/HomePage').then((m) => ({ default: m.HomePage })),
+  import('@/ui/biz/cm/home/HomePage').then((m) => ({ default: m.HomePage })),
 )
 // 조달계획 통합목록(MUI-OP-01-M01, 설계서 p.8) — biz/op/prcmPlanIntgList.
 const PrcmPlanIntgListPage = lazy(() =>
@@ -37,18 +37,18 @@ const OvsPrcmPlanDtlPage = lazy(() =>
   })),
 )
 const NoticePage = lazy(() =>
-  import('@/ui/biz/notice/NoticePage').then((m) => ({ default: m.NoticePage })),
+  import('@/ui/biz/cm/notice/NoticePage').then((m) => ({ default: m.NoticePage })),
 )
 const NotificationPage = lazy(() =>
-  import('@/ui/biz/notification/NotificationPage').then((m) => ({
+  import('@/ui/biz/cm/notification/NotificationPage').then((m) => ({
     default: m.NotificationPage,
   })),
 )
 const SupportPage = lazy(() =>
-  import('@/ui/biz/support/SupportPage').then((m) => ({ default: m.SupportPage })),
+  import('@/ui/biz/cm/support/SupportPage').then((m) => ({ default: m.SupportPage })),
 )
 const MyPage = lazy(() =>
-  import('@/ui/biz/mypage/MyPage').then((m) => ({ default: m.MyPage })),
+  import('@/ui/biz/cm/mypage/MyPage').then((m) => ({ default: m.MyPage })),
 )
 const ComponentGuidePage = lazy(() =>
   import('@/ui/dev/ComponentGuidePage').then((m) => ({

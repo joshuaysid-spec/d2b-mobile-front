@@ -13,18 +13,18 @@ import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import {
   QuickProcurementSearch,
   type SearchTarget,
-} from '@/ui/biz/home/QuickProcurementSearch'
+} from '@/ui/biz/cm/home/QuickProcurementSearch'
 import {
   ServiceShortcutGrid,
   type ServiceShortcut,
-} from '@/ui/biz/home/ServiceShortcutGrid'
+} from '@/ui/biz/cm/home/ServiceShortcutGrid'
 import {
   HomeNoticeSection,
   type NoticeItem,
   type NoticeTab,
-} from '@/ui/biz/home/HomeNoticeSection'
-import { HomeBanner, type BannerSlide } from '@/ui/biz/home/HomeBanner'
-import { FirstVisitGuide, type GuideItem } from '@/ui/biz/home/FirstVisitGuide'
+} from '@/ui/biz/cm/home/HomeNoticeSection'
+import { HomeBanner, type BannerSlide } from '@/ui/biz/cm/home/HomeBanner'
+import { FirstVisitGuide, type GuideItem } from '@/ui/biz/cm/home/FirstVisitGuide'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
 import { ROUTES } from '@/constants/routes'
 import opIcon from '@/assets/images/opIcon.svg'
