@@ -366,6 +366,20 @@ import { Icon } from '@/ui/common/base/Icon'
 - **같은 구조 + API/값/라벨만 다름**(국내·국외 조달계획상세) → **1 페이지** + `type` 파라미터로 service 선택 + config 로 라벨/탭 차이 흡수. 페이지 복제 금지.
 - **다른 도메인 + 레이아웃만 유사**(조달계획상세 vs 사전규격상세) → **페이지 분리하되 로직은 공유**: 갈라지면 안 되는 동작(`useCollapsibleHeader`)은 훅으로, 마크업은 각 페이지가 소유. 래퍼 셸 컴포넌트로 한 겹 더 씌우지 않는다(과잉 prop 방지).
 
+## 폼 검증 (react-hook-form + zod)
+
+폼 입력 검증은 **react-hook-form(RHF) + zod**로 표준화한다. 직접 `useState`로 검증 로직 짜지 말 것. (상세: `docs/02-design/features/form-validation.design.md`)
+
+- **설치됨**: `react-hook-form`·`zod`·`@hookform/resolvers` (vite `vendor-form` chunk). import: `import { useForm, Controller } from 'react-hook-form'` · `import { zodResolver } from '@hookform/resolvers/zod'`(서브패스 없음) · `import { z } from 'zod'`.
+- **스키마 = 진실원천**: zod 스키마로 규칙 + 타입(`z.infer`)을 한 곳에서. 위치: 단일 폼은 옆에 `XxxForm.schema.ts`(co-locate) · 2개+ 공유는 `src/types/` · 재사용 필드 규칙은 `src/utils/validators.ts`.
+- **zod v4 주의**: 에러 메시지는 `{ error: '...' }` (구 `message:` 아님). 형식은 `z.email()` 등 top-level.
+- **트리거 고정**: `useForm({ resolver: zodResolver(schema), mode: 'onSubmit', reValidateMode: 'onBlur' })` — 제출 시 전체 검증, 이후 에러 필드는 blur 재검증.
+- **연동**: 네이티브 입력(`InputBox`/`TextArea`) = `register`. **Radix 그룹**(`Checkbox`/`RadioButtonGroup`/`CheckboxGroup`)·마스킹 입력 = **`<Controller>`** (value/onChange/onBlur 수동 연결, Checkbox 는 `c === true` 정규화).
+- **에러 표시(KRDS 재사용)**: `<InputMessage type="error">{message}</InputMessage>` + `InputBox`의 `error` prop + `aria-invalid`/`aria-describedby`. 필수는 `InputLabel`의 `required`(`*`).
+- **첫 에러 포커스**: 입력류는 RHF `shouldFocusError` 자동. **Radix 그룹은 ref 없어 자동 안 됨** → 필드 블록을 `<div id={`field-${name}`}>`로 감싸고 `onInvalid`에서 `scrollIntoView`(main#app-scroll). `window.scrollTo` 금지.
+- **서버 검증 대체 아님**: 프론트는 UX 사전검증. 권위 검증은 백엔드(eGovFrame).
+- **적용 예시**: `PrcmPlanDtlPage`(페이지가 `useForm` 소유) + `PrcmPlan_NotiAply`(`control` 받아 Controller) + `PrcmPlan_NotiAply.schema.ts`.
+
 ## PDCA / 문서
 
 - bkit PDCA 워크플로우 사용. 기능별 plan/design 문서: `docs/01-plan/features/`, `docs/02-design/features/`.

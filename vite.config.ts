@@ -68,6 +68,8 @@ export default defineConfig({
           ],
           // 데이터·날짜 유틸 — 캘린더/리스트 페이지에서 공통 사용
           'vendor-data': ['@tanstack/react-query', 'axios', 'dayjs', 'zustand'],
+          // 폼·검증 — 입력 폼이 있는 여러 화면 공통 (react-hook-form + zod)
+          'vendor-form': ['react-hook-form', 'zod', '@hookform/resolvers'],
         },
       },
     },

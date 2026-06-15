@@ -1,11 +1,15 @@
 // 입찰공고 알림신청 콘텐츠 (MUI-OP-01-P10, Figma 9300-37419). 컨테이너(BottomSheet)는 부모가 소유.
-// 서비스 안내 + 수신자 휴대번호 + 수신동의 라디오. 값은 부모가 소유(controlled) — footer 신청하기가 읽음.
+// 서비스 안내 + 수신자 휴대번호 + 수신동의 라디오.
+// 폼은 부모(페이지)가 useForm 소유 → control 을 받아 Controller 로 필드 연결(react-hook-form + zod).
 // 기존 컴포넌트 활용: InputBox · InputLabel · InputMessage · RadioButtonGroup.
+import { Controller, type Control } from 'react-hook-form'
+
 import { formatPhoneInput } from '@/utils/format'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { InputMessage } from '@/ui/common/base/InputMessage'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
+import type { NotiAplyForm } from '@/ui/biz/op/prcmPlanDtl/PrcmPlan_NotiAply.schema'
 
 // 안내문 (Figma intro section)
 const GUIDE = [
@@ -24,20 +28,11 @@ const GUIDE = [
 ]
 
 export interface PrcmPlan_NotiAplyProps {
-  /** 수신자 휴대번호 (포맷된 문자열) */
-  phone: string
-  onPhoneChange: (value: string) => void
-  /** 수신동의: 'no'(동의 안함) | 'yes'(동의함) */
-  agree: string
-  onAgreeChange: (value: string) => void
+  /** 부모(페이지)가 소유한 react-hook-form control. 필드는 Controller 로 연결. */
+  control: Control<NotiAplyForm>
 }
 
-export function PrcmPlan_NotiAply({
-  phone,
-  onPhoneChange,
-  agree,
-  onAgreeChange,
-}: PrcmPlan_NotiAplyProps) {
+export function PrcmPlan_NotiAply({ control }: PrcmPlan_NotiAplyProps) {
   return (
     <div className="flex flex-col gap-4">
       {/* 서비스 안내 */}
@@ -55,35 +50,69 @@ export function PrcmPlan_NotiAply({
         </section>
       ))}
 
-      {/* 입력 폼 (Figma form section — primary-faint 배경) */}
-      <div className="flex flex-col gap-4 rounded-krds-8 bg-krds-bg-primary-faint p-4">
-        <div className="flex flex-col gap-krds-5">
-          <InputLabel required>수신자 휴대번호</InputLabel>
-          <InputBox
-            value={phone}
-            inputMode="tel"
-            maxLength={13}
-            placeholder="번호를 입력하세요."
-            onChange={(e) => onPhoneChange(formatPhoneInput(e.target.value))}
-            onClear={() => onPhoneChange('')}
-          />
-          <InputMessage>
-            휴대폰 변경은 마이페이지(조달업체) &gt; 알림서비스신청 에서 변경이 가능합니다.
-          </InputMessage>
-        </div>
+      {/* 입력 폼 (Figma form section 9419-29933 — primary-faint 배경).
+          Figma: 배경은 시트 풀폭(360w)으로 깔리고, 내부 필드는 시트 공통 거터(16px)에 정렬.
+          BottomSheet 가 이미 px-[16px] 를 주므로 -mx-4 로 거터를 상쇄해 배경을 가장자리까지 늘리고,
+          p-4 로 내부 콘텐츠를 다시 16px 안쪽으로 맞춰 위 안내문과 좌우 정렬을 일치시킴. */}
+      <div className="-mx-4 flex flex-col gap-4 bg-krds-bg-primary-faint p-4">
+        {/* 휴대번호 — 마스킹/onClear 때문에 Controller. field-* id 는 제출 실패 시 스크롤 타깃. */}
+        <Controller
+          control={control}
+          name="phone"
+          render={({ field, fieldState }) => (
+            <div id="field-phone" className="flex flex-col gap-krds-5">
+              <InputLabel htmlFor="noti-phone" required>
+                수신자 휴대번호
+              </InputLabel>
+              <InputBox
+                id="noti-phone"
+                value={field.value}
+                inputMode="tel"
+                maxLength={13}
+                placeholder="번호를 입력하세요."
+                onChange={(e) => field.onChange(formatPhoneInput(e.target.value))}
+                onBlur={field.onBlur}
+                onClear={() => field.onChange('')}
+                error={!!fieldState.error}
+                aria-invalid={fieldState.error ? true : undefined}
+                aria-describedby="noti-phone-msg"
+              />
+              {fieldState.error ? (
+                <InputMessage type="error" id="noti-phone-msg">
+                  {fieldState.error.message}
+                </InputMessage>
+              ) : (
+                <InputMessage id="noti-phone-msg">
+                  휴대폰 변경은 마이페이지(조달업체) &gt; 알림서비스신청 에서 변경이 가능합니다.
+                </InputMessage>
+              )}
+            </div>
+          )}
+        />
 
-        <div className="flex flex-col gap-krds-5">
-          <InputLabel>입찰 단계별 안내 수신동의</InputLabel>
-          <RadioButtonGroup
-            showIndicator
-            value={agree}
-            onValueChange={onAgreeChange}
-            items={[
-              { value: 'no', label: '동의 안함' },
-              { value: 'yes', label: '동의함' },
-            ]}
-          />
-        </div>
+        <Controller
+          control={control}
+          name="agree"
+          render={({ field, fieldState }) => (
+            <div id="field-agree" className="flex flex-col gap-krds-5">
+              <InputLabel>입찰 단계별 안내 수신동의</InputLabel>
+              <RadioButtonGroup
+                showIndicator
+                name={field.name}
+                value={field.value}
+                onValueChange={field.onChange}
+                onBlur={field.onBlur}
+                items={[
+                  { value: 'no', label: '동의 안함' },
+                  { value: 'yes', label: '동의함' },
+                ]}
+              />
+              {fieldState.error && (
+                <InputMessage type="error">{fieldState.error.message}</InputMessage>
+              )}
+            </div>
+          )}
+        />
       </div>
     </div>
   )

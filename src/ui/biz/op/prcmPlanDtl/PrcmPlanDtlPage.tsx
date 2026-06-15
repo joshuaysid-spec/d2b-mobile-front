@@ -5,6 +5,8 @@
 // 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당이라 본문은 콘텐츠만 렌더.
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { opService } from '@/services/op'
@@ -18,6 +20,10 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
 import { PrcmPlan_NotiAply } from '@/ui/biz/op/prcmPlanDtl/PrcmPlan_NotiAply'
+import {
+  notiAplySchema,
+  type NotiAplyForm,
+} from '@/ui/biz/op/prcmPlanDtl/PrcmPlan_NotiAply.schema'
 import { PrcmPlanDtl } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl'
 import { PrcmPlanDtl_PrdList } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_PrdList'
 import { PrcmPlanDtl_OpnnList } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_OpnnList'
@@ -96,13 +102,30 @@ export function PrcmPlanDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputOpen, setOutputOpen] = useState(false) // + 버튼 → 출력물 바텀시트(P17)
   const [notifyOpen, setNotifyOpen] = useState(false) // 알림 아이콘 → 알림신청 바텀시트(P10)
-  // 알림신청 폼 상태 — 컨테이너(BottomSheet) footer 의 신청하기가 읽으므로 페이지가 소유(controlled)
-  const [notifyPhone, setNotifyPhone] = useState('')
-  const [notifyAgree, setNotifyAgree] = useState('no') // 수신동의 기본값: 동의 안함
-  const handleNotifyApply = () => {
-    console.log('[P10] 입찰공고 알림신청', { phone: notifyPhone, agree: notifyAgree }) // 추후 API: opService.applyNotify
-    setNotifyOpen(false)
-  }
+  // 알림신청 폼 — 페이지가 useForm 소유(footer 신청하기가 제출). 검증 = zod 스키마 + react-hook-form.
+  // mode:onSubmit + reValidateMode:onBlur → 제출 시 전체 검증, 이후 에러 필드는 blur 시 재검증.
+  const notiForm = useForm<NotiAplyForm>({
+    resolver: zodResolver(notiAplySchema),
+    mode: 'onSubmit',
+    reValidateMode: 'onBlur',
+    defaultValues: { phone: '', agree: 'no' },
+  })
+  const handleNotifyApply = notiForm.handleSubmit(
+    (data) => {
+      console.log('[P10] 입찰공고 알림신청', data) // 추후 API: opService.applyNotify
+      setNotifyOpen(false)
+      notiForm.reset()
+    },
+    (errors) => {
+      // 첫 에러 필드로 스크롤(Radix 그룹은 자동 포커스 불가 → 수동). main#app-scroll 셸 기준.
+      const first = Object.keys(errors)[0]
+      requestAnimationFrame(() =>
+        document
+          .getElementById(`field-${first}`)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
+      )
+    },
+  )
 
   // 출력 버튼 — 서류 출력 확인 모달(MUI-BD-01-P14) 표시. 확인 시 OZ 리포트 호출(콘솔 스텁).
   const [outputModalOpen, setOutputModalOpen] = useState(false)
@@ -189,12 +212,7 @@ export function PrcmPlanDtlPage() {
           />
         }
       >
-        <PrcmPlan_NotiAply
-          phone={notifyPhone}
-          onPhoneChange={setNotifyPhone}
-          agree={notifyAgree}
-          onAgreeChange={setNotifyAgree}
-        />
+        <PrcmPlan_NotiAply control={notiForm.control} />
       </BottomSheet>
 
       {/* 출력 — 서류 출력 확인 모달 (MUI-BD-01-P14) */}
