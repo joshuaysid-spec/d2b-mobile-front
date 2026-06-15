@@ -146,7 +146,11 @@ import { Icon } from '@/ui/common/base/Icon'
 - **폴더명 = 화면 ID(camelCase 그대로)**, 그 안의 파일/컴포넌트 = 위 규칙(첫 글자 대문자). 폴더(`prcmPlanDtl`)와 파일(`PrcmPlanDtl`)이 대소문자만 다른 중첩은 허용.
 - **페이지**(통합목록 컨테이너 등)는 화면 ID + `Page` 접미사: `PrcmPlanIntgListPage`, `PrcmPlanDtlPage`. (접미사 덕에 같은 ID 의 탭 콘텐츠 `PrcmPlanDtl` 과 충돌 안 함 — 탭에는 `Content` 등 군더더기 접미사 붙이지 말 것.)
 - 설계서 ID 가 없는 하위 조립물(예: 의견 카드)은 가장 가까운 상위 화면 ID 에서 파생: `PrcmPlanDtl_OpnnCard`.
-- **컨테이너 타입 접미사** — 풀페이지 팝업은 `Popup`, 바텀시트는 `Sheet` 를 ID 뒤에 **언더스코어 없이** 붙여 종류를 드러낸다: `PrcmPlanDtl_OpnnDtlPopup`(P06 의견상세, 풀팝업) · `PrcmPlan_NotiAplySheet`(P10 알림신청, 바텀시트) · `AnlPrcmPlanDtlSheet`(P12 연관조달, 바텀시트). 탭 콘텐츠·페이지엔 안 붙임(페이지는 `Page`). ⚠️ 컨테이너가 BottomSheet 면 반드시 `Sheet`(과거 `*SearchPopup` 처럼 바텀시트인데 `Popup` 붙이지 말 것).
+- **컨테이너 타입 접미사 — 규칙: wrapper 접미사 = 감싸는 컨테이너 컴포넌트명. 그리고 wrapper 를 만드는 컨테이너는 `FullPopup` 하나뿐이다.** 따라서 전용 래퍼는 화면 ID 뒤에 **언더스코어 없이** `FullPopup` 을 붙인다(예전 `Popup` 접미사는 폐기 — 'Popup'은 바텀시트·모달까지 포함하는 카테고리 단어라 종류를 특정 못 함): `PrcmPlanDtl_OpnnDtlFullPopup`(P06 의견상세) · `PrcmPlanDtl_OpnnRegFullPopup`(의견등록) · `BfhdSpcfctDtl_OpnnDtlFullPopup`. 풀팝업만 래퍼로 캡슐화하는 이유 = 본문이 화면급으로 무겁고(긴 폼·variant·검증) footer/title 이 화면 고유라 부모로 끌어올리면 페이지가 비대해지기 때문. 탭 콘텐츠·페이지엔 안 붙임(페이지는 `Page`).
+- **⚠️ BottomSheet · AlertModal 은 전용 래퍼(`*Sheet`)를 만들지 않는다.** 부모(페이지 또는 탭 콘텐츠)가 컨테이너(`BottomSheet`/`AlertModal`)를 직접 렌더하고, 그 사이에 **콘텐츠만 분리한 컴포넌트**(아코디언/테이블 등)를 끼워 넣는다. 컨테이너 props(`title`/`footer`/`open`/`onOpenChange`)는 **부모가 소유**한다.
+  - 콘텐츠 컴포넌트는 화면 ID 그대로(접미사 없이): P12 연관조달 콘텐츠 = `AnlPrcmPlanDtl`(컨테이너는 부모의 `<BottomSheet>`). 적용 예: `src/ui/biz/op/prcmPlanDtl/PrcmPlanDtl.tsx`(BottomSheet+`AnlPrcmPlanDtl` 직접 조립) · `PrcmPlanDtlPage.tsx`(AlertModal·출력물 BottomSheet 인라인).
+  - 단순 확인(예/아니오) AlertModal 은 `description` prop 으로 끝나면 별도 콘텐츠 컴포넌트도 불필요 — 페이지에 인라인.
+  - 과거 `*Sheet` 래퍼(예전 `AnlPrcmPlanDtlSheet`)는 이 패턴으로 전환됨. 신규 BottomSheet/AlertModal 에 `Sheet` 접미사 래퍼를 새로 만들지 말 것. (관련: 메모리 `bottomsheet-slot-composition`)
 - 파일명 = 주요 export 컴포넌트명 = `displayName` 문자열 모두 동일하게 맞춘다. 공유 데이터 타입(`OpinionData` 등)은 화면 ID 로 바꾸지 않는다.
 - 화면 ID 출처: 설계서 각 "화면 목록" 표(화면ID/한글명/영문ID).
 

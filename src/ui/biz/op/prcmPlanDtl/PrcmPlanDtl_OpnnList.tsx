@@ -7,8 +7,8 @@ import { useCallback, useMemo, useState } from 'react'
 import { Button } from '@/ui/common/base/Button'
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { PrcmPlanDtl_OpnnCard, type OpinionData } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_OpnnCard'
-import { PrcmPlanDtl_OpnnDtlPopup } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_OpnnDtlPopup'
-import { PrcmPlanDtl_OpnnRegPopup } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_OpnnRegPopup'
+import { PrcmPlanDtl_OpnnDtlFullPopup } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_OpnnDtlFullPopup'
+import { PrcmPlanDtl_OpnnRegFullPopup } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_OpnnRegFullPopup'
 
 interface OpinionItem {
   id: string
@@ -158,10 +158,10 @@ export function PrcmPlanDtl_OpnnList() {
       </div>
 
       {/* 의견등록/수정 (P07) */}
-      <PrcmPlanDtl_OpnnRegPopup open={formOpen} onOpenChange={setFormOpen} />
+      <PrcmPlanDtl_OpnnRegFullPopup open={formOpen} onOpenChange={setFormOpen} />
 
       {/* 의견 상세 / 답변 상세 (P06) — 수정 클릭 시 등록/수정(P07) 진입 */}
-      <PrcmPlanDtl_OpnnDtlPopup
+      <PrcmPlanDtl_OpnnDtlFullPopup
         open={detailOpen}
         onOpenChange={setDetailOpen}
         variant={detailVariant}

@@ -6,8 +6,10 @@ import { useState } from 'react'
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { SelectionFieldBox } from '@/ui/common/base/SelectionFieldBox'
+import { Button } from '@/ui/common/base/Button'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import { AnlPrcmPlanDtlSheet } from '@/ui/biz/op/prcmPlanDtl/AnlPrcmPlanDtlSheet'
+import { AnlPrcmPlanDtl } from '@/ui/biz/op/prcmPlanDtl/AnlPrcmPlanDtl'
 
 // ── 집행계획 (목업 — 문서 slide22 [물품/용역]) ──────────────────────────────
 const EXEC_ROWS: TableRow[] = [
@@ -96,8 +98,19 @@ export function PrcmPlanDtl() {
         </AccordionSection>
       </Accordion>
 
-      {/* 연관조달계획상세 바텀시트 (P12) */}
-      <AnlPrcmPlanDtlSheet open={relatedOpen} onOpenChange={setRelatedOpen} />
+      {/* 연관조달계획상세 바텀시트 (P12) — 컨테이너는 부모가 직접 조립, 콘텐츠만 컴포넌트로 분리 */}
+      <BottomSheet
+        open={relatedOpen}
+        onOpenChange={setRelatedOpen}
+        title="연관조달계획상세"
+        footer={
+          <Button variant="secondary" className="w-full" onClick={() => setRelatedOpen(false)}>
+            닫기
+          </Button>
+        }
+      >
+        <AnlPrcmPlanDtl />
+      </BottomSheet>
     </>
   )
 }

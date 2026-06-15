@@ -38,7 +38,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   )
 }
 
-export interface PrcmPlanDtl_OpnnDtlPopupProps {
+export interface BfhdSpcfctDtl_OpnnDtlFullPopupProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   /** 'opinion'=업체의견 상세 / 'reply'=업체의견 답변 상세 */
@@ -49,13 +49,13 @@ export interface PrcmPlanDtl_OpnnDtlPopupProps {
   onDelete?: () => void
 }
 
-export function PrcmPlanDtl_OpnnDtlPopup({
+export function BfhdSpcfctDtl_OpnnDtlFullPopup({
   open,
   onOpenChange,
   variant = 'opinion',
   onEdit,
   onDelete,
-}: PrcmPlanDtl_OpnnDtlPopupProps) {
+}: BfhdSpcfctDtl_OpnnDtlFullPopupProps) {
   const isReply = variant === 'reply'
 
   return (
@@ -142,4 +142,4 @@ export function PrcmPlanDtl_OpnnDtlPopup({
     </FullPopup>
   )
 }
-PrcmPlanDtl_OpnnDtlPopup.displayName = 'PrcmPlanDtl_OpnnDtlPopup'
+BfhdSpcfctDtl_OpnnDtlFullPopup.displayName = 'BfhdSpcfctDtl_OpnnDtlFullPopup'

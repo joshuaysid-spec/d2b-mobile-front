@@ -41,18 +41,18 @@ function Field({
   )
 }
 
-export interface BfhdSpcfctDtl_OpnnRegPopupProps {
+export interface PrcmPlanDtl_OpnnRegFullPopupProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   /** 저장 콜백(추후 API). 저장 후 자동 닫힘. */
   onSave?: () => void
 }
 
-export function BfhdSpcfctDtl_OpnnRegPopup({
+export function PrcmPlanDtl_OpnnRegFullPopup({
   open,
   onOpenChange,
   onSave,
-}: BfhdSpcfctDtl_OpnnRegPopupProps) {
+}: PrcmPlanDtl_OpnnRegFullPopupProps) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [isPublic, setIsPublic] = useState('Y') // 공개/비공개 — 등록/수정 시 선택 가능(기본 공개)
@@ -169,4 +169,4 @@ export function BfhdSpcfctDtl_OpnnRegPopup({
     </FullPopup>
   )
 }
-BfhdSpcfctDtl_OpnnRegPopup.displayName = 'BfhdSpcfctDtl_OpnnRegPopup'
+PrcmPlanDtl_OpnnRegFullPopup.displayName = 'PrcmPlanDtl_OpnnRegFullPopup'

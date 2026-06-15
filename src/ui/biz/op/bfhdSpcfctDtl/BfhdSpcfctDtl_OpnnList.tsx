@@ -7,8 +7,8 @@ import { useCallback, useMemo, useState } from 'react'
 import { Button } from '@/ui/common/base/Button'
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { BfhdSpcfctDtl_OpnnCard, type OpinionData } from '@/ui/biz/op/bfhdSpcfctDtl/BfhdSpcfctDtl_OpnnCard'
-import { BfhdSpcfctDtl_OpnnDtlPopup } from '@/ui/biz/op/bfhdSpcfctDtl/BfhdSpcfctDtl_OpnnDtlPopup'
-import { BfhdSpcfctDtl_OpnnRegPopup } from '@/ui/biz/op/bfhdSpcfctDtl/BfhdSpcfctDtl_OpnnRegPopup'
+import { BfhdSpcfctDtl_OpnnDtlFullPopup } from '@/ui/biz/op/bfhdSpcfctDtl/BfhdSpcfctDtl_OpnnDtlFullPopup'
+import { BfhdSpcfctDtl_OpnnRegFullPopup } from '@/ui/biz/op/bfhdSpcfctDtl/BfhdSpcfctDtl_OpnnRegFullPopup'
 
 interface OpinionItem {
   id: string
@@ -158,10 +158,10 @@ export function BfhdSpcfctDtl_OpnnList() {
       </div>
 
       {/* 의견등록/수정 (P07) */}
-      <BfhdSpcfctDtl_OpnnRegPopup open={formOpen} onOpenChange={setFormOpen} />
+      <BfhdSpcfctDtl_OpnnRegFullPopup open={formOpen} onOpenChange={setFormOpen} />
 
       {/* 의견 상세 / 답변 상세 (P06) — 수정 클릭 시 등록/수정(P07) 진입 */}
-      <BfhdSpcfctDtl_OpnnDtlPopup
+      <BfhdSpcfctDtl_OpnnDtlFullPopup
         open={detailOpen}
         onOpenChange={setDetailOpen}
         variant={detailVariant}

@@ -16,8 +16,9 @@ import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
+import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
-import { PrcmPlan_NotiAplyPopup } from '@/ui/biz/op/prcmPlanDtl/PrcmPlan_NotiAplyPopup'
+import { PrcmPlan_NotiAply } from '@/ui/biz/op/prcmPlanDtl/PrcmPlan_NotiAply'
 import { PrcmPlanDtl } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl'
 import { PrcmPlanDtl_PrdList } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_PrdList'
 import { PrcmPlanDtl_OpnnList } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_OpnnList'
@@ -96,6 +97,13 @@ export function PrcmPlanDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputOpen, setOutputOpen] = useState(false) // + 버튼 → 출력물 바텀시트(P17)
   const [notifyOpen, setNotifyOpen] = useState(false) // 알림 아이콘 → 알림신청 바텀시트(P10)
+  // 알림신청 폼 상태 — 컨테이너(BottomSheet) footer 의 신청하기가 읽으므로 페이지가 소유(controlled)
+  const [notifyPhone, setNotifyPhone] = useState('')
+  const [notifyAgree, setNotifyAgree] = useState('no') // 수신동의 기본값: 동의 안함
+  const handleNotifyApply = () => {
+    console.log('[P10] 입찰공고 알림신청', { phone: notifyPhone, agree: notifyAgree }) // 추후 API: opService.applyNotify
+    setNotifyOpen(false)
+  }
 
   // 출력 버튼 — 서류 출력 확인 모달(MUI-BD-01-P14) 표시. 확인 시 OZ 리포트 호출(콘솔 스텁).
   const [outputModalOpen, setOutputModalOpen] = useState(false)
@@ -176,8 +184,28 @@ export function PrcmPlanDtlPage() {
       {/* 탭 콘텐츠 (탭별 컴포넌트) */}
       {renderTabContent(tab)}
 
-      {/* 알림 아이콘 → 입찰공고 알림신청 풀팝업 (P10) */}
-      <PrcmPlan_NotiAplyPopup open={notifyOpen} onOpenChange={setNotifyOpen} />
+      {/* 알림 아이콘 → 입찰공고 알림신청 바텀시트 (P10) — 컨테이너는 페이지가 직접 조립, 콘텐츠만 분리 */}
+      <BottomSheet
+        open={notifyOpen}
+        onOpenChange={setNotifyOpen}
+        title="입찰공고 알림신청"
+        footer={
+          <ButtonGroup
+            layout="asymmetric"
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setNotifyOpen(false) },
+              { label: '신청하기', variant: 'primary', onClick: handleNotifyApply },
+            ]}
+          />
+        }
+      >
+        <PrcmPlan_NotiAply
+          phone={notifyPhone}
+          onPhoneChange={setNotifyPhone}
+          agree={notifyAgree}
+          onAgreeChange={setNotifyAgree}
+        />
+      </BottomSheet>
 
       {/* 출력 — 서류 출력 확인 모달 (MUI-BD-01-P14) */}
       <AlertModal
