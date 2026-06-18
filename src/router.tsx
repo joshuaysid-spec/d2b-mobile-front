@@ -36,12 +36,9 @@ const OvsPrcmPlanDtlPage = lazy(() =>
     default: m.OvsPrcmPlanDtlPage,
   })),
 )
-const NoticePage = lazy(() =>
-  import('@/ui/biz/cm/notice/NoticePage').then((m) => ({ default: m.NoticePage })),
-)
-const NotificationPage = lazy(() =>
-  import('@/ui/biz/cm/notification/NotificationPage').then((m) => ({
-    default: m.NotificationPage,
+const NotiPrstPage = lazy(() =>
+  import('@/ui/biz/cm/notiPrst/NotiPrstPage').then((m) => ({
+    default: m.NotiPrstPage,
   })),
 )
 const SupportPage = lazy(() =>
@@ -93,10 +90,9 @@ export const router = createBrowserRouter([
         element: <OvsPrcmPlanDtlPage />,
         handle: { header: { variant: 'sub', util: 'home', title: '국외 조달계획 상세' } },
       },
-      { path: 'notice', element: <NoticePage />, handle: { scrollReset: true } },
       {
         path: 'notification',
-        element: <NotificationPage />,
+        element: <NotiPrstPage />,
         handle: { scrollReset: true, showBottomNav: true },
       },
       { path: 'support', element: <SupportPage />, handle: { showBottomNav: true } },

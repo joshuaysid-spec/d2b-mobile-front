@@ -23,6 +23,7 @@
 1. **설계서에서 화면 확인** — 담당 화면의 화면ID·구성(섹션/필드/탭)·동작을 `docs/spec/` 에서 읽는다.
 2. **`/guide` 에서 쓸 컴포넌트 고르기** — 브라우저로 `/guide`(ComponentGuidePage) 열어 공통 base/composites 카탈로그 확인. **여기 있는 걸 조립**(FullPopup·BottomSheet·AlertModal·Accordion·Table·InputBox·TextArea·RadioButtonGroup·CheckboxGroup·ButtonGroup·FileDownloadList·SummaryInfo·StepBar·TabList 등). 신규 생성 전 `common/composites`·`base` 중복 확인 필수.
 3. **폴더/파일 생성** — "파일 명명 규칙"의 화면ID→파일명 변환 + 도메인 폴더 코드(op/bd/ct/...) 준수.
+   - **새 화면은 먼저 설계서/앱메뉴 문서에서 해당 화면의 영문 화면 ID 를 확인해 파일/폴더명에 반영**(예: 알림현황 MUI-MS-01-M13 → `cm/notiPrst/NotiPrstPage`). 임의 영문명(`NotificationPage` 등) 금지 — MS/CM 공통 화면도 동일.
 4. **조립 + 목업** — 표/필드는 데이터 배열로 구동. 데이터는 파일 내 목업 상수, 핸들러는 `console.log` + `// 추후 API: xxxService.yyy` 주석으로 경계 표시.
 5. **`router.tsx` 등록** — `lazy()` + `errorElement={<ErrorPage />}` + `handle`(아래 "라우트 handle 레퍼런스").
 6. **검증** — `npm run lint && npm run build`. chunk size 확인.
@@ -223,6 +224,7 @@ import { Icon } from '@/ui/common/base/Icon'
   - 단순 확인(예/아니오) AlertModal 은 `description` prop 으로 끝나면 별도 콘텐츠 컴포넌트도 불필요 — 페이지에 인라인.
   - 과거 `*Sheet` 래퍼(예전 `AnlPrcmPlanDtlSheet`)는 이 패턴으로 전환됨. 신규 BottomSheet/AlertModal 에 `Sheet` 접미사 래퍼를 새로 만들지 말 것. (관련: 메모리 `bottomsheet-slot-composition`)
 - 파일명 = 주요 export 컴포넌트명 = `displayName` 문자열 모두 동일하게 맞춘다. 공유 데이터 타입(`OpinionData` 등)은 화면 ID 로 바꾸지 않는다.
+- **MS/CM 공통 화면도 동일 규칙** — 메뉴/공통(`cm/`) 화면도 영문 화면 ID 를 따른다. 출처는 설계서(사용자인터페이스설계서) + `docs/spec/` 앱메뉴 문서(xlsx). 예: 알림현황 MUI-MS-01-M13 → `NotiPrst`(`cm/notiPrst/NotiPrstPage.tsx`) · 햄버거메뉴 MUI-MS-01-M12 → `menu`. 영문 ID 를 먼저 찾아 파일/폴더명에 반영하고, 임의 영문명(`NotificationPage` 등) 금지.
 - 화면 ID 출처: 설계서 각 "화면 목록" 표(화면ID/한글명/영문ID).
 
 **Figma → 파일명 변환 규칙:**
@@ -379,6 +381,22 @@ import { Icon } from '@/ui/common/base/Icon'
 - **첫 에러 포커스**: 입력류는 RHF `shouldFocusError` 자동. **Radix 그룹은 ref 없어 자동 안 됨** → 필드 블록을 `<div id={`field-${name}`}>`로 감싸고 `onInvalid`에서 `scrollIntoView`(main#app-scroll). `window.scrollTo` 금지.
 - **서버 검증 대체 아님**: 프론트는 UX 사전검증. 권위 검증은 백엔드(eGovFrame).
 - **적용 예시**: `PrcmPlanDtlPage`(페이지가 `useForm` 소유) + `PrcmPlan_NotiAply`(`control` 받아 Controller) + `PrcmPlan_NotiAply.schema.ts`.
+
+### 입력 종류(마스킹·IME 가드) — `InputBox`의 `inputType`
+
+숫자/전화/영문처럼 **허용 문자 제한이 있는 입력**은 `InputBox` 의 `inputType` prop 으로 처리한다. **거르기·키패드·IME 가드를 InputBox 가 내부에서 자동 처리**하므로, 페이지/콘텐츠는 prop 만 넘긴다(가공 로직을 직접 짜지 말 것).
+
+| `inputType` | 허용 | IME 가드 | 키패드(inputMode) | 용도 |
+|---|---|---|---|---|
+| `text`(기본) | 전부(한글 OK) | ❌ | 일반 | 이름·주소·메모 등 자유 입력 |
+| `numeric` | 숫자만 | ✅ | numeric | 금액·수량·숫자코드 |
+| `tel` | 숫자만 | ✅ | tel | 휴대번호·전화 |
+| `english` | 영문/영숫자 | ✅ | 일반 | 영문 ID·코드 |
+
+- **IME 가드**란: 한글 등 조합문자가 마스킹(거르기)에 의해 조합 도중 삭제되어 커서 튐·글자 깨짐이 나는 것을 막는 장치(`compositionstart~end` 동안 가공 보류). `text` 기본값은 가드를 타지 않아 **기존 InputBox 사용처는 무영향**.
+- **표시 포맷**(전화 하이픈·금액 콤마)은 `format?: (filtered) => string` prop 으로. 예: `<InputBox inputType="tel" format={formatPhoneInput} ... />`.
+- Controller 와 그대로 호환: `value={field.value} onChange={field.onChange}` 만 넘기면 InputBox 가 가공해 반영한다(콘텐츠가 `formatPhoneInput` 직접 호출하지 않음).
+- **적용 예시**: `PrcmPlan_NotiAply` 휴대번호(`inputType="tel" format={formatPhoneInput}`).
 
 ## PDCA / 문서
 

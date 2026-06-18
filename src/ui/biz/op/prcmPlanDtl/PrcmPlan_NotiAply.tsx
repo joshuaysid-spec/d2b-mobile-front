@@ -55,7 +55,7 @@ export function PrcmPlan_NotiAply({ control }: PrcmPlan_NotiAplyProps) {
           BottomSheet 가 이미 px-[16px] 를 주므로 -mx-4 로 거터를 상쇄해 배경을 가장자리까지 늘리고,
           p-4 로 내부 콘텐츠를 다시 16px 안쪽으로 맞춰 위 안내문과 좌우 정렬을 일치시킴. */}
       <div className="-mx-4 flex flex-col gap-4 bg-krds-bg-primary-faint p-4">
-        {/* 휴대번호 — 마스킹/onClear 때문에 Controller. field-* id 는 제출 실패 시 스크롤 타깃. */}
+        {/* 휴대번호 — inputType='tel' 로 숫자만+키패드+IME 가드는 InputBox 가 처리, 하이픈은 format. field-* id 는 제출 실패 시 스크롤 타깃. */}
         <Controller
           control={control}
           name="phone"
@@ -66,11 +66,12 @@ export function PrcmPlan_NotiAply({ control }: PrcmPlan_NotiAplyProps) {
               </InputLabel>
               <InputBox
                 id="noti-phone"
+                inputType="tel"
+                format={formatPhoneInput}
                 value={field.value}
-                inputMode="tel"
                 maxLength={13}
                 placeholder="번호를 입력하세요."
-                onChange={(e) => field.onChange(formatPhoneInput(e.target.value))}
+                onChange={field.onChange}
                 onBlur={field.onBlur}
                 onClear={() => field.onChange('')}
                 error={!!fieldState.error}

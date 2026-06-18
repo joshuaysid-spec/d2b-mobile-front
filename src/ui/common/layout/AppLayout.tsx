@@ -1,8 +1,9 @@
-import { Suspense, useEffect, useRef } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation, useMatches, useNavigate, useNavigationType } from 'react-router-dom'
 
 import { BottomNav } from '@/ui/common/composites/BottomNav'
 import { Header } from '@/ui/common/composites/Header'
+import { MenuPage } from '@/ui/biz/cm/menu/MenuPage'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { BottomNavVisibleContext } from '@/ui/common/layout/bottomNavContext'
 import { useAuthStore } from '@/stores/authStore'
@@ -41,6 +42,11 @@ const loadScroll = (key: string) => {
 export function AppLayout() {
   // 알림 dot 은 전역 store 에서 구독해 주입(BottomNav 은 범용이라 도메인 store 를 모름).
   const hasUnread = useAuthStore((s) => s.hasUnread)
+  // 전체메뉴(MenuPage)도 범용이라 store 를 모름 — AppLayout 이 인증 상태/유저/로그아웃을 주입.
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
+  const user = useAuthStore((s) => s.user)
+  const logout = useAuthStore((s) => s.logout)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   // 라우트 handle.header 메타로 헤더 모드 결정 — 가장 깊은(자식) 매치 우선. 없으면 main(로고).
   const matches = useMatches()
@@ -95,6 +101,7 @@ export function AppLayout() {
         onBack={handleBack}
         onHome={() => navigate(ROUTES.HOME)}
         onLogo={() => navigate(ROUTES.HOME)}
+        onMenu={() => setMenuOpen(true)}
       />
       {/* 하단 여백 = BottomNav 높이(탭 77px + border-t 1px + safe-area)와 동일하게 맞춰 콘텐츠가 안 가리게.
           BottomNav 가 없는 화면에선 그 여백 대신 safe-area 만 둔다(빈 공간 방지). */}
@@ -112,6 +119,22 @@ export function AppLayout() {
         </Suspense>
       </main>
       {showBottomNav && <BottomNav hasNotification={hasUnread} />}
+      {/* 전체메뉴 오버레이 — 헤더 onMenu 로 열림. 인증 상태/유저/로그아웃을 store 에서 주입. */}
+      <MenuPage
+        open={menuOpen}
+        onOpenChange={setMenuOpen}
+        isLoggedIn={isLoggedIn}
+        user={user}
+        onLogin={() => {
+          setMenuOpen(false)
+          console.log('[menu] 로그인') // 추후 라우팅: navigate(로그인 화면)
+        }}
+        onLogout={() => {
+          setMenuOpen(false)
+          logout()
+          navigate(ROUTES.HOME)
+        }}
+      />
     </div>
     </BottomNavVisibleContext.Provider>
   )

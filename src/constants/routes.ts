@@ -6,7 +6,6 @@ export const ROUTES = {
   OP_DETAIL: '/op/:id',
   /** 사전규격 상세 (`:id` 파라미터). 이동: `/op/spec/${id}`. */
   OP_SPEC_DETAIL: '/op/spec/:id',
-  NOTICE: '/notice',
   NOTIFICATION: '/notification',
   SUPPORT: '/support',
   MYPAGE: '/mypage',

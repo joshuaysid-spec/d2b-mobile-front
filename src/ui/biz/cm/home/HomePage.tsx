@@ -167,7 +167,7 @@ export function HomePage() {
       return
     }
     if (label === '입찰공고') {
-      navigate(ROUTES.NOTICE)
+      navigate(ROUTES.NOTIFICATION)
       return
     }
     console.log('[Home] 서비스 바로가기', label) // 추후: 각 서비스 화면 이동

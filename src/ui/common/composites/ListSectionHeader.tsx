@@ -26,6 +26,27 @@ const listSectionHeaderVariants = cva('flex w-full items-center justify-between 
   defaultVariants: { variant: 'default' },
 })
 
+// 우측 셀렉트 트리거 두 가지 — row variant 와 독립.
+//   text  — 보더 없는 컴팩트 텍스트("10개 ∨", 현행). 목록 인셋 영역.
+//   box   — 네이비 보더 pill(Figma m_select_text 9304-77809): border/text #0F316E(krds-text-primary-active)
+//           + rounded-8 + h34. 리스트 화면(정렬/페이지 셀렉트)에서 사용.
+//   ※ 드롭다운(SelectBoxItem)은 선택 항목 파란 배경/텍스트가 이미 적용돼 9304-77890 과 일치 — 공통.
+const selectTriggerVariants = cva(
+  cn(
+    'group flex shrink-0 items-center outline-hidden',
+    'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
+  ),
+  {
+    variants: {
+      selectVariant: {
+        text: 'gap-krds-3 text-[17px] text-krds-text-ink',
+        box: 'h-[34px] gap-krds-2 rounded-krds-8 border border-krds-text-primary-active px-krds-5 text-[17px] text-krds-text-primary-active',
+      },
+    },
+    defaultVariants: { selectVariant: 'text' },
+  },
+)
+
 // 좌측 "총 N건" 텍스트 색 — 버전별로 다름.
 const totalTextColor: Record<NonNullable<VariantProps<typeof listSectionHeaderVariants>['variant']>, string> = {
   default: 'text-krds-text-primary-active',
@@ -45,6 +66,8 @@ export interface ListSectionHeaderProps
   onPageSizeChange: (size: number) => void
   /** 건수 단위. 기본 '건'. */
   unit?: string
+  /** 우측 셀렉트 트리거 디자인. 'text'(기본·보더 없는 텍스트) · 'box'(네이비 보더 pill, 리스트 화면용). */
+  selectVariant?: 'text' | 'box'
 }
 
 const ListSectionHeader = React.forwardRef<HTMLDivElement, ListSectionHeaderProps>(
@@ -57,6 +80,7 @@ const ListSectionHeader = React.forwardRef<HTMLDivElement, ListSectionHeaderProp
       onPageSizeChange,
       unit = '건',
       variant = 'default',
+      selectVariant = 'text',
       ...props
     },
     ref,
@@ -79,15 +103,12 @@ const ListSectionHeader = React.forwardRef<HTMLDivElement, ListSectionHeaderProp
       <Select value={String(pageSize)} onValueChange={(v) => onPageSizeChange(Number(v))}>
         <SelectPrimitive.Trigger
           aria-label="페이지당 건수"
-          className={cn(
-            'group flex shrink-0 items-center gap-krds-3 text-[17px] text-krds-text-ink outline-hidden',
-            'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
-          )}
+          className={cn(selectTriggerVariants({ selectVariant }))}
         >
           <SelectValue />
           <Icon
             name="ArrowDropDown"
-            size={25}
+            size={selectVariant === 'box' ? 20 : 25}
             className="shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180"
             aria-hidden
           />

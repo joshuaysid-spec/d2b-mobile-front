@@ -62,6 +62,7 @@ const REGISTRY = {
   KidStar: 'kid_star',
   LocationAway: 'location_away',
   Login: 'login',
+  Logout: 'logout',
   Menu: 'menu',
   MoreVert: 'more_vert',
   NotificationAdd: 'notification_add',
@@ -87,19 +88,14 @@ const REGISTRY = {
   Visibility: 'visibility',
   VisibilityOff: 'visibility_off',
   Warning: 'warning',
+  VerifiedUser: 'verified_user',
 } as const satisfies Record<string, string>
 
 export type IconName = keyof typeof REGISTRY
 
 /** 채움(FILL 1)이 기본 디자인인 아이콘 — 나머지는 아웃라인(FILL 0). fill prop 으로 개별 오버라이드.
  *  별/하트(솔리드가 자연스러움) + 상태 아이콘(성공/경고/에러 — Empty·AlertModal 처럼 채움이 기본). */
-const FILLED_BY_DEFAULT = new Set<IconName>([
-  'CheckCircle',
-  'Error',
-  'Favorite',
-  'Star',
-  'Warning',
-])
+const FILLED_BY_DEFAULT = new Set<IconName>(['CheckCircle', 'Error', 'Favorite', 'Star', 'Warning'])
 
 export interface IconProps {
   /** Material Symbols 아이콘 이름 (REGISTRY 키, PascalCase). 매칭 시 해당 글리프 렌더. */
@@ -167,7 +163,7 @@ const Icon = React.forwardRef<HTMLSpanElement, IconProps>(
       alignItems: 'center',
       justifyContent: 'center',
       width: size,
-      height: size, 
+      height: size,
       lineHeight: 1,
     }
     if (color) wrapperStyle.color = color
