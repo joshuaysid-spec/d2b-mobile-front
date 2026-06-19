@@ -78,17 +78,18 @@ const REGISTRY = {
   Search: 'search',
   Settings: 'settings',
   Share: 'share',
+  SmartToy: 'smart_toy',
   SoundDetection: 'sound_detection_loud_sound',
   Star: 'star',
   StarBorder: 'star',
   SubdirectoryArrowRight: 'subdirectory_arrow_right',
-  Tune: 'tune',
   TrendingFlat: 'trending_flat',
+  Tune: 'tune',
   Upgrade: 'upgrade',
+  VerifiedUser: 'verified_user',
   Visibility: 'visibility',
   VisibilityOff: 'visibility_off',
   Warning: 'warning',
-  VerifiedUser: 'verified_user',
 } as const satisfies Record<string, string>
 
 export type IconName = keyof typeof REGISTRY

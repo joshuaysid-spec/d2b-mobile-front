@@ -3,9 +3,11 @@ import { Outlet, useLocation, useMatches, useNavigate, useNavigationType } from 
 
 import { BottomNav } from '@/ui/common/composites/BottomNav'
 import { Header } from '@/ui/common/composites/Header'
-import { MenuPage } from '@/ui/biz/cm/menu/MenuPage'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { BottomNavVisibleContext } from '@/ui/common/layout/bottomNavContext'
+// AppLayout 이 직접 마운트하는 cm 오버레이(헤더 유틸로 열림 · 라우트 아님).
+import { MenuPage } from '@/ui/biz/cm/menu/MenuPage'
+import { IntgSrchPage } from '@/ui/biz/cm/intgSrch/IntgSrchPage'
 import { useAuthStore } from '@/stores/authStore'
 import { ROUTES } from '@/constants/routes'
 import type { RouteHandle } from '@/types/navigation'
@@ -47,6 +49,8 @@ export function AppLayout() {
   const user = useAuthStore((s) => s.user)
   const logout = useAuthStore((s) => s.logout)
   const [menuOpen, setMenuOpen] = useState(false)
+  // 통합검색(MUI-MS-01-M09) 오버레이 — 헤더 통합검색(util='search') 클릭 시 열림. MenuPage 와 동일 패턴.
+  const [searchOpen, setSearchOpen] = useState(false)
 
   // 라우트 handle.header 메타로 헤더 모드 결정 — 가장 깊은(자식) 매치 우선. 없으면 main(로고).
   const matches = useMatches()
@@ -101,6 +105,7 @@ export function AppLayout() {
         onBack={handleBack}
         onHome={() => navigate(ROUTES.HOME)}
         onLogo={() => navigate(ROUTES.HOME)}
+        onSearch={() => setSearchOpen(true)}
         onMenu={() => setMenuOpen(true)}
       />
       {/* 하단 여백 = BottomNav 높이(탭 77px + border-t 1px + safe-area)와 동일하게 맞춰 콘텐츠가 안 가리게.
@@ -135,6 +140,8 @@ export function AppLayout() {
           navigate(ROUTES.HOME)
         }}
       />
+      {/* 통합검색 오버레이 — 헤더 통합검색 클릭으로 열림(메인/서브 공통). */}
+      <IntgSrchPage open={searchOpen} onOpenChange={setSearchOpen} />
     </div>
     </BottomNavVisibleContext.Provider>
   )
