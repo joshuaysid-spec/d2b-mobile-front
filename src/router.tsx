@@ -42,6 +42,12 @@ const BidPbancIntgListPage = lazy(() =>
     default: m.BidPbancIntgListPage,
   })),
 )
+// 입찰공고 상세(MUI-BD-01-M07~M12, /bd/:id) — biz/bd/bidPbancDtl.
+const BidPbancDtlPage = lazy(() =>
+  import('@/ui/biz/bd/bidPbancDtl/BidPbancDtlPage').then((m) => ({
+    default: m.BidPbancDtlPage,
+  })),
+)
 const NotiPrstPage = lazy(() =>
   import('@/ui/biz/cm/notiPrst/NotiPrstPage').then((m) => ({
     default: m.NotiPrstPage,
@@ -87,6 +93,11 @@ export const router = createBrowserRouter([
           scrollReset: true,
           showBottomNav: true,
         },
+      },
+      {
+        path: 'bd/:id',
+        element: <BidPbancDtlPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '입찰공고 상세' } },
       },
       {
         path: 'op/:id',

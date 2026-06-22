@@ -6,6 +6,7 @@
 // 화면 타이틀('입찰공고')은 전역 Header(라우트 handle)가 제공 → 페이지 본문엔 타이틀 안 그림(설계서 Figma 타이틀 제거).
 // 상세필터 풀팝업은 공통 SearchFilter 셸 사용 — 현재는 최소 schema(업무구분), 상세 검색조건은 MUI-BD-01-M02 에서 확장.
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
@@ -253,6 +254,7 @@ const MOCK_LIST: BidPbancItem[] = Array.from({ length: TOTAL }, (_, i) => {
 })
 
 export function BidPbancIntgListPage() {
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false) // 상세필터 풀팝업
   const [filter, setFilter] = useState<SearchFilterValue>(DEFAULT_FILTER)
   const [keyword, setKeyword] = useState('') // 빠른검색어(입력 중)
@@ -291,9 +293,8 @@ export function BidPbancIntgListPage() {
     console.log('[BidList] loadMore → page', next)
   }
   const handleCardClick = (it: BidPbancItem) => {
-    // 추후: 입찰공고상세(MUI-BD-01-M07, /bd/:id) 라우팅. 상세 미구현이라 현재는 경계 스텁.
-    //   navigate(`/bd/${it.id}`) — 상세 라우트 추가 시 연결.
-    console.log('[BidList] 카드 클릭 → 입찰공고상세(M07) 예정', it.id)
+    // 입찰공고상세(MUI-BD-01-M07, /bd/:id) 이동.
+    navigate(`/bd/${it.id}`)
   }
 
   // ── ⚠️ 임시 목업 검색/페이징 (API 연동 시 이 블록 통째로 교체) ⚠️ ─────────────────────
