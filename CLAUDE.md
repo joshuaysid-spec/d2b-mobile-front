@@ -349,6 +349,8 @@ import { Icon } from '@/ui/common/base/Icon'
 
 ## 상세(detail) 화면 & 팝업 컨벤션 — 조달계획 상세(M03~) 작업에서 확립
 
+> **새 상세(detail) 화면은 조달계획 상세 `PrcmPlanDtlPage` 를 레퍼런스로 조립한다** (`src/ui/biz/op/prcmPlanDtl/PrcmPlanDtlPage.tsx`, 국외는 `ovsPrcmPlanDtl/OvsPrcmPlanDtlPage` · 사전규격은 `bfhdSpcfctDtl/BfhdSpcfctDtlPage`). 아래 구조/컨벤션은 그 페이지에서 확립된 것. (목록 화면은 "목록 화면 & 검색필터 컨벤션" 의 `PrcmPlanIntgListPage` 레퍼런스 참고.)
+
 **1) 다중 탭 상세 화면 구조.**
 - 상단: `useCollapsibleHeader()` + sticky 블록(요약 `SummaryInfo` + 스텝 `StepBar` + 탭 `TabList`).
 - 탭 콘텐츠는 **탭별 컴포넌트로 분리**(같은 biz 폴더), 페이지는 `renderTabContent(tab)` switch 로 렌더. (예: `DetailContent`/`ItemSpec`/`VendorOpinion`/`ContractTerms`/`Attachment`)
