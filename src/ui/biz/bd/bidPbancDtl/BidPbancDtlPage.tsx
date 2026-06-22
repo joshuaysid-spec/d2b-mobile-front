@@ -168,8 +168,10 @@ export function BidPbancDtlPage() {
         </div>
       </div>
 
-      {/* 탭 콘텐츠 */}
-      {renderTabContent(tab)}
+      {/* 탭 콘텐츠 — 짧은 탭(공고문안/계약특수조건 등)도 헤더 접힘을 지탱할 만큼 스크롤 높이를 확보한다.
+          min-h 가 없으면 접힐 때 줄어든 헤더 높이만큼 스크롤이 부족해져 top 이 클램프→재펼침으로 진동("팅김").
+          긴 탭은 콘텐츠가 이미 더 커서 영향 없음(min-height 비활성). */}
+      <div className="min-h-[100dvh]">{renderTabContent(tab)}</div>
 
       {/* 플로팅 버튼 — 맨위로(항상) + 바로가기(+) */}
       <FloatingActionButton
