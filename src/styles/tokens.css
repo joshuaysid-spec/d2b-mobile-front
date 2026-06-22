@@ -249,6 +249,7 @@
   --krds-bg-muted: var(--krds-color-gray-10);
   --krds-bg-inverse: var(--krds-color-gray-90);
   --krds-bg-primary: var(--krds-color-primary-50);
+  --krds-bg-primary-strong: var(--krds-d2b-blue);            /* D2B Figma — 슬라이더 활성 트랙 등 강조 액션 채움(#0054e9) */
   --krds-bg-primary-subtle: var(--krds-d2b-blue-subtle);      /* D2B Figma */
   --krds-bg-primary-faint: var(--krds-d2b-blue-faint);        /* D2B Figma — 캘린더 today/range */
   --krds-bg-danger: var(--krds-color-danger-50);

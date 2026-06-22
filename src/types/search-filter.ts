@@ -9,17 +9,23 @@ export interface DateRangeValue {
   start: string
   end: string
 }
-/** 필드 하나의 값 — 단일 문자열 / 다중 선택(checkbox) / 기간 */
-export type SearchFilterFieldValue = string | string[] | DateRangeValue
+/** priceRange 값 — 추정가격 범위(원, 정수). min ≤ max. */
+export interface PriceRangeValue {
+  min: number
+  max: number
+}
+/** 필드 하나의 값 — 단일 문자열 / 다중 선택(checkbox) / 기간 / 가격범위 */
+export type SearchFilterFieldValue = string | string[] | DateRangeValue | PriceRangeValue
 
 /**
  * 공통 검색 바텀시트 종류 — selectionField 가 SearchFilter 셸에서 직접 여는 검색 시트.
  * 'item'=품목별조회(MUI-OP-01-P71, ItemInq) · 'producer'=생산자조회(P72, PrdcrInq) ·
- * 'dept'=발주부서(기관)조회(MUI-BD-01-P04, DeptInq).
+ * 'dept'=발주부서(기관)조회(MUI-BD-01-P04, DeptInq) · 'region'=지역검색(MUI-BD-01-P03, RgnSrch) ·
+ * 'license'=면허정보검색(MUI-BD-01-P05, LcnsInfoSrch).
  * 콘텐츠 컴포넌트는 biz/cm/search 에 있으며(BottomSheet 컨테이너는 SearchFilter 셸이 슬롯으로 소유),
  * 종류만 config 로 선언한다(도메인 문자열 하드코딩 회피).
  */
-export type SearchSheetKind = 'item' | 'producer' | 'dept'
+export type SearchSheetKind = 'item' | 'producer' | 'dept' | 'region' | 'license'
 
 /**
  * 공통 검색 시트 콘텐츠(ItemInq/PrdcrInq/DeptInq)의 명령형 핸들.
@@ -116,6 +122,17 @@ export interface SegmentFieldDef extends BaseField {
   type: 'segment' // 세그먼트(SegmentedControl) — 옵션 중 택1. value: string. 단일 옵션이면 라벨/지표.
   options: FieldOption[]
 }
+export interface PriceRangeFieldDef extends BaseField {
+  type: 'priceRange' // 가격 범위(Slider + min/max 입력) — value: PriceRangeValue. (MUI-BD-01-M02 추정가격)
+  /** 슬라이더 도메인 최소 (기본 0) */
+  rangeMin?: number
+  /** 슬라이더 도메인 최대 (기본 100_000_000 = 1억) */
+  rangeMax?: number
+  /** 스텝 (기본 1_000_000 = 100만, 설계서 '최소값 100만') */
+  step?: number
+  /** 값 뒤 단위 표기 (기본 '원') */
+  unit?: ReactNode
+}
 
 export type SearchFilterField =
   | RadioFieldDef
@@ -127,6 +144,7 @@ export type SearchFilterField =
   | SelectionFieldDef
   | SegmentFieldDef
   | SelectFieldDef
+  | PriceRangeFieldDef
 
 // ── 아코디언 섹션 ────────────────────────────────────────────────────────
 export interface SearchFilterSection {

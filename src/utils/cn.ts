@@ -53,6 +53,7 @@ const KRDS_FONT_SIZES = [
 const KRDS_COLOR_NAMES = [
   // bg roles
   'krds-bg-primary',
+  'krds-bg-primary-strong',
   'krds-bg-primary-subtle',
   'krds-bg-danger-subtle',
   'krds-bg-disabled',

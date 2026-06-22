@@ -67,6 +67,7 @@ import { CarouselIndicator } from '@/ui/common/composites/CarouselIndicator'
 import { Carousel } from '@/ui/common/composites/Carousel'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { SelectBox } from '@/ui/common/base/SelectBox'
+import { Slider } from '@/ui/common/base/Slider'
 
 const NAV = [
   {
@@ -92,6 +93,7 @@ const NAV = [
       { id: 'inputmessage', label: 'InputMessage' },
       { id: 'selectbox', label: 'SelectBox' },
       { id: 'selectionfieldbox', label: 'SelectionFieldBox' },
+      { id: 'slider', label: 'Slider' },
       { id: 'pagetitle', label: 'PageTitle' },
       { id: 'sectiontitle', label: 'SectionTitle' },
       { id: 'sectiondivider', label: 'SectionDivider' },
@@ -1275,6 +1277,41 @@ export function ComponentGuidePage() {
                       { value: 'c', label: '항목 3' },
                     ]}
                   />
+                </div>
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── Slider ───────── */}
+          <Section
+            id="slider"
+            title="Slider"
+            desc="Figma m_range slider(9300-28028) 1:1. value 배열 길이만큼 핸들 렌더 → 단일/듀얼(범위) 모두 지원. track bg-primary-subtle · active bg-primary-strong · 30px 흰 thumb. 추정가격(검색필터) 등 범위 입력에 사용."
+          >
+            <Row label="range (듀얼 핸들)">
+              <Specimen caption="defaultValue={[20, 60]} · step 5">
+                <div className="w-[300px]">
+                  <Slider
+                    defaultValue={[20, 60]}
+                    min={0}
+                    max={100}
+                    step={5}
+                    minStepsBetweenThumbs={1}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="single (단일 핸들)">
+              <Specimen caption="defaultValue={[50]}">
+                <div className="w-[300px]">
+                  <Slider defaultValue={[50]} min={0} max={100} />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="disabled">
+              <Specimen caption="disabled">
+                <div className="w-[300px]">
+                  <Slider defaultValue={[30, 70]} min={0} max={100} disabled />
                 </div>
               </Specimen>
             </Row>

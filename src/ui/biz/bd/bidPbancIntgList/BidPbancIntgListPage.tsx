@@ -16,7 +16,11 @@ import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
-import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
+import type {
+  DateRangePresetDef,
+  SearchFilterSchema,
+  SearchFilterValue,
+} from '@/types/search-filter'
 import type { BidPbancItem } from '@/types/bd'
 
 // 빠른검색 대상 — 설계서 검색조건(공고명/공고번호).
@@ -25,11 +29,47 @@ const SEARCH_TARGETS = [
   { value: 'bidPbancNo', label: '공고번호' },
 ]
 
-// 상세필터 풀팝업 schema — MUI-BD-01-M02 에서 일자/검색어/구분설정/가격/신기술 등으로 확장 예정.
-// 지금은 최소 구성(업무구분)만. 공통 SearchFilter 셸이 schema 를 받아 렌더.
+// ── 상세필터(MUI-BD-01-M02) schema — 공통 SearchFilter 셸이 받아 렌더. 설계서 1.1~1.4 / Figma 9300-37350 ──
+// 일자설정 빠른칩 — 설계서: 3개월/6개월/12개월/기간검색.
+const DATE_PRESETS: DateRangePresetDef[] = [
+  { label: '3개월', months: 3 },
+  { label: '6개월', months: 6 },
+  { label: '12개월', months: 12 },
+  { label: '기간검색', custom: true },
+]
+// 구분설정 드롭다운 옵션 — 설계서 속성값 기준. 코드값 미확정 항목은 '전체'+대표값(추후 백엔드 코드 보완).
+const ALL = { value: 'all', label: '전체' }
+const PBANC_SE_OPTIONS = [ALL, // 공고구분
+  { value: 'normal', label: '정상공고' }, { value: 'urgent', label: '긴급공고' },
+  { value: 'amend', label: '정정공고' }, { value: 'cancel', label: '취소공고' },
+  { value: 'delay', label: '연기공고' }, { value: 'repost', label: '재공고' },
+  { value: 'renew', label: '갱신공고' }]
+const FNC_OPTIONS = [ALL, // 기능
+  { value: 'air', label: '항공' }, { value: 'fire', label: '화력' }, { value: 'ship', label: '함정' },
+  { value: 'comm', label: '통신' }, { value: 'engineer', label: '공병' }, { value: 'airdef', label: '방공' },
+  { value: 'mobility', label: '기동' }, { value: 'oil', label: '유류' }, { value: 'ammo', label: '탄약' },
+  { value: 'transport', label: '수송' }, { value: 'chem', label: '화학' }, { value: 'supply', label: '병참' },
+  { value: 'medical', label: '의무' }, { value: 'etc', label: '기타' }]
+const BID_MDM_OPTIONS = [ALL, // 입찰매체
+  { value: 'normal', label: '일반입찰' }, { value: 'electronic', label: '전자입찰' },
+  { value: 'computer', label: '전산입찰' }, { value: 'ocr', label: 'OCR입찰' },
+  { value: 'omr', label: 'OMR입찰' }, { value: 'reverse', label: '역경매' }]
+const BID_FORM_OPTIONS = [ALL, // 입찰형태
+  { value: 'open', label: '일반경쟁' }, { value: 'designated', label: '지명경쟁' },
+  { value: 'limited', label: '제한경쟁' }, { value: 'multiple', label: '복수경쟁' }]
+const CTRT_MTHD_OPTIONS = [ALL, // 계약방법
+  { value: 'private', label: '수의계약' }, { value: 'nego_doc', label: '협상에의한계약(서류)' },
+  { value: 'nego_elec', label: '협상에의한계약(전자)' }, { value: 'two_step_sync', label: '2단계경쟁(동시)' },
+  { value: 'two_step_split', label: '2단계경쟁(분리)' }, { value: 'total_award', label: '종합낙찰제' }]
+// 코드값 미확정 — 추후 백엔드 확정 시 옵션 보완.
+const BID_SE_OPTIONS = [ALL, { value: 'domestic', label: '내자' }, { value: 'foreign', label: '외자' }]
+const PRGRS_STAS_OPTIONS = [ALL, { value: 'posting', label: '공고중' }, { value: 'closed', label: '마감' }, { value: 'opened', label: '개찰완료' }]
+const BID_WIN_OPTIONS = [ALL, { value: 'lowest', label: '최저가' }, { value: 'qualify', label: '적격심사' }, { value: 'nego', label: '협상' }]
+
 const BID_FILTER_SCHEMA: SearchFilterSchema = {
   title: '검색필터',
   sections: [
+    // 업무구분 — 전체/물품/용역/공사/국외 (전체 칩 자동 동기화)
     {
       key: 'taskSeNm',
       title: '업무구분',
@@ -37,7 +77,7 @@ const BID_FILTER_SCHEMA: SearchFilterSchema = {
         {
           type: 'checkbox',
           key: 'taskSeNm',
-          selectAll: true, // 상단 '전체' 칩(전체↔개별 자동 동기화)
+          selectAll: true,
           options: [
             { value: 'goods', label: '물품' },
             { value: 'service', label: '용역' },
@@ -47,9 +87,110 @@ const BID_FILTER_SCHEMA: SearchFilterSchema = {
         },
       ],
     },
+    // 일자 설정 — 개찰/공고 토글 + 기간(빠른칩)
+    {
+      key: 'date',
+      title: '일자 설정',
+      fields: [
+        {
+          type: 'segment',
+          key: 'dateType',
+          options: [
+            { value: 'opbid', label: '개찰' },
+            { value: 'pbanc', label: '공고' },
+          ],
+        },
+        { type: 'dateRange', key: 'date', presets: DATE_PRESETS },
+      ],
+    },
+    // 검색어 — 일부 입력 가능. 번호검색은 공고번호/통합입찰번호 토글 + 입력. 발주기관/면허정보/지역은 검색시트.
+    {
+      key: 'keyword',
+      title: '검색어 (일부 입력 가능)',
+      fields: [
+        { type: 'text', key: 'bidPbancNm', label: '입찰건명', placeholder: '입찰건명을 입력하세요.' },
+        {
+          type: 'segment',
+          key: 'bidNoType',
+          label: '번호 검색',
+          options: [
+            { value: 'pbancNo', label: '공고번호' },
+            { value: 'intgBidNo', label: '통합입찰번호' },
+          ],
+        },
+        { type: 'text', key: 'bidNo', placeholder: '번호를 입력하세요.' },
+        { type: 'text', key: 'prdctNm', label: '품명', placeholder: '품명을 입력하세요.' },
+        // 발주기관 → 발주부서(기관)검색(MUI-BD-01-P04, DeptInq)
+        { type: 'selectionField', key: 'deptNm', label: '발주기관', placeholder: '발주기관을 입력하세요.', searchSheet: 'dept' },
+        // 면허정보 → 면허정보검색(MUI-BD-01-P05, LcnsInfoSrch)
+        { type: 'selectionField', key: 'lcnsNm', label: '면허정보', placeholder: '면허정보를 입력하세요.', searchSheet: 'license' },
+        // 지역 → 지역검색(MUI-BD-01-P03, RgnSrch)
+        { type: 'selectionField', key: 'regionNm', label: '지역', placeholder: '지역을 입력하세요.', searchSheet: 'region' },
+      ],
+    },
+    // 구분 설정 — 드롭다운 8종
+    {
+      key: 'category',
+      title: '구분 설정',
+      fields: [
+        { type: 'select', key: 'bidSe', label: '입찰구분', options: BID_SE_OPTIONS, placeholder: '전체' },
+        { type: 'select', key: 'pbancSe', label: '공고구분', options: PBANC_SE_OPTIONS, placeholder: '전체' },
+        { type: 'select', key: 'prgrsStas', label: '진행상태', options: PRGRS_STAS_OPTIONS, placeholder: '전체' },
+        { type: 'select', key: 'fnc', label: '기능', options: FNC_OPTIONS, placeholder: '전체' },
+        { type: 'select', key: 'bidMdm', label: '입찰매체', options: BID_MDM_OPTIONS, placeholder: '전체' },
+        { type: 'select', key: 'bidForm', label: '입찰형태', options: BID_FORM_OPTIONS, placeholder: '전체' },
+        { type: 'select', key: 'ctrtMthd', label: '계약방법', options: CTRT_MTHD_OPTIONS, placeholder: '전체' },
+        { type: 'select', key: 'bidWinMthd', label: '낙찰방법', options: BID_WIN_OPTIONS, placeholder: '전체' },
+      ],
+    },
+    // 가격 설정 — 추정가격(min/max + 듀얼 슬라이더). 최소 스텝 100만(설계서).
+    {
+      key: 'price',
+      title: '가격 설정',
+      fields: [
+        { type: 'priceRange', key: 'estPrice', label: '추정가격', rangeMin: 0, rangeMax: 100_000_000, step: 1_000_000 },
+      ],
+    },
+    // 신기술여부 — 기본값 아니오(설계서)
+    {
+      key: 'newTech',
+      title: '신기술여부',
+      fields: [
+        {
+          type: 'radio',
+          key: 'newTech',
+          options: [
+            { value: 'yes', label: '예' },
+            { value: 'no', label: '아니오' },
+          ],
+        },
+      ],
+    },
   ],
 }
-const DEFAULT_FILTER: SearchFilterValue = { taskSeNm: [] }
+// 기본값 — 설계서: 업무구분 미선택, 일자유형 개찰, 번호검색 공고번호, 추정가격 1천만~2천만, 신기술 아니오.
+const DEFAULT_FILTER: SearchFilterValue = {
+  taskSeNm: [],
+  dateType: 'opbid',
+  date: { start: '', end: '' },
+  bidPbancNm: '',
+  bidNoType: 'pbancNo',
+  bidNo: '',
+  prdctNm: '',
+  deptNm: '',
+  lcnsNm: '',
+  regionNm: '',
+  bidSe: 'all',
+  pbancSe: 'all',
+  prgrsStas: 'all',
+  fnc: 'all',
+  bidMdm: 'all',
+  bidForm: 'all',
+  ctrtMthd: 'all',
+  bidWinMthd: 'all',
+  estPrice: { min: 10_000_000, max: 20_000_000 },
+  newTech: 'no',
+}
 
 // 입찰공고 통합목록 데이터(설계서 1.4 데이터영역) — 목업, 추후 bdService.getList 매핑.
 // 필드/코드값/형식은 설계서 그대로(공고상태·업무구분·입찰방식 코드값, 공고번호 형식, 일시 형식).

@@ -12,6 +12,8 @@ import { SearchFilterField } from './SearchFilterField'
 import { ItemInq } from './ItemInq'
 import { PrdcrInq } from './PrdcrInq'
 import { DeptInq } from './DeptInq'
+import { RgnSrch } from './RgnSrch'
+import { LcnsInfoSrch } from './LcnsInfoSrch'
 import type {
   SearchFilterSchema,
   SearchFilterSchemaResolver,
@@ -86,6 +88,8 @@ const SearchFilter = ({
   const itemRef = React.useRef<SearchSheetHandle>(null)
   const prdcrRef = React.useRef<SearchSheetHandle>(null)
   const deptRef = React.useRef<SearchSheetHandle>(null)
+  const regionRef = React.useRef<SearchSheetHandle>(null)
+  const licenseRef = React.useRef<SearchSheetHandle>(null)
 
   const closeSheet = (nextOpen: boolean) => {
     if (!nextOpen) setSheet(null)
@@ -231,6 +235,22 @@ const SearchFilter = ({
         footer={sheetFooter(deptRef)}
       >
         <DeptInq ref={deptRef} onSelect={handleSheetSelect} />
+      </BottomSheet>
+      <BottomSheet
+        open={sheet?.kind === 'region'}
+        onOpenChange={closeSheet}
+        title="지역검색"
+        footer={sheetFooter(regionRef)}
+      >
+        <RgnSrch ref={regionRef} onSelect={handleSheetSelect} />
+      </BottomSheet>
+      <BottomSheet
+        open={sheet?.kind === 'license'}
+        onOpenChange={closeSheet}
+        title="면허정보검색"
+        footer={sheetFooter(licenseRef)}
+      >
+        <LcnsInfoSrch ref={licenseRef} onSelect={handleSheetSelect} />
       </BottomSheet>
     </>
   )
