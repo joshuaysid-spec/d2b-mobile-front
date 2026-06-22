@@ -36,6 +36,12 @@ const OvsPrcmPlanDtlPage = lazy(() =>
     default: m.OvsPrcmPlanDtlPage,
   })),
 )
+// 입찰공고 통합목록(MUI-BD-01-M01, /bd) — biz/bd/bidPbancIntgList.
+const BidPbancIntgListPage = lazy(() =>
+  import('@/ui/biz/bd/bidPbancIntgList/BidPbancIntgListPage').then((m) => ({
+    default: m.BidPbancIntgListPage,
+  })),
+)
 const NotiPrstPage = lazy(() =>
   import('@/ui/biz/cm/notiPrst/NotiPrstPage').then((m) => ({
     default: m.NotiPrstPage,
@@ -69,6 +75,15 @@ export const router = createBrowserRouter([
         // 목록 → 상세 → 뒤로 시 스크롤 복원 대신 항상 맨 위(scrollReset).
         handle: {
           header: { variant: 'sub', util: 'search', title: '조달계획' },
+          scrollReset: true,
+          showBottomNav: true,
+        },
+      },
+      {
+        path: 'bd',
+        element: <BidPbancIntgListPage />,
+        handle: {
+          header: { variant: 'sub', util: 'search', title: '입찰공고' },
           scrollReset: true,
           showBottomNav: true,
         },

@@ -6,6 +6,8 @@ export const ROUTES = {
   OP_DETAIL: '/op/:id',
   /** 사전규격 상세 (`:id` 파라미터). 이동: `/op/spec/${id}`. */
   OP_SPEC_DETAIL: '/op/spec/:id',
+  /** 입찰공고 통합목록 (MUI-BD-01-M01). */
+  BD: '/bd',
   NOTIFICATION: '/notification',
   SUPPORT: '/support',
   MYPAGE: '/mypage',
