@@ -7,17 +7,16 @@ import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { SelectionFieldBox } from '@/ui/common/base/SelectionFieldBox'
-import { Slider } from '@/ui/common/base/Slider'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { CheckboxGroup } from '@/ui/common/composites/CheckboxGroup'
 import { DateInput } from '@/ui/common/composites/DateInput'
 import { DateRangeInput } from '@/ui/common/composites/DateRangeInput'
 import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
+import { RangeSliderInput } from '@/ui/common/composites/RangeSliderInput'
 import { YearInput } from '@/ui/common/composites/YearInput'
 import type {
   DateRangeValue,
-  PriceRangeFieldDef,
   PriceRangeValue,
   SearchFilterField as FieldDef,
   SearchFilterFieldValue,
@@ -107,67 +106,6 @@ function SelectionFieldControl({
         </BottomSheet>
       )}
     </Field>
-  )
-}
-
-// 추정가격 등 — 가격 범위(min/max 입력 박스 + 듀얼 슬라이더, Figma 9300-28042).
-// 값 박스의 두 입력과 슬라이더가 같은 {min,max} 값을 공유(양방향 동기화). min ≤ max 유지.
-function PriceRangeControl({
-  field,
-  value,
-  onChange,
-}: {
-  field: PriceRangeFieldDef
-  value: PriceRangeValue | undefined
-  onChange: (value: PriceRangeValue) => void
-}) {
-  const domainMin = field.rangeMin ?? 0
-  const domainMax = field.rangeMax ?? 100_000_000
-  const step = field.step ?? 1_000_000
-  const unit = field.unit ?? '원'
-  const min = value?.min ?? domainMin
-  const max = value?.max ?? domainMax
-
-  const fmt = (n: number) => n.toLocaleString('ko-KR')
-  const parse = (s: string) => Number(s.replace(/[^\d]/g, '')) || 0
-  const clamp = (n: number) => Math.min(Math.max(n, domainMin), domainMax)
-
-  // min/max 교차 클램프 — 항상 min ≤ max 유지.
-  const setMin = (n: number) => onChange({ min: Math.min(clamp(n), max), max })
-  const setMax = (n: number) => onChange({ min, max: Math.max(clamp(n), min) })
-
-  return (
-    <div className="flex flex-col gap-krds-6">
-      {/* 값 박스 — [min] 원  ~  [max] 원 */}
-      <div className="flex items-center gap-2 rounded-krds-8 border border-krds-border-divider px-4 py-3 text-krds-body-md text-krds-text-ink">
-        <input
-          inputMode="numeric"
-          value={fmt(min)}
-          onChange={(e) => setMin(parse(e.target.value))}
-          aria-label={`${field.label ?? '가격'} 최소`}
-          className="min-w-0 flex-1 bg-transparent text-right outline-none"
-        />
-        <span className="shrink-0 text-krds-text-subtle">{unit}</span>
-        <span className="shrink-0 text-krds-text-subtle">~</span>
-        <input
-          inputMode="numeric"
-          value={fmt(max)}
-          onChange={(e) => setMax(parse(e.target.value))}
-          aria-label={`${field.label ?? '가격'} 최대`}
-          className="min-w-0 flex-1 bg-transparent text-right outline-none"
-        />
-        <span className="shrink-0 text-krds-text-subtle">{unit}</span>
-      </div>
-      {/* 듀얼 슬라이더 — 값 박스와 동기화 */}
-      <Slider
-        value={[min, max]}
-        min={domainMin}
-        max={domainMax}
-        step={step}
-        minStepsBetweenThumbs={1}
-        onValueChange={([lo, hi]) => onChange({ min: lo, max: hi })}
-      />
-    </div>
   )
 }
 
@@ -292,17 +230,26 @@ const SearchFilterField = ({
         </Field>
       )
 
-    // 추정가격 등 — 가격 범위(min/max 입력 + 듀얼 슬라이더)
-    case 'priceRange':
+    // 추정가격 등 — 가격 범위(공통 RangeSliderInput: min/max 입력 + 듀얼 슬라이더)
+    case 'priceRange': {
+      const pr = (value as PriceRangeValue | undefined) ?? {
+        min: field.rangeMin ?? 0,
+        max: field.rangeMax ?? 100_000_000,
+      }
       return (
         <Field label={field.label} required={field.required}>
-          <PriceRangeControl
-            field={field}
-            value={value as PriceRangeValue | undefined}
+          <RangeSliderInput
+            value={pr}
             onChange={onChange}
+            min={field.rangeMin ?? 0}
+            max={field.rangeMax ?? 100_000_000}
+            step={field.step ?? 1_000_000}
+            unit={field.unit ?? '원'}
+            ariaLabel={typeof field.label === 'string' ? field.label : '가격'}
           />
         </Field>
       )
+    }
 
     default: {
       if (import.meta.env.DEV) {

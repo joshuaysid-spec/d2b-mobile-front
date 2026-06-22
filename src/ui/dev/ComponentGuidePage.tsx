@@ -44,6 +44,7 @@ import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { DateInput } from '@/ui/common/composites/DateInput'
 import { DateRangeInput } from '@/ui/common/composites/DateRangeInput'
+import { RangeSliderInput } from '@/ui/common/composites/RangeSliderInput'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { Card } from '@/ui/common/composites/Card'
 import { List } from '@/ui/common/composites/List'
@@ -122,6 +123,7 @@ const NAV = [
       { id: 'fullpopup', label: 'FullPopup' },
       { id: 'dateinput', label: 'DateInput' },
       { id: 'daterangeinput', label: 'DateRangeInput' },
+      { id: 'rangesliderinput', label: 'RangeSliderInput' },
       { id: 'floatingactionbutton', label: 'FloatingActionButton' },
       { id: 'taglist', label: 'TagList' },
       { id: 'tablist', label: 'TabList' },
@@ -155,6 +157,7 @@ export function ComponentGuidePage() {
   const [opPageSize, setOpPageSize] = useState(10)
   const [dateValue, setDateValue] = useState('2026-05-01')
   const [rangeValue, setRangeValue] = useState({ start: '2026-05-01', end: '2026-05-30' })
+  const [priceRange, setPriceRange] = useState({ min: 10_000_000, max: 20_000_000 })
   const [calSingle, setCalSingle] = useState<string>('2026-05-13')
   const [calRange, setCalRange] = useState<{ start: string | null; end: string | null }>({
     start: '2026-05-11',
@@ -2449,6 +2452,67 @@ export function ComponentGuidePage() {
                     label="기간"
                     value={{ start: '2026-05-01', end: '2026-05-30' }}
                     disabled
+                  />
+                </div>
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── RangeSliderInput ───────── */}
+          <Section
+            id="rangesliderinput"
+            title="RangeSliderInput"
+            desc="base/Slider(듀얼 핸들) + min/max 입력 박스를 합친 합성 컴포넌트. 슬라이더와 두 입력이 같은 {min,max} 값을 양방향 공유(min ≤ max). unit·format·step·도메인 min/max 를 prop 으로 — 가격 외 임의 숫자 범위에 범용. 검색필터 priceRange 필드가 이걸 사용."
+          >
+            <Row label="default (추정가격 예시)">
+              <Specimen caption="unit='원' · step 100만 · 0~1억">
+                <div className="w-[340px]">
+                  <RangeSliderInput
+                    value={priceRange}
+                    onChange={setPriceRange}
+                    min={0}
+                    max={100_000_000}
+                    step={1_000_000}
+                    unit="원"
+                    ariaLabel="추정가격"
+                  />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="error · disabled">
+              <Specimen caption="error">
+                <div className="w-[340px]">
+                  <RangeSliderInput
+                    value={{ min: 30, max: 20 }}
+                    onChange={() => {}}
+                    min={0}
+                    max={100}
+                    error
+                  />
+                </div>
+              </Specimen>
+              <Specimen caption="disabled">
+                <div className="w-[340px]">
+                  <RangeSliderInput
+                    value={{ min: 20, max: 70 }}
+                    onChange={() => {}}
+                    min={0}
+                    max={100}
+                    disabled
+                  />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="슬라이더만 (showInputs=false)">
+              <Specimen caption="입력 박스 숨김">
+                <div className="w-[340px]">
+                  <RangeSliderInput
+                    value={priceRange}
+                    onChange={setPriceRange}
+                    min={0}
+                    max={100_000_000}
+                    step={1_000_000}
+                    showInputs={false}
                   />
                 </div>
               </Specimen>
