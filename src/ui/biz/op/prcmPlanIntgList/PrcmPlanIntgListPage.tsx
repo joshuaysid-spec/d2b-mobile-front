@@ -163,7 +163,7 @@ function opnDtSection(): SearchFilterSection {
 
 // 검색어 섹션 — 유형별 필드 구성 다름.
 // 선택필드(`>`) 는 SearchFilter 셸이 공통 검색시트를 직접 연다(searchSheet):
-//   'item' → 품목별조회(P71, ItemInqSheet) · 'producer' → 생산자조회(P72, PrdcrInqSheet)
+//   'item' → 품목별조회(P71, ItemInq) · 'producer' → 생산자조회(P72, PrdcrInq)
 function keywordSection(type: OpSrchType): SearchFilterSection {
   if (type === 'annual') {
     // 연간조달: 군구분·품질등급·재고번호·부품번호 + 품목(품목별검색)·생산자(생산자검색)
@@ -220,7 +220,7 @@ function keywordSection(type: OpSrchType): SearchFilterSection {
     })
   }
   fields.push(
-    // 발주기관 → 발주부서(기관)검색(MUI-BD-01-P04, DeptInqSheet)
+    // 발주기관 → 발주부서(기관)검색(MUI-BD-01-P04, DeptInq)
     {
       type: 'selectionField',
       key: 'deptCd',

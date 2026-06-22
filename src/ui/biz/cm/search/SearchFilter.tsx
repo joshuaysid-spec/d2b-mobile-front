@@ -6,16 +6,18 @@ import * as React from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { SearchFilterField } from './SearchFilterField'
-import { ItemInqSheet } from './ItemInqSheet'
-import { PrdcrInqSheet } from './PrdcrInqSheet'
-import { DeptInqSheet } from './DeptInqSheet'
+import { ItemInq } from './ItemInq'
+import { PrdcrInq } from './PrdcrInq'
+import { DeptInq } from './DeptInq'
 import type {
   SearchFilterSchema,
   SearchFilterSchemaResolver,
   SearchFilterFieldValue,
   SearchFilterValue,
+  SearchSheetHandle,
   SearchSheetKind,
 } from '@/types/search-filter'
 
@@ -77,6 +79,32 @@ const SearchFilter = ({
     kind: SearchSheetKind
     commit: (value: string) => void
   } | null>(null)
+
+  // 콘텐츠 전용 검색 시트(ItemInq/PrdcrInq/DeptInq)의 명령형 핸들 — footer(초기화/검색)는
+  // 셸이 소유하므로 동작만 ref 로 받아 호출한다. 시트는 한 번에 하나만 열리지만, 닫힘 애니메이션
+  // 동안 Radix presence 가 콘텐츠를 유지하도록 종류별 BottomSheet 를 따로 둔다(종류별 ref).
+  const itemRef = React.useRef<SearchSheetHandle>(null)
+  const prdcrRef = React.useRef<SearchSheetHandle>(null)
+  const deptRef = React.useRef<SearchSheetHandle>(null)
+
+  const closeSheet = (nextOpen: boolean) => {
+    if (!nextOpen) setSheet(null)
+  }
+  // 결과 선택 → 호출 필드에 주입 + 시트 닫힘.
+  const handleSheetSelect = (value: string) => {
+    sheet?.commit(value)
+    setSheet(null)
+  }
+  // 세 시트 공통 footer(초기화/검색) — 동작은 해당 콘텐츠 ref 로 위임.
+  const sheetFooter = (ref: React.RefObject<SearchSheetHandle | null>) => (
+    <ButtonGroup
+      layout="asymmetric"
+      items={[
+        { label: '초기화', variant: 'secondary', onClick: () => ref.current?.reset() },
+        { label: '검색', variant: 'primary', onClick: () => ref.current?.search() },
+      ]}
+    />
+  )
 
   // resolved schema 의 selectionField 중 searchSheet 가 지정된 key → 시트 종류 매핑.
   // (동적 schema 라 매 렌더 재계산 — 섹션 수가 적어 비용 무시 가능)
@@ -178,37 +206,32 @@ const SearchFilter = ({
       </Accordion>
     </FullPopup>
 
-      {/* 공통 검색 바텀시트 — selectionField.searchSheet 가 셸에서 직접 연다(페이지 관여 X). */}
-      <ItemInqSheet
+      {/* 공통 검색 바텀시트 — selectionField.searchSheet 가 셸에서 직접 연다(페이지 관여 X).
+          셸이 BottomSheet 컨테이너(타이틀/footer/open)를 소유하고, 콘텐츠 전용 컴포넌트를 슬롯에 끼운다. */}
+      <BottomSheet
         open={sheet?.kind === 'item'}
-        onOpenChange={(o) => {
-          if (!o) setSheet(null)
-        }}
-        onSelect={(v) => {
-          sheet?.commit(v)
-          setSheet(null)
-        }}
-      />
-      <PrdcrInqSheet
+        onOpenChange={closeSheet}
+        title="품목별 검색"
+        footer={sheetFooter(itemRef)}
+      >
+        <ItemInq ref={itemRef} onSelect={handleSheetSelect} />
+      </BottomSheet>
+      <BottomSheet
         open={sheet?.kind === 'producer'}
-        onOpenChange={(o) => {
-          if (!o) setSheet(null)
-        }}
-        onSelect={(v) => {
-          sheet?.commit(v)
-          setSheet(null)
-        }}
-      />
-      <DeptInqSheet
+        onOpenChange={closeSheet}
+        title="생산자 검색"
+        footer={sheetFooter(prdcrRef)}
+      >
+        <PrdcrInq ref={prdcrRef} onSelect={handleSheetSelect} />
+      </BottomSheet>
+      <BottomSheet
         open={sheet?.kind === 'dept'}
-        onOpenChange={(o) => {
-          if (!o) setSheet(null)
-        }}
-        onSelect={(v) => {
-          sheet?.commit(v)
-          setSheet(null)
-        }}
-      />
+        onOpenChange={closeSheet}
+        title="발주부서(기관) 검색"
+        footer={sheetFooter(deptRef)}
+      >
+        <DeptInq ref={deptRef} onSelect={handleSheetSelect} />
+      </BottomSheet>
     </>
   )
 }
