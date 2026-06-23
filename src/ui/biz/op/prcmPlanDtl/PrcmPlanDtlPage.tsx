@@ -10,7 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { opService } from '@/services/op'
-import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
+import { StepBar } from '@/ui/common/composites/StepBar'
+import { buildLifecycleSteps, type LifecycleStage } from '@/types/lifecycle'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Button } from '@/ui/common/base/Button'
 import { Icon, type IconName } from '@/ui/common/base/Icon'
@@ -56,15 +57,6 @@ function renderTabContent(tab: string) {
       return null
   }
 }
-
-// ── 진행 단계 (Figma m_stepbar_horizontal_1depth) — 조달 진행 중 ──────────────
-const STEPS: StepItem[] = [
-  { label: '조달', state: 'doing' },
-  { label: '입찰', state: 'todo' },
-  { label: '계약', state: 'todo' },
-  { label: '이행', state: 'todo' },
-  { label: '대금청구', state: 'todo' },
-]
 
 // ── 요약정보 (목업) ────────────────────────────────────────────────────────
 const SUMMARY_ROWS: SummaryInfoRow[] = [
@@ -133,8 +125,11 @@ export function PrcmPlanDtlPage() {
 
   // 국내 조달계획 상세 조회(스텁). 국외(taskSeNm='국외')는 별도 페이지(/op/ovs/:id)로 분리됨.
   const { id } = useParams()
+  // 진행단계 — 추후 상세 응답의 단계 코드로 대체(API 미연동). 조달계획 상세이므로 현재 'op'(조달).
+  const [stage] = useState<LifecycleStage>('op')
+  const steps = buildLifecycleSteps(stage)
   useEffect(() => {
-    opService.getDomesticPlanDetail(id ?? '')
+    opService.getDomesticPlanDetail(id ?? '') // 추후: 응답의 단계 코드로 setStage
   }, [id])
 
   return (
@@ -175,7 +170,7 @@ export function PrcmPlanDtlPage() {
         >
           <div className="overflow-hidden">
             <div className="bg-krds-bg-primary-faint px-4 py-4">
-              <StepBar orientation="horizontal" items={STEPS} className="bg-transparent" />
+              <StepBar orientation="horizontal" items={steps} className="bg-transparent" />
             </div>
           </div>
         </div>
