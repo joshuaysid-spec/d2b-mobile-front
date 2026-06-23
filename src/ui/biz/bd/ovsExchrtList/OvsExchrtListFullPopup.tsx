@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 
 import { Button } from '@/ui/common/base/Button'
+import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { DateInput } from '@/ui/common/composites/DateInput'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 
@@ -52,7 +53,22 @@ export function OvsExchrtListFullPopup({ open, onOpenChange }: OvsExchrtListFull
   // 조회결과(목업) — 미국환 기준 최상단 고정 후 순번 순. 추후 bdService.getExchangeRates(crtrYmd).
   const list = MOCK_RATES
   const total = list.length
-  const visibleList = useMemo(() => list.slice(0, visible), [list, visible])
+  // 통화별 행 → 기존 CardList(Card) 매핑: 순번 subtitle · 국가 title · 화폐/3환율 rows.
+  const cardItems: CardListItem[] = useMemo(
+    () =>
+      list.slice(0, visible).map((it) => ({
+        id: String(it.no),
+        subtitle: `순번 ${it.no}`,
+        title: it.ntnNm,
+        rows: [
+          { label: '화폐', value: it.crncNm },
+          { label: '매도율', value: it.ttsrt },
+          { label: '기준율', value: `${it.trdStdrt} KRW` },
+          { label: '달러환산율', value: `${it.usdExrt} USD` },
+        ],
+      })),
+    [list, visible],
+  )
 
   // 검색 — 조회일자 기준 재조회(스텁). 실제로는 list 가 API 응답으로 교체됨.
   const handleSearch = () => {
@@ -77,40 +93,13 @@ export function OvsExchrtListFullPopup({ open, onOpenChange }: OvsExchrtListFull
         {/* 총 건수 */}
         <p className="text-krds-body-sm text-krds-text-primary-active">총 {total}건</p>
 
-        {/* 조회결과 — 통화별 카드(순번 + 국가/화폐 + 매도율/기준율 KRW/달러환산율 USD) */}
-        <ul className="flex flex-col gap-krds-5">
-          {visibleList.map((it) => (
-            <li
-              key={it.no}
-              className="flex flex-col gap-krds-3 rounded-krds-8 border border-krds-border-divider p-krds-6"
-            >
-              <div className="flex items-center gap-krds-3">
-                <span className="text-krds-body-sm text-krds-text-muted">{it.no}</span>
-                <span className="text-[17px] font-bold text-krds-text-ink">{it.ntnNm}</span>
-                <span className="text-krds-body-md text-krds-text-muted">{it.crncNm}</span>
-              </div>
-              <dl className="flex flex-col gap-1">
-                <div className="flex justify-between">
-                  <dt className="text-krds-body-md text-krds-text-muted">매도율</dt>
-                  <dd className="text-krds-body-md text-krds-text-ink">{it.ttsrt}</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="text-krds-body-md text-krds-text-muted">기준율</dt>
-                  <dd className="text-krds-body-md text-krds-text-ink">{it.trdStdrt} KRW</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="text-krds-body-md text-krds-text-muted">달러환산율</dt>
-                  <dd className="text-krds-body-md text-krds-text-ink">{it.usdExrt} USD</dd>
-                </div>
-              </dl>
-            </li>
-          ))}
-        </ul>
+        {/* 조회결과 — 기존 공통 CardList 재사용(통화별 카드) */}
+        <CardList items={cardItems} />
 
         {/* 더보기 — 10개씩 추가 */}
         {visible < total && (
           <Button variant="secondary" className="w-full" onClick={handleLoadMore}>
-            더보기 ({visibleList.length}/{total}건)
+            더보기 ({cardItems.length}/{total}건)
           </Button>
         )}
       </div>
