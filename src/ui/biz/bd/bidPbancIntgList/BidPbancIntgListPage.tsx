@@ -207,7 +207,7 @@ const dlt_bidPbancList: BidPbancItem[] = [
     bidPtcptAplyDdlnDt: '2026-03-16 15:00',
     bidDocSbmsnDdlnDt: '2026-03-17 15:00',
     opbidDt: '2026-03-26 11:00',
-    bidStatNm: '입찰',
+    bidStatNm: '개찰전',
   },
   {
     id: '2',
@@ -220,7 +220,7 @@ const dlt_bidPbancList: BidPbancItem[] = [
     bidPtcptAplyDdlnDt: '2026-03-10 15:00',
     bidDocSbmsnDdlnDt: '2026-03-11 15:00',
     opbidDt: '2026-03-20 11:00',
-    bidStatNm: '입찰',
+    bidStatNm: '개찰전',
   },
   {
     id: '3',
@@ -233,7 +233,7 @@ const dlt_bidPbancList: BidPbancItem[] = [
     bidPtcptAplyDdlnDt: '2026-03-05 15:00',
     bidDocSbmsnDdlnDt: '2026-03-06 15:00',
     opbidDt: '2026-03-16 11:00',
-    bidStatNm: '입찰',
+    bidStatNm: '개찰전',
   },
   {
     id: '4',
@@ -246,7 +246,7 @@ const dlt_bidPbancList: BidPbancItem[] = [
     bidPtcptAplyDdlnDt: '2026-03-02 15:00',
     bidDocSbmsnDdlnDt: '2026-03-03 15:00',
     opbidDt: '2026-03-12 11:00',
-    bidStatNm: '입찰',
+    bidStatNm: '개찰전',
   },
 ]
 

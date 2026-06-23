@@ -53,12 +53,12 @@ function renderTabContent(tab: string) {
 }
 
 // 단계표시기(StepBar) 5단계 라벨 — 설계서 단계표시기(조달→입찰→계약→이행→대금청구).
-// 현재 단계는 아이템 속성 bidStatNm 값으로 결정.
+// 현재 단계는 아이템 속성 prgrsStg(진행단계) 값으로 결정. (bidStatNm 은 입찰 세부상태로 별개)
 const STEP_LABELS = ['조달', '입찰', '계약', '이행', '대금청구'] as const
 
-/** 진행상태명(bidStatNm)으로 StepBar items 생성 — 이전 done / 현재 doing / 이후 todo. */
-function stepsByStatus(bidStatNm: string): StepItem[] {
-  const cur = STEP_LABELS.indexOf(bidStatNm as (typeof STEP_LABELS)[number])
+/** 진행단계(prgrsStg)로 StepBar items 생성 — 이전 done / 현재 doing / 이후 todo. */
+function stepsByStg(prgrsStg: string): StepItem[] {
+  const cur = STEP_LABELS.indexOf(prgrsStg as (typeof STEP_LABELS)[number])
   return STEP_LABELS.map((label, i) => ({
     label,
     state: cur < 0 ? 'todo' : i < cur ? 'done' : i === cur ? 'doing' : 'todo',
@@ -117,11 +117,11 @@ export function BidPbancDtlPage() {
   }
 
   const { id } = useParams()
-  // 진행상태명(아이템 속성 bidStatNm) — 입찰공고 상세이므로 현재 '입찰'. 추후 bdService.getDetail 응답으로 대체.
-  const [bidStatNm] = useState('입찰')
-  const steps = stepsByStatus(bidStatNm)
+  // 진행단계(아이템 속성 prgrsStg) — 입찰공고 상세이므로 현재 '입찰'(임의 mock). 추후 bdService.getDetail 응답으로 대체.
+  const [prgrsStg] = useState('입찰')
+  const steps = stepsByStg(prgrsStg)
   useEffect(() => {
-    console.log('[BidDetail] 입찰공고 상세 조회', id) // 추후 API: bdService.getDetail(id) → bidStatNm 세팅
+    console.log('[BidDetail] 입찰공고 상세 조회', id) // 추후 API: bdService.getDetail(id) → prgrsStg 세팅
   }, [id])
 
   // 바로가기 바텀시트 항목 (Figma 9300-36775) — 각 신청서 작성/환율정보 이동(스텁).

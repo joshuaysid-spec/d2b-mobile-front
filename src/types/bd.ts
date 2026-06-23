@@ -31,7 +31,13 @@ export interface BidPbancItem {
   opbidDt: string
   /**
    * 진행상태명 (설계서 항목명 bidStatNm, slide20·47 / 상위코드 ANTC).
-   * 단계표시기(StepBar) 구동값 — 조달/입찰/계약/이행/대금청구 5단계 중 현재 단계.
+   * 입찰 세부 진행상태 — 개찰전/개찰완료/재입찰/유찰.
    */
   bidStatNm: string
+  /**
+   * 진행단계 — 단계표시기(StepBar) 구동값. 조달/입찰/계약/이행/대금청구 5단계 중 현재 단계.
+   * ⚠️ 설계서 데이터영역에 정의된 항목 아님(상세설계 예정) — 단계표시기 구동용으로 추가(사용자 승인).
+   *    실제 단계 세부상태는 bidStatNm(입찰)·implPrgrsStcd(조달) 등 도메인 항목이 별도로 가짐.
+   */
+  prgrsStg?: string
 }

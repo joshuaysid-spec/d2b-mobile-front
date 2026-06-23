@@ -57,16 +57,20 @@ function renderTabContent(tab: string) {
   }
 }
 
-// ── 진행 단계 (단계표시기) — 조달계획 상세는 '조달' 단계. ────────────────────
-// (op 에는 5단계를 담는 설계서 항목이 없어 고정. 진행상태 implPrgrsStcd 는 조달계획/공고게시/
-//  계약대기/계약완료 세부상태로 의미가 달라 StepBar 구동값으로 쓰지 않음.)
-const STEPS: StepItem[] = [
-  { label: '조달', state: 'doing' },
-  { label: '입찰', state: 'todo' },
-  { label: '계약', state: 'todo' },
-  { label: '이행', state: 'todo' },
-  { label: '대금청구', state: 'todo' },
-]
+// ── 진행 단계 (단계표시기) — 아이템 속성 prgrsStg(진행단계) 로 구동. ──────────────
+// 5단계(조달→입찰→계약→이행→대금청구). prgrsStg 는 설계서 데이터영역 미정의(상세설계 예정) —
+// 단계표시기 구동용 항목으로 추가(사용자 승인). 진행상태 implPrgrsStcd(조달계획/공고게시/계약대기/
+// 계약완료)는 조달 세부상태로 의미가 달라 StepBar 구동값이 아님.
+const STEP_LABELS = ['조달', '입찰', '계약', '이행', '대금청구'] as const
+
+/** 진행단계(prgrsStg)로 StepBar items 생성 — 이전 done / 현재 doing / 이후 todo. */
+function stepsByStg(prgrsStg: string): StepItem[] {
+  const cur = STEP_LABELS.indexOf(prgrsStg as (typeof STEP_LABELS)[number])
+  return STEP_LABELS.map((label, i) => ({
+    label,
+    state: cur < 0 ? 'todo' : i < cur ? 'done' : i === cur ? 'doing' : 'todo',
+  }))
+}
 
 // ── 요약정보 (목업) ────────────────────────────────────────────────────────
 const SUMMARY_ROWS: SummaryInfoRow[] = [
@@ -135,8 +139,11 @@ export function PrcmPlanDtlPage() {
 
   // 국내 조달계획 상세 조회(스텁). 국외(taskSeNm='국외')는 별도 페이지(/op/ovs/:id)로 분리됨.
   const { id } = useParams()
+  // 진행단계(아이템 속성 prgrsStg) — 조달계획 상세이므로 현재 '조달'(임의 mock). 추후 opService 응답으로 대체.
+  const [prgrsStg] = useState('조달')
+  const steps = stepsByStg(prgrsStg)
   useEffect(() => {
-    opService.getDomesticPlanDetail(id ?? '')
+    opService.getDomesticPlanDetail(id ?? '') // 추후: 응답의 prgrsStg 로 setStage
   }, [id])
 
   return (
@@ -177,7 +184,7 @@ export function PrcmPlanDtlPage() {
         >
           <div className="overflow-hidden">
             <div className="bg-krds-bg-primary-faint px-4 py-4">
-              <StepBar orientation="horizontal" items={STEPS} className="bg-transparent" />
+              <StepBar orientation="horizontal" items={steps} className="bg-transparent" />
             </div>
           </div>
         </div>

@@ -34,4 +34,10 @@ export interface OpPlanItem {
   ctrtMthd: string
   /** 예산금액 (원, 정수) — 표시 시 천단위 콤마 + ' 원' */
   budgetAmt: number
+  /**
+   * 진행단계 — 단계표시기(StepBar) 구동값. 조달/입찰/계약/이행/대금청구 5단계 중 현재 단계.
+   * ⚠️ 설계서 데이터영역 미정의(상세설계 예정) — 단계표시기 구동용으로 추가(사용자 승인).
+   *    진행상태 implPrgrsStcd(조달계획/공고게시/계약대기/계약완료)는 조달 세부상태로 별개.
+   */
+  prgrsStg?: string
 }
