@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
-import { Icon, type IconName } from '@/ui/common/base/Icon'
+import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
@@ -49,28 +49,6 @@ const SUMMARY_ROWS: SummaryInfoRow[] = [
   { label: '계약방법', value: '일반경쟁' },
   { label: '지시예산(USD)', value: '$ 540,000.00' },
 ]
-
-// 요약정보 액션 슬롯용 유틸 아이콘 버튼 (37×37, border)
-function SummaryUtilButton({
-  icon,
-  label,
-  onClick,
-}: {
-  icon: IconName
-  label: string
-  onClick: () => void
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      onClick={onClick}
-      className="flex size-[37px] shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-field bg-background text-krds-text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring active:opacity-70"
-    >
-      <Icon name={icon} size={24} aria-hidden />
-    </button>
-  )
-}
 
 export function OvsPrcmPlanDtlPage() {
   const [tab, setTab] = useState('detail')

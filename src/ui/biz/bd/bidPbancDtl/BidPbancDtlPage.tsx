@@ -10,8 +10,8 @@ import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
-import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { Toast } from '@/ui/common/composites/Toast'
@@ -74,37 +74,6 @@ const SUMMARY_ROWS: SummaryInfoRow[] = [
   { label: '입찰서제출마감일시', value: '2025-12-24 10:00' },
   { label: '개찰일시', value: '2025-12-24 10:30' },
 ]
-
-// 요약정보 액션 슬롯용 유틸 아이콘 버튼 (37×37, border)
-//  - active: 토글형(즐겨찾기) on 상태 — aria-pressed + 아이콘 채움(fill 1) + primary 색.
-function SummaryUtilButton({
-  icon,
-  label,
-  onClick,
-  active,
-}: {
-  icon: IconName
-  label: string
-  onClick: () => void
-  /** 토글 on 상태(없으면 일반 버튼). 지정 시 aria-pressed + 아이콘 fill/색 전환. */
-  active?: boolean
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      aria-pressed={active}
-      onClick={onClick}
-      className={`flex size-[37px] shrink-0 items-center justify-center rounded-krds-8 border bg-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring active:opacity-70 ${
-        active
-          ? 'border-krds-border-primary text-krds-text-primary'
-          : 'border-krds-border-field text-krds-text-ink'
-      }`}
-    >
-      <Icon name={icon} size={24} fill={active ? 1 : 0} aria-hidden />
-    </button>
-  )
-}
 
 export function BidPbancDtlPage() {
   const [tab, setTab] = useState('general')
