@@ -46,6 +46,7 @@ import { DateInput } from '@/ui/common/composites/DateInput'
 import { DateRangeInput } from '@/ui/common/composites/DateRangeInput'
 import { RangeSliderInput } from '@/ui/common/composites/RangeSliderInput'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
 import { Card } from '@/ui/common/composites/Card'
 import { List } from '@/ui/common/composites/List'
 import { MenuAccordion } from '@/ui/common/composites/MenuAccordion'
@@ -135,6 +136,7 @@ const NAV = [
       { id: 'menuaccordion', label: 'MenuAccordion' },
       { id: 'list', label: 'List' },
       { id: 'summaryinfo', label: 'SummaryInfo' },
+      { id: 'summaryutilbutton', label: 'SummaryUtilButton' },
       { id: 'toast', label: 'Toast' },
       { id: 'header', label: 'Header' },
       { id: 'bottomnav', label: 'BottomNav' },
@@ -3290,6 +3292,31 @@ export function ComponentGuidePage() {
                     title="좁은 폭이라 뱃지가 overflow"
                     rows={[{ label: '레이블', value: '데이터' }]}
                   />
+                </div>
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── SummaryUtilButton ───────── */}
+          <Section
+            id="summaryutilbutton"
+            title="SummaryUtilButton"
+            desc="Figma m_button icon_page utility(9300-27080) 1:1. 요약정보(SummaryInfo) 액션 슬롯용 37×37 아이콘 버튼. state: default(흰 배경+field 보더+ink 라인 아이콘) · pressed(:active=faint-blue 배경) · disabled(회색 배경·보더 제거·회색 아이콘). selected(active) 토글 시 아이콘 채움(fill 1)+navy(primary-active). 상세 화면(조달계획·국외·사전규격·입찰공고) 공통."
+          >
+            <Row label="state / selected">
+              <Specimen caption="default (off)">
+                <SummaryUtilButton icon="KidStar" label="즐겨찾기" onClick={() => {}} />
+              </Specimen>
+              <Specimen caption="selected (on) — 채움 + navy">
+                <SummaryUtilButton icon="KidStar" label="즐겨찾기" active onClick={() => {}} />
+              </Specimen>
+              <Specimen caption="disabled">
+                <SummaryUtilButton icon="Print" label="출력" disabled onClick={() => {}} />
+              </Specimen>
+              <Specimen caption="아이콘 종류 (NotificationAdd / Print)">
+                <div className="flex gap-2">
+                  <SummaryUtilButton icon="NotificationAdd" label="알림 신청" onClick={() => {}} />
+                  <SummaryUtilButton icon="Print" label="출력" onClick={() => {}} />
                 </div>
               </Specimen>
             </Row>

@@ -29,6 +29,8 @@ export interface SearchConditionProps extends Omit<
   onFilterClick: () => void
   /** 필터 버튼 활성(on) 상태 — 필터가 적용 중임을 강조. 기본 false(off). */
   filterActive?: boolean
+  /** 필터 버튼 비활성 상태. 회색 배경 + 보더 제거 + 회색 아이콘. 기본 false. */
+  filterDisabled?: boolean
   /** 검색 버튼 클릭. */
   onSearch: () => void
   /** 검색어 placeholder. 기본 '내용을 입력하세요.'. */
@@ -48,6 +50,7 @@ const SearchCondition = React.forwardRef<HTMLDivElement, SearchConditionProps>(
       onKeywordChange,
       onFilterClick,
       filterActive = false,
+      filterDisabled = false,
       onSearch,
       placeholder = '내용을 입력하세요.',
       searchOnEnter = true,
@@ -71,12 +74,17 @@ const SearchCondition = React.forwardRef<HTMLDivElement, SearchConditionProps>(
           aria-label="상세 검색 필터"
           aria-pressed={filterActive}
           onClick={onFilterClick}
+          disabled={filterDisabled}
           className={cn(
+            // Figma m_button icon(9300-27071) state style:
             'flex size-12 shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-primary text-krds-text-primary',
             'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
-            // on/off 동일 — 흰 배경 + 1px primary 보더(위 border). on 의 inset shadow 는
-            // 흰 배경 전환 후 보더가 2px 로 보이는 문제가 있어 제거(aria-pressed 로 상태만 노출).
-            'bg-background',
+            // default(off): 흰 배경 + 1px primary 보더 / pressed(:active): subtle 배경
+            'bg-background active:bg-krds-bg-primary-subtle',
+            // selected(on): subtle 배경 + 2px primary 보더로 강조
+            filterActive && 'border-2 bg-krds-bg-primary-subtle',
+            // disabled: 회색 배경 · 보더 제거 · 회색 아이콘
+            'disabled:border-transparent disabled:bg-krds-bg-disabled disabled:text-krds-text-disabled',
           )}
         >
           <Icon name="Tune" size={24} aria-hidden />

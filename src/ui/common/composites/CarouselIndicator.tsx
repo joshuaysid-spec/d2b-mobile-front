@@ -50,9 +50,13 @@ function ArrowButton({
       onClick={onClick}
       disabled={disabled}
       className={cn(
+        // default: 흰 배경 + 파란 보더 + ink 아이콘
         'flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-white text-krds-text-ink',
+        // pressed: faint blue 배경 (보더 유지)
+        'active:bg-krds-bg-primary-faint',
         'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
-        'disabled:opacity-40',
+        // disabled: 회색 배경 · 보더 제거 · 회색 아이콘
+        'disabled:border-transparent disabled:bg-krds-bg-disabled disabled:text-krds-text-disabled',
       )}
     >
       <Icon
@@ -97,7 +101,9 @@ const CarouselIndicator = ({
           onClick={onTogglePlay}
           className={cn(
             'flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-white text-krds-text-ink',
+            'active:bg-krds-bg-primary-faint',
             'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
+            'disabled:border-transparent disabled:bg-krds-bg-disabled disabled:text-krds-text-disabled',
           )}
         >
           <Icon name={playing ? 'Pause' : 'PlayArrow'} size={20} aria-hidden />
