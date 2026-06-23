@@ -7,8 +7,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
-import { StepBar } from '@/ui/common/composites/StepBar'
-import { buildLifecycleSteps, type LifecycleStage } from '@/types/lifecycle'
+import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Button } from '@/ui/common/base/Button'
 import { Icon, type IconName } from '@/ui/common/base/Icon'
@@ -51,6 +50,19 @@ function renderTabContent(tab: string) {
     default:
       return null
   }
+}
+
+// 단계표시기(StepBar) 5단계 라벨 — 설계서 단계표시기(조달→입찰→계약→이행→대금청구).
+// 현재 단계는 아이템 속성 bidStatNm 값으로 결정.
+const STEP_LABELS = ['조달', '입찰', '계약', '이행', '대금청구'] as const
+
+/** 진행상태명(bidStatNm)으로 StepBar items 생성 — 이전 done / 현재 doing / 이후 todo. */
+function stepsByStatus(bidStatNm: string): StepItem[] {
+  const cur = STEP_LABELS.indexOf(bidStatNm as (typeof STEP_LABELS)[number])
+  return STEP_LABELS.map((label, i) => ({
+    label,
+    state: cur < 0 ? 'todo' : i < cur ? 'done' : i === cur ? 'doing' : 'todo',
+  }))
 }
 
 // ── 요약정보 (목업 — 설계서 slide26) ─────────────────────────────────────────
@@ -105,11 +117,11 @@ export function BidPbancDtlPage() {
   }
 
   const { id } = useParams()
-  // 진행단계 — 추후 상세 응답의 단계 코드로 대체(API 미연동). 입찰공고 상세이므로 현재 'bd'(입찰).
-  const [stage] = useState<LifecycleStage>('bd')
-  const steps = buildLifecycleSteps(stage)
+  // 진행상태명(아이템 속성 bidStatNm) — 입찰공고 상세이므로 현재 '입찰'. 추후 bdService.getDetail 응답으로 대체.
+  const [bidStatNm] = useState('입찰')
+  const steps = stepsByStatus(bidStatNm)
   useEffect(() => {
-    console.log('[BidDetail] 입찰공고 상세 조회', id) // 추후 API: bdService.getDetail(id) → stage 세팅
+    console.log('[BidDetail] 입찰공고 상세 조회', id) // 추후 API: bdService.getDetail(id) → bidStatNm 세팅
   }, [id])
 
   // 바로가기 바텀시트 항목 (Figma 9300-36775) — 각 신청서 작성/환율정보 이동(스텁).

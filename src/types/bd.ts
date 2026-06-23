@@ -29,4 +29,9 @@ export interface BidPbancItem {
   bidDocSbmsnDdlnDt: string
   /** 개찰일시 (예: '2026-03-26 11:00') */
   opbidDt: string
+  /**
+   * 진행상태명 (설계서 항목명 bidStatNm, slide20·47 / 상위코드 ANTC).
+   * 단계표시기(StepBar) 구동값 — 조달/입찰/계약/이행/대금청구 5단계 중 현재 단계.
+   */
+  bidStatNm: string
 }
