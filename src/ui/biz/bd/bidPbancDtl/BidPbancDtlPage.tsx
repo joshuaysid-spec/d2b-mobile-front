@@ -10,13 +10,12 @@ import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
-import { Button } from '@/ui/common/base/Button'
 import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { Toast } from '@/ui/common/composites/Toast'
-import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
+import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
 import { BidPbancDtl } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl'
 import { BidPbancDtl_Tacpg02 } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl_Tacpg02'
@@ -230,21 +229,13 @@ export function BidPbancDtlPage() {
         plusLabel="바로가기"
       />
 
-      {/* 바로가기 바텀시트 (9300-36775) — 컨테이너는 페이지가 직접 조립, NavigationItemList 슬롯 */}
-      <BottomSheet
-        open={shortcutOpen}
-        onOpenChange={setShortcutOpen}
-        title="바로가기"
-        footer={
-          <Button variant="primary" className="w-full" onClick={() => setShortcutOpen(false)}>
-            확인
-          </Button>
-        }
-      >
-        <NavigationItemList
+      {/* 바로가기 바텀시트 (9300-36775) — 컨테이너는 페이지가 직접 조립, 항목은 세로 버튼 리스트 */}
+      <BottomSheet open={shortcutOpen} onOpenChange={setShortcutOpen} title="바로가기">
+        <ButtonGroup
+          layout="vertical"
           items={shortcutItems.map((it) => ({
-            id: it.id,
             label: it.label,
+            variant: 'secondary',
             onClick: () => {
               console.log('[BidDetail] 바로가기', it.id) // 추후: 각 신청서 작성/환율정보 화면 이동
               setShortcutOpen(false)
