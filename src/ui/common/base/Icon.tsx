@@ -49,8 +49,9 @@ const REGISTRY = {
   Edit: 'edit',
   Error: 'error',
   ExpandMore: 'expand_more',
-  // Material Symbols 는 채움/아웃라인을 FILL 축으로 구분 — 'favorite'/'star' 한 ligature 로 통합.
-  // Favorite/Star 는 FILLED_BY_DEFAULT 로 채움, FavoriteBorder/StarBorder 는 아웃라인(FILL 0).
+  // Material Symbols 는 채움/아웃라인을 FILL 축으로 구분 — 'favorite'/'kid_star' 한 ligature 로 통합.
+  // Favorite/KidStar 는 FILLED_BY_DEFAULT 로 채움, FavoriteBorder 는 아웃라인(FILL 0).
+  // 즐겨찾기(별)는 디자인 기준 kid_star 사용 — fill 0/1 로 off/on 토글.
   Favorite: 'favorite',
   FavoriteBorder: 'favorite',
   FilterAlt: 'filter_alt',
@@ -80,8 +81,6 @@ const REGISTRY = {
   Share: 'share',
   SmartToy: 'smart_toy',
   SoundDetection: 'sound_detection_loud_sound',
-  Star: 'star',
-  StarBorder: 'star',
   SubdirectoryArrowRight: 'subdirectory_arrow_right',
   TrendingFlat: 'trending_flat',
   Tune: 'tune',
@@ -96,7 +95,7 @@ export type IconName = keyof typeof REGISTRY
 
 /** 채움(FILL 1)이 기본 디자인인 아이콘 — 나머지는 아웃라인(FILL 0). fill prop 으로 개별 오버라이드.
  *  별/하트(솔리드가 자연스러움) + 상태 아이콘(성공/경고/에러 — Empty·AlertModal 처럼 채움이 기본). */
-const FILLED_BY_DEFAULT = new Set<IconName>(['CheckCircle', 'Error', 'Favorite', 'Star', 'Warning'])
+const FILLED_BY_DEFAULT = new Set<IconName>(['CheckCircle', 'Error', 'Favorite', 'KidStar', 'Warning'])
 
 export interface IconProps {
   /** Material Symbols 아이콘 이름 (REGISTRY 키, PascalCase). 매칭 시 해당 글리프 렌더. */

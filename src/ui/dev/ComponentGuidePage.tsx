@@ -969,16 +969,16 @@ export function ComponentGuidePage() {
             </Row>
             <Row label="size">
               <Specimen caption="size={16}">
-                <Icon name="Star" size={16} />
+                <Icon name="KidStar" size={16} />
               </Specimen>
               <Specimen caption="size={24} (default)">
-                <Icon name="Star" size={24} />
+                <Icon name="KidStar" size={24} />
               </Specimen>
               <Specimen caption="size={32}">
-                <Icon name="Star" size={32} />
+                <Icon name="KidStar" size={32} />
               </Specimen>
               <Specimen caption="size={48}">
-                <Icon name="Star" size={48} />
+                <Icon name="KidStar" size={48} />
               </Specimen>
             </Row>
             <Row label="color">

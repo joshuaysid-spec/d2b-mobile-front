@@ -17,7 +17,7 @@
 //     title="2026 K5 방독면 수리부속(구매)"
 //     actions={<>
 //       <button type="button"><Icon name="Refresh" /></button>
-//       <button type="button"><Icon name="Star" /></button>
+//       <button type="button"><Icon name="KidStar" /></button>
 //     </>}
 //     rows={[
 //       { label: '발주예정월', value: '2026-03' },
