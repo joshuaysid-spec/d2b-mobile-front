@@ -22,6 +22,7 @@
 **순서:**
 1. **설계서에서 화면 확인** — 담당 화면의 화면ID·구성(섹션/필드/탭)·동작을 `docs/spec/` 에서 읽는다.
 2. **`/guide` 에서 쓸 컴포넌트 고르기** — 브라우저로 `/guide`(ComponentGuidePage) 열어 공통 base/composites 카탈로그 확인. **여기 있는 걸 조립**(FullPopup·BottomSheet·AlertModal·Accordion·Table·InputBox·TextArea·RadioButtonGroup·CheckboxGroup·ButtonGroup·FileDownloadList·SummaryInfo·StepBar·TabList 등). 신규 생성 전 `common/composites`·`base` 중복 확인 필수.
+   - **⚠️ 기존 공통에 없어 새 공통 컴포넌트(`base`/`composites`)나 새 variant 를 만들어야 하면, 만들기 전에 사용자에게 "새로 만들어도 되는지" 먼저 물어본다.** (도메인 전용 조립물 — `biz/{도메인}/` 의 페이지·탭·바텀시트 콘텐츠·`*FullPopup` 등 — 은 예외로 바로 생성)
 3. **폴더/파일 생성** — "파일 명명 규칙"의 화면ID→파일명 변환 + 도메인 폴더 코드(op/bd/ct/...) 준수.
    - **새 화면은 먼저 설계서/앱메뉴 문서에서 해당 화면의 영문 화면 ID 를 확인해 파일/폴더명에 반영**(예: 알림현황 MUI-MS-01-M13 → `cm/notiPrst/NotiPrstPage`). 임의 영문명(`NotificationPage` 등) 금지 — MS/CM 공통 화면도 동일.
 4. **조립 + 목업** — 표/필드는 데이터 배열로 구동. 데이터는 파일 내 목업 상수, 핸들러는 `console.log` + `// 추후 API: xxxService.yyy` 주석으로 경계 표시.
@@ -362,6 +363,7 @@ import { Icon } from '@/ui/common/base/Icon'
 
 **2) 기존 컴포넌트 재사용 — 신규 생성 최소화 (사용자 반복 지시).**
 화면/팝업은 반드시 기존 공통부터 조립한다: `FullPopup`·`BottomSheet`·`AlertModal`·`Accordion`·`Table`·`InputBox`·`TextArea`·`InputLabel`·`InputMessage`·`RadioButtonGroup`·`ButtonGroup`·`FileDownloadList`·`SummaryInfo`·`StepBar`·`TabList`·`SearchFilter`. 신규는 **도메인 전용 조립물**(예: `OpinionCard`, `*FullPopup` 풀팝업 래퍼, 바텀시트 콘텐츠 컴포넌트)만. 신규 생성 전 `common/composites`·`base` 중복 확인 필수.
+- **새 공통 컴포넌트(`base`/`composites`)·새 variant 는 만들기 전 사용자에게 먼저 물어본다**(도메인 전용 조립물은 예외). → "새 페이지 작성 절차" step 2 참고.
 - **팝업 종류 선택**: 선택/검색/짧은 입력 → `BottomSheet` · 상세/긴 폼(여러 섹션) → `FullPopup` · 단순 확인(예/아니오) → `AlertModal`.
 - 읽기전용 표시 필드는 `InputBox`/`TextArea` 에 `disabled` 로 재사용.
 - 액션 버튼은 시트 `footer` 슬롯에 둔다(스크롤 본문에 두면 overflow 로 하단 border 잘림).
