@@ -7,12 +7,15 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
+import { useAuthStore } from '@/stores/authStore'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Button } from '@/ui/common/base/Button'
 import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { AlertModal } from '@/ui/common/composites/AlertModal'
+import { Toast } from '@/ui/common/composites/Toast'
 import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
 import { BidPbancDtl } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl'
@@ -108,12 +111,38 @@ export function BidPbancDtlPage() {
   const [tab, setTab] = useState('general')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기 바텀시트(9300-36775)
-  const [favorite, setFavorite] = useState(false) // 즐겨찾기 on/off (KidStar fill 토글). 추후 API: bdService.toggleFavorite
+  // 관심공고(즐겨찾기) 등록 여부 — 추후 bdService.getDetail 응답(관심공고 등록 여부)으로 초기화. 현재 mock false.
+  const [favorite, setFavorite] = useState(false)
+  const [outputModalOpen, setOutputModalOpen] = useState(false) // 서류 출력 확인(MUI-BD-01-P14)
+  const [loginGuideOpen, setLoginGuideOpen] = useState(false) // 로그인 안내(MUI-MS-03-P15)
+  // 관심공고 등록/제외 토스트(MUI-BD-01-P13)
+  const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
+
+  // 로그인 필요 동작 — 비로그인 시 로그인 안내(P15) 노출하고 동작 차단. authStore 직접 구독.
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
+
+  // 즐겨찾기(관심공고) 토글 — 로그인 필요. 등록/제외에 따라 아이콘(라인↔채움) + 토스트(P13).
   const handleToggleFavorite = () => {
-    setFavorite((on) => {
-      console.log('[BidDetail] 즐겨찾기', !on ? '등록' : '해제', id)
-      return !on
+    if (!isLoggedIn) {
+      setLoginGuideOpen(true)
+      return
+    }
+    const next = !favorite
+    setFavorite(next)
+    setToast({
+      open: true,
+      message: next ? '관심공고에 등록 되었습니다.' : '관심공고에서 제외 되었습니다.',
     })
+    console.log('[BidDetail] 관심공고', next ? '등록' : '제외', id) // 추후 API: bdService.toggleFavorite
+  }
+
+  // 출력 — 로그인 필요. 로그인 시 서류 출력 확인(P14) 모달, 비로그인 시 로그인 안내(P15).
+  const handleOutput = () => {
+    if (!isLoggedIn) {
+      setLoginGuideOpen(true)
+      return
+    }
+    setOutputModalOpen(true)
   }
 
   const { id } = useParams()
@@ -155,11 +184,7 @@ export function BidPbancDtlPage() {
                 active={favorite}
                 onClick={handleToggleFavorite}
               />
-              <SummaryUtilButton
-                icon="Print"
-                label="출력"
-                onClick={() => console.log('[BidDetail] 출력')}
-              />
+              <SummaryUtilButton icon="Print" label="출력" onClick={handleOutput} />
             </>
           }
           rows={SUMMARY_ROWS}
@@ -227,6 +252,39 @@ export function BidPbancDtlPage() {
           }))}
         />
       </BottomSheet>
+
+      {/* 서류 출력 확인 (MUI-BD-01-P14) — OZ 리포트 연계 전 확인. 확인 시 리포트 호출(스텁). */}
+      <AlertModal
+        open={outputModalOpen}
+        onOpenChange={setOutputModalOpen}
+        variant="info"
+        title="서류 출력 확인"
+        description="OZ 리포트가 실행되며, 로딩에 약간의 시간이 소요됩니다. 서류 출력을 진행할까요?"
+        secondaryAction={{ label: '취소' }}
+        primaryAction={{
+          label: '확인',
+          onClick: () => console.log('[BidDetail] 서류 출력 → OZ 리포트 호출'), // 추후 API: OZ 리포트 연계
+        }}
+      />
+
+      {/* 로그인 안내 (MUI-MS-03-P15) — 로그인 필요 동작을 비로그인 사용자가 시도할 때. */}
+      <AlertModal
+        open={loginGuideOpen}
+        onOpenChange={setLoginGuideOpen}
+        variant="info"
+        title="로그인 안내"
+        description="서비스를 사용하기 위해서 로그인이 필요합니다. 지금 로그인할까요?"
+        secondaryAction={{ label: '취소' }}
+        primaryAction={{
+          label: '확인',
+          onClick: () => console.log('[BidDetail] 로그인 화면 이동'), // 추후: 로그인 화면(cm/auth) 이동
+        }}
+      />
+
+      {/* 관심공고 등록/제외 토스트 (MUI-BD-01-P13) */}
+      <Toast open={toast.open} onClose={() => setToast((t) => ({ ...t, open: false }))}>
+        {toast.message}
+      </Toast>
     </div>
   )
 }
