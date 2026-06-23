@@ -153,13 +153,14 @@ export function BidPbancDtlPage() {
   }, [id])
 
   // 바로가기 바텀시트 항목 (Figma 9300-36775) — 각 신청서 작성/환율정보 이동(스텁).
-  const shortcutItems = [
-    { id: 'pq', label: '사전심사(PQ)신청서 작성하기' },
-    { id: 'bid', label: '입찰서(견적서) 작성하기' },
-    { id: 'apply', label: '입찰참가신청서 작성하기' },
-    { id: 'giveup', label: '입찰포기 신청서 작성하기' },
-    { id: 'cancel', label: '입찰취소 신청서 작성하기' },
-    { id: 'fx', label: '환율정보 바로가기' },
+  // 버튼 색: 작성류 상위 3개 primary · 포기/취소 2개 secondary · 환율정보 1개 tertiary(라인).
+  const shortcutItems: { id: string; label: string; variant: 'primary' | 'secondary' | 'tertiary' }[] = [
+    { id: 'pq', label: '사전심사(PQ)신청서 작성하기', variant: 'primary' },
+    { id: 'bid', label: '입찰서(견적서) 작성하기', variant: 'primary' },
+    { id: 'apply', label: '입찰참가신청서 작성하기', variant: 'primary' },
+    { id: 'giveup', label: '입찰포기 신청서 작성하기', variant: 'secondary' },
+    { id: 'cancel', label: '입찰취소 신청서 작성하기', variant: 'secondary' },
+    { id: 'fx', label: '환율정보 바로가기', variant: 'tertiary' },
   ]
 
   return (
@@ -235,7 +236,7 @@ export function BidPbancDtlPage() {
           layout="vertical"
           items={shortcutItems.map((it) => ({
             label: it.label,
-            variant: 'secondary',
+            variant: it.variant,
             onClick: () => {
               console.log('[BidDetail] 바로가기', it.id) // 추후: 각 신청서 작성/환율정보 화면 이동
               setShortcutOpen(false)
