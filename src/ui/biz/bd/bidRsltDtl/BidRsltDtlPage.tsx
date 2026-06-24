@@ -1,0 +1,250 @@
+// 입찰결과상세(개찰상세, MUI-BD-09-M01~M04). 개찰목록 카드 클릭 → /bd/result/:id 진입.
+// 레퍼런스: 입찰공고 상세 BidPbancDtlPage (요약정보+스텝바+탭+탭콘텐츠 동일 패턴).
+// 구성: 요약정보(SummaryInfo, 즐겨찾기) + 스텝바(StepBar, 입찰) + 탭4(일반정보/품목정보/입찰결과/협상결과)
+//   + 탭 콘텐츠(일반정보=이 파일 인라인=M01 / 품목정보=BidRsltDtlListPage M02 / 입찰결과=BidRsltDtl M03 / 협상결과=BidRsltDtl2 M04)
+//   + 맨위로 FAB.
+// 상세화면이라 검색필터 없음. 데이터는 목업(추후 bdService.getBidRsltDetail). 헤더는 전역 Header(AppLayout).
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+
+import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
+import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
+import { TabList, type TabItem } from '@/ui/common/composites/TabList'
+import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
+import { Toast } from '@/ui/common/composites/Toast'
+import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
+import { PageTitle } from '@/ui/common/base/PageTitle'
+import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
+import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
+import { BidRsltDtlListPage } from '@/ui/biz/bd/bidRsltDtl/BidRsltDtlListPage'
+import { BidRsltDtl } from '@/ui/biz/bd/bidRsltDtl/BidRsltDtl'
+import { BidRsltDtl2 } from '@/ui/biz/bd/bidRsltDtl/BidRsltDtl2'
+
+// ── 탭 (설계서 6.1 화면목록 MUI-BD-09-M01~M04) ───────────────────────────────
+const TABS: TabItem[] = [
+  { value: 'general', label: '일반정보' },
+  { value: 'item', label: '품목정보' },
+  { value: 'bid', label: '입찰결과' },
+  { value: 'nego', label: '협상결과' },
+]
+
+// 단계표시기(StepBar) 5단계 — 조달→입찰→계약→이행→대금청구. 입찰결과상세는 '입찰'(개찰/낙찰) 단계.
+const STEP_LABELS = ['조달', '입찰', '계약', '이행', '대금청구'] as const
+function stepsByStg(prgrsStg: string): StepItem[] {
+  const cur = STEP_LABELS.indexOf(prgrsStg as (typeof STEP_LABELS)[number])
+  return STEP_LABELS.map((label, i) => ({
+    label,
+    state: cur < 0 ? 'todo' : i < cur ? 'done' : i === cur ? 'doing' : 'todo',
+  }))
+}
+
+// ── 요약정보 (설계서 slide150~151) — 값은 일반정보(slide152) 데이터셋과 일관되게 맞춤(테스트공고/MST0001-1) ──
+const SUMMARY_ROWS: SummaryInfoRow[] = [
+  { label: '공고일자', value: '2025-11-20' },
+  { label: '개찰일시', value: '2025-12-01 10:00' },
+]
+
+// ── 일반정보 탭(M01) 데이터 (설계서 slide152~153) — 라벨은 설계서 순서 그대로, 값은 목업 ──
+const GENERAL_ROWS: TableRow[] = [
+  { label: '입찰건명', value: '테스트공고' },
+  { label: '공고번호', value: 'MST0001-1' },
+  { label: '판단번호', value: '10000' },
+  { label: '발주기관', value: '테스트발주기관' },
+  { label: '통합참조번호', value: '2025MST0001' },
+  { label: '집행유형', value: '구매' },
+  { label: '단가제유형', value: '총액제' },
+  { label: '계약방법', value: '2단계경쟁(분리)' },
+  { label: '입찰방법', value: '전자입찰' },
+  { label: '낙찰자결정방법', value: '최저가격제' },
+  { label: '예산금액', value: '100,000,000 원', type: 'number' },
+  { label: '기초예가적용여부', value: '적용' },
+  { label: '개찰일시', value: '2025-12-01 10:00' },
+  { label: '적격심사', value: '비대상' },
+  { label: '입찰서제출마감일시', value: '2025-12-01 09:00' },
+  { label: '등록심사시점', value: '-' },
+  { label: '기초예비가격', value: '98,000,000 원', type: 'number' },
+  { label: '사정률(%)', value: '-3 ~ 3' },
+  { label: '낙찰하한율', value: '예정가격 순공사원가의 100분의 98' },
+  {
+    label: '공사개요',
+    value: (
+      <div className="flex flex-col gap-0.5">
+        <span>위치: 서울 용산</span>
+        <span>공사기간: -</span>
+        <span>예정가격: 98,000,000 원</span>
+      </div>
+    ),
+    type: 'combination',
+  },
+  { label: '가격평가비중', value: '-' },
+  { label: '입찰결과', value: '-' },
+  { label: '협상형태', value: '전자협상' },
+  { label: '협상장소', value: '테스트장소' },
+  { label: '협상결과', value: '-' },
+  { label: '재입찰대상구분', value: '재입찰 대상' },
+  { label: '재입찰 차수', value: '01' },
+  { label: '유찰사유', value: '-' },
+]
+
+// 담당자 정보 (설계서 slide153) — 업무별 담당자/연락처
+const CONTACT_ROWS: TableRow[] = [
+  {
+    label: '구매담당',
+    value: (
+      <div className="flex flex-col gap-0.5">
+        <span>홍길동 대령</span>
+        <span>02-1234-5678</span>
+        <span>010-1234-5678</span>
+      </div>
+    ),
+    type: 'combination',
+  },
+  {
+    label: '협상담당',
+    value: (
+      <div className="flex flex-col gap-0.5">
+        <span>홍길순 주무관(7급)</span>
+        <span>02-1234-5678</span>
+        <span>010-1234-5678</span>
+      </div>
+    ),
+    type: 'combination',
+  },
+  { label: '입회관', value: '-' },
+]
+
+// 첨부서류 (설계서 slide151~152 — 총 N건, 개별 다운로드)
+const ATTACH_FILES: FileDownloadItem[] = [
+  { id: 'att-1', name: '첨부서류명.hwp', size: '786KB', onDownload: () => console.log('[BidRsltDtl] 다운로드: 첨부서류1') },
+  { id: 'att-2', name: '첨부서류명.hwp', size: '1.2MB', onDownload: () => console.log('[BidRsltDtl] 다운로드: 첨부서류2') },
+]
+
+// 일반정보 탭(M01) — 설계서 순서: 일반정보 → 첨부서류 → 담당자 정보 (slide152 일반정보·첨부서류, slide153 담당자).
+function GeneralInfo() {
+  return (
+    <>
+      <PageTitle as="h2">일반정보</PageTitle>
+      <Accordion type="multiple" defaultValue={['general', 'attach', 'contact']} className="w-full">
+        <AccordionSection value="general" title="일반정보" borderTop={false}>
+          <Table rows={GENERAL_ROWS} />
+        </AccordionSection>
+        <AccordionSection value="attach" title={`첨부서류 (총 ${ATTACH_FILES.length}건)`}>
+          <FileDownloadList files={ATTACH_FILES} />
+        </AccordionSection>
+        <AccordionSection value="contact" title="담당자 정보">
+          <Table rows={CONTACT_ROWS} />
+        </AccordionSection>
+      </Accordion>
+    </>
+  )
+}
+
+function renderTabContent(tab: string) {
+  switch (tab) {
+    case 'general':
+      return <GeneralInfo />
+    case 'item':
+      return <BidRsltDtlListPage />
+    case 'bid':
+      return <BidRsltDtl />
+    case 'nego':
+      return <BidRsltDtl2 />
+    default:
+      return null
+  }
+}
+
+export function BidRsltDtlPage() {
+  const [tab, setTab] = useState('general')
+  const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
+  // 관심공고(즐겨찾기) 등록 여부 — 추후 bdService 응답으로 초기화. 현재 mock false.
+  const [favorite, setFavorite] = useState(false)
+  // 관심공고 등록/제외 토스트.
+  const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
+
+  // 즐겨찾기(관심공고) 토글 — 등록/제외에 따라 아이콘(라인↔채움) + 토스트.
+  const handleToggleFavorite = () => {
+    const next = !favorite
+    setFavorite(next)
+    setToast({
+      open: true,
+      message: next ? '관심공고에 등록 되었습니다.' : '관심공고에서 제외 되었습니다.',
+    })
+    console.log('[BidRsltDtl] 관심공고', next ? '등록' : '제외', id) // 추후 API: bdService.toggleFavorite
+  }
+
+  const { id } = useParams()
+  // 진행단계(prgrsStg) — 입찰결과상세이므로 '입찰'(개찰/낙찰). 추후 bdService 응답으로 대체.
+  const [prgrsStg] = useState('입찰')
+  const steps = stepsByStg(prgrsStg)
+  useEffect(() => {
+    console.log('[BidRsltDtl] 입찰결과상세 조회', id) // 추후 API: bdService.getBidRsltDetail(id)
+  }, [id])
+
+  return (
+    <div ref={rootRef} className="flex w-full flex-col">
+      {/* 상단 블록 — sticky 고정. 스크롤 시 요약정보 축소(infolist 숨김). */}
+      <div
+        className={`sticky top-0 z-20 border-b bg-white transition-colors ${
+          collapsed ? 'border-krds-border-divider' : 'border-transparent'
+        }`}
+      >
+        <SummaryInfo
+          collapsed={collapsed}
+          badges={[{ label: '물품' }, { label: '경쟁입찰' }]}
+          subtitle="정상공고 MST0001-1"
+          title="테스트공고"
+          actions={
+            <SummaryUtilButton
+              icon="KidStar"
+              label={favorite ? '즐겨찾기 해제' : '즐겨찾기 등록'}
+              active={favorite}
+              onClick={handleToggleFavorite}
+            />
+          }
+          rows={SUMMARY_ROWS}
+        />
+
+        {/* 진행 단계 — 스크롤 축소 시 함께 접힘 */}
+        <div
+          aria-hidden={collapsed}
+          className={`grid transition-all duration-200 ease-out motion-reduce:transition-none
+            ${collapsed ? 'grid-rows-[0fr] opacity-0' : 'grid-rows-[1fr] opacity-100'}
+            `}
+        >
+          <div className="overflow-hidden">
+            <div className="bg-krds-bg-primary-faint px-4 py-4">
+              <StepBar orientation="horizontal" items={steps} className="bg-transparent" />
+            </div>
+          </div>
+        </div>
+
+        {/* 탭 */}
+        <div className="px-4">
+          <TabList
+            value={tab}
+            onChange={(next) => {
+              setTab(next)
+              goToContentTop()
+            }}
+            items={TABS}
+          />
+        </div>
+      </div>
+
+      {/* 탭 콘텐츠 — 짧은 탭도 헤더 접힘 지탱 위해 최소 높이 확보(진동 방지).
+          가로 패딩은 각 콘텐츠(PageTitle px-4 / Accordion p-krds-8)가 자체 처리. */}
+      <div className="min-h-[100dvh]">{renderTabContent(tab)}</div>
+
+      {/* 맨위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main). */}
+      <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />
+
+      {/* 관심공고 등록/제외 토스트 */}
+      <Toast open={toast.open} onClose={() => setToast((t) => ({ ...t, open: false }))}>
+        {toast.message}
+      </Toast>
+    </div>
+  )
+}

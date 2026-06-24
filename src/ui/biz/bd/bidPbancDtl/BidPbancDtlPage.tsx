@@ -71,8 +71,6 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 // ── 요약정보 (목업 — 설계서 slide26) ─────────────────────────────────────────
 const SUMMARY_ROWS: SummaryInfoRow[] = [
   { label: '공고일자', value: '2025-12-22' },
-  { label: '입찰참가신청 마감일시', value: '2025-12-23 17:00' },
-  { label: '입찰서제출마감일시', value: '2025-12-24 10:00' },
   { label: '개찰일시', value: '2025-12-24 10:30' },
 ]
 
@@ -82,7 +80,6 @@ export function BidPbancDtlPage() {
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기 바텀시트(9300-36775)
   // 관심공고(즐겨찾기) 등록 여부 — 추후 bdService.getDetail 응답(관심공고 등록 여부)으로 초기화. 현재 mock false.
   const [favorite, setFavorite] = useState(false)
-  const [outputModalOpen, setOutputModalOpen] = useState(false) // 서류 출력 확인(MUI-BD-01-P14)
   const [loginGuideOpen, setLoginGuideOpen] = useState(false) // 로그인 안내(MUI-MS-03-P15)
   const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보 조회 풀팝업(MUI-BD-01-M74)
   // 관심공고 등록/제외 토스트(MUI-BD-01-P13)
@@ -105,9 +102,6 @@ export function BidPbancDtlPage() {
     })
     console.log('[BidDetail] 관심공고', next ? '등록' : '제외', id) // 추후 API: bdService.toggleFavorite
   }
-
-  // 출력 — 서류 출력 확인(P14) 모달 표시. (조달계획 상세와 동일 동작 — 로그인 게이트 없음)
-  const handleOutput = () => setOutputModalOpen(true)
 
   const { id } = useParams()
   // 진행단계(아이템 속성 prgrsStg) — 입찰공고 상세이므로 현재 '입찰'(임의 mock). 추후 bdService.getDetail 응답으로 대체.
@@ -142,15 +136,12 @@ export function BidPbancDtlPage() {
           subtitle="긴급공고 LDG0097-1"
           title="특수작전용대물타격무인항공기"
           actions={
-            <>
-              <SummaryUtilButton
-                icon="KidStar"
-                label={favorite ? '즐겨찾기 해제' : '즐겨찾기 등록'}
-                active={favorite}
-                onClick={handleToggleFavorite}
-              />
-              <SummaryUtilButton icon="Print" label="출력" onClick={handleOutput} />
-            </>
+            <SummaryUtilButton
+              icon="KidStar"
+              label={favorite ? '즐겨찾기 해제' : '즐겨찾기 등록'}
+              active={favorite}
+              onClick={handleToggleFavorite}
+            />
           }
           rows={SUMMARY_ROWS}
         />
@@ -216,20 +207,6 @@ export function BidPbancDtlPage() {
 
       {/* 환율정보 조회 풀팝업 (MUI-BD-01-M74) — 바로가기 '환율정보 바로가기' 로 진입 */}
       <OvsExchrtListFullPopup open={exchrtOpen} onOpenChange={setExchrtOpen} />
-
-      {/* 서류 출력 확인 (MUI-BD-01-P14) — OZ 리포트 연계 전 확인. 확인 시 리포트 호출(스텁). */}
-      <AlertModal
-        open={outputModalOpen}
-        onOpenChange={setOutputModalOpen}
-        variant="info"
-        title="서류 출력 확인"
-        description="OZ 리포트가 실행되며, 로딩에 약간의 시간이 소요됩니다. 서류 출력을 진행할까요?"
-        secondaryAction={{ label: '취소' }}
-        primaryAction={{
-          label: '확인',
-          onClick: () => console.log('[BidDetail] 서류 출력 → OZ 리포트 호출'), // 추후 API: OZ 리포트 연계
-        }}
-      />
 
       {/* 로그인 안내 (MUI-MS-03-P15) — 로그인 필요 동작을 비로그인 사용자가 시도할 때. */}
       <AlertModal
