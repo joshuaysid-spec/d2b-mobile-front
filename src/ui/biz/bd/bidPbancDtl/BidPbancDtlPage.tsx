@@ -4,10 +4,12 @@
 //   + 플로팅 버튼(맨위로 / + → 바로가기 바텀시트).
 // 데이터는 목업 — 추후 bdService.getDetail. 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당.
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 
+import { bdService } from '@/services/bd'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
+import type { BidPbancItem, BidPbancDetail } from '@/types/bd'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
@@ -16,7 +18,7 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { Toast } from '@/ui/common/composites/Toast'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
-import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
+import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { BidPbancDtl } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl'
 import { BidPbancDtl_Tacpg02 } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl_Tacpg02'
 import { BidPbancDtl_Tacpg03 } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl_Tacpg03'
@@ -68,12 +70,6 @@ function stepsByStg(prgrsStg: string): StepItem[] {
   }))
 }
 
-// ── 요약정보 (목업 — 설계서 slide26) ─────────────────────────────────────────
-const SUMMARY_ROWS: SummaryInfoRow[] = [
-  { label: '공고일자', value: '2025-12-22' },
-  { label: '개찰일시', value: '2025-12-24 10:30' },
-]
-
 export function BidPbancDtlPage() {
   const [tab, setTab] = useState('general')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -103,13 +99,16 @@ export function BidPbancDtlPage() {
     console.log('[BidDetail] 관심공고', next ? '등록' : '제외', id) // 추후 API: bdService.toggleFavorite
   }
 
+  // 목록 → 상세 데이터 전달 표준: useParams id + useLocation().state 즉시표시 초기값 + bdService 조회.
   const { id } = useParams()
-  // 진행단계(아이템 속성 prgrsStg) — 입찰공고 상세이므로 현재 '입찰'(임의 mock). 추후 bdService.getDetail 응답으로 대체.
-  const [prgrsStg] = useState('입찰')
-  const steps = stepsByStg(prgrsStg)
+  const passed = useLocation().state as BidPbancItem | null
+  const [detail, setDetail] = useState<BidPbancDetail | null>(passed)
   useEffect(() => {
-    console.log('[BidDetail] 입찰공고 상세 조회', id) // 추후 API: bdService.getDetail(id) → prgrsStg 세팅
-  }, [id])
+    if (!id || detail) return
+    bdService.getBidPbancDetail(id).then(setDetail)
+  }, [id, detail])
+  // 진행단계(prgrsStg) — detail 기반. 미정 시 입찰공고이므로 '입찰' 기본.
+  const steps = stepsByStg(detail?.prgrsStg ?? '입찰')
 
   // 바로가기 바텀시트 항목 (Figma 9300-36775) — 각 신청서 작성/환율정보 이동(스텁).
   // 버튼 색: 작성류 상위 3개 primary · 포기/취소 2개 secondary · 환율정보 1개 tertiary(라인).
@@ -132,9 +131,9 @@ export function BidPbancDtlPage() {
       >
         <SummaryInfo
           collapsed={collapsed}
-          badges={[{ label: '물품' }, { label: '경쟁입찰' }]}
-          subtitle="긴급공고 LDG0097-1"
-          title="특수작전용대물타격무인항공기"
+          badges={[{ label: detail?.taskSeNm ?? '' }, { label: detail?.bidMthdNm ?? '' }]}
+          subtitle={`${detail?.pbancStasNm ?? ''} ${detail?.bidPbancNo ?? ''}`.trim()}
+          title={detail?.bidPbancNm ?? ''}
           actions={
             <SummaryUtilButton
               icon="KidStar"
@@ -143,7 +142,12 @@ export function BidPbancDtlPage() {
               onClick={handleToggleFavorite}
             />
           }
-          rows={SUMMARY_ROWS}
+          rows={[
+            { label: '공고일자', value: detail?.pbancDt ?? '-' },
+            { label: '입찰참가신청 마감일시', value: detail?.bidPtcptAplyDdlnDt ?? '-' },
+            { label: '입찰서제출 마감일시', value: detail?.bidDocSbmsnDdlnDt ?? '-' },
+            { label: '개찰일시', value: detail?.opbidDt ?? '-' },
+          ]}
         />
 
         {/* 진행 단계 — 스크롤 축소 시 함께 접힘 */}

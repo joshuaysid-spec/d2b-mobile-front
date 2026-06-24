@@ -4,7 +4,7 @@
 // 항목명은 설계서 dlt_bidPrgrsList(slide66·67) 기준. 상태값(신청/미동의/등록확정 등)은 설계서 영문 항목명이
 //   없어(상세설계 예정) Figma 표기 텍스트를 그대로 노출.
 import { useEffect, useRef, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Button } from '@/ui/common/base/Button'
@@ -17,31 +17,12 @@ import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
 import { BidAbndAperWrt, type BidAbndAperWrtHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidAbndAperWrt'
 import { BidRtrcnAperInq, type BidRtrcnAperInqHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidRtrcnAperInq'
-import type { BidPrgrsItem } from '@/types/bd'
-
-// 상세 대상(목업) — Figma 9300-38114 예시값 + dlt_bidPrgrsList 항목명. 추후 bdService.getBidProgressDetail(id).
-const DETAIL: BidPrgrsItem & { clsfNo: string } = {
-  rNum: '1',
-  taskSeNm: '물품',
-  pbancNo: '000 000 0000',
-  prcmNo: '00 00 00 00',
-  clsfNo: '00 00 00000',
-  bidNm: '간편한 아침식 제조 및 납품',
-  rfrncNo: '0000 0000',
-  orderInstTelno: '000-0000-0000',
-  ctrtMthdNm: '경쟁입찰',
-  bidMthdNm: '-',
-  bidClrsDt: '2026-03-16 15:00',
-  tndrSbmsnDdlnDt: '2026-03-17 15:00',
-  bzentySeNm: '대표',
-  bfhdSrng: true,
-  bidPrgrsApfr: true,
-  tndr: true,
-}
+import { bdService } from '@/services/bd'
+import type { BidPrgrsItem, BidPrgrsDetail } from '@/types/bd'
 
 // 구분/내용 표 — Figma 9300-38114 행 순서/항목 그대로. 일부 행은 상태텍스트 + 보기 버튼(combination).
 function buildRows(
-  it: typeof DETAIL,
+  it: BidPrgrsDetail,
   onView: (key: string) => void,
 ): TableRow[] {
   // 상태 + 버튼 셀(예: "신청 / 미동의 / 등록확정" 위, [내용 보기] 아래)
@@ -69,7 +50,7 @@ function buildRows(
       type: 'combination',
     },
     { label: '판단번호', value: it.prcmNo },
-    { label: '항목번호', value: it.clsfNo },
+    { label: '항목번호', value: it.clsfNo ?? '-' },
     { label: '입찰건명', value: it.bidNm },
     { label: '통합참조번호', value: it.rfrncNo },
     { label: '발주기관 연락처', value: it.orderInstTelno },
@@ -89,6 +70,8 @@ function buildRows(
 export function BidPrgsDtlInqPage() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const passed = useLocation().state as BidPrgrsItem | null
+  const [detail, setDetail] = useState<BidPrgrsDetail | null>(passed)
   const [shortcutOpen, setShortcutOpen] = useState(false) // 바로가기 시트(9300-43180)
   const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보 조회(M74)
   const [abandonOpen, setAbandonOpen] = useState(false) // 입찰포기신청서(P03)
@@ -97,8 +80,10 @@ export function BidPrgsDtlInqPage() {
   const abandonRef = useRef<BidAbndAperWrtHandle>(null)
   const cancelRef = useRef<BidRtrcnAperInqHandle>(null)
   useEffect(() => {
-    console.log('[M02] 입찰진행 상세 조회', id) // 추후 API: bdService.getBidProgressDetail(id)
-  }, [id])
+    if (!id) return
+    if (detail) return
+    bdService.getBidProgressDetail(id).then(setDetail)
+  }, [id, detail])
 
   // 보기 버튼 → 결과조회 화면 연계. 입찰참가신청서→입찰등록심사 결과조회(M05) · 사전심사(PQ)→사전심사 결과조회(M02).
   const handleView = (key: string) => {
@@ -106,7 +91,7 @@ export function BidPrgsDtlInqPage() {
     else if (key === 'pq') navigate('/bd/srng-rslt')
     else console.log('[M02] 보기', key) // 공고/입찰서 등 — 추후 연계
   }
-  const rows = buildRows(DETAIL, handleView)
+  const rows = detail ? buildRows(detail, handleView) : []
 
   // 바로가기 시트 항목 — 입찰공고상세(M07)와 동일한 버튼 리스트 형식.
   // 색: 작성류(입찰서/입찰참가) primary · 포기/취소 secondary · 환율정보 tertiary(라인).
@@ -123,13 +108,13 @@ export function BidPrgsDtlInqPage() {
       {/* 요약 헤더 — badges(업무구분/입찰방식/신청유형) + 공고번호 + 출력 + 입찰건명 (Figma 9300-38114) */}
       <SummaryInfo
         badges={[
-          { label: DETAIL.taskSeNm },
-          { label: DETAIL.ctrtMthdNm },
+          { label: detail?.taskSeNm ?? '' },
+          { label: detail?.ctrtMthdNm ?? '' },
           { label: '사전심사' },
           { label: '입찰참가' },
         ]}
-        subtitle="긴급공고 LDG0097-1"
-        title="특수작전용대물타격무인항공기"
+        subtitle={detail?.pbancNo ?? ''}
+        title={detail?.bidNm ?? ''}
         actions={
           <button
             type="button"

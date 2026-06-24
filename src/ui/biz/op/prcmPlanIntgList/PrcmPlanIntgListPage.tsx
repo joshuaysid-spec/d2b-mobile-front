@@ -567,7 +567,11 @@ export function PrcmPlanIntgListPage() {
     annual: (id) => `/op/ovs/${id}`,
   }
   const handleCardClick = (item: OpPlanItem) => {
-    navigate((ROUTE_BY_SRCH_TYPE[item.srchType] ?? ROUTE_BY_SRCH_TYPE.plan)(item.id))
+    // 클릭 항목을 state 로 함께 전달 — 상세에서 즉시표시 초기값(재조회 없이 헤더/요약 렌더).
+    // (CLAUDE.md "목록 → 상세 데이터 전달")
+    navigate((ROUTE_BY_SRCH_TYPE[item.srchType] ?? ROUTE_BY_SRCH_TYPE.plan)(item.id), {
+      state: item,
+    })
   }
 
   // ── ⚠️ 임시 목업 검색/페이징 (API 연동 시 이 블록 통째로 삭제 후 재작성) ⚠️ ──────────

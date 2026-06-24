@@ -4,9 +4,11 @@
 // 데이터는 목업 — 추후 API(opService.getDetail)로 대체.
 // 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당이라 본문은 콘텐츠만 렌더.
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+
+import type { OpPlanItem, OpPlanDetail } from '@/types/op'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { opService } from '@/services/op'
@@ -18,7 +20,7 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
-import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
+import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { PrcmPlan_NotiAply } from '@/ui/biz/op/prcmPlanDtl/PrcmPlan_NotiAply'
 import {
   notiAplySchema,
@@ -72,14 +74,6 @@ function stepsByStg(prgrsStg: string): StepItem[] {
   }))
 }
 
-// ── 요약정보 (목업) ────────────────────────────────────────────────────────
-const SUMMARY_ROWS: SummaryInfoRow[] = [
-  { label: '발주예정월', value: '2026-03' },
-  { label: '발주기관', value: '화력총괄계약팀' },
-  { label: '계약방법', value: '총액제' },
-  { label: '예산금액', value: '11,616,000 원' },
-]
-
 export function PrcmPlanDtlPage() {
   const [tab, setTab] = useState('detail')
   // 스크롤 시 상단 블록(요약+스텝+탭) 축소 + sticky 동작 — 로직은 훅에서. (overflow-anchor 진동방지 포함)
@@ -116,13 +110,17 @@ export function PrcmPlanDtlPage() {
   const handleOutput = () => setOutputModalOpen(true)
 
   // 국내 조달계획 상세 조회(스텁). 국외(taskSeNm='국외')는 별도 페이지(/op/ovs/:id)로 분리됨.
+  // 목록→상세 데이터 전달 표준(CLAUDE.md): 목록에서 navigate(state) 로 받은 항목을 즉시표시 초기값으로
+  //   쓰고, 직접 URL 진입(state 없음) 시에만 opService.getDomesticPlanDetail(id) 로 조회한다.
   const { id } = useParams()
-  // 진행단계(아이템 속성 prgrsStg) — 조달계획 상세이므로 현재 '조달'(임의 mock). 추후 opService 응답으로 대체.
-  const [prgrsStg] = useState('조달')
-  const steps = stepsByStg(prgrsStg)
+  const passed = useLocation().state as OpPlanItem | null
+  const [detail, setDetail] = useState<OpPlanDetail | null>(passed)
   useEffect(() => {
-    opService.getDomesticPlanDetail(id ?? '') // 추후: 응답의 prgrsStg 로 setStage
-  }, [id])
+    if (!id || detail) return // 목록에서 state 로 받았으면 재조회 불필요(직접 URL 진입 시 fetch)
+    opService.getDomesticPlanDetail(id).then(setDetail)
+  }, [id, detail])
+  // 진행단계(아이템 속성 prgrsStg) — 조회/전달된 detail 로 구동(없으면 '조달' fallback).
+  const steps = stepsByStg(detail?.prgrsStg ?? '조달')
 
   return (
     <div ref={rootRef} className="flex w-full flex-col">
@@ -136,9 +134,11 @@ export function PrcmPlanDtlPage() {
       >
         <SummaryInfo
           collapsed={collapsed}
-          badges={[{ label: '물품' }, { label: '수의계약' }]}
-          subtitle="판단번호 6000A"
-          title="'26년 K5방독면"
+          badges={[{ label: detail?.taskSeNm ?? '' }, { label: detail?.ctrtMthdNm ?? '' }].filter(
+            (b) => b.label,
+          )}
+          subtitle={`판단번호 ${detail?.prcmNo ?? ''}`}
+          title={detail?.title ?? ''}
           actions={
             <>
               <SummaryUtilButton
@@ -149,7 +149,12 @@ export function PrcmPlanDtlPage() {
               <SummaryUtilButton icon="Print" label="출력" onClick={handleOutput} />
             </>
           }
-          rows={SUMMARY_ROWS}
+          rows={[
+            { label: '발주예정월', value: detail?.orderPrnmntYm ?? '-' },
+            { label: '발주기관', value: detail?.orderDeptNm ?? '-' },
+            { label: '계약방법', value: detail?.ctrtMthd ?? '-' },
+            { label: '예산금액', value: detail ? `${detail.budgetAmt.toLocaleString()} 원` : '-' },
+          ]}
         />
 
         {/* 진행 단계 — 스크롤 축소(collapsed) 시 StepBar 도 함께 접힘(grid-rows 0fr 전환, SummaryInfo 와 동일 방식).

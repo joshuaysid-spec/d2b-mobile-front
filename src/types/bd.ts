@@ -102,3 +102,14 @@ export interface BidPrgrsItem {
   /** 입찰서(견적서) 제출 가능 여부 (tndr) — 신청유형 배지 */
   tndr: boolean
 }
+
+/**
+ * 입찰공고 상세 응답 — 목록→상세 표준. 헤더/요약은 목록 아이템(BidPbancItem)과 동일 필드.
+ * 상세 전용 섹션(일반정보/기초예비가격/품목명세서 등)은 추후 설계서 데이터영역 기준 확장.
+ */
+export type BidPbancDetail = BidPbancItem
+
+/**
+ * 입찰진행 상세 응답 — 목록→상세 표준. 목록 아이템(BidPrgrsItem) + 상세 전용(항목번호 clsfNo 등).
+ */
+export type BidPrgrsDetail = BidPrgrsItem & { clsfNo?: string }

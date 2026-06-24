@@ -299,8 +299,8 @@ export function BidPbancIntgListPage() {
     console.log('[BidList] loadMore → page', next)
   }
   const handleCardClick = (it: BidPbancItem) => {
-    // 입찰공고상세(MUI-BD-01-M07, /bd/:id) 이동.
-    navigate(`/bd/${it.id}`)
+    // 입찰공고상세(MUI-BD-01-M07, /bd/:id) 이동 — 목록 아이템을 state 로 전달(즉시표시 초기값).
+    navigate(`/bd/${it.id}`, { state: it })
   }
 
   // ── ⚠️ 임시 목업 검색/페이징 (API 연동 시 이 블록 통째로 교체) ⚠️ ─────────────────────

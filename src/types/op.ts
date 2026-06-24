@@ -41,3 +41,10 @@ export interface OpPlanItem {
    */
   prgrsStg?: string
 }
+
+/**
+ * 조달계획 상세 응답 — 목록→상세 표준(navigate state + id 조회, CLAUDE.md "목록 → 상세 데이터 전달").
+ * 헤더/요약은 목록 아이템(OpPlanItem)과 동일 필드. 상세 전용 섹션(집행계획·판단내역 등)은
+ * 추후 설계서 데이터영역 기준으로 확장한다.
+ */
+export type OpPlanDetail = OpPlanItem
