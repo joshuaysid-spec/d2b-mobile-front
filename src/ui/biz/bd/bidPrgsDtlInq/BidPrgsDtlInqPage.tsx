@@ -4,7 +4,7 @@
 // 항목명은 설계서 dlt_bidPrgrsList(slide66·67) 기준. 상태값(신청/미동의/등록확정 등)은 설계서 영문 항목명이
 //   없어(상세설계 예정) Figma 표기 텍스트를 그대로 노출.
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Button } from '@/ui/common/base/Button'
@@ -88,6 +88,7 @@ function buildRows(
 
 export function BidPrgsDtlInqPage() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [shortcutOpen, setShortcutOpen] = useState(false) // 바로가기 시트(9300-43180)
   const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보 조회(M74)
   const [abandonOpen, setAbandonOpen] = useState(false) // 입찰포기신청서(P03)
@@ -96,7 +97,12 @@ export function BidPrgsDtlInqPage() {
     console.log('[M02] 입찰진행 상세 조회', id) // 추후 API: bdService.getBidProgressDetail(id)
   }, [id])
 
-  const handleView = (key: string) => console.log('[M02] 보기', key) // 추후: 작성 화면 읽기모드 연계
+  // 보기 버튼 → 결과조회 화면 연계. 입찰참가신청서→입찰등록심사 결과조회(M05) · 사전심사(PQ)→사전심사 결과조회(M02).
+  const handleView = (key: string) => {
+    if (key === 'apfr') navigate('/bd/reg-rslt')
+    else if (key === 'pq') navigate('/bd/srng-rslt')
+    else console.log('[M02] 보기', key) // 공고/입찰서 등 — 추후 연계
+  }
   const rows = buildRows(DETAIL, handleView)
 
   // 바로가기 시트 항목 (Figma 9300-43180) — 작성 화면/환율정보 이동(스텁).

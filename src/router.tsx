@@ -54,6 +54,18 @@ const BidPrgsDtlInqPage = lazy(() =>
     default: m.BidPrgsDtlInqPage,
   })),
 )
+// 입찰등록심사 결과조회(MUI-BD-03-M05, /bd/reg-rslt) — biz/bd/bidRegRsltInq.
+const BidRegRsltInqPage = lazy(() =>
+  import('@/ui/biz/bd/bidRegRsltInq/BidRegRsltInqPage').then((m) => ({
+    default: m.BidRegRsltInqPage,
+  })),
+)
+// 사전심사(PQ) 결과조회(MUI-BD-02-M02, /bd/srng-rslt) — biz/bd/bfhdSrngRsltInq.
+const BfhdSrngRsltInqPage = lazy(() =>
+  import('@/ui/biz/bd/bfhdSrngRsltInq/BfhdSrngRsltInqPage').then((m) => ({
+    default: m.BfhdSrngRsltInqPage,
+  })),
+)
 // 입찰공고 상세(MUI-BD-01-M07~M12, /bd/:id) — biz/bd/bidPbancDtl.
 const BidPbancDtlPage = lazy(() =>
   import('@/ui/biz/bd/bidPbancDtl/BidPbancDtlPage').then((m) => ({
@@ -132,6 +144,16 @@ export const router = createBrowserRouter([
         path: 'bd/prgrs/:id',
         element: <BidPrgsDtlInqPage />,
         handle: { header: { variant: 'sub', util: 'home', title: '입찰진행 상세' } },
+      },
+      {
+        path: 'bd/reg-rslt',
+        element: <BidRegRsltInqPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '입찰등록심사 결과조회' } },
+      },
+      {
+        path: 'bd/srng-rslt',
+        element: <BfhdSrngRsltInqPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '사전심사(PQ) 결과조회' } },
       },
       {
         path: 'bd/:id',
