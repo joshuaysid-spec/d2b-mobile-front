@@ -23,6 +23,7 @@ import { BidPbancDtl_Tacpg03 } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl_Tacpg03
 import { BidPbancDtl_Tacpg04 } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl_Tacpg04'
 import { BidPbancDtl_Tacpg06 } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl_Tacpg06'
 import { BidPbancDtl_Tacpg07 } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl_Tacpg07'
+import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
 
 // ── 탭 (설계서 2.1 화면목록) ─────────────────────────────────────────────────
 //  일반정보(고정) · 기초예비가격(경쟁입찰) · 품목명세서(업무구분 물품) · 계약특수조건 · 공고문안 · 입찰진행현황
@@ -83,6 +84,7 @@ export function BidPbancDtlPage() {
   const [favorite, setFavorite] = useState(false)
   const [outputModalOpen, setOutputModalOpen] = useState(false) // 서류 출력 확인(MUI-BD-01-P14)
   const [loginGuideOpen, setLoginGuideOpen] = useState(false) // 로그인 안내(MUI-MS-03-P15)
+  const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보 조회 풀팝업(MUI-BD-01-M74)
   // 관심공고 등록/제외 토스트(MUI-BD-01-P13)
   const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
 
@@ -104,14 +106,8 @@ export function BidPbancDtlPage() {
     console.log('[BidDetail] 관심공고', next ? '등록' : '제외', id) // 추후 API: bdService.toggleFavorite
   }
 
-  // 출력 — 로그인 필요. 로그인 시 서류 출력 확인(P14) 모달, 비로그인 시 로그인 안내(P15).
-  const handleOutput = () => {
-    if (!isLoggedIn) {
-      setLoginGuideOpen(true)
-      return
-    }
-    setOutputModalOpen(true)
-  }
+  // 출력 — 서류 출력 확인(P14) 모달 표시. (조달계획 상세와 동일 동작 — 로그인 게이트 없음)
+  const handleOutput = () => setOutputModalOpen(true)
 
   const { id } = useParams()
   // 진행단계(아이템 속성 prgrsStg) — 입찰공고 상세이므로 현재 '입찰'(임의 mock). 추후 bdService.getDetail 응답으로 대체.
@@ -207,12 +203,19 @@ export function BidPbancDtlPage() {
             label: it.label,
             variant: it.variant,
             onClick: () => {
-              console.log('[BidDetail] 바로가기', it.id) // 추후: 각 신청서 작성/환율정보 화면 이동
               setShortcutOpen(false)
+              if (it.id === 'fx') {
+                setExchrtOpen(true) // 환율정보 바로가기 → 환율정보 조회 풀팝업(M74)
+                return
+              }
+              console.log('[BidDetail] 바로가기', it.id) // 추후: 각 신청서 작성 화면 이동
             },
           }))}
         />
       </BottomSheet>
+
+      {/* 환율정보 조회 풀팝업 (MUI-BD-01-M74) — 바로가기 '환율정보 바로가기' 로 진입 */}
+      <OvsExchrtListFullPopup open={exchrtOpen} onOpenChange={setExchrtOpen} />
 
       {/* 서류 출력 확인 (MUI-BD-01-P14) — OZ 리포트 연계 전 확인. 확인 시 리포트 호출(스텁). */}
       <AlertModal

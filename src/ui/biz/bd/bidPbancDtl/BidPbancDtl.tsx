@@ -44,6 +44,22 @@ const LICENSE_ROWS: TableRow[] = [
   { label: '그룹', value: '1그룹' },
 ]
 
+// 시공능력평가제한 (설계서 slide28) — 공종(업종)명 + 제한금액
+const CNSTR_CPCTY_ROWS: TableRow[] = [
+  { label: '공종(업종)명', value: '정보통신공사업' },
+  { label: '제한금액', value: '10,000,000,000 원', type: 'number' },
+]
+
+// 지명경쟁업체 (설계서 slide28) — 업체코드/업체명/대표자/사업자등록번호/주소/항목번호
+const DSGNT_BIDDER_ROWS: TableRow[] = [
+  { label: '업체코드', value: '7004F' },
+  { label: '업체명', value: '주식회사 국방전자조달' },
+  { label: '대표자', value: '홍길동' },
+  { label: '사업자등록번호', value: '123-45-67890' },
+  { label: '주소', value: '서울특별시 용산구 한강대로 1' },
+  { label: '항목번호', value: '1' },
+]
+
 // 첨부서류 (설계서 slide28 — 총 N건, 개별 다운로드)
 const ATTACH_FILES: FileDownloadItem[] = [
   { id: 'att-1', name: '입찰공고문.hwp', size: '786KB', onDownload: () => console.log('[M07] 다운로드: 입찰공고문') },
@@ -72,7 +88,7 @@ export function BidPbancDtl() {
       <PageTitle as="h2">일반정보</PageTitle>
       <Accordion
         type="multiple"
-        defaultValue={['general', 'region', 'license', 'attach', 'contact']}
+        defaultValue={['general', 'region', 'license', 'cnstrCpcty', 'dsgntBidder', 'attach', 'contact']}
         className="w-full"
       >
         <AccordionSection value="general" title="일반정보" borderTop={false}>
@@ -90,6 +106,12 @@ export function BidPbancDtl() {
             ]}
           />
           <Table rows={LICENSE_ROWS} />
+        </AccordionSection>
+        <AccordionSection value="cnstrCpcty" title="시공능력평가제한">
+          <Table rows={CNSTR_CPCTY_ROWS} />
+        </AccordionSection>
+        <AccordionSection value="dsgntBidder" title="지명경쟁업체">
+          <Table rows={DSGNT_BIDDER_ROWS} />
         </AccordionSection>
         <AccordionSection value="attach" title={`첨부서류 (총 ${ATTACH_FILES.length}건)`}>
           <FileDownloadList files={ATTACH_FILES} />

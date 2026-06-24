@@ -42,6 +42,12 @@ const BidPbancIntgListPage = lazy(() =>
     default: m.BidPbancIntgListPage,
   })),
 )
+// 입찰진행 목록(MUI-BD-03-M01, /bd/prgrs) — biz/bd/bidPrgrsListForBzenty.
+const BidPrgrsListForBzentyPage = lazy(() =>
+  import('@/ui/biz/bd/bidPrgrsListForBzenty/BidPrgrsListForBzentyPage').then((m) => ({
+    default: m.BidPrgrsListForBzentyPage,
+  })),
+)
 // 입찰공고 상세(MUI-BD-01-M07~M12, /bd/:id) — biz/bd/bidPbancDtl.
 const BidPbancDtlPage = lazy(() =>
   import('@/ui/biz/bd/bidPbancDtl/BidPbancDtlPage').then((m) => ({
@@ -105,6 +111,13 @@ export const router = createBrowserRouter([
         element: <BdopnListPage />,
         handle: {
           header: { variant: 'sub', util: 'search', title: '개찰목록' },
+        },
+      },
+      {
+        path: 'bd/prgrs',
+        element: <BidPrgrsListForBzentyPage />,
+        handle: {
+          header: { variant: 'sub', util: 'search', title: '입찰진행' },
           scrollReset: true,
           showBottomNav: true,
         },

@@ -66,3 +66,39 @@ export interface BdopnItem {
   /** 개찰일시 (예: '2026-03-26 11:00') — 카드 2행 */
   opbidDt: string
 }
+/**
+ * 입찰진행 목록 카드 1건 (MUI-BD-03-M01, 설계서 slide68 데이터영역 dlt_bidPrgrsList).
+ * "조달업체가 신청한 입찰 내역" — 항목명/코드값 설계서 그대로(추후 bdService.getBidProgressList 매핑).
+ */
+export interface BidPrgrsItem {
+  /** 번호 (rNum) — 조회 번호. 카드 식별자/상세 라우팅 키 */
+  rNum: string
+  /** 업무구분 (taskSeNm) — 물품/용역/공사/국외 */
+  taskSeNm: string
+  /** 공고번호 (pbancNo) */
+  pbancNo: string
+  /** 판단번호(공사번호) (prcmNo) — 조달번호 */
+  prcmNo: string
+  /** 입찰건명 (bidNm) */
+  bidNm: string
+  /** 통합참조번호 (rfrncNo) */
+  rfrncNo: string
+  /** 발주기관연락처 (orderInstTelno) */
+  orderInstTelno: string
+  /** 계약방법 (ctrtMthdNm) */
+  ctrtMthdNm: string
+  /** 입찰방법 (bidMthdNm) */
+  bidMthdNm: string
+  /** 입찰참가등록마감일시 (bidClrsDt) */
+  bidClrsDt: string
+  /** 입찰서접수마감일시 (tndrSbmsnDdlnDt) */
+  tndrSbmsnDdlnDt: string
+  /** 업체구분 (bzentySeNm) — 대표/구성 */
+  bzentySeNm: string
+  /** 사전심사(PQ) 공고 여부 (bfhdSrng) — 신청유형 배지 */
+  bfhdSrng: boolean
+  /** 입찰참가신청서 대상 여부 (bidPrgrsApfr) — 신청유형 배지 */
+  bidPrgrsApfr: boolean
+  /** 입찰서(견적서) 제출 가능 여부 (tndr) — 신청유형 배지 */
+  tndr: boolean
+}
