@@ -169,7 +169,7 @@ export function BidPrgrsListForBzentyPage() {
     console.log('[BidPrgrs] loadMore → page', next)
   }
   const handleCardClick = (it: BidPrgrsItem) => {
-    navigate(`/bd/prgrs/${it.rNum}`) // 입찰진행 상세(MUI-BD-03-M02)
+    navigate(`/bd/prgrs/${it.rNum}`) // 입찰진행 상세(MUI-BD-03-M02). 결과/작성 화면은 상세의 보기 버튼에서 연계.
   }
 
   // ── 임시 목업 검색/페이징 (API 연동 시 통째로 교체) ──

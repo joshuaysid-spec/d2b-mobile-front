@@ -1,20 +1,24 @@
-// MUI-BD-03-P04 입찰취소신청서작성 — 입찰취소신청서 작성 FullPopup.
+// MUI-BD-03-P04 입찰취소신청서작성 — 입찰취소신청서 작성 바텀시트 콘텐츠 전용(컨테이너는 부모 소유).
 // Figma 9300-43228(작성)·9300-43569(제출확인) 참고. 내용은 설계서대로.
-// 기존 공통(FullPopup·SummaryInfo·Accordion·Table·TextArea·InputLabel·ButtonGroup·AlertModal)만 조립.
-import * as React from 'react'
+// 부모가 BottomSheet 컨테이너(title/footer/open/onOpenChange)를 소유하고, 여기엔 콘텐츠만.
+// footer '제출' 은 부모가 ref(useImperativeHandle)로 submit() 을 호출 → 제출확인 모달.
+import { forwardRef, useImperativeHandle, useState } from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { TextArea } from '@/ui/common/base/TextArea'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
-import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
-import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 
-export interface BidRtrcnAperInqProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
+export interface BidRtrcnAperInqHandle {
+  /** 부모 BottomSheet footer '제출' 이 호출 — 제출확인 모달을 띄운다 */
+  submit: () => void
+}
+
+interface BidRtrcnAperInqProps {
+  /** 제출 완료(확인) 시 호출(부모가 BottomSheet 를 닫음) */
+  onSubmitted: () => void
 }
 
 const BID_RTRCN_RSN_MAX = 500
@@ -31,42 +35,24 @@ const PBANC_ROWS: TableRow[] = [
   { label: '사업자등록번호', value: '123-56-78901' }, // brno
 ]
 
-const BidRtrcnAperInq = ({ open, onOpenChange }: BidRtrcnAperInqProps) => {
-  // 취소사유(bidRtrcnAplyRsn) — 필수, 최대 500자.
-  const [bidRtrcnAplyRsn, setBidRtrcnAplyRsn] = React.useState('')
-  const [confirmOpen, setConfirmOpen] = React.useState(false)
+const BidRtrcnAperInq = forwardRef<BidRtrcnAperInqHandle, BidRtrcnAperInqProps>(
+  ({ onSubmitted }, ref) => {
+    // 취소사유(bidRtrcnAplyRsn) — 필수, 최대 500자.
+    const [bidRtrcnAplyRsn, setBidRtrcnAplyRsn] = useState('')
+    const [confirmOpen, setConfirmOpen] = useState(false)
 
-  const handleSubmit = () => {
-    console.log('[P04] 입찰취소신청서 제출', { bidRtrcnAplyRsn })
-    // 추후 API: bdService.submitBidCancel
-    setConfirmOpen(false)
-    onOpenChange(false)
-  }
+    // footer '제출' → 제출확인 모달 오픈
+    useImperativeHandle(ref, () => ({ submit: () => setConfirmOpen(true) }), [])
 
-  return (
-    <>
-      <FullPopup
-        open={open}
-        onOpenChange={onOpenChange}
-        title="입찰취소신청서"
-        footer={
-          <ButtonGroup
-            layout="asymmetric"
-            items={[
-              {
-                label: '취소',
-                variant: 'secondary',
-                onClick: () => onOpenChange(false),
-              },
-              {
-                label: '제출',
-                variant: 'primary',
-                onClick: () => setConfirmOpen(true),
-              },
-            ]}
-          />
-        }
-      >
+    const handleConfirm = () => {
+      console.log('[P04] 입찰취소신청서 제출', { bidRtrcnAplyRsn })
+      // 추후 API: bdService.submitBidCancel
+      setConfirmOpen(false)
+      onSubmitted()
+    }
+
+    return (
+      <div className="flex flex-col gap-krds-7">
         <div className="flex flex-col">
           <SummaryInfo
             badges={[
@@ -117,20 +103,20 @@ const BidRtrcnAperInq = ({ open, onOpenChange }: BidRtrcnAperInqProps) => {
             </p>
           </div>
         </div>
-      </FullPopup>
 
-      {/* 제출확인 — Figma 9300-43569 */}
-      <AlertModal
-        open={confirmOpen}
-        onOpenChange={setConfirmOpen}
-        variant="check"
-        title="입찰취소 신청서를 제출하시겠습니까?"
-        secondaryAction={{ label: '취소' }}
-        primaryAction={{ label: '확인', onClick: handleSubmit }}
-      />
-    </>
-  )
-}
+        {/* 제출확인 — Figma 9300-43569 */}
+        <AlertModal
+          open={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          variant="check"
+          title="입찰취소 신청서를 제출하시겠습니까?"
+          secondaryAction={{ label: '취소' }}
+          primaryAction={{ label: '확인', onClick: handleConfirm }}
+        />
+      </div>
+    )
+  },
+)
 BidRtrcnAperInq.displayName = 'BidRtrcnAperInq'
 
 export { BidRtrcnAperInq }
