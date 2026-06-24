@@ -11,7 +11,7 @@ import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
-import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
+import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
@@ -105,13 +105,14 @@ export function BidPrgsDtlInqPage() {
   }
   const rows = buildRows(DETAIL, handleView)
 
-  // 바로가기 시트 항목 (Figma 9300-43180) — 작성 화면/환율정보 이동(스텁).
-  const shortcutItems = [
-    { id: 'bid', label: '입찰서(견적서) 작성하기' },
-    { id: 'apply', label: '입찰참가신청서 작성하기' },
-    { id: 'giveup', label: '입찰포기 신청서 작성하기' },
-    { id: 'cancel', label: '입찰취소 신청서 작성하기' },
-    { id: 'fx', label: '환율정보 바로가기' },
+  // 바로가기 시트 항목 — 입찰공고상세(M07)와 동일한 버튼 리스트 형식.
+  // 색: 작성류(입찰서/입찰참가) primary · 포기/취소 secondary · 환율정보 tertiary(라인).
+  const shortcutItems: { id: string; label: string; variant: 'primary' | 'secondary' | 'tertiary' }[] = [
+    { id: 'bid', label: '입찰서(견적서) 작성하기', variant: 'primary' },
+    { id: 'apply', label: '입찰참가신청서 작성하기', variant: 'primary' },
+    { id: 'giveup', label: '입찰포기 신청서 작성하기', variant: 'secondary' },
+    { id: 'cancel', label: '입찰취소 신청서 작성하기', variant: 'secondary' },
+    { id: 'fx', label: '환율정보 바로가기', variant: 'tertiary' },
   ]
 
   return (
@@ -156,21 +157,13 @@ export function BidPrgsDtlInqPage() {
         plusLabel="바로가기"
       />
 
-      {/* 바로가기 시트 (Figma 9300-43180) — NavigationItemList(> 행) + 확인 footer */}
-      <BottomSheet
-        open={shortcutOpen}
-        onOpenChange={setShortcutOpen}
-        title="바로가기"
-        footer={
-          <Button variant="primary" className="w-full" onClick={() => setShortcutOpen(false)}>
-            확인
-          </Button>
-        }
-      >
-        <NavigationItemList
+      {/* 바로가기 시트 — 입찰공고상세(M07)와 동일한 세로 버튼 리스트(ButtonGroup) */}
+      <BottomSheet open={shortcutOpen} onOpenChange={setShortcutOpen} title="바로가기">
+        <ButtonGroup
+          layout="vertical"
           items={shortcutItems.map((it) => ({
-            id: it.id,
             label: it.label,
+            variant: it.variant,
             onClick: () => {
               setShortcutOpen(false)
               if (it.id === 'fx') setExchrtOpen(true) // 환율정보 바로가기 → 환율정보 조회(M74)
