@@ -160,6 +160,8 @@ const BID_FILTER_SCHEMA: SearchFilterSchema = {
         {
           type: 'radio',
           key: 'newTech',
+          direction: 'horizontal',
+          showIndicator: true,
           options: [
             { value: 'yes', label: '예' },
             { value: 'no', label: '아니오' },

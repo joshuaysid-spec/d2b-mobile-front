@@ -54,10 +54,12 @@ interface BaseField {
 }
 
 export interface RadioFieldDef extends BaseField {
-  type: 'radio' // 세로 라디오 그룹 — value: string
+  type: 'radio' // 라디오 그룹 — value: string
   options: FieldOption[]
   /** 좌측 원형 라디오(○/●) 표시 유무. 기본 false(pill). */
   showIndicator?: boolean
+  /** 배치 방향. 'vertical'(세로 스택, 기본 — 검색유형) / 'horizontal'(가로, 예: 신기술여부 예/아니오). */
+  direction?: 'horizontal' | 'vertical'
 }
 export interface CheckboxFieldDef extends BaseField {
   type: 'checkbox' // 다중 선택 — value: string[]

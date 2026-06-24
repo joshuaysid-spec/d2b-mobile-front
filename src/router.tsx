@@ -48,6 +48,12 @@ const BidPbancDtlPage = lazy(() =>
     default: m.BidPbancDtlPage,
   })),
 )
+// 개찰목록(MUI-BD-08-M01, /bd/opbid) — biz/bd/bdopnList.
+const BdopnListPage = lazy(() =>
+  import('@/ui/biz/bd/bdopnList/BdopnListPage').then((m) => ({
+    default: m.BdopnListPage,
+  })),
+)
 const NotiPrstPage = lazy(() =>
   import('@/ui/biz/cm/notiPrst/NotiPrstPage').then((m) => ({
     default: m.NotiPrstPage,
@@ -90,6 +96,15 @@ export const router = createBrowserRouter([
         element: <BidPbancIntgListPage />,
         handle: {
           header: { variant: 'sub', util: 'search', title: '입찰공고' },
+          scrollReset: true,
+          showBottomNav: true,
+        },
+      },
+      {
+        path: 'bd/opbid',
+        element: <BdopnListPage />,
+        handle: {
+          header: { variant: 'sub', util: 'search', title: '개찰목록' },
           scrollReset: true,
           showBottomNav: true,
         },

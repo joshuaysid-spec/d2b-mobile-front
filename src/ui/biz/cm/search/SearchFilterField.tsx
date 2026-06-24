@@ -116,12 +116,12 @@ const SearchFilterField = ({
   onSelectionClick,
 }: SearchFilterFieldProps) => {
   switch (field.type) {
-    // 검색유형 — 세로 라디오
+    // 라디오 그룹 — 기본 세로(검색유형). field.direction='horizontal' 이면 가로(예: 신기술여부 예/아니오).
     case 'radio':
       return (
         <Field label={field.label} required={field.required}>
           <RadioButtonGroup
-            direction="vertical"
+            direction={field.direction ?? 'vertical'}
             value={(value as string) ?? ''}
             onValueChange={(v) => onChange(v)}
             items={field.options}
