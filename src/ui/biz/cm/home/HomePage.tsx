@@ -170,6 +170,10 @@ export function HomePage() {
       navigate(ROUTES.BD)
       return
     }
+    if (label === '개찰') {
+      navigate(ROUTES.BD_OPBID)
+      return
+    }
     console.log('[Home] 서비스 바로가기', label) // 추후: 각 서비스 화면 이동
   }
 

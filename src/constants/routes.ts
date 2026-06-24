@@ -12,6 +12,8 @@ export const ROUTES = {
   BD_DETAIL: '/bd/:id',
   /** 입찰진행 목록 (MUI-BD-03-M01). */
   BD_PRGRS: '/bd/prgrs',
+  /** 개찰목록 (MUI-BD-08-M01). */
+  BD_OPBID: '/bd/opbid',
   NOTIFICATION: '/notification',
   SUPPORT: '/support',
   MYPAGE: '/mypage',

@@ -202,6 +202,7 @@ const MENU_ROUTES: Record<string, string> = {
   'op-plan': ROUTES.OP, // 조달계획관리
   'bd-noti': ROUTES.BD, // 입찰공고
   'bd-proc': ROUTES.BD_PRGRS, // 입찰진행
+  'bd-open': ROUTES.BD_OPBID, // 개찰(개찰목록 MUI-BD-08-M01)
 }
 
 function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: MenuPageProps) {
