@@ -3,6 +3,7 @@
 // 구성: 업무도움(Infobox) + 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더 + 카드 리스트 + 더보기 + FAB.
 // 데이터/페이징/검색은 페이지 소유. 목록은 목업(dlt_bidPrgrsList, 항목명 설계서 그대로) — 추후 bdService.getBidProgressList.
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
@@ -132,6 +133,7 @@ function aplyBadges(it: BidPrgrsItem): string[] {
 }
 
 export function BidPrgrsListForBzentyPage() {
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false) // 상세필터 풀팝업
   const [filter, setFilter] = useState<SearchFilterValue>(DEFAULT_FILTER)
   const [keyword, setKeyword] = useState('')
@@ -167,8 +169,7 @@ export function BidPrgrsListForBzentyPage() {
     console.log('[BidPrgrs] loadMore → page', next)
   }
   const handleCardClick = (it: BidPrgrsItem) => {
-    // 추후: 입찰진행 상세(MUI-BD-03-M02) 라우팅. 상세 미구현이라 현재는 경계 스텁.
-    console.log('[BidPrgrs] 상세 정보 보기 → 입찰진행 상세(M02) 예정', it.rNum)
+    navigate(`/bd/prgrs/${it.rNum}`) // 입찰진행 상세(MUI-BD-03-M02)
   }
 
   // ── 임시 목업 검색/페이징 (API 연동 시 통째로 교체) ──
