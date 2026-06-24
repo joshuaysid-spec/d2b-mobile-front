@@ -147,6 +147,21 @@ export const router = createBrowserRouter([
         },
       },
       {
+        path: 'bd/prgrs/:id',
+        element: <BidPrgsDtlInqPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '입찰진행 상세' } },
+      },
+      {
+        path: 'bd/reg-rslt',
+        element: <BidRegRsltInqPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '입찰등록심사 결과조회' } },
+      },
+      {
+        path: 'bd/srng-rslt',
+        element: <BfhdSrngRsltInqPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '사전심사(PQ) 결과조회' } },
+      },
+      {
         path: 'bd/result/:id',
         element: <BidRsltDtlPage />,
         handle: { header: { variant: 'sub', util: 'home', title: '입찰결과 상세' } },
