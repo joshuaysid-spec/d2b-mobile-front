@@ -60,6 +60,12 @@ const BdopnListPage = lazy(() =>
     default: m.BdopnListPage,
   })),
 )
+// 입찰결과상세(개찰상세, MUI-BD-09-M01~M04, /bd/result/:id) — biz/bd/bidRsltDtl.
+const BidRsltDtlPage = lazy(() =>
+  import('@/ui/biz/bd/bidRsltDtl/BidRsltDtlPage').then((m) => ({
+    default: m.BidRsltDtlPage,
+  })),
+)
 const NotiPrstPage = lazy(() =>
   import('@/ui/biz/cm/notiPrst/NotiPrstPage').then((m) => ({
     default: m.NotiPrstPage,
@@ -121,6 +127,11 @@ export const router = createBrowserRouter([
           scrollReset: true,
           showBottomNav: true,
         },
+      },
+      {
+        path: 'bd/result/:id',
+        element: <BidRsltDtlPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '입찰결과 상세' } },
       },
       {
         path: 'bd/:id',

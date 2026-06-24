@@ -10,6 +10,7 @@
 // 의 BID_FILTER_SCHEMA 와 항목·라벨·placeholder·옵션을 일치시킨다. 개찰 고유 차이는 일자 토글뿐:
 // 개찰/공고 → 개찰/협상. 검색시트(dept/region/license)는 셸 내장 재사용 — 신규 시트 없음.
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
@@ -251,6 +252,7 @@ const MOCK_BDOPN_LIST: BdopnItem[] = Array.from({ length: TOTAL }, (_, i) => {
 })
 
 export function BdopnListPage() {
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false) // 상세필터 풀팝업
   const [filter, setFilter] = useState<SearchFilterValue>(DEFAULT_FILTER)
   const [keyword, setKeyword] = useState('') // 빠른검색어(입력 중)
@@ -289,8 +291,8 @@ export function BdopnListPage() {
     console.log('[BdopnList] loadMore → page', next)
   }
   const handleCardClick = (it: BdopnItem) => {
-    // 추후: 입찰결과상세(MUI-BD-09-M01) 이동 — 상세화면 구현 시 navigate 연결.
-    console.log('[BdopnList] 카드 클릭(개찰 결과 확인)', it.id, it.bidPbancNo)
+    // 입찰결과상세(개찰상세, MUI-BD-09-M01) 이동.
+    navigate(`/bd/result/${it.id}`)
   }
 
   // ── ⚠️ 임시 목업 검색/페이징 (API 연동 시 이 블록 통째로 교체) ⚠️ ─────────────────────
