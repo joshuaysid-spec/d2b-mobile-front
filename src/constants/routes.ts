@@ -10,6 +10,8 @@ export const ROUTES = {
   BD: '/bd',
   /** 입찰공고 상세 (`:id` 파라미터). 이동: `/bd/${id}`. */
   BD_DETAIL: '/bd/:id',
+  /** 입찰진행 목록 (MUI-BD-03-M01). */
+  BD_PRGRS: '/bd/prgrs',
   NOTIFICATION: '/notification',
   SUPPORT: '/support',
   MYPAGE: '/mypage',

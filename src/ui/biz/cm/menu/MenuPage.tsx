@@ -6,7 +6,9 @@
 //   (예전 biz 전용 MenuGroup·menuData 는 MenuAccordion 과 중복이라 제거 — 공통 컴포넌트로 일원화.)
 // 검색은 cmService.searchAll 스텁 호출 → 결과 없으면 공통 Toast 알림. 핸들러는 console.log 스텁(// 추후 라우팅).
 import { useCallback, useMemo, useState, type ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import { ROUTES } from '@/constants/routes'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { Button } from '@/ui/common/base/Button'
@@ -195,7 +197,15 @@ interface QuickIcon {
   onClick: () => void
 }
 
+// 메뉴 leaf(node.id) → 라우트. 구현된 화면만 등록(미구현은 스텁 console.log 유지).
+const MENU_ROUTES: Record<string, string> = {
+  'op-plan': ROUTES.OP, // 조달계획관리
+  'bd-noti': ROUTES.BD, // 입찰공고
+  'bd-proc': ROUTES.BD_PRGRS, // 입찰진행
+}
+
 function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: MenuPageProps) {
+  const navigate = useNavigate()
   const [keyword, setKeyword] = useState('')
   // 검색 결과 없음 토스트.
   const [emptyToastOpen, setEmptyToastOpen] = useState(false)
@@ -265,10 +275,18 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
   }
 
   // 메뉴 트리 → MenuAccordion items (leaf 클릭은 라우팅 스텁). 렌더마다 재생성 방지(useMemo).
-  const handleLeafClick = useCallback((node: MenuNode) => {
-    console.log('[menu]', node.label)
-    // 추후 라우팅: navigate(menuRoutes[node.id])
-  }, [])
+  const handleLeafClick = useCallback(
+    (node: MenuNode) => {
+      const route = MENU_ROUTES[node.id]
+      if (route) {
+        onOpenChange(false) // 메뉴(전체메뉴 풀팝업) 닫고 이동
+        navigate(route)
+        return
+      }
+      console.log('[menu]', node.label) // 미구현 화면 — 추후 라우팅
+    },
+    [navigate, onOpenChange],
+  )
   const menuItems = useMemo(() => toMenuItems(MENU_TREE, handleLeafClick), [handleLeafClick])
 
   return (
