@@ -15,6 +15,8 @@ import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
+import { BidAbndAperWrt } from '@/ui/biz/bd/bidPrgsDtlInq/BidAbndAperWrt'
+import { BidRtrcnAperInq } from '@/ui/biz/bd/bidPrgsDtlInq/BidRtrcnAperInq'
 import type { BidPrgrsItem } from '@/types/bd'
 
 // 상세 대상(목업) — Figma 9300-38114 예시값 + dlt_bidPrgrsList 항목명. 추후 bdService.getBidProgressDetail(id).
@@ -88,6 +90,8 @@ export function BidPrgsDtlInqPage() {
   const { id } = useParams()
   const [shortcutOpen, setShortcutOpen] = useState(false) // 바로가기 시트(9300-43180)
   const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보 조회(M74)
+  const [abandonOpen, setAbandonOpen] = useState(false) // 입찰포기신청서(P03)
+  const [cancelOpen, setCancelOpen] = useState(false) // 입찰취소신청서(P04)
   useEffect(() => {
     console.log('[M02] 입찰진행 상세 조회', id) // 추후 API: bdService.getBidProgressDetail(id)
   }, [id])
@@ -163,11 +167,10 @@ export function BidPrgsDtlInqPage() {
             label: it.label,
             onClick: () => {
               setShortcutOpen(false)
-              if (it.id === 'fx') {
-                setExchrtOpen(true) // 환율정보 바로가기 → 환율정보 조회(M74)
-                return
-              }
-              console.log('[M02] 바로가기', it.id) // 추후: 각 신청서 작성 화면 이동
+              if (it.id === 'fx') setExchrtOpen(true) // 환율정보 바로가기 → 환율정보 조회(M74)
+              else if (it.id === 'giveup') setAbandonOpen(true) // 입찰포기신청서(P03)
+              else if (it.id === 'cancel') setCancelOpen(true) // 입찰취소신청서(P04)
+              else console.log('[M02] 바로가기', it.id) // 추후: 입찰서/입찰참가신청서 작성 화면 이동
             },
           }))}
         />
@@ -175,6 +178,9 @@ export function BidPrgsDtlInqPage() {
 
       {/* 환율정보 조회 풀팝업 (M74) */}
       <OvsExchrtListFullPopup open={exchrtOpen} onOpenChange={setExchrtOpen} />
+      {/* 입찰포기신청서(P03) / 입찰취소신청서(P04) — 바로가기에서 진입 */}
+      <BidAbndAperWrt open={abandonOpen} onOpenChange={setAbandonOpen} />
+      <BidRtrcnAperInq open={cancelOpen} onOpenChange={setCancelOpen} />
     </div>
   )
 }
