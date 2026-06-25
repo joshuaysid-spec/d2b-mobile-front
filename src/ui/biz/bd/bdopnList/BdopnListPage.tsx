@@ -251,6 +251,16 @@ const MOCK_BDOPN_LIST: BdopnItem[] = Array.from({ length: TOTAL }, (_, i) => {
   return { ...base, id: String(i + 1), bidPbancNo: `${base.bidPbancNo.slice(0, -3)}-${i + 1}` }
 })
 
+/**
+ * id 로 개찰목록 1건 조회 — 입찰결과상세(BidRsltDtlPage)가 URL 의 :id 로 재조회해
+ * 상단(뱃지/공고번호/타이틀/공고일자/개찰일시)을 채우는 용도. id 기반이라 새로고침/직접진입에도 값 유지.
+ * 추후 bdService.getBidRsltDetail(id) 로 교체(목업 공유 종료).
+ */
+export function getBdopnById(id: string | undefined): BdopnItem | undefined {
+  if (!id) return undefined
+  return MOCK_BDOPN_LIST.find((it) => it.id === id)
+}
+
 export function BdopnListPage() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false) // 상세필터 풀팝업
@@ -291,7 +301,8 @@ export function BdopnListPage() {
     console.log('[BdopnList] loadMore → page', next)
   }
   const handleCardClick = (it: BdopnItem) => {
-    // 입찰결과상세(개찰상세, MUI-BD-09-M01) 이동.
+    // 입찰결과상세(개찰상세, MUI-BD-09-M01) 이동. 상세는 URL 의 :id 로 getBdopnById 재조회해
+    // 상단(뱃지/공고번호/타이틀/공고일자/개찰일시)을 이 카드와 동일하게 채움 → 새로고침에도 유지.
     navigate(`/bd/result/${it.id}`)
   }
 
