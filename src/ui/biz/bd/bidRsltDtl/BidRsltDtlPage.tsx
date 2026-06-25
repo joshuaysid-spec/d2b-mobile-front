@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
+import { getBdopnById } from '@/ui/biz/bd/bdopnList/BdopnListPage'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
@@ -39,12 +40,6 @@ function stepsByStg(prgrsStg: string): StepItem[] {
     state: cur < 0 ? 'todo' : i < cur ? 'done' : i === cur ? 'doing' : 'todo',
   }))
 }
-
-// ── 요약정보 (설계서 slide150~151) — 값은 일반정보(slide152) 데이터셋과 일관되게 맞춤(테스트공고/MST0001-1) ──
-const SUMMARY_ROWS: SummaryInfoRow[] = [
-  { label: '공고일자', value: '2025-11-20' },
-  { label: '개찰일시', value: '2025-12-01 10:00' },
-]
 
 // ── 일반정보 탭(M01) 데이터 (설계서 slide152~153) — 라벨은 설계서 순서 그대로, 값은 목업 ──
 const GENERAL_ROWS: TableRow[] = [
@@ -176,6 +171,14 @@ export function BidRsltDtlPage() {
   }
 
   const { id } = useParams()
+  // 개찰목록 카드의 id 로 재조회 — 상단 뱃지·공고번호·타이틀·공고일자·개찰일시를 그 카드와 동일하게 표시.
+  // id 기반이라 새로고침/직접진입에도 값 유지. 추후 bdService.getBidRsltDetail(id) 로 교체.
+  const item = getBdopnById(id)
+  // 요약정보 행(공고일자·개찰일시) — 선택 카드와 동일 값.
+  const summaryRows: SummaryInfoRow[] = [
+    { label: '공고일자', value: item?.pbancDt ?? '-' },
+    { label: '개찰일시', value: item?.opbidDt ?? '-' },
+  ]
   // 진행단계(prgrsStg) — 입찰결과상세이므로 '입찰'(개찰/낙찰). 추후 bdService 응답으로 대체.
   const [prgrsStg] = useState('입찰')
   const steps = stepsByStg(prgrsStg)
@@ -193,9 +196,14 @@ export function BidRsltDtlPage() {
       >
         <SummaryInfo
           collapsed={collapsed}
-          badges={[{ label: '물품' }, { label: '경쟁입찰' }]}
-          subtitle="정상공고 MST0001-1"
-          title="테스트공고"
+          // 뱃지·공고번호·타이틀은 클릭한 개찰목록 카드(item)와 동일하게 표시 (카드와 동일: 뱃지 3개 + '입찰공고번호 …').
+          badges={
+            item
+              ? [{ label: item.pbancStasNm }, { label: item.taskSeNm }, { label: item.bidMthdNm }]
+              : []
+          }
+          subtitle={item ? `입찰공고번호 ${item.bidPbancNo}` : '-'}
+          title={item?.bidPbancNm ?? '-'}
           actions={
             <SummaryUtilButton
               icon="KidStar"
@@ -204,7 +212,7 @@ export function BidRsltDtlPage() {
               onClick={handleToggleFavorite}
             />
           }
-          rows={SUMMARY_ROWS}
+          rows={summaryRows}
         />
 
         {/* 진행 단계 — 스크롤 축소 시 함께 접힘 */}
