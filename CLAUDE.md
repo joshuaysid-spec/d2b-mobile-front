@@ -397,9 +397,9 @@ import { Icon } from '@/ui/common/base/Icon'
   4. 사용 화면은 selectionField 의 `searchSheet` 에 새 종류만 선언 — **시트 파일을 페이지에서 import 하지 않는다.**
 - 적용 예: `PrcmPlanIntgListPage`(검색유형별 `buildOpSearchSchema` resolver + `normalizeOpSearch`) · `HomePage`(정적 schema).
 
-## 목록 → 상세 데이터 전달 (navigate state + id 조회) — 모든 목록/상세 공통 표준
+## 목록 → 상세 데이터 전달 (navigate state + 페이지 목업) — 모든 목록/상세 공통 표준
 
-> **모든 목록 화면에서 상세로 이동할 때 이 패턴을 따른다.** 클릭한 항목을 넘겨 상세 헤더를 즉시 그리고, id 로 상세 API 를 조회해 본문을 채운다. 상세 응답 타입은 **설계서 데이터영역 구조에 맞춘다.**
+> **모든 목록 화면에서 상세로 이동할 때 이 패턴을 따른다.** 클릭한 항목을 navigate state 로 넘겨 상세 **상단(요약/헤더)** 을 그 객체로 그린다. **백엔드 미연동(폐쇄망) 단계에서는 service 스텁을 만들지 않는다** — 상세 본문/탭은 컴포넌트 내 목업으로 구동하고, 상단은 넘어온 항목으로 그린다.
 
 **1) 목록 — 클릭한 항목을 navigate state 로 넘긴다.**
 ```tsx
@@ -407,24 +407,19 @@ navigate(`/bd/${item.id}`, { state: item })   // 클릭한 항목(목록 카드 
 ```
 - state 로 넘기는 값 = 목록 아이템 타입(예: `BidPbancItem`). id 는 URL path 로도 같이 전달(`:id`).
 
-**2) 상세 — id 추출 + state 초기표시 + id 로 조회.**
+**2) 상세 — state 객체로 상단을 그린다 + 페이지 fallback 목업.**
 ```tsx
-const { id } = useParams()
-const passed = useLocation().state as BidPbancItem | null   // 목록에서 넘어온 항목(없을 수 있음)
-const [detail, setDetail] = useState<BidPbancDetail | null>(null)
-useEffect(() => {
-  if (!id) return
-  bdService.getBidPbancDetail(id).then(setDetail)   // 추후 실제 API. 현재는 목업 스텁.
-}, [id])
+// 목록에서 넘어온 항목으로 상단(요약/헤더)을 그린다. 직접 URL 진입(state 없음)이면 페이지 목업.
+const detail = (useLocation().state as BidPbancItem | null) ?? MOCK_BID_PBANC_DETAIL
 ```
-- **id 의 진실원천은 `useParams`** (URL). state 의 `item.id` 는 보조.
-- **헤더/요약은 `passed` 로 즉시 표시**(로딩 전 깜빡임 방지), 본문은 `detail`(조회 결과)로 채운다. `passed` 가 없어도(새로고침·URL 직접 진입) id 로 조회되므로 화면이 빈다거나 깨지지 않게 한다 — **state 는 최적화일 뿐, 진실원천은 조회 결과.**
+- **상단(요약/헤더)은 `detail`(넘어온 항목)로 그린다.** 본문/탭은 컴포넌트 내 목업.
+- **직접 URL 진입·새로고침(state 없음)** 대비 **페이지 내 fallback 목업 상수**(`MOCK_*`, 설계서 항목명/형식 그대로)를 두어 화면이 비거나 깨지지 않게 한다.
+- **service 스텁(`xxxService.getXxxDetail`)·`useEffect` 조회·`setDetail` 을 만들지 않는다** — 폐쇄망/백엔드 미연동 단계에서 죽은 코드만 늘어난다(과거 방식 폐기). API 연동 시점에 이 줄을 실제 조회로 바꾼다.
 
-**3) 상세 응답 타입 = 설계서 데이터영역 구조.**
-- 상세 조회 응답 타입(`BidPbancDetail` 등)은 `src/types/{도메인}.ts` 에 **설계서 데이터영역(섹션/필드)의 항목명·구조 그대로** 정의한다(목록 아이템 타입과 별개 — 목록은 카드용 부분집합, 상세는 전체).
-- **목업은 컴포넌트 인라인 상수가 아니라 services 스텁(`xxxService.getXxxDetail`)에 두고** 그 타입으로 반환한다 — API 연동 시 스텁 본문만 실제 호출로 교체(컴포넌트 무수정).
+**3) 타입은 설계서 데이터영역 기준.**
+- 상세/목록 아이템 타입(`BidPbancItem`·`OpPlanItem` 등)은 `src/types/{도메인}.ts` 에 **설계서 데이터영역(섹션/필드)의 항목명·형식 그대로** 정의한다. 상단이 목록 아이템보다 많은 필드가 필요하면(국외 상세의 USD 예산 등) 그 부분만 페이지 목업으로 보완한다.
 
-**4) 적용 대상.** 조달계획(op)·입찰공고(bd)·입찰진행(bd/prgrs) 등 **모든 목록→상세**. 새 목록/상세 추가 시도 동일.
+**4) 적용 대상.** 조달계획(op)·입찰공고(bd)·입찰진행(bd/prgrs) 등 **모든 목록→상세**. 새 목록/상세 추가 시도 동일. (목록도 service 없이 페이지 인라인 목업 + state 전달.)
 
 ## 폼 검증 (react-hook-form + zod)
 

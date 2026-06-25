@@ -2,9 +2,10 @@
 // 국내 조달계획상세(M03)와 셸은 동일(요약+스텝+탭+useCollapsibleHeader)하나 탭이 다름:
 //   2탭(집행계획상세 M73 / 결과목록 M74). 업무구분·품목명세서·계약특수조건·업체의견·첨부서류·알림신청 없음.
 // 국외 전용 팝업(품목별가격자료 P75 / 목록정보조회 P76·P77)은 추후. 데이터는 목업.
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
+import type { OpPlanItem } from '@/types/op'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
@@ -12,7 +13,6 @@ import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
-import { opService } from '@/services/op'
 import { OvsPrcmPlanDtl } from '@/ui/biz/op/ovsPrcmPlanDtl/OvsPrcmPlanDtl'
 import { OvsPrcmPlanDtl_RsltList } from '@/ui/biz/op/ovsPrcmPlanDtl/OvsPrcmPlanDtl_RsltList'
 
@@ -58,11 +58,9 @@ export function OvsPrcmPlanDtlPage() {
   const [outputModalOpen, setOutputModalOpen] = useState(false)
   const handleOutput = () => setOutputModalOpen(true)
 
-  // 국외 조달계획 상세 조회(스텁). 통합목록에서 국외 카드로만 진입한다.
-  const { id } = useParams()
-  useEffect(() => {
-    opService.getOverseasPlanDetail(id ?? '')
-  }, [id])
+  // 통합목록에서 국외 카드 클릭 시 navigate(state)로 넘어온 항목(OpPlanItem). 백엔드 미연동.
+  //   국외 요약 전용필드(지시예산 USD·조달요구번호 등)는 통합목록 아이템에 없어 페이지 목업으로 보완.
+  const passed = useLocation().state as OpPlanItem | null
 
   return (
     <div ref={rootRef} className="flex w-full flex-col">
@@ -76,9 +74,9 @@ export function OvsPrcmPlanDtlPage() {
       >
         <SummaryInfo
           collapsed={collapsed}
-          badges={[{ label: '국외' }, { label: '일반경쟁' }]}
+          badges={[{ label: '국외' }, { label: passed?.ctrtMthdCd ?? '일반경쟁' }]}
           subtitle="조달요구번호 A-2026-0001"
-          title="'26년 야간투시경 해외구매"
+          title={passed?.prcmPlanNm ?? "'26년 야간투시경 해외구매"}
           actions={
             // 국외(M73)은 알림신청 없음 — 출력만.
             <SummaryUtilButton icon="Print" label="출력" onClick={handleOutput} />

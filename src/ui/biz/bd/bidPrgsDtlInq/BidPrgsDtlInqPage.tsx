@@ -1,10 +1,11 @@
 // 입찰진행 상세조회 (MUI-BD-03-M02, Figma 9300-38114). 입찰진행 목록 카드 → /bd/prgrs/:id 진입.
 // 구성(Figma): 요약 헤더(badges + 공고번호 + 출력 + 입찰건명) + 단일 구분/내용 표 + 플로팅(맨위로/바로가기).
-//   바로가기 시트는 Figma 9300-43180(NavigationItemList + 확인). 데이터는 목업 — 추후 bdService.getBidProgressDetail.
+//   바로가기 시트는 Figma 9300-43180(NavigationItemList + 확인).
+//   데이터는 목업(상단/표=목록에서 넘어온 항목, 없으면 페이지 fallback 목업). 백엔드 미연동.
 // 항목명은 설계서 dlt_bidPrgrsList(slide66·67) 기준. 상태값(신청/미동의/등록확정 등)은 설계서 영문 항목명이
 //   없어(상세설계 예정) Figma 표기 텍스트를 그대로 노출.
-import { useEffect, useRef, useState } from 'react'
-import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { useRef, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Button } from '@/ui/common/base/Button'
@@ -17,8 +18,27 @@ import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
 import { BidAbndAperWrt, type BidAbndAperWrtHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidAbndAperWrt'
 import { BidRtrcnAperInq, type BidRtrcnAperInqHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidRtrcnAperInq'
-import { bdService } from '@/services/bd'
 import type { BidPrgrsItem, BidPrgrsDetail } from '@/types/bd'
+
+// 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — 설계서 dlt_bidPrgrsList 항목명 그대로.
+const MOCK_BID_PRGRS_DETAIL: BidPrgrsDetail = {
+  rNum: '0',
+  taskSeNm: '물품',
+  pbancNo: '000 000 0000',
+  prcmNo: '00 00 00 00',
+  clsfNo: '00 00 00000',
+  bidNm: '간편한 아침식 제조 및 납품',
+  rfrncNo: '0000 0000',
+  orderInstTelno: '000-0000-0000',
+  ctrtMthdNm: '경쟁입찰',
+  bidMthdNm: '-',
+  bidClrsDt: '2026-03-16 15:00',
+  tndrSbmsnDdlnDt: '2026-03-17 15:00',
+  bzentySeNm: '대표',
+  bfhdSrng: true,
+  bidPrgrsApfr: true,
+  tndr: true,
+}
 
 // 구분/내용 표 — Figma 9300-38114 행 순서/항목 그대로. 일부 행은 상태텍스트 + 보기 버튼(combination).
 function buildRows(
@@ -68,10 +88,9 @@ function buildRows(
 }
 
 export function BidPrgsDtlInqPage() {
-  const { id } = useParams()
   const navigate = useNavigate()
-  const passed = useLocation().state as BidPrgrsItem | null
-  const [detail, setDetail] = useState<BidPrgrsDetail | null>(passed)
+  // 목록에서 navigate(state)로 넘어온 항목으로 상단/표를 그린다. 없으면(직접 URL 진입) 페이지 목업.
+  const detail = (useLocation().state as BidPrgrsItem | null) ?? MOCK_BID_PRGRS_DETAIL
   const [shortcutOpen, setShortcutOpen] = useState(false) // 바로가기 시트(9300-43180)
   const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보 조회(M74)
   const [abandonOpen, setAbandonOpen] = useState(false) // 입찰포기신청서(P03)
@@ -79,11 +98,6 @@ export function BidPrgsDtlInqPage() {
   // P03/P04 는 바텀시트 콘텐츠 전용 — 컨테이너/footer 는 여기(부모)가 소유, 제출은 ref 핸들로 호출.
   const abandonRef = useRef<BidAbndAperWrtHandle>(null)
   const cancelRef = useRef<BidRtrcnAperInqHandle>(null)
-  useEffect(() => {
-    if (!id) return
-    if (detail) return
-    bdService.getBidProgressDetail(id).then(setDetail)
-  }, [id, detail])
 
   // 보기 버튼 → 결과조회 화면 연계. 입찰참가신청서→입찰등록심사 결과조회(M05) · 사전심사(PQ)→사전심사 결과조회(M02).
   const handleView = (key: string) => {
@@ -91,7 +105,7 @@ export function BidPrgsDtlInqPage() {
     else if (key === 'pq') navigate('/bd/srng-rslt')
     else console.log('[M02] 보기', key) // 공고/입찰서 등 — 추후 연계
   }
-  const rows = detail ? buildRows(detail, handleView) : []
+  const rows = buildRows(detail, handleView)
 
   // 바로가기 시트 항목 — 입찰공고상세(M07)와 동일한 버튼 리스트 형식.
   // 색: 작성류(입찰서/입찰참가) primary · 포기/취소 secondary · 환율정보 tertiary(라인).

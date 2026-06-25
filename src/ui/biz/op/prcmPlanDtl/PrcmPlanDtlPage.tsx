@@ -1,17 +1,16 @@
 // 조달계획 상세 (MUI-OP-01-M03, Figma 9300-37444). 카드 클릭 → /op/:id 진입.
 // 구성(Figma contents area): 요약정보(SummaryInfo) + 스텝바(StepBar) + 탭(TabList)
 //   + 탭 콘텐츠(탭별 컴포넌트 분리: PrcmPlanDtl / PrcmPlanDtl_PrdList / PrcmPlanDtl_OpnnList / PrcmPlanDtl_spclCtrt / PrcmPlanDtl_Doc).
-// 데이터는 목업 — 추후 API(opService.getDetail)로 대체.
+// 데이터는 목업(상단=목록에서 넘어온 항목, 없으면 페이지 fallback 목업). 백엔드 미연동.
 // 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당이라 본문은 콘텐츠만 렌더.
-import { useEffect, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import type { OpPlanItem, OpPlanDetail } from '@/types/op'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
-import { opService } from '@/services/op'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Button } from '@/ui/common/base/Button'
@@ -31,6 +30,25 @@ import { PrcmPlanDtl_PrdList } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_PrdList
 import { PrcmPlanDtl_OpnnList } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_OpnnList'
 import { PrcmPlanDtl_spclCtrt } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_spclCtrt'
 import { PrcmPlanDtl_Doc } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_Doc'
+
+// 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — 설계서 dlt_prcmPlanList 항목명/형식 그대로.
+// 평소엔 목록에서 navigate(state)로 받은 항목으로 상단을 그린다(아래 detail).
+const MOCK_PLAN_DETAIL: OpPlanDetail = {
+  id: '0',
+  srchType: 'plan',
+  no: 1,
+  taskSeNm: '물품',
+  prcmNo: '6000A',
+  orderPrnmntYm: '2026-03',
+  prcmPlanNm: "'26년 K5방독면",
+  deptCd: '화력총괄계약팀',
+  userNm: '홍길동',
+  ctrtMthdCd: '수의계약',
+  bidMthdCd: '전자입찰',
+  drctnAmt: 11616000,
+  implPrgrsStcd: '조달계획',
+  prgrsStg: '조달',
+}
 
 // ── 탭 (Figma m_tab) ──────────────────────────────────────────────────────
 const TABS: TabItem[] = [
@@ -109,18 +127,11 @@ export function PrcmPlanDtlPage() {
   const [outputModalOpen, setOutputModalOpen] = useState(false)
   const handleOutput = () => setOutputModalOpen(true)
 
-  // 국내 조달계획 상세 조회(스텁). 국외(taskSeNm='국외')는 별도 페이지(/op/ovs/:id)로 분리됨.
-  // 목록→상세 데이터 전달 표준(CLAUDE.md): 목록에서 navigate(state) 로 받은 항목을 즉시표시 초기값으로
-  //   쓰고, 직접 URL 진입(state 없음) 시에만 opService.getDomesticPlanDetail(id) 로 조회한다.
-  const { id } = useParams()
-  const passed = useLocation().state as OpPlanItem | null
-  const [detail, setDetail] = useState<OpPlanDetail | null>(passed)
-  useEffect(() => {
-    if (!id || detail) return // 목록에서 state 로 받았으면 재조회 불필요(직접 URL 진입 시 fetch)
-    opService.getDomesticPlanDetail(id).then(setDetail)
-  }, [id, detail])
-  // 진행단계(아이템 속성 prgrsStg) — 조회/전달된 detail 로 구동(없으면 '조달' fallback).
-  const steps = stepsByStg(detail?.prgrsStg ?? '조달')
+  // 목록 → 상세 데이터 전달: 목록에서 navigate(state)로 넘어온 항목으로 상단을 그린다.
+  //   직접 URL 진입(state 없음)이면 페이지 목업(MOCK_PLAN_DETAIL)으로 대체. (백엔드 미연동)
+  const detail = (useLocation().state as OpPlanItem | null) ?? MOCK_PLAN_DETAIL
+  // 진행단계(아이템 속성 prgrsStg) — detail 로 구동(없으면 '조달' fallback).
+  const steps = stepsByStg(detail.prgrsStg ?? '조달')
 
   return (
     <div ref={rootRef} className="flex w-full flex-col">

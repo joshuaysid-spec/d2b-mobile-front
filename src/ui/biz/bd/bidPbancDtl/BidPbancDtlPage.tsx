@@ -2,11 +2,11 @@
 // 레퍼런스: 조달계획 상세 PrcmPlanDtlPage (요약정보+스텝바+탭+탭콘텐츠 동일 패턴).
 // 구성: 요약정보(SummaryInfo) + 스텝바(StepBar, 입찰 진행) + 탭(6개) + 탭 콘텐츠(탭별 컴포넌트 분리)
 //   + 플로팅 버튼(맨위로 / + → 바로가기 바텀시트).
-// 데이터는 목업 — 추후 bdService.getDetail. 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당.
-import { useEffect, useState } from 'react'
+// 데이터는 목업(상단=목록에서 넘어온 항목, 없으면 페이지 fallback 목업). 백엔드 미연동.
+// 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당.
+import { useState } from 'react'
 import { useParams, useLocation } from 'react-router-dom'
 
-import { bdService } from '@/services/bd'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
 import type { BidPbancItem, BidPbancDetail } from '@/types/bd'
@@ -57,6 +57,24 @@ function renderTabContent(tab: string) {
   }
 }
 
+// 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — 설계서 dlt_bidPbancIntgList 항목명/형식 그대로.
+const MOCK_BID_PBANC_DETAIL: BidPbancDetail = {
+  id: '0',
+  rnum: 1,
+  pbancTpcd: '긴급공고',
+  g2BBidPbancNo: 'LDG0097',
+  g2BBidPbancCycl: '1',
+  rfrncNo: '2025LDG56349',
+  rprsItemNm: '특수작전용대물타격무인항공기',
+  csrtName: '-',
+  orderInstNm: '육군 탄약지원사령부',
+  prdcpIdntySmdocDdlnDt: '2025-12-22 17:00',
+  bidClrsDt: '2025-12-23 17:00',
+  tndrSbmsnDdlnDt: '2025-12-24 10:00',
+  brprc: 619520000,
+  prgrsStg: '입찰',
+}
+
 // 단계표시기(StepBar) 5단계 라벨 — 설계서 단계표시기(조달→입찰→계약→이행→대금청구).
 // 현재 단계는 아이템 속성 prgrsStg(진행단계) 값으로 결정. (bidStatNm 은 입찰 세부상태로 별개)
 const STEP_LABELS = ['조달', '입찰', '계약', '이행', '대금청구'] as const
@@ -99,16 +117,12 @@ export function BidPbancDtlPage() {
     console.log('[BidDetail] 관심공고', next ? '등록' : '제외', id) // 추후 API: bdService.toggleFavorite
   }
 
-  // 목록 → 상세 데이터 전달 표준: useParams id + useLocation().state 즉시표시 초기값 + bdService 조회.
+  // 목록 → 상세 데이터 전달: 목록에서 navigate(state)로 넘어온 항목으로 상단을 그린다.
+  //   직접 URL 진입(state 없음)이면 페이지 목업(MOCK_BID_PBANC_DETAIL)으로 대체. (백엔드 미연동)
   const { id } = useParams()
-  const passed = useLocation().state as BidPbancItem | null
-  const [detail, setDetail] = useState<BidPbancDetail | null>(passed)
-  useEffect(() => {
-    if (!id || detail) return
-    bdService.getBidPbancDetail(id).then(setDetail)
-  }, [id, detail])
+  const detail = (useLocation().state as BidPbancItem | null) ?? MOCK_BID_PBANC_DETAIL
   // 진행단계(prgrsStg) — detail 기반. 미정 시 입찰공고이므로 '입찰' 기본.
-  const steps = stepsByStg(detail?.prgrsStg ?? '입찰')
+  const steps = stepsByStg(detail.prgrsStg ?? '입찰')
 
   // 바로가기 바텀시트 항목 (Figma 9300-36775) — 각 신청서 작성/환율정보 이동(스텁).
   // 버튼 색: 작성류 상위 3개 primary · 포기/취소 2개 secondary · 환율정보 1개 tertiary(라인).
