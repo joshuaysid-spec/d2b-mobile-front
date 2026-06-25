@@ -8,14 +8,17 @@ import type { OpPlanDetail } from '@/types/op'
 const MOCK_PLAN_DETAIL: OpPlanDetail = {
   id: '0',
   srchType: 'plan',
+  no: 1,
   taskSeNm: '물품',
-  ctrtMthdNm: '수의계약',
   prcmNo: '6000A',
-  title: "'26년 K5방독면",
   orderPrnmntYm: '2026-03',
-  orderDeptNm: '화력총괄계약팀',
-  ctrtMthd: '총액제',
-  budgetAmt: 11616000,
+  prcmPlanNm: "'26년 K5방독면",
+  deptCd: '화력총괄계약팀',
+  userNm: '홍길동',
+  ctrtMthdCd: '수의계약',
+  bidMthdCd: '전자입찰',
+  drctnAmt: 11616000,
+  implPrgrsStcd: '조달계획',
   prgrsStg: '조달',
 }
 

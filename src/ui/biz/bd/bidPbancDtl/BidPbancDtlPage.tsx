@@ -131,9 +131,9 @@ export function BidPbancDtlPage() {
       >
         <SummaryInfo
           collapsed={collapsed}
-          badges={[{ label: detail?.taskSeNm ?? '' }, { label: detail?.bidMthdNm ?? '' }]}
-          subtitle={`${detail?.pbancStasNm ?? ''} ${detail?.bidPbancNo ?? ''}`.trim()}
-          title={detail?.bidPbancNm ?? ''}
+          badges={[{ label: detail?.pbancTpcd ?? '' }]}
+          subtitle={`공고번호 ${detail?.g2BBidPbancNo ?? ''}`}
+          title={detail?.rprsItemNm ?? ''}
           actions={
             <SummaryUtilButton
               icon="KidStar"
@@ -143,10 +143,10 @@ export function BidPbancDtlPage() {
             />
           }
           rows={[
-            { label: '공고일자', value: detail?.pbancDt ?? '-' },
-            { label: '입찰참가신청 마감일시', value: detail?.bidPtcptAplyDdlnDt ?? '-' },
-            { label: '입찰서제출 마감일시', value: detail?.bidDocSbmsnDdlnDt ?? '-' },
-            { label: '개찰일시', value: detail?.opbidDt ?? '-' },
+            { label: '발주기관', value: detail?.orderInstNm ?? '-' },
+            { label: '입찰참가등록 마감일시', value: detail?.bidClrsDt ?? '-' },
+            { label: '입찰서제출 마감일시', value: detail?.tndrSbmsnDdlnDt ?? '-' },
+            { label: '기초예가금액', value: detail ? `${detail.brprc.toLocaleString()} 원` : '-' },
           ]}
         />
 

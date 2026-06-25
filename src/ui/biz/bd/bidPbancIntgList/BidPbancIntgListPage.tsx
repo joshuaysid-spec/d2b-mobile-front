@@ -26,8 +26,8 @@ import type { BidPbancItem } from '@/types/bd'
 
 // 빠른검색 대상 — 설계서 검색조건(공고명/공고번호).
 const SEARCH_TARGETS = [
-  { value: 'bidPbancNm', label: '공고명' },
-  { value: 'bidPbancNo', label: '공고번호' },
+  { value: 'rprsItemNm', label: '공고명' },
+  { value: 'g2BBidPbancNo', label: '공고번호' },
 ]
 
 // ── 상세필터(MUI-BD-01-M02) schema — 공통 SearchFilter 셸이 받아 렌더. 설계서 1.1~1.4 / Figma 9300-37350 ──
@@ -200,63 +200,76 @@ const DEFAULT_FILTER: SearchFilterValue = {
 const dlt_bidPbancList: BidPbancItem[] = [
   {
     id: '1',
-    bidPbancNo: '2026LGM000604191-01',
-    bidPbancNm: '(26-물품-04) 간편한 아침식 제조 및 납품',
-    pbancStasNm: '정상공고',
-    taskSeNm: '물품',
-    bidMthdNm: '경쟁입찰',
-    pbancDt: '2026-02-12',
-    bidPtcptAplyDdlnDt: '2026-03-16 15:00',
-    bidDocSbmsnDdlnDt: '2026-03-17 15:00',
-    opbidDt: '2026-03-26 11:00',
-    bidStatNm: '개찰전',
+    rnum: 1,
+    pbancTpcd: '정상공고',
+    g2BBidPbancNo: 'LDG0097',
+    g2BBidPbancCycl: '01',
+    rfrncNo: '2026LGM000604191',
+    rprsItemNm: '(26-물품-04) 간편한 아침식 제조 및 납품',
+    csrtName: '-',
+    orderInstNm: '국방부조달본부',
+    prdcpIdntySmdocDdlnDt: '2026-03-15 15:00',
+    bidClrsDt: '2026-03-16 15:00',
+    tndrSbmsnDdlnDt: '2026-03-17 15:00',
+    brprc: 184_500_000,
   },
   {
     id: '2',
-    bidPbancNo: '2026LGM000598220-01',
-    bidPbancNm: '(26-용역-12) 정보화시스템 유지관리 용역',
-    pbancStasNm: '정정공고',
-    taskSeNm: '용역',
-    bidMthdNm: '공개수의',
-    pbancDt: '2026-02-10',
-    bidPtcptAplyDdlnDt: '2026-03-10 15:00',
-    bidDocSbmsnDdlnDt: '2026-03-11 15:00',
-    opbidDt: '2026-03-20 11:00',
-    bidStatNm: '개찰전',
+    rnum: 2,
+    pbancTpcd: '정정공고',
+    g2BBidPbancNo: 'LDG0098',
+    g2BBidPbancCycl: '01',
+    rfrncNo: '2026LGM000598220',
+    rprsItemNm: '(26-용역-12) 정보화시스템 유지관리 용역',
+    csrtName: '-',
+    orderInstNm: '방위사업청',
+    prdcpIdntySmdocDdlnDt: '2026-03-09 15:00',
+    bidClrsDt: '2026-03-10 15:00',
+    tndrSbmsnDdlnDt: '2026-03-11 15:00',
+    brprc: 96_000_000,
   },
   {
     id: '3',
-    bidPbancNo: '2026LGM000601077-01',
-    bidPbancNm: '(26-공사-07) 군 관사 리모델링 공사',
-    pbancStasNm: '취소공고',
-    taskSeNm: '공사',
-    bidMthdNm: '제한경쟁',
-    pbancDt: '2026-02-05',
-    bidPtcptAplyDdlnDt: '2026-03-05 15:00',
-    bidDocSbmsnDdlnDt: '2026-03-06 15:00',
-    opbidDt: '2026-03-16 11:00',
-    bidStatNm: '개찰전',
+    rnum: 3,
+    pbancTpcd: '취소공고',
+    g2BBidPbancNo: 'LDG0099',
+    g2BBidPbancCycl: '01',
+    rfrncNo: '2026LGM000601077',
+    rprsItemNm: '(26-공사-07) 군 관사 리모델링 공사',
+    csrtName: '군 관사 리모델링 공사',
+    orderInstNm: '육군본부',
+    prdcpIdntySmdocDdlnDt: '2026-03-04 15:00',
+    bidClrsDt: '2026-03-05 15:00',
+    tndrSbmsnDdlnDt: '2026-03-06 15:00',
+    brprc: 1_250_000_000,
   },
   {
     id: '4',
-    bidPbancNo: '2026LGM000605432-01',
-    bidPbancNm: '(26-국외-02) 정밀부품 국외 도입',
-    pbancStasNm: '긴급공고',
-    taskSeNm: '국외',
-    bidMthdNm: '협상에의한계약',
-    pbancDt: '2026-02-14',
-    bidPtcptAplyDdlnDt: '2026-03-02 15:00',
-    bidDocSbmsnDdlnDt: '2026-03-03 15:00',
-    opbidDt: '2026-03-12 11:00',
-    bidStatNm: '개찰전',
+    rnum: 4,
+    pbancTpcd: '긴급공고',
+    g2BBidPbancNo: 'LDG0100',
+    g2BBidPbancCycl: '01',
+    rfrncNo: '2026LGM000605432',
+    rprsItemNm: '(26-국외-02) 정밀부품 국외 도입',
+    csrtName: '-',
+    orderInstNm: '해군본부',
+    prdcpIdntySmdocDdlnDt: '2026-03-01 15:00',
+    bidClrsDt: '2026-03-02 15:00',
+    tndrSbmsnDdlnDt: '2026-03-03 15:00',
+    brprc: 532_800_000,
   },
 ]
 
 const TOTAL = 258 // 총 건수(목업 — 실제 API total)
-// 목업 확장 — 보유 4건을 인덱스로 복제해 TOTAL 건 구성(공고번호·id 는 고유하게).
+// 목업 확장 — 보유 4건을 인덱스로 복제해 TOTAL 건 구성(공고번호·id·순번은 고유하게).
 const MOCK_LIST: BidPbancItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dlt_bidPbancList[i % dlt_bidPbancList.length]
-  return { ...base, id: String(i + 1), bidPbancNo: `${base.bidPbancNo.slice(0, -3)}-${i + 1}` }
+  return {
+    ...base,
+    id: String(i + 1),
+    rnum: i + 1,
+    g2BBidPbancNo: `LDG${String(97 + i).padStart(4, '0')}`,
+  }
 })
 
 export function BidPbancIntgListPage() {
@@ -264,7 +277,7 @@ export function BidPbancIntgListPage() {
   const [open, setOpen] = useState(false) // 상세필터 풀팝업
   const [filter, setFilter] = useState<SearchFilterValue>(DEFAULT_FILTER)
   const [keyword, setKeyword] = useState('') // 빠른검색어(입력 중)
-  const [targets, setTargets] = useState<string[]>(['bidPbancNm']) // 빠른검색 대상(single — 1개만)
+  const [targets, setTargets] = useState<string[]>(['rprsItemNm']) // 빠른검색 대상(single — 1개만)
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
   // 빠른검색 '적용' 상태 — 검색 버튼(또는 Enter) 실행 시에만 확정(입력 중에는 목록 안 걸러짐).
@@ -282,7 +295,7 @@ export function BidPbancIntgListPage() {
     // bdService.getList(toRequest(value)) → 목록 재조회
   }
   const handleQuickSearch = () => {
-    const target = targets[0] ?? 'bidPbancNm'
+    const target = targets[0] ?? 'rprsItemNm'
     setAppliedSearch({ keyword: keyword.trim(), target })
     setPage(1)
     console.log('[BidList] 빠른검색', { keyword, target })
@@ -310,7 +323,7 @@ export function BidPbancIntgListPage() {
     if (!appliedSearch || !appliedSearch.keyword) return MOCK_LIST
     const kw = appliedSearch.keyword.toLowerCase()
     return MOCK_LIST.filter((it) => {
-      const field = appliedSearch.target === 'bidPbancNo' ? it.bidPbancNo : it.bidPbancNm
+      const field = appliedSearch.target === 'g2BBidPbancNo' ? it.g2BBidPbancNo : it.rprsItemNm
       return field.toLowerCase().includes(kw)
     })
   }, [appliedSearch])
@@ -322,20 +335,14 @@ export function BidPbancIntgListPage() {
   // 목업 → Card props 매핑
   const cardItems: CardListItem[] = visibleList.map((it) => ({
     id: it.id,
-    badges: (
-      <>
-        <Badge>{it.pbancStasNm}</Badge>
-        <Badge>{it.taskSeNm}</Badge>
-        <Badge>{it.bidMthdNm}</Badge>
-      </>
-    ),
-    subtitle: `입찰공고번호 ${it.bidPbancNo}`,
-    title: it.bidPbancNm,
+    badges: [<Badge key="pbancTpcd">{it.pbancTpcd}</Badge>],
+    subtitle: `공고번호 ${it.g2BBidPbancNo}-${it.g2BBidPbancCycl}`,
+    title: it.rprsItemNm,
     rows: [
-      { label: '공고일자', value: it.pbancDt },
-      { label: '입찰참가신청 마감일시', value: it.bidPtcptAplyDdlnDt },
-      { label: '입찰서제출 마감일시', value: it.bidDocSbmsnDdlnDt },
-      { label: '개찰일시', value: it.opbidDt },
+      { label: '발주기관', value: it.orderInstNm },
+      { label: '입찰참가등록 마감일시', value: it.bidClrsDt },
+      { label: '입찰서제출 마감일시', value: it.tndrSbmsnDdlnDt },
+      { label: '기초예가금액', value: `${it.brprc.toLocaleString()} 원` },
     ],
     onClick: () => handleCardClick(it),
   }))

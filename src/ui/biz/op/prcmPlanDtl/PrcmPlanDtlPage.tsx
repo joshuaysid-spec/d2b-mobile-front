@@ -134,11 +134,11 @@ export function PrcmPlanDtlPage() {
       >
         <SummaryInfo
           collapsed={collapsed}
-          badges={[{ label: detail?.taskSeNm ?? '' }, { label: detail?.ctrtMthdNm ?? '' }].filter(
+          badges={[{ label: detail?.taskSeNm ?? '' }, { label: detail?.ctrtMthdCd ?? '' }].filter(
             (b) => b.label,
           )}
           subtitle={`판단번호 ${detail?.prcmNo ?? ''}`}
-          title={detail?.title ?? ''}
+          title={detail?.prcmPlanNm ?? ''}
           actions={
             <>
               <SummaryUtilButton
@@ -151,9 +151,9 @@ export function PrcmPlanDtlPage() {
           }
           rows={[
             { label: '발주예정월', value: detail?.orderPrnmntYm ?? '-' },
-            { label: '발주기관', value: detail?.orderDeptNm ?? '-' },
-            { label: '계약방법', value: detail?.ctrtMthd ?? '-' },
-            { label: '예산금액', value: detail ? `${detail.budgetAmt.toLocaleString()} 원` : '-' },
+            { label: '발주기관', value: detail?.deptCd ?? '-' },
+            { label: '입찰방법', value: detail?.bidMthdCd ?? '-' },
+            { label: '예산금액', value: detail ? `${detail.drctnAmt.toLocaleString()} 원` : '-' },
           ]}
         />
 

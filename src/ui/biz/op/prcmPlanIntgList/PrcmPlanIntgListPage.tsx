@@ -375,7 +375,7 @@ const DEFAULT_VALUE: OpSearchFilter = {
 //   기본(조달계획/사전규격): 조달명 · 판단번호
 //   연간조달계획: 재고번호 · 조달요구번호 (기본 선택 = 재고번호)
 const SEARCH_TARGETS = [
-  { value: 'prcmNm', label: '조달명' },
+  { value: 'prcmPlanNm', label: '조달명' },
   { value: 'prcmNo', label: '판단번호' },
 ]
 const ANNUAL_SEARCH_TARGETS = [
@@ -393,101 +393,125 @@ const dlt_prcmPlanList: OpPlanItem[] = [
   {
     id: '1',
     srchType: 'plan',
+    no: 1,
     taskSeNm: '물품',
-    ctrtMthdNm: '수의계약',
+    ctrtMthdCd: '수의계약',
+    bidMthdCd: '전자입찰',
     prcmNo: '6000A',
-    title: "'26년 K5방독면",
+    prcmPlanNm: "'26년 K5방독면",
     orderPrnmntYm: '2026-03',
-    orderDeptNm: '화력총괄계약팀',
-    ctrtMthd: '총액제',
-    budgetAmt: 11616000,
+    deptCd: '화력총괄계약팀',
+    userNm: '김조달',
+    drctnAmt: 11616000,
+    implPrgrsStcd: '조달계획',
   },
   {
     id: '2',
     srchType: 'plan',
+    no: 2,
     taskSeNm: '용역',
-    ctrtMthdNm: '일반경쟁',
+    ctrtMthdCd: '일반경쟁',
+    bidMthdCd: '전자입찰',
     prcmNo: '6000B',
-    title: "'26년 정보화 유지보수 사업",
+    prcmPlanNm: "'26년 정보화 유지보수 사업",
     orderPrnmntYm: '2026-04',
-    orderDeptNm: '정보화팀',
-    ctrtMthd: '총액제',
-    budgetAmt: 92472000,
+    deptCd: '정보화팀',
+    userNm: '이정보',
+    drctnAmt: 92472000,
+    implPrgrsStcd: '공고게시',
   },
   {
     id: '3',
     srchType: 'plan',
+    no: 3,
     taskSeNm: '공사',
-    ctrtMthdNm: '제한경쟁',
+    ctrtMthdCd: '제한경쟁',
+    bidMthdCd: '전자입찰',
     prcmNo: '6000C',
-    title: "'26년 막사 보수 공사",
+    prcmPlanNm: "'26년 막사 보수 공사",
     orderPrnmntYm: '2026-02',
-    orderDeptNm: '시설관리단',
-    ctrtMthd: '총액제',
-    budgetAmt: 158000000,
+    deptCd: '시설관리단',
+    userNm: '박시설',
+    drctnAmt: 158000000,
+    implPrgrsStcd: '계약대기',
   },
   // 조달계획 · 국외(업무구분) — srchType=plan 이므로 조달계획상세(/op/:id)로 이동
   {
     id: '4',
     srchType: 'plan',
+    no: 4,
     taskSeNm: '국외',
-    ctrtMthdNm: '일반경쟁',
+    ctrtMthdCd: '일반경쟁',
+    bidMthdCd: '전자입찰',
     prcmNo: '6000D',
-    title: "'26년 야간투시경 해외구매",
+    prcmPlanNm: "'26년 야간투시경 해외구매",
     orderPrnmntYm: '2026-05',
-    orderDeptNm: '해외조달팀',
-    ctrtMthd: '단가제',
-    budgetAmt: 540000000,
+    deptCd: '해외조달팀',
+    userNm: '최해외',
+    drctnAmt: 540000000,
+    implPrgrsStcd: '계약완료',
   },
   // 사전규격 · 국내(물품/용역/공사 — 국외 없음) → /op/spec/:id
   {
     id: '5',
     srchType: 'spec',
+    no: 5,
     taskSeNm: '용역',
-    ctrtMthdNm: '일반경쟁',
+    ctrtMthdCd: '일반경쟁',
+    bidMthdCd: '전자입찰',
     prcmNo: '6000E',
-    title: "'26년 통신장비 사전규격",
+    prcmPlanNm: "'26년 통신장비 사전규격",
     orderPrnmntYm: '2026-03',
-    orderDeptNm: '통신정보팀',
-    ctrtMthd: '총액제',
-    budgetAmt: 47200000,
+    deptCd: '통신정보팀',
+    userNm: '정통신',
+    drctnAmt: 47200000,
+    implPrgrsStcd: '조달계획',
   },
   {
     id: '7',
     srchType: 'spec',
+    no: 6,
     taskSeNm: '물품',
-    ctrtMthdNm: '수의계약',
+    ctrtMthdCd: '수의계약',
+    bidMthdCd: '전자입찰',
     prcmNo: '6000G',
-    title: "'26년 전투화 사전규격",
+    prcmPlanNm: "'26년 전투화 사전규격",
     orderPrnmntYm: '2026-04',
-    orderDeptNm: '피복관리팀',
-    ctrtMthd: '총액제',
-    budgetAmt: 33500000,
+    deptCd: '피복관리팀',
+    userNm: '한피복',
+    drctnAmt: 33500000,
+    implPrgrsStcd: '조달계획',
   },
   {
     id: '8',
     srchType: 'spec',
+    no: 7,
     taskSeNm: '공사',
-    ctrtMthdNm: '제한경쟁',
+    ctrtMthdCd: '제한경쟁',
+    bidMthdCd: '전자입찰',
     prcmNo: '6000H',
-    title: "'26년 정비고 증축 사전규격",
+    prcmPlanNm: "'26년 정비고 증축 사전규격",
     orderPrnmntYm: '2026-05',
-    orderDeptNm: '시설관리단',
-    ctrtMthd: '총액제',
-    budgetAmt: 210000000,
+    deptCd: '시설관리단',
+    userNm: '박시설',
+    drctnAmt: 210000000,
+    implPrgrsStcd: '공고게시',
   },
   // 연간조달계획 · 국외만 → /op/ovs/:id (국외 분기)
   {
     id: '6',
     srchType: 'annual',
+    no: 8,
     taskSeNm: '국외',
-    ctrtMthdNm: '일반경쟁',
+    ctrtMthdCd: '일반경쟁',
+    bidMthdCd: '전자입찰',
     prcmNo: '6000F',
-    title: "'26년 연간 군수품 해외조달",
+    prcmPlanNm: "'26년 연간 군수품 해외조달",
     orderPrnmntYm: '2026-06',
-    orderDeptNm: '해외조달팀',
-    ctrtMthd: '단가제',
-    budgetAmt: 880000000,
+    deptCd: '해외조달팀',
+    userNm: '최해외',
+    drctnAmt: 880000000,
+    implPrgrsStcd: '계약대기',
   },
 ]
 
@@ -500,8 +524,8 @@ const dlt_prcmPlanList: OpPlanItem[] = [
 //   → MOCK_LIST · filteredList(useMemo) · visibleList(slice) 모두 제거 대상.
 const MOCK_LIST: OpPlanItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dlt_prcmPlanList[i % dlt_prcmPlanList.length]
-  // id·prcmNo 는 고유해야 하므로 인덱스로 구분 (key 안정성 + 판단번호 검색 데모용)
-  return { ...base, id: String(i + 1), prcmNo: `${base.prcmNo}-${i + 1}` }
+  // id·prcmNo·no 는 고유해야 하므로 인덱스로 구분 (key 안정성 + 판단번호 검색 데모용)
+  return { ...base, id: String(i + 1), no: i + 1, prcmNo: `${base.prcmNo}-${i + 1}` }
 })
 
 export function PrcmPlanIntgListPage() {
@@ -509,7 +533,7 @@ export function PrcmPlanIntgListPage() {
   const [open, setOpen] = useState(false) // 상세필터 풀팝업
   const [filter, setFilter] = useState<SearchFilterValue>(DEFAULT_VALUE)
   const [keyword, setKeyword] = useState('') // 빠른검색어(입력 중)
-  const [targets, setTargets] = useState<string[]>(['prcmNm']) // 빠른검색 대상(single — 1개만)
+  const [targets, setTargets] = useState<string[]>(['prcmPlanNm']) // 빠른검색 대상(single — 1개만)
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
   // 빠른검색 '적용' 상태 — 검색 버튼(또는 Enter)을 눌렀을 때만 확정된다.
@@ -529,7 +553,7 @@ export function PrcmPlanIntgListPage() {
     // 검색유형이 바뀌면 빠른검색 대상을 그 유형 기본값으로 리셋(연간조달=재고번호, 그 외=조달명).
     // (이전 선택 'prcmNm' 등이 새 유형 칩에 없어 비활성으로 남는 것 방지)
     if (value.srchType !== filter.srchType) {
-      setTargets([value.srchType === 'annual' ? 'stockNo' : 'prcmNm'])
+      setTargets([value.srchType === 'annual' ? 'stockNo' : 'prcmPlanNm'])
     }
     setFilter(value)
     setPage(1) // 필터(검색유형 등) 적용 시 첫 페이지부터
@@ -540,7 +564,7 @@ export function PrcmPlanIntgListPage() {
   }
   const handleQuickSearch = () => {
     // 검색대상(targets)은 single 칩이라 항상 1개만 선택됨 — 첫 값을 검색 기준으로 사용.
-    const target = targets[0] ?? 'prcmNm'
+    const target = targets[0] ?? 'prcmPlanNm'
     setAppliedSearch({ keyword: keyword.trim(), target })
     setPage(1) // 새 검색은 첫 페이지부터
     console.log('[OpList] 빠른검색', { keyword, target })
@@ -577,7 +601,7 @@ export function PrcmPlanIntgListPage() {
   // ── ⚠️ 임시 목업 검색/페이징 (API 연동 시 이 블록 통째로 삭제 후 재작성) ⚠️ ──────────
   // [현재] 보유한 MOCK_LIST 를 클라이언트에서 필터(검색) + 슬라이스(더보기) 한다.
   //   filteredList: SEARCH_TARGET(검색대상)에 따라 검색 필드를 바꿔 부분일치(대소문자 무시)로 거름.
-  //     - 'prcmNm'(조달명)  → 카드 제목(it.title)
+  //     - 'prcmPlanNm'(조달명)  → 카드 제목(it.prcmPlanNm)
   //     - 'prcmNo'(판단번호) → 판단번호(it.prcmNo)
   //     - 연간조달 'stockNo'(재고번호)/'prcmReqNo'(조달요구번호) → 목업에 필드 없어 prcmNo 로 대체(API 연동 시 매핑)
   //     아직 검색 실행 전(appliedSearch null)이거나 검색어가 비면 전체(MOCK_LIST).
@@ -594,7 +618,7 @@ export function PrcmPlanIntgListPage() {
     const kw = appliedSearch.keyword.toLowerCase()
     return byType.filter((it) => {
       // 조달명만 제목 검색, 나머지(판단번호·재고번호·조달요구번호)는 prcmNo 검색(목업 한계).
-      const field = appliedSearch.target === 'prcmNm' ? it.title : it.prcmNo
+      const field = appliedSearch.target === 'prcmPlanNm' ? it.prcmPlanNm : it.prcmNo
       return field.toLowerCase().includes(kw)
     })
   }, [appliedSearch, filter.srchType])
@@ -611,16 +635,16 @@ export function PrcmPlanIntgListPage() {
     badges: (
       <>
         <Badge>{it.taskSeNm}</Badge>
-        <Badge>{it.ctrtMthdNm}</Badge>
+        <Badge>{it.ctrtMthdCd}</Badge>
       </>
     ),
     subtitle: `판단번호 ${it.prcmNo}`,
-    title: it.title,
+    title: it.prcmPlanNm,
     rows: [
       { label: '발주예정월', value: it.orderPrnmntYm },
-      { label: '발주기관', value: it.orderDeptNm },
-      { label: '계약방법', value: it.ctrtMthd },
-      { label: '예산금액', value: `${it.budgetAmt.toLocaleString()} 원` },
+      { label: '발주기관', value: it.deptCd },
+      { label: '입찰방법', value: it.bidMthdCd },
+      { label: '예산금액', value: `${it.drctnAmt.toLocaleString()} 원` },
     ],
     onClick: () => handleCardClick(it),
   }))

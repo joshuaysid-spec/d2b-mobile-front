@@ -6,16 +6,18 @@ import type { BidPbancDetail, BidPrgrsDetail } from '@/types/bd'
 // 입찰공고 상세(M07) 헤더/요약 목업 — 설계서 항목명/형식. 추후 API 응답으로 대체.
 const MOCK_BID_PBANC_DETAIL: BidPbancDetail = {
   id: '0',
-  bidPbancNo: 'LDG0097-1',
-  bidPbancNm: '특수작전용대물타격무인항공기',
-  pbancStasNm: '긴급공고',
-  taskSeNm: '물품',
-  bidMthdNm: '경쟁입찰',
-  pbancDt: '2025-12-22',
-  bidPtcptAplyDdlnDt: '2025-12-23 17:00',
-  bidDocSbmsnDdlnDt: '2025-12-24 10:00',
-  opbidDt: '2025-12-24 10:30',
-  bidStatNm: '개찰전',
+  rnum: 1,
+  pbancTpcd: '긴급공고',
+  g2BBidPbancNo: 'LDG0097',
+  g2BBidPbancCycl: '1',
+  rfrncNo: '2025LDG56349',
+  rprsItemNm: '특수작전용대물타격무인항공기',
+  csrtName: '-',
+  orderInstNm: '육군 탄약지원사령부',
+  prdcpIdntySmdocDdlnDt: '2025-12-22 17:00',
+  bidClrsDt: '2025-12-23 17:00',
+  tndrSbmsnDdlnDt: '2025-12-24 10:00',
+  brprc: 619520000,
   prgrsStg: '입찰',
 }
 

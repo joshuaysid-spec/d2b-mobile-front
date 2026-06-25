@@ -12,32 +12,37 @@ export type OpSearchFilter = SearchFilterValue
  */
 export type OpSrchType = 'plan' | 'spec' | 'annual'
 
-// 조달계획 통합목록 데이터(dlt_prcmPlanList, 기획서 p15 1.4) 카드 1건 (목업/추후 API 매핑).
+// 조달계획 통합목록 데이터(설계서 dlt_prcmPlanList) 카드 1건 — 항목명 설계서 그대로.
 export interface OpPlanItem {
   /** 카드 식별자 (상세 라우팅 키) */
   id: string
-  /** 검색유형 — 'spec'(사전규격)이면 사전규격상세로 라우팅. */
+  /** 검색유형(srchType) — 'spec'(사전규격)이면 사전규격상세로 라우팅. */
   srchType: OpSrchType
+  /** 순번 (no) */
+  no: number
   /** 업무구분(taskSeNm) — 물품/용역/공사/국외. '국외'면 국외 조달(국내/국외 분기 기준). */
   taskSeNm: string
-  /** 계약방법 뱃지 (예: '수의계약') */
-  ctrtMthdNm: string
-  /** 판단번호 (예: '6000A') — 카드 subtitle(주요 정보) */
+  /** 판단번호(prcmNo, 예: '6000A') — 카드 subtitle */
   prcmNo: string
-  /** 카드 제목 (예: "'26년 K5방독면") */
-  title: string
-  /** 발주예정월 (예: '2026-03') */
+  /** 발주예정월(orderPrnmntYm, yyyy-mm) */
   orderPrnmntYm: string
-  /** 발주기관 (예: '화력총괄계약팀') */
-  orderDeptNm: string
-  /** 계약방법 (예: '총액제') */
-  ctrtMthd: string
-  /** 예산금액 (원, 정수) — 표시 시 천단위 콤마 + ' 원' */
-  budgetAmt: number
+  /** 제목(prcmPlanNm) — 카드 title */
+  prcmPlanNm: string
+  /** 발주기관(deptCd, 상위코드 RIC — 조회결과는 기관명) */
+  deptCd: string
+  /** 담당자(userNm) */
+  userNm: string
+  /** 계약방법(ctrtMthdCd, 상위코드 CTMC — 조회결과는 계약방법명) */
+  ctrtMthdCd: string
+  /** 입찰방법(bidMthdCd, 상위코드 BDTC — 조회결과는 입찰방법명) */
+  bidMthdCd: string
+  /** 예산금액(drctnAmt, 원 정수) — 표시 시 천단위 콤마 + ' 원' */
+  drctnAmt: number
+  /** 진행상태(implPrgrsStcd) — 조달계획/공고게시/계약대기/계약완료 */
+  implPrgrsStcd: string
   /**
-   * 진행단계 — 단계표시기(StepBar) 구동값. 조달/입찰/계약/이행/대금청구 5단계 중 현재 단계.
-   * ⚠️ 설계서 데이터영역 미정의(상세설계 예정) — 단계표시기 구동용으로 추가(사용자 승인).
-   *    진행상태 implPrgrsStcd(조달계획/공고게시/계약대기/계약완료)는 조달 세부상태로 별개.
+   * 진행단계 — 단계표시기(StepBar) 구동값(조달/입찰/계약/이행/대금청구).
+   * ⚠️ 설계서 데이터영역 미정의(상세설계 예정) — 단계표시기 구동용 추가(사용자 승인). implPrgrsStcd 와 별개.
    */
   prgrsStg?: string
 }
