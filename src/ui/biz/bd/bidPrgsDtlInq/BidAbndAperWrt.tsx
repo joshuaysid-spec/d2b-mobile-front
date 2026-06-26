@@ -125,8 +125,8 @@ const BidAbndAperWrt = forwardRef<BidAbndAperWrtHandle, BidAbndAperWrtProps>(
           </AccordionSection>
         </Accordion>
 
-        {/* 서약문 박스(Figma 9300-43269) */}
-        <div className="px-krds-8 pb-krds-8">
+        {/* 서약문 박스(Figma 9300-43269) — 좌우 패딩은 시트 본문(px-16) 제공, 하단 간격만 */}
+        <div className="pb-krds-8">
           <OathBox statement="우리 회사가 귀 부대에 제출한 전자입찰서를 포기합니다." />
         </div>
       </div>

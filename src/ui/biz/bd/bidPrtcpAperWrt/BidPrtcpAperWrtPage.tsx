@@ -132,8 +132,8 @@ export function BidPrtcpAperWrtPage() {
       goTab(tabOrder[tabIdx + 1])
       return
     }
-    console.log('[M14] 전자서명하기', { pbancNo: detail.pbancNo })
-    // 추후 API/라우팅: 전자서명(MUI-BD-04-M21) 화면으로 이동
+    // 마지막 탭(문의및동의) 다음 = 전자서명(MUI-BD-04-M21). 서명 완료 시 신청완료(M08)로.
+    navigate(`/bd/prgrs/${detail.rNum}/elsgn`, { state: { detail, aplyType: 'apfr' } })
   }
   const handlePrev = () => {
     if (tabIdx > 0) {

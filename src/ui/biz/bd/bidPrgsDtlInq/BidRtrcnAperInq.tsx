@@ -78,15 +78,15 @@ const BidRtrcnAperInq = forwardRef<BidRtrcnAperInqHandle, BidRtrcnAperInqProps>(
             title={detail.bidNm}
           />
 
-          {/* 공고일반 */}
+          {/* 공고일반 — flush: 시트 본문(px-16) 안이라 아코디언 콘텐츠 좌우 패딩 제거(2중 패딩 방지) */}
           <Accordion type="multiple" defaultValue={['pbanc']}>
-            <AccordionSection value="pbanc" title="공고일반" borderTop={false}>
+            <AccordionSection value="pbanc" title="공고일반" borderTop={false} flush>
               <Table rows={pbancRows} />
             </AccordionSection>
           </Accordion>
 
-          {/* 취소사유 */}
-          <div className="flex flex-col gap-krds-5 p-krds-8">
+          {/* 취소사유 — 좌우 패딩은 시트 본문(px-16)이 제공, 여기선 상하 간격만(py) */}
+          <div className="flex flex-col gap-krds-5 py-krds-8">
             <InputLabel htmlFor="bidRtrcnAplyRsn" required>
               취소사유
             </InputLabel>
@@ -102,8 +102,8 @@ const BidRtrcnAperInq = forwardRef<BidRtrcnAperInqHandle, BidRtrcnAperInqProps>(
             </div>
           </div>
 
-          {/* 서약문 박스(Figma 9300-43269) */}
-          <div className="px-krds-8 pb-krds-8 pt-krds-5">
+          {/* 서약문 박스(Figma 9300-43269) — 좌우 패딩은 시트 본문(px-16) 제공, 상하 간격만 */}
+          <div className="pb-krds-8 pt-krds-5">
             <OathBox statement="우리 회사가 귀 부대에 제출한 전자입찰서를 취소하오니 무효 처리하여 주시기 바랍니다." />
           </div>
         </div>

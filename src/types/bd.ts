@@ -132,3 +132,27 @@ export type BidPbancDetail = BidPbancItem
  * 입찰진행 상세 응답 — 목록→상세 표준. 목록 아이템(BidPrgrsItem) + 상세 전용(항목번호 clsfNo 등).
  */
 export type BidPrgrsDetail = BidPrgrsItem & { clsfNo?: string }
+
+/**
+ * 신청서 작성 플로우 종류 — 전자서명(M21)/신청완료(M08)의 표시 텍스트 분기 구동값.
+ * 설계서 slide132·133: "사전심사(PQ), 입찰참가신청, 입찰서에 따라 표시 텍스트 변경".
+ */
+export type AplyFlowType = 'pq' | 'apfr' | 'tndr'
+
+/**
+ * 전자서명(MUI-BD-04-M21)·신청완료(MUI-BD-06-M08) 진입 시 navigate state.
+ * 견적서작성하기/입찰참가신청서 제출 → 전자서명(Elsgn) → 신청완료(AplyCmptn) 로 흐른다.
+ */
+export interface AplyFlowState {
+  /** 요약 헤더 구동용 입찰진행 항목 */
+  detail: BidPrgrsItem
+  /** 작성 유형 — 사전심사(PQ)/입찰참가신청/입찰서. 표시 텍스트 분기 */
+  aplyType: AplyFlowType
+  // ── 신청완료(M08) 표시 항목 ───────────────────────────────────────────────
+  // ⚠️ 설계서 데이터영역 미정의(상세설계 예정) — 신청완료 표시용 임시 항목(사용자 승인 rcptNo/rcptDt).
+  //    상세설계에서 영문 항목명이 확정되면 그 이름으로 교체한다.
+  /** 접수번호 (rcptNo) — 예: '0000 000 0000' */
+  rcptNo?: string
+  /** 접수일시 (rcptDt) — 예: '2025-10-31 12:30' */
+  rcptDt?: string
+}

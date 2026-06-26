@@ -16,6 +16,9 @@
 //  - 패딩: pt-[20px] pb-[16px] px-[16px], 영역 간 gap-16
 //  - title: 19 Bold ink, items-start, close icon 24px (살짝 위쪽 정렬 pt-[3px])
 //  - body: flex-1 overflow-y-auto, 17 Regular ink 기본
+//    ⚠️ 본문(Content)에 이미 좌우 px-[16px] 패딩이 있다 → children 콘텐츠는 자체 좌우 패딩(px-*)을
+//       추가하지 말 것(2중 패딩 금지). 좌우는 시트가 제공하고, 콘텐츠는 상하 간격(py-*/gap-*)만 조절한다.
+//       (SummaryInfo 는 flushX, AccordionSection 은 flush 로 자체 좌우 패딩을 끈다.)
 //  - footer: 옵션. onConfirm 주입 시 자동으로 풀폭 primary "확인" 버튼 생성
 //
 // 닫힘 경로 (4가지, dismissable=true 기본):

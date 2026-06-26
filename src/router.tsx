@@ -78,6 +78,14 @@ const BidPrtcpAperWrtPage = lazy(() =>
     default: m.BidPrtcpAperWrtPage,
   })),
 )
+// 전자서명(MUI-BD-04-M21, /bd/prgrs/:id/elsgn) — biz/bd/elsgn. 사전심사/입찰참가/입찰서 공용 전자서명. 견적서작성하기·신청서 제출 → 이 화면 → 신청완료.
+const ElsgnPage = lazy(() =>
+  import('@/ui/biz/bd/elsgn/ElsgnPage').then((m) => ({ default: m.ElsgnPage })),
+)
+// 신청 완료(MUI-BD-06-M08, /bd/prgrs/:id/aply-cmptn) — biz/bd/aplyCmptn. 전자서명 완료 후 작성완료 표시(유형별 텍스트).
+const AplyCmptnPage = lazy(() =>
+  import('@/ui/biz/bd/aplyCmptn/AplyCmptnPage').then((m) => ({ default: m.AplyCmptnPage })),
+)
 // 사전심사(PQ)신청(MUI-BD-02-M01, /bd/bfhd-srng-aply) — biz/bd/bfhdSrngAply.
 const BfhdSrngAplyPage = lazy(() =>
   import('@/ui/biz/bd/bfhdSrngAply/BfhdSrngAplyPage').then((m) => ({
@@ -178,6 +186,16 @@ export const router = createBrowserRouter([
         path: 'bd/prgrs/:id/apfr/form',
         element: <BidPrtcpAperWrtPage />,
         handle: { header: { variant: 'sub', util: 'home', title: '입찰참가신청서' } },
+      },
+      {
+        path: 'bd/prgrs/:id/elsgn',
+        element: <ElsgnPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '전자서명' } },
+      },
+      {
+        path: 'bd/prgrs/:id/aply-cmptn',
+        element: <AplyCmptnPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '신청완료' } },
       },
       {
         path: 'bd/bfhd-srng-aply',
