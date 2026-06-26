@@ -6,6 +6,7 @@ import { forwardRef, useImperativeHandle } from 'react'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
+import type { BidPrgrsItem } from '@/types/bd'
 
 export interface BidAbndAperWrtHandle {
   /** 부모 BottomSheet footer '제출하기' 가 호출 — 제출 처리 후 onSubmitted() 로 시트 닫힘 알림 */
@@ -13,20 +14,19 @@ export interface BidAbndAperWrtHandle {
 }
 
 interface BidAbndAperWrtProps {
+  /** 상세에서 넘어온 항목(navigate state) — 요약/공고일반을 이 항목으로 그린다. */
+  detail: BidPrgrsItem
   /** 제출 완료 시 호출(부모가 BottomSheet 를 닫음) */
   onSubmitted: () => void
 }
 
-// 공고일반 (설계서 dmt_bidPbancInfo 항목명 그대로)
-interface BidPbancInfo {
-  pbancNo: string // 공고번호
-  orderInstNm: string // 발주기관
-  prcmNo: string // 판단번호/공사번호
-  rfrncNo: string // 통합참조번호
-  bzentyCd: string // 업체코드
-  bzentyNm: string // 업체명
-  rprsvNm: string // 대표자
-  brno: string // 사업자등록번호
+// 업체내역 (설계서 dmt_bzentyInfo) — 로그인 업체 정보라 목록 항목에 없어 목업 유지.
+const MOCK_BZENTY = {
+  bzentyCd: '00000', // 업체코드
+  bzentyNm: '㈜업체명표기영역', // 업체명
+  rprsvNm: '홍길동', // 대표자
+  brno: '123-56-78901', // 사업자등록번호
+  orderInstNm: '육군 탄약지원사령부', // 발주기관(공고 항목, 목록 미보유 → 목업)
 }
 
 // 품목내역 (설계서 dlt_itemList 항목명 그대로)
@@ -42,18 +42,7 @@ interface ItemListRow {
   drctnAmt: string // 금액
 }
 
-// ── 목업 (설계서 데이터영역 값 그대로) ──────────────────────────────
-const MOCK_PBANC: BidPbancInfo = {
-  pbancNo: '긴급공고 LDG0097-1',
-  orderInstNm: '육군 탄약지원사령부',
-  prcmNo: '56349',
-  rfrncNo: '2025LDG56349',
-  bzentyCd: '00000',
-  bzentyNm: '㈜업체명표기영역',
-  rprsvNm: '홍길동',
-  brno: '123-56-78901',
-}
-
+// ── 품목내역 목업 (설계서 dlt_itemList 값 그대로) ─────────────────────
 const MOCK_ITEMS: ItemListRow[] = [
   {
     rNum: '1',
@@ -69,28 +58,29 @@ const MOCK_ITEMS: ItemListRow[] = [
 ]
 
 const BidAbndAperWrt = forwardRef<BidAbndAperWrtHandle, BidAbndAperWrtProps>(
-  ({ onSubmitted }, ref) => {
+  ({ detail, onSubmitted }, ref) => {
     useImperativeHandle(
       ref,
       () => ({
         submit: () => {
-          console.log('[P03] 입찰포기신청서 제출')
+          console.log('[P03] 입찰포기신청서 제출', { pbancNo: detail.pbancNo })
           // 추후 API: bdService.submitBidAbandon
           onSubmitted()
         },
       }),
-      [onSubmitted],
+      [detail, onSubmitted],
     )
 
+    // 공고일반(dmt_bidPbancInfo) — 공고 식별값은 상세 항목, 업체내역은 목업.
     const pbancRows: TableRow[] = [
-      { label: '공고번호', value: MOCK_PBANC.pbancNo },
-      { label: '발주기관', value: MOCK_PBANC.orderInstNm },
-      { label: '판단번호/공사번호', value: MOCK_PBANC.prcmNo },
-      { label: '통합참조번호', value: MOCK_PBANC.rfrncNo },
-      { label: '업체코드', value: MOCK_PBANC.bzentyCd },
-      { label: '업체명', value: MOCK_PBANC.bzentyNm },
-      { label: '대표자', value: MOCK_PBANC.rprsvNm },
-      { label: '사업자등록번호', value: MOCK_PBANC.brno },
+      { label: '공고번호', value: detail.pbancNo },
+      { label: '발주기관', value: MOCK_BZENTY.orderInstNm },
+      { label: '판단번호/공사번호', value: detail.prcmNo },
+      { label: '통합참조번호', value: detail.rfrncNo },
+      { label: '업체코드', value: MOCK_BZENTY.bzentyCd },
+      { label: '업체명', value: MOCK_BZENTY.bzentyNm },
+      { label: '대표자', value: MOCK_BZENTY.rprsvNm },
+      { label: '사업자등록번호', value: MOCK_BZENTY.brno },
     ]
 
     const item = MOCK_ITEMS[0]
@@ -110,13 +100,13 @@ const BidAbndAperWrt = forwardRef<BidAbndAperWrtHandle, BidAbndAperWrtProps>(
       <div className="flex flex-col gap-krds-7">
         <SummaryInfo
           badges={[
-            { label: '물품' },
-            { label: '경쟁입찰' },
-            { label: '사전심사' },
-            { label: '입찰참가' },
+            { key: 'task', label: detail.taskSeNm },
+            { key: 'ctrt', label: detail.ctrtMthdNm },
+            ...(detail.bfhdSrng ? [{ key: 'bfhd', label: '사전심사' }] : []),
+            ...(detail.bidPrgrsApfr ? [{ key: 'apfr', label: '입찰참가' }] : []),
           ]}
-          subtitle="긴급공고 LDG0097-1"
-          title="특수작전용대물타격무인항공기"
+          subtitle={detail.pbancNo}
+          title={detail.bidNm}
         />
 
         <Accordion type="multiple" defaultValue={['pbanc', 'item']}>

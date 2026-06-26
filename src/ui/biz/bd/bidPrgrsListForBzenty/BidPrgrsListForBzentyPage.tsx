@@ -79,8 +79,11 @@ const DEFAULT_FILTER: SearchFilterValue = {
   rfrncNo: '',
 }
 
-// 입찰진행 목록 데이터(설계서 slide68 dlt_bidPrgrsList) — 목업, 추후 bdService.getBidProgressList.
+// 입찰진행 목록 데이터(설계서 slide67 dlt_bidPrgrsList) — 목업, 추후 bdService.getBidProgressList.
+// ⚠️ 각 아이템 = (업무구분 + 진행상태 + 실데이터)를 다 담은 완결 객체. 그대로 상세(navigate state)로 넘기면
+//    상세가 이 상태값으로 버튼을 분기해 굴러간다. 상태 조합을 달리해 상세의 버튼 베리에이션을 모두 확인 가능.
 const dlt_bidPrgrsList: BidPrgrsItem[] = [
+  // 1) 사전심사 대상·결과 없음 + 입찰참가 신청전 → [사전심사 신청하기]·[입찰참가신청서 작성하기]·[등록반려]
   {
     rNum: '1',
     taskSeNm: '물품',
@@ -97,23 +100,133 @@ const dlt_bidPrgrsList: BidPrgrsItem[] = [
     bfhdSrng: true,
     bidPrgrsApfr: true,
     tndr: false,
+    techEvl: false,
+    prdcpDcmntSbms: false,
+    apfrStatNm: '신청',
+    applInsp: 'pre',
+    regRjctYn: false,
+    bfhdSrngRsltYn: false,
   },
+  // 2) 입찰참가 등록확정(사전등록심사) → [입찰서(견적서) 작성하기]·[반려신청조회]
   {
     rNum: '2',
     taskSeNm: '물품',
     pbancNo: '2026LGM000598220-01',
     prcmNo: '2026LGM000598220',
-    bidNm: '(26-용역-12) 정보화시스템 유지관리 용역',
+    bidNm: '(26-물품-07) 전투피복류 외 12종 구매',
     rfrncNo: '2026LGM58220',
     orderInstTelno: '02-2345-6789',
-    ctrtMthdNm: '공개수의',
+    ctrtMthdNm: '경쟁입찰',
     bidMthdNm: '전자입찰',
     bidClrsDt: '2026-03-10 15:00',
     tndrSbmsnDdlnDt: '2026-03-11 15:00',
     bzentySeNm: '대표',
     bfhdSrng: false,
-    bidPrgrsApfr: false,
+    bidPrgrsApfr: true,
     tndr: true,
+    techEvl: false,
+    prdcpDcmntSbms: false,
+    apfrStatNm: '등록확정',
+    tndrStatNm: '미제출',
+    applInsp: 'pre',
+    regRjctYn: true,
+  },
+  // 3) 입찰서 제출 완료 → 작성류 버튼 숨김(완료 상태)
+  {
+    rNum: '3',
+    taskSeNm: '용역',
+    pbancNo: '2026LGM000591033-01',
+    prcmNo: '2026LGM000591033',
+    bidNm: '(26-용역-12) 정보화시스템 유지관리 용역',
+    rfrncNo: '2026LGM59103',
+    orderInstTelno: '02-3456-7890',
+    ctrtMthdNm: '공개수의',
+    bidMthdNm: '전자입찰',
+    bidClrsDt: '2026-03-08 15:00',
+    tndrSbmsnDdlnDt: '2026-03-09 15:00',
+    bzentySeNm: '대표',
+    bfhdSrng: false,
+    bidPrgrsApfr: true,
+    tndr: true,
+    techEvl: false,
+    prdcpDcmntSbms: false,
+    apfrStatNm: '등록확정',
+    tndrStatNm: '완료',
+    applInsp: 'pre',
+    regRjctYn: false,
+  },
+  // 4) 사전심사 합격 + 기술평가 결과 있음 → [사전심사 결과조회]·[기술평가 결과조회]
+  {
+    rNum: '4',
+    taskSeNm: '공사',
+    pbancNo: '2026LDG000560349-01',
+    prcmNo: '2026LDG000560349',
+    bidNm: '(26-공사-03) ○○부대 정비고 신축공사',
+    rfrncNo: '2026LDG56034',
+    orderInstTelno: '042-123-4567',
+    ctrtMthdNm: '경쟁입찰',
+    bidMthdNm: '전자입찰',
+    bidClrsDt: '2026-03-20 15:00',
+    tndrSbmsnDdlnDt: '2026-03-21 15:00',
+    bzentySeNm: '구성',
+    bfhdSrng: true,
+    bidPrgrsApfr: true,
+    tndr: true,
+    techEvl: true,
+    prdcpDcmntSbms: false,
+    apfrStatNm: '등록확정',
+    tndrStatNm: '제출',
+    applInsp: 'pre',
+    regRjctYn: false,
+    bfhdSrngRsltYn: true,
+    techEvlRsltYn: true,
+  },
+  // 5) 생산능력서류제출 대상 + 사후등록심사 → [생산능력서류 제출]·[입찰서 작성하기](사후라 등록확정 전 가능)
+  {
+    rNum: '5',
+    taskSeNm: '물품',
+    pbancNo: '2026LGM000572118-01',
+    prcmNo: '2026LGM000572118',
+    bidNm: '(26-물품-09) 방한복 상·하의 세트 제조',
+    rfrncNo: '2026LGM57211',
+    orderInstTelno: '02-4567-8901',
+    ctrtMthdNm: '경쟁입찰',
+    bidMthdNm: '전자입찰',
+    bidClrsDt: '2026-03-18 15:00',
+    tndrSbmsnDdlnDt: '2026-03-19 15:00',
+    bzentySeNm: '대표',
+    bfhdSrng: false,
+    bidPrgrsApfr: true,
+    tndr: true,
+    techEvl: false,
+    prdcpDcmntSbms: true,
+    apfrStatNm: '신청',
+    tndrStatNm: '미제출',
+    applInsp: 'post',
+    regRjctYn: false,
+  },
+  // 6) 입찰참가 미동의(반려신청 후) → [반려신청조회]
+  {
+    rNum: '6',
+    taskSeNm: '물품',
+    pbancNo: '2026LGM000585277-01',
+    prcmNo: '2026LGM000585277',
+    bidNm: '(26-물품-11) 야전침대 및 부속품 구매',
+    rfrncNo: '2026LGM58527',
+    orderInstTelno: '02-5678-9012',
+    ctrtMthdNm: '경쟁입찰',
+    bidMthdNm: '전자입찰',
+    bidClrsDt: '2026-03-14 15:00',
+    tndrSbmsnDdlnDt: '2026-03-15 15:00',
+    bzentySeNm: '대표',
+    bfhdSrng: false,
+    bidPrgrsApfr: true,
+    tndr: false,
+    techEvl: false,
+    prdcpDcmntSbms: false,
+    apfrStatNm: '미동의',
+    applInsp: 'pre',
+    regRjctYn: true,
   },
 ]
 
@@ -130,6 +243,17 @@ function aplyBadges(it: BidPrgrsItem): string[] {
   if (it.bidPrgrsApfr) out.push('입찰참가')
   if (it.tndr) out.push('견적서')
   return out
+}
+
+// 진행상태 배지(타이틀 영역에서 상태를 알 수 있게) — 색으로 상태 강조.
+//   반려신청(미동의/반려후)=red · 등록확정/완료=green · 그 외(신청/제출)=blue.
+function statusBadge(it: BidPrgrsItem): { label: string; color: 'blue' | 'green' | 'red' } | null {
+  if (it.regRjctYn) return { label: '입찰참가등록반려', color: 'red' }
+  if (it.tndrStatNm === '완료') return { label: '입찰서 완료', color: 'green' }
+  if (it.tndrStatNm === '제출') return { label: '입찰서 제출', color: 'blue' }
+  if (it.apfrStatNm === '등록확정') return { label: '등록확정', color: 'green' }
+  if (it.apfrStatNm) return { label: `입찰참가 ${it.apfrStatNm}`, color: 'blue' }
+  return null
 }
 
 export function BidPrgrsListForBzentyPage() {
@@ -186,10 +310,18 @@ export function BidPrgrsListForBzentyPage() {
   const loaded = Math.min(page * pageSize, total)
   const visibleList = filteredList.slice(0, loaded)
 
-  const cardItems: CardListItem[] = visibleList.map((it) => ({
+  const cardItems: CardListItem[] = visibleList.map((it) => {
+    const status = statusBadge(it)
+    return {
     id: it.rNum,
     badges: (
       <>
+        {/* 진행상태 — 색으로 강조해 타이틀 영역에서 바로 상태 파악 */}
+        {status && (
+          <Badge type="solid" color={status.color}>
+            {status.label}
+          </Badge>
+        )}
         <Badge>{it.taskSeNm}</Badge>
         <Badge>{it.ctrtMthdNm}</Badge>
         {aplyBadges(it).map((b) => (
@@ -206,7 +338,8 @@ export function BidPrgrsListForBzentyPage() {
       { label: '발주기관연락처', value: it.orderInstTelno },
     ],
     onClick: () => handleCardClick(it),
-  }))
+    }
+  })
 
   return (
     <div className="flex w-full flex-col">

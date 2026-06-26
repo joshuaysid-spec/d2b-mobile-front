@@ -66,6 +66,18 @@ const BfhdSrngRsltInqPage = lazy(() =>
     default: m.BfhdSrngRsltInqPage,
   })),
 )
+// 입찰참가신청서작성(MUI-BD-04-M01, /bd/prgrs/:id/apfr) — biz/bd/bidPrtcpAperWrt. 등록반려/반려신청조회(P07) 호스트.
+const BidPrtcpAperWrtPage = lazy(() =>
+  import('@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage').then((m) => ({
+    default: m.BidPrtcpAperWrtPage,
+  })),
+)
+// 사전심사(PQ)신청(MUI-BD-02-M01, /bd/bfhd-srng-aply) — biz/bd/bfhdSrngAply.
+const BfhdSrngAplyPage = lazy(() =>
+  import('@/ui/biz/bd/bfhdSrngAply/BfhdSrngAplyPage').then((m) => ({
+    default: m.BfhdSrngAplyPage,
+  })),
+)
 // 입찰공고 상세(MUI-BD-01-M07~M12, /bd/:id) — biz/bd/bidPbancDtl.
 const BidPbancDtlPage = lazy(() =>
   import('@/ui/biz/bd/bidPbancDtl/BidPbancDtlPage').then((m) => ({
@@ -150,6 +162,16 @@ export const router = createBrowserRouter([
         path: 'bd/prgrs/:id',
         element: <BidPrgsDtlInqPage />,
         handle: { header: { variant: 'sub', util: 'home', title: '입찰진행 상세' } },
+      },
+      {
+        path: 'bd/prgrs/:id/apfr',
+        element: <BidPrtcpAperWrtPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '입찰참가신청서' } },
+      },
+      {
+        path: 'bd/bfhd-srng-aply',
+        element: <BfhdSrngAplyPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '사전심사신청' } },
       },
       {
         path: 'bd/reg-rslt',
