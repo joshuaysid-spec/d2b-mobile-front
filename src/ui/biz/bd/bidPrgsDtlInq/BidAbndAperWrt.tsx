@@ -6,6 +6,7 @@ import { forwardRef, useImperativeHandle } from 'react'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
+import { OathBox } from '@/ui/biz/bd/OathBox'
 import type { BidPrgrsItem } from '@/types/bd'
 
 export interface BidAbndAperWrtHandle {
@@ -99,6 +100,7 @@ const BidAbndAperWrt = forwardRef<BidAbndAperWrtHandle, BidAbndAperWrtProps>(
     return (
       <div className="flex flex-col gap-krds-7">
         <SummaryInfo
+          flushX
           badges={[
             { key: 'task', label: detail.taskSeNm },
             { key: 'ctrt', label: detail.ctrtMthdNm },
@@ -123,13 +125,9 @@ const BidAbndAperWrt = forwardRef<BidAbndAperWrtHandle, BidAbndAperWrtProps>(
           </AccordionSection>
         </Accordion>
 
-        {/* 서약문 — 설계서 문구 그대로, 가운데 정렬 */}
-        <div className="flex flex-col items-center gap-krds-7 px-krds-8 py-krds-10 text-center">
-          <p className="text-krds-body-md text-krds-text-ink">
-            우리 회사가 귀 부대에 제출한 전자입찰서를 포기합니다.
-          </p>
-          <p className="text-krds-body-md text-krds-text-ink">0000 년 00 월 00 일</p>
-          <p className="text-krds-body-md text-krds-text-ink">000000 재무관 귀하</p>
+        {/* 서약문 박스(Figma 9300-43269) */}
+        <div className="px-krds-8 pb-krds-8">
+          <OathBox statement="우리 회사가 귀 부대에 제출한 전자입찰서를 포기합니다." />
         </div>
       </div>
     )

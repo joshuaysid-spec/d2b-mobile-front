@@ -78,18 +78,19 @@ export function BfhdSrngAplyPage() {
 
   return (
     <div className="flex w-full flex-col">
-      <div className="flex flex-col gap-krds-7 px-4 py-4">
-        <SummaryInfo
-          badges={[
-            { key: 'task', label: detail.taskSeNm },
-            { key: 'ctrt', label: detail.ctrtMthdNm },
-            { key: 'bfhd', label: '사전심사' },
-            { key: 'apfr', label: '입찰참가' },
-          ]}
-          subtitle={detail.pbancNo}
-          title={detail.bidNm}
-        />
+      {/* 요약 — 페이지 표준: full-bleed(자체 px-krds-8 가 페이지 좌우 패딩 제공). px 래퍼로 감싸지 않는다. */}
+      <SummaryInfo
+        badges={[
+          { key: 'task', label: detail.taskSeNm },
+          { key: 'ctrt', label: detail.ctrtMthdNm },
+          { key: 'bfhd', label: '사전심사' },
+          { key: 'apfr', label: '입찰참가' },
+        ]}
+        subtitle={detail.pbancNo}
+        title={detail.bidNm}
+      />
 
+      <div className="flex flex-col gap-krds-7 px-4 py-4">
         <Accordion type="multiple" defaultValue={['pbanc', 'bzenty', 'file']}>
           <AccordionSection value="pbanc" title="공고일반" variant="blue" borderTop={false} flush>
             <Table rows={pbancRows} />

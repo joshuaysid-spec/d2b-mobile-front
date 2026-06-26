@@ -62,6 +62,11 @@ export interface SummaryInfoProps extends Omit<React.HTMLAttributes<HTMLDivEleme
    * sticky 헤더에서 StepBar 와 동일하게 완전히 숨겨진다. 기본 false.
    */
   collapsed?: boolean
+  /**
+   * 좌우 패딩 제거 — true 면 본문 좌우 패딩(px-krds-8)을 0 으로(세로 패딩 py-krds-8 은 유지).
+   * 이미 좌우 패딩이 있는 컨테이너(BottomSheet 본문 px-16 등) 안에서 이중 패딩을 막을 때. 기본 false.
+   */
+  flushX?: boolean
 }
 
 function SummaryInfo({
@@ -72,6 +77,7 @@ function SummaryInfo({
   actions,
   rows,
   collapsed = false,
+  flushX = false,
   ...props
 }: SummaryInfoProps) {
   // collapsed 시 카드 전체를 grid-rows 0fr 로 접는다(높이 0). 핵심 3겹 구조:
@@ -89,7 +95,12 @@ function SummaryInfo({
       {...props}
     >
       <div className="overflow-hidden">
-        <div className="flex w-full flex-col gap-krds-8 p-krds-8">
+        <div
+          className={cn(
+            'flex w-full flex-col gap-krds-8 py-krds-8',
+            flushX ? 'px-0' : 'px-krds-8',
+          )}
+        >
           {badges && badges.length > 0 && (
             <BadgeSwipeRow>
               {badges.map((badge, i) => (

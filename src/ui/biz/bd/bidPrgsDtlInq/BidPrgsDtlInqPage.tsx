@@ -17,8 +17,8 @@ import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SummaryInfo, type SummaryInfoBadge } from '@/ui/common/composites/SummaryInfo'
 import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
-import { TechEvlRsltInqFullPopup } from '@/ui/biz/bd/bfhdSrngRsltInq/TechEvlRsltInqFullPopup'
-import { PrdctnAbltDcmntSbmsnFullPopup } from '@/ui/biz/bd/bfhdSrngRsltInq/PrdctnAbltDcmntSbmsnFullPopup'
+import { TechEvlRsltInq } from '@/ui/biz/bd/bfhdSrngRsltInq/TechEvlRsltInq'
+import { PrdctnAbltDcmntSbmsn, type PrdctnAbltDcmntSbmsnHandle } from '@/ui/biz/bd/bfhdSrngRsltInq/PrdctnAbltDcmntSbmsn'
 import { BidAbndAperWrt, type BidAbndAperWrtHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidAbndAperWrt'
 import { BidRtrcnAperInq, type BidRtrcnAperInqHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidRtrcnAperInq'
 import type { BidPrgrsItem, BidPrgrsDetail } from '@/types/bd'
@@ -151,9 +151,10 @@ export function BidPrgsDtlInqPage() {
   const [cancelOpen, setCancelOpen] = useState(false) // 입찰취소신청서(P04)
   const [techEvlOpen, setTechEvlOpen] = useState(false) // 기술평가결과조회(P01)
   const [prdcpOpen, setPrdcpOpen] = useState(false) // 생산능력서류제출(P06)
-  // P03/P04 는 바텀시트 콘텐츠 전용 — 컨테이너/footer 는 여기(부모)가 소유, 제출은 ref 핸들로 호출.
+  // P03/P04/P06 은 바텀시트 콘텐츠 전용 — 컨테이너/footer 는 여기(부모)가 소유, 제출은 ref 핸들로 호출.
   const abandonRef = useRef<BidAbndAperWrtHandle>(null)
   const cancelRef = useRef<BidRtrcnAperInqHandle>(null)
+  const prdcpRef = useRef<PrdctnAbltDcmntSbmsnHandle>(null)
 
   // 보기 버튼 → 결과조회 연계. 기술평가/생산능력서류는 풀팝업(P01/P06), 그 외는 결과 화면 이동.
   const handleView = (key: string) => {
@@ -275,10 +276,38 @@ export function BidPrgsDtlInqPage() {
 
       {/* 환율정보 조회 풀팝업 (M74) */}
       <OvsExchrtListFullPopup open={exchrtOpen} onOpenChange={setExchrtOpen} />
-      {/* 기술평가결과조회 풀팝업 (P01) */}
-      <TechEvlRsltInqFullPopup open={techEvlOpen} onOpenChange={setTechEvlOpen} detail={detail} />
-      {/* 생산능력서류제출 풀팝업 (P06) */}
-      <PrdctnAbltDcmntSbmsnFullPopup open={prdcpOpen} onOpenChange={setPrdcpOpen} detail={detail} />
+      {/* 기술평가결과조회(P01) — 바텀시트(읽기전용 조회, footer=닫기) */}
+      <BottomSheet
+        open={techEvlOpen}
+        onOpenChange={setTechEvlOpen}
+        title="기술평가결과조회"
+        footer={
+          <ButtonGroup
+            layout="single"
+            items={[{ label: '닫기', variant: 'primary', onClick: () => setTechEvlOpen(false) }]}
+          />
+        }
+      >
+        <TechEvlRsltInq detail={detail} />
+      </BottomSheet>
+
+      {/* 생산능력서류제출(P06) — 바텀시트(컨테이너/footer 부모 소유, 콘텐츠는 ref 핸들) */}
+      <BottomSheet
+        open={prdcpOpen}
+        onOpenChange={setPrdcpOpen}
+        title="생산능력서류 제출"
+        footer={
+          <ButtonGroup
+            layout="asymmetric"
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setPrdcpOpen(false) },
+              { label: '제출하기', variant: 'primary', onClick: () => prdcpRef.current?.submit() },
+            ]}
+          />
+        }
+      >
+        <PrdctnAbltDcmntSbmsn ref={prdcpRef} detail={detail} onSubmitted={() => setPrdcpOpen(false)} />
+      </BottomSheet>
 
       {/* 입찰포기신청서(P03) — 바텀시트(컨테이너/footer 부모 소유, 콘텐츠는 ref 핸들) */}
       <BottomSheet

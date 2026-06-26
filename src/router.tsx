@@ -66,7 +66,13 @@ const BfhdSrngRsltInqPage = lazy(() =>
     default: m.BfhdSrngRsltInqPage,
   })),
 )
-// 입찰참가신청서작성(MUI-BD-04-M01, /bd/prgrs/:id/apfr) — biz/bd/bidPrtcpAperWrt. 등록반려/반려신청조회(P07) 호스트.
+// 서약서동의(MUI-BD-04-M01, /bd/prgrs/:id/apfr) — biz/bd/wrotAgrePage. 입찰참가신청서 진입(서약서 스텝). P02/P03/P04 서약서 호스트.
+const WrotAgrePage = lazy(() =>
+  import('@/ui/biz/bd/wrotAgrePage/WrotAgrePage').then((m) => ({
+    default: m.WrotAgrePage,
+  })),
+)
+// 입찰참가신청서작성 신청서(MUI-BD-04-M05~M14, /bd/prgrs/:id/apfr/form) — biz/bd/bidPrtcpAperWrt. 7탭 + 등록반려/반려신청조회(P07) 호스트.
 const BidPrtcpAperWrtPage = lazy(() =>
   import('@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage').then((m) => ({
     default: m.BidPrtcpAperWrtPage,
@@ -165,6 +171,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'bd/prgrs/:id/apfr',
+        element: <WrotAgrePage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '입찰참가신청서' } },
+      },
+      {
+        path: 'bd/prgrs/:id/apfr/form',
         element: <BidPrtcpAperWrtPage />,
         handle: { header: { variant: 'sub', util: 'home', title: '입찰참가신청서' } },
       },

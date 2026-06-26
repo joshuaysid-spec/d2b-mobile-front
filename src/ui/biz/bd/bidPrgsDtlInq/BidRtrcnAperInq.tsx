@@ -10,6 +10,7 @@ import { TextArea } from '@/ui/common/base/TextArea'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { OathBox } from '@/ui/biz/bd/OathBox'
 import type { BidPrgrsItem } from '@/types/bd'
 
 export interface BidRtrcnAperInqHandle {
@@ -66,6 +67,7 @@ const BidRtrcnAperInq = forwardRef<BidRtrcnAperInqHandle, BidRtrcnAperInqProps>(
       <div className="flex flex-col gap-krds-7">
         <div className="flex flex-col">
           <SummaryInfo
+            flushX
             badges={[
               { key: 'task', label: detail.taskSeNm },
               { key: 'ctrt', label: detail.ctrtMthdNm },
@@ -100,18 +102,9 @@ const BidRtrcnAperInq = forwardRef<BidRtrcnAperInqHandle, BidRtrcnAperInqProps>(
             </div>
           </div>
 
-          {/* 서약문(설계서 그대로, 가운데 정렬) */}
-          <div className="flex flex-col items-center gap-krds-7 px-krds-8 pb-krds-9 pt-krds-5 text-center">
-            <p className="text-krds-body-md leading-relaxed text-krds-text-ink">
-              우리 회사가 귀 부대에 제출한 전자입찰서를 취소하오니, 무효 처리하여
-              주시기 바랍니다.
-            </p>
-            <p className="text-krds-body-md text-krds-text-ink">
-              0000 년 00 월 00 일
-            </p>
-            <p className="text-krds-body-md font-bold text-krds-text-ink">
-              000000 재무관 귀하
-            </p>
+          {/* 서약문 박스(Figma 9300-43269) */}
+          <div className="px-krds-8 pb-krds-8 pt-krds-5">
+            <OathBox statement="우리 회사가 귀 부대에 제출한 전자입찰서를 취소하오니 무효 처리하여 주시기 바랍니다." />
           </div>
         </div>
 
