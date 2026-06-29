@@ -570,7 +570,7 @@ export function ComponentGuidePage() {
           <Section
             id="accordion"
             title="Accordion"
-            desc="Figma m_accordian(9300-28556) 1:1. 섹션 아코디언 — raw/accordion 래핑. 타이틀바(56h · blue(bg-primary-faint)/white · 19px Bold · chevron 20px 회전) + content(white p-16, 세로 stack gap-16). AccordionSection props: value · title · titleInfo? · variant(blue/white) · borderTop · flush."
+            desc="Figma m_accordian(9300-28556) 1:1. 섹션 아코디언 — raw/accordion 래핑. 타이틀바(56h · blue(bg-primary-faint)/white · 19px Bold · chevron 20px 회전) + content(white · 좌우/하단 16 · 상단 0(타이틀 바 하단 여백으로 충분) · 세로 stack gap-16). AccordionSection props: value · title · titleInfo? · variant(blue/white) · borderTop · flush · contentClassName(예: pt-2 로 상단 간격 추가)."
           >
             <Row label="기본 (multiple · blue)">
               <Specimen caption="2 섹션 · 독립 접기/펴기">
@@ -2757,7 +2757,7 @@ export function ComponentGuidePage() {
           <Section
             id="stepbar"
             title="StepBar"
-            desc="Figma Step bar(9300-28323) 1:1. atomic 분리 없이 한 composite 파일에 통합. items[{label, state, depth?}] + orientation. state: done/doing/todo/done-red. depth: 1(chip-pill 19 Bold) / 2(connector line + 14 dot + 17 text). vertical 에서 연속된 2depth 사이에 connector 자동 연결."
+            desc="Figma Step bar(9300-28323·28417) 1:1. atomic 분리 없이 한 composite 파일에 통합. items[{label, state, depth?}] + orientation. state: done/doing/todo/done-red. depth: 1(chip-pill 19 Bold) / 2(connector line + 14 dot + 17 text). vertical 에서 연속된 2depth 사이에 connector 자동 연결. horizontal 은 가로 스와이프 + 우측 펼침(▾) 버튼 → '진행현황' 바텀시트(세로 StepBar 전체 + 확인). sheetItems 로 상세(1·2depth) 목록을 시트에 주입(생략 시 가로 항목 그대로)."
           >
             <Row label="orientation='vertical' (혼합 depth — 진행현황 예시)">
               <Specimen caption="입찰 프로세스 진행 흐름">
@@ -2796,8 +2796,8 @@ export function ComponentGuidePage() {
                 </div>
               </Specimen>
             </Row>
-            <Row label="horizontal — 항목 3개 이상 시 가로 스크롤 + 좌/우 화살표 (TabList 패턴)">
-              <Specimen caption="좁은 컨테이너 → overflow 시 화살표 자동 노출 (scrollButtons='auto')">
+            <Row label="horizontal — 가로 스와이프 + 우측 펼침(▾) → 진행현황 바텀시트">
+              <Specimen caption="▾ 터치 시 세로 StepBar 전체가 바텀시트로 (sheetItems 생략 = 가로 항목 그대로)">
                 <div className="w-[320px]">
                   <StepBar
                     orientation="horizontal"
@@ -2812,17 +2812,27 @@ export function ComponentGuidePage() {
                   />
                 </div>
               </Specimen>
-              <Specimen caption="scrollButtons='none' — 화살표 없이 스와이프만">
+              <Specimen caption="sheetItems — 시트에 상세 진행현황(1·2depth) 주입">
                 <div className="w-[320px]">
                   <StepBar
                     orientation="horizontal"
-                    scrollButtons="none"
                     items={[
                       { label: '조달계획', state: 'done' },
-                      { label: '사전규격', state: 'done' },
                       { label: '입찰', state: 'doing' },
                       { label: '계약', state: 'todo' },
                       { label: '이행', state: 'todo' },
+                      { label: '대금사후', state: 'todo' },
+                    ]}
+                    sheetItems={[
+                      { label: '조달계획', state: 'done', depth: 1 },
+                      { label: '사전규격', state: 'done', depth: 2 },
+                      { label: '입찰', state: 'doing', depth: 1 },
+                      { label: '입찰공고', state: 'done-red', depth: 2 },
+                      { label: '입찰진행', state: 'doing', depth: 2 },
+                      { label: '개찰', state: 'todo', depth: 2 },
+                      { label: '계약', state: 'todo', depth: 1 },
+                      { label: '이행', state: 'todo', depth: 1 },
+                      { label: '대금사후', state: 'todo', depth: 1 },
                     ]}
                   />
                 </div>

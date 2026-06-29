@@ -103,7 +103,7 @@ const dlt_bidPrgrsList: BidPrgrsItem[] = [
     techEvl: false,
     prdcpDcmntSbms: false,
     apfrStatNm: '신청',
-    applInsp: 'pre',
+    tndrSbmsnPntmCd: 'pre',
     regRjctYn: false,
     bfhdSrngRsltYn: false,
   },
@@ -126,9 +126,9 @@ const dlt_bidPrgrsList: BidPrgrsItem[] = [
     tndr: true,
     techEvl: false,
     prdcpDcmntSbms: false,
-    apfrStatNm: '등록확정',
+    bidRegCfmtnYn: 'Y',
     tndrStatNm: '미제출',
-    applInsp: 'pre',
+    tndrSbmsnPntmCd: 'pre',
     regRjctYn: true,
   },
   // 3) 입찰서 제출 완료 → 작성류 버튼 숨김(완료 상태)
@@ -150,9 +150,9 @@ const dlt_bidPrgrsList: BidPrgrsItem[] = [
     tndr: true,
     techEvl: false,
     prdcpDcmntSbms: false,
-    apfrStatNm: '등록확정',
+    bidRegCfmtnYn: 'Y',
     tndrStatNm: '완료',
-    applInsp: 'pre',
+    tndrSbmsnPntmCd: 'pre',
     regRjctYn: false,
   },
   // 4) 사전심사 합격 + 기술평가 결과 있음 → [사전심사 결과조회]·[기술평가 결과조회]
@@ -174,9 +174,9 @@ const dlt_bidPrgrsList: BidPrgrsItem[] = [
     tndr: true,
     techEvl: true,
     prdcpDcmntSbms: false,
-    apfrStatNm: '등록확정',
+    bidRegCfmtnYn: 'Y',
     tndrStatNm: '제출',
-    applInsp: 'pre',
+    tndrSbmsnPntmCd: 'pre',
     regRjctYn: false,
     bfhdSrngRsltYn: true,
     techEvlRsltYn: true,
@@ -202,7 +202,7 @@ const dlt_bidPrgrsList: BidPrgrsItem[] = [
     prdcpDcmntSbms: true,
     apfrStatNm: '신청',
     tndrStatNm: '미제출',
-    applInsp: 'post',
+    tndrSbmsnPntmCd: 'post',
     regRjctYn: false,
   },
   // 6) 입찰참가 미동의(반려신청 후) → [반려신청조회]
@@ -225,7 +225,7 @@ const dlt_bidPrgrsList: BidPrgrsItem[] = [
     techEvl: false,
     prdcpDcmntSbms: false,
     apfrStatNm: '미동의',
-    applInsp: 'pre',
+    tndrSbmsnPntmCd: 'pre',
     regRjctYn: true,
   },
 ]
@@ -251,7 +251,7 @@ function statusBadge(it: BidPrgrsItem): { label: string; color: 'blue' | 'green'
   if (it.regRjctYn) return { label: '입찰참가등록반려', color: 'red' }
   if (it.tndrStatNm === '완료') return { label: '입찰서 완료', color: 'green' }
   if (it.tndrStatNm === '제출') return { label: '입찰서 제출', color: 'blue' }
-  if (it.apfrStatNm === '등록확정') return { label: '등록확정', color: 'green' }
+  if (it.bidRegCfmtnYn === 'Y') return { label: '등록확정', color: 'green' }
   if (it.apfrStatNm) return { label: `입찰참가 ${it.apfrStatNm}`, color: 'blue' }
   return null
 }

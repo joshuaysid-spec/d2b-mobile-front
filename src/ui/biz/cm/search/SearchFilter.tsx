@@ -51,11 +51,7 @@ export interface SearchFilterProps {
    * 커스텀 팝업을 외부에서 열고 싶을 때만 사용. searchSheet 가 지정된 필드는 셸이 직접 처리하므로
    * 이 콜백은 호출되지 않는다(페이지는 보통 SearchFilter 하나만 import 하면 됨).
    */
-  onSelectionClick?: (
-    key: string,
-    current: string,
-    commit: (value: string) => void,
-  ) => void
+  onSelectionClick?: (key: string, current: string, commit: (value: string) => void) => void
 }
 
 const SearchFilter = ({
@@ -72,8 +68,7 @@ const SearchFilter = ({
   const [draft, setDraft] = React.useState<SearchFilterValue>(value ?? defaultValue)
 
   // 정적 schema 면 그대로, resolver 면 현재 draft 로 매 렌더 재계산 → 검색유형 변경 시 섹션/필드가 바뀜.
-  const resolved: SearchFilterSchema =
-    typeof schema === 'function' ? schema(draft) : schema
+  const resolved: SearchFilterSchema = typeof schema === 'function' ? schema(draft) : schema
 
   // 공통 검색시트(품목별/생산자) — selectionField.searchSheet 가 셸에서 직접 연다.
   // sheet 가 set 되면 해당 시트가 열리고, 선택 결과는 sheet.commit 으로 해당 필드에 주입된다.
@@ -120,11 +115,7 @@ const SearchFilter = ({
   )
 
   // 필드의 selectionField 터치 → searchSheet 지정이면 셸이 직접 열고, 아니면 외부 콜백 위임.
-  const handleSelectionClick = (
-    key: string,
-    current: string,
-    commit: (value: string) => void,
-  ) => {
+  const handleSelectionClick = (key: string, current: string, commit: (value: string) => void) => {
     const kind = sheetKindByKey[key]
     if (kind) {
       setSheet({ kind, commit })
@@ -164,51 +155,53 @@ const SearchFilter = ({
 
   return (
     <>
-    <FullPopup
-      open={open}
-      onOpenChange={onOpenChange}
-      title={resolved.title ?? '검색필터'}
-      rightActions={[
-        { icon: 'Refresh', label: '초기화', onClick: handleReset },
-        { icon: 'Close', label: '닫기', onClick: () => onOpenChange(false) },
-      ]}
-      footer={
-        <ButtonGroup
-          layout="asymmetric"
-          items={[
-            { label: '닫기', variant: 'secondary', onClick: () => onOpenChange(false) },
-            { label: '검색', variant: 'primary', onClick: handleSearch },
-          ]}
-        />
-      }
-    >
-      <Accordion key={accordionKey} type="multiple" defaultValue={openKeys} className="w-full">
-        {resolved.sections.map((section, i) => (
-          <AccordionSection
-            key={section.key}
-            value={section.key}
-            title={section.title}
-            titleInfo={section.titleInfo}
-            borderTop={i > 0}
-            variant={'blue'}
-          >
-            {section.fields.length === 0 ? (
-              <p className="text-krds-body-sm text-krds-text-subtle">준비 중입니다.</p>
-            ) : (
-              section.fields.map((field) => (
-                <SearchFilterField
-                  key={field.key}
-                  field={field}
-                  value={draft[field.key]}
-                  onChange={(v) => setField(field.key, v)}
-                  onSelectionClick={handleSelectionClick}
-                />
-              ))
-            )}
-          </AccordionSection>
-        ))}
-      </Accordion>
-    </FullPopup>
+      <FullPopup
+        open={open}
+        onOpenChange={onOpenChange}
+        title={resolved.title ?? '검색필터'}
+        rightActions={[
+          { icon: 'Refresh', label: '초기화', onClick: handleReset },
+          { icon: 'Close', label: '닫기', onClick: () => onOpenChange(false) },
+        ]}
+        footer={
+          <ButtonGroup
+            layout="asymmetric"
+            items={[
+              { label: '닫기', variant: 'secondary', onClick: () => onOpenChange(false) },
+              { label: '검색', variant: 'primary', onClick: handleSearch },
+            ]}
+          />
+        }
+      >
+        <Accordion key={accordionKey} type="multiple" defaultValue={openKeys} className="w-full">
+          {resolved.sections.map((section, i) => (
+            <AccordionSection
+              key={section.key}
+              value={section.key}
+              title={section.title}
+              titleInfo={section.titleInfo}
+              borderTop={i > 0}
+              variant={'blue'}
+              // 검색필터는 상단 간격 필요 → py 보강(공통 기본 pt-0 위에 덮어씀). py-4=상하 16px, 표준값이라 twMerge 가 raw pt-0 확실히 덮음.
+              contentClassName="py-4"
+            >
+              {section.fields.length === 0 ? (
+                <p className="text-krds-body-sm text-krds-text-subtle">준비 중입니다.</p>
+              ) : (
+                section.fields.map((field) => (
+                  <SearchFilterField
+                    key={field.key}
+                    field={field}
+                    value={draft[field.key]}
+                    onChange={(v) => setField(field.key, v)}
+                    onSelectionClick={handleSelectionClick}
+                  />
+                ))
+              )}
+            </AccordionSection>
+          ))}
+        </Accordion>
+      </FullPopup>
 
       {/* 공통 검색 바텀시트 — selectionField.searchSheet 가 셸에서 직접 연다(페이지 관여 X).
           셸이 BottomSheet 컨테이너(타이틀/footer/open)를 소유하고, 콘텐츠 전용 컴포넌트를 슬롯에 끼운다. */}

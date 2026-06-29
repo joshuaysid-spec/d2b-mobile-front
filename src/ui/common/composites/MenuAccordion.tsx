@@ -10,7 +10,8 @@
 //   1depth — 45 height · bg white · 1px border(krds-border-disabled) · 19px Bold ink · 우측 chevron
 //   2depth — 34 height · 17px Regular ink · 자식 있을 때만 chevron / 없으면 leaf
 //   3depth — 31 height · 15px Regular muted · "·" 불릿 · leaf only
-//   중첩 들여쓰기 — AccordionContent 좌측 16px(pl-4) 누적.
+//   중첩 들여쓰기 — 컨테이너 px 0, 각 행(트리거/leaf)이 pl 로 깊이 표현 + 가로 전체 클릭영역.
+//     (depth2 행 pl-16 / depth3 행 pl-24, 우측 pr-16 으로 chevron 정렬)
 //
 // 데이터:
 //   items: MenuItem[]  ·  MenuItem = { id, label, children?, onClick? }
@@ -175,25 +176,24 @@ function triggerClass(depth: Depth) {
     'py-0 hover:no-underline [&>svg]:size-5 [&>svg]:shrink-0 text-krds-text-ink'
   if (depth === 1)
     return cn(base, 'h-[45px] px-krds-8 text-[19px] font-bold leading-normal')
-  // depth 2 는 bold, depth 3 는 normal.
+  // depth2/3 — 컨테이너 px 제거분을 행에 이관: pr-4(우측 chevron 정렬) + pl 로 깊이 들여쓰기.
+  //   클릭/포커스 영역이 가로 전체로 확장된다. depth2=bold/pl-16, depth3=normal/pl-24.
   return cn(
     base,
-    'h-[34px] text-[17px] leading-normal',
-    depth === 2 ? 'font-bold' : 'font-normal',
+    'h-[34px] pr-4 text-[17px] leading-normal',
+    depth === 2 ? 'pl-4 font-bold' : 'pl-6 font-normal',
   )
 }
 
 function contentClass(depth: Depth) {
-  // raw AccordionContent 내부 div 기본 pb-4 pt-0 → 좌측 16px 들여쓰기 + 패딩 조정.
-  // 1depth: 서브 메뉴 wrapper 상단에 divider(첫 서브 메뉴 위 경계) + 상하 12px 여백.
+  // 콘텐츠 좌우 패딩(px) 제거 → 들여쓰기·우측정렬은 각 행(트리거/leaf)의 pl/pr 로 이관(가로 전체 클릭).
+  // 1depth: 서브 메뉴 wrapper 상단 divider + 상하 12px 여백(py)만 유지.
   // 닫힌 상태에선 content 가 unmount 되어 border 가 안 보이므로 줄 겹침 없음.
-  // pr-4(16px): depth2 chevron 을 depth1 trigger(px-krds-8=16px) chevron 과 우측 정렬.
-  // ⚠️ raw 내부 div 가 `pt-0 pb-4` 를 박는데, twMerge 가 커스텀 `py-krds-7` 을
-  //    padding 그룹으로 인식 못 해 pt-0 이 안 지워진다. arbitrary 값(토큰 참조)으로
-  //    줘야 twMerge 가 충돌로 인식해 pt-0/pb-4 를 덮어쓴다.
+  // ⚠️ raw 내부 div 가 `pt-0 pb-4` 를 박는데, twMerge 가 커스텀 `py-krds-*` 을
+  //    padding 그룹으로 인식 못 해 안 지워진다. arbitrary 값(토큰 참조)으로 줘야 충돌로 인식해 덮어쓴다.
   return depth === 1
-    ? 'border-t border-krds-border-divider pl-4 pr-4 py-[var(--krds-space-7)]'
-    : 'pl-2 pr-0 pt-krds-3 pb-0'
+    ? 'border-t border-krds-border-divider py-[var(--krds-space-7)]'
+    : 'pt-krds-3 pb-0'
 }
 
 // ─── leaf 행 ─────────────────────────────────────────────────────────────────
@@ -204,7 +204,8 @@ function LeafRow({ item, depth }: { item: MenuItem; depth: Depth }) {
         type="button"
         onClick={item.onClick}
         className={cn(
-          'flex h-[31px] w-full items-center gap-1 text-left',
+          // pl-6(24)/pr-4(16) — 컨테이너 px 제거분 이관. 가로 전체 클릭/포커스 영역.
+          'flex h-[31px] w-full items-center gap-1 pl-6 pr-4 text-left',
           'text-[15px] font-normal leading-normal text-krds-text-ink',
           'focus-visible:bg-krds-bg-primary-faint focus-visible:outline-hidden',
         )}
@@ -241,7 +242,8 @@ function LeafRow({ item, depth }: { item: MenuItem; depth: Depth }) {
       type="button"
       onClick={item.onClick}
       className={cn(
-        'flex h-[34px] w-full items-center text-left',
+        // pl-4(16)/pr-4(16) — 컨테이너 px 제거분 이관. 가로 전체 클릭/포커스 영역.
+        'flex h-[34px] w-full items-center pl-4 pr-4 text-left',
         'text-[17px] font-bold leading-normal text-krds-text-ink',
         'focus-visible:bg-krds-bg-primary-faint focus-visible:outline-hidden',
       )}

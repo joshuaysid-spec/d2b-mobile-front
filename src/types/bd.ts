@@ -105,15 +105,20 @@ export interface BidPrgrsItem {
   /** 생산능력서류제출 대상 여부 (prdcpDcmntSbms) — 대상 공고인 경우 버튼 보이기 (설계서 slide67) */
   prdcpDcmntSbms: boolean
 
+  // ── 등록 상태 (설계서 타 데이터영역 정의 항목 — 입찰서 작성 분기 slide68) ──────────
+  /** 등록확정여부 (bidRegCfmtnYn) — 'Y'|'N'. 등록확정 시 입찰서 작성 가능 (설계서 slide76 입찰등록결과 데이터영역) */
+  bidRegCfmtnYn?: 'Y' | 'N'
+  /** 등록심사시점 (tndrSbmsnPntmCd) — 'pre'(사전등록심사)|'post'(사후등록심사). 사후면 등록확정 전에도 입찰서 작성
+   *  (설계서 slide156 공고정보 dmt_pbancInfo. 실제 코드값은 상세설계 예정이라 의미값으로 임시 표기) */
+  tndrSbmsnPntmCd?: 'pre' | 'post'
+
   // ── 진행 상태값 (버튼 분기·타이틀 상태표시 구동용) ───────────────────────────
   // ⚠️ 설계서 데이터영역 미정의(상세설계 예정) — 상태별 버튼 노출(slide68)/타이틀 표시를 구동하기 위한
   //    임시 항목(사용자 승인). 상세설계에서 영문 항목명이 확정되면 그 이름으로 교체한다.
-  /** 입찰참가신청서 상태 (apfrStatNm) — '신청'|'미동의'|'등록확정'. 등록확정 시 입찰서 작성 가능 */
-  apfrStatNm?: '신청' | '미동의' | '등록확정'
+  /** 입찰참가신청서 상태 (apfrStatNm) — '신청'|'미동의'. 등록확정은 bidRegCfmtnYn(설계서 항목)으로 판단 */
+  apfrStatNm?: '신청' | '미동의'
   /** 입찰서 상태 (tndrStatNm) — '미제출'|'제출'|'완료'|'입찰취소' */
   tndrStatNm?: '미제출' | '제출' | '완료' | '입찰취소'
-  /** 입찰등록심사 시점 (applInsp) — 'pre'(사전등록심사)|'post'(사후등록심사). 사후면 등록확정 전에도 입찰서 작성 */
-  applInsp?: 'pre' | 'post'
   /** 입찰참가등록반려 신청 여부 (regRjctYn) — false=신청전(등록반려 버튼)·true=신청후(반려신청조회 버튼) */
   regRjctYn?: boolean
   /** 사전심사(PQ) 결과 유무 (bfhdSrngRsltYn) — 결과 있을 때 사전심사 결과조회 버튼 노출 */

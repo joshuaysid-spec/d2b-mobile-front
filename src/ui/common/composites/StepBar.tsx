@@ -20,10 +20,13 @@
 // vertical 모드는 2depth connector 가 항목 사이를 잇는다(마지막 항목은 connector 안 그림).
 // horizontal 은 1depth chip 을 가로 나열하고, 칩 사이를 8px×1px step-blue 연결선(Figma line)으로 잇는다
 //   (디자인상 horizontal-2depth 없음).
-//   - 항목 3개 이상이면 TabList 처럼 가로 스크롤 + 좌/우 화살표 버튼이 활성화된다.
+//   - 가로 스와이프 스크롤 유지 + 우측 끝 펼침(▾) 버튼 → '진행현황' 바텀시트(세로 StepBar 전체 + 확인)로 전개.
+//     (좌/우 사이드 스크롤 화살표는 폐지 — Figma 9300-28323/28417.)
 import * as React from 'react'
 
+import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { cn } from '@/utils/cn'
 
 export type StepState = 'done' | 'doing' | 'todo' | 'done-red'
@@ -36,17 +39,18 @@ export interface StepItem {
   depth?: StepDepth
 }
 
-export type StepBarScrollButtons = 'auto' | 'always' | 'none'
-
 export interface StepBarProps extends React.HTMLAttributes<HTMLDivElement> {
   items: StepItem[]
   /** 기본 'vertical'. */
   orientation?: 'vertical' | 'horizontal'
   /**
-   * horizontal 모드 좌/우 스크롤 화살표 노출 정책. 기본 'auto'.
-   * 항목이 3개 미만이면(스크롤 불필요) 화살표는 표시되지 않는다.
+   * horizontal 펼침(▾) 바텀시트에 보일 세로 StepBar 항목.
+   * 생략 시 items 사용(보통 컴팩트 1depth 가로 항목을 그대로 세로로 표시).
+   * 상세 진행현황(1·2depth 혼합)을 보이려면 depth 포함 배열을 주입.
    */
-  scrollButtons?: StepBarScrollButtons
+  sheetItems?: StepItem[]
+  /** 펼침 바텀시트 제목. 기본 '진행현황'. */
+  sheetTitle?: string
 }
 
 // ─── 1depth chip (pill) ──────────────────────────────────────────────────────
@@ -63,9 +67,7 @@ function Chip1Depth({
   const isDoing = state === 'doing'
   const wrapCls = cn(
     'inline-flex h-10 shrink-0 items-center gap-krds-3 rounded-krds-full pl-krds-5 pr-krds-7',
-    isDoing
-      ? 'bg-krds-action-danger'
-      : 'border border-krds-step-blue bg-background',
+    isDoing ? 'bg-krds-action-danger' : 'border border-krds-step-blue bg-background',
     className,
   )
   const textCls = cn(
@@ -125,9 +127,7 @@ function Row2Depth({
   const showCheck = state === 'done' || state === 'done-red'
   const textCls = cn(
     'min-w-px flex-1 text-[17px] leading-[1.3]',
-    state === 'doing'
-      ? 'font-bold text-krds-action-danger'
-      : 'font-normal text-krds-text-ink',
+    state === 'doing' ? 'font-bold text-krds-action-danger' : 'font-normal text-krds-text-ink',
   )
   return (
     <div className="flex w-full items-center gap-krds-3">
@@ -163,76 +163,33 @@ function Row2Depth({
   )
 }
 
-// ─── horizontal (가로 스크롤 + 좌/우 화살표) ──────────────────────────────────
-// 항목 3개 이상이면 TabList 패턴(overflow-x-auto + ResizeObserver 로 화살표 자동 노출)으로
-// 가로 스크롤한다. 항목 2개 이하면 스크롤 불필요 → 단순 가로 나열(flex-wrap).
+// ─── horizontal (가로 스와이프 스크롤 + 우측 펼침 버튼 → 진행현황 바텀시트) ──────────
+// 칩을 가로로 나열하고 좌우 스와이프로 스크롤한다(좌/우 사이드 화살표 폐지).
+// 우측 끝 펼침(▾) 버튼 터치 → '진행현황' 바텀시트에 세로 StepBar 전체(+확인)를 띄운다.
 function StepBarHorizontal({
   className,
   items,
-  scrollButtons = 'auto',
+  sheetItems,
+  sheetTitle = '진행현황',
   ...props
 }: Omit<StepBarProps, 'orientation'>) {
-  const scrollerRef = React.useRef<HTMLDivElement>(null)
-  const [canScrollLeft, setCanScrollLeft] = React.useState(false)
-  const [canScrollRight, setCanScrollRight] = React.useState(false)
-
-  // 3개 미만이면 스크롤·화살표 자체를 끈다.
-  const scrollable = items.length >= 3
-
-  // 스크롤 가능 여부 측정 — resize/scroll 시 갱신.
-  const updateScrollState = React.useCallback(() => {
-    const el = scrollerRef.current
-    if (!el) return
-    setCanScrollLeft(el.scrollLeft > 0)
-    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1)
-  }, [])
-
-  React.useEffect(() => {
-    if (!scrollable) return
-    updateScrollState()
-    const el = scrollerRef.current
-    if (!el) return
-    el.addEventListener('scroll', updateScrollState, { passive: true })
-    const ro = new ResizeObserver(updateScrollState)
-    ro.observe(el)
-    return () => {
-      el.removeEventListener('scroll', updateScrollState)
-      ro.disconnect()
-    }
-  }, [updateScrollState, items.length, scrollable])
-
-  const showLeft =
-    scrollable &&
-    (scrollButtons === 'always' || (scrollButtons === 'auto' && canScrollLeft))
-  const showRight =
-    scrollable &&
-    (scrollButtons === 'always' || (scrollButtons === 'auto' && canScrollRight))
-
-  const scrollBy = (delta: number) => {
-    scrollerRef.current?.scrollBy({ left: delta, behavior: 'smooth' })
-  }
+  const [sheetOpen, setSheetOpen] = React.useState(false)
+  // 바텀시트에 보일 세로 목록 — 별도 주입 없으면 가로 항목을 그대로 세로로.
+  const fullItems = sheetItems ?? items
 
   return (
     <div className={cn('relative w-full bg-background', className)} {...props}>
       <div
-        ref={scrollerRef}
         role="list"
         aria-label="진행 단계"
-        className={cn(
-          // 칩 사이 간격은 연결선(아래 8px line)이 담당 → 가로 gap 0. wrap 시 줄 간격만 부여.
-          'flex w-full items-center',
-          scrollable
-            ? 'overflow-x-auto overflow-y-hidden scrollbar-none [&::-webkit-scrollbar]:hidden'
-            : 'flex-wrap gap-y-krds-5',
-        )}
-        style={scrollable ? { scrollbarWidth: 'none' } : undefined}
+        // 칩 사이 간격은 연결선(8px line)이 담당 → 가로 gap 0. 우측 펼침 버튼 자리만큼 pr 확보.
+        className="flex w-full items-center overflow-x-auto overflow-y-hidden scrollbar-none pr-16 [&::-webkit-scrollbar]:hidden"
+        style={{ scrollbarWidth: 'none' }}
       >
         {items.map((item, i) => (
           <React.Fragment key={i}>
-            {/* 칩 사이 연결선 — Figma 8px×1px step-blue. 첫 칩 앞엔 없음(i>0). 인접 상태와 무관히 파란선. */}
-            {i > 0 && (
-              <span aria-hidden className="h-px w-krds-5 shrink-0 bg-krds-step-blue" />
-            )}
+            {/* 칩 사이 연결선 — Figma 8px×1px step-blue. 첫 칩 앞엔 없음(i>0). */}
+            {i > 0 && <span aria-hidden className="h-px w-krds-5 shrink-0 bg-krds-step-blue" />}
             <div role="listitem">
               <Chip1Depth label={item.label} state={item.state} />
             </div>
@@ -240,51 +197,39 @@ function StepBarHorizontal({
         ))}
       </div>
 
-      {showLeft && (
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
-          <div className="pointer-events-auto flex h-10 items-center">
-            {/* 버튼 뒤(사각 모서리 포함)는 배경색(#ECF1FA)으로 덮어 칩이 비치지 않게 */}
-            <span className="flex h-full items-center bg-krds-bg-primary-faint">
-              <button
-                type="button"
-                aria-label="이전 단계로 스크롤"
-                onClick={() => scrollBy(-160)}
-                className="flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-background text-krds-text-ink"
-              >
-                <Icon name="ArrowBackIosNew" size={20} aria-hidden />
-              </button>
-            </span>
-            {/* 칩 위로 #ECF1FA→투명 그라데이션 fade — 화살표 안쪽 칩이 서서히 사라지게 */}
-            <div
-              aria-hidden
-              className="h-full w-5 bg-gradient-to-r from-krds-bg-primary-faint to-transparent"
-            />
-          </div>
-        </div>
-      )}
+      {/* 우측 끝 펼침(▾) 버튼 — 터치 시 진행현황 바텀시트. 좌/우 스크롤 화살표 대체. */}
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center">
+        {/* 칩 위로 투명→#ECF1FA fade — 버튼 안쪽 칩이 서서히 사라지게 */}
+        <div
+          aria-hidden
+          className="h-full w-5 bg-gradient-to-r from-transparent to-krds-bg-primary-faint"
+        />
+        <span className="pointer-events-auto flex h-full items-center bg-krds-bg-primary-faint">
+          <button
+            type="button"
+            aria-label="진행현황 전체 보기"
+            aria-haspopup="dialog"
+            onClick={() => setSheetOpen(true)}
+            className="flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-background text-krds-text-ink"
+          >
+            <Icon name="ArrowForwardIos" size={20} aria-hidden className="rotate-90" />
+          </button>
+        </span>
+      </div>
 
-      {showRight && (
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center">
-          <div className="pointer-events-auto flex h-10 items-center">
-            {/* 칩 위로 투명→#ECF1FA 그라데이션 fade — 화살표 안쪽 칩이 서서히 사라지게 */}
-            <div
-              aria-hidden
-              className="h-full w-5 bg-gradient-to-r from-transparent to-krds-bg-primary-faint"
-            />
-            {/* 버튼 뒤(사각 모서리 포함)는 배경색(#ECF1FA)으로 덮어 칩이 비치지 않게 */}
-            <span className="flex h-full items-center bg-krds-bg-primary-faint">
-              <button
-                type="button"
-                aria-label="다음 단계로 스크롤"
-                onClick={() => scrollBy(160)}
-                className="flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-background text-krds-text-ink"
-              >
-                <Icon name="ArrowForwardIos" size={20} aria-hidden />
-              </button>
-            </span>
-          </div>
-        </div>
-      )}
+      {/* 진행현황 바텀시트 — 세로 StepBar 전체 + 확인(footer) */}
+      <BottomSheet
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+        title={sheetTitle}
+        footer={
+          <Button variant="primary" className="w-full" onClick={() => setSheetOpen(false)}>
+            확인
+          </Button>
+        }
+      >
+        <StepBar orientation="vertical" items={fullItems} />
+      </BottomSheet>
     </div>
   )
 }
@@ -294,7 +239,8 @@ function StepBar({
   className,
   items,
   orientation = 'vertical',
-  scrollButtons,
+  sheetItems,
+  sheetTitle,
   ...props
 }: StepBarProps) {
   if (orientation === 'horizontal') {
@@ -302,7 +248,8 @@ function StepBar({
       <StepBarHorizontal
         className={className}
         items={items}
-        scrollButtons={scrollButtons}
+        sheetItems={sheetItems}
+        sheetTitle={sheetTitle}
         {...props}
       />
     )

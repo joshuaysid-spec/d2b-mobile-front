@@ -4,7 +4,7 @@
 //   화살표 통일(arrow_forward_ios)에 맞춰 Material ArrowForwardIos(Icon)를 직접 렌더.
 //   90° 회전해 아래(⌄), 열림(data-state=open) 시 위(⌃)로 회전. (raw 수정 금지 — base 에서 처리)
 // 타이틀 바: h-56 · px-16 · 19px Bold · blue(bg-primary-faint) / white · 상단 1px divider.
-// 콘텐츠: bg-white · p-16 · 세로 stack gap-16.
+// 콘텐츠: bg-white · 좌우/하단 16 · 상단 0(타이틀 바 h-56 의 하단 여백으로 충분 → pt 추가 시 간격 과다) · 세로 stack gap-16.
 import * as React from 'react'
 
 import {
@@ -29,7 +29,7 @@ export interface AccordionSectionProps {
   variant?: 'blue' | 'white'
   /** 상단 구분선(기본 true). 첫 섹션은 false 권장. */
   borderTop?: boolean
-  /** 콘텐츠 패딩 제거(기본 false → p-16) */
+  /** 콘텐츠 좌우/하단 패딩 제거(기본 false → 좌우/하단 16, 상단 0) */
   flush?: boolean
   className?: string
   /** 트리거(타이틀 바) 추가 className — 글자/chevron 색 등 오버라이드(currentColor 상속). */
@@ -65,7 +65,9 @@ const AccordionSection = ({
     >
       <span className="min-w-0 flex-1 truncate text-left">{title}</span>
       {titleInfo && (
-        <span className="shrink-0 text-[17px] font-bold text-krds-text-primary-active">{titleInfo}</span>
+        <span className="shrink-0 text-[17px] font-bold text-krds-text-primary-active">
+          {titleInfo}
+        </span>
       )}
       {/* Material 화살표(arrow_forward_ios) — 90° 회전해 아래(⌄), 열림 시 위(⌃). 크기는 size 로 조절. */}
       <Icon
@@ -76,7 +78,12 @@ const AccordionSection = ({
       />
     </RawAccordionTrigger>
     <RawAccordionContent
-      className={cn('flex flex-col gap-krds-8 bg-white pt-4', flush ? 'p-0' : 'p-krds-8', contentClassName)}
+      className={cn(
+        // 상단 패딩 0(타이틀 바 하단 여백으로 충분) · 좌우/하단 16. raw 내부 div 의 pt-0 을 그대로 살린다.
+        'flex flex-col gap-krds-8 bg-white',
+        flush ? 'p-0' : 'px-krds-8 pb-krds-8',
+        contentClassName,
+      )}
     >
       {children}
     </RawAccordionContent>

@@ -1,7 +1,8 @@
 // 입찰진행 상세조회 (MUI-BD-03-M02, 설계서 slide66·67·68). 입찰진행 목록 카드 → /bd/prgrs/:id 진입.
 // 구성: 요약 헤더(badges + 공고번호 + 출력 + 입찰건명) + 구분/내용 표 + 플로팅(맨위로/바로가기).
 //   데이터는 목록에서 넘어온 항목(navigate state)으로 구동. 없으면(직접 URL 진입) 페이지 fallback 목업.
-// 항목명은 설계서 dlt_bidPrgrsList(slide67) 기준. 진행 상태값(apfrStatNm/tndrStatNm/applInsp/regRjctYn/
+// 항목명은 설계서 dlt_bidPrgrsList(slide67) 기준. 등록확정여부(bidRegCfmtnYn,slide76)·등록심사시점(tndrSbmsnPntmCd,slide156)은
+//   설계서 타 데이터영역 항목으로 입찰서 작성 분기(slide68)에 사용. 진행 상태값(apfrStatNm/tndrStatNm/regRjctYn/
 //   bfhdSrngRsltYn/techEvlRsltYn)은 설계서 미정의(상세설계 예정) 임시 항목 — 상태별 버튼 노출(slide68)을 구동.
 // ⚠️ 상태에 따라 표 행·플로팅(바로가기) 버튼이 분기된다. 결과조회(기술평가 P01·생산능력서류 P06)는 풀팝업.
 //    입찰참가신청서 작성(M01)·사전심사 신청(M01)은 화면 이동. 반려(P07)는 입찰참가신청서 화면에 있다.
@@ -43,9 +44,9 @@ const MOCK_BID_PRGRS_DETAIL: BidPrgrsDetail = {
   tndr: true,
   techEvl: true,
   prdcpDcmntSbms: true,
-  apfrStatNm: '등록확정',
+  bidRegCfmtnYn: 'Y',
   tndrStatNm: '미제출',
-  applInsp: 'pre',
+  tndrSbmsnPntmCd: 'pre',
   regRjctYn: false,
   bfhdSrngRsltYn: true,
   techEvlRsltYn: true,
@@ -58,7 +59,7 @@ function statusBadge(
   if (it.regRjctYn) return { label: '입찰참가등록반려', color: 'red' }
   if (it.tndrStatNm === '완료') return { label: '입찰서 완료', color: 'green' }
   if (it.tndrStatNm === '제출') return { label: '입찰서 제출', color: 'blue' }
-  if (it.apfrStatNm === '등록확정') return { label: '등록확정', color: 'green' }
+  if (it.bidRegCfmtnYn === 'Y') return { label: '등록확정', color: 'green' }
   if (it.apfrStatNm) return { label: `입찰참가 ${it.apfrStatNm}`, color: 'blue' }
   return null
 }
@@ -102,7 +103,11 @@ function buildRows(it: BidPrgrsDetail, onView: (key: string) => void): TableRow[
   if (it.bidPrgrsApfr) {
     rows.push({
       label: '입찰참가신청서',
-      value: statusCell(it.apfrStatNm ?? '신청', '내용 보기', 'apfr'),
+      value: statusCell(
+        it.bidRegCfmtnYn === 'Y' ? '등록확정' : (it.apfrStatNm ?? '신청'),
+        '내용 보기',
+        'apfr',
+      ),
       type: 'combination',
     })
   }
@@ -176,14 +181,15 @@ export function BidPrgsDtlInqPage() {
     ...(detail.bidPrgrsApfr ? [{ key: 'apfr', label: '입찰참가' }] : []),
   ]
 
-  // 바로가기(플로팅) 버튼 — 진행 상태에 따라 분기(설계서 slide68 조건).
-  //   입찰참가신청서 작성: 입찰참가 대상이고 아직 등록확정 전.
-  //   사전심사 신청: 사전심사 대상이고 결과 없음(미신청).
-  //   입찰서 작성: 입찰서 대상이고 (등록확정 또는 사후등록심사)이며 아직 완료 전.
-  //   입찰포기/취소: 입찰서를 제출한 경우.
+  // 바로가기(플로팅) 버튼 — 진행 상태에 따라 분기(설계서 slide68 "이벤트 설명" 노출 조건).
+  //   입찰참가신청서 작성: 입찰참가 대상(bidPrgrsApfr)이고 아직 등록확정 전(bidRegCfmtnYn!=='Y').
+  //   사전심사 신청: 사전심사 대상(bfhdSrng)이고 결과 없음(미신청).
+  //   입찰서 작성: 입찰서 대상(tndr)이고 (등록확정 bidRegCfmtnYn==='Y' 또는 사후등록심사 tndrSbmsnPntmCd==='post')이며 아직 완료 전.
+  //     └ slide68 원문: "입찰참가신청 상태가 등록확정 또는 입찰등록심사 시점이 사후심사인 경우 버튼 보이기".
+  //   입찰포기/취소: 입찰서를 제출한 경우(tndrStatNm==='제출').
   type Shortcut = { id: string; label: string; variant: 'primary' | 'secondary' | 'tertiary' }
   const shortcutItems: Shortcut[] = []
-  if (detail.bidPrgrsApfr && detail.apfrStatNm !== '등록확정') {
+  if (detail.bidPrgrsApfr && detail.bidRegCfmtnYn !== 'Y') {
     shortcutItems.push({ id: 'apply', label: '입찰참가신청서 작성하기', variant: 'primary' })
   }
   if (detail.bfhdSrng && !detail.bfhdSrngRsltYn) {
@@ -191,7 +197,7 @@ export function BidPrgsDtlInqPage() {
   }
   const canTender =
     detail.tndr &&
-    (detail.apfrStatNm === '등록확정' || detail.applInsp === 'post') &&
+    (detail.bidRegCfmtnYn === 'Y' || detail.tndrSbmsnPntmCd === 'post') &&
     detail.tndrStatNm !== '완료'
   if (canTender) {
     shortcutItems.push({ id: 'bid', label: '입찰서(견적서) 작성하기', variant: 'primary' })
