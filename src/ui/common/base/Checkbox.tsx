@@ -16,11 +16,70 @@ import { cn } from '@/utils/cn'
 export interface CheckboxProps extends React.ComponentPropsWithoutRef<typeof RawCheckbox> {
   /** 칩 라벨. children 으로도 받음(children 우선). */
   label?: React.ReactNode
+  /**
+   * 시각 형태.
+   * - 'chip'(기본): pill 칩 — 항상 Check 아이콘 표시, 선택 시 배경/굵기 변경. 검색필터·CheckboxGroup 등 기존 사용처 전부 이 형태.
+   * - 'box': 24px 사각 체크박스 + 옆에 일반 텍스트 라벨. 약관/서약서 동의 목록처럼 행 안에 박스로 끼울 때.
+   */
+  variant?: 'chip' | 'box'
 }
 
 const Checkbox = React.forwardRef<React.ElementRef<typeof RawCheckbox>, CheckboxProps>(
-  ({ className, label, children, ...props }, ref) => (
-    <label
+  ({ className, label, children, variant = 'chip', ...props }, ref) => {
+    // box variant — 사각 체크박스(☐). raw 를 박스 위에 투명 임베드(레이어 규칙 유지), 시각은 data-state 로 따라감.
+    if (variant === 'box') {
+      const content = label ?? children
+      return (
+        <label
+          className={cn(
+            'inline-flex cursor-pointer select-none items-center gap-krds-4',
+            'text-krds-body-md text-krds-text-ink',
+            'has-disabled:cursor-not-allowed has-disabled:text-krds-text-disabled',
+            className,
+          )}
+        >
+          <span
+            className={cn(
+              // 24px 사각 박스 — Figma m_checkbox_basic(border #c1d1ee=border-field, radius 2px=krds-xs)
+              'relative grid size-6 shrink-0 place-content-center rounded-krds-xs border border-krds-border-field bg-background transition-colors',
+              // 선택됨/부분선택(indeterminate) — 파란 배경 + 흰 체크/대시
+              'has-data-[state=checked]:border-krds-action-primary has-data-[state=checked]:bg-krds-action-primary',
+              'has-data-[state=indeterminate]:border-krds-action-primary has-data-[state=indeterminate]:bg-krds-action-primary',
+              // 키보드 포커스 링
+              'has-focus-visible:outline-hidden has-focus-visible:ring-2 has-focus-visible:ring-ring has-focus-visible:ring-offset-2',
+              // 비활성
+              'has-disabled:border-krds-border-disabled has-disabled:bg-krds-bg-disabled-soft',
+            )}
+          >
+            {/* after:-inset-2 — 24px 박스의 클릭 가능 영역을 사방 8px 넓혀 터치 타깃 확보(레이아웃 불변). */}
+            <RawCheckbox
+              ref={ref}
+              className="peer absolute inset-0 size-full cursor-pointer opacity-0 after:absolute after:-inset-2 after:content-[''] disabled:cursor-not-allowed"
+              {...props}
+            />
+            {/* 체크 아이콘 — 선택 시에만 표시(peer=raw 의 data-state 추적). 흰색, 클릭은 raw 로 통과. */}
+            <Icon
+              name="Check"
+              size={18}
+              aria-hidden
+              className="pointer-events-none text-white opacity-0 peer-data-[state=checked]:opacity-100"
+            />
+            {/* 부분선택(전체동의 일부 체크) — 대시 표시. absolute 로 겹쳐 중앙 정렬(체크 아이콘과 자리 공유). */}
+            <Icon
+              name="Remove"
+              size={18}
+              aria-hidden
+              className="pointer-events-none absolute inset-0 grid place-content-center text-white opacity-0 peer-data-[state=indeterminate]:opacity-100"
+            />
+          </span>
+          {content != null && <span className="min-w-0">{content}</span>}
+        </label>
+      )
+    }
+
+    // chip variant(기본) — pill 칩. 기존 동작 그대로.
+    return (
+      <label
       className={cn(
         // 칩(pill) 기본 — 기본 너비 74px(min-w), 내용이 길면 줄바꿈 없이 가로로 늘어나 아래로 안 넘침
         // relative: 숨은 input(absolute)의 containing block 을 칩으로 고정 → 스와이프 스크롤러 안에서
@@ -50,7 +109,8 @@ const Checkbox = React.forwardRef<React.ElementRef<typeof RawCheckbox>, Checkbox
       <Icon name="Check" size={24} className="shrink-0" aria-hidden />
       <span className="whitespace-nowrap">{label ?? children}</span>
     </label>
-  ),
+    )
+  },
 )
 Checkbox.displayName = 'Checkbox'
 

@@ -6,10 +6,8 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { Button } from '@/ui/common/base/Button'
-import { Checkbox } from '@/ui/common/base/Checkbox'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
+import { AgreementList } from '@/ui/common/composites/AgreementList'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
@@ -65,6 +63,7 @@ const WROT_ITEMS: Array<{ id: string; required: boolean }> = [
   { id: 'w_p03', required: true }, // 청렴 계약 이행 서약서
   { id: 'w_p04', required: false }, // 하도급대금의 지급관련 확인 및 확약서
 ]
+const ALL_IDS = WROT_ITEMS.map((i) => i.id) // 전체 동의 토글용 — 모듈 상수(매 렌더 재계산 방지)
 
 export function WrotAgrePage() {
   const navigate = useNavigate()
@@ -75,6 +74,9 @@ export function WrotAgrePage() {
 
   const toggle = (id: string, on: boolean) =>
     setChecked((prev) => (on ? [...new Set([...prev, id])] : prev.filter((v) => v !== id)))
+
+  // 전체 동의 토글 — 전체 on·off(전체/부분 상태 계산은 AgreementList 내부에서 처리).
+  const toggleAll = (on: boolean) => setChecked(on ? [...ALL_IDS] : [])
 
   const openWrot = (w: WrotData) => {
     setSelected(w)
@@ -117,39 +119,28 @@ export function WrotAgrePage() {
       {/* 입찰안내(사후심사대상) */}
       <Infobox title="입찰안내" items={NOTICE_ITEMS} />
 
-      {/* 페이지 타이틀 */}
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        서약서 동의
-      </PageTitle>
-
-      {/* 서약서 동의 — 3항목 체크리스트(각 행: 체크박스 + 보기 버튼) */}
-      <SectionTitle as="h3" topDivider info={`총 ${WROT_ITEMS.length}건`}>
+      {/* 서약서 동의 섹션 헤더 — Figma m_section title(9300-40694, borderTop, 19px Bold, 카운트 없음) */}
+      <SectionTitle as="h2" topDivider>
         서약서 동의
       </SectionTitle>
-      <div className="flex flex-col gap-krds-5 px-4 py-4">
-        {WROT_ITEMS.map((item) => {
-          const wrot = WROTS.find((w) => w.id === item.id)
-          if (!wrot) return null
-          return (
-            <div key={item.id} className="flex items-center gap-krds-5">
-              <Checkbox
-                label={`${wrot.title}${item.required ? ' (필수)' : ' (선택)'}`}
-                checked={checked.includes(item.id)}
-                onCheckedChange={(c) => toggle(item.id, c === true)}
-                className="min-w-0 flex-1 justify-start [&>span]:whitespace-normal [&>span]:text-left"
-              />
-              <Button
-                variant="inner"
-                size="sm"
-                className="shrink-0"
-                onClick={() => openWrot(wrot)}
-              >
-                보기
-              </Button>
-            </div>
-          )
-        })}
-      </div>
+
+      {/* 서약서 동의 카드 — 공통 AgreementList(Figma m_agreemen). 내용은 설계서(slide92) 3건 유지.
+          항목 행 클릭 → 서약서 바텀시트(WrotAgreForm) 는 이 페이지가 소유. */}
+      <AgreementList
+        className="m-4"
+        items={WROT_ITEMS.map((item) => ({
+          id: item.id,
+          title: WROTS.find((w) => w.id === item.id)?.title ?? '',
+          requirement: item.required ? 'required' : 'optional',
+        }))}
+        checked={checked}
+        onToggle={toggle}
+        onCheckAll={toggleAll}
+        onView={(id) => {
+          const wrot = WROTS.find((w) => w.id === id)
+          if (wrot) openWrot(wrot)
+        }}
+      />
 
       {/* 하단 액션바 — 취소/다음으로 */}
       <div className="border-t border-krds-border-divider bg-krds-bg-primary-faint px-4 py-4">

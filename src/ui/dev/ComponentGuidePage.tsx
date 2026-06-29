@@ -61,6 +61,7 @@ import { TagList } from '@/ui/common/composites/TagList'
 import { RadioGroup } from '@/ui/raw/radio-group'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { CheckboxGroup } from '@/ui/common/composites/CheckboxGroup'
+import { AgreementList } from '@/ui/common/composites/AgreementList'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
@@ -111,6 +112,7 @@ const NAV = [
     items: [
       { id: 'radiobuttongroup', label: 'RadioButtonGroup' },
       { id: 'checkboxgroup', label: 'CheckboxGroup' },
+      { id: 'agreementlist', label: 'AgreementList' },
       { id: 'infobox', label: 'Infobox' },
       { id: 'searchcondition', label: 'SearchCondition' },
       { id: 'listsectionheader', label: 'ListSectionHeader' },
@@ -339,9 +341,9 @@ export function ComponentGuidePage() {
           <Section
             id="checkbox"
             title="Checkbox"
-            desc="Figma m_checkbox — 라벨 포함 선택 칩. 선택 시 연파랑 배경 + 보더 2px + Bold."
+            desc="Figma m_checkbox — variant='chip'(기본): 라벨 포함 선택 칩, 선택 시 연파랑 배경 + 보더 2px + Bold. variant='box': 24px 사각 체크박스 + 옆 일반 텍스트 라벨(약관/서약서 동의 목록용), 선택 시 파란 배경 + 흰 체크."
           >
-            <Row label="state">
+            <Row label="chip (기본)">
               <Specimen caption="기본 (미선택)">
                 <Checkbox label="선택항목" />
               </Specimen>
@@ -353,6 +355,20 @@ export function ComponentGuidePage() {
               </Specimen>
               <Specimen caption="disabled + checked">
                 <Checkbox label="선택항목" disabled defaultChecked />
+              </Specimen>
+            </Row>
+            <Row label="box">
+              <Specimen caption="기본 (미선택)">
+                <Checkbox variant="box" label="동의항목" />
+              </Specimen>
+              <Specimen caption="defaultChecked (선택)">
+                <Checkbox variant="box" label="동의항목" defaultChecked />
+              </Specimen>
+              <Specimen caption="disabled">
+                <Checkbox variant="box" label="동의항목" disabled />
+              </Specimen>
+              <Specimen caption="라벨 없음">
+                <Checkbox variant="box" aria-label="선택" />
               </Specimen>
             </Row>
           </Section>
@@ -1772,6 +1788,28 @@ export function ComponentGuidePage() {
                       { value: 'c', label: '담당자' },
                     ]}
                   />
+                </div>
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── AgreementList ───────── */}
+          <Section
+            id="agreementlist"
+            title="AgreementList"
+            desc="Figma m_agreemen(9300-40702) 1:1. 테두리 카드(radius 12·padding 16·gap 16) 안에 '전체 동의' → 구분선 → 항목 리스트. 각 행: 사각 체크박스(box) + [필수](빨강)/[선택](네이비) 색상 텍스트 + 제목 + ArrowForwardIos(행 클릭=상세 열기). 서약서 동의·약관 동의 등 동의 체크리스트 공용. requirement 생략 시 태그 없음, checkAll=false 로 '전체 동의' 숨김."
+          >
+            <Row label="전체 동의 + [필수]/[선택]">
+              <Specimen caption="행 클릭=상세 / 체크박스=동의 토글 / 전체동의 indeterminate">
+                <div className="w-[328px]">
+                  <AgreementListDemo />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="checkAll=false (태그 없음)">
+              <Specimen caption="전체 동의 행 숨김 + 태그 없는 단순 목록">
+                <div className="w-[328px]">
+                  <AgreementListDemo checkAll={false} plain />
                 </div>
               </Specimen>
             </Row>
@@ -3634,6 +3672,39 @@ function GroupHeading({ children }: { children: React.ReactNode }) {
       <h2 className="text-krds-heading-sm font-bold text-foreground">{children}</h2>
       <div className="h-px flex-1 bg-border" />
     </div>
+  )
+}
+
+// AgreementList 데모 — 상태(checked) 보유. plain=태그 없는 단순 목록.
+function AgreementListDemo({
+  checkAll = true,
+  plain = false,
+}: {
+  checkAll?: boolean
+  plain?: boolean
+}) {
+  const items = plain
+    ? [
+        { id: 'a', title: '국방규격 및 계약이행 가능성 확인 동의' },
+        { id: 'b', title: '약관동의' },
+      ]
+    : [
+        { id: 'a', title: '국방규격 및 계약이행 가능성 확인 동의', requirement: 'required' as const },
+        { id: 'b', title: '약관동의', requirement: 'required' as const },
+        { id: 'c', title: '하도급대금의 지급관련 확인 및 확약서', requirement: 'optional' as const },
+      ]
+  const [checked, setChecked] = useState<string[]>(['a'])
+  return (
+    <AgreementList
+      items={items}
+      checked={checked}
+      checkAll={checkAll}
+      onToggle={(id, on) =>
+        setChecked((prev) => (on ? [...new Set([...prev, id])] : prev.filter((v) => v !== id)))
+      }
+      onCheckAll={(on) => setChecked(on ? items.map((i) => i.id) : [])}
+      onView={(id) => console.log('[guide] AgreementList view', id)}
+    />
   )
 }
 

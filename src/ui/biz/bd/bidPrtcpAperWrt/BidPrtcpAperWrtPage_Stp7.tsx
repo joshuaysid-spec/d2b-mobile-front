@@ -4,10 +4,9 @@
 // 이 탭이 동의서 BottomSheet 컨테이너(선택 동의서 title, footer=저장 후 닫기/취소)와 저장 확인 AlertModal 을 직접 소유.
 import { useState } from 'react'
 
-import { Button } from '@/ui/common/base/Button'
-import { Checkbox } from '@/ui/common/base/Checkbox'
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
+import { AgreementList } from '@/ui/common/composites/AgreementList'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
@@ -42,6 +41,9 @@ export function BidPrtcpAperWrtPage_Stp7({ detail }: { detail: BidPrgrsItem }) {
   const toggle = (id: string, on: boolean) =>
     setChecked((prev) => (on ? [...new Set([...prev, id])] : prev.filter((v) => v !== id)))
 
+  // 전체 동의 토글 — 전체 on·off(전체/부분 상태 계산은 AgreementList 내부).
+  const toggleAll = (on: boolean) => setChecked(on ? AGREEMENTS.map((a) => a.id) : [])
+
   const openAgreement = (a: AgreementData) => {
     setSelected(a)
     setSheetOpen(true)
@@ -71,30 +73,26 @@ export function BidPrtcpAperWrtPage_Stp7({ detail }: { detail: BidPrgrsItem }) {
         <Table rows={CONTACT_ROWS} />
       </div>
 
-      {/* 약관 동의 — 6항목 체크리스트(각 행: 체크박스 + 보기 버튼) */}
-      <SectionTitle as="h3" topDivider info={`총 ${AGREEMENTS.length}건`}>
+      {/* 약관 동의 — 공통 AgreementList(Figma m_agreemen). [필수]/[선택]은 variant 로 도출(select=하도급→선택).
+          항목 행 클릭 → 동의서 바텀시트(AgreementForm) 는 이 탭이 소유. */}
+      <SectionTitle as="h3" topDivider>
         약관 동의
       </SectionTitle>
-      <div className="flex flex-col gap-krds-5 px-4 py-4">
-        {AGREEMENTS.map((a) => (
-          <div key={a.id} className="flex items-center gap-krds-5">
-            <Checkbox
-              label={a.title}
-              checked={checked.includes(a.id)}
-              onCheckedChange={(c) => toggle(a.id, c === true)}
-              className="min-w-0 flex-1 justify-start [&>span]:whitespace-normal [&>span]:text-left"
-            />
-            <Button
-              variant="inner"
-              size="sm"
-              className="shrink-0"
-              onClick={() => openAgreement(a)}
-            >
-              보기
-            </Button>
-          </div>
-        ))}
-      </div>
+      <AgreementList
+        className="m-4"
+        items={AGREEMENTS.map((a) => ({
+          id: a.id,
+          title: a.title,
+          requirement: a.variant === 'select' ? 'optional' : 'required',
+        }))}
+        checked={checked}
+        onToggle={toggle}
+        onCheckAll={toggleAll}
+        onView={(id) => {
+          const a = AGREEMENTS.find((x) => x.id === id)
+          if (a) openAgreement(a)
+        }}
+      />
 
       {/* 입찰안내(사후심사대상) */}
       <Infobox title="입찰안내" items={NOTICE_ITEMS} />
