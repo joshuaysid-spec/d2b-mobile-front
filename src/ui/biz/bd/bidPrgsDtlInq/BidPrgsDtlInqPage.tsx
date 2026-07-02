@@ -217,8 +217,8 @@ export function BidPrgsDtlInqPage() {
       case 'bfhdAply': // 사전심사(PQ) 신청(M01)
         navigate('/bd/bfhd-srng-aply', { state: detail })
         break
-      case 'bid': // 입찰서(견적서) 작성하기 → 전자서명(M21) → 신청완료(M08). 입찰서 작성 폼(M01~M07)은 추후.
-        navigate(`/bd/prgrs/${detail.rNum}/elsgn`, { state: { detail, aplyType: 'tndr' } })
+      case 'bid': // 입찰서(견적서) 작성하기 → 입찰서 작성 마법사(MUI-BD-06-M01~M07) → 전자서명 → 신청완료.
+        navigate(`/bd/prgrs/${detail.rNum}/tndr-wrt`, { state: detail })
         break
       case 'fx':
         setExchrtOpen(true)

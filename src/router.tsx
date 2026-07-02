@@ -78,6 +78,10 @@ const BidPrtcpAperWrtPage = lazy(() =>
     default: m.BidPrtcpAperWrtPage,
   })),
 )
+// 입찰서(견적서) 작성(MUI-BD-06-M01~M07, /bd/prgrs/:id/tndr-wrt) — biz/bd/tndrWrt. 7탭 마법사(일반정보~약관동의). 신청 → 전자서명 → 신청완료.
+const TndrWrtPage = lazy(() =>
+  import('@/ui/biz/bd/tndrWrt/TndrWrtPage').then((m) => ({ default: m.TndrWrtPage })),
+)
 // 전자서명(MUI-BD-04-M21, /bd/prgrs/:id/elsgn) — biz/bd/elsgn. 사전심사/입찰참가/입찰서 공용 전자서명. 견적서작성하기·신청서 제출 → 이 화면 → 신청완료.
 const ElsgnPage = lazy(() =>
   import('@/ui/biz/bd/elsgn/ElsgnPage').then((m) => ({ default: m.ElsgnPage })),
@@ -186,6 +190,11 @@ export const router = createBrowserRouter([
         path: 'bd/prgrs/:id/apfr/form',
         element: <BidPrtcpAperWrtPage />,
         handle: { header: { variant: 'sub', util: 'home', title: '입찰참가신청서' } },
+      },
+      {
+        path: 'bd/prgrs/:id/tndr-wrt',
+        element: <TndrWrtPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '입찰서 작성' } },
       },
       {
         path: 'bd/prgrs/:id/elsgn',
