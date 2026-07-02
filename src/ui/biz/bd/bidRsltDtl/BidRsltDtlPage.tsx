@@ -5,7 +5,7 @@
 //   + 맨위로 FAB.
 // 상세화면이라 검색필터 없음. 데이터는 목업(추후 bdService.getBidRsltDetail). 헤더는 전역 Header(AppLayout).
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { getBdopnById } from '@/ui/biz/bd/bdopnList/BdopnListPage'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -19,9 +19,11 @@ import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
+import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { BidRsltDtlListPage } from '@/ui/biz/bd/bidRsltDtl/BidRsltDtlListPage'
 import { BidRsltDtl } from '@/ui/biz/bd/bidRsltDtl/BidRsltDtl'
 import { BidRsltDtl2 } from '@/ui/biz/bd/bidRsltDtl/BidRsltDtl2'
+import { ImpltElgbSrngAbndAply } from '@/ui/biz/bd/bidRsltDtl/ImpltElgbSrngAbndAply'
 
 // ── 탭 (설계서 6.1 화면목록 MUI-BD-09-M01~M04) ───────────────────────────────
 const TABS: TabItem[] = [
@@ -118,6 +120,13 @@ const ATTACH_FILES: FileDownloadItem[] = [
 
 // 일반정보 탭(M01) — 설계서 순서: 일반정보 → 첨부서류 → 담당자 정보 (slide152 일반정보·첨부서류, slide153 담당자).
 function GeneralInfo() {
+  const navigate = useNavigate()
+  const { id } = useParams()
+  // 이행/적격심사 신청 화면(MUI-BD-10)으로 이동 — 상단 요약을 그릴 개찰목록 항목을 state 로 전달.
+  const item = getBdopnById(id)
+  // 이행/적격심사 포기신청 풀팝업(MUI-BD-10-P21) 열림 상태.
+  const [abndOpen, setAbndOpen] = useState(false)
+
   return (
     <>
       <PageTitle as="h2">일반정보</PageTitle>
@@ -132,6 +141,45 @@ function GeneralInfo() {
           <Table rows={CONTACT_ROWS} />
         </AccordionSection>
       </Accordion>
+
+      {/* 이행/적격심사 액션 — 담당자 정보와 간격 두고 균등 분할(포기하기/신청하기) + 풀폭 제출내용 확인. 추후 API: bdService.applyPfmncElgblScrn */}
+      {/* 하단 여백: 우측 플로팅 버튼(48px + 하단 10px + safe-area)에 안 가리도록 확보. */}
+      <div
+        className="flex flex-col gap-krds-5 px-4 pt-krds-8"
+        style={{ paddingBottom: 'calc(48px + 10px + 16px + env(safe-area-inset-bottom))' }}
+      >
+        <ButtonGroup
+          layout="split"
+          items={[
+            {
+              label: '이행/적격심사 포기하기',
+              variant: 'secondary',
+              itemClassName: 'h-auto min-h-12 whitespace-normal break-keep py-2 text-center leading-tight',
+              onClick: () => setAbndOpen(true),
+            },
+            {
+              label: '이행/적격심사 신청하기',
+              variant: 'primary',
+              itemClassName: 'h-auto min-h-12 whitespace-normal break-keep py-2 text-center leading-tight',
+              onClick: () => navigate(`/bd/implt/${id ?? ''}`, { state: item }),
+            },
+          ]}
+        />
+        <ButtonGroup
+          layout="single"
+          items={[
+            {
+              label: '이행/적격심사 제출내용 확인',
+              variant: 'primary',
+              itemClassName: 'h-auto min-h-12 whitespace-normal break-keep py-2 text-center leading-tight',
+              onClick: () => console.log('[BidRsltDtl] 이행/적격심사 제출내용 확인'),
+            },
+          ]}
+        />
+      </div>
+
+      {/* 이행/적격심사 포기신청 풀팝업(MUI-BD-10-P21) */}
+      <ImpltElgbSrngAbndAply open={abndOpen} onOpenChange={setAbndOpen} detail={item} />
     </>
   )
 }
