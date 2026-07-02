@@ -110,6 +110,12 @@ const BidRsltDtlPage = lazy(() =>
     default: m.BidRsltDtlPage,
   })),
 )
+// 이행/적격심사상세(MUI-BD-10-M01~M04, /bd/implt/:id) — biz/bd/bidRsltDtl. 입찰결과상세 > 이행적격심사 신청하기 진입.
+const ImpltPage = lazy(() =>
+  import('@/ui/biz/bd/bidRsltDtl/ImpltPage').then((m) => ({
+    default: m.ImpltPage,
+  })),
+)
 const NotiPrstPage = lazy(() =>
   import('@/ui/biz/cm/notiPrst/NotiPrstPage').then((m) => ({
     default: m.NotiPrstPage,
@@ -216,6 +222,11 @@ export const router = createBrowserRouter([
         path: 'bd/result/:id',
         element: <BidRsltDtlPage />,
         handle: { header: { variant: 'sub', util: 'home', title: '입찰결과 상세' } },
+      },
+      {
+        path: 'bd/implt/:id',
+        element: <ImpltPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '이행/적격심사' } },
       },
       {
         path: 'bd/:id',

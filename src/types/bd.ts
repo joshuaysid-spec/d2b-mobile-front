@@ -139,6 +139,84 @@ export type BidPbancDetail = BidPbancItem
 export type BidPrgrsDetail = BidPrgrsItem & { clsfNo?: string }
 
 /**
+ * 이행/적격심사상세 – 일반정보 공고정보 (MUI-BD-10-M01, 설계서 slide166 데이터영역 dmt_pbancInfo).
+ * 항목명(영문)·자리수는 설계서 그대로. 대표품명/비고는 콘텐츠 표시 항목(데이터영역 외).
+ */
+export interface ImpltElgbSrngPbancInfo {
+  /** 입찰건명 (bidNm, 200) */
+  bidNm: string
+  /** 대표품명 — 콘텐츠 표시(데이터영역 외) */
+  rprsCmdtyNm: string
+  /** 지시년도 (drctnYr, 4) */
+  drctnYr: string
+  /** 공고번호 (pbancNo, 7) */
+  pbancNo: string
+  /** 통합참조번호 (rfrncNo, 13) */
+  rfrncNo: string
+  /** 발주기관 (orderInstNm, 200) */
+  orderInstNm: string
+  /** 판단번호 (prcmNo, 38) */
+  prcmNo: string
+  /** 항목번호 (clsfNo, 3) */
+  clsfNo: string
+  /** 계약방법 (ctrtMthdCd → 표시명) */
+  ctrtMthdNm: string
+  /** 입찰방법 (bidMthdCd → 표시명) */
+  bidMthdNm: string
+  /** 개찰일시 (bdopnDt) */
+  bdopnDt: string
+  /** 신청마감일시 (srngPrgrsDdlnDt) */
+  srngPrgrsDdlnDt: string
+  /** 적용양식 (cmdtyLbsvcElgbSrngCd → 표시명) */
+  cmdtyLbsvcElgbSrngNm: string
+  /** 비고 — 콘텐츠 표시(데이터영역 외) */
+  rmrk: string
+}
+
+/**
+ * 이행/적격심사상세 – 입찰결과 (MUI-BD-10-M02, 설계서 slide166 데이터영역 dmt_bidRslt).
+ */
+export interface ImpltElgbSrngBidRslt {
+  /** 낙찰순위 (scsbdRnk, 10) */
+  scsbdRnk: string
+  /** 투찰금액 (bdngAmt, 17,2) — 표시 시 콤마 + ' 원' */
+  bdngAmt: string
+  /** 투찰률 (scbrt, 9,4) — (입찰가격-A)/(예정가격-A)*100. 표시 시 ' %' */
+  scbrt: string
+  /** 상태 (srngPrgrsStcd → 표시명) — 예: '대상통보' */
+  srngPrgrsStNm: string
+  /** 반려사유 (rjctRsn, 4000) — 반려 시에만 값 */
+  rjctRsn: string
+}
+
+/**
+ * 이행/적격심사결과상세 – 심사결과 (MUI-BD-10-M04 물품, 설계서 slide170 데이터영역 dmt_srngRslt).
+ * 물품(Cmdty) 라벨 기준(제조능력=srngScr2, 재무상태=srngScr4). 용역/공사 등은 라벨만 상이.
+ */
+export interface ImpltElgbSrngResult {
+  /** 이행실적 (srngScr1, 5,2) */
+  srngScr1: string
+  /** 제조능력 (srngScr2, 5,2) — 물품 라벨 */
+  srngScr2: string
+  /** 재무상태 (srngScr4, 5,2) — 물품 라벨 */
+  srngScr4: string
+  /** 입찰가격 (srngScr7, 5,2) — 표시 시 콤마 + ' 원' */
+  srngScr7: string
+  /** 신인도 (srngScr5, 5,2) */
+  srngScr5: string
+  /** 결격사유 (srngScr8, 5,2) */
+  srngScr8: string
+  /** 기타1 — slide169 표시 항목 */
+  etc1: string
+  /** 기타2 — slide169 표시 항목 */
+  etc2: string
+  /** 점수총계 (tscr, 15,2) — 표시 시 ' 점' */
+  tscr: string
+  /** 판정결과 (jgmtRsltCd → 표시명) */
+  jgmtRsltNm: string
+}
+
+/**
  * 신청서 작성 플로우 종류 — 전자서명(M21)/신청완료(M08)의 표시 텍스트 분기 구동값.
  * 설계서 slide132·133: "사전심사(PQ), 입찰참가신청, 입찰서에 따라 표시 텍스트 변경".
  */
