@@ -42,7 +42,7 @@ const loadScroll = (key: string) => {
 // 본문(Outlet)은 lazy chunk 라서 Suspense 로 감싸 PageLoading 표시.
 // 에러(청크 로드 실패·렌더 throw)는 router 의 errorElement(ErrorPage)가 처리한다.
 export function AppLayout() {
-  // 알림 dot 은 전역 store 에서 구독해 주입(BottomNav 은 범용이라 도메인 store 를 모름).
+  // 알림 dot 은 전역 store 에서 구독해 주입(Header 는 범용이라 도메인 store 를 모름).
   const hasUnread = useAuthStore((s) => s.hasUnread)
   // 전체메뉴(MenuPage)도 범용이라 store 를 모름 — AppLayout 이 인증 상태/유저/로그아웃을 주입.
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
@@ -102,10 +102,20 @@ export function AppLayout() {
         variant={header?.variant ?? 'main'}
         util={header?.util}
         title={header?.title}
+        isLoggedIn={isLoggedIn}
+        onLogin={() => {
+          console.log('[header] 로그인') // 추후 라우팅: navigate(로그인 화면)
+        }}
+        onLogout={() => {
+          logout()
+          navigate(ROUTES.HOME)
+        }}
         onBack={handleBack}
         onHome={() => navigate(ROUTES.HOME)}
         onLogo={() => navigate(ROUTES.HOME)}
-        onSearch={() => setSearchOpen(true)}
+        // 통합검색↔알림현황 위치 스왑 — 헤더 유틸=알림현황 이동, 통합검색은 BottomNav 탭.
+        onNotification={() => navigate(ROUTES.NOTIFICATION)}
+        hasNotification={hasUnread}
         onMenu={() => setMenuOpen(true)}
       />
       {/* 하단 여백 = BottomNav 높이(탭 77px + border-t 1px + safe-area)와 동일하게 맞춰 콘텐츠가 안 가리게.
@@ -123,7 +133,15 @@ export function AppLayout() {
           <Outlet />
         </Suspense>
       </main>
-      {showBottomNav && <BottomNav hasNotification={hasUnread} />}
+      {/* 알림 dot 은 헤더 알림 버튼으로 이동(위치 스왑). 액션 탭(통합검색/챗봇)은 id 로 분기. */}
+      {showBottomNav && (
+        <BottomNav
+          onAction={(id) => {
+            if (id === 'search') setSearchOpen(true)
+            if (id === 'chatbot') console.log('[nav] 챗봇') // 추후: 챗봇 연결
+          }}
+        />
+      )}
       {/* 전체메뉴 오버레이 — 헤더 onMenu 로 열림. 인증 상태/유저/로그아웃을 store 에서 주입. */}
       <MenuPage
         open={menuOpen}

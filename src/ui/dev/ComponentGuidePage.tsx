@@ -3559,22 +3559,27 @@ export function ComponentGuidePage() {
           <Section
             id="header"
             title="Header"
-            desc="Figma Header(9300-26861) 1:1. 앱 상단 헤더. variant(main|sub) · main 은 isLoggedIn 으로 로그인 버튼 토글 · sub 는 util(search|home)로 우측 유틸(통합검색+전체메뉴 / 홈+전체메뉴) + 뒤로가기·타이틀. utility menu(70×66) 인라인 아톰. Logo·Icon base 재사용. sticky top-0 + safe-area-top. 미리보기는 360px 프레임."
+            desc="Figma Header(9300-26861) 1:1. 앱 상단 헤더. variant(main|sub) · main 은 isLoggedIn 으로 로그인/로그아웃 버튼 토글 · sub 는 util(search|home)로 우측 유틸(알림+전체메뉴 / 홈+전체메뉴) + 뒤로가기·타이틀. 통합검색↔알림현황 위치 스왑으로 util 슬롯=알림현황(hasNotification dot). utility menu(70×66) 인라인 아톰. Logo·Icon base 재사용. sticky top-0 + safe-area-top. 미리보기는 360px 프레임."
           >
             <Row label="main — 로그인 전 / 후">
-              <Specimen caption="variant='main' isLoggedIn={false} (기본)">
+              <Specimen caption="variant='main' isLoggedIn={false} (기본 · 로그인 버튼)">
                 <div className="w-[360px]">
                   <Header onLogin={() => console.log('[Header] login')} />
                 </div>
               </Specimen>
-              <Specimen caption="variant='main' isLoggedIn={true}">
+              <Specimen caption="variant='main' isLoggedIn={true} + hasNotification (로그아웃 버튼 · 알림 dot)">
                 <div className="w-[360px]">
-                  <Header isLoggedIn />
+                  <Header
+                    isLoggedIn
+                    hasNotification
+                    onLogout={() => console.log('[Header] logout')}
+                    onNotification={() => console.log('[Header] notification')}
+                  />
                 </div>
               </Specimen>
             </Row>
             <Row label="sub — util search / home">
-              <Specimen caption="variant='sub' util='search' (통합검색+전체메뉴)">
+              <Specimen caption="variant='sub' util='search' (알림+전체메뉴)">
                 <div className="w-[360px]">
                   <Header
                     variant="sub"
@@ -3602,17 +3607,17 @@ export function ComponentGuidePage() {
           <Section
             id="bottomnav"
             title="BottomNav"
-            desc="Figma Tab bar(9300-27700) 1:1. 하단 고정 탭바. 4탭(홈/알림/고객센터/마이페이지) · 선택 시 상단 4px #0F316E border + #ECF1FA 배경 + navy 색(비선택 transparent border 로 높이 점프 방지) · hasNotification 으로 알림 탭 빨강 dot · 아토믹 인라인 · safe-area-bottom. 실제론 fixed bottom-0 — 미리보기는 프레임 안에 정적 렌더. 라우트 밖(/guide)이라 activeId 로 선택 탭을 강제해 디자인을 보여줌."
+            desc="Figma Tab bar(9300-27700) 1:1. 하단 고정 탭바. 4탭(홈/통합검색/챗봇/마이페이지 — 통합검색↔알림현황 위치 스왑 · 고객센터→챗봇 교체) · 선택 시 상단 4px #0F316E border + #ECF1FA 배경 + navy 색(비선택 transparent border 로 높이 점프 방지) · to 없는 액션 탭(통합검색/챗봇)은 button 렌더 + onAction(id) · 아토믹 인라인 · safe-area-bottom. 실제론 fixed bottom-0 — 미리보기는 프레임 안에 정적 렌더. 라우트 밖(/guide)이라 activeId 로 선택 탭을 강제해 디자인을 보여줌."
           >
-            <Row label="기본(홈 active) / 알림 dot">
+            <Row label="기본(홈 active) / 액션 탭">
               <Specimen caption="activeId='home' — 홈 탭 선택 디자인(상단 border + #ECF1FA 배경)">
                 <div className="w-[360px] [&>nav]:static! [&>nav]:w-full! [&>nav]:translate-x-0!">
                   <BottomNav activeId="home" />
                 </div>
               </Specimen>
-              <Specimen caption="activeId='notification' + hasNotification — 알림 탭 active(dot 테두리 = 배경색)">
+              <Specimen caption="액션 탭 클릭 → onAction(id) — 통합검색/챗봇은 라우트 아님(콘솔 확인)">
                 <div className="w-[360px] [&>nav]:static! [&>nav]:w-full! [&>nav]:translate-x-0!">
-                  <BottomNav activeId="notification" hasNotification />
+                  <BottomNav activeId="search" onAction={(id) => console.log('[BottomNav]', id)} />
                 </div>
               </Specimen>
             </Row>

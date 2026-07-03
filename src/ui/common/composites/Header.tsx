@@ -5,25 +5,31 @@
 //
 // 우측 utility menu = 70w × 66h, 세로 정렬(24px 아이콘 + gap-3px + 15px Bold ink 라벨).
 //
+// ※ 위치 스왑: 통합검색(헤더)↔알림현황(탭바). 헤더의 통합검색 자리에 알림현황 버튼이,
+//   BottomNav 의 알림 탭 자리에 통합검색 탭이 온다. util='search' 값(라우트 handle 18곳)은
+//   이름을 유지하되 "우측 유틸 슬롯" 의미로 쓰이며 현재 알림 버튼을 렌더한다.
+//
 // 4가지 상태:
-//   1) variant='main' · isLoggedIn=false → [Logo] ········· [로그인][통합검색][전체메뉴]
-//   2) variant='main' · isLoggedIn=true  → [Logo] ················· [통합검색][전체메뉴]
-//   3) variant='sub'  · util='search'    → [뒤로][타이틀 flex-1] ·· [통합검색][전체메뉴]
-//   4) variant='sub'  · util='home'      → [뒤로][타이틀 flex-1] ······· [홈][전체메뉴]
+//   1) variant='main' · isLoggedIn=false → [Logo] ··········· [로그인][알림][전체메뉴]
+//   2) variant='main' · isLoggedIn=true  → [Logo] ········· [로그아웃][알림][전체메뉴]
+//   3) variant='sub'  · util='search'    → [뒤로][타이틀 flex-1] ···· [알림][전체메뉴]
+//   4) variant='sub'  · util='home'      → [뒤로][타이틀 flex-1] ····· [홈][전체메뉴]
 //
 // Props (개별 props):
-// ┌────────────┬──────────────────────────┬──────────────────────────────────────────────┐
-// │ variant    │ 'main' | 'sub' = 'main'   │ 헤더 모드                                     │
-// │ isLoggedIn │ boolean = false          │ main 전용. false→로그인 버튼 노출, true→숨김    │
-// │ onLogin    │ () => void               │ main 전용. 로그인 버튼 클릭                   │
-// │ title      │ ReactNode                │ sub 전용. 타이틀(19 Bold ink, flex-1 truncate) │
-// │ util       │ 'home'|'search'='search' │ sub 전용. search→통합검색+전체메뉴 / home→홈+전체메뉴 │
-// │ onBack     │ () => void               │ sub 전용. 뒤로가기                            │
-// │ onHome     │ () => void               │ sub 전용. util='home' 홈                      │
-// │ onSearch   │ () => void               │ 공통. 통합검색                                │
-// │ onMenu     │ () => void               │ 공통. 전체메뉴                                │
-// │ className  │ string                   │ header 추가 클래스                            │
-// └────────────┴──────────────────────────┴──────────────────────────────────────────────┘
+// ┌────────────────┬──────────────────────────┬──────────────────────────────────────────────┐
+// │ variant        │ 'main' | 'sub' = 'main'   │ 헤더 모드                                     │
+// │ isLoggedIn     │ boolean = false          │ main 전용. false→로그인 버튼, true→로그아웃 버튼 │
+// │ onLogin        │ () => void               │ main 전용. 로그인 버튼 클릭                   │
+// │ onLogout       │ () => void               │ main 전용. 로그아웃 버튼 클릭                 │
+// │ title          │ ReactNode                │ sub 전용. 타이틀(19 Bold ink, flex-1 truncate) │
+// │ util           │ 'home'|'search'='search' │ sub 전용. search→알림+전체메뉴 / home→홈+전체메뉴 │
+// │ onBack         │ () => void               │ sub 전용. 뒤로가기                            │
+// │ onHome         │ () => void               │ sub 전용. util='home' 홈                      │
+// │ onNotification │ () => void               │ 공통. 알림현황 이동                           │
+// │ hasNotification│ boolean = false          │ 알림 아이콘 우상단 빨강 dot                   │
+// │ onMenu         │ () => void               │ 공통. 전체메뉴                                │
+// │ className      │ string                   │ header 추가 클래스                            │
+// └────────────────┴──────────────────────────┴──────────────────────────────────────────────┘
 //
 // 기본값으로 무인자 <Header /> → main + 로그인전 렌더 (AppLayout 호환).
 import * as React from 'react'
@@ -37,17 +43,19 @@ export interface HeaderProps {
   variant?: 'main' | 'sub'
 
   // --- main 전용 ---
-  /** 로그인 여부. 기본 false → 로그인 버튼 노출, true → 숨김. */
+  /** 로그인 여부. 기본 false → 로그인 버튼, true → 로그아웃 버튼 노출. */
   isLoggedIn?: boolean
   /** 로그인 버튼 클릭. */
   onLogin?: () => void
+  /** 로그아웃 버튼 클릭. */
+  onLogout?: () => void
   /** main 로고 클릭 → 홈 이동. 주어지면 로고가 버튼이 된다(미지정 시 비클릭 이미지). */
   onLogo?: () => void
 
   // --- sub 전용 ---
   /** sub 타이틀(19 Bold ink, flex-1 truncate). */
   title?: React.ReactNode
-  /** sub 우측 유틸. 기본 'search'. search→통합검색+전체메뉴 / home→홈+전체메뉴. */
+  /** sub 우측 유틸. 기본 'search'(알림+전체메뉴) / home→홈+전체메뉴. */
   util?: 'home' | 'search'
   /** 뒤로가기 클릭. */
   onBack?: () => void
@@ -55,8 +63,10 @@ export interface HeaderProps {
   onHome?: () => void
 
   // --- 공통 utility ---
-  /** 통합검색 클릭. */
-  onSearch?: () => void
+  /** 알림현황 클릭(알림현황 화면 이동). */
+  onNotification?: () => void
+  /** true 면 알림 아이콘 우상단 빨강 dot(새 알림) 표시. */
+  hasNotification?: boolean
   /** 전체메뉴 클릭. */
   onMenu?: () => void
 
@@ -72,10 +82,12 @@ interface UtilityMenuProps {
   icon: IconName | React.ReactNode
   /** 시각 라벨이자 버튼 aria-label(string 으로 강제). */
   label: string
+  /** true 면 아이콘 우상단 빨강 dot(새 알림) 표시 — BottomNav dot 과 동일 디자인. */
+  dot?: boolean
   onClick?: () => void
 }
 
-const UtilityMenu = ({ icon, label, onClick }: UtilityMenuProps) => {
+const UtilityMenu = ({ icon, label, dot = false, onClick }: UtilityMenuProps) => {
   const iconNode =
     typeof icon === 'string' ? (
       <Icon name={icon as IconName} size={24} aria-hidden />
@@ -100,7 +112,14 @@ const UtilityMenu = ({ icon, label, onClick }: UtilityMenuProps) => {
         'active:opacity-70',
       )}
     >
-      {iconNode}
+      <span className="relative inline-flex">
+        {iconNode}
+        {dot && (
+          <span className="absolute right-0 top-0 size-[11px] rounded-full border-2 border-white bg-krds-feedback-danger">
+            <span className="sr-only">새 알림 있음</span>
+          </span>
+        )}
+      </span>
       <span className="text-[15px] font-bold leading-[1.2]">{label}</span>
     </button>
   )
@@ -113,31 +132,45 @@ const Header = ({
   variant = 'main',
   isLoggedIn = false,
   onLogin,
+  onLogout,
   onLogo,
   title,
   util = 'search',
   onBack,
   onHome,
-  onSearch,
+  onNotification,
+  hasNotification = false,
   onMenu,
   className,
 }: HeaderProps) => {
   // 우측 utility 묶음 — 상태별로 노출 버튼이 다름.
   const rightUtilities = (
     <>
-      {variant === 'main' && !isLoggedIn && (
-        // Login 은 REGISTRY 미등록 → children 으로 직접 MUI 아이콘 주입.
-        <UtilityMenu
-          icon={<Icon name="Login" size={24} />}
-          label="로그인"
-          onClick={onLogin}
-        />
-      )}
+      {variant === 'main' &&
+        (isLoggedIn ? (
+          <UtilityMenu
+            icon={<Icon name="Logout" size={24} />}
+            label="로그아웃"
+            onClick={onLogout}
+          />
+        ) : (
+          <UtilityMenu
+            icon={<Icon name="Login" size={24} />}
+            label="로그인"
+            onClick={onLogin}
+          />
+        ))}
 
       {variant === 'sub' && util === 'home' ? (
         <UtilityMenu icon="Home" label="홈" onClick={onHome} />
       ) : (
-        <UtilityMenu icon="Search" label="통합검색" onClick={onSearch} />
+        // 통합검색↔알림현황 위치 스왑 — 이 슬롯은 알림현황 진입(통합검색은 BottomNav 탭).
+        <UtilityMenu
+          icon="NotificationsActive"
+          label="알림"
+          dot={hasNotification}
+          onClick={onNotification}
+        />
       )}
 
       <UtilityMenu icon="Menu" label="전체메뉴" onClick={onMenu} />
