@@ -29,6 +29,8 @@ coverage
 npm-debug.log*
 
 # editor / OS
+# MS Office 임시 잠금 파일 (pptx/xlsx 열어두면 생김)
+~$*
 .DS_Store
 Thumbs.db
 Desktop.ini
