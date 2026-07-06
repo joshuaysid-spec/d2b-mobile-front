@@ -21,7 +21,9 @@
 //   무인자 <BottomNav/> → 기본 4탭(홈/통합검색/챗봇/마이페이지).
 import { NavLink } from 'react-router-dom'
 
+import chatbotImage from '@/assets/images/chatbot.png'
 import { Icon, type IconName } from '@/ui/common/base/Icon'
+import { Image } from '@/ui/common/base/Image'
 import { ROUTES } from '@/constants/routes'
 import { cn } from '@/utils/cn'
 
@@ -67,7 +69,21 @@ const DEFAULT_ITEMS: NavItem[] = [
   // 통합검색↔알림현황 위치 스왑 — 알림 탭 자리에 통합검색(오버레이 열기, 라우트 아님).
   { id: 'search', label: '통합검색', iconName: 'Search' },
   // 고객센터 → 챗봇 교체(라우트 미정 스텁 — onAction('chatbot')).
-  { id: 'chatbot', label: '챗봇', iconName: 'SmartToy' },
+  // 챗봇 마스코트는 햄버거메뉴 챗봇상담과 동일한 Figma 추출 PNG(9300-27501) —
+  // 써클(overflow-hidden rounded-full) 안에 이미지를 크게 넣어 크롭하는 구조(MenuPage 퀵아이콘과 동일).
+  // 레이아웃 박스는 다른 탭 아이콘과 같은 27px 로 유지하고, 써클(36px)만 absolute 센터링으로
+  // 박스 밖으로 넘치게 키움 → 마스코트가 커져도 라벨 위치·탭 높이·정렬은 다른 탭과 동일.
+  {
+    id: 'chatbot',
+    label: '챗봇상담',
+    icon: (
+      <div className="relative size-[27px]">
+        <div className="absolute left-1/2 top-1/2 size-9 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full">
+          <Image src={chatbotImage} alt="" objectFit="contain" className="size-12" />
+        </div>
+      </div>
+    ),
+  },
   { id: 'mypage', label: '마이페이지', iconName: 'LocationAway', to: ROUTES.MYPAGE },
 ]
 
@@ -85,8 +101,7 @@ function NavTab({
   activeOverride?: boolean
   onAction?: (id: string) => void
 }) {
-  const computeActive = (isActive: boolean) =>
-    activeOverride ?? (isActive && !item.noActive)
+  const computeActive = (isActive: boolean) => activeOverride ?? (isActive && !item.noActive)
   // 높이 점프 방지: 선택/비선택 모두 4px 상단 border 영역 확보.
   // 선택 시 상단 4px #0F316E border + #ECF1FA 배경, 비선택 시 transparent. 콘텐츠 위치 동일 → 모든 탭 h-77.
   // min-w-0: flex-1 이 라벨 min-content 아래로도 줄어들게 → 좁은 폭에서 nav 가 넘쳐 잘리지 않음.
@@ -125,11 +140,7 @@ function NavTab({
   if (!item.to) {
     const active = activeOverride ?? false
     return (
-      <button
-        type="button"
-        onClick={() => onAction?.(item.id)}
-        className={tabClass(active)}
-      >
+      <button type="button" onClick={() => onAction?.(item.id)} className={tabClass(active)}>
         {tabContent(active)}
       </button>
     )

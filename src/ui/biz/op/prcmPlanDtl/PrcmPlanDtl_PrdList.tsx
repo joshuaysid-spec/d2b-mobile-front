@@ -117,9 +117,9 @@ function buildRows(item: SpecItem, onView: (invtNo: string) => void): TableRow[]
     { label: '단위', value: item.unit },
     { label: '수량', value: item.qty, type: 'number' },
     { label: '규격공개여부', value: item.open },
-    { label: '군급', value: item.gun },
+
     {
-      label: '재고번호',
+      label: '군급-재고번호',
       type: 'combination',
       value: (
         <>
