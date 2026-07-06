@@ -13,6 +13,8 @@ import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
 import { Toast } from '@/ui/common/composites/Toast'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
 import { PageTitle } from '@/ui/common/base/PageTitle'
@@ -206,6 +208,18 @@ export function BidRsltDtlPage() {
   const [favorite, setFavorite] = useState(false)
   // 관심공고 등록/제외 토스트.
   const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
+  const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기 바텀시트(입찰공고 상세와 동일)
+  const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보 조회 풀팝업(MUI-BD-01-M74)
+
+  // 바로가기 바텀시트 항목 — 입찰공고 상세(BidPbancDtlPage)와 동일. 작성류 primary · 포기/취소 secondary · 환율정보 tertiary.
+  const shortcutItems: { id: string; label: string; variant: 'primary' | 'secondary' | 'tertiary' }[] = [
+    { id: 'pq', label: '사전심사(PQ)신청서 작성하기', variant: 'primary' },
+    { id: 'bid', label: '입찰서(견적서) 작성하기', variant: 'primary' },
+    { id: 'apply', label: '입찰참가신청서 작성하기', variant: 'primary' },
+    { id: 'giveup', label: '입찰포기 신청서 작성하기', variant: 'secondary' },
+    { id: 'cancel', label: '입찰취소 신청서 작성하기', variant: 'secondary' },
+    { id: 'fx', label: '환율정보 바로가기', variant: 'tertiary' },
+  ]
 
   // 즐겨찾기(관심공고) 토글 — 등록/제외에 따라 아이콘(라인↔채움) + 토스트.
   const handleToggleFavorite = () => {
@@ -294,8 +308,35 @@ export function BidRsltDtlPage() {
           가로 패딩은 각 콘텐츠(PageTitle px-4 / Accordion p-krds-8)가 자체 처리. */}
       <div className="min-h-[100dvh]">{renderTabContent(tab)}</div>
 
-      {/* 맨위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main). */}
-      <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />
+      {/* 플로팅 버튼 — 맨위로(항상) + 바로가기(+). 입찰공고 상세와 동일. 스크롤 주체는 AppLayout 의 #app-scroll(main). */}
+      <FloatingActionButton
+        className="fixed bottom-0 right-4 z-40"
+        onTop={scrollToTop}
+        onPlus={() => setShortcutOpen(true)}
+        plusLabel="바로가기"
+      />
+
+      {/* 바로가기 바텀시트 — 컨테이너는 페이지가 직접 조립, 항목은 세로 버튼 리스트(입찰공고 상세와 동일) */}
+      <BottomSheet open={shortcutOpen} onOpenChange={setShortcutOpen} title="바로가기">
+        <ButtonGroup
+          layout="vertical"
+          items={shortcutItems.map((it) => ({
+            label: it.label,
+            variant: it.variant,
+            onClick: () => {
+              setShortcutOpen(false)
+              if (it.id === 'fx') {
+                setExchrtOpen(true) // 환율정보 바로가기 → 환율정보 조회 풀팝업(M74)
+                return
+              }
+              console.log('[BidRsltDtl] 바로가기', it.id) // 추후: 각 신청서 작성 화면 이동
+            },
+          }))}
+        />
+      </BottomSheet>
+
+      {/* 환율정보 조회 풀팝업 (MUI-BD-01-M74) — 바로가기 '환율정보 바로가기' 로 진입 */}
+      <OvsExchrtListFullPopup open={exchrtOpen} onOpenChange={setExchrtOpen} />
 
       {/* 관심공고 등록/제외 토스트 */}
       <Toast open={toast.open} onClose={() => setToast((t) => ({ ...t, open: false }))}>
