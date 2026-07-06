@@ -46,7 +46,7 @@
 
 | 필드 | 값 | 용도 |
 |------|----|----|
-| `header` | `{ variant?: 'main'\|'sub', util?: 'home'\|'search', title?: ReactNode }` | 전역 Header 설정. `variant:'sub'`=뒤로+타이틀(없으면 'main'=로고), `util:'search'`=우측 통합검색(보통 2뎁스), `util:'home'`=우측 홈(보통 상세). |
+| `header` | `{ variant?: 'main'\|'sub', title?: ReactNode }` | 전역 Header 설정. **2단 헤더**(2026-07-06 기획 반영): 메인바(로고+로그인/로그아웃+알림+전체메뉴)는 모든 화면 최상단 고정, `variant:'sub'`=메인바 아래 타이틀바(뒤로+가운데 타이틀) 추가. ⚠️ 구 `util:'home'|'search'` 는 deprecated(무시됨) — 새 라우트에 지정 금지. |
 | `scrollReset` | `boolean` | 뒤로(POP)로 복귀 시 스크롤 복원 대신 항상 맨 위. 목록 화면에 true. |
 | `showBottomNav` | `boolean` | 하단 BottomNav 노출. **홈/알림/고객센터/마이페이지에만 true.** 생략=숨김(opt-in). |
 
@@ -59,7 +59,7 @@
   element: <PrcmPlanIntgListPage />,
   errorElement: <ErrorPage />,
   handle: {
-    header: { variant: 'sub', util: 'search', title: '조달계획' },
+    header: { variant: 'sub', title: '조달계획' },
     scrollReset: true,     // ← header 밖, handle 직속
     // showBottomNav 생략 = 숨김
   },

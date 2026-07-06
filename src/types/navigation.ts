@@ -5,11 +5,14 @@ import type { ReactNode } from 'react'
 // handle.header 가 없는 라우트는 main 헤더(로고)로 렌더된다.
 
 export interface HeaderRouteMeta {
-  /** 'main'(로고) | 'sub'(뒤로+타이틀). 기본 'main'. */
+  /** 'main'(메인바만) | 'sub'(메인바 + 아래 타이틀바[뒤로+타이틀]). 기본 'main'. */
   variant?: 'main' | 'sub'
-  /** sub 우측 유틸 버튼 — 'search'(통합검색) | 'home'(홈). 보통 2뎁스=search, 상세=home. */
+  /**
+   * @deprecated 2026-07-06 2단 헤더 전환(카톡 기획 이미지)으로 미사용 — 우측 유틸은 메인바 고정
+   * ([로그인/로그아웃][알림][전체메뉴]). 기존 라우트의 util 값은 무시되며, 새 라우트엔 지정하지 않는다.
+   */
   util?: 'home' | 'search'
-  /** sub 헤더 타이틀. */
+  /** sub 타이틀바 타이틀. */
   title?: ReactNode
 }
 

@@ -1,30 +1,32 @@
 // Figma Header (node 9300-26861) 기반 — 앱 전체 상단 헤더.
-// 360w · 콘텐츠 h-72 고정 · bg-white · 하단 1px border krds-border-divider(#d1d7e0).
-// 노치/Dynamic Island 보호를 위해 콘텐츠(h-72) 위에 safe-area-top 스페이서를 별도 분리
+// 360w · 메인바 h-72 고정 · bg-white · 하단 1px border krds-border-divider(#d1d7e0).
+// 노치/Dynamic Island 보호를 위해 콘텐츠 위에 safe-area-top 스페이서를 별도 분리
 // (FullPopup / AlertModal 과 동일 철학 — h-72 를 Figma 1:1 로 고정 유지).
 //
 // 우측 utility menu = 70w × 66h, 세로 정렬(24px 아이콘 + gap-3px + 15px Bold ink 라벨).
 //
 // ※ 위치 스왑: 통합검색(헤더)↔알림현황(탭바). 헤더의 통합검색 자리에 알림현황 버튼이,
-//   BottomNav 의 알림 탭 자리에 통합검색 탭이 온다. util='search' 값(라우트 handle 18곳)은
-//   이름을 유지하되 "우측 유틸 슬롯" 의미로 쓰이며 현재 알림 버튼을 렌더한다.
+//   BottomNav 의 알림 탭 자리에 통합검색 탭이 온다.
 //
-// 4가지 상태:
+// 2026-07-06 레이아웃 변경(카톡 기획 이미지): 2뎁스 이하(variant='sub')에서도 메인 앱바를
+//   최상단에 그대로 두고, 그 바로 아래에 타이틀바(뒤로가기 + 가운데 타이틀)를 한 줄 추가한다.
+//   → 메인바(로고+로그인/로그아웃+알림+전체메뉴)는 모든 화면 공통 고정 크롬.
+//
+// 상태:
 //   1) variant='main' · isLoggedIn=false → [Logo] ··········· [로그인][알림][전체메뉴]
 //   2) variant='main' · isLoggedIn=true  → [Logo] ········· [로그아웃][알림][전체메뉴]
-//   3) variant='sub'  · util='search'    → [뒤로][타이틀 flex-1] ···· [알림][전체메뉴]
-//   4) variant='sub'  · util='home'      → [뒤로][타이틀 flex-1] ····· [홈][전체메뉴]
+//   3) variant='sub'  → 메인바(1·2 와 동일) + 아래 타이틀바 [뒤로][타이틀(가운데)]
 //
 // Props (개별 props):
 // ┌────────────────┬──────────────────────────┬──────────────────────────────────────────────┐
-// │ variant        │ 'main' | 'sub' = 'main'   │ 헤더 모드                                     │
-// │ isLoggedIn     │ boolean = false          │ main 전용. false→로그인 버튼, true→로그아웃 버튼 │
-// │ onLogin        │ () => void               │ main 전용. 로그인 버튼 클릭                   │
-// │ onLogout       │ () => void               │ main 전용. 로그아웃 버튼 클릭                 │
-// │ title          │ ReactNode                │ sub 전용. 타이틀(19 Bold ink, flex-1 truncate) │
-// │ util           │ 'home'|'search'='search' │ sub 전용. search→알림+전체메뉴 / home→홈+전체메뉴 │
+// │ variant        │ 'main' | 'sub' = 'main'   │ 'sub' 면 메인바 아래 타이틀바 추가            │
+// │ isLoggedIn     │ boolean = false          │ false→로그인 버튼, true→로그아웃 버튼(공통)   │
+// │ onLogin        │ () => void               │ 로그인 버튼 클릭                              │
+// │ onLogout       │ () => void               │ 로그아웃 버튼 클릭                            │
+// │ title          │ ReactNode                │ sub 전용. 타이틀바 타이틀(19 Bold, 가운데)     │
+// │ util           │ 'home'|'search'          │ ⚠️ deprecated — 2단 헤더 전환으로 미사용.      │
 // │ onBack         │ () => void               │ sub 전용. 뒤로가기                            │
-// │ onHome         │ () => void               │ sub 전용. util='home' 홈                      │
+// │ onHome         │ () => void               │ ⚠️ deprecated — 홈은 메인바 로고(onLogo)로.    │
 // │ onNotification │ () => void               │ 공통. 알림현황 이동                           │
 // │ hasNotification│ boolean = false          │ 알림 아이콘 우상단 빨강 dot                   │
 // │ onMenu         │ () => void               │ 공통. 전체메뉴                                │
@@ -39,27 +41,30 @@ import { Logo } from '@/ui/common/base/Logo'
 import { cn } from '@/utils/cn'
 
 export interface HeaderProps {
-  /** 헤더 모드. 기본 'main'. */
+  /** 헤더 모드. 기본 'main'. 'sub' 면 메인바 아래 타이틀바(뒤로+타이틀)가 한 줄 추가된다. */
   variant?: 'main' | 'sub'
 
-  // --- main 전용 ---
+  // --- 로그인 상태 (메인바 공통) ---
   /** 로그인 여부. 기본 false → 로그인 버튼, true → 로그아웃 버튼 노출. */
   isLoggedIn?: boolean
   /** 로그인 버튼 클릭. */
   onLogin?: () => void
   /** 로그아웃 버튼 클릭. */
   onLogout?: () => void
-  /** main 로고 클릭 → 홈 이동. 주어지면 로고가 버튼이 된다(미지정 시 비클릭 이미지). */
+  /** 메인바 로고 클릭 → 홈 이동. 주어지면 로고가 버튼이 된다(미지정 시 비클릭 이미지). */
   onLogo?: () => void
 
-  // --- sub 전용 ---
-  /** sub 타이틀(19 Bold ink, flex-1 truncate). */
+  // --- sub(타이틀바) 전용 ---
+  /** sub 타이틀바 타이틀(19 Bold ink, 가운데 정렬 truncate). */
   title?: React.ReactNode
-  /** sub 우측 유틸. 기본 'search'(알림+전체메뉴) / home→홈+전체메뉴. */
+  /**
+   * @deprecated 2026-07-06 2단 헤더 전환으로 미사용 — 우측 유틸은 메인바 고정
+   * ([로그인/로그아웃][알림][전체메뉴]). 라우트 handle 의 기존 util 값은 무시된다.
+   */
   util?: 'home' | 'search'
   /** 뒤로가기 클릭. */
   onBack?: () => void
-  /** util='home' 홈 클릭. */
+  /** @deprecated 홈 유틸 제거 — 홈 이동은 메인바 로고(onLogo)가 담당. */
   onHome?: () => void
 
   // --- 공통 utility ---
@@ -135,43 +140,36 @@ const Header = ({
   onLogout,
   onLogo,
   title,
-  util = 'search',
   onBack,
-  onHome,
   onNotification,
   hasNotification = false,
   onMenu,
   className,
 }: HeaderProps) => {
-  // 우측 utility 묶음 — 상태별로 노출 버튼이 다름.
+  // 우측 utility 묶음 — 메인바 고정: [로그인/로그아웃][알림][전체메뉴] (main/sub 공통).
   const rightUtilities = (
     <>
-      {variant === 'main' &&
-        (isLoggedIn ? (
-          <UtilityMenu
-            icon={<Icon name="Logout" size={24} />}
-            label="로그아웃"
-            onClick={onLogout}
-          />
-        ) : (
-          <UtilityMenu
-            icon={<Icon name="Login" size={24} />}
-            label="로그인"
-            onClick={onLogin}
-          />
-        ))}
-
-      {variant === 'sub' && util === 'home' ? (
-        <UtilityMenu icon="Home" label="홈" onClick={onHome} />
-      ) : (
-        // 통합검색↔알림현황 위치 스왑 — 이 슬롯은 알림현황 진입(통합검색은 BottomNav 탭).
+      {isLoggedIn ? (
         <UtilityMenu
-          icon="NotificationsActive"
-          label="알림"
-          dot={hasNotification}
-          onClick={onNotification}
+          icon={<Icon name="Logout" size={24} />}
+          label="로그아웃"
+          onClick={onLogout}
+        />
+      ) : (
+        <UtilityMenu
+          icon={<Icon name="Login" size={24} />}
+          label="로그인"
+          onClick={onLogin}
         />
       )}
+
+      {/* 통합검색↔알림현황 위치 스왑 — 이 슬롯은 알림현황 진입(통합검색은 BottomNav 탭). */}
+      <UtilityMenu
+        icon="NotificationsActive"
+        label="알림"
+        dot={hasNotification}
+        onClick={onNotification}
+      />
 
       <UtilityMenu icon="Menu" label="전체메뉴" onClick={onMenu} />
     </>
@@ -186,28 +184,31 @@ const Header = ({
         className,
       )}
     >
-      <div
-        className={cn(
-          'flex h-[72px] items-center border-b border-krds-border-divider',
-          // main(Logo)은 좌측 16px. sub 는 뒤로가기 버튼(44px 박스에 20px 아이콘
-          // 중앙정렬 → 좌측 12px 여백)을 감안해 pl-1(4px) → 아이콘 시각 시작점 16px.
-          variant === 'main' ? 'pl-[16px]' : 'pl-1',
-        )}
-      >
-        {variant === 'main' ? (
-          onLogo ? (
-            <button
-              type="button"
-              onClick={onLogo}
-              aria-label="홈으로"
-              className="inline-flex shrink-0 items-center rounded-krds-8 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring active:opacity-70"
-            >
-              <Logo />
-            </button>
-          ) : (
+      {/* 메인바 — 로고 + [로그인/로그아웃][알림][전체메뉴]. main/sub 공통 최상단 고정. */}
+      <div className="flex h-[72px] items-center border-b border-krds-border-divider pl-[16px]">
+        {onLogo ? (
+          <button
+            type="button"
+            onClick={onLogo}
+            aria-label="홈으로"
+            className="inline-flex shrink-0 items-center rounded-krds-8 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring active:opacity-70"
+          >
             <Logo />
-          )
+          </button>
         ) : (
+          <Logo />
+        )}
+
+        <div className="flex-1" aria-hidden />
+
+        <div className="flex shrink-0 items-center">{rightUtilities}</div>
+      </div>
+
+      {/* 타이틀바(sub 전용) — 뒤로가기 + 가운데 타이틀. 메인바 바로 아래 한 줄 추가(카톡 기획 이미지).
+          그리드 [44px|1fr|44px] 로 타이틀을 광학적 가운데 고정(우측 스페이서 = 뒤로가기와 동일 폭).
+          높이 56px: Figma 미확정 — 뒤로가기 터치 타깃(44px) + 상하 여백 근사값(원본 확정 시 조정). */}
+      {variant === 'sub' && (
+        <div className="grid h-[56px] grid-cols-[44px_minmax(0,1fr)_44px] items-center border-b border-krds-border-divider px-1">
           <button
             type="button"
             onClick={onBack}
@@ -221,21 +222,14 @@ const Header = ({
           >
             <Icon name="ArrowBackIosNew" size={20} aria-hidden />
           </button>
-        )}
 
-        {variant === 'sub' && (
-          // 페이지 본문(PageContainer)이 이미 <h1> 을 렌더하므로 헤더 타이틀은
-          // 중복 헤딩을 피해 <span> 으로 둔다(네비게이션 chrome 라벨).
-          <span className="min-w-0 flex-1 truncate text-[19px] font-bold leading-normal text-krds-text-ink">
+          {/* 페이지 본문(PageContainer)이 이미 <h1> 을 렌더하므로 헤더 타이틀은
+              중복 헤딩을 피해 <span> 으로 둔다(네비게이션 chrome 라벨). */}
+          <span className="min-w-0 truncate text-center text-[19px] font-bold leading-normal text-krds-text-ink">
             {title}
           </span>
-        )}
-
-        {/* main 일 때는 Logo 와 utility 사이를 밀어내는 스페이서. */}
-        {variant === 'main' && <div className="flex-1" aria-hidden />}
-
-        <div className="flex shrink-0 items-center">{rightUtilities}</div>
-      </div>
+        </div>
+      )}
     </header>
   )
 }

@@ -98,9 +98,10 @@ export function AppLayout() {
   return (
     <BottomNavVisibleContext.Provider value={showBottomNav}>
     <div className="mx-auto flex h-dvh w-full max-w-[480px] flex-col overflow-hidden bg-background">
+      {/* 2단 헤더(2026-07-06 카톡 기획 이미지): 메인바(로고+로그인/로그아웃+알림+전체메뉴)는 모든 화면
+          최상단 고정, sub 화면은 그 아래 타이틀바(뒤로+타이틀) 추가. handle.header.util 은 deprecated(무시). */}
       <Header
         variant={header?.variant ?? 'main'}
-        util={header?.util}
         title={header?.title}
         isLoggedIn={isLoggedIn}
         onLogin={() => {
@@ -111,7 +112,6 @@ export function AppLayout() {
           navigate(ROUTES.HOME)
         }}
         onBack={handleBack}
-        onHome={() => navigate(ROUTES.HOME)}
         onLogo={() => navigate(ROUTES.HOME)}
         // 통합검색↔알림현황 위치 스왑 — 헤더 유틸=알림현황 이동, 통합검색은 BottomNav 탭.
         onNotification={() => navigate(ROUTES.NOTIFICATION)}

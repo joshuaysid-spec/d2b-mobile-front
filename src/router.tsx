@@ -212,13 +212,14 @@ export const router = createBrowserRouter([
     children: [
       // BottomNav 노출 = 홈/알림/고객센터/마이페이지 4개 메뉴에만(showBottomNav).
       { index: true, element: <HomePage />, handle: { showBottomNav: true } },
-      // 2뎁스(메뉴) → sub/util='search'(뒤로+타이틀+통합검색) · 상세 → sub/util='home'(뒤로+타이틀+홈)
+      // 2뎁스 이하 = variant:'sub' → 메인바(로고+로그인/로그아웃+알림+전체메뉴) 아래 타이틀바(뒤로+타이틀) 추가.
+      // (2026-07-06 2단 헤더 전환 — 구 util:'home'|'search' 는 deprecated, 지정 금지)
       {
         path: 'op',
         element: <PrcmPlanIntgListPage />,
         // 목록 → 상세 → 뒤로 시 스크롤 복원 대신 항상 맨 위(scrollReset).
         handle: {
-          header: { variant: 'sub', util: 'search', title: '조달계획' },
+          header: { variant: 'sub', title: '조달계획' },
           scrollReset: true,
           showBottomNav: true,
         },
@@ -227,7 +228,7 @@ export const router = createBrowserRouter([
         path: 'bd',
         element: <BidPbancIntgListPage />,
         handle: {
-          header: { variant: 'sub', util: 'search', title: '입찰공고' },
+          header: { variant: 'sub', title: '입찰공고' },
           scrollReset: true,
           showBottomNav: true,
         },
@@ -236,14 +237,14 @@ export const router = createBrowserRouter([
         path: 'bd/opbid',
         element: <BdopnListPage />,
         handle: {
-          header: { variant: 'sub', util: 'search', title: '개찰목록' },
+          header: { variant: 'sub', title: '개찰목록' },
         },
       },
       {
         path: 'bd/prgrs',
         element: <BidPrgrsListForBzentyPage />,
         handle: {
-          header: { variant: 'sub', util: 'search', title: '입찰진행' },
+          header: { variant: 'sub', title: '입찰진행' },
           scrollReset: true,
           showBottomNav: true,
         },
@@ -251,69 +252,69 @@ export const router = createBrowserRouter([
       {
         path: 'bd/prgrs/:id',
         element: <BidPrgsDtlInqPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '입찰진행 상세' } },
+        handle: { header: { variant: 'sub', title: '입찰진행 상세' } },
       },
       {
         path: 'bd/prgrs/:id/apfr',
         element: <WrotAgrePage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '입찰참가신청서' } },
+        handle: { header: { variant: 'sub', title: '입찰참가신청서' } },
       },
       {
         path: 'bd/prgrs/:id/apfr/form',
         element: <BidPrtcpAperWrtPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '입찰참가신청서' } },
+        handle: { header: { variant: 'sub', title: '입찰참가신청서' } },
       },
       {
         path: 'bd/prgrs/:id/tndr-wrt',
         element: <TndrWrtPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '입찰서 작성' } },
+        handle: { header: { variant: 'sub', title: '입찰서 작성' } },
       },
       {
         path: 'bd/prgrs/:id/elsgn',
         element: <ElsgnPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '전자서명' } },
+        handle: { header: { variant: 'sub', title: '전자서명' } },
       },
       {
         path: 'bd/prgrs/:id/aply-cmptn',
         element: <AplyCmptnPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '신청완료' } },
+        handle: { header: { variant: 'sub', title: '신청완료' } },
       },
       {
         path: 'bd/bfhd-srng-aply',
         element: <BfhdSrngAplyPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '사전심사신청' } },
+        handle: { header: { variant: 'sub', title: '사전심사신청' } },
       },
       {
         path: 'bd/reg-rslt',
         element: <BidRegRsltInqPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '입찰등록심사 결과조회' } },
+        handle: { header: { variant: 'sub', title: '입찰등록심사 결과조회' } },
       },
       {
         path: 'bd/srng-rslt',
         element: <BfhdSrngRsltInqPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '사전심사(PQ) 결과조회' } },
+        handle: { header: { variant: 'sub', title: '사전심사(PQ) 결과조회' } },
       },
       {
         path: 'bd/result/:id',
         element: <BidRsltDtlPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '입찰결과 상세' } },
+        handle: { header: { variant: 'sub', title: '입찰결과 상세' } },
       },
       {
         path: 'bd/implt/:id',
         element: <ImpltPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '이행/적격심사' } },
+        handle: { header: { variant: 'sub', title: '이행/적격심사' } },
       },
       {
         path: 'bd/:id',
         element: <BidPbancDtlPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '입찰공고 상세' } },
+        handle: { header: { variant: 'sub', title: '입찰공고 상세' } },
       },
       // ── 국외 입찰(bd/ovs) — 정적 세그먼트(goal-prc-items·locker·prgrs)가 :id 보다 먼저 매칭됨 ──
       {
         path: 'bd/ovs/goal-prc-items',
         element: <OvsGoalPrcRlsItemListPage />,
         handle: {
-          header: { variant: 'sub', util: 'home', title: '목표가공개품목조회' },
+          header: { variant: 'sub', title: '목표가공개품목조회' },
           scrollReset: true,
         },
       },
@@ -321,74 +322,74 @@ export const router = createBrowserRouter([
         path: 'bd/ovs/locker',
         element: <OvsLockerPbanListPage />,
         handle: {
-          header: { variant: 'sub', util: 'search', title: '국외 보관함' },
+          header: { variant: 'sub', title: '국외 보관함' },
           scrollReset: true,
         },
       },
       {
         path: 'bd/ovs/locker/:id',
         element: <OvsLockerPbanDtlPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '국외 보관함 상세' } },
+        handle: { header: { variant: 'sub', title: '국외 보관함 상세' } },
       },
       {
         path: 'bd/ovs/locker/:id/items',
         element: <OvsLockerItemRegPage />,
         handle: {
-          header: { variant: 'sub', util: 'home', title: '보관함 품목 관리' },
+          header: { variant: 'sub', title: '보관함 품목 관리' },
           scrollReset: true,
         },
       },
       {
         path: 'bd/ovs/locker/:id/bid-cn',
         element: <OvsTmprBidCnRegPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '입찰내역 작성' } },
+        handle: { header: { variant: 'sub', title: '입찰내역 작성' } },
       },
       {
         path: 'bd/ovs/locker/:id/bfr-bid-cn',
         element: <OvsBfrTmprBidBidCnRegPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '이전공고입찰내역등록' } },
+        handle: { header: { variant: 'sub', title: '이전공고입찰내역등록' } },
       },
       {
         path: 'bd/ovs/prgrs/:id/aply',
         element: <OvsBidPrtcpAplyPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '입찰참가신청서' } },
+        handle: { header: { variant: 'sub', title: '입찰참가신청서' } },
       },
       {
         path: 'bd/ovs/prgrs/:id/apfr',
         element: <OvsBidPrtcpApfrDtlPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '입찰참가신청서 상세' } },
+        handle: { header: { variant: 'sub', title: '입찰참가신청서 상세' } },
       },
       {
         path: 'bd/ovs/prgrs/:id/tndr-sbmsn',
         element: <OvsTndrSbmsnPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '입찰서제출' } },
+        handle: { header: { variant: 'sub', title: '입찰서제출' } },
       },
       {
         path: 'bd/ovs/prgrs/:id/tndr',
         element: <OvsTndrDtlPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '입찰서 상세' } },
+        handle: { header: { variant: 'sub', title: '입찰서 상세' } },
       },
       {
         path: 'bd/ovs/:id',
         element: <OvsBidPbancDtlPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '국외 입찰공고 상세' } },
+        handle: { header: { variant: 'sub', title: '국외 입찰공고 상세' } },
       },
       {
         path: 'op/:id',
         element: <PrcmPlanDtlPage />,
         handle: {
-          header: { variant: 'sub', util: 'home', title: '조달계획 상세' },
+          header: { variant: 'sub', title: '조달계획 상세' },
         },
       },
       {
         path: 'op/spec/:id',
         element: <BfhdSpcfctDtlPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '사전규격 상세' } },
+        handle: { header: { variant: 'sub', title: '사전규격 상세' } },
       },
       {
         path: 'op/ovs/:id',
         element: <OvsPrcmPlanDtlPage />,
-        handle: { header: { variant: 'sub', util: 'home', title: '국외 조달계획 상세' } },
+        handle: { header: { variant: 'sub', title: '국외 조달계획 상세' } },
       },
       {
         path: 'notification',
