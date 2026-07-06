@@ -12,6 +12,7 @@ import type { OpPlanItem, OpPlanDetail } from '@/types/op'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
+import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Button } from '@/ui/common/base/Button'
 import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
@@ -178,7 +179,12 @@ export function PrcmPlanDtlPage() {
         >
           <div className="overflow-hidden">
             <div className="bg-krds-bg-primary-faint px-4 py-4">
-              <StepBar orientation="horizontal" items={steps} className="bg-transparent" />
+              <StepBar
+                orientation="horizontal"
+                items={steps}
+                sheetItems={buildProgressSheet(detail.prgrsStg ?? '조달')}
+                className="bg-transparent"
+              />
             </div>
           </div>
         </div>

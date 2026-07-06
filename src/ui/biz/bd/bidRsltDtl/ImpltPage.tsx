@@ -10,6 +10,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { getBdopnById } from '@/ui/biz/bd/bdopnList/BdopnListPage'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
+import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
@@ -183,7 +184,12 @@ export function ImpltPage() {
         >
           <div className="overflow-hidden">
             <div className="bg-krds-bg-primary-faint px-4 py-4">
-              <StepBar orientation="horizontal" items={steps} className="bg-transparent" />
+              <StepBar
+                orientation="horizontal"
+                items={steps}
+                sheetItems={buildProgressSheet('입찰')}
+                className="bg-transparent"
+              />
             </div>
           </div>
         </div>
