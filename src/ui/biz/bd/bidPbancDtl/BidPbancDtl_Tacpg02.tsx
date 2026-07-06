@@ -1,7 +1,6 @@
 // 입찰공고 상세 - '기초예비가격' 탭 (MUI-BD-01-M08, Figma 9300-41466).
 // 업무도움(Infobox) + 기초예비가격 산출 항목 테이블. 경쟁입찰일 때만 노출(컨테이너에서 제어).
 // 데이터는 목업(추후 bdService.getDetail).
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -36,7 +35,6 @@ const PRICE_ROWS: TableRow[] = [
 export function BidPbancDtl_Tacpg02() {
   return (
     <>
-      <PageTitle as="h2">기초예비가격</PageTitle>
       <Accordion type="multiple" defaultValue={['price']} className="w-full">
         <AccordionSection value="price" title="기초예비가격" borderTop={false}>
           <Infobox

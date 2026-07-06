@@ -6,7 +6,6 @@
 // 첨부문서 '보기' 는 첨부문서조회 팝업(UI-BD-05-P76, 타 유닛) 연계 예정 — console.log 스텁.
 import { useState } from 'react'
 
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Button } from '@/ui/common/base/Button'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -187,7 +186,6 @@ function ItitbList() {
 
   return (
     <>
-      <PageTitle as="h2">입찰참여품목</PageTitle>
       <p className="px-4 pb-krds-5 text-krds-body-sm text-krds-text-primary-active">
         품목 목록 · 총 {total}건
       </p>
@@ -229,7 +227,6 @@ function AlonbsList() {
 
   return (
     <>
-      <PageTitle as="h2">입찰참여품목</PageTitle>
       <p className="px-4 pb-krds-5 text-krds-body-sm text-krds-text-primary-active">
         입찰 품목 · 총 {total}건
       </p>

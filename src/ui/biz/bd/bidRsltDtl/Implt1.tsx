@@ -1,7 +1,6 @@
 // 이행/적격심사상세 - '일반정보' 탭 (MUI-BD-10-M01, 설계서 02입찰 slide163 / 데이터영역 slide166~167).
 // 공고정보(dmt_pbancInfo) 표 + 참고서류(dlt_refDcmnt) 다운로드 + 법 위반 처벌이력 확인서 양식.
 // 데이터는 목업(추후 API: scwin.getImpltElgbSrngDtlInfo). 항목명은 설계서 그대로.
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
@@ -53,7 +52,6 @@ const pbancRows = (it: ImpltElgbSrngPbancInfo): TableRow[] => [
 export function Implt1() {
   return (
     <>
-      <PageTitle as="h2">일반정보</PageTitle>
       <Accordion type="multiple" defaultValue={['pbanc', 'ref']} className="w-full">
         <AccordionSection value="pbanc" title="일반정보" borderTop={false}>
           <Table rows={pbancRows(MOCK_PBANC_INFO)} />

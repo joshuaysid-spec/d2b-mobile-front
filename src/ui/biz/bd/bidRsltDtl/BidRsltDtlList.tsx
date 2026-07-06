@@ -6,7 +6,6 @@
 //   형제 탭 BidRsltDtl(M03)·BidRsltDtl2(M04)와 동일하게 Page 를 뗐다. 규칙 > 설계서 표기).
 import { useState } from 'react'
 
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Button } from '@/ui/common/base/Button'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -66,7 +65,6 @@ export function BidRsltDtlList() {
 
   return (
     <>
-      <PageTitle as="h2">품목정보</PageTitle>
       {/* key={loaded} — 더보기로 추가 로드 시 새 항목도 펼쳐진 상태로 재적용(Accordion defaultValue 는 mount 시 1회) */}
       <Accordion key={loaded} type="multiple" defaultValue={visible.map((it) => it.id)} className="w-full">
         {visible.map((it, i) => (

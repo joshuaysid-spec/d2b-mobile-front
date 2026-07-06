@@ -18,7 +18,6 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
 import { Toast } from '@/ui/common/composites/Toast'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
@@ -133,7 +132,6 @@ function GeneralInfo() {
 
   return (
     <>
-      <PageTitle as="h2">일반정보</PageTitle>
       <Accordion type="multiple" defaultValue={['general', 'attach', 'contact']} className="w-full">
         <AccordionSection value="general" title="일반정보" borderTop={false}>
           <Table rows={GENERAL_ROWS} />

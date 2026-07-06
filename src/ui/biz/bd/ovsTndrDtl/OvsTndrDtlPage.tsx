@@ -10,7 +10,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Icon } from '@/ui/common/base/Icon'
 import { SummaryInfo, type SummaryInfoBadge, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
@@ -147,7 +146,6 @@ function GeneralInfo({ detail }: { detail: OvsTndrDtlItem }) {
 
   return (
     <>
-      <PageTitle as="h2">일반정보</PageTitle>
       <Accordion type="multiple" defaultValue={['general', 'contact']} className="w-full">
         <AccordionSection value="general" title="일반정보" borderTop={false}>
           <Table rows={generalRows} />

@@ -3,7 +3,6 @@
 // 구성: 입찰업체(dm_splyInfo) Table + 입찰보증금 지급각서(LETTER OF GUARANTEE FOR PAYMENT OF BID BOND) 영문 전문.
 //   영문 각서의 #입찰업체명(splyBzentyNm)·#보증금액(bidGrnteAmt)은 데이터로 치환(설계서 placeholder).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type {
   OvsBidPrtcpApfrDetail,
@@ -46,7 +45,6 @@ export function OvsBidPrtcpApfrDtlPage_Tab2({ detail, splyInfo }: OvsBidPrtcpApf
 
   return (
     <>
-      <PageTitle as="h2">업체정보</PageTitle>
       <Accordion type="multiple" defaultValue={['sply', 'letter']} className="w-full">
         <AccordionSection value="sply" title="입찰업체" borderTop={false}>
           <Table rows={splyRows} />

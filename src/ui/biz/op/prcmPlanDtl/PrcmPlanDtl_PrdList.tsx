@@ -7,7 +7,6 @@ import { memo, useCallback, useMemo, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
@@ -189,7 +188,6 @@ export function PrcmPlanDtl_PrdList() {
 
   return (
     <div className="flex flex-col gap-krds-7 pb-6">
-      <PageTitle as="h2">품목명세서</PageTitle>
       <div className="px-4">
         <ListSectionHeader
           total={TOTAL}

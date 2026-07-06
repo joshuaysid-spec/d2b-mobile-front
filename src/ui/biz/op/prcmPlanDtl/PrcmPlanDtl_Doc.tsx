@@ -1,7 +1,6 @@
 // 조달계획 상세 - '첨부파일' 탭 콘텐츠 (MUI-OP-01-M09_첨부서류, Figma 9300-42569).
 // 제목(PageTitle) + 섹션 2개(집행계획 첨부파일 / 조달판단 첨부파일) — 각 섹션 = SectionTitle(제목 + 총건수 info slot)
 //   + FileDownloadList(파일 행 — 개별 다운로드만, 일괄 다운로드 버튼 없음). 데이터는 목업 — 추후 API.
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import {
   FileDownloadList,
@@ -21,7 +20,6 @@ export function PrcmPlanDtl_Doc() {
   return (
     // pb 는 우하단 FAB(48px + bottom 10px) 가 마지막 다운로드 버튼을 가리지 않도록 그만큼 비워둠.
     <div className="flex flex-col gap-8 pb-[72px]">
-      <PageTitle as="h2">첨부파일</PageTitle>
 
       {/* 집행계획 첨부파일 */}
       <section className="flex flex-col gap-krds-7">

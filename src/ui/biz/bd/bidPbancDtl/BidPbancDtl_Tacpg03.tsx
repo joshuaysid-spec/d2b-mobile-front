@@ -1,7 +1,6 @@
 // 입찰공고 상세 - '품목명세서' 탭 (MUI-BD-01-M09, Figma 9300-41867).
 // 품목 명세 테이블(군급-재고번호는 '보기' 버튼). 업무구분 [물품]일 때만 노출(컨테이너에서 제어).
 // 데이터는 목업(추후 bdService.getDetail).
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -44,7 +43,6 @@ const ITEM_ROWS: TableRow[] = [
 export function BidPbancDtl_Tacpg03() {
   return (
     <>
-      <PageTitle as="h2">품목명세서</PageTitle>
       <Accordion type="multiple" defaultValue={['item']} className="w-full">
         <AccordionSection value="item" title="품목명세서 (순번 1)" borderTop={false}>
           <Table rows={ITEM_ROWS} />

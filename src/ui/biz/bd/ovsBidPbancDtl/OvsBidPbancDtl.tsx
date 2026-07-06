@@ -4,7 +4,6 @@
 // 10개 노출 후 더보기 버튼으로 10개씩 추가 로드(설계서). 데이터는 목업(추후 bdService.getOvsBidItemList).
 import { useState } from 'react'
 
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -137,7 +136,6 @@ export function OvsBidPbancDtl() {
 
   return (
     <>
-      <PageTitle as="h2">품목 목록</PageTitle>
       {/* 총 건수 */}
       <p className="px-4 pb-2 text-krds-body-sm text-krds-text-primary-active">총 {total}건</p>
       <Accordion type="multiple" defaultValue={['item-1']} className="w-full">

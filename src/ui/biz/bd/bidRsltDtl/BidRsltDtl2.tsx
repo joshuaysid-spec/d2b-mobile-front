@@ -3,7 +3,6 @@
 // + 더보기(10개씩). 데이터는 목업(추후 bdService.getBidRsltDetail).
 import { useState } from 'react'
 
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Button } from '@/ui/common/base/Button'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -60,7 +59,6 @@ export function BidRsltDtl2() {
 
   return (
     <>
-      <PageTitle as="h2">협상결과</PageTitle>
       <Accordion key={loaded} type="multiple" defaultValue={visible.map((it) => it.id)} className="w-full">
         {visible.map((it, i) => (
           <AccordionSection
