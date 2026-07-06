@@ -1,6 +1,5 @@
 // 이행/적격심사상세 - '입찰/반려 정보' 탭 (MUI-BD-10-M02, 설계서 02입찰 slide164 / 데이터영역 slide166).
 // 입찰결과(dmt_bidRslt) 표 + 반려사유(rjctRsn). "내 업체 정보만 표시". 데이터는 목업(추후 API).
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { TextArea } from '@/ui/common/base/TextArea'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -26,7 +25,6 @@ export function Implt2() {
   const it = MOCK_BID_RSLT
   return (
     <>
-      <PageTitle as="h2">입찰/반려 정보</PageTitle>
       <Accordion type="multiple" defaultValue={['bidRslt', 'rjct']} className="w-full">
         <AccordionSection value="bidRslt" title="입찰결과" borderTop={false}>
           <Table rows={bidRsltRows(it)} />

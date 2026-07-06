@@ -1,6 +1,5 @@
 // 입찰공고 상세 - '일반정보' 탭 (MUI-BD-01-M07, Figma 9300-37570 / 설계서 slide26~28).
 // 일반정보 + 지역제한 + 공증·면허제한(업무도움) + 첨부서류 + 문의처 아코디언. 데이터는 목업(추후 bdService.getDetail).
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -85,7 +84,6 @@ const CONTACT_ROWS: TableRow[] = [
 export function BidPbancDtl() {
   return (
     <>
-      <PageTitle as="h2">일반정보</PageTitle>
       <Accordion
         type="multiple"
         defaultValue={['general', 'region', 'license', 'cnstrCpcty', 'dsgntBidder', 'attach', 'contact']}

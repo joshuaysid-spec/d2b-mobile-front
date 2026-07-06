@@ -1,7 +1,6 @@
 // 입찰공고 상세 - '공고문안' 탭 (MUI-BD-01-M11, Figma 9300-41549).
 // 업무도움(Infobox) + 공고문안 본문(소제목 + 내용 블록 반복). 수의계약 등에서 노출.
 // 데이터는 목업(추후 bdService.getDetail).
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Infobox } from '@/ui/common/composites/Infobox'
 
@@ -18,7 +17,6 @@ const NOTICE_BLOCKS: { id: string; title: string; body: string }[] = [
 export function BidPbancDtl_Tacpg06() {
   return (
     <>
-      <PageTitle as="h2">공고문안</PageTitle>
       <Accordion type="multiple" defaultValue={['notice']} className="w-full">
         <AccordionSection value="notice" title="공고문안" borderTop={false}>
           <Infobox

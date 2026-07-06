@@ -11,7 +11,6 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
 import type { BidPbancItem } from '@/types/bd'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
@@ -261,7 +260,6 @@ function GeneralInfoTab({
 
   return (
     <>
-      <PageTitle as="h2">일반정보</PageTitle>
       {/* 공지사항 (dm_ntcInfo) — 국외경쟁입찰 공지 영역 */}
       <div className="px-4 pb-2">
         <Infobox

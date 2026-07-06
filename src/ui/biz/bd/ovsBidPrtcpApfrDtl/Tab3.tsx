@@ -9,7 +9,6 @@ import { useState } from 'react'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
 import { InputLabel } from '@/ui/common/base/InputLabel'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type {
@@ -98,7 +97,6 @@ export function OvsBidPrtcpApfrDtlPage_Tab3({
 
   return (
     <>
-      <PageTitle as="h2">입찰 보증금</PageTitle>
 
       {/* 입찰보증금 구분 (slide350·351) — 구분 변경 시 목록/항목 전환 */}
       <div className="flex flex-col gap-krds-5 px-4 pb-4">

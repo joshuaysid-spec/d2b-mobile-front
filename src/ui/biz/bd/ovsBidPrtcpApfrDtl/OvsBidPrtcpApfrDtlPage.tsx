@@ -13,7 +13,6 @@ import { useLocation } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
@@ -253,7 +252,6 @@ function Tab1({ detail, sbtInfo }: { detail: OvsBidPrtcpApfrDetail; sbtInfo: Ovs
   ]
   return (
     <>
-      <PageTitle as="h2">일반정보</PageTitle>
       <Accordion type="multiple" defaultValue={['pbanc', 'sbt']} className="w-full">
         <AccordionSection value="pbanc" title="공고일반" borderTop={false}>
           <Table rows={pbancRows} />

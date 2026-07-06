@@ -3,7 +3,6 @@
 // 데이터는 목업 — 추후 API(opService.getSpecDetail)로 대체.
 import { useState } from 'react'
 
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { SelectionFieldBox } from '@/ui/common/base/SelectionFieldBox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -73,7 +72,6 @@ export function BfhdSpcfctDtl() {
 
   return (
     <>
-      <PageTitle as="h2">상세내용</PageTitle>
       <Accordion
         type="multiple"
         defaultValue={['exec', 'decision', 'related', 'contact']}

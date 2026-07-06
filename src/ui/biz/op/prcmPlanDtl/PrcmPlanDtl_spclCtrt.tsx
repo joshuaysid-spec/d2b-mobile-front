@@ -1,7 +1,6 @@
 // 조달계획 상세 - '계약특수조건' 탭 콘텐츠 (MUI-OP-01-M08, Figma 9300-42505 / 42708[스크롤]).
 // 제목(PageTitle) + 조항(제N조) 목록 — 각 조 = 헤딩 + 본문 + 일부 번호 리스트.
 // 법조문 텍스트라 정적 렌더(List 컴포지트는 Switch/Button 설정행용이라 부적합). 목업 — 추후 API.
-import { PageTitle } from '@/ui/common/base/PageTitle'
 
 interface Article {
   heading: string
@@ -62,7 +61,6 @@ const ARTICLES: Article[] = [
 export function PrcmPlanDtl_spclCtrt() {
   return (
     <div className="flex flex-col gap-krds-7 pb-6">
-      <PageTitle as="h2">계약특수조건</PageTitle>
 
       <div className="flex flex-col gap-6 px-4">
         {ARTICLES.map((article) => (

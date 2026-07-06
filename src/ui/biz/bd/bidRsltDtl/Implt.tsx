@@ -2,7 +2,6 @@
 // 심사결과(dmt_srngRslt) 표 — "내 업체 정보만 표시". 데이터는 목업(추후 API: scwin.getImpltElgbSrngRsltDtlInfo).
 // ⚠️ 물품(Cmdty) 라벨 기준(제조능력=srngScr2, 재무상태=srngScr4). 용역/공사 등 세부구분(M04~M19)은
 //    이 목업/라벨만 교체하면 됨(구조 동일).
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { ImpltElgbSrngResult } from '@/types/bd'
@@ -37,7 +36,6 @@ const resultRows = (it: ImpltElgbSrngResult): TableRow[] => [
 export function Implt() {
   return (
     <>
-      <PageTitle as="h2">심사결과</PageTitle>
       <Accordion type="multiple" defaultValue={['result']} className="w-full">
         <AccordionSection value="result" title="심사결과" borderTop={false}>
           <Table rows={resultRows(MOCK_RESULT)} />

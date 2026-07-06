@@ -5,7 +5,6 @@
 import { useCallback, useMemo, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { BfhdSpcfctDtl_OpnnCard, type OpinionData } from '@/ui/biz/op/bfhdSpcfctDtl/BfhdSpcfctDtl_OpnnCard'
 import { BfhdSpcfctDtl_OpnnDtlFullPopup } from '@/ui/biz/op/bfhdSpcfctDtl/BfhdSpcfctDtl_OpnnDtlFullPopup'
 import { BfhdSpcfctDtl_OpnnRegFullPopup } from '@/ui/biz/op/bfhdSpcfctDtl/BfhdSpcfctDtl_OpnnRegFullPopup'
@@ -117,7 +116,6 @@ export function BfhdSpcfctDtl_OpnnList() {
 
   return (
     <div className="flex flex-col gap-krds-7 pb-6">
-      <PageTitle as="h2">업체의견</PageTitle>
 
       {/* 헤더 — 총건수 + 의견등록 */}
       <div className="flex items-center justify-between gap-krds-5 px-4">

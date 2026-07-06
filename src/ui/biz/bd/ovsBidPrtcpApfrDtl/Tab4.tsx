@@ -2,7 +2,6 @@
 // 페이지(OvsBidPrtcpApfrDtlPage)가 renderTabContent 로 렌더하는 탭 콘텐츠 — 요약/스텝/탭은 페이지 소유.
 // 구성: 첨부파일 목록(dl_docList — 첨부서류명 + 첨부파일명[파일크기] + 다운로드, FileDownloadList 재사용)
 //   + 입찰 확약문(안내) Infobox(설계서 확약/구비서류 문안 그대로).
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { Infobox } from '@/ui/common/composites/Infobox'
@@ -16,7 +15,6 @@ interface OvsBidPrtcpApfrDtlPage_Tab4Props {
 export function OvsBidPrtcpApfrDtlPage_Tab4({ docList }: OvsBidPrtcpApfrDtlPage_Tab4Props) {
   return (
     <>
-      <PageTitle as="h2">첨부파일</PageTitle>
 
       {/* 첨부파일 — 총 N건 (slide352). 서류명(항목번호) + 파일명[크기] + 다운로드 */}
       <SectionTitle topDivider>

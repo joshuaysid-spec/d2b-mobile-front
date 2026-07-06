@@ -7,7 +7,6 @@
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
@@ -133,7 +132,6 @@ export function OvsLockerPbanDtlPage() {
 
       {/* 본문 — 짧은 콘텐츠도 헤더 접힘을 지탱할 스크롤 높이 확보(접힘 진동 방지). */}
       <div className="min-h-[100dvh]">
-        <PageTitle as="h2">일반정보</PageTitle>
         <Accordion type="multiple" defaultValue={['general', 'contact']} className="w-full">
           <AccordionSection value="general" title="일반정보" borderTop={false}>
             <Table rows={generalRows} />

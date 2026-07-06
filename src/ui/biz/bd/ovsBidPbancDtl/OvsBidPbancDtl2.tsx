@@ -1,7 +1,6 @@
 // 국외 입찰공고 상세 - '첨부파일' 탭 (MUI-BD-01-M73, 설계서 slide292·294).
 // 첨부서류(dl_docList) 목록 — 순번·첨부서류명 라벨 + 첨부파일 행(파일명 [크기] + 다운로드).
 // 데이터는 목업(추후 bdService.getOvsBidAtchDocList). 다운로드 클릭 = 파일다운로드 스텁.
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 // 추후 src/types/bd.ts 통합
 import type { OvsAtchDoc } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbancDtlPage'
@@ -16,7 +15,6 @@ const MOCK_DOC_LIST: OvsAtchDoc[] = [
 export function OvsBidPbancDtl2() {
   return (
     <>
-      <PageTitle as="h2">첨부서류</PageTitle>
       {/* 총 건수 */}
       <p className="px-4 pb-2 text-krds-body-sm text-krds-text-primary-active">
         총 {MOCK_DOC_LIST.length}건

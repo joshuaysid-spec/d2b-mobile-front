@@ -1,7 +1,6 @@
 // 입찰공고 상세 - '계약특수조건' 탭 (MUI-BD-01-M10, 설계서 slide42).
 // 상단 기본정보 테이블 + 계약특수조건 전문(번호별, 축약 없이 전체 표시). 경쟁입찰 중 내용 있을 때만 노출.
 // (전용 Figma 노드 미제공 — 설계서 데이터영역 + 상세 탭 공통 패턴으로 구성.) 데이터는 목업.
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 
@@ -28,7 +27,6 @@ const TERMS: { no: number; text: string }[] = [
 export function BidPbancDtl_Tacpg04() {
   return (
     <>
-      <PageTitle as="h2">계약특수조건</PageTitle>
       <Accordion type="multiple" defaultValue={['info', 'terms']} className="w-full">
         <AccordionSection value="info" title="기본정보" borderTop={false}>
           <Table rows={INFO_ROWS} />

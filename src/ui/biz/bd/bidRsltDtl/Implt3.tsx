@@ -2,7 +2,6 @@
 // 첨부서류(dlt_adoc) + 추가첨부서류(dlt_addAdoc) — 업로드 변형(파일 추가/삭제). 데이터는 목업(추후 API).
 import { useState } from 'react'
 
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 
@@ -31,7 +30,6 @@ export function Implt3() {
 
   return (
     <>
-      <PageTitle as="h2">파일첨부</PageTitle>
       <Accordion type="multiple" defaultValue={['adoc', 'addAdoc']} className="w-full">
         <AccordionSection value="adoc" title={`첨부서류 (총 ${adoc.length}건)`} borderTop={false}>
           <FileDownloadList

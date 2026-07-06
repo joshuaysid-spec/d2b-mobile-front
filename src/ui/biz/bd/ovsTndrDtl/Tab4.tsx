@@ -1,7 +1,6 @@
 // 국외 입찰서 상세 — 탭4 첨부파일 (MUI-BD-06-M79, 설계서 slide379 · 항목설명 slide384).
 // 첨부파일 목록(dl_docList) — 항목번호 + 첨부서류명(atchDocNm) 라벨 + 파일행(atchFileNm [fileSz] + 다운로드).
 // 항목명(영문) 설계서 그대로. 데이터는 목업 — 추후 API: bdService.getOvsTndrDocList.
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 
 // 첨부파일 1건 (dl_docList, 설계서 slide384) — 항목명(영문) 설계서 그대로. id 는 렌더 key 용.
@@ -23,7 +22,6 @@ const MOCK_DOC_LIST: OvsTndrDoc[] = [
 export function Tab4() {
   return (
     <>
-      <PageTitle as="h2">첨부파일</PageTitle>
       <div className="flex flex-col gap-krds-7 px-4 pb-4">
         <p className="text-krds-body-sm text-krds-text-primary-active">총 {MOCK_DOC_LIST.length}건</p>
         {MOCK_DOC_LIST.map((doc, i) => (
