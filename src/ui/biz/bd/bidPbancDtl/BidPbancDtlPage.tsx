@@ -11,6 +11,7 @@ import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
 import type { BidPbancItem, BidPbancDetail } from '@/types/bd'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
+import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
@@ -173,7 +174,12 @@ export function BidPbancDtlPage() {
         >
           <div className="overflow-hidden">
             <div className="bg-krds-bg-primary-faint px-4 py-4">
-              <StepBar orientation="horizontal" items={steps} className="bg-transparent" />
+              <StepBar
+                orientation="horizontal"
+                items={steps}
+                sheetItems={buildProgressSheet(detail.prgrsStg ?? '입찰')}
+                className="bg-transparent"
+              />
             </div>
           </div>
         </div>

@@ -8,6 +8,7 @@ import { useLocation } from 'react-router-dom'
 import type { OpPlanItem } from '@/types/op'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
+import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
@@ -93,7 +94,7 @@ export function OvsPrcmPlanDtlPage() {
         >
           <div className="overflow-hidden">
             <div className="px-4 py-4">
-              <StepBar orientation="horizontal" items={STEPS} />
+              <StepBar orientation="horizontal" items={STEPS} sheetItems={buildProgressSheet('조달')} />
             </div>
           </div>
         </div>

@@ -15,6 +15,7 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Icon } from '@/ui/common/base/Icon'
 import { SummaryInfo, type SummaryInfoBadge, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
+import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
@@ -279,7 +280,12 @@ export function OvsTndrDtlPage() {
         >
           <div className="overflow-hidden">
             <div className="bg-krds-bg-primary-faint px-4 py-4">
-              <StepBar orientation="horizontal" items={steps} className="bg-transparent" />
+              <StepBar
+                orientation="horizontal"
+                items={steps}
+                sheetItems={buildProgressSheet('입찰')}
+                className="bg-transparent"
+              />
             </div>
           </div>
         </div>

@@ -10,6 +10,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { getBdopnById } from '@/ui/biz/bd/bdopnList/BdopnListPage'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
+import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
@@ -44,6 +45,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
     state: cur < 0 ? 'todo' : i < cur ? 'done' : i === cur ? 'doing' : 'todo',
   }))
 }
+
 
 // ── 일반정보 탭(M01) 데이터 (설계서 slide152~153) — 라벨은 설계서 순서 그대로, 값은 목업 ──
 const GENERAL_ROWS: TableRow[] = [
@@ -286,7 +288,12 @@ export function BidRsltDtlPage() {
         >
           <div className="overflow-hidden">
             <div className="bg-krds-bg-primary-faint px-4 py-4">
-              <StepBar orientation="horizontal" items={steps} className="bg-transparent" />
+              <StepBar
+                orientation="horizontal"
+                items={steps}
+                sheetItems={buildProgressSheet(prgrsStg)}
+                className="bg-transparent"
+              />
             </div>
           </div>
         </div>
