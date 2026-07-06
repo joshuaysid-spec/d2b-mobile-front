@@ -1,7 +1,7 @@
 // 입찰결과상세(개찰상세, MUI-BD-09-M01~M04). 개찰목록 카드 클릭 → /bd/result/:id 진입.
 // 레퍼런스: 입찰공고 상세 BidPbancDtlPage (요약정보+스텝바+탭+탭콘텐츠 동일 패턴).
 // 구성: 요약정보(SummaryInfo, 즐겨찾기) + 스텝바(StepBar, 입찰) + 탭4(일반정보/품목정보/입찰결과/협상결과)
-//   + 탭 콘텐츠(일반정보=이 파일 인라인=M01 / 품목정보=BidRsltDtlListPage M02 / 입찰결과=BidRsltDtl M03 / 협상결과=BidRsltDtl2 M04)
+//   + 탭 콘텐츠(일반정보=이 파일 인라인=M01 / 품목정보=BidRsltDtlList M02 / 입찰결과=BidRsltDtl M03 / 협상결과=BidRsltDtl2 M04)
 //   + 맨위로 FAB.
 // 상세화면이라 검색필터 없음. 데이터는 목업(추후 bdService.getBidRsltDetail). 헤더는 전역 Header(AppLayout).
 import { useEffect, useState } from 'react'
@@ -20,7 +20,7 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
-import { BidRsltDtlListPage } from '@/ui/biz/bd/bidRsltDtl/BidRsltDtlListPage'
+import { BidRsltDtlList } from '@/ui/biz/bd/bidRsltDtl/BidRsltDtlList'
 import { BidRsltDtl } from '@/ui/biz/bd/bidRsltDtl/BidRsltDtl'
 import { BidRsltDtl2 } from '@/ui/biz/bd/bidRsltDtl/BidRsltDtl2'
 import { ImpltElgbSrngAbndAply } from '@/ui/biz/bd/bidRsltDtl/ImpltElgbSrngAbndAply'
@@ -189,7 +189,7 @@ function renderTabContent(tab: string) {
     case 'general':
       return <GeneralInfo />
     case 'item':
-      return <BidRsltDtlListPage />
+      return <BidRsltDtlList />
     case 'bid':
       return <BidRsltDtl />
     case 'nego':

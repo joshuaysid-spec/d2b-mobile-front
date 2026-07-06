@@ -1,6 +1,9 @@
 // 입찰결과상세 - '품목정보' 탭 (MUI-BD-09-M02, 설계서 02입찰 slide154).
 // 품목 목록(항목번호/재고번호/품명/규격/단위/수량/단가/금액) — 항목당 표 + 더보기(10개씩).
 // 데이터는 목업(추후 bdService.getBidRsltDetail). 표/필드는 설계서 기준.
+// ⚠️ 파일명 = BidRsltDtlList(설계서 영문 ID 는 BidRsltDtlListPage 지만, 이건 라우트 페이지가 아니라
+//   BidRsltDtlPage 의 '품목정보' 탭 콘텐츠 → 파일 명명 규칙상 탭 콘텐츠는 Page 접미사 금지.
+//   형제 탭 BidRsltDtl(M03)·BidRsltDtl2(M04)와 동일하게 Page 를 뗐다. 규칙 > 설계서 표기).
 import { useState } from 'react'
 
 import { PageTitle } from '@/ui/common/base/PageTitle'
@@ -50,7 +53,7 @@ const productRows = (it: ProductItem): TableRow[] => [
 
 const PAGE_SIZE = 10
 
-export function BidRsltDtlListPage() {
+export function BidRsltDtlList() {
   const [page, setPage] = useState(1)
   const total = MOCK_PRODUCTS.length
   const loaded = Math.min(page * PAGE_SIZE, total)
@@ -87,4 +90,4 @@ export function BidRsltDtlListPage() {
     </>
   )
 }
-BidRsltDtlListPage.displayName = 'BidRsltDtlListPage'
+BidRsltDtlList.displayName = 'BidRsltDtlList'
