@@ -39,6 +39,12 @@ export interface BidPbancItem {
    * ⚠️ 설계서 데이터영역 미정의(상세설계 예정) — 단계표시기 구동용 추가(사용자 승인).
    */
   prgrsStg?: string
+  /**
+   * 업무구분 (taskSeNm) — 물품/용역/공사/국외. 카드 클릭 시 국내(/bd/:id)·국외(/bd/ovs/:id) 상세 라우팅 분기 구동.
+   * ⚠️ 목록 데이터영역(dlt_bidPbancIntgList)엔 미정의 — 검색조건(dml_bidPbancSrchCnd)의 TaskSeNm ·
+   *   입찰진행 목록(BidPrgrsItem.taskSeNm) 항목명 재사용(BD 임시키 관례).
+   */
+  taskSeNm?: string
 }
 
 /**

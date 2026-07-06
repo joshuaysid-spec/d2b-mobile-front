@@ -161,13 +161,23 @@ export function BidPrgsDtlInqPage() {
   const cancelRef = useRef<BidRtrcnAperInqHandle>(null)
   const prdcpRef = useRef<PrdctnAbltDcmntSbmsnHandle>(null)
 
+  // 업무구분(taskSeNm) 데이터 필드로 국내/국외 화면 분기 — 목록(M01)·상세(M02)는 국내외 공용(설계서 slide324).
+  const isOvs = detail.taskSeNm === '국외'
+
   // 보기 버튼 → 결과조회 연계. 기술평가/생산능력서류는 풀팝업(P01/P06), 그 외는 결과 화면 이동.
   const handleView = (key: string) => {
-    if (key === 'apfr') navigate('/bd/reg-rslt', { state: detail })
-    else if (key === 'pq') navigate('/bd/srng-rslt', { state: detail })
+    if (key === 'apfr') {
+      // 국외: 입찰참가신청서 상세(MUI-BD-04-M78, /bd/ovs/prgrs/:id/apfr — state 는 목업 위 병합) / 국내: 입찰등록심사 결과조회
+      if (isOvs) navigate(`/bd/ovs/prgrs/${detail.rNum}/apfr`, { state: detail })
+      else navigate('/bd/reg-rslt', { state: detail })
+    } else if (key === 'tndr' && isOvs) {
+      // 국외 입찰서 상세(MUI-BD-06-M75, /bd/ovs/prgrs/:id/tndr) — state 미전달(페이지가 OvsTndrDtlItem 전체를
+      // 기대하므로 BidPrgrsItem 을 넘기면 상단이 깨짐 → fallback 목업으로 렌더. API 연동 시 조회로 대체).
+      navigate(`/bd/ovs/prgrs/${detail.rNum}/tndr`)
+    } else if (key === 'pq') navigate('/bd/srng-rslt', { state: detail })
     else if (key === 'techEvl') setTechEvlOpen(true)
     else if (key === 'prdcp') setPrdcpOpen(true)
-    else console.log('[M02] 보기', key) // 공고/입찰서 등 — 추후 연계
+    else console.log('[M02] 보기', key) // 공고/국내 입찰서 등 — 추후 연계
   }
   const rows = buildRows(detail, handleView)
   const status = statusBadge(detail)
@@ -211,14 +221,16 @@ export function BidPrgsDtlInqPage() {
   const handleShortcut = (id: string) => {
     setShortcutOpen(false)
     switch (id) {
-      case 'apply': // 입찰참가신청서작성(M01) — 등록반려/반려신청조회 플로팅은 그 화면에 있다.
-        navigate(`/bd/prgrs/${detail.rNum}/apfr`, { state: detail })
+      case 'apply': // 입찰참가신청서작성 — 국외(MUI-BD-04-M71, /bd/ovs/prgrs/:id/aply) / 국내(M01, 등록반려/반려신청조회 플로팅은 그 화면에 있다).
+        if (isOvs) navigate(`/bd/ovs/prgrs/${detail.rNum}/aply`, { state: detail })
+        else navigate(`/bd/prgrs/${detail.rNum}/apfr`, { state: detail })
         break
       case 'bfhdAply': // 사전심사(PQ) 신청(M01)
         navigate('/bd/bfhd-srng-aply', { state: detail })
         break
-      case 'bid': // 입찰서(견적서) 작성하기 → 입찰서 작성 마법사(MUI-BD-06-M01~M07) → 전자서명 → 신청완료.
-        navigate(`/bd/prgrs/${detail.rNum}/tndr-wrt`, { state: detail })
+      case 'bid': // 입찰서 작성 — 국외 입찰서제출(MUI-BD-06-M71, /bd/ovs/prgrs/:id/tndr-sbmsn) / 국내 마법사(MUI-BD-06-M01~M07) → 전자서명 → 신청완료.
+        if (isOvs) navigate(`/bd/ovs/prgrs/${detail.rNum}/tndr-sbmsn`, { state: detail })
+        else navigate(`/bd/prgrs/${detail.rNum}/tndr-wrt`, { state: detail })
         break
       case 'fx':
         setExchrtOpen(true)

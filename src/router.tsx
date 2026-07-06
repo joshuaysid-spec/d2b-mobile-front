@@ -120,6 +120,72 @@ const ImpltPage = lazy(() =>
     default: m.ImpltPage,
   })),
 )
+// 국외 입찰공고 상세(MUI-BD-01-M71~M73, /bd/ovs/:id) — biz/bd/ovsBidPbancDtl.
+const OvsBidPbancDtlPage = lazy(() =>
+  import('@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbancDtlPage').then((m) => ({
+    default: m.OvsBidPbancDtlPage,
+  })),
+)
+// 목표가공개품목조회(MUI-BD-01-M75, /bd/ovs/goal-prc-items) — biz/bd/ovsGoalPrcRlsItemList.
+const OvsGoalPrcRlsItemListPage = lazy(() =>
+  import('@/ui/biz/bd/ovsGoalPrcRlsItemList/OvsGoalPrcRlsItemListPage').then((m) => ({
+    default: m.OvsGoalPrcRlsItemListPage,
+  })),
+)
+// 국외 보관함 목록(MUI-CM-01-M71, /bd/ovs/locker) — biz/bd/ovsLockerPbanList.
+const OvsLockerPbanListPage = lazy(() =>
+  import('@/ui/biz/bd/ovsLockerPbanList/OvsLockerPbanListPage').then((m) => ({
+    default: m.OvsLockerPbanListPage,
+  })),
+)
+// 국외 보관함 상세(MUI-CM-01-M72, /bd/ovs/locker/:id) — biz/bd/ovsLockerPbanDtl.
+const OvsLockerPbanDtlPage = lazy(() =>
+  import('@/ui/biz/bd/ovsLockerPbanDtl/OvsLockerPbanDtlPage').then((m) => ({
+    default: m.OvsLockerPbanDtlPage,
+  })),
+)
+// 보관함 품목 관리(MUI-CM-01-M73, /bd/ovs/locker/:id/items) — biz/bd/ovsLockerItemReg.
+const OvsLockerItemRegPage = lazy(() =>
+  import('@/ui/biz/bd/ovsLockerItemReg/OvsLockerItemRegPage').then((m) => ({
+    default: m.OvsLockerItemRegPage,
+  })),
+)
+// 입찰내역 작성(MUI-BD-01-M76~M78, /bd/ovs/locker/:id/bid-cn) — biz/bd/ovsTmprBidCnReg. 단가제/총액제 분기.
+const OvsTmprBidCnRegPage = lazy(() =>
+  import('@/ui/biz/bd/ovsTmprBidCnReg/OvsTmprBidCnRegPage').then((m) => ({
+    default: m.OvsTmprBidCnRegPage,
+  })),
+)
+// 이전공고입찰내역등록(MUI-BD-01-M79, /bd/ovs/locker/:id/bfr-bid-cn) — biz/bd/ovsBfrTmprBidBidCnReg.
+const OvsBfrTmprBidBidCnRegPage = lazy(() =>
+  import('@/ui/biz/bd/ovsBfrTmprBidBidCnReg/OvsBfrTmprBidBidCnRegPage').then((m) => ({
+    default: m.OvsBfrTmprBidBidCnRegPage,
+  })),
+)
+// 국외 입찰참가신청서 작성(MUI-BD-04-M71~M77, /bd/ovs/prgrs/:id/aply) — biz/bd/ovsBidPrtcpAply. 서약서 → 신청서 4탭 마법사.
+const OvsBidPrtcpAplyPage = lazy(() =>
+  import('@/ui/biz/bd/ovsBidPrtcpAply/OvsBidPrtcpAplyPage').then((m) => ({
+    default: m.OvsBidPrtcpAplyPage,
+  })),
+)
+// 국외 입찰참가신청서 상세(MUI-BD-04-M78~M81, /bd/ovs/prgrs/:id/apfr) — biz/bd/ovsBidPrtcpApfrDtl.
+const OvsBidPrtcpApfrDtlPage = lazy(() =>
+  import('@/ui/biz/bd/ovsBidPrtcpApfrDtl/OvsBidPrtcpApfrDtlPage').then((m) => ({
+    default: m.OvsBidPrtcpApfrDtlPage,
+  })),
+)
+// 국외 입찰서제출(MUI-BD-06-M71~M74, /bd/ovs/prgrs/:id/tndr-sbmsn) — biz/bd/ovsTndrSbmsn. 3스탭 마법사.
+const OvsTndrSbmsnPage = lazy(() =>
+  import('@/ui/biz/bd/ovsTndrSbmsn/OvsTndrSbmsnPage').then((m) => ({
+    default: m.OvsTndrSbmsnPage,
+  })),
+)
+// 국외 입찰서 상세(MUI-BD-06-M75~M79, /bd/ovs/prgrs/:id/tndr) — biz/bd/ovsTndrDtl.
+const OvsTndrDtlPage = lazy(() =>
+  import('@/ui/biz/bd/ovsTndrDtl/OvsTndrDtlPage').then((m) => ({
+    default: m.OvsTndrDtlPage,
+  })),
+)
 const NotiPrstPage = lazy(() =>
   import('@/ui/biz/cm/notiPrst/NotiPrstPage').then((m) => ({
     default: m.NotiPrstPage,
@@ -241,6 +307,71 @@ export const router = createBrowserRouter([
         path: 'bd/:id',
         element: <BidPbancDtlPage />,
         handle: { header: { variant: 'sub', util: 'home', title: '입찰공고 상세' } },
+      },
+      // ── 국외 입찰(bd/ovs) — 정적 세그먼트(goal-prc-items·locker·prgrs)가 :id 보다 먼저 매칭됨 ──
+      {
+        path: 'bd/ovs/goal-prc-items',
+        element: <OvsGoalPrcRlsItemListPage />,
+        handle: {
+          header: { variant: 'sub', util: 'home', title: '목표가공개품목조회' },
+          scrollReset: true,
+        },
+      },
+      {
+        path: 'bd/ovs/locker',
+        element: <OvsLockerPbanListPage />,
+        handle: {
+          header: { variant: 'sub', util: 'search', title: '국외 보관함' },
+          scrollReset: true,
+        },
+      },
+      {
+        path: 'bd/ovs/locker/:id',
+        element: <OvsLockerPbanDtlPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '국외 보관함 상세' } },
+      },
+      {
+        path: 'bd/ovs/locker/:id/items',
+        element: <OvsLockerItemRegPage />,
+        handle: {
+          header: { variant: 'sub', util: 'home', title: '보관함 품목 관리' },
+          scrollReset: true,
+        },
+      },
+      {
+        path: 'bd/ovs/locker/:id/bid-cn',
+        element: <OvsTmprBidCnRegPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '입찰내역 작성' } },
+      },
+      {
+        path: 'bd/ovs/locker/:id/bfr-bid-cn',
+        element: <OvsBfrTmprBidBidCnRegPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '이전공고입찰내역등록' } },
+      },
+      {
+        path: 'bd/ovs/prgrs/:id/aply',
+        element: <OvsBidPrtcpAplyPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '입찰참가신청서' } },
+      },
+      {
+        path: 'bd/ovs/prgrs/:id/apfr',
+        element: <OvsBidPrtcpApfrDtlPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '입찰참가신청서 상세' } },
+      },
+      {
+        path: 'bd/ovs/prgrs/:id/tndr-sbmsn',
+        element: <OvsTndrSbmsnPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '입찰서제출' } },
+      },
+      {
+        path: 'bd/ovs/prgrs/:id/tndr',
+        element: <OvsTndrDtlPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '입찰서 상세' } },
+      },
+      {
+        path: 'bd/ovs/:id',
+        element: <OvsBidPbancDtlPage />,
+        handle: { header: { variant: 'sub', util: 'home', title: '국외 입찰공고 상세' } },
       },
       {
         path: 'op/:id',

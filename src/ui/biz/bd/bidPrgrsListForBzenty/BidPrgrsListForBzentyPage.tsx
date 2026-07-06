@@ -228,12 +228,40 @@ const dlt_bidPrgrsList: BidPrgrsItem[] = [
     tndrSbmsnPntmCd: 'pre',
     regRjctYn: true,
   },
+  // 7) 국외(사후등록심사) — [입찰참가신청서 작성하기]·[입찰서 작성하기] → 국외(/bd/ovs/prgrs/*) 화면 분기.
+  //    설계서 09국외입찰진행 slide330: 국외는 입찰서제출 마감 후 등록심사(사후심사) — tndrSbmsnPntmCd 'post'.
+  //    건 값은 국외 신청서(OvsBidPrtcpAplyPage) fallback 목업과 동일(EFD0007-2500 · MD부품국외경쟁입찰).
+  {
+    rNum: '7',
+    taskSeNm: '국외',
+    pbancNo: 'EFD0007-2500',
+    prcmNo: '83990',
+    bidNm: 'MD부품국외경쟁입찰',
+    rfrncNo: 'BAD83990EFD',
+    orderInstTelno: '02-2079-5100',
+    ctrtMthdNm: '경쟁입찰',
+    bidMthdNm: '총액제',
+    bidClrsDt: '2025-12-23 15:00',
+    tndrSbmsnDdlnDt: '2025-12-24 10:00',
+    bzentySeNm: '대표',
+    bfhdSrng: false,
+    bidPrgrsApfr: true,
+    tndr: true,
+    techEvl: false,
+    prdcpDcmntSbms: false,
+    apfrStatNm: '신청',
+    tndrStatNm: '미제출',
+    tndrSbmsnPntmCd: 'post',
+    regRjctYn: false,
+  },
 ]
 
 const TOTAL = 2010 // 총 건수(목업 — 실제 API total)
 const MOCK_LIST: BidPrgrsItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dlt_bidPrgrsList[i % dlt_bidPrgrsList.length]
-  return { ...base, rNum: String(i + 1), pbancNo: `${base.pbancNo.slice(0, -3)}-${i + 1}` }
+  // 국외 공고번호(EFD0007-2500)는 '-차수' 재접미사 규칙이 안 맞으므로 원형 유지(설계서 형식 보존).
+  const pbancNo = base.taskSeNm === '국외' ? base.pbancNo : `${base.pbancNo.slice(0, -3)}-${i + 1}`
+  return { ...base, rNum: String(i + 1), pbancNo }
 })
 
 // 신청유형 배지(설계서 slide66: 사전심사/입찰참가/견적서) — 해당 플래그가 true 인 것만.

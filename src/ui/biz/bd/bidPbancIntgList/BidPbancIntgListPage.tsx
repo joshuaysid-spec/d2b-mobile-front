@@ -212,6 +212,7 @@ const dlt_bidPbancList: BidPbancItem[] = [
     bidClrsDt: '2026-03-16 15:00',
     tndrSbmsnDdlnDt: '2026-03-17 15:00',
     brprc: 184_500_000,
+    taskSeNm: '물품',
   },
   {
     id: '2',
@@ -227,6 +228,7 @@ const dlt_bidPbancList: BidPbancItem[] = [
     bidClrsDt: '2026-03-10 15:00',
     tndrSbmsnDdlnDt: '2026-03-11 15:00',
     brprc: 96_000_000,
+    taskSeNm: '용역',
   },
   {
     id: '3',
@@ -242,6 +244,7 @@ const dlt_bidPbancList: BidPbancItem[] = [
     bidClrsDt: '2026-03-05 15:00',
     tndrSbmsnDdlnDt: '2026-03-06 15:00',
     brprc: 1_250_000_000,
+    taskSeNm: '공사',
   },
   {
     id: '4',
@@ -257,6 +260,7 @@ const dlt_bidPbancList: BidPbancItem[] = [
     bidClrsDt: '2026-03-02 15:00',
     tndrSbmsnDdlnDt: '2026-03-03 15:00',
     brprc: 532_800_000,
+    taskSeNm: '국외',
   },
 ]
 
@@ -312,7 +316,13 @@ export function BidPbancIntgListPage() {
     console.log('[BidList] loadMore → page', next)
   }
   const handleCardClick = (it: BidPbancItem) => {
-    // 입찰공고상세(MUI-BD-01-M07, /bd/:id) 이동 — 목록 아이템을 state 로 전달(즉시표시 초기값).
+    // 업무구분(taskSeNm) 데이터 필드로 국내/국외 상세 분기 — 목록 아이템을 state 로 전달(즉시표시 초기값).
+    if (it.taskSeNm === '국외') {
+      // 국외 입찰공고 상세(MUI-BD-01-M71~M73, /bd/ovs/:id)
+      navigate(`/bd/ovs/${it.id}`, { state: it })
+      return
+    }
+    // 입찰공고상세(MUI-BD-01-M07, /bd/:id)
     navigate(`/bd/${it.id}`, { state: it })
   }
 
