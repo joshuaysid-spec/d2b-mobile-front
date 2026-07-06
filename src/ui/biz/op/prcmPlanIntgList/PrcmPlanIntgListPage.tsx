@@ -15,6 +15,7 @@ import { SearchCondition } from '@/ui/common/composites/SearchCondition'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import type {
   SearchFilterSchema,
@@ -27,8 +28,10 @@ import type { OpSearchFilter, OpPlanItem, OpSrchType } from '@/types/op'
 const DATE_FORMAT = 'YYYY-MM-DD'
 
 // ── MUI-OP-01-M02 검색필터 schema (설계서 p11~13) ─────────────────────────────────
-// 검색유형(srchType)에 따라 날짜·검색어·구분설정 섹션이 통째로 바뀐다. SearchFilter 에 정적 객체가
-// 아니라 resolver(buildOpSearchSchema)로 넘겨, draft.srchType 변경 시마다 재구성되도록 한다.
+// 검색유형(srchType)에 따라 날짜·검색어·구분설정 섹션이 통째로 바뀐다. 단, 검색유형 자체는
+// 더 이상 필터 내부 값이 아니라 **페이지 상단 탭**(설계서 p10 '유형 추가', 2026-06-18)이 정하므로,
+// SearchFilter 에는 현재 탭으로 만든 정적 schema(buildOpSearchSchema(tab))를 넘긴다.
+// (설계서 p12·p13 '검색 유형 삭제', 2026-06-18 — 검색유형 섹션 제거)
 //   - 조달계획(plan, p11) : 월 설정 / 검색어 5(제목·판단번호·대표품명·발주기관·담당자) / 구분설정 4 / 업무구분 전체
 //   - 사전규격(spec, p12) : 일자 설정 + 공개일 설정 / 검색어 4(품명 없음) / 구분설정 없음 / 업무구분 '국외' 비활성
 //   - 연간조달(annual,p13): 연도 설정 / 검색어 4(군구분·품질등급·재고번호·부품번호) / 구분설정 4 / 업무구분 '국외'만 활성
@@ -43,25 +46,6 @@ const PROGRESS_OPTIONS = [
 ]
 // 옵션 미확정 드롭다운 자리 — 현재 '전체'만(TODO: 백엔드 코드값 확정 시 채움)
 const ALL_ONLY = [{ value: 'all', label: '전체' }]
-
-// 검색유형 — 항상 첫 섹션(고정). 원형 라디오(○) · 필수.
-const SRCH_TYPE_SECTION: SearchFilterSection = {
-  key: 'srchType',
-  title: '검색유형',
-  fields: [
-    {
-      type: 'radio',
-      key: 'srchType',
-      required: true,
-      showIndicator: true, // 검색유형은 원형 라디오(○) 표시 — 설계서 M02
-      options: [
-        { value: 'plan', label: '조달계획' },
-        { value: 'spec', label: '사전규격' },
-        { value: 'annual', label: '연간조달계획' },
-      ],
-    },
-  ],
-}
 
 // 업무구분 — 라벨/값은 동일, 검색유형별 활성/비활성만 다름.
 //   spec: '국외' 비활성(사전규격은 국외 없음) · annual: '국외'만 활성(타 항목 비활성)
@@ -293,45 +277,25 @@ function categorySections(type: OpSrchType): SearchFilterSection[] {
   ]
 }
 
-// 최종 resolver — draft 의 검색유형으로 섹션 조립. SearchFilter 에 함수째 넘긴다.
-function buildOpSearchSchema(value: SearchFilterValue): SearchFilterSchema {
-  const type = (value.srchType as OpSrchType) ?? 'plan'
+// 최종 schema 빌더 — 현재 탭(검색유형)으로 섹션 조립. 검색유형은 페이지 탭이 정하므로 인자로 받는다.
+// (탭 안에서는 섹션이 고정 → 정적 SearchFilterSchema 를 반환. 페이지가 useMemo(tab)로 캐시.)
+function buildOpSearchSchema(type: OpSrchType): SearchFilterSchema {
   // 사전규격: 일자설정 → 검색어 → 공개일설정 (공개일이 검색어 뒤). 그 외: 날짜 → 검색어 → 구분설정.
   const sections =
     type === 'spec'
-      ? [
-          SRCH_TYPE_SECTION,
-          taskSection(type),
-          ...dateSections(type),
-          keywordSection(type),
-          opnDtSection(),
-        ]
-      : [
-          SRCH_TYPE_SECTION,
-          taskSection(type),
-          ...dateSections(type),
-          keywordSection(type),
-          ...categorySections(type),
-        ]
+      ? [taskSection(type), ...dateSections(type), keywordSection(type), opnDtSection()]
+      : [taskSection(type), ...dateSections(type), keywordSection(type), ...categorySections(type)]
   return {
     title: '검색필터',
     sections,
   }
 }
 
-// 검색유형별 업무구분 기본값 — 검색유형 전환 시 normalize 로 이 값으로 교체한다.
+// 검색유형별 업무구분 기본값 — 탭 전환 시 filter 를 이 유형 기본값으로 리셋한다.
 const TASK_DEFAULT_BY_TYPE: Record<OpSrchType, string[]> = {
   plan: ['goods', 'service', 'construction', 'foreign'], // 전체
   spec: ['goods', 'service', 'construction'], // 국외 없음
   annual: ['foreign'], // 국외만
-}
-
-// 검색유형이 바뀌면 종속 필드(업무구분)를 새 유형 기본값으로 교체. 그 외 변경은 그대로 통과.
-// (도메인 로직이라 SearchFilter 가 아닌 페이지가 소유 → normalize prop 으로 주입)
-function normalizeOpSearch(next: SearchFilterValue, prev: SearchFilterValue): SearchFilterValue {
-  if (next.srchType === prev.srchType) return next
-  const type = (next.srchType as OpSrchType) ?? 'plan'
-  return { ...next, taskSeNm: TASK_DEFAULT_BY_TYPE[type] }
 }
 
 const RECENT_1M = () => ({
@@ -339,37 +303,46 @@ const RECENT_1M = () => ({
   end: dayjs().format(DATE_FORMAT),
 })
 
-// 초기/초기화 기준값 — 검색유형 조달계획. 유형 전환 시 normalize 가 종속 필드를 보정하므로,
-// 여기엔 모든 유형의 키를 한 벌씩 담아둔다(전환 후 빈값으로 떨어지지 않게).
-const DEFAULT_VALUE: OpSearchFilter = {
-  srchType: 'plan',
-  taskSeNm: TASK_DEFAULT_BY_TYPE.plan,
-  // 조달계획 — 월 설정(최근 1개월)
-  orderPrnmntYm: RECENT_1M(),
-  prcmPlanNm: '',
-  prcmNo: '',
-  rprsItemNm: '',
-  deptCd: '',
-  userNm: '',
-  implPrgrsStcd: 'all',
-  inspShcd: 'all',
-  bidSecd: 'all',
-  ctrtMthdCd: 'all',
-  // 사전규격 — 일자 설정(최근 1개월) + 공개일(기본 당일)
-  rcptPeriod: RECENT_1M(),
-  opnDt: dayjs().format(DATE_FORMAT),
-  // 연간조달 — 연도/검색어/구분설정
-  stdYr: dayjs().format('YYYY'),
-  mlSvcNm: '',
-  qltyGradeNm: '',
-  stockNo: '',
-  partNo: '',
-  itemNm: '',
-  prdctnNm: '',
-  deptSeCd: 'all',
-  functnCd: 'all',
-  prdClsfCd: 'all',
+// 탭(검색유형)별 초기/초기화 기준값. 탭 전환 시 filter 를 이 값으로 리셋하고, SearchFilter 초기화(reset)
+// 도 이 값을 기준으로 한다. 유형마다 업무구분(taskSeNm) 기본값만 다르고 나머지 키는 한 벌씩 담아둔다
+// (유형 전환 시 빈값으로 떨어지지 않게). srchType 은 더 이상 필터 값이 아님 — 페이지 탭이 소유.
+function buildDefaultValue(type: OpSrchType): OpSearchFilter {
+  return {
+    taskSeNm: TASK_DEFAULT_BY_TYPE[type],
+    // 조달계획 — 월 설정(최근 1개월)
+    orderPrnmntYm: RECENT_1M(),
+    prcmPlanNm: '',
+    prcmNo: '',
+    rprsItemNm: '',
+    deptCd: '',
+    userNm: '',
+    implPrgrsStcd: 'all',
+    inspShcd: 'all',
+    bidSecd: 'all',
+    ctrtMthdCd: 'all',
+    // 사전규격 — 일자 설정(최근 1개월) + 공개일(기본 당일)
+    rcptPeriod: RECENT_1M(),
+    opnDt: dayjs().format(DATE_FORMAT),
+    // 연간조달 — 연도/검색어/구분설정
+    stdYr: dayjs().format('YYYY'),
+    mlSvcNm: '',
+    qltyGradeNm: '',
+    stockNo: '',
+    partNo: '',
+    itemNm: '',
+    prdctnNm: '',
+    deptSeCd: 'all',
+    functnCd: 'all',
+    prdClsfCd: 'all',
+  }
 }
+
+// 검색유형 탭 — 설계서 p10(2026-06-18 '유형 추가'). 업무도움 바로 아래에서 유형 선택.
+const SRCH_TYPE_TABS: TabItem[] = [
+  { value: 'plan', label: '조달계획' },
+  { value: 'spec', label: '사전규격' },
+  { value: 'annual', label: '연간조달계획' },
+]
 
 // 빠른검색 대상 칩 — 검색유형별로 다름(설계서 p11).
 //   기본(조달계획/사전규격): 조달명 · 판단번호
@@ -531,11 +504,15 @@ const MOCK_LIST: OpPlanItem[] = Array.from({ length: TOTAL }, (_, i) => {
 export function PrcmPlanIntgListPage() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false) // 상세필터 풀팝업
-  const [filter, setFilter] = useState<SearchFilterValue>(DEFAULT_VALUE)
+  // 검색유형 — 업무도움 아래 탭이 소유(설계서 p10 '유형 추가'). filter 안이 아님.
+  const [tab, setTab] = useState<OpSrchType>('plan')
+  const [filter, setFilter] = useState<SearchFilterValue>(() => buildDefaultValue('plan'))
   const [keyword, setKeyword] = useState('') // 빠른검색어(입력 중)
   const [targets, setTargets] = useState<string[]>(['prcmPlanNm']) // 빠른검색 대상(single — 1개만)
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
+  // 상세필터가 적용됐는지 — 필터 버튼 강조(filterActive). 탭 전환 시 해제.
+  const [filterApplied, setFilterApplied] = useState(false)
   // 빠른검색 '적용' 상태 — 검색 버튼(또는 Enter)을 눌렀을 때만 확정된다.
   // (입력 중에는 목록이 걸러지지 않고, 검색을 실행해야 dlt_prcmPlanList 가 필터됨)
   const [appliedSearch, setAppliedSearch] = useState<{ keyword: string; target: string } | null>(
@@ -545,22 +522,38 @@ export function PrcmPlanIntgListPage() {
   // 검색어 selectionField(품명/발주기관) 의 검색시트는 SearchFilter 셸이 직접 연다(searchSheet).
 
   // 검색유형이 연간조달이면 빠른검색 대상 칩을 재고번호/조달요구번호로 교체(설계서 p11).
-  const isAnnual = filter.srchType === 'annual'
+  const isAnnual = tab === 'annual'
   const searchTargets = isAnnual ? ANNUAL_SEARCH_TARGETS : SEARCH_TARGETS
 
+  // 현재 탭 기준 schema / 초기화 기준값 — 탭 안에서는 고정이라 탭이 바뀔 때만 재계산.
+  const schema = useMemo(() => buildOpSearchSchema(tab), [tab])
+  const tabDefaultValue = useMemo(() => buildDefaultValue(tab), [tab])
+
   // ── API 경계 스텁 (백엔드 연동 시 services/op·queries/op 로 대체). console 로 동작 확인 ──
+  // 검색유형 탭 전환 — 목록 유형 변경 + 관련 상태 리셋(page/빠른검색/필터). 구 normalize(업무구분 보정)는
+  // 여기서 filter 를 그 유형 기본값(buildDefaultValue)으로 통째로 리셋하며 흡수한다.
+  const handleTabChange = (next: string) => {
+    const type = next as OpSrchType
+    if (type === tab) return
+    setTab(type)
+    setFilter(buildDefaultValue(type)) // 유형 기본값으로 리셋(업무구분 등 종속 필드 포함)
+    setFilterApplied(false) // 유형 바뀌면 이전 상세필터 강조 해제
+    setPage(1)
+    setKeyword('')
+    setAppliedSearch(null)
+    // 빠른검색 대상을 새 유형 기본값으로(연간조달=재고번호, 그 외=조달명).
+    setTargets([type === 'annual' ? 'stockNo' : 'prcmPlanNm'])
+    console.log('[OpList] 검색유형 탭 전환', type)
+    // services/op.ts: opService.getList({ srchType: type, ... }) → 유형별 목록 재조회
+  }
   const handleFilterSearch = (value: SearchFilterValue) => {
-    // 검색유형이 바뀌면 빠른검색 대상을 그 유형 기본값으로 리셋(연간조달=재고번호, 그 외=조달명).
-    // (이전 선택 'prcmNm' 등이 새 유형 칩에 없어 비활성으로 남는 것 방지)
-    if (value.srchType !== filter.srchType) {
-      setTargets([value.srchType === 'annual' ? 'stockNo' : 'prcmPlanNm'])
-    }
     setFilter(value)
-    setPage(1) // 필터(검색유형 등) 적용 시 첫 페이지부터
+    setFilterApplied(true) // 상세필터 적용됨 → 필터 버튼 강조
+    setPage(1) // 필터 적용 시 첫 페이지부터
     setKeyword('') // 검색필터 팝업에서 '검색' 실행 시 빠른검색 입력값 비움(닫기는 유지 — handleSearch 만 호출됨)
-    setAppliedSearch(null) // 빠른검색어 초기화(유형 바뀌면 이전 키워드 필터 해제)
+    setAppliedSearch(null) // 빠른검색어 초기화
     console.log('[OpList] 상세필터 검색', value)
-    // services/op.ts: opService.getList(toRequest(value)) → 목록 재조회
+    // services/op.ts: opService.getList(toRequest(tab, value)) → 목록 재조회
   }
   const handleQuickSearch = () => {
     // 검색대상(targets)은 single 칩이라 항상 1개만 선택됨 — 첫 값을 검색 기준으로 사용.
@@ -610,9 +603,8 @@ export function PrcmPlanIntgListPage() {
   //   opService.getList({ page, pageSize, keyword, searchTarget }) 결과를 받아 누적/치환한다.
   //   → filteredList(useMemo) · visibleList(slice) 제거하고 fetch 한 데이터로 cardItems 를 만든다.
   const filteredList = useMemo(() => {
-    // ① 검색유형(srchType) 필터 — 적용된 검색유형의 데이터만 노출(기본 조달계획). 목록은 항상 한 유형만.
-    const srchType = (filter.srchType as OpSrchType) ?? 'plan'
-    const byType = MOCK_LIST.filter((it) => it.srchType === srchType)
+    // ① 검색유형(탭) 필터 — 현재 탭의 데이터만 노출(기본 조달계획). 목록은 항상 한 유형만.
+    const byType = MOCK_LIST.filter((it) => it.srchType === tab)
     // ② 빠른검색 키워드 필터(검색 실행 시에만)
     if (!appliedSearch || !appliedSearch.keyword) return byType
     const kw = appliedSearch.keyword.toLowerCase()
@@ -621,7 +613,7 @@ export function PrcmPlanIntgListPage() {
       const field = appliedSearch.target === 'prcmPlanNm' ? it.prcmPlanNm : it.prcmNo
       return field.toLowerCase().includes(kw)
     })
-  }, [appliedSearch, filter.srchType])
+  }, [appliedSearch, tab])
 
   // 총건수·더보기는 항상 걸러진(검색유형+검색어) 결과 기준.
   const total = filteredList.length
@@ -663,6 +655,13 @@ export function PrcmPlanIntgListPage() {
         ]}
       />
 
+      {/* 검색유형 탭 — 업무도움 바로 아래(설계서 p10 '유형 추가'). 조달계획/사전규격/연간조달계획.
+          전환 시 목록 유형 + filter/빠른검색/page 리셋(handleTabChange). */}
+      <div className="px-4">
+        {/* fitted — 탭 3개가 가로폭 균등 분할(각 1/3) */}
+        <TabList value={tab} onChange={handleTabChange} items={SRCH_TYPE_TABS} fitted />
+      </div>
+
       {/* 검색조건 — 블루 바(full-bleed) + 폼(px-4 인셋) */}
       <SectionTitle as="h2" bgColor="blue">
         검색조건
@@ -675,7 +674,7 @@ export function PrcmPlanIntgListPage() {
           keyword={keyword}
           onKeywordChange={setKeyword}
           onFilterClick={() => setOpen(true)}
-          filterActive // 이 화면은 검색유형 필터가 항상 적용 중 → 필터 버튼 always on
+          filterActive={filterApplied} // 상세필터를 적용한 경우에만 강조(설계서 '검색 필터 설정이 있는 경우 표시')
           onSearch={handleQuickSearch}
         />
       </div>
@@ -710,15 +709,14 @@ export function PrcmPlanIntgListPage() {
       />
 
       {/* 상세필터 풀팝업 (필터 아이콘으로 open) */}
-      {/* 검색유형(조달계획/사전규격/연간조달)에 따라 섹션이 달라짐 — schema 를 resolver 로,
-          유형 전환 시 업무구분 보정은 normalize 로 처리(설계서 MUI-OP-01-M02 p11~13). */}
+      {/* 검색유형은 상단 탭이 정하고(설계서 검색 유형 삭제), 그 탭으로 만든 정적 schema 를 넘긴다.
+          유형별 섹션 구성은 buildOpSearchSchema 참고(설계서 MUI-OP-01-M02 p11~13). */}
       <SearchFilter
         open={open}
         onOpenChange={setOpen}
-        schema={buildOpSearchSchema}
-        normalize={normalizeOpSearch}
+        schema={schema}
         value={filter}
-        defaultValue={DEFAULT_VALUE}
+        defaultValue={tabDefaultValue}
         onSearch={handleFilterSearch}
       />
     </div>
