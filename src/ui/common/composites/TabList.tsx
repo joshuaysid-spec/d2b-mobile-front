@@ -1,6 +1,11 @@
-// Figma m_tab(9300-28541) 1:1.
+// Figma m_tab(9300-28541) · tab_btntype(10005-5888) 1:1.
 // items 배열을 Tab 으로 매핑 + 가로 스크롤(overflow-x-auto) + gap 8.
 // 활성 탭이 변경되면 자동 scrollIntoView 로 가시 영역에 들어오게 한다.
+//
+// variant 옵션:
+//   'line' (기본) — 하단 3px border 탭 (m_tab)
+//   'button'      — 라운드 8px 칩 탭 (tab_btntype). 컨테이너 = p-16 + 하단 1px divider.
+//                   label(선행 레이블, 17px Bold #0f316e)은 옵션 — 생략 가능.
 //
 // scrollButtons 옵션:
 //   'auto' (기본) — 스크롤이 필요할 때만 좌/우 화살표 자동 노출 (ResizeObserver + scroll 감지)
@@ -19,10 +24,11 @@
 //       { value: 'notice', label: '공고' },
 //     ]}
 //   />
+//   <TabList variant="button" label="레이블" ... />  // 버튼 타입 + 레이블(옵션)
 import * as React from 'react'
 
 import { Icon } from '@/ui/common/base/Icon'
-import { Tab } from '@/ui/common/base/Tab'
+import { Tab, type TabVariant } from '@/ui/common/base/Tab'
 import { cn } from '@/utils/cn'
 
 export interface TabItem {
@@ -44,6 +50,10 @@ export interface TabListProps
   scrollButtons?: TabListScrollButtons
   /** true 면 탭들을 flex-1 로 균등 분할(가로 꽉 채움). 스크롤/화살표는 비활성. */
   fitted?: boolean
+  /** 탭 모양 — line(하단 border, 기본) | button(라운드 칩, Figma tab_btntype 10005-5888). */
+  variant?: TabVariant
+  /** 탭 그룹 앞 레이블(17px Bold #0f316e) — 생략 가능. button variant 에서 사용. */
+  label?: React.ReactNode
 }
 
 function TabList({
@@ -53,6 +63,8 @@ function TabList({
   onChange,
   scrollButtons = 'auto',
   fitted = false,
+  variant = 'line',
+  label,
   ...props
 }: TabListProps) {
   const scrollerRef = React.useRef<HTMLDivElement>(null)
@@ -109,82 +121,99 @@ function TabList({
 
   return (
     <div
-      className={cn('relative w-full bg-background pt-krds-8', className)}
+      className={cn(
+        'flex w-full items-center bg-background',
+        variant === 'line'
+          ? 'pt-krds-8'
+          : 'gap-krds-7 border-b border-krds-border-divider p-krds-8',
+        className,
+      )}
       {...props}
     >
-      <div
-        ref={scrollerRef}
-        role="tablist"
-        className={cn(
-          'flex w-full items-center gap-krds-5 scrollbar-none [&::-webkit-scrollbar]:hidden',
-          // fitted = 균등 분할(스크롤 없음) / 기본 = 가로 스크롤
-          fitted
-            ? 'overflow-hidden'
-            : 'overflow-x-auto overflow-y-hidden',
+      {/* 선행 레이블(옵션) — Figma tab_btntype(10005-5888) 좌측 "레이블". 생략 가능. */}
+      {label != null && (
+        <span className="shrink-0 whitespace-nowrap text-[17px] font-bold leading-normal text-krds-text-primary-active">
+          {label}
+        </span>
+      )}
+
+      {/* 스크롤러 + 화살표 오버레이 — 레이블을 제외한 탭 영역에만 화살표가 겹치도록 래핑 */}
+      <div className="relative min-w-0 flex-1">
+        <div
+          ref={scrollerRef}
+          role="tablist"
+          className={cn(
+            'flex w-full items-center gap-krds-5 scrollbar-none [&::-webkit-scrollbar]:hidden',
+            // fitted = 균등 분할(스크롤 없음) / 기본 = 가로 스크롤
+            fitted
+              ? 'overflow-hidden'
+              : 'overflow-x-auto overflow-y-hidden',
+          )}
+          style={{ scrollbarWidth: 'none' }}
+        >
+          {items.map((item) => (
+            <Tab
+              key={item.value}
+              ref={(el) => {
+                tabRefs.current[item.value] = el
+              }}
+              variant={variant}
+              selected={item.value === value}
+              disabled={item.disabled}
+              onClick={() => onChange(item.value)}
+              className={fitted ? 'flex-1' : undefined}
+            >
+              {item.label}
+            </Tab>
+          ))}
+        </div>
+
+        {showLeft && (
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
+            <div className="pointer-events-auto flex h-12 items-center">
+              {/* 버튼 뒤(사각 모서리 포함)는 흰색으로 덮어 탭이 비치지 않게 */}
+              <span className="flex h-full items-center bg-background">
+                <button
+                  type="button"
+                  aria-label="이전 탭으로 스크롤"
+                  onClick={() => scrollBy(-160)}
+                  className="flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-background text-krds-text-ink"
+                >
+                  <Icon name="ArrowBackIosNew" size={20} aria-hidden />
+                </button>
+              </span>
+              {/* 탭 위로 흰색→투명 그라데이션 fade — 화살표 안쪽 탭이 서서히 사라지게 */}
+              <div
+                aria-hidden
+                className="h-full w-5 bg-gradient-to-r from-background to-transparent"
+              />
+            </div>
+          </div>
         )}
-        style={{ scrollbarWidth: 'none' }}
-      >
-        {items.map((item) => (
-          <Tab
-            key={item.value}
-            ref={(el) => {
-              tabRefs.current[item.value] = el
-            }}
-            selected={item.value === value}
-            disabled={item.disabled}
-            onClick={() => onChange(item.value)}
-            className={fitted ? 'flex-1' : undefined}
-          >
-            {item.label}
-          </Tab>
-        ))}
+
+        {showRight && (
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center">
+            <div className="pointer-events-auto flex h-12 items-center">
+              {/* 탭 위로 투명→흰색 그라데이션 fade — 화살표 안쪽 탭이 서서히 사라지게 */}
+              <div
+                aria-hidden
+                className="h-full w-5 bg-gradient-to-r from-transparent to-background"
+              />
+              {/* 버튼 뒤(사각 모서리 포함)는 흰색으로 덮어 탭이 비치지 않게 */}
+              <span className="flex h-full items-center bg-background">
+                <button
+                  type="button"
+                  aria-label="다음 탭으로 스크롤"
+                  onClick={() => scrollBy(160)}
+                  className="flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-background text-krds-text-ink"
+                >
+                  <Icon name="ArrowForwardIos" size={20} aria-hidden />
+                </button>
+              </span>
+            </div>
+          </div>
+        )}
       </div>
-
-      {showLeft && (
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pt-krds-8">
-          <div className="pointer-events-auto flex h-12 items-center">
-            {/* 버튼 뒤(사각 모서리 포함)는 흰색으로 덮어 탭이 비치지 않게 */}
-            <span className="flex h-full items-center bg-background">
-              <button
-                type="button"
-                aria-label="이전 탭으로 스크롤"
-                onClick={() => scrollBy(-160)}
-                className="flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-background text-krds-text-ink"
-              >
-                <Icon name="ArrowBackIosNew" size={20} aria-hidden />
-              </button>
-            </span>
-            {/* 탭 위로 흰색→투명 그라데이션 fade — 화살표 안쪽 탭이 서서히 사라지게 */}
-            <div
-              aria-hidden
-              className="h-full w-5 bg-gradient-to-r from-background to-transparent"
-            />
-          </div>
-        </div>
-      )}
-
-      {showRight && (
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pt-krds-8">
-          <div className="pointer-events-auto flex h-12 items-center">
-            {/* 탭 위로 투명→흰색 그라데이션 fade — 화살표 안쪽 탭이 서서히 사라지게 */}
-            <div
-              aria-hidden
-              className="h-full w-5 bg-gradient-to-r from-transparent to-background"
-            />
-            {/* 버튼 뒤(사각 모서리 포함)는 흰색으로 덮어 탭이 비치지 않게 */}
-            <span className="flex h-full items-center bg-background">
-              <button
-                type="button"
-                aria-label="다음 탭으로 스크롤"
-                onClick={() => scrollBy(160)}
-                className="flex size-10 shrink-0 items-center justify-center rounded-full border border-krds-border-field bg-background text-krds-text-ink"
-              >
-                <Icon name="ArrowForwardIos" size={20} aria-hidden />
-              </button>
-            </span>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

@@ -9,7 +9,7 @@ import dayjs from 'dayjs'
 
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
-import { SectionTitle } from '@/ui/common/base/SectionTitle'
+import { SectionDivider } from '@/ui/common/base/SectionDivider'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
@@ -655,17 +655,23 @@ export function PrcmPlanIntgListPage() {
         ]}
       />
 
-      {/* 검색유형 탭 — 업무도움 바로 아래(설계서 p10 '유형 추가'). 조달계획/사전규격/연간조달계획.
-          전환 시 목록 유형 + filter/빠른검색/page 리셋(handleTabChange). */}
-      <div className="px-4">
-        {/* fitted — 탭 3개가 가로폭 균등 분할(각 1/3) */}
-        <TabList value={tab} onChange={handleTabChange} items={SRCH_TYPE_TABS} fitted />
-      </div>
+      {/* 업무도움 ↔ 탭 사이 1px 구분선 (Figma 9973-122615 m_section divider) */}
+      <SectionDivider />
 
-      {/* 검색조건 — 블루 바(full-bleed) + 폼(px-4 인셋) */}
-      <SectionTitle as="h2" bgColor="blue">
-        검색조건
-      </SectionTitle>
+      {/* 검색유형 탭 — 업무도움 바로 아래(Figma 9973-122615, 2026-07-07 버튼 타입 전환).
+          '유형' 레이블 + 라운드 칩 탭(조달계획/사전규격/연간조달계획). 컨테이너 p-16 + 하단 divider 는
+          TabList(variant=button) 내장. 전환 시 목록 유형 + filter/빠른검색/page 리셋(handleTabChange). */}
+      {/* fitted — 칩 탭들이 레이블 오른쪽 남은 폭을 균등 분할해 100% 채움 */}
+      <TabList
+        variant="button"
+        label="유형"
+        value={tab}
+        onChange={handleTabChange}
+        items={SRCH_TYPE_TABS}
+        fitted
+      />
+
+      {/* 검색영역 — 탭 바로 아래(설계 개정으로 '검색조건' 타이틀 바 삭제, Figma 9973-122615) */}
       <div className="px-4 py-4">
         <SearchCondition
           targets={searchTargets}

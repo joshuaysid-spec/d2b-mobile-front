@@ -1363,7 +1363,7 @@ export function ComponentGuidePage() {
           <Section
             id="tab"
             title="Tab"
-            desc="Figma tab_atomic(9300-28533/28537) 1:1. 단일 탭 atom — h-48 · 19px Bold + 3px 하단 border. selected=false 면 border-field 회색, selected=true 면 D2B blue. 보통은 직접 쓰지 않고 TabList 가 매핑."
+            desc="Figma tab_atomic(9300-28533/28537) · tab_btntype atomic(10005-5894) 1:1. 단일 탭 atom — variant: line(기본, h-48 · 19px Bold + 3px 하단 border) | button(라운드 8px 칩 · 17px · 보더/채움 #0f316e). 보통은 직접 쓰지 않고 TabList 가 매핑."
           >
             <Row label="selected">
               {/* Tab(role=tab)은 tablist 부모가 필요(axe aria-required-parent) — 데모용 래퍼. */}
@@ -1375,6 +1375,20 @@ export function ComponentGuidePage() {
               <Specimen caption="selected=true (활성)">
                 <div role="tablist" aria-label="탭 예시">
                   <Tab selected>탭제목</Tab>
+                </div>
+              </Specimen>
+            </Row>
+            <Row label='variant="button"'>
+              <Specimen caption="selected=false — 흰 배경 + 1px #0f316e 보더 + Medium">
+                <div role="tablist" aria-label="버튼 탭 예시">
+                  <Tab variant="button">탭제목</Tab>
+                </div>
+              </Specimen>
+              <Specimen caption="selected=true — #0f316e 채움 + Bold 흰색">
+                <div role="tablist" aria-label="버튼 탭 예시">
+                  <Tab variant="button" selected>
+                    탭제목
+                  </Tab>
                 </div>
               </Specimen>
             </Row>
@@ -2611,7 +2625,7 @@ export function ComponentGuidePage() {
           <Section
             id="tablist"
             title="TabList"
-            desc="Figma m_tab(9300-28541) 1:1. items 배열 + value/onChange · 가로 스크롤(overflow-x-auto) + gap 8. 활성 탭 변경 시 자동 scrollIntoView. scrollButtons: 'auto'(기본, 스크롤 가능할 때만 좌/우 화살표 자동) / 'always' / 'none'. 화살표 옆 그라데이션 fade 포함."
+            desc="Figma m_tab(9300-28541) · tab_btntype(10005-5888) 1:1. items 배열 + value/onChange · 가로 스크롤(overflow-x-auto) + gap 8. 활성 탭 변경 시 자동 scrollIntoView. scrollButtons: 'auto'(기본, 스크롤 가능할 때만 좌/우 화살표 자동) / 'always' / 'none'. 화살표 옆 그라데이션 fade 포함. variant='button' = 라운드 칩 탭(p-16 + 하단 divider) + 선행 label(옵션, 생략 가능)."
           >
             <Row label="기본 (적은 탭, 화살표 미노출)">
               <Specimen caption="2~3 탭 — 화면 안에 들어와 스크롤 불필요">
@@ -2677,6 +2691,39 @@ export function ComponentGuidePage() {
                       { value: 't5', label: '탭제목5' },
                       { value: 't6', label: '탭제목6' },
                       { value: 't7', label: '탭제목7' },
+                    ]}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label='variant="button" + label'>
+              <Specimen caption="Figma tab_btntype(10005-5888) — 라운드 칩 탭 + 선행 레이블(옵션)">
+                <div className="w-[360px]">
+                  <TabList
+                    variant="button"
+                    label="레이블"
+                    value={tabValue}
+                    onChange={setTabValue}
+                    items={[
+                      { value: 'bid', label: '탭제목' },
+                      { value: 'notice', label: '탭제목' },
+                      { value: 'contract', label: '탭제목' },
+                    ]}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label='variant="button" (레이블 생략)'>
+              <Specimen caption="label 생략 시 칩 탭만 노출">
+                <div className="w-[360px]">
+                  <TabList
+                    variant="button"
+                    value={tabValue}
+                    onChange={setTabValue}
+                    items={[
+                      { value: 'bid', label: '탭제목' },
+                      { value: 'notice', label: '탭제목' },
+                      { value: 'contract', label: '탭제목' },
                     ]}
                   />
                 </div>
