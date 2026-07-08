@@ -120,6 +120,30 @@ const ImpltPage = lazy(() =>
     default: m.ImpltPage,
   })),
 )
+// 국외 입찰결과조회 상세(단가제, MUI-BD-09-M71·M72, /bd/ovs/result/:id) — biz/bd/ovsBidRsltDtl. 개찰목록 국외(단가제) 카드 진입.
+const OvsBidRsltDtlPage = lazy(() =>
+  import('@/ui/biz/bd/ovsBidRsltDtl/OvsBidRsltDtlPage').then((m) => ({
+    default: m.OvsBidRsltDtlPage,
+  })),
+)
+// 국외 공개수의협상계획상세(MUI-BD-12-M71·T71~T73, /bd/ovs/rls-ngtn/:id) — biz/bd/ovsRlsVltrnsNgtnPlanDtl. 개찰목록 국외·수의계약 카드 진입.
+const OvsRlsVltrnsNgtnPlanDtlPage = lazy(() =>
+  import('@/ui/biz/bd/ovsRlsVltrnsNgtnPlanDtl/OvsRlsVltrnsNgtnPlanDtlPage').then((m) => ({
+    default: m.OvsRlsVltrnsNgtnPlanDtlPage,
+  })),
+)
+// 국외 공개수의협상 견적서 작성(4스텝, MUI-BD-12-M74~M77, /bd/ovs/rls-ngtn/:id/etdc) — biz/bd/ovsRlsVltrnsNgtnEtdcSbmsnPage. 계획상세 바로가기 진입.
+const OvsRlsVltrnsNgtnEtdcSbmsnPage = lazy(() =>
+  import('@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcSbmsnPage/OvsRlsVltrnsNgtnEtdcSbmsnPage').then((m) => ({
+    default: m.OvsRlsVltrnsNgtnEtdcSbmsnPage,
+  })),
+)
+// 국외 공개수의협상 견적서 조회(상세 읽기, MUI-BD-12-M78~M81, /bd/ovs/rls-ngtn/:id/etdc-dtl) — biz/bd/ovsRlsVltrnsNgtnEtdcDtl. 계획상세 바로가기 진입.
+const OvsRlsVltrnsNgtnEtdcDtlPage = lazy(() =>
+  import('@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcDtl/OvsRlsVltrnsNgtnEtdcDtlPage').then((m) => ({
+    default: m.OvsRlsVltrnsNgtnEtdcDtlPage,
+  })),
+)
 // 국외 입찰공고 상세(MUI-BD-01-M71~M73, /bd/ovs/:id) — biz/bd/ovsBidPbancDtl.
 const OvsBidPbancDtlPage = lazy(() =>
   import('@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbancDtlPage').then((m) => ({
@@ -303,6 +327,30 @@ export const router = createBrowserRouter([
         path: 'bd/implt/:id',
         element: <ImpltPage />,
         handle: { header: { variant: 'sub', title: '이행/적격심사' } },
+      },
+      {
+        // 국외 입찰결과조회 상세(단가제) — 정적 'ovs/result' 세그먼트가 bd/:id·bd/ovs/:id 보다 먼저 매칭.
+        path: 'bd/ovs/result/:id',
+        element: <OvsBidRsltDtlPage />,
+        handle: { header: { variant: 'sub', title: '입찰결과 조회' } },
+      },
+      {
+        // 국외 공개수의협상계획상세 — 정적 'ovs/rls-ngtn' 세그먼트가 bd/:id·bd/ovs/:id 보다 먼저 매칭.
+        path: 'bd/ovs/rls-ngtn/:id',
+        element: <OvsRlsVltrnsNgtnPlanDtlPage />,
+        handle: { header: { variant: 'sub', title: '공개수의협상 계획상세' } },
+      },
+      {
+        // 공개수의협상 견적서 작성(4스텝) — 정적 'etdc' 세그먼트가 :id 보다 먼저 매칭. 헤더 타이틀 '견적서 작성'.
+        path: 'bd/ovs/rls-ngtn/:id/etdc',
+        element: <OvsRlsVltrnsNgtnEtdcSbmsnPage />,
+        handle: { header: { variant: 'sub', title: '견적서 작성' } },
+      },
+      {
+        // 공개수의협상 견적서 조회(상세 읽기, 4탭) — 정적 'etdc-dtl' 세그먼트. 헤더 타이틀 '견적서 조회'.
+        path: 'bd/ovs/rls-ngtn/:id/etdc-dtl',
+        element: <OvsRlsVltrnsNgtnEtdcDtlPage />,
+        handle: { header: { variant: 'sub', title: '견적서 조회' } },
       },
       {
         path: 'bd/:id',

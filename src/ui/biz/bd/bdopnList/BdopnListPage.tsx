@@ -26,7 +26,7 @@ import type {
   SearchFilterSchema,
   SearchFilterValue,
 } from '@/types/search-filter'
-import type { BdopnItem } from '@/types/bd'
+import type { BdopnItem, OvsBidRsltSummary, OvsRlsVltrnsSummary } from '@/types/bd'
 
 // 빠른검색 대상 — 설계서 검색조건(공고명/공고번호).
 const SEARCH_TARGETS = [
@@ -244,6 +244,80 @@ const dlt_bdopnList: BdopnItem[] = [
   },
 ]
 
+// 국외 개찰 카드 = 상세 상단 요약 공통 데이터 (MUI-BD-09-M71 slide402) — 목록 최상단 고정.
+// 카드 클릭 시 이 값을 navigate state 로 넘겨 상세 상단(배지/번호/사업명/요약행)을 카드와 동일하게 표시.
+const OVS_BDOPN_SUMMARY: OvsBidRsltSummary = {
+  taskSeNm: '국외',
+  bidTypeNm: '단가제',
+  bidMthdNm: '경쟁입찰',
+  intgRfrncNo: 'BDF01823EFE',
+  pbancNo: 'EFE00012-2',
+  bizNm: '500MD 부품',
+  bidBzentyNm: 'A 해외업체',
+  prchsDmndNo: 'BDF01823-002',
+  regDdlnDt: '2026-03-17 15:00',
+  bdngDdlnDt: '2026-03-26 11:00',
+  bdopnDt: '2026-03-30',
+}
+// 총액제 카드 — 단가제 카드 복사 후 입찰유형만 총액제로. (상세는 추후 제작 — MUI-BD-09-M73)
+const OVS_BDOPN_SUMMARY_TOTAL: OvsBidRsltSummary = { ...OVS_BDOPN_SUMMARY, bidTypeNm: '총액제' }
+
+// 요약 데이터 → 국외 개찰 카드. 배지 순서: 업무구분(국외) 먼저, 입찰방식(경쟁입찰) 맨 마지막, 사이 입찰유형(단가제/총액제).
+function buildOvsBdopnCard(id: string, s: OvsBidRsltSummary): CardListItem {
+  return {
+    id,
+    badges: (
+      <>
+        <Badge>{s.taskSeNm}</Badge>
+        <Badge>{s.bidTypeNm}</Badge>
+        <Badge>{s.bidMthdNm}</Badge>
+      </>
+    ),
+    subtitle: `통합참조번호 ${s.intgRfrncNo} / 공고번호 ${s.pbancNo}`,
+    title: s.bizNm,
+    rows: [
+      { label: '입찰업체', value: s.bidBzentyNm },
+      { label: '구매요청번호', value: s.prchsDmndNo },
+      { label: '입찰참가등록마감일시', value: s.regDdlnDt },
+      { label: '입찰서제출마감일시', value: s.bdngDdlnDt },
+      { label: '개찰일자', value: s.bdopnDt },
+    ],
+  }
+}
+const OVS_BDOPN_CARD = buildOvsBdopnCard('ovs-m71', OVS_BDOPN_SUMMARY)
+const OVS_BDOPN_CARD_TOTAL = buildOvsBdopnCard('ovs-m73', OVS_BDOPN_SUMMARY_TOTAL)
+
+// 국외 공개수의협상 카드 (MUI-BD-12-M71, slide411) — 수의계약 배지 조건. 클릭 시 공개수의협상계획상세 진입.
+const OVS_NGTN_SUMMARY: OvsRlsVltrnsSummary = {
+  taskSeNm: '국외',
+  ctrtMthdNm: '수의계약',
+  intgRfrncNo: 'BDF01823EFE',
+  pbancNo: 'EFE00012-2',
+  bizNm: '500MD 부품',
+  prchsDmndNo: 'BDF01823-002',
+  sumDrctnAmt: '$ 126,000.18',
+  etdcDdlnDt: '2026-03-26 11:00',
+  bdopnDt: '2026-03-30',
+}
+const OVS_NGTN_CARD: CardListItem = {
+  id: 'ovs-ngtn-m71',
+  // 배지: 업무구분(국외) + 계약방법(수의계약).
+  badges: (
+    <>
+      <Badge>{OVS_NGTN_SUMMARY.taskSeNm}</Badge>
+      <Badge>{OVS_NGTN_SUMMARY.ctrtMthdNm}</Badge>
+    </>
+  ),
+  subtitle: `통합참조번호 ${OVS_NGTN_SUMMARY.intgRfrncNo} / 공고번호 ${OVS_NGTN_SUMMARY.pbancNo}`,
+  title: OVS_NGTN_SUMMARY.bizNm,
+  rows: [
+    { label: '구매요청번호', value: OVS_NGTN_SUMMARY.prchsDmndNo },
+    { label: '총 금액', value: OVS_NGTN_SUMMARY.sumDrctnAmt },
+    { label: '견적서제출마감일시', value: OVS_NGTN_SUMMARY.etdcDdlnDt },
+    { label: '개찰일자', value: OVS_NGTN_SUMMARY.bdopnDt },
+  ],
+}
+
 const TOTAL = 258 // 총 건수(목업 — 실제 API total)
 // 목업 확장 — 보유 4건을 인덱스로 복제해 TOTAL 건 구성(공고번호·id 는 고유하게).
 const MOCK_BDOPN_LIST: BdopnItem[] = Array.from({ length: TOTAL }, (_, i) => {
@@ -323,23 +397,34 @@ export function BdopnListPage() {
   const visibleList = filteredList.slice(0, loaded)
 
   // 목업 → Card props 매핑. 개찰목록 정보행 = 공고일자·개찰일시 2행(설계서 MUI-BD-08-M01).
-  const cardItems: CardListItem[] = visibleList.map((it) => ({
-    id: it.id,
-    badges: (
-      <>
-        <Badge>{it.pbancStasNm}</Badge>
-        <Badge>{it.taskSeNm}</Badge>
-        <Badge>{it.bidMthdNm}</Badge>
-      </>
-    ),
-    subtitle: `입찰공고번호 ${it.bidPbancNo}`,
-    title: it.bidPbancNm,
-    rows: [
-      { label: '공고일자', value: it.pbancDt },
-      { label: '개찰일시', value: it.opbidDt },
-    ],
-    onClick: () => handleCardClick(it),
-  }))
+  // 국외 입찰결과조회 카드(MUI-BD-09-M71)는 최상단 고정 — 국내 목록 앞에 prepend.
+  const cardItems: CardListItem[] = [
+    // 국외(단가제) 카드 → 국외 입찰결과조회 상세(MUI-BD-09-M71·M72). 상단 요약을 카드와 동일하게 state 로 전달.
+    { ...OVS_BDOPN_CARD, onClick: () => navigate('/bd/ovs/result/ovs-m71', { state: OVS_BDOPN_SUMMARY }) },
+    // 국외(총액제) 카드 → 국외 입찰결과조회 상세(총액제, MUI-BD-09-M71·M73). 배지(총액제)로 결과 탭 분기.
+    { ...OVS_BDOPN_CARD_TOTAL, onClick: () => navigate('/bd/ovs/result/ovs-m73', { state: OVS_BDOPN_SUMMARY_TOTAL }) },
+    // 국외·수의계약 카드 → 공개수의협상계획상세(MUI-BD-12-M71). 수의계약 배지 조건일 때만 진입.
+    { ...OVS_NGTN_CARD, onClick: () => navigate('/bd/ovs/rls-ngtn/ovs-ngtn-m71', { state: OVS_NGTN_SUMMARY }) },
+    ...visibleList.map((it) => ({
+      id: it.id,
+      // 최상단 배지(레이블 딱지) — 우선순위 순서(업무구분>공고구분) + 입찰방식은 맨 마지막.
+      // 값이 있는 항목만 그 순서대로 노출(없으면 생략).
+      badges: (
+        <>
+          {[it.taskSeNm, it.pbancStasNm, it.bidMthdNm].filter(Boolean).map((v, i) => (
+            <Badge key={i}>{v}</Badge>
+          ))}
+        </>
+      ),
+      subtitle: `입찰공고번호 ${it.bidPbancNo}`,
+      title: it.bidPbancNm,
+      rows: [
+        { label: '공고일자', value: it.pbancDt },
+        { label: '개찰일시', value: it.opbidDt },
+      ],
+      onClick: () => handleCardClick(it),
+    })),
+  ]
 
   return (
     <div className="flex w-full flex-col">
