@@ -266,6 +266,10 @@ function StepBar({
     >
       {items.map((item, i) => {
         const depth = item.depth ?? 1
+        const nextDepth = items[i + 1]?.depth ?? 1
+        // 연속 1depth 사이엔 2depth connector 가 없어 라인이 안 보인다 → 살짝 띄우고(gap) 짧은 세로선 추가.
+        // (1depth→2depth 는 2depth row 가 위쪽 connector 를 그리므로 불필요)
+        const gapConnector = depth === 1 && i < items.length - 1 && nextDepth === 1
         return (
           <div key={i} role="listitem" className="w-full">
             {depth === 1 ? (
@@ -282,6 +286,10 @@ function StepBar({
                 isFirst={i === 0}
                 isLast={i === items.length - 1}
               />
+            )}
+            {gapConnector && (
+              // dot 중심(x≈21) 아래로 짧은 세로 연결선(#C1D1EE=border-field). 칩에 붙여 연속(흰 여백 없음).
+              <span aria-hidden className="ml-[20px] block h-2.5 w-0.5 bg-krds-border-field" />
             )}
           </div>
         )

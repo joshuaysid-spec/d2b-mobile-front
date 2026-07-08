@@ -223,6 +223,373 @@ export interface ImpltElgbSrngResult {
 }
 
 /**
+ * 국외 입찰결과조회 요약(카드=상세 상단 공통, MUI-BD-09-M71 slide402 m_summary info).
+ * 개찰목록 국외(단가제) 카드와 상세 상단이 동일 값을 공유 — 카드 클릭 시 navigate state 로 전달.
+ */
+export interface OvsBidRsltSummary {
+  /** 업무구분 배지 (taskSeNm) — 국외 */
+  taskSeNm: string
+  /** 입찰유형 배지 (bidTypeNm) — 단가제 */
+  bidTypeNm: string
+  /** 입찰방식 배지 (bidMthdNm) — 경쟁입찰 */
+  bidMthdNm: string
+  /** 통합참조번호 (intgRfrncNo) — subtitle */
+  intgRfrncNo: string
+  /** 공고번호 (pbancNo) — subtitle */
+  pbancNo: string
+  /** 사업명 (bizNm) — title */
+  bizNm: string
+  /** 입찰업체 (bidBzentyNm) — 예: 'A 해외업체' */
+  bidBzentyNm: string
+  /** 구매요청번호 (prchsDmndNo) */
+  prchsDmndNo: string
+  /** 입찰참가등록마감일시 (regDdlnDt) */
+  regDdlnDt: string
+  /** 입찰서제출마감일시 (bdngDdlnDt) */
+  bdngDdlnDt: string
+  /** 개찰일자 (bdopnDt) */
+  bdopnDt: string
+}
+
+/**
+ * 국외 입찰결과조회 - 일반정보 (MUI-BD-09-M71, 설계서 slide403 일반 데이터 영역).
+ * ⚠️ M71 데이터영역에 영문 항목명 미표기 → 국외 입찰서 상세(OvsTndrDtlItem) 관례 차용.
+ * 개찰목록 국외(단가제) 카드 → 이 화면 진입. navigate state / 페이지 fallback 목업 타입.
+ */
+export interface OvsBidRsltGeneral {
+  /** 공고번호 (pbancNo) — 예: 'EFD0007-2' */
+  pbancNo: string
+  /** 공고구분 (pbancSeNm) — 정상공고 등 */
+  pbancSeNm: string
+  /** 공고일자 (pbancDt) */
+  pbancDt: string
+  /** 구매요청번호 (prchsDmndNo) */
+  prchsDmndNo: string
+  /** 통합참조번호 (intgRfrncNo) */
+  intgRfrncNo: string
+  /** 사업명 (bizNm) — 요약 title */
+  bizNm: string
+  /** 입찰유형 (bidTypeNm) — 단가제/총액제 */
+  bidTypeNm: string
+  /** 입찰매체 (bidMdmNm) — 전자입찰 등 */
+  bidMdmNm: string
+  /** 계약방법 (ctrtMthdNm) — 일반경쟁 등 */
+  ctrtMthdNm: string
+  /** 입찰방식 (bidMth) — 일반투찰 등 */
+  bidMth: string
+  /** 총금액 (totAmt) — USD 표시(예: '$ 126,000.18') */
+  totAmt: string
+  /** 환율적용일자 (exchrtAplcnYmd) */
+  exchrtAplcnYmd: string
+  /** 공고 품목수 (pbancItemCnt) */
+  pbancItemCnt: string
+  /** 개찰일시 (bdopnDt) */
+  bdopnDt: string
+  /** 입찰참가등록마감일시 (regDdlnDt) */
+  regDdlnDt: string
+  /** 입찰서제출마감일시 (bdngDdlnDt) */
+  bdngDdlnDt: string
+  /** 담당 부서명 (picDeptNm) */
+  picDeptNm: string
+  /** 담당자 (picNm) */
+  picNm: string
+  /** 연락처 유선 (picTlno) */
+  picTlno: string
+  /** 연락처 휴대 (picMblTelno) */
+  picMblTelno: string
+}
+
+/**
+ * 국외 입찰결과조회 - 입찰결과(단가제) 목록 1건 (MUI-BD-09-M72, 설계서 slide404 입찰결과 단가제 데이터영역).
+ */
+export interface OvsBidRsltUnitPriceItem {
+  /** 항목번호 (clsfNo) */
+  clsfNo: string
+  /** 품명 (prdctNm) — 예: '500MD' */
+  prdctNm: string
+  /** 재고번호 (stckNo) */
+  stckNo: string
+  /** 부품번호 (partNo) */
+  partNo: string
+  /** 단위 (unit) — 예: 'EA' */
+  unit: string
+  /** 수량 (qty) */
+  qty: string
+  /** 지시단가 (drctnUprc) — 원 */
+  drctnUprc: string
+  /** 입찰단가 (bidUprc) — 원 */
+  bidUprc: string
+  /** 달러단가 (usdUprc) — USD */
+  usdUprc: string
+  /** 달러금액 (usdAmt) — USD */
+  usdAmt: string
+  /** 입찰결과 (bidRsltNm) — 낙찰/조건부/동가낙찰 */
+  bidRsltNm: string
+}
+
+/**
+ * 국외 입찰결과조회 - 입찰결과(총액제) 목록 1건 (MUI-BD-09-M73, 설계서 slide405 입찰결과 총액제 데이터영역).
+ * 총액제는 업체별 결과(입찰업체/사업자번호/지시금액/입찰금액/달러금액/입찰결과). 현황 요약 없음.
+ */
+export interface OvsBidRsltTotalItem {
+  /** 순번 (seq) — 목록 key. ⚠️ 설계서 미표기, React key 용 */
+  seq: string
+  /** 입찰업체 (bidBzentyNm) — 예: 'A 국외업체' */
+  bidBzentyNm: string
+  /** 사업자번호 (bizRegNo) — 예: '123-45-67890' */
+  bizRegNo: string
+  /** 지시금액 (drctnAmt) — 원 */
+  drctnAmt: string
+  /** 입찰금액 (bidAmt) — 원 */
+  bidAmt: string
+  /** 달러금액 (usdAmt) — USD */
+  usdAmt: string
+  /** 입찰결과 (bidRsltNm) — 낙찰/조건부 낙찰/동가 낙찰/유찰 */
+  bidRsltNm: string
+}
+
+/**
+ * 국외 입찰결과현황(단가제) 요약 (MUI-BD-09-M72, 설계서 slide404 입찰결과현황 데이터영역).
+ * 결과품목 소계(건수) + 원/달러 금액 소계 — 낙찰/조건부/동가낙찰/소계.
+ */
+export interface OvsBidRsltUnitPriceStatus {
+  /** 총 참여품목수 (totItemCnt) */
+  totItemCnt: string
+  /** 총 낙찰 (totScsbdCnt) */
+  totScsbdCnt: string
+  /** 결과품목 건수 — 낙찰/조건부/동가낙찰/소계 */
+  cnt: { scsbd: string; cndl: string; eqv: string; sub: string }
+  /** 화폐금액(원) — 낙찰/조건부/동가낙찰/소계 */
+  krw: { scsbd: string; cndl: string; eqv: string; sub: string }
+  /** 달러금액(USD) — 낙찰/조건부/동가낙찰/소계 */
+  usd: { scsbd: string; cndl: string; eqv: string; sub: string }
+}
+
+/**
+ * 국외 공개수의협상계획상세 요약(카드=상세 상단 공통, MUI-BD-12-M71 slide411).
+ * 개찰목록 국외·수의계약 카드 → 이 화면 진입(수의계약 배지 조건일 때만). navigate state.
+ * ⚠️ 영문 항목명 = 국외 상세(OvsTndrDtl/OvsBidRslt) 관례 차용(설계서 데이터영역 영문 미표기).
+ */
+export interface OvsRlsVltrnsSummary {
+  /** 업무구분 배지 (taskSeNm) — 국외. UI 배지값(설계서 데이터영역 항목 아님) */
+  taskSeNm: string
+  /** 계약방법 배지 (ctrtMthdNm) — 수의계약 */
+  ctrtMthdNm: string
+  /** 통합참조번호 (intgRfrncNo) — subtitle */
+  intgRfrncNo: string
+  /** 공고번호 (pbancNo) — subtitle */
+  pbancNo: string
+  /** 사업명 (bizNm) — title */
+  bizNm: string
+  /** 구매요청번호 (prchsDmndNo) */
+  prchsDmndNo: string
+  /** 총금액 (sumDrctnAmt) — USD 표시 */
+  sumDrctnAmt: string
+  /** 견적서제출마감일시 (etdcDdlnDt) */
+  etdcDdlnDt: string
+  /** 개찰일자 (bdopnDt) */
+  bdopnDt: string
+}
+
+/** 국외 공개수의협상계획상세 - 일반정보 (MUI-BD-12-M71/T71, slide412 공고일반). */
+export interface OvsRlsVltrnsGeneral {
+  pbancNo: string
+  /** 공고구분 (pbancType) */
+  pbancType: string
+  /** 공고일자 (pbancRqstYmd) */
+  pbancRqstYmd: string
+  prchsDmndNo: string
+  intgRfrncNo: string
+  /** 사업명 (bizNm) */
+  bizNm: string
+  /** 계약방법 (ctrtMthdNm) */
+  ctrtMthdNm: string
+  /** 총금액 (sumDrctnAmt) — USD */
+  sumDrctnAmt: string
+  /** 공고품목수 (itemQty) */
+  itemQty: string
+  /** 환율적용일자 (exchrtAplcnYmd) */
+  exchrtAplcnYmd: string
+  /** 개찰일시 (bdopnDt) */
+  bdopnDt: string
+  /** 견적서제출마감일시 (etdcDdlnDt) */
+  etdcDdlnDt: string
+  /** 담당부서 (picDeptNm) */
+  picDeptNm: string
+  /** 담당자 (picNm) */
+  picNm: string
+  /** 연락처 (picTlno) */
+  picTlno: string
+  /** 휴대번호 — UI 표기용(설계서 데이터영역에 대응 항목 없음, 연락처=picTlno 1개) */
+  picMblTelno: string
+}
+
+/** 국외 공개수의협상계획상세 - 품목정보 목록 1건 (MUI-BD-12-M72/T72, slide413 품목목록). */
+export interface OvsRlsVltrnsItem {
+  /** 항목번호 (clsfNo) */
+  clsfNo: string
+  /** 품질등급 (qltyGrd) — 예: 'A' */
+  qltyGrd: string
+  /** 첨부문서 유무 (atchDocYn) — 예: 'O' */
+  atchDocYn: string
+  /** 재고번호 (stckNo) */
+  stckNo: string
+  /** 부품번호 (partNo) */
+  partNo: string
+  /** 규격번호 (specNo) */
+  specNo: string
+  /** 품명 (prdctNm) */
+  prdctNm: string
+  /** 납기기준일자 (dlvyBaseYmd) */
+  dlvyBaseYmd: string
+  /** 단위 (unit) */
+  unit: string
+  /** 본조수량 (mainQty) */
+  mainQty: string
+  /** 당국수량 (currQty) */
+  currQty: string
+  /** 장국수량 (futrQty) */
+  futrQty: string
+  /** 본조예산 (mainBdgt) — 원 */
+  mainBdgt: string
+  /** 당국예산 (currBdgt) — 원 */
+  currBdgt: string
+  /** 장국예산 (futrBdgt) — 원 */
+  futrBdgt: string
+  /** 수량합계 (qtySum) */
+  qtySum: string
+  /** 화폐단위 (crncyUnit) — 예: '미 달러' */
+  crncyUnit: string
+  /** 지시단가 (drctnUprc) */
+  drctnUprc: string
+  /** 지시금액 (drctnAmt) */
+  drctnAmt: string
+  /** 장비부호 (equipCd) */
+  equipCd: string
+  /** 장비명 (equipNm) */
+  equipNm: string
+}
+
+/**
+ * 국외 공개수의협상 견적서 업체정보 (작성 M75/slide421 · 조회 M79/slide431·434~435).
+ * 항목명 = 설계서 데이터영역 영문(dm_aplyBzenty / dm_bidBzenty).
+ */
+export interface OvsRlsVltrnsEtdcBzenty {
+  /** 신청업체 (dm_aplyBzenty) */
+  aply: {
+    /** 업체코드 (sbtBzentyCd) */
+    sbtBzentyCd: string
+    /** 업체명 (sbtBzentyNm) */
+    sbtBzentyNm: string
+    /** 대표자 (sbtRprsvNm) */
+    sbtRprsvNm: string
+    /** 전화번호 (sbtTlno) */
+    sbtTlno: string
+    /** 팩스 (sbtFxno) */
+    sbtFxno: string
+    /** 사업자번호 (sbtBzmnNo) — 사업자등록번호 또는 DUNS NUM */
+    sbtBzmnNo: string
+    /** 주소 (sbtAddr) */
+    sbtAddr: string
+  }
+  /** 입찰업체 (dm_bidBzenty) */
+  bid: {
+    /** 업체코드 (splyBzentyCd) */
+    splyBzentyCd: string
+    /** 업체명 (splyBzentyNm) */
+    splyBzentyNm: string
+    /** 대표자 (splyRprsvNm) */
+    splyRprsvNm: string
+    /** 이메일 (splyEmlAddr) */
+    splyEmlAddr: string
+    /** 전화번호 (splyTlno) */
+    splyTlno: string
+    /** 팩스 (splyFxno) */
+    splyFxno: string
+    /** 사업자번호 (splyBzmnNo) — 사업자등록번호 또는 DUNS NUM */
+    splyBzmnNo: string
+    /** 주소 (splyAddr) */
+    splyAddr: string
+  }
+}
+
+/** 국외 공개수의협상견적서제출 - 스탭3 입찰참여품목(단가제) 1건 (MUI-BD-12-M76/T76, slide422·435). 항목명 = 설계서 데이터영역 영문(dl_bidItemList). */
+export interface OvsRlsVltrnsEtdcItem {
+  /** 항목번호 (frcptlArtclNo) */
+  frcptlArtclNo: string
+  /** 재고번호 (invtNo) */
+  invtNo: string
+  /** 부품번호 (prtsNo) */
+  prtsNo: string
+  /** 품명 (itemNm) */
+  itemNm: string
+  /** 단위 (unitNm) */
+  unitNm: string
+  /** 수량 (qty) */
+  qty: string
+  /** 지시단가 (drctnUntprc) */
+  drctnUntprc: string
+  /** 화폐단위 (crncNm) — 예: '미 달러' */
+  crncNm: string
+  // ── 입력 항목(견적 작성) ──
+  /** 품목대체구분 (itemSbstSe) — 'Y'|'N'. Y 시 수정재고/부품번호·대체첨부문서 입력 */
+  itemSbstSe: 'Y' | 'N'
+  /** 수정재고번호 (mdfcnInvtNo) — itemSbstSe=Y 입력 */
+  mdfcnInvtNo: string
+  /** 수정부품번호 (mdfcnPrtsNo) — itemSbstSe=Y 입력 */
+  mdfcnPrtsNo: string
+  /** 견적단가 (estmtUntprc) — 입력 */
+  estmtUntprc: string
+}
+
+/**
+ * 국외 공개수의협상견적서상세(조회) - 입찰품목 1건 (MUI-BD-12-M80/T80, slide432·435).
+ * 항목명 = 설계서 데이터영역 영문(dl_bidItemList). 읽기전용 표시값. itemSbstSe='Y' 시 품목대체첨부문서·수정재고/부품번호 노출.
+ */
+export interface OvsRlsVltrnsEtdcDtlItem {
+  /** 항목번호 (frcptlArtclNo) */
+  frcptlArtclNo: string
+  /** 재고번호 (invtNo) */
+  invtNo: string
+  /** 부품번호 (prtsNo) */
+  prtsNo: string
+  /** 품명 (itemNm) */
+  itemNm: string
+  /** 단위 (unitNm) */
+  unitNm: string
+  /** 수량 (qty) */
+  qty: string
+  /** 지시단가 (drctnUntprc) */
+  drctnUntprc: string
+  /** 품목대체구분 (itemSbstSe) — 'Y'|'N' */
+  itemSbstSe: 'Y' | 'N'
+  /** 품목대체첨부문서 파일명 (itemSbstDocEn) — itemSbstSe='Y' 시 값 (예: 'File.pdf') */
+  itemSbstDocEn: string
+  /** 수정재고번호 (mdfcnInvtNo) — itemSbstSe='Y' 시 값 */
+  mdfcnInvtNo: string
+  /** 수정부품번호 (mdfcnPrtsNo) — itemSbstSe='Y' 시 값 */
+  mdfcnPrtsNo: string
+  /** 견적단가 (estmtUntprc) */
+  estmtUntprc: string
+  /** 견적금액 (estmtAmt) */
+  estmtAmt: string
+  /** 화폐단위 (crncNm) — 예: 'USD (미 달러)' */
+  crncNm: string
+}
+
+/** 국외 공개수의협상계획상세 - 첨부서류 1건 (MUI-BD-12-M73/T73, slide414 첨부파일). */
+export interface OvsRlsVltrnsAtchDoc {
+  /** 식별자 (id) — 목록 key */
+  id: string
+  /** 구분 (docSeNm) — 공고문안/일반조건/특수조건/기타첨부 */
+  docSeNm: string
+  /** 첨부파일명 (fileNm) */
+  fileNm: string
+  /** 파일크기 (fileSz) */
+  fileSz: string
+}
+
+/**
  * 신청서 작성 플로우 종류 — 전자서명(M21)/신청완료(M08)의 표시 텍스트 분기 구동값.
  * 설계서 slide132·133: "사전심사(PQ), 입찰참가신청, 입찰서에 따라 표시 텍스트 변경".
  */
