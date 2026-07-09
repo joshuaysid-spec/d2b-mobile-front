@@ -129,6 +129,13 @@ export function OvsTmprBidCnRegPage() {
           <div className="px-4 py-4">
             <Table rows={picRows} />
           </div>
+
+          {/* 다음 — 품목 목록 탭으로 이동(다음=다음탭 마법사 컨벤션) */}
+          <div className="px-4 pb-6 pt-2">
+            <Button variant="primary" className="w-full" onClick={() => goTab('품목목록')}>
+              다음
+            </Button>
+          </div>
         </>
       ) : (
         <>

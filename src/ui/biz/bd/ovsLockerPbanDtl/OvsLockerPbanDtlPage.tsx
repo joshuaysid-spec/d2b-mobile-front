@@ -13,7 +13,7 @@ import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 // 보관함 공고 타입 — @/types/bd 공유 타입(설계서 slide306 dl_resultList).
-import type { OvsLockerPbanItem } from '@/types/bd'
+import type { BidPrgrsItem, OvsLockerPbanItem } from '@/types/bd'
 
 // 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — 설계서 slide304 데이터영역 항목명/형식 그대로.
 const MOCK_OVS_LOCKER_PBAN_DETAIL: OvsLockerPbanItem = {
@@ -25,8 +25,10 @@ const MOCK_OVS_LOCKER_PBAN_DETAIL: OvsLockerPbanItem = {
   prchsDmndNo: 'BDF01823-002',
   bizNm: 'T-80U/TBE-3',
   tmprBidCnEn: 'N',
+  tmprBidCnStts: '미작성',
   splyBzentyNm: '미작성',
   bidPrtcpAplyYn: 'N',
+  bidPrtcpAplyStts: '미신청',
   regDdlnDt: '2026-03-17 15:00',
   bdngDdlnDt: '2026-03-26 11:00',
   bdopnYmd: '2026-03-30',
@@ -94,8 +96,19 @@ export function OvsLockerPbanDtlPage() {
   }
   const handleApfr = () => {
     // btn_moveApplFormEdit_onlick → 국외 입찰참가신청서 작성. 청렴계약이행서약서동의(P71)는 신청서 화면에서 처리.
+    // 신청서 화면은 BidPrgrsItem 형태 state 를 기대 — 보관함 항목을 매핑해 전달(목록 goPrtcpAply 와 동일).
     console.log('[OvsLockerDtl] 입찰참가신청서 작성 이동', detail.intgRfrncNo)
-    navigate(`/bd/ovs/prgrs/${id ?? detail.id}/aply`, { state: detail })
+    const aplyState: Partial<BidPrgrsItem> = {
+      taskSeNm: '국외',
+      pbancNo: `${detail.pbancNo}-${detail.pbancOd}`,
+      rfrncNo: detail.intgRfrncNo,
+      bidNm: detail.bizNm,
+      ctrtMthdNm: detail.bidMth,
+      bidMthdNm: detail.bidPrcSysNm,
+      bidClrsDt: detail.regDdlnDt,
+      tndrSbmsnDdlnDt: detail.bdngDdlnDt,
+    }
+    navigate(`/bd/ovs/prgrs/${id ?? detail.id}/aply`, { state: aplyState })
   }
 
   return (

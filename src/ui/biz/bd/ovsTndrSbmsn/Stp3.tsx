@@ -53,7 +53,7 @@ export function OvsTndrSbmsnPage_Stp3({ detail }: { detail: OvsTndrSbmsnDetail }
   return (
     <>
       {/* 첨부파일 — 총 건수(설계서 slide369 '첨부파일 – 총 0건') */}
-      <SectionTitle as="h3" info={`총 ${files.length}건`}>
+      <SectionTitle as="h3" info={`총 ${files.length}건`} className="bg-white">
         첨부파일
       </SectionTitle>
 

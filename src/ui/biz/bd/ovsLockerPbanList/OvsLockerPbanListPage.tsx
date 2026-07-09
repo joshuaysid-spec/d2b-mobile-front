@@ -1,9 +1,14 @@
-// 국외 보관함 목록 (MUI-CM-01-M71, 설계서 slide301·306·307). 보관함에 추가한 국외 공고 목록 조회.
+// 국외 보관함 목록 (MUI-CM-01-M71, 설계서 slide301·306·307 + 최종 와이어프레임 260709). 보관함에 추가한 국외 공고 목록 조회.
 // 레퍼런스: 입찰공고 통합목록 BidPbancIntgListPage (구성·상태·페이징 동일 패턴).
 // 구성: 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더(총건수·page size) + 카드 리스트 + 더보기 + FAB.
 // 데이터/페이징/검색은 페이지 소유. 목록은 목업(dl_resultList, 항목명 설계서 그대로) — 추후 API: bdService.getOvsLockerPbanList.
-// ⚠️ 카드에 액션 버튼(입찰내역 작성, 설계서 slide301 ⑤)이 있어 카드 전체 클릭(Card onClick=button 컨테이너)과
-//    중첩 버튼이 되므로, 상세 이동은 footer '상세보기' 버튼으로 분리(navigate state 전달은 표준 그대로).
+// 카드 하단 버튼(260709 확정 — 상태 버튼 1개 + 보관함 품목 관리 1개, 총 2개. 260706 보관함상세 삭제로 '상세보기' 없음):
+//   - 상태 버튼(우선순위 분기, 1개만):
+//     ① 입찰참가신청 완료 → [입찰진행 바로가기](해당 공고 진행 상세 직행)
+//     ② 입찰참가신청 작성(저장) → [입찰참가신청 작성수정]
+//     ③ 입찰내역 제출 완료 → [입찰내역 완료](비활성 표시)
+//     ④ 그 외(내역 미작성/작성) → [입찰내역 작성수정]
+//   - 보관함 품목 관리: 항시 노출
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -13,7 +18,7 @@ import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
-import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
+import { ButtonGroup, type ButtonGroupItem } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import type {
@@ -22,7 +27,7 @@ import type {
   SearchFilterValue,
 } from '@/types/search-filter'
 
-import type { OvsLockerPbanItem } from '@/types/bd'
+import type { BidPrgrsItem, OvsLockerPbanItem } from '@/types/bd'
 
 // 빠른검색 대상 — 설계서 slide301 검색영역(통합참조번호/구매요청번호).
 const SEARCH_TARGETS = [
@@ -105,8 +110,10 @@ const dl_resultList: OvsLockerPbanItem[] = [
     prchsDmndNo: 'BDF01823-002',
     bizNm: 'T-80U/TBE-3',
     tmprBidCnEn: 'N',
+    tmprBidCnStts: '미작성',
     splyBzentyNm: '미작성',
     bidPrtcpAplyYn: 'N',
+    bidPrtcpAplyStts: '미신청',
     regDdlnDt: '2026-03-17 15:00',
     bdngDdlnDt: '2026-03-26 11:00',
     bdopnYmd: '2026-03-30',
@@ -125,8 +132,10 @@ const dl_resultList: OvsLockerPbanItem[] = [
     prchsDmndNo: 'BDF01824-001',
     bizNm: 'K-9 SELF-PROPELLED HOWITZER SPARE PARTS',
     tmprBidCnEn: 'Y',
+    tmprBidCnStts: '완료',
     splyBzentyNm: 'A 업체',
     bidPrtcpAplyYn: 'Y',
+    bidPrtcpAplyStts: '완료',
     regDdlnDt: '2026-03-17 15:00',
     bdngDdlnDt: '2026-03-26 11:00',
     bdopnYmd: '2026-03-30',
@@ -144,9 +153,11 @@ const dl_resultList: OvsLockerPbanItem[] = [
     pbancYr: '2026',
     prchsDmndNo: 'BDF01931-004',
     bizNm: 'F-15K AIRCRAFT RECOIL ASSEMBLY',
-    tmprBidCnEn: 'N',
-    splyBzentyNm: '미작성',
-    bidPrtcpAplyYn: 'Y',
+    tmprBidCnEn: 'Y',
+    tmprBidCnStts: '작성',
+    splyBzentyNm: 'C 물산',
+    bidPrtcpAplyYn: 'N',
+    bidPrtcpAplyStts: '미신청',
     regDdlnDt: '2026-04-02 15:00',
     bdngDdlnDt: '2026-04-10 11:00',
     bdopnYmd: '2026-04-14',
@@ -165,8 +176,10 @@ const dl_resultList: OvsLockerPbanItem[] = [
     prchsDmndNo: 'BDF02005-001',
     bizNm: 'UH-60 HELICOPTER MAIN ROTOR BLADE',
     tmprBidCnEn: 'Y',
+    tmprBidCnStts: '완료',
     splyBzentyNm: 'B 상사',
     bidPrtcpAplyYn: 'N',
+    bidPrtcpAplyStts: '작성',
     regDdlnDt: '2026-04-20 15:00',
     bdngDdlnDt: '2026-04-28 11:00',
     bdopnYmd: '2026-05-01',
@@ -175,6 +188,29 @@ const dl_resultList: OvsLockerPbanItem[] = [
     lockerItemQty: 27,
     bidPrcSysNm: '총액제',
     ctrtMthdNm: '제한경쟁',
+  },
+  {
+    // 내역 제출완료 + 참가신청 전 → [입찰내역 완료](비활성) 상태 확인용
+    id: 'BDF02112EFE',
+    intgRfrncNo: 'BDF02112EFE',
+    pbancNo: 'EFE00035',
+    pbancOd: '1',
+    pbancYr: '2026',
+    prchsDmndNo: 'BDF02112-003',
+    bizNm: 'KF-21 LANDING GEAR SEAL KIT',
+    tmprBidCnEn: 'Y',
+    tmprBidCnStts: '완료',
+    splyBzentyNm: 'D 항공',
+    bidPrtcpAplyYn: 'N',
+    bidPrtcpAplyStts: '미신청',
+    regDdlnDt: '2026-05-11 15:00',
+    bdngDdlnDt: '2026-05-19 11:00',
+    bdopnYmd: '2026-05-22',
+    exchrtAplcnYmd: '2026-05-11',
+    bidMth: '경쟁입찰',
+    lockerItemQty: 8,
+    bidPrcSysNm: '단가제',
+    ctrtMthdNm: '일반경쟁',
   },
 ]
 
@@ -223,14 +259,48 @@ export function OvsLockerPbanListPage() {
     setPage(next)
     console.log('[OvsLockerList] loadMore → page', next)
   }
-  // 상세 이동 — 클릭한 항목 전체를 navigate state 로 전달(상세 상단 요약 구동).
-  const goDetail = (it: OvsLockerPbanItem) => {
-    navigate(`/bd/ovs/locker/${it.id}`, { state: it })
-  }
-  // 입찰내역 작성/수정 (설계서 이벤트 btn_moveBidDetail_onclick → MUI-BD-01-M76)
+  // 진행 화면들(신청서/진행 상세)은 입찰진행 아이템(BidPrgrsItem) 형태의 state 를 기대 — 보관함 항목을 매핑.
+  // 보관함 항목에 없는 필드(판단번호·연락처·진행 플래그)는 목업으로 보완(추후 API 응답으로 교체).
+  const toPrgrsItem = (it: OvsLockerPbanItem): BidPrgrsItem => ({
+    rNum: it.id,
+    taskSeNm: '국외',
+    pbancNo: `${it.pbancNo}-${it.pbancOd}`,
+    prcmNo: '-',
+    bidNm: it.bizNm,
+    rfrncNo: it.intgRfrncNo,
+    orderInstTelno: '02-2079-5100',
+    ctrtMthdNm: it.bidMth,
+    bidMthdNm: it.bidPrcSysNm,
+    bidClrsDt: it.regDdlnDt,
+    tndrSbmsnDdlnDt: it.bdngDdlnDt,
+    bzentySeNm: '대표',
+    bfhdSrng: false,
+    bidPrgrsApfr: true,
+    tndr: true,
+    techEvl: false,
+    prdcpDcmntSbms: false,
+    tndrSbmsnPntmCd: 'post', // 국외 = 사후등록심사(입찰진행 목록 국외 목업과 동일)
+  })
+
+  // 입찰내역 작성수정 (설계서 이벤트 btn_moveBidDetail_onclick → MUI-BD-01-M76)
   const goBidCn = (it: OvsLockerPbanItem) => {
-    console.log('[OvsLockerList] 입찰내역 작성 이동', it.intgRfrncNo)
+    console.log('[OvsLockerList] 입찰내역 작성수정 이동', it.intgRfrncNo)
     navigate(`/bd/ovs/locker/${it.id}/bid-cn`, { state: it })
+  }
+  // 입찰참가신청 작성수정 (국외 입찰참가신청서 작성 MUI-BD-04-M71)
+  const goPrtcpAply = (it: OvsLockerPbanItem) => {
+    console.log('[OvsLockerList] 입찰참가신청 작성수정 이동', it.intgRfrncNo)
+    navigate(`/bd/ovs/prgrs/${it.id}/aply`, { state: toPrgrsItem(it) })
+  }
+  // 입찰진행 바로가기 — 해당 공고 입찰진행 상세(/bd/prgrs/:id) 직행(260709 확정).
+  const goBidPrgrs = (it: OvsLockerPbanItem) => {
+    console.log('[OvsLockerList] 입찰진행 바로가기', it.intgRfrncNo)
+    navigate(`/bd/prgrs/${it.id}`, { state: toPrgrsItem(it) })
+  }
+  // 보관함 품목 관리 (MUI-CM-01-M74) — 항시 노출.
+  const goItemMng = (it: OvsLockerPbanItem) => {
+    console.log('[OvsLockerList] 보관함 품목 관리 이동', it.intgRfrncNo)
+    navigate(`/bd/ovs/locker/${it.id}/items`, { state: it })
   }
 
   // ── 임시 목업 검색/페이징 (API 연동 시 이 블록 통째로 교체) ──
@@ -247,49 +317,61 @@ export function OvsLockerPbanListPage() {
   const loaded = Math.min(page * pageSize, total)
   const visibleList = filteredList.slice(0, loaded)
 
-  // 목업 → Card props 매핑. 표시 레이블(설계서 slide301 ③④):
-  //   입찰구분(경쟁입찰/공개수의/사전심사) · 가격제(단가제/총액제) · 입찰참가신청여부 · 입찰내역작성여부.
-  const cardItems: CardListItem[] = visibleList.map((it) => ({
-    id: it.id,
-    badges: (
-      <>
-        <Badge>{it.bidMth}</Badge>
-        <Badge>{it.bidPrcSysNm}</Badge>
-        {it.bidPrtcpAplyYn === 'Y' ? (
-          <Badge type="solid" color="blue">입찰참가 신청</Badge>
-        ) : (
-          <Badge type="pastel" color="red">입찰참가 미신청</Badge>
-        )}
-        {it.tmprBidCnEn === 'Y' ? (
-          <Badge type="solid" color="green">입찰내역 완료</Badge>
-        ) : (
-          <Badge type="pastel" color="yellow">입찰내역 미작성</Badge>
-        )}
-      </>
-    ),
-    subtitle: `통합참조번호 ${it.intgRfrncNo} / 공고번호 ${it.pbancNo}-${it.pbancOd}`,
-    title: it.bizNm,
-    rows: [
-      { label: '입찰업체', value: it.splyBzentyNm },
-      { label: '구매요청번호', value: it.prchsDmndNo },
-      { label: '입찰참가등록마감일시', value: it.regDdlnDt },
-      { label: '입찰서제출마감일시', value: it.bdngDdlnDt },
-      { label: '개찰일자', value: it.bdopnYmd },
-    ],
-    footer: (
-      <ButtonGroup
-        layout="split"
-        items={[
-          { label: '상세보기', variant: 'secondary', onClick: () => goDetail(it) },
-          {
-            label: it.tmprBidCnEn === 'Y' ? '입찰내역 수정' : '입찰내역 작성',
-            variant: 'primary',
-            onClick: () => goBidCn(it),
-          },
-        ]}
-      />
-    ),
-  }))
+  // 목업 → Card props 매핑. 표시 레이블(최종 와이어프레임 ⑤ 순서 그대로):
+  //   입찰내역작성여부(작성/미작성/완료) · 입찰참가신청여부(신청/미신청) · 입찰구분(경쟁입찰/공개수의/사전심사) · 가격제(단가제/총액제).
+  const cardItems: CardListItem[] = visibleList.map((it) => {
+    // 상태 버튼 1개 (260709 확정 — 우선순위 분기):
+    //   ① 참가신청 완료 → [입찰진행 바로가기] ② 참가신청 작성(저장) → [입찰참가신청 작성수정]
+    //   ③ 내역 제출완료 → [입찰내역 완료](비활성 표시) ④ 그 외(내역 미작성/작성) → [입찰내역 작성수정]
+    const statusBtn: ButtonGroupItem =
+      it.bidPrtcpAplyStts === '완료'
+        ? { label: '입찰진행 바로가기', variant: 'primary', onClick: () => goBidPrgrs(it) }
+        : it.bidPrtcpAplyStts === '작성'
+          ? { label: '입찰참가신청 작성수정', variant: 'primary', onClick: () => goPrtcpAply(it) }
+          : it.tmprBidCnStts === '완료'
+            ? { label: '입찰내역 완료', variant: 'primary', disabled: true }
+            : { label: '입찰내역 작성수정', variant: 'primary', onClick: () => goBidCn(it) }
+    return {
+      id: it.id,
+      badges: (
+        <>
+          {it.tmprBidCnStts === '완료' ? (
+            <Badge type="solid" color="green">입찰내역 완료</Badge>
+          ) : it.tmprBidCnStts === '작성' ? (
+            <Badge type="pastel" color="blue">입찰내역 작성</Badge>
+          ) : (
+            <Badge type="pastel" color="yellow">입찰내역 미작성</Badge>
+          )}
+          {it.bidPrtcpAplyYn === 'Y' ? (
+            <Badge type="solid" color="blue">입찰참가 신청</Badge>
+          ) : (
+            <Badge type="pastel" color="red">입찰참가 미신청</Badge>
+          )}
+          <Badge>{it.bidMth}</Badge>
+          <Badge>{it.bidPrcSysNm}</Badge>
+        </>
+      ),
+      subtitle: `통합참조번호 ${it.intgRfrncNo} / 공고번호 ${it.pbancNo}-${it.pbancOd}`,
+      title: it.bizNm,
+      rows: [
+        { label: '입찰업체', value: it.splyBzentyNm },
+        { label: '구매요청번호', value: it.prchsDmndNo },
+        { label: '입찰참가등록마감일시', value: it.regDdlnDt },
+        { label: '입찰서제출마감일시', value: it.bdngDdlnDt },
+        { label: '개찰일자', value: it.bdopnYmd },
+      ],
+      footer: (
+        // 총 2개 버튼(260709 확정): 상태 버튼 1개 + 보관함 품목 관리(항시)
+        <ButtonGroup
+          layout="vertical"
+          items={[
+            statusBtn,
+            { label: '보관함 품목 관리', variant: 'secondary', onClick: () => goItemMng(it) },
+          ]}
+        />
+      ),
+    }
+  })
 
   return (
     <div className="flex w-full flex-col">

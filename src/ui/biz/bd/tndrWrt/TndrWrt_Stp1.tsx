@@ -1,8 +1,7 @@
 // 입찰서(견적서) 작성 - 일반정보 (MUI-BD-06-M01, Figma 9973-62571 · 설계서 02입찰 slide121·128)
 // 컨테이너(TndrWrtPage)가 요약/탭/하단버튼/FAB 를 소유 — 이 컴포넌트는 스텝1 '일반정보' 탭 본문만 렌더한다.
-// 구성: PageTitle('일반정보') → 일반정보(SectionTitle+Table) → 업체내역(SectionTitle+Table).
+// 구성: 일반정보(SectionTitle+Table) → 업체내역(SectionTitle+Table). 탭명과 중복되는 큰 타이틀은 제거(260709).
 // 항목명/형식은 데이터영역(slide128 dmt_bidPbancInfo·dmt_bzentyInfo) 그대로 — 공고 식별값은 상세 항목, 나머지 목업(slide121 예시값).
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { BidPrgrsItem } from '@/types/bd'
@@ -45,10 +44,6 @@ export function TndrWrt_Stp1({ detail }: { detail: BidPrgrsItem }) {
   return (
     <>
       {/* 페이지 타이틀 */}
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        일반정보
-      </PageTitle>
-
       {/* 공지사항 영역 — 설계서상 "공지사항이 있는 경우 표시" 조건부. 목업 생략. */}
 
       {/* 일반정보 섹션 */}

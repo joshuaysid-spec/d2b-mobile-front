@@ -1,15 +1,14 @@
-// 보관함 품목 관리 (MUI-CM-01-M73, 설계서 slide308~311). 공고입찰품목 중 보관함에 품목을 추가/삭제.
+// 보관함 품목 관리 (MUI-CM-01-M73, 설계서 slide308~311 + 최종 확정 260709). 공고입찰품목 중 보관함에 품목을 추가/삭제.
 // 레퍼런스: 입찰공고 통합목록 BidPbancIntgListPage (검색·페이징 동일 패턴).
-// 구성: 검색조건(SearchCondition, 필터→풀팝업) + 목록헤더 + 품목 카드 + 더보기 + FAB
-//      + 선택 발생 시 하단 일괄처리 바(설계서 slide308 ③④: 클릭 시 선택 활성/비활성, 선택 시 버튼 표시).
-// 카드에 선택/추가·삭제 버튼이 있어 CardList(onClick=button 컨테이너) 대신 Card 를 직접 조립(중첩 버튼 방지).
+// 구성: 검색조건(SearchCondition, 필터→풀팝업) + 목록헤더 + 품목 카드 + 더보기 + FAB.
+//   ※ 최종 확정(260709): 선택 버튼·일괄 추가/삭제 삭제 — 카드마다 보관함 여부에 따라 [보관함 추가]/[보관함 삭제] 단일 버튼만 노출.
+// 카드에 추가/삭제 버튼이 있어 CardList(onClick=button 컨테이너) 대신 Card 를 직접 조립(중첩 버튼 방지).
 // 데이터: 페이지 내 목업(dl_resultList, 항목명 설계서 그대로) — 추후 API: bdService.getOvsLockerBidItemList.
 import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
-import { Icon } from '@/ui/common/base/Icon'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
@@ -26,7 +25,6 @@ import type {
 } from '@/types/search-filter'
 // 보관함 공고 타입 — @/types/bd 공유 타입.
 import type { OvsLockerPbanItem } from '@/types/bd'
-import { cn } from '@/utils/cn'
 
 /**
  * 입찰품목 1건 (MUI-CM-01-M73, 설계서 slide310 1.2 입찰품목목록 데이터영역 dl_resultList).
@@ -201,8 +199,6 @@ export function OvsLockerItemRegPage() {
   const [appliedSearch, setAppliedSearch] = useState<{ keyword: string; target: string } | null>(
     null,
   )
-  // 선택된 품목 id — 카드 클릭으로 활성/비활성 토글(설계서 slide308 ③).
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
 
   // ── API 경계 스텁 (백엔드 연동 시 services/bd 로 대체) ──
@@ -230,17 +226,7 @@ export function OvsLockerItemRegPage() {
     console.log('[OvsLockerItem] loadMore → page', next)
   }
 
-  // 선택 토글 — 품목엔 상세 페이지가 없고 클릭 시 선택 활성/비활성(설계서 slide308).
-  const toggleSelect = (id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }
-
-  // 보관함 추가/삭제 (개별) — 설계서 이벤트 btn_addItem/btn_deleteItem_onclick.
+  // 보관함 추가/삭제 — 설계서 이벤트 btn_addItem/btn_deleteItem_onclick. (최종 확정 260709: 개별 버튼만, 일괄 없음)
   const toggleLocker = (target: OvsLockerBidItem) => {
     const adding = target.lockerYn === 'N'
     setItems((prev) =>
@@ -252,21 +238,6 @@ export function OvsLockerItemRegPage() {
     })
     console.log('[OvsLockerItem]', adding ? '보관함 추가' : '보관함 삭제', target.id)
     // 추후 API: bdService.addLockerItem / bdService.deleteLockerItem
-  }
-
-  // 일괄 추가/삭제 — 선택된 품목 전체에 적용 후 선택 해제(설계서 slide308 ④).
-  const bulkLocker = (lockerYn: 'Y' | 'N') => {
-    setItems((prev) => (prev.map((it) => (selectedIds.has(it.id) ? { ...it, lockerYn } : it))))
-    setToast({
-      open: true,
-      message:
-        lockerYn === 'Y'
-          ? `선택한 ${selectedIds.size}건이 보관함에 추가되었습니다.`
-          : `선택한 ${selectedIds.size}건이 보관함에서 삭제되었습니다.`,
-    })
-    console.log('[OvsLockerItem] 일괄', lockerYn === 'Y' ? '추가' : '삭제', [...selectedIds])
-    // 추후 API: bdService.addLockerItems / bdService.deleteLockerItems
-    setSelectedIds(new Set())
   }
 
   // ── 임시 목업 검색/페이징 (API 연동 시 이 블록 통째로 교체) ──
@@ -282,7 +253,6 @@ export function OvsLockerItemRegPage() {
   const total = filteredList.length
   const loaded = Math.min(page * pageSize, total)
   const visibleList = filteredList.slice(0, loaded)
-  const selectedCount = selectedIds.size
 
   return (
     <div className="flex w-full flex-col">
@@ -311,21 +281,16 @@ export function OvsLockerItemRegPage() {
         onPageSizeChange={handlePageSize}
       />
 
-      {/* 품목 카드 — 상세 페이지 없음. '선택' 버튼으로 활성/비활성, 우측 버튼으로 개별 추가/삭제. */}
+      {/* 품목 카드 — 상세 페이지 없음. 보관함 여부에 따라 [보관함 추가]/[보관함 삭제] 단일 버튼(최종 확정 260709). */}
       <div className="flex flex-col gap-krds-8 px-4 pb-4 pt-krds-7">
         {visibleList.length === 0 ? (
           <CardList items={[]} emptyText="데이터가 없습니다." />
         ) : (
           visibleList.map((it) => {
-            const selected = selectedIds.has(it.id)
             return (
               <Card
                 key={it.id}
-                className={cn(
-                  'shadow-krds-card',
-                  // 선택 활성 — 보더 강조(설계서 slide308 ③ 클릭 시 선택 활성/비활성)
-                  selected && 'border-krds-border-primary bg-krds-bg-primary-subtle ring-1 ring-krds-border-primary',
-                )}
+                className="shadow-krds-card"
                 badges={
                   <>
                     {it.lockerYn === 'Y' ? (
@@ -353,21 +318,8 @@ export function OvsLockerItemRegPage() {
                 ]}
                 footer={
                   <ButtonGroup
-                    layout="split"
+                    layout="single"
                     items={[
-                      {
-                        label: selected ? (
-                          <>
-                            <Icon name="Check" size={20} aria-hidden />
-                            선택
-                          </>
-                        ) : (
-                          '선택'
-                        ),
-                        variant: selected ? 'primary' : 'secondary',
-                        'aria-pressed': selected,
-                        onClick: () => toggleSelect(it.id),
-                      },
                       {
                         label: it.lockerYn === 'Y' ? '보관함 삭제' : '보관함 추가',
                         variant: 'secondary',
@@ -388,22 +340,6 @@ export function OvsLockerItemRegPage() {
           <Button variant="secondary" className="w-full" onClick={handleLoadMore}>
             더보기 ({loaded}/{total}건)
           </Button>
-        </div>
-      )}
-
-      {/* 일괄 처리 바 — 선택이 발생한 경우에만 표시(설계서 slide308 ④). */}
-      {selectedCount > 0 && (
-        <div className="sticky bottom-0 z-30 flex flex-col gap-krds-4 border-t border-krds-border-divider bg-white px-4 py-3">
-          <span className="text-krds-body-sm text-krds-text-primary-active">
-            선택 {selectedCount.toLocaleString()}건
-          </span>
-          <ButtonGroup
-            layout="split"
-            items={[
-              { label: '일괄 삭제', variant: 'secondary', onClick: () => bulkLocker('N') },
-              { label: '일괄 추가', variant: 'primary', onClick: () => bulkLocker('Y') },
-            ]}
-          />
         </div>
       )}
 

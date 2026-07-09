@@ -1,8 +1,7 @@
 // 스탭1 일반정보 (MUI-BD-04-M72 OvsBidPrtcpAplyPage_Stp1 · 설계서 slide333 · 데이터 slide338).
 // 호스트 페이지(OvsBidPrtcpAplyPage)의 '일반정보' 탭 본문만 담당 — 요약/스텝/탭/하단 액션바는 페이지 소유.
-// 구성: 페이지타이틀 → 일반정보 Table(dm_bscPbancInfo: 공고번호·개찰일시·입찰보증금 총액[달러금액])
+// 구성: 일반정보 Table(dm_bscPbancInfo: 공고번호·개찰일시·입찰보증금 총액[달러금액])
 //   → 공지사항 Infobox → 신청업체 Table(dm_sbtInfo) → 입찰보증금 납입 서약문 박스(설계서 slide333 원문).
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -52,11 +51,7 @@ export function Stp1({ detail }: { detail: BidPrgrsItem }) {
 
   return (
     <>
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        일반정보
-      </PageTitle>
-
-      {/* 일반정보 — 공고번호/개찰일시/입찰보증금 총액(달러) */}
+      {/* 일반정보 — 공고번호/개찰일시/입찰보증금 총액(달러). 탭명과 중복되는 큰 타이틀은 제거(260709) */}
       <SectionTitle as="h3" topDivider>
         일반정보
       </SectionTitle>

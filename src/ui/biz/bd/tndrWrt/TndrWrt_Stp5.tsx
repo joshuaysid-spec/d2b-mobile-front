@@ -55,7 +55,7 @@ export function TndrWrt_Stp5({ detail }: { detail: BidPrgrsItem }) {
   return (
     <>
       {/* 입찰서 첨부파일 — 총 건수 */}
-      <SectionTitle as="h3" info={`총 ${files.length}건`}>
+      <SectionTitle as="h3" info={`총 ${files.length}건`} className="bg-white">
         입찰서 첨부파일
       </SectionTitle>
 

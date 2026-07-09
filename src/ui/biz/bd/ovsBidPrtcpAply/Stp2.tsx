@@ -6,7 +6,6 @@
 import { useState } from 'react'
 
 import { InputBox } from '@/ui/common/base/InputBox'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { OvsSplyInfo } from '@/types/bd'
@@ -70,11 +69,7 @@ export function Stp2({ detail }: { detail: BidPrgrsItem }) {
 
   return (
     <>
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        업체정보
-      </PageTitle>
-
-      {/* 입찰업체 — dm_splyInfo */}
+      {/* 입찰업체 — dm_splyInfo. 탭명과 중복되는 큰 타이틀은 제거(260709) */}
       <SectionTitle as="h3" topDivider>
         입찰업체
       </SectionTitle>

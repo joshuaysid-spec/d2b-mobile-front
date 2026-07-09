@@ -8,7 +8,6 @@ import { useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { Infobox } from '@/ui/common/composites/Infobox'
@@ -44,18 +43,14 @@ export function AtchDocReg({ detail }: { detail: BidPrgrsItem }) {
 
   return (
     <>
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        첨부파일
-      </PageTitle>
-
-      {/* 업무도움(설계서 slide337) — 입찰참가용 서류 첨부 안내 */}
+      {/* 업무도움(설계서 slide337) — 입찰참가용 서류 첨부 안내. 탭명과 중복되는 큰 타이틀은 제거(260709) */}
       <Infobox
         title="안내사항"
         items={['입찰참가용 서류가 있는 경우 파일선택을 클릭하여 입찰참가 서류를 첨부합니다.']}
       />
 
       {/* 첨부파일 — 총 건수(설계서 slide337 '첨부파일 – 총 0건') */}
-      <SectionTitle as="h3" topDivider info={`총 ${files.length}건`}>
+      <SectionTitle as="h3" topDivider info={`총 ${files.length}건`} className="bg-white">
         첨부파일
       </SectionTitle>
 

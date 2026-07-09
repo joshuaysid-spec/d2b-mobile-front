@@ -1,13 +1,12 @@
 // 입찰서(견적서) 작성 - 동가낙찰 선추첨 (MUI-BD-06-M06, Figma 9973-63684 · 설계서 02입찰 slide126·130)
 // 컨테이너(TndrWrtPage)가 요약/탭/하단버튼/FAB 를 소유 — 이 컴포넌트는 스텝6 '동가낙찰 선추첨' 탭 본문만 렌더한다.
-// 구성(Figma M06): 안내사항(Infobox) → PageTitle('동가낙찰 선추첨') → 1차~5차 아코디언(선택값 표시) + [가위][바위][보] 3열.
+// 구성(Figma M06): 안내사항(Infobox) → 1차~5차 아코디언(선택값 표시) + [가위][바위][보] 3열. 탭명과 중복되는 큰 타이틀은 제거(260709).
 // 항목명은 데이터영역(slide130 dmt_smprcScsbdChc) 그대로: 1차~5차 = smprcScsbdChcCd1~smprcScsbdChcCd5. 기본값 미선택('-').
 // 조건부 노출(계약방법 F/J/P·공고일자 20210415 이전 등, slide126) 은 컨테이너(TndrWrtPage)가 탭 자체를 분기 → 여기선 다루지 않음.
 import { useState } from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { cn } from '@/utils/cn'
 import type { BidPrgrsItem } from '@/types/bd'
@@ -75,10 +74,6 @@ export function TndrWrt_Stp6({ detail }: { detail: BidPrgrsItem }) {
         defaultOpen
         items={['동가입찰시 낙찰자 결정을 위해 [가위, 바위, 보]를 5차까지 선택합니다.']}
       />
-
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        동가낙찰 선추첨
-      </PageTitle>
 
       {/* 1차~5차 아코디언 — 다중 열림(기본 전체 열림). 헤더 우측에 선택값(없으면 '-') 표시. */}
       <Accordion type="multiple" defaultValue={ROUNDS.map((r) => r.field)}>

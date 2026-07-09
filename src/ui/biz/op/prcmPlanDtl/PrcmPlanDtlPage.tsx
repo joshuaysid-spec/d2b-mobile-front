@@ -203,8 +203,9 @@ export function PrcmPlanDtlPage() {
         </div>
       </div>
 
-      {/* 탭 콘텐츠 (탭별 컴포넌트) */}
-      {renderTabContent(tab)}
+      {/* 탭 콘텐츠 (탭별 컴포넌트) — 짧은 탭(첨부파일 등)도 헤더 접힘을 지탱할 스크롤 높이 확보:
+          접힘으로 줄어든 높이만큼 스크롤이 클램프되면 헤더가 다시 펴지며 상단으로 튕기는 진동 방지(bd 상세와 동일) */}
+      <div className="min-h-[100dvh]">{renderTabContent(tab)}</div>
 
       {/* 알림 아이콘 → 입찰공고 알림신청 바텀시트 (P10) — 컨테이너는 페이지가 직접 조립, 콘텐츠만 분리 */}
       <BottomSheet

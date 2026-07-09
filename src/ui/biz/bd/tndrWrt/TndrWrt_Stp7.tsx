@@ -1,11 +1,10 @@
 // 입찰서(견적서) 작성 - 약관동의 (MUI-BD-06-M07, Figma 9973-63762·9973-67681 · 설계서 02입찰 slide127)
 // 컨테이너(TndrWrtPage)가 요약/탭/하단버튼([이전][신청])/FAB 를 소유 — 이 컴포넌트는 스텝7 '약관동의' 탭 본문만 렌더한다.
-// 구성: PageTitle('약관 동의') → 약관 동의 목록(AgreementList, 필요 시 노출 · 설계서 slide127) → 유의사항 Infobox(열림).
+// 구성: 약관 동의 목록(AgreementList, 필요 시 노출 · 설계서 slide127) → 유의사항 Infobox(열림). 탭명과 중복되는 큰 타이틀은 제거(260709).
 // 이 탭이 동의서 상세 BottomSheet 컨테이너(title='동의서 상세', footer=취소/저장 후 닫기)와 저장 확인 AlertModal 을 직접 소유.
 //   동의 처리 패턴(라디오 동의안함/동의함 → 저장 후 닫기 → 확인)은 입찰참가신청서(BidPrtcpAperWrtPage_Stp7)와 동일.
 import { useState } from 'react'
 
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { AgreementList } from '@/ui/common/composites/AgreementList'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
@@ -60,10 +59,6 @@ export function TndrWrt_Stp7({ detail }: { detail: BidPrgrsItem }) {
 
   return (
     <>
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        약관 동의
-      </PageTitle>
-
       {/* 약관 동의 — 공통 AgreementList. 항목 1개(입찰보증금 지급확약서, 필수). 전체 동의 행은 단일 항목이라 숨김.
           항목 행 클릭 → 동의서 상세 바텀시트는 이 탭이 소유. */}
       <AgreementList

@@ -113,8 +113,8 @@ export function OvsPrcmPlanDtlPage() {
         </div>
       </div>
 
-      {/* 탭 콘텐츠 */}
-      {renderTabContent(tab)}
+      {/* 탭 콘텐츠 — 짧은 탭도 헤더 접힘을 지탱할 스크롤 높이 확보(상단 튕김 진동 방지, bd 상세와 동일) */}
+      <div className="min-h-[100dvh]">{renderTabContent(tab)}</div>
 
       {/* 출력 — 서류 출력 확인 모달 (MUI-BD-01-P14) */}
       <AlertModal

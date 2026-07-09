@@ -4,12 +4,12 @@
 //   + 플로팅 버튼(맨위로 / + → 바로가기 바텀시트).
 // 데이터는 목업(상단=목록에서 넘어온 항목, 없으면 페이지 fallback 목업). 백엔드 미연동.
 // 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당.
-import { useState } from 'react'
-import { useParams, useLocation } from 'react-router-dom'
+import { useRef, useState } from 'react'
+import { useParams, useLocation, useNavigate } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
-import type { BidPbancItem, BidPbancDetail } from '@/types/bd'
+import type { BidPbancItem, BidPbancDetail, BidPrgrsItem } from '@/types/bd'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
@@ -27,6 +27,8 @@ import { BidPbancDtl_Tacpg04 } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl_Tacpg04
 import { BidPbancDtl_Tacpg06 } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl_Tacpg06'
 import { BidPbancDtl_Tacpg07 } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl_Tacpg07'
 import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
+import { BidAbndAperWrt, type BidAbndAperWrtHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidAbndAperWrt'
+import { BidRtrcnAperInq, type BidRtrcnAperInqHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidRtrcnAperInq'
 
 // ── 탭 (설계서 2.1 화면목록) ─────────────────────────────────────────────────
 //  일반정보(고정) · 기초예비가격(경쟁입찰) · 품목명세서(업무구분 물품) · 계약특수조건 · 공고문안 · 입찰진행현황
@@ -90,9 +92,15 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function BidPbancDtlPage() {
+  const navigate = useNavigate()
   const [tab, setTab] = useState('general')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기 바텀시트(9300-36775)
+  // 입찰포기(P03)/입찰취소(P04) 신청서 바텀시트 — 진행상세(BidPrgsDtlInqPage)와 동일 조립.
+  const [abandonOpen, setAbandonOpen] = useState(false)
+  const [cancelOpen, setCancelOpen] = useState(false)
+  const abandonRef = useRef<BidAbndAperWrtHandle>(null)
+  const cancelRef = useRef<BidRtrcnAperInqHandle>(null)
   // 관심공고(즐겨찾기) 등록 여부 — 추후 bdService.getDetail 응답(관심공고 등록 여부)으로 초기화. 현재 mock false.
   const [favorite, setFavorite] = useState(false)
   const [loginGuideOpen, setLoginGuideOpen] = useState(false) // 로그인 안내(MUI-MS-03-P15)
@@ -125,7 +133,7 @@ export function BidPbancDtlPage() {
   // 진행단계(prgrsStg) — detail 기반. 미정 시 입찰공고이므로 '입찰' 기본.
   const steps = stepsByStg(detail.prgrsStg ?? '입찰')
 
-  // 바로가기 바텀시트 항목 (Figma 9300-36775) — 각 신청서 작성/환율정보 이동(스텁).
+  // 바로가기 바텀시트 항목 (Figma 9300-36775) — 각 신청서 작성/환율정보 이동.
   // 버튼 색: 작성류 상위 3개 primary · 포기/취소 2개 secondary · 환율정보 1개 tertiary(라인).
   const shortcutItems: { id: string; label: string; variant: 'primary' | 'secondary' | 'tertiary' }[] = [
     { id: 'pq', label: '사전심사(PQ)신청서 작성하기', variant: 'primary' },
@@ -135,6 +143,54 @@ export function BidPbancDtlPage() {
     { id: 'cancel', label: '입찰취소 신청서 작성하기', variant: 'secondary' },
     { id: 'fx', label: '환율정보 바로가기', variant: 'tertiary' },
   ]
+
+  // 신청서 화면들(사전심사/입찰서/참가신청서/포기·취소)은 입찰진행 아이템(BidPrgrsItem) 형태를 기대 —
+  // 공고 아이템을 매핑해 전달한다. 공고 아이템에 없는 필드(판단번호·연락처·계약/입찰방법·진행 플래그)는
+  // 목업으로 보완(추후 API: bdService.getBidPbancDtl 응답으로 교체).
+  const prgrsDetail: BidPrgrsItem = {
+    rNum: detail.id,
+    taskSeNm: detail.taskSeNm ?? '물품',
+    pbancNo: `${detail.g2BBidPbancNo}-${detail.g2BBidPbancCycl}`,
+    prcmNo: '-',
+    bidNm: detail.rprsItemNm,
+    rfrncNo: detail.rfrncNo,
+    orderInstTelno: '02-2079-5100',
+    ctrtMthdNm: '경쟁입찰',
+    bidMthdNm: '단가제',
+    bidClrsDt: detail.bidClrsDt,
+    tndrSbmsnDdlnDt: detail.tndrSbmsnDdlnDt,
+    bzentySeNm: '대표',
+    bfhdSrng: true,
+    bidPrgrsApfr: true,
+    tndr: true,
+    techEvl: false,
+    prdcpDcmntSbms: false,
+  }
+
+  // 바로가기 이동 — 국내 진행 화면 라우트(진행상세 BidPrgsDtlInqPage 의 handleShortcut 과 동일 목적지).
+  const handleShortcut = (sid: string) => {
+    setShortcutOpen(false)
+    switch (sid) {
+      case 'pq': // 사전심사(PQ)신청서 작성(MUI-BD-02)
+        navigate('/bd/bfhd-srng-aply', { state: prgrsDetail })
+        break
+      case 'bid': // 입찰서(견적서) 작성 마법사(MUI-BD-06-M01~M07)
+        navigate(`/bd/prgrs/${detail.id}/tndr-wrt`, { state: prgrsDetail })
+        break
+      case 'apply': // 입찰참가신청서 — 서약서(WrotAgrePage) → 작성 폼
+        navigate(`/bd/prgrs/${detail.id}/apfr`, { state: prgrsDetail })
+        break
+      case 'giveup': // 입찰포기신청서(P03) — 바텀시트
+        setAbandonOpen(true)
+        break
+      case 'cancel': // 입찰취소신청서(P04) — 바텀시트
+        setCancelOpen(true)
+        break
+      case 'fx': // 환율정보 조회 풀팝업(M74)
+        setExchrtOpen(true)
+        break
+    }
+  }
 
   return (
     <div ref={rootRef} className="flex w-full flex-col">
@@ -217,14 +273,7 @@ export function BidPbancDtlPage() {
           items={shortcutItems.map((it) => ({
             label: it.label,
             variant: it.variant,
-            onClick: () => {
-              setShortcutOpen(false)
-              if (it.id === 'fx') {
-                setExchrtOpen(true) // 환율정보 바로가기 → 환율정보 조회 풀팝업(M74)
-                return
-              }
-              console.log('[BidDetail] 바로가기', it.id) // 추후: 각 신청서 작성 화면 이동
-            },
+            onClick: () => handleShortcut(it.id),
           }))}
         />
       </BottomSheet>
@@ -250,6 +299,42 @@ export function BidPbancDtlPage() {
       <Toast open={toast.open} onClose={() => setToast((t) => ({ ...t, open: false }))}>
         {toast.message}
       </Toast>
+
+      {/* 입찰포기신청서(P03) — 바텀시트(컨테이너/footer 부모 소유, 콘텐츠는 ref 핸들 · 진행상세와 동일 조립) */}
+      <BottomSheet
+        open={abandonOpen}
+        onOpenChange={setAbandonOpen}
+        title="입찰포기신청서"
+        footer={
+          <ButtonGroup
+            layout="asymmetric"
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setAbandonOpen(false) },
+              { label: '제출하기', variant: 'primary', onClick: () => abandonRef.current?.submit() },
+            ]}
+          />
+        }
+      >
+        <BidAbndAperWrt ref={abandonRef} detail={prgrsDetail} onSubmitted={() => setAbandonOpen(false)} />
+      </BottomSheet>
+
+      {/* 입찰취소신청서(P04) — 바텀시트(제출확인 모달은 콘텐츠 내부) */}
+      <BottomSheet
+        open={cancelOpen}
+        onOpenChange={setCancelOpen}
+        title="입찰취소신청서"
+        footer={
+          <ButtonGroup
+            layout="asymmetric"
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setCancelOpen(false) },
+              { label: '제출', variant: 'primary', onClick: () => cancelRef.current?.submit() },
+            ]}
+          />
+        }
+      >
+        <BidRtrcnAperInq ref={cancelRef} detail={prgrsDetail} onSubmitted={() => setCancelOpen(false)} />
+      </BottomSheet>
     </div>
   )
 }

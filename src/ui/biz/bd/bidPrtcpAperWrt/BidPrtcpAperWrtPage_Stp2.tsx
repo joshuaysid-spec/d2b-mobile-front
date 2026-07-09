@@ -78,7 +78,7 @@ export function BidPrtcpAperWrtPage_Stp2({ detail }: { detail: BidPrgrsItem }) {
         품목내역
       </PageTitle>
 
-      <SectionTitle as="h3" topDivider info={`총 ${MOCK_ITEMS.length}건`}>
+      <SectionTitle as="h3" topDivider info={`총 ${MOCK_ITEMS.length}건`} className="bg-white">
         품목내역
       </SectionTitle>
 

@@ -104,7 +104,10 @@ const TABS: TabItem[] = [
 
 export function OvsBidPrtcpAplyPage() {
   const navigate = useNavigate()
-  const detail = (useLocation().state as BidPrgrsItem | null) ?? MOCK_DETAIL
+  // 진입 경로가 여럿(입찰진행 상세 = BidPrgrsItem 전체 / 국외보관함 목록 = 매핑된 부분 필드)이라
+  // fallback 목업 위에 병합 — 부분 state 로 들어와도 요약이 비지 않는다.
+  const stateItem = useLocation().state as Partial<BidPrgrsItem> | null
+  const detail: BidPrgrsItem = { ...MOCK_DETAIL, ...(stateItem ?? {}) }
 
   // 마법사 국면 — 'wrot'(M71 서약서동의 목록) → 'aper'(M72~M77 신청서 4탭).
   const [phase, setPhase] = useState<'wrot' | 'aper'>('wrot')

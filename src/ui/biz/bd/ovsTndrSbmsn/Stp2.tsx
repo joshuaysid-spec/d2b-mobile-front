@@ -397,7 +397,7 @@ export function OvsTndrSbmsnPage_Stp2({ detail }: { detail: OvsTndrSbmsnDetail }
       </PageTitle>
 
       {/* 품목 목록(단가제) / 입찰 품목(총액제) — 총건수 */}
-      <SectionTitle as="h3" topDivider info={`총 ${TOTAL_COUNT}건`}>
+      <SectionTitle as="h3" topDivider info={`총 ${TOTAL_COUNT}건`} className="bg-white">
         {isUntprc ? '품목 목록' : '입찰 품목'}
       </SectionTitle>
 

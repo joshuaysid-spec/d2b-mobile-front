@@ -47,7 +47,7 @@ export function BidPrtcpAperWrtPage_Stp6({ detail }: { detail: BidPrgrsItem }) {
       <Infobox title="안내사항" items={NOTICES} />
 
       {/* 입찰서 첨부파일 — 업로드(첨부/삭제) */}
-      <SectionTitle as="h3" topDivider info={`총 ${files.length}건`}>
+      <SectionTitle as="h3" topDivider info={`총 ${files.length}건`} className="bg-white">
         입찰서 첨부파일
       </SectionTitle>
       <div className="px-4 py-4">

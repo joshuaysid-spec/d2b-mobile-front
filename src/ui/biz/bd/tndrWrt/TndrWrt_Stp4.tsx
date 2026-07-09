@@ -1,13 +1,12 @@
 // 입찰서(견적서) 작성 - 복수예비가격 (MUI-BD-06-M04, Figma 9973-63541 · 설계서 02입찰 slide124·129)
 // 컨테이너(TndrWrtPage)가 요약/탭/하단버튼/FAB 를 소유 — 이 컴포넌트는 스텝4 '복수예비가격' 탭 본문만 렌더한다.
-// 구성(Figma M04): 안내사항(Infobox) → PageTitle('복수예비가격 선택') → 1회/2회 아코디언(선택값 표시) + 1~15번 3열 그리드.
+// 구성(Figma M04): 안내사항(Infobox) → 1회/2회 아코디언(선택값 표시) + 1~15번 3열 그리드. 탭명과 중복되는 큰 타이틀은 제거(260709).
 // 항목명은 데이터영역(slide129 dmt_rsrbPrcChc) 그대로: 1회=rsrvPrcChcNo1 · 2회=rsrvPrcChcNo2 (2개 추첨번호 선택).
 // 동작(slide124): 1회 기본 열림 → 번호 선택 시 헤더에 값 표시+해당 아코디언 닫힘 → 2회 미선택이면 2회 자동 열림.
 import { useState } from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { cn } from '@/utils/cn'
 import type { BidPrgrsItem } from '@/types/bd'
@@ -75,10 +74,6 @@ export function TndrWrt_Stp4({ detail }: { detail: BidPrgrsItem }) {
         defaultOpen
         items={['예정가격 결정을 위한 복수예비가격 2개를 추첨합니다.']}
       />
-
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        복수예비가격 선택
-      </PageTitle>
 
       {/* 1회/2회 아코디언 — 단일 열림 제어. 헤더 우측에 선택 번호(없으면 '-') 표시. */}
       <Accordion type="single" collapsible value={openRound} onValueChange={setOpenRound}>

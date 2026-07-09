@@ -8,7 +8,6 @@ import { useState } from 'react'
 
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import type { BidPrgrsItem } from '@/types/bd'
 
 // 한글금액 변환용 자릿수 사전 — 설계서 예시(10,000,000,000 → '금 일백억 원')와 1:1.
@@ -86,10 +85,6 @@ export function TndrWrt_Stp3({ detail }: { detail: BidPrgrsItem }) {
 
   return (
     <>
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        투찰내역
-      </PageTitle>
-
       <div className="flex flex-col gap-4 px-4 py-4">
         {/* 입찰금액(₩) * — 숫자 입력, 우측 '원' 접미 */}
         <div className="flex flex-col gap-krds-5">

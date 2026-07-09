@@ -11,7 +11,6 @@ import { useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { InputBox } from '@/ui/common/base/InputBox'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Infobox } from '@/ui/common/composites/Infobox'
@@ -254,11 +253,7 @@ export function Stp3({ detail }: { detail: BidPrgrsItem }) {
 
   return (
     <>
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        입찰 보증금
-      </PageTitle>
-
-      {/* 입찰보증금 구분 — 값에 따라 면제/비면제 데이터 영역 전환 */}
+      {/* 입찰보증금 구분 — 값에 따라 면제/비면제 데이터 영역 전환. 탭명과 중복되는 큰 타이틀은 제거(260709) */}
       <div className="px-4 py-4">
         <Table
           rows={[
@@ -282,7 +277,7 @@ export function Stp3({ detail }: { detail: BidPrgrsItem }) {
       </div>
 
       {/* 입찰참가사업 및 입찰보증금 — 사업별 Table */}
-      <SectionTitle as="h3" topDivider info={`총 ${MOCK_BIZ_LIST.length}건`}>
+      <SectionTitle as="h3" topDivider info={`총 ${MOCK_BIZ_LIST.length}건`} className="bg-white">
         입찰참가사업 및 입찰보증금
       </SectionTitle>
       <div className="flex flex-col gap-krds-8 px-4 py-4">

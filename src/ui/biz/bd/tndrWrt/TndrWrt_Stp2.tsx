@@ -1,10 +1,9 @@
 // 입찰서(견적서) 작성 - 품목내역 (MUI-BD-06-M02, Figma 9973-63264 · 설계서 02입찰 slide122·129)
 // 입찰서 작성 마법사의 '품목내역' 스텝 탭 콘텐츠. 요약/스텝/탭/하단 액션바는 컨테이너(TndrWrtPage) 소유 —
-// 이 컴포넌트는 PageTitle + 섹션(품목 카드 반복) + 더보기만 렌더한다.
+// 이 컴포넌트는 섹션(품목 카드 반복) + 더보기만 렌더한다. 탭명과 중복되는 큰 타이틀은 제거(260709).
 // 설계서 slide122: "입찰참가신청서작성 – 품목내역과 같은 구성임" → BidPrtcpAperWrtPage_Stp2 구성을 따름.
 // 항목명/형식은 설계서 데이터영역(dlt_itemList, slide129) 그대로.
 import { useState } from 'react'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Button } from '@/ui/common/base/Button'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -169,11 +168,7 @@ export function TndrWrt_Stp2({ detail }: { detail: BidPrgrsItem }) {
 
   return (
     <>
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        품목내역
-      </PageTitle>
-
-      <SectionTitle as="h3" topDivider info={`총 ${TOTAL_COUNT}건`}>
+      <SectionTitle as="h3" topDivider info={`총 ${TOTAL_COUNT}건`} className="bg-white">
         품목내역
       </SectionTitle>
 

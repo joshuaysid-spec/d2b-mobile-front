@@ -183,7 +183,7 @@ export function BidPrtcpAperWrtPage() {
             </div>
 
             {/* 입찰공고 첨부서류 섹션 — 다운로드(읽기) */}
-            <SectionTitle as="h3" topDivider info={`총 ${PBANC_FILES.length}건`}>
+            <SectionTitle as="h3" topDivider info={`총 ${PBANC_FILES.length}건`} className="bg-white">
               입찰공고 첨부서류
             </SectionTitle>
             <div className="px-4 py-4">

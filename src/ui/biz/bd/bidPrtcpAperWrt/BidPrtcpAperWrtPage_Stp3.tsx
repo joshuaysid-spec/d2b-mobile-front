@@ -63,7 +63,7 @@ export function BidPrtcpAperWrtPage_Stp3({ detail }: { detail: BidPrgrsItem }) {
         공종 및 면허
       </PageTitle>
 
-      <SectionTitle as="h3" topDivider info={`총 ${MOCK_CNSTWKS.length}건`}>
+      <SectionTitle as="h3" topDivider info={`총 ${MOCK_CNSTWKS.length}건`} className="bg-white">
         공종 및 면허정보
       </SectionTitle>
 
