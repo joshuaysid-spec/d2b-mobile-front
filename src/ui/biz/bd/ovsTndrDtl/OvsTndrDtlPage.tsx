@@ -27,52 +27,7 @@ import { OvsBidRegRslt } from '@/ui/biz/bd/ovsTndrDtl/OvsBidRegRslt'
 import { OvsTechEvlRslt } from '@/ui/biz/bd/ovsTndrDtl/OvsTechEvlRslt'
 import { OvsBidRtrcnAply, type OvsBidRtrcnAplyHandle } from '@/ui/biz/bd/ovsTndrDtl/OvsBidRtrcnAply'
 
-/**
- * 국외 입찰서 상세 공고일반 항목 (설계서 slide380 데이터영역 dm_bscPbancInfo) — 항목명(영문) 설계서 그대로.
- * 국외 입찰진행 상세 → 이 화면 진입 시 navigate state 로 전달되는 항목 타입.
- * // 추후 src/types/bd.ts 통합
- */
-export interface OvsTndrDtlItem {
-  /** 공고번호 (pbancNo, 7) */
-  pbancNo: string
-  /** 공고차수 (pbancOd, 2) — 표시는 '공고번호-차수' */
-  pbancOd: string
-  /** 구매요청번호 (prchsDmndNo, 10) */
-  prchsDmndNo: string
-  /** 통합참조번호 (intgRfrncNo, 30) */
-  intgRfrncNo: string
-  /** 사업명 (bizNm, 100) */
-  bizNm: string
-  /** 입찰방식 (bidMth, 100) — 일반투찰 등 */
-  bidMth: string
-  /** 계약방법 (ctrtMthdNm, 100) */
-  ctrtMthdNm: string
-  /** 입찰참가등록마감일시 (regDdlnDt, 14) */
-  regDdlnDt: string
-  /** 입찰서제출마감일시 (bdngDdlnDt, 14) */
-  bdngDdlnDt: string
-  /** 개찰일시 (bdopnDt, 14) */
-  bdopnDt: string
-  /** 환율적용일자 (exchrtAplcnYmd, 8) */
-  exchrtAplcnYmd: string
-  /** 담당부서 (picDeptNm, 100) */
-  picDeptNm: string
-  /** 담당자 (picNm, 200) */
-  picNm: string
-  /** 연락처 (picTlno, 11) */
-  picTlno: string
-
-  // ── 설계서 미정의(상세설계 예정) 임시 항목 — BD 진행 상태필드 임시 영문키 관례(사용자 승인)와 동일 ──
-  /** 업무구분 (taskSeNm) — 국내 dlt_bidPrgrsList 항목 차용. 요약 배지(국외) */
-  taskSeNm?: string
-  /** 입찰서 상태 (tndrStatNm) — 국내 임시 항목과 동일. '제출' 일 때 투찰취소 바로가기 노출 */
-  tndrStatNm?: '미제출' | '제출' | '완료' | '입찰취소'
-  /** 총액제 여부 (alonbsYn) — ⚠️ 설계서 미정의. 입찰참여품목 탭 단가제(M77)/총액제(M78) 분기 구동
-   *  (설계서 총액제 데이터영역 접두 dl_alonbs* 차용). 상세설계 확정 시 그 이름으로 교체 */
-  alonbsYn?: 'Y' | 'N'
-  /** 담당자 휴대전화 (picMblTelno) — ⚠️ 설계서 미정의. 레이아웃(slide375)의 연락처 2행 표시용 임시 항목 */
-  picMblTelno?: string
-}
+import type { OvsTndrDtlItem } from '@/types/bd'
 
 // 직접 URL 진입(state 없음) 대비 페이지 fallback 목업 — 설계서 slide375 예시값 그대로.
 const MOCK_OVS_TNDR_DETAIL: OvsTndrDtlItem = {

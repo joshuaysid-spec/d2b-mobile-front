@@ -8,7 +8,7 @@
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsTndrDtlItem } from '@/ui/biz/bd/ovsTndrDtl/OvsTndrDtlPage'
+import type { OvsTndrDtlItem } from '@/types/bd'
 
 export interface OvsBidRegRsltProps {
   /** 상세에서 넘어온 항목 — 공고 식별/표시값 시드. */

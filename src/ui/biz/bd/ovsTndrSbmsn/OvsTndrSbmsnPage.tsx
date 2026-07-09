@@ -20,42 +20,7 @@ import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsTndrSbmsnPage_Stp2 } from '@/ui/biz/bd/ovsTndrSbmsn/Stp2'
 import { OvsTndrSbmsnPage_Stp3 } from '@/ui/biz/bd/ovsTndrSbmsn/Stp3'
-import type { BidPrgrsItem } from '@/types/bd'
-
-// ── 공고일반 데이터 영역(dm_bscPbancInfo, 설계서 slide370) — 추후 src/types/bd.ts 통합 ──
-export interface OvsTndrSbmsnDetail {
-  /** 공고번호 (pbancNo, 7) */
-  pbancNo: string
-  /** 공고차수 (pbancOd, 2) */
-  pbancOd: string
-  /** 구매요청번호 (prchsDmndNo, 10) */
-  prchsDmndNo: string
-  /** 통합참조번호 (intgRfrncNo, 30) */
-  intgRfrncNo: string
-  /** 사업명 (bizNm, 100) */
-  bizNm: string
-  /** 입찰방식 (bidMth, 100) — 예: 일반투찰 */
-  bidMth: string
-  /** 계약방법 (ctrtMthdNm, 100) — 예: 일반경쟁 */
-  ctrtMthdNm: string
-  /** 입찰참가등록마감일시 (regDdlnDt, 14) */
-  regDdlnDt: string
-  /** 입찰서제출마감일시 (bdngDdlnDt, 14) */
-  bdngDdlnDt: string
-  /** 개찰일시 (bdopnDt, 14) */
-  bdopnDt: string
-  /** 환율적용일자 (exchrtAplcnYmd, 8) */
-  exchrtAplcnYmd: string
-  /** 담당부서 (picDeptNm, 100) */
-  picDeptNm: string
-  /** 담당자 (picNm, 200) */
-  picNm: string
-  /** 연락처 (picTlno, 11) */
-  picTlno: string
-  /** 입찰방법 (bidMthdNm) — 스탭2 단가제(M72)/총액제(M73) 분기.
-   *  ⚠️ 설계서 dm_bscPbancInfo 미정의(상세설계 예정) — 국내 BidPrgrsItem.bidMthdNm 관례를 따른 임시 항목. */
-  bidMthdNm?: '단가제' | '총액제'
-}
+import type { BidPrgrsItem, OvsTndrSbmsnDetail } from '@/types/bd'
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 slide366 예시값 그대로.
 const MOCK_OVS_TNDR_DETAIL: OvsTndrSbmsnDetail = {

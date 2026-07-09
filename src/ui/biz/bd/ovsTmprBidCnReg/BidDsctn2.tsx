@@ -15,11 +15,7 @@ import { SelectBox } from '@/ui/common/base/SelectBox'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type {
-  AlonbsBidCnInfo,
-  AlonbsItem,
-  BscPbancInfo,
-} from '@/ui/biz/bd/ovsTmprBidCnReg/OvsTmprBidCnRegPage'
+import type { AlonbsBidCnInfo, AlonbsItem, BscPbancInfo } from '@/types/bd'
 
 // ── 목업 코드값 — On-Load 입찰업체목록/화폐단위 조회 결과(설계서 slide319) ──
 // 추후 API: bdService.getOvsBidBzentyList / bdService.getCrncList

@@ -9,61 +9,7 @@ import { useParams } from 'react-router-dom'
 import { Button } from '@/ui/common/base/Button'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { BfrPbancBidDsctnItemDtlFullPopup } from '@/ui/biz/bd/ovsBfrTmprBidBidCnReg/BfrPbancBidDsctnItemDtlFullPopup'
-
-// ── 타입 — 설계서 slide322 항목설명 그대로. 추후 src/types/bd.ts 통합 ─────────────────
-
-/** 보관함 이전공고 1건 (1.1 보관함목록 데이터 영역 dl_pbancInfo) */
-export interface BfrPbancInfoItem {
-  /** 순번 */
-  no: number
-  /** 공고번호 (공고의 공고번호) */
-  pbancNo: string
-  /** 공고차수 (공고의 차수) */
-  pbancOd: string
-  /** 구매요청번호 (공고의 구매요청번호) */
-  prchsDmndNo: string
-  /** 개찰일자 (공고의 개찰일자) */
-  bdopnYmd: string
-  /** 참가품목수 (참가신청한 품목수) */
-  prtcpItemQty: number
-  /** ⚠️ 설계서 dl_pbancInfo 미정의 — 와이어프레임 카드 타이틀(RECOIL) 표기용 임시.
-   *  항목명은 BD 도메인 공통 '대표품명(rprsItemNm)' 재사용. 설계서 확정 시 정리. */
-  rprsItemNm: string
-}
-
-/** 입찰내역 1건 (1.2 입찰내역목록 데이터 영역 dl_bidCnList) */
-export interface BfrPbancBidCnItem {
-  /** 순번 */
-  no: number
-  /** 재고번호 */
-  invtNo: string
-  /** 부품번호 */
-  prtsNo: string
-  /** 품명 */
-  itemNm: string
-  /** 품목대체구분 (Y/N) */
-  itemSbstSe: string
-  /** 품목대체첨부문서 (Y/N, 필수 아님) */
-  itemSbstDocEn: string
-  /** 수정재고번호 (필수 아님) */
-  mdfcnInvtNo: string
-  /** 수정부품번호 (필수 아님) */
-  mdfcnPrtsNo: string
-  /** MOQ구분 (Y/N) */
-  moqYn: string
-  /** MOQ수량 (필수 아님) */
-  moqQty: number | null
-  /** MOQ첨부문서 (Y/N, 필수 아님) */
-  moqDocEn: string
-  /** 입찰업체 */
-  splyBzentyNm: string
-  /** 입찰단가 */
-  bdngTccrUntprc: number
-  /** 입찰금액 */
-  bdngTccrAmt: number
-  /** 화폐단위 */
-  crncNm: string
-}
+import type { BfrPbancInfoItem } from '@/types/bd'
 
 // ── 목업 — 보관함 이전공고 목록(dl_pbancInfo). 설계서 와이어프레임 '총 5건' + 예시값(VDW2523-03 등).
 //    On-Load 보관함이전공고목록조회 — 추후 API: bdService.getBfrPbancLockerList(lockerId)

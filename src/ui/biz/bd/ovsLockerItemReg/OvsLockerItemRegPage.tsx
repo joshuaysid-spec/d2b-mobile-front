@@ -24,13 +24,13 @@ import type {
   SearchFilterSchema,
   SearchFilterValue,
 } from '@/types/search-filter'
-// 보관함 공고 타입 — 목록 화면에서 정의. // 추후 src/types/bd.ts 통합
-import type { OvsLockerPbanItem } from '@/ui/biz/bd/ovsLockerPbanList/OvsLockerPbanListPage'
+// 보관함 공고 타입 — @/types/bd 공유 타입.
+import type { OvsLockerPbanItem } from '@/types/bd'
 import { cn } from '@/utils/cn'
 
 /**
  * 입찰품목 1건 (MUI-CM-01-M73, 설계서 slide310 1.2 입찰품목목록 데이터영역 dl_resultList).
- * 항목명(영문)·자리수는 설계서 그대로. // 추후 src/types/bd.ts 통합
+ * 항목명(영문)·자리수는 설계서 그대로.
  */
 export interface OvsLockerBidItem {
   /** 렌더 key/선택 식별자 — 통합참조번호+항목번호 조합(품목엔 상세 페이지 없음, slide308) */

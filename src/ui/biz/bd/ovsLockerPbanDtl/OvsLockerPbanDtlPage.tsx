@@ -12,8 +12,8 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
-// 보관함 공고 타입 — 목록 화면에서 정의(설계서 slide306 dl_resultList). // 추후 src/types/bd.ts 통합
-import type { OvsLockerPbanItem } from '@/ui/biz/bd/ovsLockerPbanList/OvsLockerPbanListPage'
+// 보관함 공고 타입 — @/types/bd 공유 타입(설계서 slide306 dl_resultList).
+import type { OvsLockerPbanItem } from '@/types/bd'
 
 // 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — 설계서 slide304 데이터영역 항목명/형식 그대로.
 const MOCK_OVS_LOCKER_PBAN_DETAIL: OvsLockerPbanItem = {

@@ -29,7 +29,7 @@ import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListF
 import { OvsBidPbancDtl } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbancDtl'
 import { OvsBidPbancDtl2 } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbancDtl2'
 
-// ── 도메인 타입 (설계서 항목설명 1.1~1.4 항목명 그대로) — 추후 src/types/bd.ts 통합 ─────
+// ── 도메인 타입 (설계서 항목설명 1.1~1.2 항목명 그대로 · 품목/첨부서류 타입은 @/types/bd) ──
 
 /** 공지사항 1건 (dm_ntcInfo, 설계서 slide293 1.1) */
 export interface OvsNtcInfo {
@@ -81,66 +81,6 @@ export interface OvsBidPbancDetail {
   picNm: string
   /** 연락처 (picTlno, 11) */
   picTlno: string
-}
-
-/** 품목목록 1건 (dl_itemList, 설계서 slide295 1.4) — 품목 목록 탭(M72) */
-export interface OvsBidItem {
-  /** 항목번호 (frcptlArtclNo, 5) */
-  frcptlArtclNo: string
-  /** 품질등급 (inspShpNm, 100) */
-  inspShpNm: string
-  /** 첨부문서 (atchDocEn, 1) — 품목의 첨부 문서 유무(Y/N) */
-  atchDocEn: 'Y' | 'N'
-  /** 재고번호 (invtNo, 9) */
-  invtNo: string
-  /** 부품번호 (prtsNo, 32) */
-  prtsNo: string
-  /** 규격번호 (spcfctNo, 20) */
-  spcfctNo: string
-  /** 품명 (itemNm, 200) */
-  itemNm: string
-  /** 납기기준일자 (dudtYmd, 8) */
-  dudtYmd: string
-  /** 단위 (unitNm, 2) */
-  unitNm: string
-  /** 본조수량 (bscbgtQty, 15) */
-  bscbgtQty: string
-  /** 당국수량 (athrtQty, 15) */
-  athrtQty: string
-  /** 장국수량 (ltbndQty, 15) */
-  ltbndQty: string
-  /** 본조예산 (bscbgtDrctnAmt, 25) */
-  bscbgtDrctnAmt: string
-  /** 당국예산 (athrtDrctnAmt, 25) */
-  athrtDrctnAmt: string
-  /** 장국예산 (ltbndDrctnAmt, 25) */
-  ltbndDrctnAmt: string
-  /** 수량합계 (sumQty, 15) — 본조수량+당국수량+장국수량 */
-  sumQty: string
-  /** 화폐단위 (drctnCrncNm, 100) */
-  drctnCrncNm: string
-  /** 지시단가 (drctnUntprc, 25) */
-  drctnUntprc: string
-  /** 지시금액 (drctnAmt, 25) */
-  drctnAmt: string
-  /** 장비부호 (aplcnEqpmntCd, 8) */
-  aplcnEqpmntCd: string
-  /** 장비명 (aplcnEqpmntNm, 100) */
-  aplcnEqpmntNm: string
-  /** 보관함여부 (lockerYn, 1) — Y/N. 업체담당자인 경우에만 표시 */
-  lockerYn: 'Y' | 'N'
-}
-
-/** 첨부서류 1건 (dl_docList, 설계서 slide294 1.3) — 첨부파일 탭(M73) */
-export interface OvsAtchDoc {
-  /** 순번 (no, 15) */
-  no: number
-  /** 첨부서류명 (atchDocNm, 200) */
-  atchDocNm: string
-  /** 첨부파일명 (atchFileNm, 200) */
-  atchFileNm: string
-  /** 파일크기 (fileSz, 10) */
-  fileSz: string
 }
 
 // ── 탭 (설계서 slide289 — 일반정보 / 품목 목록 / 첨부서류) ─────────────────────────

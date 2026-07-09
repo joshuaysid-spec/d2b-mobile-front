@@ -6,10 +6,12 @@ import { useState } from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
+import { SectionTitle } from '@/ui/common/base/SectionTitle'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { Toast } from '@/ui/common/composites/Toast'
-// 추후 src/types/bd.ts 통합
-import type { OvsBidItem } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbancDtlPage'
+import { OvsBidPbanc_AtchFileInq } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbanc_AtchFileInq'
+import type { OvsAtchDoc, OvsBidItem } from '@/types/bd'
 
 // 품목목록(dl_itemList) 목업 — 설계서 slide291 예시값(수량 1+1+1=3, 예산 608,000.00 USD) 기반.
 // 항목번호별로 재고·부품·규격번호와 품명만 달리해 실제 응답처럼 구성. 추후 bdService.getOvsBidItemList
@@ -51,6 +53,13 @@ const MOCK_ITEM_LIST: OvsBidItem[] = MOCK_ITEM_BASE.map((it) => ({
 
 const PAGE_STEP = 10 // 더보기 10개씩(설계서)
 
+// 첨부파일조회(MUI-BD-01-P76) 목업 — 선택 품목의 첨부서류 목록(dl_docList 형태).
+// 설계서 slide15 Layout(순번·첨부서류명 + 첨부파일명.hwp [파일크기]) 그대로. 추후 API: bdService.getOvsItemAtchFileList
+const buildAtchDocs = (item: OvsBidItem): OvsAtchDoc[] => [
+  { no: 1, atchDocNm: '규격서', atchFileNm: `규격서(${item.spcfctNo}).hwp`, fileSz: '786KB' },
+  { no: 2, atchDocNm: '도면', atchFileNm: `도면(${item.prtsNo}).pdf`, fileSz: '1.2MB' },
+]
+
 export function OvsBidPbancDtl() {
   // 보관함 추가/삭제 로컬 토글 — 추후 API 연동 시 서버 상태로 교체.
   const [items, setItems] = useState<OvsBidItem[]>(MOCK_ITEM_LIST)
@@ -74,9 +83,11 @@ export function OvsBidPbancDtl() {
     console.log('[M72] 보관함', next === 'Y' ? '추가' : '삭제', item.frcptlArtclNo)
   }
 
-  // 첨부문서 보기 (scwin.btn_openAtchDoc_onlick) — 파일다운로드.
+  // 첨부문서 보기 (scwin.btn_openAtchDoc_onlick) — 첨부파일조회(MUI-BD-01-P76) 바텀시트 호출(국외 설계서 slide14·20).
+  const [atchItem, setAtchItem] = useState<OvsBidItem | null>(null)
   const handleOpenAtchDoc = (item: OvsBidItem) => {
-    console.log('[M72] 첨부문서 다운로드', item.frcptlArtclNo) // 추후 API: bdService.downloadItemAtchDoc
+    setAtchItem(item)
+    console.log('[M72] 첨부파일조회(P76) 열기', item.frcptlArtclNo) // 추후 API: bdService.getOvsItemAtchFileList
   }
 
   // 재고번호 클릭 (scwin.grd_list_oncellclick) — 목록정보조회 팝업(UI-OP-01-P75) 호출.
@@ -136,8 +147,10 @@ export function OvsBidPbancDtl() {
 
   return (
     <>
-      {/* 총 건수 */}
-      <p className="px-4 pb-2 text-krds-body-sm text-krds-text-primary-active">총 {total}건</p>
+      {/* 타이틀 + 건수 — Figma m_section title(9973-131169) 우측 건수 슬롯(총 N건). 배경은 흰색(사용자 확정 — info 기본 블루 강조 제거) */}
+      <SectionTitle topDivider info={`총 ${total}건`} className="bg-white">
+        품목 목록
+      </SectionTitle>
       <Accordion type="multiple" defaultValue={['item-1']} className="w-full">
         {visibleItems.map((it) => (
           <AccordionSection
@@ -171,6 +184,19 @@ export function OvsBidPbancDtl() {
           </Button>
         </div>
       )}
+
+      {/* 첨부파일조회(MUI-BD-01-P76) 바텀시트 — 컨테이너/footer(닫기)는 부모 소유, 콘텐츠만 분리 */}
+      <BottomSheet
+        open={atchItem !== null}
+        onOpenChange={(o) => {
+          if (!o) setAtchItem(null)
+        }}
+        title="첨부파일 조회"
+        onConfirm={() => setAtchItem(null)}
+        confirmLabel="닫기"
+      >
+        {atchItem && <OvsBidPbanc_AtchFileInq docs={buildAtchDocs(atchItem)} />}
+      </BottomSheet>
 
       {/* 보관함 추가/삭제 토스트 */}
       <Toast open={toast.open} onClose={() => setToast((t) => ({ ...t, open: false }))}>

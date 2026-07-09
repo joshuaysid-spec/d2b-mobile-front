@@ -12,9 +12,9 @@ import type {
   OvsBidPrtcpApfrDetail,
   OvsSbtInfo,
   OvsSplyInfo,
-} from '@/ui/biz/bd/ovsBidPrtcpApfrDtl/OvsBidPrtcpApfrDtlPage'
+} from '@/types/bd'
 
-/** 사업별등록결과 (dl_resultList, slide363) — 추후 src/types/bd.ts 통합 */
+/** 사업별등록결과 (dl_resultList, slide363) */
 export interface OvsBidRegRsltItem {
   no: number // 순번
   prchsDmndNo: string // 구매요청번호

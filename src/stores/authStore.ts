@@ -26,12 +26,14 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  accessToken: null,
-  isLoggedIn: false,
+  // ⚠️ 목업(백엔드 미연동) 단계 기본값 = 로그인 상태 — 업체담당자 전용 화면(국외 보관함 등) 테스트용.
+  //    로그인 화면/API 연동 시 null/false 로 되돌리고 실제 로그인 플로우에서 setAccessToken 호출.
+  accessToken: 'mock-access-token',
+  isLoggedIn: true,
   setAccessToken: (token) => set({ accessToken: token, isLoggedIn: Boolean(token) }),
   logout: () => set({ accessToken: null, isLoggedIn: false, user: null, hasUnread: false }),
 
-  user: null,
+  user: { customerNo: '0012345678', name: '홍길동' }, // 목업 사용자 — API 연동 시 null
   setUser: (user) => set({ user }),
 
   hasUnread: false,

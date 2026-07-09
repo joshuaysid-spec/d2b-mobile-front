@@ -14,7 +14,7 @@ import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
 
-import type { BfrPbancBidCnItem, BfrPbancInfoItem } from '@/ui/biz/bd/ovsBfrTmprBidBidCnReg/OvsBfrTmprBidBidCnRegPage'
+import type { BfrPbancBidCnItem, BfrPbancInfoItem } from '@/types/bd'
 
 // ── 목업 — 이전공고 입찰내역 목록(dl_bidCnList). 와이어프레임 예시값(A000-A0000·0000T-80U/TBE-3·OA 업체·10,000 USD) 기반.
 //    이전공고입찰내역목록조회 — 추후 API: bdService.getBfrPbancBidCnList(pbancNo, pbancOd)

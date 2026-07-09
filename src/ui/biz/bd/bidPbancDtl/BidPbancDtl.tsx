@@ -111,7 +111,8 @@ export function BidPbancDtl() {
         <AccordionSection value="dsgntBidder" title="지명경쟁업체">
           <Table rows={DSGNT_BIDDER_ROWS} />
         </AccordionSection>
-        <AccordionSection value="attach" title={`첨부서류 (총 ${ATTACH_FILES.length}건)`}>
+        {/* 건수는 우측 titleInfo 슬롯(Figma m_section title 9973-131169 — 17px Bold 남색). 배경 흰색(사용자 확정) */}
+        <AccordionSection value="attach" title="첨부서류" titleInfo={`총 ${ATTACH_FILES.length}건`}>
           <FileDownloadList files={ATTACH_FILES} />
         </AccordionSection>
         <AccordionSection value="contact" title="문의처">

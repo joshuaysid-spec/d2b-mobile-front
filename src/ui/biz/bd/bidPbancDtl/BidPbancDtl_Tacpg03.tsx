@@ -3,6 +3,7 @@
 // 데이터는 목업(추후 bdService.getDetail).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
+import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 
 const ITEM_ROWS: TableRow[] = [
@@ -43,8 +44,12 @@ const ITEM_ROWS: TableRow[] = [
 export function BidPbancDtl_Tacpg03() {
   return (
     <>
+      {/* 타이틀 + 건수 — Figma m_section title(9973-131169) 우측 건수 슬롯(총 N건). 배경 흰색(사용자 확정) */}
+      <SectionTitle topDivider info="총 1건" className="bg-white">
+        품목명세서
+      </SectionTitle>
       <Accordion type="multiple" defaultValue={['item']} className="w-full">
-        <AccordionSection value="item" title="품목명세서 (순번 1)" borderTop={false}>
+        <AccordionSection value="item" title="순번 1" borderTop={false}>
           <Table rows={ITEM_ROWS} />
         </AccordionSection>
       </Accordion>

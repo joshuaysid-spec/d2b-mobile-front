@@ -8,10 +8,7 @@ import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type {
-  OvsBidWtgrInfo,
-  OvsBidWtgrItem,
-} from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidPrtcpAplyPage'
+import type { OvsBidWtgrInfo, OvsBidWtgrItem } from '@/types/bd'
 
 // 보증서정보 상세 목업(dl_wtgrInfo + dl_IsrInfo + dl_ctrtInfo) — 설계서 slide344~345 예시값 그대로.
 const MOCK_WTGR_INFO: OvsBidWtgrInfo = {

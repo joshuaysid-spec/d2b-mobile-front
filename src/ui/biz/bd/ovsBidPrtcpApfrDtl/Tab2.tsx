@@ -7,7 +7,7 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type {
   OvsBidPrtcpApfrDetail,
   OvsSplyInfo,
-} from '@/ui/biz/bd/ovsBidPrtcpApfrDtl/OvsBidPrtcpApfrDtlPage'
+} from '@/types/bd'
 
 // 달러 금액 표기 — 설계서 '000,000,000,000.00' 형식(소수 2자리).
 const fmtUsd = (n: number) =>

@@ -9,7 +9,7 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsSplyInfo } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidPrtcpAplyPage'
+import type { OvsSplyInfo } from '@/types/bd'
 import type { BidPrgrsItem } from '@/types/bd'
 
 // 입찰업체(dm_splyInfo) — 설계서 slide334 표시값 형식 그대로(2026-07-01 화면 수정: 주민등록번호 삭제).
