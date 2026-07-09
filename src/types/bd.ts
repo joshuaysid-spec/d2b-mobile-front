@@ -590,6 +590,66 @@ export interface OvsRlsVltrnsAtchDoc {
 }
 
 /**
+ * 국외 공개수의협상결과조회 - 상단 요약 (MUI-BD-12-M83, slide441).
+ * 배지 국외/수의계약/입찰유형 + subtitle(통합참조번호·공고번호) + title(사업명) + 요약행(입찰업체·구매요청번호·공고일자·개찰일자).
+ */
+export interface OvsRlsVltrnsSrngRsltSummary {
+  /** 업무구분 배지 (taskSeNm) — 국외. UI 배지값 */
+  taskSeNm: string
+  /** 계약방법 배지 (ctrtMthdNm) — 수의계약 */
+  ctrtMthdNm: string
+  /** 입찰유형 배지 (bidTypeNm) — 단가제 */
+  bidTypeNm: string
+  /** 통합참조번호 (intgRfrncNo) — subtitle */
+  intgRfrncNo: string
+  /** 공고번호 (pbancNo) — subtitle */
+  pbancNo: string
+  /** 사업명 (bizNm) — title */
+  bizNm: string
+  /** 입찰업체명 (splyBzentyNm) — 요약행 */
+  splyBzentyNm: string
+  /** 구매요청번호 (prchsDmndNo) — 요약행 */
+  prchsDmndNo: string
+  /** 공고일자 (pbancRqstYmd) — 요약행 */
+  pbancRqstYmd: string
+  /** 개찰일자 (bdopnDt) — 요약행 */
+  bdopnDt: string
+}
+
+/**
+ * 국외 공개수의협상결과조회 - 조회결과 1건 (MUI-BD-12-M83, slide443·445).
+ * 항목명 = 설계서 데이터영역 영문(dl_bidRsltList).
+ */
+export interface OvsRlsVltrnsSrngRsltItem {
+  /** 순번 (no) */
+  no: string
+  /** 신청업체코드 (sbtBzentyCd) */
+  sbtBzentyCd: string
+  /** 신청업체명 (sbtBzentyNm) */
+  sbtBzentyNm: string
+  /** 입찰업체코드 (splyBzentyCd) */
+  splyBzentyCd: string
+  /** 입찰업체명 (splyBzentyNm) */
+  splyBzentyNm: string
+  /** 제출서류 유무 (docSbmsnYn) — 'O'|'X' */
+  docSbmsnYn: string
+  /** 견적금액 (estmtAmt) */
+  estmtAmt: string
+  /** 화폐단위 (crncNm) */
+  crncNm: string
+  /** 순위 (rnk) */
+  rnk: string
+  /** 낙찰여부 (scsbdYn) — 낙찰/탈락 */
+  scsbdYn: string
+  /** 탈락사유 (rsn) */
+  rsn: string
+  /** 계약포기일자 (abndDt) */
+  abndDt: string
+  /** 계약포기사유 (abndRsn) */
+  abndRsn: string
+}
+
+/**
  * 신청서 작성 플로우 종류 — 전자서명(M21)/신청완료(M08)의 표시 텍스트 분기 구동값.
  * 설계서 slide132·133: "사전심사(PQ), 입찰참가신청, 입찰서에 따라 표시 텍스트 변경".
  */

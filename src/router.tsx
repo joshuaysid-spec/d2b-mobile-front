@@ -144,6 +144,12 @@ const OvsRlsVltrnsNgtnEtdcDtlPage = lazy(() =>
     default: m.OvsRlsVltrnsNgtnEtdcDtlPage,
   })),
 )
+// 국외 공개수의협상 결과조회(MUI-BD-12-M83, /bd/ovs/rls-ngtn/:id/rslt) — biz/bd/ovsRlsVltrnsNgtnSrngRsltInq. 견적서 상세 바로가기 진입.
+const OvsRlsVltrnsNgtnSrngRsltInqPage = lazy(() =>
+  import('@/ui/biz/bd/ovsRlsVltrnsNgtnSrngRsltInq/OvsRlsVltrnsNgtnSrngRsltInqPage').then((m) => ({
+    default: m.OvsRlsVltrnsNgtnSrngRsltInqPage,
+  })),
+)
 // 국외 입찰공고 상세(MUI-BD-01-M71~M73, /bd/ovs/:id) — biz/bd/ovsBidPbancDtl.
 const OvsBidPbancDtlPage = lazy(() =>
   import('@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbancDtlPage').then((m) => ({
@@ -351,6 +357,12 @@ export const router = createBrowserRouter([
         path: 'bd/ovs/rls-ngtn/:id/etdc-dtl',
         element: <OvsRlsVltrnsNgtnEtdcDtlPage />,
         handle: { header: { variant: 'sub', title: '견적서 조회' } },
+      },
+      {
+        // 공개수의협상 결과조회 — 정적 'rslt' 세그먼트. 헤더 타이틀 '공개수의협상 결과조회'.
+        path: 'bd/ovs/rls-ngtn/:id/rslt',
+        element: <OvsRlsVltrnsNgtnSrngRsltInqPage />,
+        handle: { header: { variant: 'sub', title: '공개수의협상 결과조회' } },
       },
       {
         path: 'bd/:id',

@@ -7,6 +7,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
+import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
@@ -175,6 +176,9 @@ export function OvsRlsVltrnsNgtnEtdcSbmsnPage() {
           ]}
         />
       </div>
+
+      {/* 플로팅 버튼 — 맨위로(사용자 요청). 상세와 달리 + 없음. */}
+      <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollTop} />
     </div>
   )
 }

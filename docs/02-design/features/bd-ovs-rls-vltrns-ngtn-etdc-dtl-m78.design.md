@@ -87,6 +87,27 @@ SummaryInfo(badges 국외·수의계약 / subtitle 통합참조번호·공고번
 - 하단 액션바 = **없음**(설계서 우선) · FAB = **없음**(견적서 작성과 동일)
 - 설계서에 없는 요소 제거, 항목명은 설계서 데이터영역 기준.
 
+## 7. 플로팅 버튼 & 견적서 취소신청서(P82) — 사용자 추가 요청
+
+- **견적서 작성(SbmsnPage)**: 우측 하단 위로가기 FAB(`onTop`만).
+- **견적서 상세(DtlPage)**: 위로가기 + `+`(바로가기) FAB. `+` → 바로가기 바텀시트 2버튼:
+  1. **공개수의협상견적서 취소 신청서 작성** → P82 바텀시트 오픈
+  2. **공개수의협상 결과조회** → M83(미구현, console 스텁)
+
+### 7.1 공개수의협상견적서취소신청서작성 (MUI-BD-12-P82, slide438~439)
+- 파일: `ovsRlsVltrnsNgtnEtdcDtl/OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt.tsx` (설계서 영문 화면명).
+- **FullPopup 래퍼**(헤더/footer 자체 소유) — Figma 9973-132825 = `m_popup_header` 풀스크린 팝업. `open`/`onOpenChange`/`detail` props. footer=취소·제출하기 `asymmetric`.
+- **섹션은 아코디언 없이 `SectionTitle` + `Table`**(Figma m_section title 구조).
+- 내용(설계서 slide438 · 항목설명 slide439, 항목명 = `dm_rtrcnAplyDsctn` 영문):
+  - **취소신청내역**: 공고번호-차수 · 사업명 · 구매요청번호 · 통합참조번호
+  - **신청업체**(sbt*): 업체코드 · 업체명 · 대표자 · 사업자번호(DUNS NUM)
+  - **입찰업체 - 제작자/공급자**(sply*): 업체코드 · 업체명 · 대표자 · 사업자번호(DUNS NUM)
+  - **취소사유**(rsn, 필수 · **4000자**): TextArea
+  - 서약문 박스: "우리 회사가 귀 청에 제출한 전자입찰서를 취소하오니 … / **날짜=오늘(제출일)** / 방위사업청장 귀하"
+- **제출하기** → 제출확인 AlertModal(check, "견적서 취소 신청서를 제출하시겠습니까?", 취소/확인) → 확인 시 console 스텁 + 팝업 닫힘.
+- 데이터영역엔 품목(frcptlArtclNo 등)도 있으나 slide438 목업 미표시 → 화면엔 미노출(목업 기준).
+- Figma 9973-132825(입찰취소 P04)·9973-132885(알럿)은 **레이아웃 참고**, 내용은 P82 설계서 우선.
+
 ## 6. Definition of Done
 - [x] 4 파일(Page/2/3/4) + 타입(bd.ts OvsRlsVltrnsEtdcDtlItem) + 라우트(`bd/ovs/rls-ngtn/:id/etdc-dtl`) + 계획상세 '견적서 조회' 연결
 - [x] 헤더 타이틀 '견적서 조회' · 읽기전용(입력/추가/삭제 없음) · StepBar 포함 · 하단 액션바 없음 · FAB 없음 · 4탭
