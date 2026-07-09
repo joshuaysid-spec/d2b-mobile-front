@@ -9,9 +9,9 @@ import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import type { OvsTndrSbmsnDetail } from '@/ui/biz/bd/ovsTndrSbmsn/OvsTndrSbmsnPage'
+import type { OvsTndrSbmsnDetail } from '@/types/bd'
 
-// ── 첨부파일 데이터 영역(dl_docList, 설계서 slide373) — 추후 src/types/bd.ts 통합 ──
+// ── 첨부파일 데이터 영역(dl_docList, 설계서 slide373) ──
 export interface OvsTndrDocItem {
   /** 식별자(고유) — 파일명 중복 가능하므로 목록 key 는 id 사용 */
   id: string

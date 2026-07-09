@@ -15,9 +15,9 @@ import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
-import type { OvsTndrSbmsnDetail } from '@/ui/biz/bd/ovsTndrSbmsn/OvsTndrSbmsnPage'
+import type { OvsTndrSbmsnDetail } from '@/types/bd'
 
-// ── 입찰참여품목(단가제) 데이터 영역(dl_ititbBidCnList, 설계서 slide371) — 추후 src/types/bd.ts 통합 ──
+// ── 입찰참여품목(단가제) 데이터 영역(dl_ititbBidCnList, 설계서 slide371) ──
 export interface OvsItitbBidCnItem {
   /** 항목번호 (frcptlArtclNo, 5) */
   frcptlArtclNo: string
@@ -61,7 +61,7 @@ export interface OvsItitbBidCnItem {
   usdExrt: string
 }
 
-// ── 입찰품목(총액제) 데이터 영역(dl_alonbsItemList, 설계서 slide372) — 추후 src/types/bd.ts 통합 ──
+// ── 입찰품목(총액제) 데이터 영역(dl_alonbsItemList, 설계서 slide372) ──
 export interface OvsAlonbsItem {
   /** 항목번호 (frcptlArtclNo, 5) */
   frcptlArtclNo: string

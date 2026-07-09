@@ -13,7 +13,7 @@ import { TextArea } from '@/ui/common/base/TextArea'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsTndrDtlItem } from '@/ui/biz/bd/ovsTndrDtl/OvsTndrDtlPage'
+import type { OvsTndrDtlItem } from '@/types/bd'
 
 export interface OvsBidRtrcnAplyHandle {
   /** 부모 BottomSheet footer '제출하기' 가 호출 — 제출확인 모달을 띄운다 */

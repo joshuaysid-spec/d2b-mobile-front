@@ -9,7 +9,7 @@ import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { OvsBidWtgrDtlFullPopup } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidWtgrDtlFullPopup'
-import type { OvsBidWtgrItem } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidPrtcpAplyPage'
+import type { OvsBidWtgrItem } from '@/types/bd'
 
 // 입찰보증서 목록 목업(dl_resultList) — 설계서 slide342 예시값(총 5건) 그대로.
 const MOCK_WTGR_LIST: OvsBidWtgrItem[] = [

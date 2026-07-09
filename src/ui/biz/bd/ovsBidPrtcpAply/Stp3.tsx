@@ -17,11 +17,7 @@ import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsBidWtgrInqFullPopup } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidWtgrInqFullPopup'
-import type {
-  OvsBidPrtcpBizItem,
-  OvsBidWtgrItem,
-} from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidPrtcpAplyPage'
-import type { BidPrgrsItem } from '@/types/bd'
+import type { BidPrgrsItem, OvsBidPrtcpBizItem, OvsBidWtgrItem } from '@/types/bd'
 
 // 입찰보증금 구분 — ⚠️ 값 항목명 설계서 미정의(이벤트 sbx_depositType_onchange 에서 파생한 임시 키, 관례 승인).
 const DEPOSIT_TYPES = [

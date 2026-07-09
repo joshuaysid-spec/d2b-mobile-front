@@ -1,9 +1,9 @@
 // 국외 입찰공고 상세 - '첨부파일' 탭 (MUI-BD-01-M73, 설계서 slide292·294).
 // 첨부서류(dl_docList) 목록 — 순번·첨부서류명 라벨 + 첨부파일 행(파일명 [크기] + 다운로드).
 // 데이터는 목업(추후 bdService.getOvsBidAtchDocList). 다운로드 클릭 = 파일다운로드 스텁.
+import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-// 추후 src/types/bd.ts 통합
-import type { OvsAtchDoc } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbancDtlPage'
+import type { OvsAtchDoc } from '@/types/bd'
 
 // 첨부서류(dl_docList) 목업 — 설계서 slide292 Layout(첨부서류명 + 첨부파일명.hwp [파일크기]) 기반.
 const MOCK_DOC_LIST: OvsAtchDoc[] = [
@@ -15,11 +15,11 @@ const MOCK_DOC_LIST: OvsAtchDoc[] = [
 export function OvsBidPbancDtl2() {
   return (
     <>
-      {/* 총 건수 */}
-      <p className="px-4 pb-2 text-krds-body-sm text-krds-text-primary-active">
-        총 {MOCK_DOC_LIST.length}건
-      </p>
-      <div className="flex flex-col gap-krds-7 px-4 pb-4">
+      {/* 타이틀 + 건수 — Figma m_section title(9973-131169) 우측 건수 슬롯(총 N건). 배경은 흰색(사용자 확정 — info 기본 블루 강조 제거) */}
+      <SectionTitle topDivider info={`총 ${MOCK_DOC_LIST.length}건`} className="bg-white">
+        첨부서류
+      </SectionTitle>
+      <div className="flex flex-col gap-krds-7 px-4 pt-2 pb-4">
         {MOCK_DOC_LIST.map((doc) => (
           <div key={doc.no} className="flex flex-col gap-krds-3">
             {/* 순번 · 첨부서류명(atchDocNm) */}

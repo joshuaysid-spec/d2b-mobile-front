@@ -28,81 +28,26 @@ import {
   type OvsBidPrtcpRtrcnAplyHandle,
 } from '@/ui/biz/bd/ovsBidPrtcpApfrDtl/OvsBidPrtcpRtrcnAply'
 import { OvsBidRegRsltByBiz } from '@/ui/biz/bd/ovsBidPrtcpApfrDtl/OvsBidRegRsltByBiz'
+import type {
+  OvsBidBizExmptnItem,
+  OvsBidBizItem,
+  OvsBidPrtcpApfrDetail,
+  OvsRtrcnTarget,
+  OvsSbtInfo,
+  OvsSplyInfo,
+} from '@/types/bd'
 
-// ── 타입 (설계서 데이터영역 항목명 그대로) — 추후 src/types/bd.ts 통합 ─────────────────
+// ── 타입 (설계서 데이터영역 항목명 그대로) — 공유 도메인 타입은 @/types/bd ──────────────
 
-/** 공고일반 (dm_bscPbancInfo, slide353) + 화면 식별값 */
-export interface OvsBidPrtcpApfrDetail {
-  pbancNo: string // 공고번호 (7)
-  pbancOd: string // 공고차수 (2)
-  bdopnYmd: string // 개찰일자 — 화면표기는 '개찰일시'(slide349) 라 일시 형식으로 목업
-  bidGrnteAmt: number // 입찰보증금총액 (달러금액)
-  intgRfrncNo: string // 통합참조번호 (dl_resultInfo, slide358)
-  pbancNm: string // ⚠️ 설계서 미정의 임시 항목 — 요약 헤더 공고명 표기(예: MD부품 국외경쟁입찰)
-  pbancTpcd?: string // ⚠️ 공고유형 배지(긴급공고) — 국내 dlt_bidPbancIntgList 항목 재사용
-}
-
-/** 신청업체 (dm_sbtInfo, slide353) */
-export interface OvsSbtInfo {
-  sbtBzentyCd: string // 신청업체 업체코드 (5)
-  sbtBzentyNm: string // 신청업체 업체명
-  sbtRprsvNm: string // 신청업체 대표자
-  sbtTlno: string // 신청업체 전화번호
-  sbtFxno: string // 신청업체 팩스
-  sbtBzmnNo: string // 신청업체 사업자등록번호 또는 DUNS NUM
-  sbtAddr: string // 신청업체 주소
-}
-
-/** 입찰업체 (dm_splyInfo, slide353) */
-export interface OvsSplyInfo {
-  splyBzentyCd: string // 입찰업체 업체코드 (5)
-  splyBzentyNm: string // 입찰업체 업체명
-  splyRprsvNm: string // 입찰업체 대표자
-  splyEmlAddr: string // 입찰업체 이메일
-  splyTlno: string // 입찰업체 전화번호
-  splyFxno: string // 입찰업체 팩스
-  splyBzmnNo: string // 입찰업체 사업자등록번호 또는 DUNS NUM
-  splyAddr: string // 입찰업체 주소
-}
-
-/** 입찰참가사업 및 입찰보증금 - 보증금비면제 (dl_bizList, slide354) */
-export interface OvsBidBizItem {
-  prchsDmndNo: string // 구매요청번호 (고유 — 목록 key)
-  bizNm: string // 사업명
-  bdngItemQty: number // 입찰품목수
-  bdngTccrAmt: number // 입찰금액 (달러)
-  bidGrnteAmt: number // 입찰보증금 (달러)
-  chckBidGrnteAmt: number // 입찰보증금(확인입력)
-  grntePayMth: string // 보증금납부방법
-  wtgrNo: string // 보증금증권번호
-  grnteInstNm: string // 보증기관명
-  grntePyslDocNo?: string // 입찰보증금납부서 파일명
-}
-
-/** 입찰참가사업 및 입찰보증금 - 보증금면제 (dl_bizExmptnList, slide354) */
-export interface OvsBidBizExmptnItem {
-  prchsDmndNo: string // 구매요청번호 (고유 — 목록 key)
-  bizNm: string // 사업명
-  bdngItemQty: number // 입찰품목수
-  bdngTccrAmt: number // 입찰금액 (달러)
-  bidGrnteAmt: number // 입찰보증금 (달러)
-  chckBidGrnteAmt: number // 입찰보증금(확인입력)
-  gurnAgreDocNo: string // 연대보증서 파일명
-  giveWrtprmDocNo: string // 지급각서 파일명
-}
-
-/** 첨부서류 (dl_docList, slide355) */
+/**
+ * 첨부서류 (dl_docList, slide355)
+ * ⚠️ 작성 화면(ovsBidPrtcpAply)의 동명 OvsAtchDocItem 과 필드가 다름(그쪽은 목록 key 용 id 보유)
+ *    — 설계서 기반 이름이라 개명하지 않고 화면별로 각자 유지.
+ */
 export interface OvsAtchDocItem {
   atchDocNm: string // 첨부서류명 (고유 — 목록 key)
   atchFileNm: string // 첨부파일명
   fileSz: string // 파일크기
-}
-
-/** 입찰참가신청서취소(P82) 대상 사업 — dl_resultInfo(slide358)의 사업 식별 부분집합 */
-export interface OvsRtrcnTarget {
-  prchsDmndNo: string // 구매요청번호
-  bizNm: string // 사업명
-  rtrcnItemQty: number // 취소신청품목수(대상 사업의 입찰품목수)
 }
 
 // ── fallback 목업 (직접 URL 진입 대비 — 설계서 slide349·357 예시값 형식 그대로) ──────────

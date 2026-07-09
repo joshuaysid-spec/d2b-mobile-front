@@ -6,11 +6,7 @@ import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type {
-  OvsBscPbancInfo,
-  OvsSbtInfo,
-} from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidPrtcpAplyPage'
-import type { BidPrgrsItem } from '@/types/bd'
+import type { BidPrgrsItem, OvsBscPbancInfo, OvsSbtInfo } from '@/types/bd'
 
 // 공고일반(dm_bscPbancInfo) — 입찰보증금총액은 달러금액(설계서 slide338 비고).
 const MOCK_BSC_PBANC_INFO: OvsBscPbancInfo = {

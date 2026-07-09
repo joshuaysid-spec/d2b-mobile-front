@@ -22,49 +22,7 @@ import type {
   SearchFilterValue,
 } from '@/types/search-filter'
 
-/**
- * 국외 보관함 공고 1건 (MUI-CM-01-M71, 설계서 slide306 1.2 검색결과 데이터영역 dl_resultList).
- * 항목명(영문)·자리수는 설계서 그대로. // 추후 src/types/bd.ts 통합
- */
-export interface OvsLockerPbanItem {
-  /** 라우팅 키 — 통합참조번호(intgRfrncNo) 사용 (직접 URL 진입 테스트 가능) */
-  id: string
-  /** 통합참조번호 (intgRfrncNo, 30) */
-  intgRfrncNo: string
-  /** 공고번호 (pbancNo, 7) */
-  pbancNo: string
-  /** 공고차수 (pbancOd, 2) */
-  pbancOd: string
-  /** 공고년도 (pbancYr, 4) */
-  pbancYr: string
-  /** 구매요청번호 (prchsDmndNo, 10) */
-  prchsDmndNo: string
-  /** 사업명 (bizNm, 100) */
-  bizNm: string
-  /** 입찰내역작성여부 (tmprBidCnEn, 1) — 구분(Y,N) */
-  tmprBidCnEn: 'Y' | 'N'
-  /** 입찰업체명 (splyBzentyNm, 200) — 미작성 시 '미작성' 표기(설계서 slide301) */
-  splyBzentyNm: string
-  /** 입찰참가신청여부 (bidPrtcpAplyYn, 1) — 구분(Y,N) */
-  bidPrtcpAplyYn: 'Y' | 'N'
-  /** 입찰참가등록마감일시 (regDdlnDt, 14) */
-  regDdlnDt: string
-  /** 입찰서제출마감일시 (bdngDdlnDt, 14) */
-  bdngDdlnDt: string
-  /** 개찰일자 (bdopnYmd, 8) */
-  bdopnYmd: string
-  /** 환율일자 (exchrtAplcnYmd, 8) */
-  exchrtAplcnYmd: string
-  /** 입찰방식 (bidMth, 100) — 경쟁입찰/공개수의/사전심사 */
-  bidMth: string
-  /** 보관품목수 (lockerItemQty, 15) */
-  lockerItemQty: number
-  // ── ⚠️ 설계서 데이터영역 미정의 임시 항목 (기존 승인 관례: 임시 영문키 + 주석) ──────────
-  /** 입찰구분(단가제/총액제) — 카드 표시 레이블(slide301)·입찰내역 M77/M78 분기 구동값. 상세설계 확정 시 교체 */
-  bidPrcSysNm: '단가제' | '총액제'
-  /** 계약방식 표시명 — 상세 일반정보(slide304) 표시 항목. 데이터영역 미정의, 상세설계 확정 시 교체 */
-  ctrtMthdNm: string
-}
+import type { OvsLockerPbanItem } from '@/types/bd'
 
 // 빠른검색 대상 — 설계서 slide301 검색영역(통합참조번호/구매요청번호).
 const SEARCH_TARGETS = [
@@ -72,14 +30,13 @@ const SEARCH_TARGETS = [
   { value: 'prchsDmndNo', label: '구매요청번호' },
 ]
 
-// ── 상세필터 schema — 설계서 slide302·306 1.1 보관함 검색조건(dm_searchInfo) ──
-// 일자구분(srchYmdSe) 구분코드 GTSB0001: 개찰일자/입찰참가/입찰서제출.
-// 빠른 설정 칩 — 설계서 slide302: 최근 1개월/최근 3개월/최근 6개월.
+// ── 상세필터 schema — 국외 개정판(v1.82_국외) slide26 검색필터(2026-07-06) 반영 ──
+// 일자구분(srchYmdSe): 개찰일자/공고일자 토글(구판의 개찰일자/입찰참가/입찰서제출 3종에서 변경).
+// 빠른 설정 칩 — slide26: 최근 1개월/최근 3개월/최근 6개월 (직접 입력·데이트피커는 DateRangeInput 자체 제공 — 기간검색 칩 제거).
 const DATE_PRESETS: DateRangePresetDef[] = [
   { label: '최근 1개월', months: 1 },
   { label: '최근 3개월', months: 3 },
   { label: '최근 6개월', months: 6 },
-  { label: '기간검색', custom: true },
 ]
 const LOCKER_FILTER_SCHEMA: SearchFilterSchema = {
   title: '검색필터',
@@ -92,9 +49,8 @@ const LOCKER_FILTER_SCHEMA: SearchFilterSchema = {
           type: 'segment',
           key: 'srchYmdSe',
           options: [
-            { value: 'bdopn', label: '개찰일자' },
-            { value: 'bidPrtcp', label: '입찰참가' },
-            { value: 'tndrSbmsn', label: '입찰서제출' },
+            { value: 'opbid', label: '개찰' },
+            { value: 'pbanc', label: '공고' },
           ],
         },
         // 기준일자시작(srchEndYmd)~기준일자끝(srchBgngYmd) — value 는 { start, end } 로 관리.
@@ -130,7 +86,7 @@ const LOCKER_FILTER_SCHEMA: SearchFilterSchema = {
   ],
 }
 const DEFAULT_FILTER: SearchFilterValue = {
-  srchYmdSe: 'bdopn',
+  srchYmdSe: 'opbid',
   date: { start: '', end: '' },
   intgRfrncNo: '',
   prchsDmndNo: '',

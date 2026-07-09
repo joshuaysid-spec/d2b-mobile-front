@@ -5,7 +5,7 @@
 //   동의 선택(동의안함/동의함, 기본 동의안함)을 부모로 끌어올려 저장 버튼 활성화(동의함 체크 시)를 구동한다(설계서 slide332).
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { WROTS } from '@/ui/biz/bd/wrotAgrePage/WrotAgreForm'
-import type { OvsProbWrotAgreResultInfo } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidPrtcpAplyPage'
+import type { OvsProbWrotAgreResultInfo } from '@/types/bd'
 
 // 동의 선택 옵션 — 기본값 동의안함(설계서 slide331).
 const AGREE_OPTIONS = [

@@ -26,96 +26,15 @@ import { OvsProbWrotAgre } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsProbWrotAgre'
 import { Stp1 } from '@/ui/biz/bd/ovsBidPrtcpAply/Stp1'
 import { Stp2 } from '@/ui/biz/bd/ovsBidPrtcpAply/Stp2'
 import { Stp3 } from '@/ui/biz/bd/ovsBidPrtcpAply/Stp3'
-import type { AplyFlowState, BidPrgrsItem } from '@/types/bd'
+import type { AplyFlowState, BidPrgrsItem, OvsProbWrotAgreResultInfo } from '@/types/bd'
 
 // ────────────────────────────────────────────────────────────────────────────
-// 도메인 타입 — 설계서 데이터영역 항목명(영문) 그대로. // 추후 src/types/bd.ts 통합
+// 도메인 타입 — 설계서 데이터영역 항목명(영문) 그대로. 공유 타입은 @/types/bd 로 이관.
 // ────────────────────────────────────────────────────────────────────────────
 
-/** 서약서 데이터 영역 (MUI-BD-04-P03, 설계서 slide332 dl_resultInfo). */
-export interface OvsProbWrotAgreResultInfo {
-  /** 서약일자 (wrotAgreYmd, 8) — 당일일자를 표시 */
-  wrotAgreYmd: string
-  /** 담당자명 (picNm, 200) — 로그인한 조달업체사용자의 명 */
-  picNm: string
-  /** 업체명 (sbtBzentyNm, 200) — 로그인한 조달업체사용자의 업체명 */
-  sbtBzentyNm: string
-  /** 발주기관명 (prcmRqtInstNm, 200) — 공고의 발주기관명 */
-  prcmRqtInstNm: string
-}
-
-/** 공고일반 데이터 영역 (MUI-BD-04-M72, 설계서 slide338 dm_bscPbancInfo). */
-export interface OvsBscPbancInfo {
-  /** 공고번호 (pbancNo, 7) */
-  pbancNo: string
-  /** 공고차수 (pbancOd, 2) */
-  pbancOd: string
-  /** 개찰일자 (bdopnYmd, 8) — 화면 표시는 개찰일시 */
-  bdopnYmd: string
-  /** 입찰보증금총액 (bidGrnteAmt, 25) — 달러금액 */
-  bidGrnteAmt: string
-}
-
-/** 신청업체 데이터 영역 (MUI-BD-04-M72, 설계서 slide338 dm_sbtInfo). */
-export interface OvsSbtInfo {
-  /** 신청업체 업체코드 (sbtBzentyCd, 5) */
-  sbtBzentyCd: string
-  /** 신청업체 업체명 (sbtBzentyNm, 200) */
-  sbtBzentyNm: string
-  /** 신청업체 대표자 (sbtRprsvNm, 200) */
-  sbtRprsvNm: string
-  /** 신청업체 전화번호 (sbtTlno, 11) */
-  sbtTlno: string
-  /** 신청업체 팩스 (sbtFxno, 40) */
-  sbtFxno: string
-  /** 신청업체 사업자등록번호 또는 DUNS NUM (sbtBzmnNo, 20) */
-  sbtBzmnNo: string
-  /** 신청업체 주소 (sbtAddr, 600) */
-  sbtAddr: string
-}
-
-/** 입찰업체 데이터 영역 (MUI-BD-04-M73, 설계서 slide338 dm_splyInfo). */
-export interface OvsSplyInfo {
-  /** 입찰업체 업체코드 (splyBzentyCd, 5) — 속성 E */
-  splyBzentyCd: string
-  /** 입찰업체 업체명 (splyBzentyNm, 200) */
-  splyBzentyNm: string
-  /** 입찰업체 대표자 (splyRprsvNm, 200) */
-  splyRprsvNm: string
-  /** 입찰업체 이메일 (splyEmlAddr, 100) */
-  splyEmlAddr: string
-  /** 입찰업체 전화번호 (splyTlno, 11) */
-  splyTlno: string
-  /** 입찰업체 팩스 (splyFxno, 40) */
-  splyFxno: string
-  /** 입찰업체 사업자등록번호 또는 DUNS NUM (splyBzmnNo, 20) */
-  splyBzmnNo: string
-  /** 입찰업체 주소 (splyAddr, 600) */
-  splyAddr: string
-}
-
-/**
- * 입찰참가사업 및 입찰보증금 1건 (MUI-BD-04-M74, 설계서 slide339 dl_bizList·dl_bizExmptnList 공통 R 필드).
- * 편집(E) 필드(chckBidGrnteAmt·grntePayMth·wtgrNo·grnteInstNm·grntePyslDocNo)는 Stp3 의 입력 상태로 관리.
- */
-export interface OvsBidPrtcpBizItem {
-  /** 구매요청번호 (prchsDmndNo, 10) — 목록 key */
-  prchsDmndNo: string
-  /** 사업명 (bizNm, 100) */
-  bizNm: string
-  /** 입찰품목수 (bdngItemQty, 15) */
-  bdngItemQty: string
-  /** 입찰총금액 (bdngTccrAmt, 25) — 달러금액 */
-  bdngTccrAmt: string
-  /** 입찰보증금 (bidGrnteAmt, 25) — 달러금액 */
-  bidGrnteAmt: string
-  /** 연대보증서 파일명 (gurnAgreDocNo, 38) — 보증금면제 목록(dl_bizExmptnList) 전용 */
-  gurnAgreDocNo?: string
-  /** 지급각서 파일명 (giveWrtprmDocNo, 38) — 보증금면제 목록(dl_bizExmptnList) 전용 */
-  giveWrtprmDocNo?: string
-}
-
-/** 첨부서류 1건 (MUI-BD-04-M77, 설계서 slide340 dl_docList). id 는 목록 key 용(고유). */
+/** 첨부서류 1건 (MUI-BD-04-M77, 설계서 slide340 dl_docList). id 는 목록 key 용(고유).
+ *  ⚠️ 상세 화면(ovsBidPrtcpApfrDtl)의 동명 OvsAtchDocItem 과 필드가 다름(그쪽은 id 없음)
+ *     — 설계서 기반 이름이라 개명하지 않고 화면별로 각자 유지. */
 export interface OvsAtchDocItem {
   /** 안정적 고유 식별자(목록 key) */
   id: string
@@ -125,78 +44,6 @@ export interface OvsAtchDocItem {
   atchFileNm: string
   /** 파일크기 (fileSz, 10) */
   fileSz: string
-}
-
-/** 입찰보증서 1건 (MUI-BD-04-P75, 설계서 slide343 dl_resultList). */
-export interface OvsBidWtgrItem {
-  /** 보증서번호 (wtgrNo, 30) — 목록 key */
-  wtgrNo: string
-  /** 개찰일자 (bdopnYmd, 8) */
-  bdopnYmd: string
-  /** 입찰건명 (bidNm, 100) */
-  bidNm: string
-  /** 보증금액 (grnteAmt, 25) */
-  grnteAmt: string
-  /** 보증채권자 (crdtrRprsvNm, 200) */
-  crdtrRprsvNm: string
-  /** 계약자 (ctrtrNm, 200) */
-  ctrtrNm: string
-  /** 발행자 (isrRprsvNm, 200) */
-  isrRprsvNm: string
-}
-
-/** 보증서정보 상세 (MUI-BD-04-P76, 설계서 slide346~347 dl_wtgrInfo + dl_IsrInfo + dl_ctrtInfo). */
-export interface OvsBidWtgrInfo {
-  /** 증권번호 (wtgrNo, 30) */
-  wtgrNo: string
-  /** 보증금액 (grnteAmt, 25) */
-  grnteAmt: string
-  /** 보증기간 (grnteBgngPrd, 16) */
-  grnteBgngPrd: string
-  /** 보증료 (grfe, 21) */
-  grfe: string
-  /** 보증금율 (grnteAmtDepstRt, 5) */
-  grnteAmtDepstRt: string
-  /** 보증계약자 상호 (ctrtBzentyNm, 200) */
-  ctrtBzentyNm: string
-  /** 보증계약자 대표자 (ctrtRprsvNm, 200) */
-  ctrtRprsvNm: string
-  /** 보증채권자 상호 (crdtrBzentyNm, 200) */
-  crdtrBzentyNm: string
-  /** 보증채권자 대표자 (crdtrRprsvNm, 200) */
-  crdtrRprsvNm: string
-  /** 특기사항 (spcltMttr, 500) */
-  spcltMttr: string
-  /** 보증문 (grntePhrsCn, 1000) */
-  grntePhrsCn: string
-  /** 발행일자 (pblcnYmd, 8) */
-  pblcnYmd: string
-  // ── 발행자 데이터 영역 (dl_IsrInfo) ──────────────────────────────────────
-  /** 발행자 상호 (isrBzentyNm, 200) */
-  isrBzentyNm: string
-  /** 발행자 대표자 (isrRprsvNm, 200) */
-  isrRprsvNm: string
-  /** 발행자 주소 (isrAddr, 100) */
-  isrAddr: string
-  /** 대리인 성명 (agtNm, 200) */
-  agtNm: string
-  /** 대리인 부서 (agtDeptNm, 100) */
-  agtDeptNm: string
-  /** 담당자 성명 (picNm, 200) */
-  picNm: string
-  /** 담당자 전화 (picTlno, 11) */
-  picTlno: string
-  /** 담당자 FAX (picFxno, 40) */
-  picFxno: string
-  // ── 보증계약 데이터 영역 (dl_ctrtInfo, 주계약) ───────────────────────────
-  /** 입찰건명 (bidNm, 100) */
-  bidNm: string
-  /** 입찰금액 (bdngTccrAmt, 25) */
-  bdngTccrAmt: string
-  /** 입찰번호 (bidNo, 27) */
-  bidNo: string
-  /** 입찰서제출마감일자 (bdngDdlnDt, 14) */
-  bdngDdlnDt: string
 }
 
 // ────────────────────────────────────────────────────────────────────────────

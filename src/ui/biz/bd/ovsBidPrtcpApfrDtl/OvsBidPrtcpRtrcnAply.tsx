@@ -15,7 +15,7 @@ import type {
   OvsRtrcnTarget,
   OvsSbtInfo,
   OvsSplyInfo,
-} from '@/ui/biz/bd/ovsBidPrtcpApfrDtl/OvsBidPrtcpApfrDtlPage'
+} from '@/types/bd'
 
 export interface OvsBidPrtcpRtrcnAplyHandle {
   /** 부모 BottomSheet footer '제출하기' 가 호출 — 제출확인 모달을 띄운다 */

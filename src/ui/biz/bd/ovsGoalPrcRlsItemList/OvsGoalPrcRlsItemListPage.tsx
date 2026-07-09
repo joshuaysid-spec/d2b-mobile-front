@@ -6,11 +6,11 @@
 import { useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
-import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
+import { Table, type TableRow } from '@/ui/common/composites/Table'
 
-// 조회결과 1건 (dl_resultList, 설계서 slide300 항목설명 표) — // 추후 src/types/bd.ts 통합
+// 조회결과 1건 (dl_resultList, 설계서 slide300 항목설명 표)
 export interface OvsGoalPrcRlsItem {
   frcptlArtclNo: string // 항목번호 (5)
   invtNo: string // 재고번호 (9)
@@ -182,30 +182,27 @@ export function OvsGoalPrcRlsItemListPage() {
   const loaded = Math.min(page * pageSize, total)
   const visibleList = MOCK_LIST.slice(0, loaded)
 
-  // 목업 → Card props 매핑 — 설계서 데이터영역 항목 순서 그대로 노출.
-  const cardItems: CardListItem[] = visibleList.map((it) => ({
-    id: it.frcptlArtclNo,
-    subtitle: `항목번호 ${it.frcptlArtclNo}`,
-    title: it.itemNm,
-    rows: [
-      { label: '재고번호', value: it.invtNo },
-      { label: '부품번호', value: it.prtsNo },
-      { label: '규격번호', value: it.spcfctNo },
-      { label: '납기기준일자', value: it.dudtYmd },
-      { label: '단위', value: it.unitNm },
-      { label: '본조수량', value: it.bscbgtQty.toLocaleString() },
-      { label: '당국수량', value: it.athrtQty.toLocaleString() },
-      { label: '장국수량', value: it.ltbndQty.toLocaleString() },
-      { label: '본조예산', value: formatAmt(it.bscbgtDrctnAmt) },
-      { label: '당국예산', value: formatAmt(it.athrtDrctnAmt) },
-      { label: '장국예산', value: formatAmt(it.ltbndDrctnAmt) },
-      { label: '수량합계', value: it.sumQty.toLocaleString() },
-      { label: '지시단가', value: it.drctnUntprc.toLocaleString() },
-      { label: '지시금액', value: formatAmt(it.drctnAmt) },
-      { label: '장비부호', value: it.aplcnEqpmntCd },
-      { label: '장비명', value: it.aplcnEqpmntNm },
-    ],
-  }))
+  // 목업 → Table rows 매핑 — 설계서 데이터영역(dl_resultList) 항목 순서 그대로 노출. 숫자/금액은 우측 정렬(type: number).
+  const itemRows = (it: OvsGoalPrcRlsItem): TableRow[] => [
+    { label: '항목번호', value: it.frcptlArtclNo },
+    { label: '품명', value: it.itemNm },
+    { label: '재고번호', value: it.invtNo },
+    { label: '부품번호', value: it.prtsNo },
+    { label: '규격번호', value: it.spcfctNo },
+    { label: '납기기준일자', value: it.dudtYmd },
+    { label: '단위', value: it.unitNm },
+    { label: '본조수량', value: it.bscbgtQty.toLocaleString(), type: 'number' },
+    { label: '당국수량', value: it.athrtQty.toLocaleString(), type: 'number' },
+    { label: '장국수량', value: it.ltbndQty.toLocaleString(), type: 'number' },
+    { label: '본조예산', value: formatAmt(it.bscbgtDrctnAmt), type: 'number' },
+    { label: '당국예산', value: formatAmt(it.athrtDrctnAmt), type: 'number' },
+    { label: '장국예산', value: formatAmt(it.ltbndDrctnAmt), type: 'number' },
+    { label: '수량합계', value: it.sumQty.toLocaleString(), type: 'number' },
+    { label: '지시단가', value: it.drctnUntprc.toLocaleString(), type: 'number' },
+    { label: '지시금액', value: formatAmt(it.drctnAmt), type: 'number' },
+    { label: '장비부호', value: it.aplcnEqpmntCd },
+    { label: '장비명', value: it.aplcnEqpmntNm },
+  ]
 
   return (
     <div className="flex w-full flex-col">
@@ -217,9 +214,11 @@ export function OvsGoalPrcRlsItemListPage() {
         onPageSizeChange={handlePageSize}
       />
 
-      {/* 조회결과 — 품목별 카드 (px-4 인셋) */}
+      {/* 조회결과 — 품목별 테이블 (px-4 인셋). 카드 → Table 전환(사용자 확정) */}
       <div className="flex flex-col gap-krds-7 px-4 pb-4 pt-krds-7">
-        <CardList items={cardItems} />
+        {visibleList.map((it) => (
+          <Table key={it.frcptlArtclNo} rows={itemRows(it)} />
+        ))}
       </div>
 
       {/* 더보기 — 모두 노출됐으면 숨김 */}
