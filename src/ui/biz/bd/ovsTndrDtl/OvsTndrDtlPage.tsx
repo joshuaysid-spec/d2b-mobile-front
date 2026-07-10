@@ -7,7 +7,7 @@
 // 바로가기(FAB +): 입찰등록결과조회(M80)·기술평가결과조회(P71)=바텀시트(footer 닫기),
 //   투찰취소 → 입찰취소신청서작성(P81)=바텀시트(footer 취소/제출하기, ref 핸들) — 설계서 slide385 이벤트.
 import { useEffect, useRef, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
@@ -114,6 +114,7 @@ function GeneralInfo({ detail }: { detail: OvsTndrDtlItem }) {
 }
 
 export function OvsTndrDtlPage() {
+  const navigate = useNavigate()
   const { id } = useParams()
   // 국외 입찰진행에서 넘어온 항목으로 상단(요약)을 그린다. 직접 URL 진입(state 없음)이면 페이지 목업.
   //   id 끝자리 '2' 는 총액제(M78) 데모, 그 외 단가제(M77) — 목업 단계 분기 확인용.
@@ -236,7 +237,7 @@ export function OvsTndrDtlPage() {
               <StepBar
                 orientation="horizontal"
                 items={steps}
-                sheetItems={buildProgressSheet('입찰')}
+                sheetItems={buildProgressSheet('입찰', (substep, prgrsStg) => navigate('/anl-prgrs', { state: { substep, prgrsStg } }))}
                 className="bg-transparent"
               />
             </div>

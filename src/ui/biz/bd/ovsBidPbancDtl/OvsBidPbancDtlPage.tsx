@@ -354,7 +354,7 @@ export function OvsBidPbancDtlPage() {
               <StepBar
                 orientation="horizontal"
                 items={steps}
-                sheetItems={buildProgressSheet(passed.prgrsStg ?? '입찰')}
+                sheetItems={buildProgressSheet(passed.prgrsStg ?? '입찰', (substep, prgrsStg) => navigate('/anl-prgrs', { state: { substep, prgrsStg } }))}
                 className="bg-transparent"
               />
             </div>

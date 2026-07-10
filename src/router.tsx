@@ -224,6 +224,12 @@ const NotiPrstPage = lazy(() =>
 const SupportPage = lazy(() =>
   import('@/ui/biz/cm/support/SupportPage').then((m) => ({ default: m.SupportPage })),
 )
+// 연관 진행 목록(설계서 미정의 — 진행현황 시트 세부단계 클릭 진입, /anl-prgrs) — biz/cm/anlPrgrsList.
+const AnlPrgrsListPage = lazy(() =>
+  import('@/ui/biz/cm/anlPrgrsList/AnlPrgrsListPage').then((m) => ({
+    default: m.AnlPrgrsListPage,
+  })),
+)
 const MyPage = lazy(() => import('@/ui/biz/cm/mypage/MyPage').then((m) => ({ default: m.MyPage })))
 const ComponentGuidePage = lazy(() =>
   import('@/ui/dev/ComponentGuidePage').then((m) => ({
@@ -455,6 +461,16 @@ export const router = createBrowserRouter([
         path: 'notification',
         element: <NotiPrstPage />,
         handle: { scrollReset: true, showBottomNav: true },
+      },
+      {
+        // 연관 진행 목록 — 상세 진행현황 시트의 세부단계 클릭 진입(설계서 미정의, 화면ID 채번 대기)
+        path: 'anl-prgrs',
+        element: <AnlPrgrsListPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '연관 목록' },
+          scrollReset: true,
+        },
       },
       { path: 'support', element: <SupportPage />, handle: { showBottomNav: true } },
       { path: 'mypage', element: <MyPage />, handle: { showBottomNav: true } },

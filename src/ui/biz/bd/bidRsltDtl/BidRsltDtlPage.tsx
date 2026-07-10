@@ -202,6 +202,7 @@ function renderTabContent(tab: string) {
 }
 
 export function BidRsltDtlPage() {
+  const navigate = useNavigate()
   const [tab, setTab] = useState('general')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   // 관심공고(즐겨찾기) 등록 여부 — 추후 bdService 응답으로 초기화. 현재 mock false.
@@ -289,7 +290,7 @@ export function BidRsltDtlPage() {
               <StepBar
                 orientation="horizontal"
                 items={steps}
-                sheetItems={buildProgressSheet(prgrsStg)}
+                sheetItems={buildProgressSheet(prgrsStg, (substep, prgrsStg) => navigate('/anl-prgrs', { state: { substep, prgrsStg } }))}
                 className="bg-transparent"
               />
             </div>

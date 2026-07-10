@@ -37,6 +37,8 @@ export interface StepItem {
   state: StepState
   /** 들여쓰기/dot 사이즈. 기본 1. */
   depth?: StepDepth
+  /** vertical(진행현황 바텀시트) 항목 클릭 — 있으면 행이 버튼이 된다(연관 목록 이동 등). */
+  onClick?: () => void
 }
 
 export interface StepBarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -175,11 +177,34 @@ function StepBarHorizontal({
 }: Omit<StepBarProps, 'orientation'>) {
   const [sheetOpen, setSheetOpen] = React.useState(false)
   // 바텀시트에 보일 세로 목록 — 별도 주입 없으면 가로 항목을 그대로 세로로.
-  const fullItems = sheetItems ?? items
+  // 항목에 onClick 이 있으면 클릭 즉시 시트를 닫고 실행(확인 버튼 없이 바로 이동/전환).
+  const fullItems = (sheetItems ?? items).map((it) =>
+    it.onClick
+      ? {
+          ...it,
+          onClick: () => {
+            setSheetOpen(false)
+            it.onClick?.()
+          },
+        }
+      : it,
+  )
+
+  // 칩이 많아 doing 칩이 화면 밖일 수 있음 → 렌더/항목 변경 시 doing 칩을 보이는 위치로 스크롤.
+  const listRef = React.useRef<HTMLDivElement>(null)
+  React.useEffect(() => {
+    const list = listRef.current
+    const doing = list?.querySelector<HTMLElement>('[data-step-state="doing"]')
+    if (!list || !doing) return
+    // 컨테이너 내부 가로 스크롤만 조정(scrollIntoView 는 조상 세로 스크롤까지 움직일 수 있어 직접 계산).
+    const target = doing.offsetLeft - (list.clientWidth - doing.offsetWidth) / 2
+    list.scrollLeft = Math.max(0, target)
+  }, [items])
 
   return (
     <div className={cn('relative w-full bg-background', className)} {...props}>
       <div
+        ref={listRef}
         role="list"
         aria-label="진행 단계"
         // 칩 사이 간격은 연결선(8px line)이 담당 → 가로 gap 0. 우측 펼침 버튼 자리만큼 pr 확보.
@@ -190,7 +215,7 @@ function StepBarHorizontal({
           <React.Fragment key={i}>
             {/* 칩 사이 연결선 — Figma 8px×1px step-blue. 첫 칩 앞엔 없음(i>0). */}
             {i > 0 && <span aria-hidden className="h-px w-krds-5 shrink-0 bg-krds-step-blue" />}
-            <div role="listitem">
+            <div role="listitem" data-step-state={item.state}>
               <Chip1Depth label={item.label} state={item.state} />
             </div>
           </React.Fragment>
@@ -270,22 +295,31 @@ function StepBar({
         // 연속 1depth 사이엔 2depth connector 가 없어 라인이 안 보인다 → 살짝 띄우고(gap) 짧은 세로선 추가.
         // (1depth→2depth 는 2depth row 가 위쪽 connector 를 그리므로 불필요)
         const gapConnector = depth === 1 && i < items.length - 1 && nextDepth === 1
+        const content =
+          depth === 1 ? (
+            // full-width 알약 + dot 을 connector(x≈21)에 맞춰 pl-krds-7(12px)
+            <Chip1Depth
+              label={item.label}
+              state={item.state}
+              className="flex w-full pl-krds-7 gap-krds-5"
+            />
+          ) : (
+            <Row2Depth
+              label={item.label}
+              state={item.state}
+              isFirst={i === 0}
+              isLast={i === items.length - 1}
+            />
+          )
         return (
           <div key={i} role="listitem" className="w-full">
-            {depth === 1 ? (
-              // full-width 알약 + dot 을 connector(x≈21)에 맞춰 pl-krds-7(12px)
-              <Chip1Depth
-                label={item.label}
-                state={item.state}
-                className="flex w-full pl-krds-7 gap-krds-5"
-              />
+            {item.onClick ? (
+              // onClick 이 있으면 행 전체를 버튼으로 — 진행현황 시트에서 단계 클릭 → 연관 목록 이동 등.
+              <button type="button" onClick={item.onClick} className="block w-full text-left">
+                {content}
+              </button>
             ) : (
-              <Row2Depth
-                label={item.label}
-                state={item.state}
-                isFirst={i === 0}
-                isLast={i === items.length - 1}
-              />
+              content
             )}
             {gapConnector && (
               // dot 중심(x≈21) 아래로 짧은 세로 연결선(#C1D1EE=border-field). 칩에 붙여 연속(흰 여백 없음).

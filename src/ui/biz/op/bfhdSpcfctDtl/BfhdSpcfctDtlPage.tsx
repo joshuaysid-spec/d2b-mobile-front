@@ -3,6 +3,7 @@
 // 구성: 요약정보(SummaryInfo) + 스텝바(StepBar) + 탭(TabList) + 탭 콘텐츠(BfhdSpcfctDtl / BfhdSpcfctDtl_OpnnList / BfhdSpcfctDtl_Doc).
 // 데이터는 목업 — 추후 API(opService.getSpecDetail)로 대체. 헤더는 전역 Header(AppLayout) 담당.
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
@@ -55,6 +56,7 @@ const SUMMARY_ROWS: SummaryInfoRow[] = [
 ]
 
 export function BfhdSpcfctDtlPage() {
+  const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   // 스크롤 시 상단 블록(요약+스텝+탭) 축소 + sticky 동작 — 로직은 훅에서. (overflow-anchor 진동방지 포함)
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -94,7 +96,7 @@ export function BfhdSpcfctDtlPage() {
         >
           <div className="overflow-hidden">
             <div className="px-4 py-4">
-              <StepBar orientation="horizontal" items={STEPS} sheetItems={buildProgressSheet('조달')} />
+              <StepBar orientation="horizontal" items={STEPS} sheetItems={buildProgressSheet('조달', (substep, prgrsStg) => navigate('/anl-prgrs', { state: { substep, prgrsStg } }))} />
             </div>
           </div>
         </div>

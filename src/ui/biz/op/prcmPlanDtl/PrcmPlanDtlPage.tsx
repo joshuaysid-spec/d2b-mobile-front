@@ -4,7 +4,7 @@
 // 데이터는 목업(상단=목록에서 넘어온 항목, 없으면 페이지 fallback 목업). 백엔드 미연동.
 // 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당이라 본문은 콘텐츠만 렌더.
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -94,6 +94,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function PrcmPlanDtlPage() {
+  const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   // 스크롤 시 상단 블록(요약+스텝+탭) 축소 + sticky 동작 — 로직은 훅에서. (overflow-anchor 진동방지 포함)
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -182,7 +183,7 @@ export function PrcmPlanDtlPage() {
               <StepBar
                 orientation="horizontal"
                 items={steps}
-                sheetItems={buildProgressSheet(detail.prgrsStg ?? '조달')}
+                sheetItems={buildProgressSheet(detail.prgrsStg ?? '조달', (substep, prgrsStg) => navigate('/anl-prgrs', { state: { substep, prgrsStg } }))}
                 className="bg-transparent"
               />
             </div>

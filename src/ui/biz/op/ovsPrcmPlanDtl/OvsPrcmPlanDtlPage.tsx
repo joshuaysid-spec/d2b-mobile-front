@@ -3,7 +3,7 @@
 //   2탭(집행계획상세 M73 / 결과목록 M74). 업무구분·품목명세서·계약특수조건·업체의견·첨부서류·알림신청 없음.
 // 국외 전용 팝업(품목별가격자료 P75 / 목록정보조회 P76·P77)은 추후. 데이터는 목업.
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import type { OpPlanItem } from '@/types/op'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -52,6 +52,7 @@ const SUMMARY_ROWS: SummaryInfoRow[] = [
 ]
 
 export function OvsPrcmPlanDtlPage() {
+  const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
@@ -94,7 +95,7 @@ export function OvsPrcmPlanDtlPage() {
         >
           <div className="overflow-hidden">
             <div className="px-4 py-4">
-              <StepBar orientation="horizontal" items={STEPS} sheetItems={buildProgressSheet('조달')} />
+              <StepBar orientation="horizontal" items={STEPS} sheetItems={buildProgressSheet('조달', (substep, prgrsStg) => navigate('/anl-prgrs', { state: { substep, prgrsStg } }))} />
             </div>
           </div>
         </div>

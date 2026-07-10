@@ -307,6 +307,7 @@ import { Icon } from '@/ui/common/base/Icon'
   2. `tailwind.css` `@theme` 에 네임스페이스로 등록 (예: `--color-krds-xxx: var(--krds-xxx);`)
   3. **색/폰트크기 토큰이면 `src/utils/cn.ts` 의 `KRDS_COLOR_NAMES`/`KRDS_FONT_SIZES` 에도 등록.** 누락 시 `text-*` 패턴을 twMerge 가 색 그룹으로 오분류 → 인접 색 클래스가 같이 제거되는 회귀(5/22·5/28 발생). spacing/radius/shadow 는 cn.ts 등록 불필요.
 - 컴포넌트 스타일은 Tailwind 유틸 + `cva` 로만. 컴포넌트별 `.css` 파일 금지.
+- **클릭 요소 커서(손모양)**: Tailwind v4 preflight 는 버튼 기본 커서를 `default` 로 둔다(v3 과 다름) → `globals.css` 전역 규칙(`button:not(:disabled)`, `[role='button']`, `label[for]` 등에 `cursor:pointer`)으로 복원해 둠. **개별 컴포넌트에 `cursor-pointer` 를 일일이 달지 말 것.** 클릭 가능한 요소는 `<div onClick>` 이 아니라 `<button>`/`<a>`(또는 `role="button"`)로 만들어야 이 전역 규칙과 접근성이 함께 커버된다.
 
 ## Figma (디자인 원본)
 
