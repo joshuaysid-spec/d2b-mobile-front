@@ -54,6 +54,10 @@ export const ROUTES = {
   SUPPORT_SYS_IMPV_DETAIL: '/support/sys-impv/:contsNo',
   /** 자주묻는질문 (MUI-CM-04-M03). */
   SUPPORT_FAQ: '/support/faq',
+  /** 인증센터 (MUI-CM-04-M13). 홈 유관기관 바로가기 진입. */
+  CERT: '/cert',
+  /** 인증서 관리 (MUI-CM-04-M14). 인증센터 > 인증서 관리 진입. */
+  CERT_CRTF_MNG: '/cert/manage',
   MYPAGE: '/mypage',
   /** 개발자용 컴포넌트 가이드 (PC 해상도, 모바일 셸 미적용). */
   GUIDE: '/guide',

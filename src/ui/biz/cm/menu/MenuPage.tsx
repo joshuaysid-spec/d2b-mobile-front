@@ -190,6 +190,7 @@ const MENU_ROUTES: Record<string, string> = {
   'support-archive-form': ROUTES.SUPPORT_ARCHIVE_CTRT, // 계약관련서식자료실(M29)
   'support-improve': ROUTES.SUPPORT_SYS_IMPV, // 시스템개선안내(M31)
   'support-faq': ROUTES.SUPPORT_FAQ, // 자주묻는질문(M03)
+  'cert-manage': ROUTES.CERT_CRTF_MNG, // 인증서 관리(MUI-CM-04-M14)
 }
 
 function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: MenuPageProps) {

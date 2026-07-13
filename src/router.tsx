@@ -276,6 +276,14 @@ const SysImpvRpstrListPage = lazy(() =>
 const FaqListPage = lazy(() =>
   import('@/ui/biz/cm/faqList/FaqListPage').then((m) => ({ default: m.FaqListPage })),
 )
+// 인증센터(MUI-CM-04-M13, /cert) — biz/cm/certMng. 홈 유관기관 바로가기 진입.
+const CertMngPage = lazy(() =>
+  import('@/ui/biz/cm/certMng/CertMngPage').then((m) => ({ default: m.CertMngPage })),
+)
+// 인증서 관리(MUI-CM-04-M14, /cert/manage) — biz/cm/crtfMng. 인증센터 > 인증서 관리.
+const CrtfMngPage = lazy(() =>
+  import('@/ui/biz/cm/crtfMng/CrtfMngPage').then((m) => ({ default: m.CrtfMngPage })),
+)
 // 연관 진행 목록(설계서 미정의 — 진행현황 시트 세부단계 클릭 진입, /anl-prgrs) — biz/cm/anlPrgrsList.
 const AnlPrgrsListPage = lazy(() =>
   import('@/ui/biz/cm/anlPrgrsList/AnlPrgrsListPage').then((m) => ({
@@ -612,6 +620,26 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.SUPPORT_FAQ] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 인증센터 (MUI-CM-04-M13) — 홈 유관기관 바로가기 > 인증센터 진입
+        path: 'cert',
+        element: <CertMngPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '인증센터' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 인증서 관리 (MUI-CM-04-M14) — 인증센터/전체메뉴 > 인증서 관리 진입
+        path: 'cert/manage',
+        element: <CrtfMngPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '인증서 관리' },
           scrollReset: true,
         },
       },

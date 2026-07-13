@@ -248,8 +248,15 @@ export function HomePage() {
         <FirstVisitGuide items={guideItems} />
       </div>
 
-      {/* Footer — full-bleed */}
+      {/* Footer — full-bleed. 유관기관 바로가기 '인증센터' → 인증센터(MUI-CM-04-M13) 이동. */}
       <Footer
+        relatedSites={[
+          { label: '전자조달시스템(타기관)' },
+          { label: '방위사업청' },
+          { label: '국방관련사이트' },
+          { label: '조달관련사이트' },
+          { label: '인증센터', onClick: () => navigate(ROUTES.CERT) },
+        ]}
         snsLinks={[
           { type: 'instagram', href: '#' },
           { type: 'youtube', href: '#' },
