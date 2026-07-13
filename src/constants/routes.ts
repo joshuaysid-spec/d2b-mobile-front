@@ -24,6 +24,34 @@ export const ROUTES = {
   BD_RESULT_DETAIL: '/bd/result/:id',
   NOTIFICATION: '/notification',
   SUPPORT: '/support',
+  /** 일반공지사항(공지사항 목록) (MUI-CM-04-M01). */
+  SUPPORT_NOTICE: '/support/notice',
+  /** 일반공지사항 상세 (MUI-CM-04-M02, `:contsNo`). 이동: `/support/notice/${contsNo}`. */
+  SUPPORT_NOTICE_DETAIL: '/support/notice/:contsNo',
+  /** 방위사업청공지사항 (MUI-CM-04-M21). */
+  SUPPORT_NOTICE_DAPA: '/support/notice/dapa',
+  /** 방위사업청공지사항 상세 (MUI-CM-04-M22, `:contsNo`). */
+  SUPPORT_NOTICE_DAPA_DETAIL: '/support/notice/dapa/:contsNo',
+  /** 수요부대별공지사항 (MUI-CM-04-M23). */
+  SUPPORT_NOTICE_DMDFRC: '/support/notice/dmdfrc',
+  /** 수요부대별공지사항 상세 (MUI-CM-04-M24, `:contsNo`). */
+  SUPPORT_NOTICE_DMDFRC_DETAIL: '/support/notice/dmdfrc/:contsNo',
+  /** 일반자료실 (MUI-CM-04-M25). */
+  SUPPORT_ARCHIVE: '/support/archive',
+  /** 일반자료실 상세 (MUI-CM-04-M26, `:contsNo`). */
+  SUPPORT_ARCHIVE_DETAIL: '/support/archive/:contsNo',
+  /** 수요부대별자료실 (MUI-CM-04-M27). */
+  SUPPORT_ARCHIVE_DMDFRC: '/support/archive/dmdfrc',
+  /** 수요부대별자료실 상세 (MUI-CM-04-M28, `:contsNo`). */
+  SUPPORT_ARCHIVE_DMDFRC_DETAIL: '/support/archive/dmdfrc/:contsNo',
+  /** 계약관련서식자료실 (MUI-CM-04-M29). */
+  SUPPORT_ARCHIVE_CTRT: '/support/archive/ctrt',
+  /** 계약관련서식자료실 상세 (MUI-CM-04-M30, `:contsNo`). */
+  SUPPORT_ARCHIVE_CTRT_DETAIL: '/support/archive/ctrt/:contsNo',
+  /** 시스템개선안내 (MUI-CM-04-M31). */
+  SUPPORT_SYS_IMPV: '/support/sys-impv',
+  /** 시스템개선안내 상세 (MUI-CM-04-M32, `:contsNo`). */
+  SUPPORT_SYS_IMPV_DETAIL: '/support/sys-impv/:contsNo',
   MYPAGE: '/mypage',
   /** 개발자용 컴포넌트 가이드 (PC 해상도, 모바일 셸 미적용). */
   GUIDE: '/guide',

@@ -99,13 +99,13 @@ const MENU_TREE: MenuNode[] = [
     id: 'support',
     label: '고객센터',
     children: [
-      { id: 'support-notice-general', label: '일반공지사항' },
-      { id: 'support-notice-dapa', label: '방위사업청공지사항' },
-      { id: 'support-notice-unit', label: '수요부대별공지사항' },
-      { id: 'support-archive-general', label: '일반자료실' },
-      { id: 'support-archive-unit', label: '수요부대별자료실' },
-      { id: 'support-archive-form', label: '계약관련서식자료실' },
-      { id: 'support-improve', label: '시스템개선안내' },
+      { id: 'support-notice-general', label: LINKED_MENU_LABELS[ROUTES.SUPPORT_NOTICE] },
+      { id: 'support-notice-dapa', label: LINKED_MENU_LABELS[ROUTES.SUPPORT_NOTICE_DAPA] },
+      { id: 'support-notice-unit', label: LINKED_MENU_LABELS[ROUTES.SUPPORT_NOTICE_DMDFRC] },
+      { id: 'support-archive-general', label: LINKED_MENU_LABELS[ROUTES.SUPPORT_ARCHIVE] },
+      { id: 'support-archive-unit', label: LINKED_MENU_LABELS[ROUTES.SUPPORT_ARCHIVE_DMDFRC] },
+      { id: 'support-archive-form', label: LINKED_MENU_LABELS[ROUTES.SUPPORT_ARCHIVE_CTRT] },
+      { id: 'support-improve', label: LINKED_MENU_LABELS[ROUTES.SUPPORT_SYS_IMPV] },
       { id: 'support-faq', label: '자주묻는질문' },
       { id: 'support-civil-doc', label: '민원서류발급신청' },
       { id: 'support-law', label: '법령조회' },
@@ -182,6 +182,13 @@ const MENU_ROUTES: Record<string, string> = {
   'bd-noti': ROUTES.BD, // 입찰공고
   'bd-proc': ROUTES.BD_PRGRS, // 입찰진행
   'bd-open': ROUTES.BD_OPBID, // 개찰(개찰목록 MUI-BD-08-M01)
+  'support-notice-general': ROUTES.SUPPORT_NOTICE, // 일반공지사항(MUI-CM-04-M01)
+  'support-notice-dapa': ROUTES.SUPPORT_NOTICE_DAPA, // 방위사업청공지사항(M21)
+  'support-notice-unit': ROUTES.SUPPORT_NOTICE_DMDFRC, // 수요부대별공지사항(M23)
+  'support-archive-general': ROUTES.SUPPORT_ARCHIVE, // 일반자료실(M25)
+  'support-archive-unit': ROUTES.SUPPORT_ARCHIVE_DMDFRC, // 수요부대별자료실(M27)
+  'support-archive-form': ROUTES.SUPPORT_ARCHIVE_CTRT, // 계약관련서식자료실(M29)
+  'support-improve': ROUTES.SUPPORT_SYS_IMPV, // 시스템개선안내(M31)
 }
 
 function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: MenuPageProps) {

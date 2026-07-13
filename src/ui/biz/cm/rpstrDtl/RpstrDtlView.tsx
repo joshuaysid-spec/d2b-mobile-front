@@ -1,0 +1,60 @@
+// 자료실 상세 공유 뷰 — 일반/수요부대별/계약관련서식(MUI-CM-04-M26·M28·M30)이 dm_rpstrInfo 동일.
+// 공지 상세와 달리 긴급·게시기간 없음(배지=구분만, 메타=작성자/담당부서/구분). 이전글/다음글은 mock에서 계산.
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+
+import { Badge } from '@/ui/common/base/Badge'
+import { BoardDetailView } from '@/ui/biz/cm/board/BoardDetailView'
+import type { FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
+import { toRpstrDetail } from '@/ui/biz/cm/rpstrList/rpstrMock'
+import type { RpstrListItem } from '@/types/notice'
+
+export function RpstrDtlView({
+  mock,
+  base,
+  deptNm,
+}: {
+  mock: RpstrListItem[]
+  base: string
+  /** 담당부서(deptNm) — 목록에 없어 상세 목업으로 보완. 게시판별로 주입. */
+  deptNm?: string
+}) {
+  const navigate = useNavigate()
+  const { contsNo } = useParams<{ contsNo: string }>()
+  const stateItem = useLocation().state as RpstrListItem | null
+  const item = stateItem ?? mock.find((x) => x.contsNo === contsNo) ?? mock[0]
+  const detail = toRpstrDetail(item, deptNm)
+
+  const idx = mock.findIndex((x) => x.contsNo === item.contsNo)
+  const goDetail = (target: RpstrListItem) => navigate(`${base}/${target.contsNo}`, { state: target })
+  const prevItem = idx > 0 ? mock[idx - 1] : null
+  const nextItem = idx >= 0 && idx < mock.length - 1 ? mock[idx + 1] : null
+
+  const files: FileDownloadItem[] = detail.files.map((f) => ({
+    id: f.fileSn,
+    name: f.fileName,
+    size: f.fileSize,
+    onDownload: () => console.log('[RpstrDtl] 첨부 다운로드', f.fileSn),
+  }))
+
+  return (
+    <BoardDetailView
+      badges={
+        <Badge type="pastel" color="blue">
+          {item.bizFldCd}
+        </Badge>
+      }
+      title={detail.rpstrTtl}
+      date={item.regDt}
+      metaRows={[
+        { label: '작성자', value: detail.wrtrNm },
+        { label: '담당부서', value: detail.deptNm },
+        { label: '구분', value: detail.bizFldCd },
+      ]}
+      content={detail.contsCn}
+      files={files}
+      prev={prevItem ? { title: prevItem.rpstrTtl, onClick: () => goDetail(prevItem) } : null}
+      next={nextItem ? { title: nextItem.rpstrTtl, onClick: () => goDetail(nextItem) } : null}
+    />
+  )
+}
+RpstrDtlView.displayName = 'RpstrDtlView'

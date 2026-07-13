@@ -225,6 +225,53 @@ const NotiPrstPage = lazy(() =>
 const SupportPage = lazy(() =>
   import('@/ui/biz/cm/support/SupportPage').then((m) => ({ default: m.SupportPage })),
 )
+// 고객센터 게시판 목록(MUI-CM-04) — 공지사항(일반/방위사업청/수요부대별) · 자료실(일반/수요부대별/계약관련서식) · 시스템개선안내.
+const NoticeListPage = lazy(() =>
+  import('@/ui/biz/cm/noticeList/NoticeListPage').then((m) => ({ default: m.NoticeListPage })),
+)
+const NoticeDtlPage = lazy(() =>
+  import('@/ui/biz/cm/noticeDtl/NoticeDtlPage').then((m) => ({ default: m.NoticeDtlPage })),
+)
+const D2bNoticeDtlPage = lazy(() =>
+  import('@/ui/biz/cm/noticeDtl/D2b_NoticeDtlPage').then((m) => ({ default: m.D2b_NoticeDtlPage })),
+)
+const DmdfrcNoticeDtlPage = lazy(() =>
+  import('@/ui/biz/cm/noticeDtl/Dmdfrc_NoticeDtlPage').then((m) => ({
+    default: m.Dmdfrc_NoticeDtlPage,
+  })),
+)
+const RpstrDtlPage = lazy(() =>
+  import('@/ui/biz/cm/rpstrDtl/RpstrDtl').then((m) => ({ default: m.RpstrDtl })),
+)
+const DmdfrcRpstrDtlPage = lazy(() =>
+  import('@/ui/biz/cm/rpstrDtl/Dmdfrc_rpstrDtl').then((m) => ({ default: m.Dmdfrc_rpstrDtl })),
+)
+const CtrtRpstrDtlPage = lazy(() =>
+  import('@/ui/biz/cm/rpstrDtl/Ctrt_rpstrDtl').then((m) => ({ default: m.Ctrt_rpstrDtl })),
+)
+const SysImpvRpstrDtlPage = lazy(() =>
+  import('@/ui/biz/cm/rpstrDtl/SysImpv_rpstrDtl').then((m) => ({ default: m.SysImpv_rpstrDtl })),
+)
+const D2bNoticeListPage = lazy(() =>
+  import('@/ui/biz/cm/noticeList/D2b_NoticeListPage').then((m) => ({ default: m.D2b_NoticeListPage })),
+)
+const DmdfrcNoticeListPage = lazy(() =>
+  import('@/ui/biz/cm/noticeList/Dmdfrc_NoticeListPage').then((m) => ({
+    default: m.Dmdfrc_NoticeListPage,
+  })),
+)
+const RpstrListPage = lazy(() =>
+  import('@/ui/biz/cm/rpstrList/RpstrList').then((m) => ({ default: m.RpstrList })),
+)
+const DmdfrcRpstrListPage = lazy(() =>
+  import('@/ui/biz/cm/rpstrList/Dmdfrc_rpstrList').then((m) => ({ default: m.Dmdfrc_rpstrList })),
+)
+const CtrtRpstrListPage = lazy(() =>
+  import('@/ui/biz/cm/rpstrList/Ctrt_rpstrList').then((m) => ({ default: m.Ctrt_rpstrList })),
+)
+const SysImpvRpstrListPage = lazy(() =>
+  import('@/ui/biz/cm/rpstrList/SysImpv_rpstrList').then((m) => ({ default: m.SysImpv_rpstrList })),
+)
 // 연관 진행 목록(설계서 미정의 — 진행현황 시트 세부단계 클릭 진입, /anl-prgrs) — biz/cm/anlPrgrsList.
 const AnlPrgrsListPage = lazy(() =>
   import('@/ui/biz/cm/anlPrgrsList/AnlPrgrsListPage').then((m) => ({
@@ -474,6 +521,129 @@ export const router = createBrowserRouter([
         },
       },
       { path: 'support', element: <SupportPage />, handle: { showBottomNav: true } },
+      {
+        // 일반공지사항(공지사항 목록) — 전체메뉴 고객센터 > 일반공지사항 진입(MUI-CM-04-M01)
+        path: 'support/notice',
+        element: <NoticeListPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.SUPPORT_NOTICE] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 일반공지사항 상세 — 목록 카드 클릭 진입(MUI-CM-04-M02). 정적 dapa/dmdfrc 목록이 우선 매칭됨.
+        path: 'support/notice/:contsNo',
+        element: <NoticeDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '공지사항 상세' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 방위사업청공지사항 (MUI-CM-04-M21)
+        path: 'support/notice/dapa',
+        element: <D2bNoticeListPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.SUPPORT_NOTICE_DAPA] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 수요부대별공지사항 (MUI-CM-04-M23)
+        path: 'support/notice/dmdfrc',
+        element: <DmdfrcNoticeListPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.SUPPORT_NOTICE_DMDFRC] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 일반자료실 (MUI-CM-04-M25)
+        path: 'support/archive',
+        element: <RpstrListPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.SUPPORT_ARCHIVE] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 수요부대별자료실 (MUI-CM-04-M27)
+        path: 'support/archive/dmdfrc',
+        element: <DmdfrcRpstrListPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.SUPPORT_ARCHIVE_DMDFRC] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 계약관련서식자료실 (MUI-CM-04-M29)
+        path: 'support/archive/ctrt',
+        element: <CtrtRpstrListPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.SUPPORT_ARCHIVE_CTRT] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 시스템개선안내 (MUI-CM-04-M31)
+        path: 'support/sys-impv',
+        element: <SysImpvRpstrListPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.SUPPORT_SYS_IMPV] },
+          scrollReset: true,
+        },
+      },
+      // 게시판 상세 — 목록 카드 클릭 진입. 정적 목록경로(dapa/dmdfrc/ctrt 등)가 RRv6 랭킹으로 우선 매칭됨.
+      {
+        // 방위사업청공지사항 상세 (MUI-CM-04-M22)
+        path: 'support/notice/dapa/:contsNo',
+        element: <D2bNoticeDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '방위사업청 공지사항 상세' }, scrollReset: true },
+      },
+      {
+        // 수요부대별공지사항 상세 (MUI-CM-04-M24)
+        path: 'support/notice/dmdfrc/:contsNo',
+        element: <DmdfrcNoticeDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '수요부대별 공지사항 상세' }, scrollReset: true },
+      },
+      {
+        // 일반자료실 상세 (MUI-CM-04-M26)
+        path: 'support/archive/:contsNo',
+        element: <RpstrDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '자료실 상세' }, scrollReset: true },
+      },
+      {
+        // 수요부대별자료실 상세 (MUI-CM-04-M28)
+        path: 'support/archive/dmdfrc/:contsNo',
+        element: <DmdfrcRpstrDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '자료실 상세' }, scrollReset: true },
+      },
+      {
+        // 계약관련서식자료실 상세 (MUI-CM-04-M30)
+        path: 'support/archive/ctrt/:contsNo',
+        element: <CtrtRpstrDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '자료실 상세' }, scrollReset: true },
+      },
+      {
+        // 시스템개선안내 상세 (MUI-CM-04-M32)
+        path: 'support/sys-impv/:contsNo',
+        element: <SysImpvRpstrDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '시스템개선안내 상세' }, scrollReset: true },
+      },
       { path: 'mypage', element: <MyPage />, handle: { showBottomNav: true } },
       // 매칭 안 되는 경로 → 404 (errorElement 가 isRouteErrorResponse 404 로 렌더)
       { path: '*', element: <ErrorPage /> },
