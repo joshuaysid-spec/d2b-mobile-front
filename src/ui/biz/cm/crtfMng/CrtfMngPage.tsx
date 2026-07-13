@@ -9,15 +9,11 @@ import { Button } from '@/ui/common/base/Button'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { Toast } from '@/ui/common/composites/Toast'
+import { CertCard } from '@/ui/biz/cm/crtfMng/CertCard'
+import { MOCK_CERTS } from '@/ui/biz/cm/crtfMng/certMock'
 import { CrtfDelPage } from '@/ui/biz/cm/crtfDel/CrtfDelPage'
 import type { CertItem } from '@/types/cert'
 
-// 보유 인증서 목업 — 추후 스마트PKI 솔루션 연동.
-const MOCK_CERTS: CertItem[] = [
-  { id: '1', issuer: '한국정보인증', certNm: '인증서 타이틀명 1', validUntil: '2026-07-11' },
-  { id: '2', issuer: '한국정보인증', certNm: '인증서 타이틀명 2', validUntil: '2026-07-11' },
-  { id: '3', issuer: '코스콤', certNm: '인증서 타이틀명 3', validUntil: '2026-07-11' },
-]
 // 데모용 비밀번호 — 실제 검증은 스마트PKI 솔루션.
 const MOCK_PASSWORD = '1234'
 
@@ -66,25 +62,15 @@ export function CrtfMngPage() {
         </p>
       ) : (
         certs.map((c) => (
-          <div
+          <CertCard
             key={c.id}
-            className="flex flex-col gap-4 rounded-[12px] border border-krds-border-divider bg-background p-4 shadow-krds-card"
-          >
-            <div className="flex flex-col gap-0.5">
-              <span className="text-[17px] font-medium leading-normal text-krds-text-ink">
-                {c.issuer}
-              </span>
-              <span className="text-[19px] font-bold leading-normal text-krds-text-ink">
-                {c.certNm}
-              </span>
-              <span className="text-[17px] leading-normal text-krds-text-muted">
-                {c.validUntil}까지 유효함
-              </span>
-            </div>
-            <Button variant="secondary" className="w-full" onClick={() => setTarget(c)}>
-              인증서 삭제
-            </Button>
-          </div>
+            cert={c}
+            footer={
+              <Button variant="secondary" className="w-full" onClick={() => setTarget(c)}>
+                인증서 삭제
+              </Button>
+            }
+          />
         ))
       )}
 

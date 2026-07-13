@@ -4,6 +4,7 @@
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { InputMessage } from '@/ui/common/base/InputMessage'
+import { CertCard } from '@/ui/biz/cm/crtfMng/CertCard'
 import type { CertItem } from '@/types/cert'
 
 export interface CrtfDelPageProps {
@@ -27,17 +28,7 @@ export function CrtfDelPage({ cert, password, onPasswordChange, errorMessage }: 
       {/* 선택된 인증서 */}
       <div className="flex flex-col gap-krds-5">
         <span className="text-[17px] font-bold leading-normal text-krds-text-ink">선택된 인증서</span>
-        <div className="flex flex-col gap-0.5 rounded-[12px] border border-krds-border-divider bg-background p-4">
-          <span className="text-[17px] font-medium leading-normal text-krds-text-ink">
-            {cert.issuer}
-          </span>
-          <span className="text-[19px] font-bold leading-normal text-krds-text-ink">
-            {cert.certNm}
-          </span>
-          <span className="text-[17px] leading-normal text-krds-text-muted">
-            {cert.validUntil}까지 유효함
-          </span>
-        </div>
+        <CertCard cert={cert} />
       </div>
 
       {/* 인증서 비밀번호 — Label + Input + Message(error) 결합 폼 필드 */}

@@ -191,6 +191,8 @@ const MENU_ROUTES: Record<string, string> = {
   'support-improve': ROUTES.SUPPORT_SYS_IMPV, // 시스템개선안내(M31)
   'support-faq': ROUTES.SUPPORT_FAQ, // 자주묻는질문(M03)
   'cert-manage': ROUTES.CERT_CRTF_MNG, // 인증서 관리(MUI-CM-04-M14)
+  'cert-import': ROUTES.CERT_CRTF_RECEIVE, // 인증서 가져오기(MUI-CM-04-M16)
+  'cert-export': ROUTES.CERT_CRTF_SEND, // 인증서 내보내기(MUI-CM-04-M17)
 }
 
 function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: MenuPageProps) {

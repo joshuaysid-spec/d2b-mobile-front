@@ -284,6 +284,14 @@ const CertMngPage = lazy(() =>
 const CrtfMngPage = lazy(() =>
   import('@/ui/biz/cm/crtfMng/CrtfMngPage').then((m) => ({ default: m.CrtfMngPage })),
 )
+// 인증서 가져오기(MUI-CM-04-M16, /cert/receive) — biz/cm/crtfReceive.
+const CrtfReceivePage = lazy(() =>
+  import('@/ui/biz/cm/crtfReceive/CrtfReceivePage').then((m) => ({ default: m.CrtfReceivePage })),
+)
+// 인증서 내보내기(MUI-CM-04-M17, /cert/send) — biz/cm/crtfSend.
+const CrtfSendPage = lazy(() =>
+  import('@/ui/biz/cm/crtfSend/CrtfSendPage').then((m) => ({ default: m.CrtfSendPage })),
+)
 // 연관 진행 목록(설계서 미정의 — 진행현황 시트 세부단계 클릭 진입, /anl-prgrs) — biz/cm/anlPrgrsList.
 const AnlPrgrsListPage = lazy(() =>
   import('@/ui/biz/cm/anlPrgrsList/AnlPrgrsListPage').then((m) => ({
@@ -640,6 +648,26 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: '인증서 관리' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 인증서 가져오기 (MUI-CM-04-M16) — 인증센터/전체메뉴 > 인증서 가져오기
+        path: 'cert/receive',
+        element: <CrtfReceivePage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '인증서 가져오기' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 인증서 내보내기 (MUI-CM-04-M17) — 인증센터/전체메뉴 > 인증서 내보내기
+        path: 'cert/send',
+        element: <CrtfSendPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '인증서 내보내기' },
           scrollReset: true,
         },
       },

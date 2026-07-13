@@ -29,13 +29,13 @@ export function CertMngPage() {
       id: 'crtfReceive',
       label: '인증서 가져오기',
       icon: 'Download',
-      onClick: () => console.log('[CertMng] 인증서 가져오기'), // 추후 라우팅: MUI-CM-04-M16
+      onClick: () => navigate(ROUTES.CERT_CRTF_RECEIVE), // 인증서 가져오기(MUI-CM-04-M16)
     },
     {
       id: 'crtfSend',
       label: '인증서 내보내기',
       icon: 'Upload',
-      onClick: () => console.log('[CertMng] 인증서 내보내기'), // 추후 라우팅: MUI-CM-04-M17
+      onClick: () => navigate(ROUTES.CERT_CRTF_SEND), // 인증서 내보내기(MUI-CM-04-M17)
     },
     {
       id: 'bio',

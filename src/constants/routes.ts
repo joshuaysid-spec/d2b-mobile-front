@@ -58,6 +58,10 @@ export const ROUTES = {
   CERT: '/cert',
   /** 인증서 관리 (MUI-CM-04-M14). 인증센터 > 인증서 관리 진입. */
   CERT_CRTF_MNG: '/cert/manage',
+  /** 인증서 가져오기 (MUI-CM-04-M16). */
+  CERT_CRTF_RECEIVE: '/cert/receive',
+  /** 인증서 내보내기 (MUI-CM-04-M17). */
+  CERT_CRTF_SEND: '/cert/send',
   MYPAGE: '/mypage',
   /** 개발자용 컴포넌트 가이드 (PC 해상도, 모바일 셸 미적용). */
   GUIDE: '/guide',
