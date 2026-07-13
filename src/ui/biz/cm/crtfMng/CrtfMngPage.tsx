@@ -21,7 +21,6 @@ export function CrtfMngPage() {
   const [certs, setCerts] = useState<CertItem[]>(MOCK_CERTS)
   const [target, setTarget] = useState<CertItem | null>(null) // 삭제 대상(=BottomSheet 열림)
   const [password, setPassword] = useState('')
-  const [pwError, setPwError] = useState('') // 비밀번호 필드 에러 메시지(미입력 등)
   const [toast, setToast] = useState<{ open: boolean; message: string }>({
     open: false,
     message: '',
@@ -30,17 +29,12 @@ export function CrtfMngPage() {
   const closeSheet = () => {
     setTarget(null)
     setPassword('')
-    setPwError('')
-  }
-  const handlePasswordChange = (v: string) => {
-    setPassword(v)
-    if (pwError) setPwError('') // 입력 시작하면 에러 해제
   }
   const handleDelete = () => {
     if (!target) return
-    // 비밀번호 미입력 → 필드 에러 표시(토스트 아님).
+    // 비밀번호 미입력 → 토스트 안내.
     if (password.trim() === '') {
-      setPwError('인증서 비밀번호를 입력해주세요.')
+      setToast({ open: true, message: '인증서 비밀번호를 입력해주세요.' })
       return
     }
     // 추후: 스마트PKI 솔루션으로 비밀번호 검증. 데모는 고정값 비교.
@@ -92,12 +86,7 @@ export function CrtfMngPage() {
         }
       >
         {target && (
-          <CrtfDelPage
-            cert={target}
-            password={password}
-            onPasswordChange={handlePasswordChange}
-            errorMessage={pwError || undefined}
-          />
+          <CrtfDelPage cert={target} password={password} onPasswordChange={setPassword} />
         )}
       </BottomSheet>
 

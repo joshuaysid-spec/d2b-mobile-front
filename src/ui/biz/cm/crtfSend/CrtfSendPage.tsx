@@ -3,6 +3,8 @@
 //   (인증서 선택 시 인증서 비밀번호 확인 P18 은 이번 범위 밖 — 선택 → 바로 ② 표시. 클릭으로 재선택)
 import { useState } from 'react'
 
+import { Button } from '@/ui/common/base/Button'
+import { Toast } from '@/ui/common/composites/Toast'
 import { CertCard } from '@/ui/biz/cm/crtfMng/CertCard'
 import { CertInfoBox } from '@/ui/biz/cm/crtfMng/CertInfoBox'
 import { MOCK_CERTS } from '@/ui/biz/cm/crtfMng/certMock'
@@ -17,6 +19,19 @@ const GUIDE = [
 
 export function CrtfSendPage() {
   const [selected, setSelected] = useState<CertItem | null>(null)
+  const [copyToastOpen, setCopyToastOpen] = useState(false)
+
+  // 인증번호(12자리) 클립보드 복사 + 토스트.
+  const handleCopy = async () => {
+    const code = AUTH_BLOCKS.join('')
+    try {
+      await navigator.clipboard.writeText(code)
+    } catch {
+      // 클립보드 API 미지원/거부 시에도 안내는 노출(WebView 환경 대응).
+    }
+    setCopyToastOpen(true)
+    console.log('[CrtfSend] 인증번호 복사', code)
+  }
 
   // ① 인증서 선택(목록)
   if (!selected) {
@@ -64,10 +79,18 @@ export function CrtfSendPage() {
               </div>
             ))}
           </div>
+          {/* 인증번호 복사하기 — 클립보드 복사 + 토스트 안내 */}
+          <Button variant="primary" className="w-full" onClick={handleCopy}>
+            인증번호 복사하기
+          </Button>
         </div>
       </div>
 
       <CertInfoBox items={GUIDE} />
+
+      <Toast open={copyToastOpen} onClose={() => setCopyToastOpen(false)} duration={2000}>
+        인증번호가 복사되었습니다.
+      </Toast>
     </div>
   )
 }

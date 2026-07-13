@@ -7,7 +7,6 @@ import { useState } from 'react'
 import { Button } from '@/ui/common/base/Button'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
-import { InputMessage } from '@/ui/common/base/InputMessage'
 import { Toast } from '@/ui/common/composites/Toast'
 import { CertInfoBox } from '@/ui/biz/cm/crtfMng/CertInfoBox'
 
@@ -20,7 +19,6 @@ const GUIDE = [
 
 export function CrtfReceivePage() {
   const [blocks, setBlocks] = useState(['', '', '']) // 4자리 × 3
-  const [error, setError] = useState('') // 인증번호 필드 에러 메시지
   const [toast, setToast] = useState<{ open: boolean; message: string }>({
     open: false,
     message: '',
@@ -29,12 +27,11 @@ export function CrtfReceivePage() {
 
   const setBlock = (i: number, v: string) => {
     setBlocks((prev) => prev.map((b, idx) => (idx === i ? v : b)))
-    if (error) setError('') // 입력 시작하면 에러 해제
   }
   const handleImport = () => {
-    // 미입력 → 필드 에러(토스트 아님).
+    // 미입력 → 토스트 안내.
     if (code.trim() === '') {
-      setError('인증번호를 입력해주세요.')
+      setToast({ open: true, message: '인증번호를 입력해주세요.' })
       return
     }
     if (code !== MOCK_AUTH_CODE) {
@@ -59,14 +56,12 @@ export function CrtfReceivePage() {
               value={b}
               placeholder="0000"
               onChange={(e) => setBlock(i, e.target.value)}
-              error={Boolean(error)}
-              className="min-w-px flex-1 text-center"
+              className="min-w-px flex-1"
+              style={{ textAlign: 'center' }}
               aria-label={`인증번호 ${i + 1}번째 4자리`}
-              aria-invalid={Boolean(error)}
             />
           ))}
         </div>
-        {error && <InputMessage type="error">{error}</InputMessage>}
       </div>
 
       {/* 안내 */}
