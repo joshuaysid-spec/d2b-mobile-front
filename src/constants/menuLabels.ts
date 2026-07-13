@@ -20,4 +20,5 @@ export const LINKED_MENU_LABELS = {
   [ROUTES.SUPPORT_ARCHIVE_DMDFRC]: '수요부대별자료실',
   [ROUTES.SUPPORT_ARCHIVE_CTRT]: '계약관련서식자료실',
   [ROUTES.SUPPORT_SYS_IMPV]: '시스템개선안내',
+  [ROUTES.SUPPORT_FAQ]: '자주묻는 질문',
 } as const

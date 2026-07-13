@@ -272,6 +272,10 @@ const CtrtRpstrListPage = lazy(() =>
 const SysImpvRpstrListPage = lazy(() =>
   import('@/ui/biz/cm/rpstrList/SysImpv_rpstrList').then((m) => ({ default: m.SysImpv_rpstrList })),
 )
+// 자주묻는질문(FAQ, MUI-CM-04-M03, /support/faq) — biz/cm/faqList.
+const FaqListPage = lazy(() =>
+  import('@/ui/biz/cm/faqList/FaqListPage').then((m) => ({ default: m.FaqListPage })),
+)
 // 연관 진행 목록(설계서 미정의 — 진행현황 시트 세부단계 클릭 진입, /anl-prgrs) — biz/cm/anlPrgrsList.
 const AnlPrgrsListPage = lazy(() =>
   import('@/ui/biz/cm/anlPrgrsList/AnlPrgrsListPage').then((m) => ({
@@ -598,6 +602,16 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.SUPPORT_SYS_IMPV] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 자주묻는질문 (MUI-CM-04-M03) — 전체메뉴 고객센터 > 자주묻는 질문 진입
+        path: 'support/faq',
+        element: <FaqListPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.SUPPORT_FAQ] },
           scrollReset: true,
         },
       },

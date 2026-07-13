@@ -52,6 +52,8 @@ export const ROUTES = {
   SUPPORT_SYS_IMPV: '/support/sys-impv',
   /** 시스템개선안내 상세 (MUI-CM-04-M32, `:contsNo`). */
   SUPPORT_SYS_IMPV_DETAIL: '/support/sys-impv/:contsNo',
+  /** 자주묻는질문 (MUI-CM-04-M03). */
+  SUPPORT_FAQ: '/support/faq',
   MYPAGE: '/mypage',
   /** 개발자용 컴포넌트 가이드 (PC 해상도, 모바일 셸 미적용). */
   GUIDE: '/guide',

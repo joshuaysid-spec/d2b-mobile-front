@@ -106,7 +106,7 @@ const MENU_TREE: MenuNode[] = [
       { id: 'support-archive-unit', label: LINKED_MENU_LABELS[ROUTES.SUPPORT_ARCHIVE_DMDFRC] },
       { id: 'support-archive-form', label: LINKED_MENU_LABELS[ROUTES.SUPPORT_ARCHIVE_CTRT] },
       { id: 'support-improve', label: LINKED_MENU_LABELS[ROUTES.SUPPORT_SYS_IMPV] },
-      { id: 'support-faq', label: '자주묻는질문' },
+      { id: 'support-faq', label: LINKED_MENU_LABELS[ROUTES.SUPPORT_FAQ] },
       { id: 'support-civil-doc', label: '민원서류발급신청' },
       { id: 'support-law', label: '법령조회' },
     ],
@@ -189,6 +189,7 @@ const MENU_ROUTES: Record<string, string> = {
   'support-archive-unit': ROUTES.SUPPORT_ARCHIVE_DMDFRC, // 수요부대별자료실(M27)
   'support-archive-form': ROUTES.SUPPORT_ARCHIVE_CTRT, // 계약관련서식자료실(M29)
   'support-improve': ROUTES.SUPPORT_SYS_IMPV, // 시스템개선안내(M31)
+  'support-faq': ROUTES.SUPPORT_FAQ, // 자주묻는질문(M03)
 }
 
 function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: MenuPageProps) {
