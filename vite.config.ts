@@ -48,6 +48,11 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
+    watch: {
+      // docs/ 는 소스가 아니라 HMR 대상이 아니다. 특히 docs/spec 의 pptx 설계서가
+      // PowerPoint 등으로 열려 잠기면(EBUSY) Vite 워처가 크래시(exit 1)하므로 감시 제외.
+      ignored: ['**/docs/**'],
+    },
   },
   build: {
     rollupOptions: {
