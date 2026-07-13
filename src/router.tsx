@@ -5,6 +5,7 @@ import { AppLayout } from '@/ui/common/layout/AppLayout'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { ErrorPage } from '@/ui/biz/cm/error/ErrorPage'
 import { ROUTES } from '@/constants/routes'
+import { LINKED_MENU_LABELS } from '@/constants/menuLabels'
 
 // frontend-architecture.md §5 — 라우트 정의 단일 파일
 // 모든 페이지는 React.lazy 로 코드 스플리팅 — 첫 진입 시 해당 페이지 chunk 만 다운로드.
@@ -255,7 +256,7 @@ export const router = createBrowserRouter([
         element: <PrcmPlanIntgListPage />,
         // 목록 → 상세 → 뒤로 시 스크롤 복원 대신 항상 맨 위(scrollReset).
         handle: {
-          header: { variant: 'sub', title: '조달계획' },
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.OP] },
           scrollReset: true,
           showBottomNav: true,
         },
@@ -264,7 +265,7 @@ export const router = createBrowserRouter([
         path: 'bd',
         element: <BidPbancIntgListPage />,
         handle: {
-          header: { variant: 'sub', title: '입찰공고' },
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.BD] },
           scrollReset: true,
           showBottomNav: true,
         },
@@ -273,14 +274,14 @@ export const router = createBrowserRouter([
         path: 'bd/opbid',
         element: <BdopnListPage />,
         handle: {
-          header: { variant: 'sub', title: '개찰목록' },
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.BD_OPBID] },
         },
       },
       {
         path: 'bd/prgrs',
         element: <BidPrgrsListForBzentyPage />,
         handle: {
-          header: { variant: 'sub', title: '입찰진행' },
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.BD_PRGRS] },
           scrollReset: true,
           showBottomNav: true,
         },

@@ -9,6 +9,7 @@ import { useCallback, useMemo, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
+import { LINKED_MENU_LABELS } from '@/constants/menuLabels'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { Button } from '@/ui/common/base/Button'
@@ -43,90 +44,86 @@ interface MenuNode {
 }
 
 const MENU_TREE: MenuNode[] = [
-  { id: 'op', label: '조달계획', children: [{ id: 'op-plan', label: '조달계획관리' }] },
+  // 조달·입찰 — 라우팅 연결됨(MENU_ROUTES). 링크된 leaf 의 라벨은 LINKED_MENU_LABELS(단일
+  // 진실원천)에서 가져온다 → 여기 메뉴명을 바꾸면 연결 페이지 헤더 타이틀도 같이 바뀐다.
+  { id: 'op', label: '조달', children: [{ id: 'op-plan', label: LINKED_MENU_LABELS[ROUTES.OP] }] },
   {
     id: 'bd',
     label: '입찰',
     children: [
-      { id: 'bd-noti', label: '입찰공고' },
-      { id: 'bd-proc', label: '입찰진행' },
-      { id: 'bd-open', label: '개찰' },
+      { id: 'bd-noti', label: LINKED_MENU_LABELS[ROUTES.BD] },
+      { id: 'bd-proc', label: LINKED_MENU_LABELS[ROUTES.BD_PRGRS] },
+      { id: 'bd-open', label: LINKED_MENU_LABELS[ROUTES.BD_OPBID] },
     ],
   },
+  // 이하 — 사이트맵(260713) 이미지 구조로 교체(미연결, 라우팅 추후).
   {
     id: 'ct',
     label: '계약',
     children: [
-      {
-        id: 'ct-econtract',
-        label: '전자계약',
-        // 3depth(Figma 9623-17698) — 전자계약 하위 불릿 메뉴.
-        children: [
-          { id: 'ct-econtract-list', label: '계약통합목록' },
-          { id: 'ct-econtract-cancel', label: '해지/해제 목록' },
-        ],
-      },
+      { id: 'ct-list', label: '계약통합목록' },
+      { id: 'ct-payment', label: '대금지불정보목록' },
+      { id: 'ct-cancel', label: '해지/해제목록' },
     ],
   },
-  { id: 'ex', label: '이행', children: [{ id: 'ex-inspect', label: '검사 및 납품조서' }] },
-  { id: 'wm', label: '대금·사후', children: [{ id: 'wm-claim', label: '대금청구' }] },
+  {
+    id: 'ex',
+    label: '이행',
+    children: [
+      { id: 'ex-inspect-list', label: '검사통합목록' },
+      { id: 'ex-inspect-report', label: '검사및납품조서현황목록' },
+      { id: 'ex-quote-req', label: '견적의뢰서목록' },
+      { id: 'ex-quote-noti', label: '견적통보서목록' },
+      { id: 'ex-order-req', label: '발주의뢰서목록' },
+      { id: 'ex-order-noti', label: '발주통보서목록' },
+    ],
+  },
+  {
+    id: 'wm',
+    label: '대금청구 및 사후',
+    children: [
+      { id: 'wm-claim-list', label: '대금청구통합목록' },
+      { id: 'wm-payment-return', label: '대금지불정보(반납)' },
+      { id: 'wm-claim-progress', label: '대금청구진행현황' },
+    ],
+  },
   {
     id: 'ts',
     label: '업무지원',
     children: [
       { id: 'ts-intent', label: '사전의향서' },
-      { id: 'ts-eligibility', label: '물품적격심사' },
-      { id: 'ts-defect', label: '하자관리' },
-      { id: 'ts-gov-asset', label: '관급자산관리' },
       { id: 'ts-tax-invoice', label: '세금계산서' },
-      { id: 'ts-subcontract', label: '하도급관리' },
-      { id: 'ts-eguarantee', label: '전자보증' },
-      { id: 'ts-guarantee-use', label: '보증사용현황' },
-      { id: 'ts-biz-stat', label: '사업구조통계' },
-      { id: 'ts-localization', label: '국산화·개발품목조회' },
-      { id: 'ts-mock-review', label: '모의심사' },
     ],
   },
   {
     id: 'support',
     label: '고객센터',
     children: [
-      { id: 'support-notice', label: '공지사항' },
-      { id: 'support-archive', label: '자료실' },
-      { id: 'support-faq', label: '자주묻는 질문' },
-      { id: 'support-civil-doc', label: '민원서류 발급신청' },
+      { id: 'support-notice-general', label: '일반공지사항' },
+      { id: 'support-notice-dapa', label: '방위사업청공지사항' },
+      { id: 'support-notice-unit', label: '수요부대별공지사항' },
+      { id: 'support-archive-general', label: '일반자료실' },
+      { id: 'support-archive-unit', label: '수요부대별자료실' },
+      { id: 'support-archive-form', label: '계약관련서식자료실' },
+      { id: 'support-improve', label: '시스템개선안내' },
+      { id: 'support-faq', label: '자주묻는질문' },
+      { id: 'support-civil-doc', label: '민원서류발급신청' },
       { id: 'support-law', label: '법령조회' },
-      { id: 'support-epeople', label: '국민신문고' },
-      { id: 'support-survey', label: '설문조사' },
-    ],
-  },
-  {
-    id: 'mypage',
-    label: '마이페이지',
-    children: [
-      { id: 'my-progress', label: '나의진행업무현황' },
-      { id: 'my-history', label: '나의업무이력현황' },
-      { id: 'my-posts', label: '나의 게시물' },
-      { id: 'my-interest-noti', label: '관심입찰공고' },
-      { id: 'my-calendar', label: '업무캘린더' },
-      { id: 'my-docbox', label: '문서함' },
-      { id: 'my-notification', label: '알림현황' },
-      { id: 'my-interest-law', label: '관심법령' },
-      { id: 'my-cabinet', label: '디지털캐비닛' },
     ],
   },
   {
     id: 'cert',
     label: '인증센터',
     children: [
-      { id: 'cert-manage', label: '인증서 관리' },
-      { id: 'cert-import', label: '인증서 가져오기' },
-      { id: 'cert-export', label: '인증서 내보내기' },
+      { id: 'cert-manage', label: '인증서관리' },
+      { id: 'cert-import', label: '인증서가져오기' },
+      { id: 'cert-export', label: '인증서내보내기' },
+      { id: 'cert-bio', label: '생체인증' },
     ],
   },
   {
     id: 'intro',
-    label: '국방전자조달 소개',
+    label: '국방전자조달소개',
     children: [
       { id: 'intro-system', label: '시스템소개' },
       { id: 'intro-feature', label: '주요특징' },
@@ -145,25 +142,7 @@ const MENU_TREE: MenuNode[] = [
       { id: 'guide-foreign', label: '국외조달안내' },
       { id: 'guide-related-site', label: '관련사이트' },
       { id: 'guide-glossary', label: '용어사전' },
-    ],
-  },
-  {
-    id: 'settings',
-    label: '설정',
-    children: [
-      { id: 'set-push', label: '앱 푸시 알림' },
-      { id: 'set-permission-list', label: '앱 권한 내역' },
-      { id: 'set-permission-manage', label: '앱 권한 관리' },
-      { id: 'set-cache', label: '앱 캐시 삭제' },
-      { id: 'set-version', label: '앱 버전 정보' },
-    ],
-  },
-  {
-    id: 'terms',
-    label: '약관',
-    children: [
-      { id: 'terms-privacy', label: '개인정보처리방침' },
-      { id: 'terms-copyright', label: '저작권 정책' },
+      { id: 'guide-app', label: '앱이용안내' },
     ],
   },
 ]
