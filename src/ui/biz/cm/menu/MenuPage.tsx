@@ -217,8 +217,8 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
       label: '마이페이지',
       icon: <Icon name="LocationAway" size={24} aria-hidden />,
       onClick: () => {
-        console.log('[menu] 마이페이지')
-        // 추후 라우팅: navigate(ROUTES.MYPAGE)
+        onOpenChange(false) // 전체메뉴 닫고 이동
+        navigate(ROUTES.MYPAGE) // 마이페이지(MUI-CM-06-M01)
       },
     },
     {

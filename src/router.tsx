@@ -425,7 +425,7 @@ const AnlPrgrsListPage = lazy(() =>
     default: m.AnlPrgrsListPage,
   })),
 )
-const MyPage = lazy(() => import('@/ui/biz/cm/mypage/MyPage').then((m) => ({ default: m.MyPage })))
+const MyPage = lazy(() => import('@/ui/biz/cm/myPage/MyPage').then((m) => ({ default: m.MyPage })))
 const ComponentGuidePage = lazy(() =>
   import('@/ui/dev/ComponentGuidePage').then((m) => ({
     default: m.ComponentGuidePage,
@@ -921,7 +921,13 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '시스템개선안내 상세' }, scrollReset: true },
       },
-      { path: 'mypage', element: <MyPage />, handle: { showBottomNav: true } },
+      // 마이페이지(MUI-CM-06-M01) — 셸 안 + sub헤더(뒤로+타이틀) + 하단 BottomNav 탭.
+      {
+        path: 'mypage',
+        element: <MyPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '마이페이지' }, showBottomNav: true, scrollReset: true },
+      },
       // 로그인 방식선택(MUI-CM-03-M01) — 셸 안 + sub헤더(뒤로+타이틀). 헤더는 AppLayout 소유.
       {
         path: 'login',
