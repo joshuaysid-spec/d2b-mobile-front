@@ -78,6 +78,8 @@ export const ROUTES = {
   GUIDE_DOMESTIC: '/guide/domestic01',
   /** 국외조달원 등록절차 (MUI-CM-05-M12). 이용안내 > 국외조달안내 > 국외조달원 등록절차. */
   GUIDE_FOREIGN: '/guide/foreign01',
+  /** 관련사이트 (MUI-CM-05-M15). 이용안내 > 관련사이트. */
+  GUIDE_SITE: '/guide/site',
   MYPAGE: '/mypage',
   /** 앱 실행 스플래시 (MUI-MS-01-M01). 셸(AppLayout) 밖 독립 풀스크린. */
   SPLASH: '/splash',
