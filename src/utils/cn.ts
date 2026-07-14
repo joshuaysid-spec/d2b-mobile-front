@@ -61,6 +61,8 @@ const KRDS_COLOR_NAMES = [
   'krds-bg-primary-faint',
   'krds-bg-blue-pastel',
   'krds-bg-divider',
+  'krds-bg-secondary',
+  'krds-bg-inverse',
   // text roles
   'krds-text-strong',
   'krds-text-muted',

@@ -17,6 +17,7 @@ import { Empty } from '@/ui/common/feedback/Empty'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
 import { TagList } from '@/ui/common/composites/TagList'
+import { IntgSrch_Rslt } from './IntgSrch_Rslt'
 import { cn } from '@/utils/cn'
 
 export interface IntgSrchPageProps {
@@ -132,6 +133,9 @@ function SectionHeading({
 
 function IntgSrchPage({ open, onOpenChange }: IntgSrchPageProps) {
   const [keyword, setKeyword] = useState('')
+  // 실행된 검색어 — 검색 버튼/Enter/자동완성 선택 시 확정. 이 값이 있고 현재 입력과 같으면
+  //   결과목록(MUI-MS-01-M10, IntgSrch_Rslt)을 본문에 렌더한다(검색어를 다시 고치면 자동완성으로 복귀).
+  const [executed, setExecuted] = useState<string | null>(null)
   const [recent, setRecent] = useState<RecentSearch[]>(RECENT_SEARCHES_SEED)
   const [autoComplete, setAutoComplete] = useState(true)
   // 자동완성 토글 라벨 연결용 id(접근성).
@@ -147,6 +151,8 @@ function IntgSrchPage({ open, onOpenChange }: IntgSrchPageProps) {
 
   const trimmed = keyword.trim()
   const isSearching = trimmed.length > 0
+  // 검색 실행 후 & 입력을 고치지 않았을 때만 결과목록 노출.
+  const showResults = executed !== null && executed === trimmed && isSearching
 
   // 자동완성 후보(검색어 포함 메뉴명, 최대 6) — 클라이언트 필터(목업).
   const suggestions = useMemo(
@@ -159,17 +165,21 @@ function IntgSrchPage({ open, onOpenChange }: IntgSrchPageProps) {
     [isSearching, trimmed],
   )
 
-  // 닫을 때 검색어 초기화(재진입 시 깨끗한 상태 + 진입 포커스).
+  // 닫을 때 검색어/결과 초기화(재진입 시 깨끗한 상태 + 진입 포커스).
   const handleOpenChange = (o: boolean) => {
-    if (!o) setKeyword('')
+    if (!o) {
+      setKeyword('')
+      setExecuted(null)
+    }
     onOpenChange(o)
   }
 
   const handleSearch = (kw?: string) => {
     const q = (kw ?? keyword).trim()
     if (!q) return
+    setExecuted(q) // 결과목록(IntgSrch_Rslt) 노출 트리거
     console.log('[intgSrch] 통합검색', q)
-    // 추후 API: cmService.searchAll(q) → navigate(통합검색 결과목록 MUI-MS-01-M10)
+    // 추후 API: cmService.searchAll(q) → 카테고리별 결과목록(MUI-MS-01-M10)
   }
 
   const handleRemoveRecent = (id: string | number) => {
@@ -224,7 +234,11 @@ function IntgSrchPage({ open, onOpenChange }: IntgSrchPageProps) {
         </div>
       </div>
 
-      {/* 본문 — 상태 분기 */}
+      {/* 본문 — 검색 실행 시 결과목록(M10), 그 외 검색 입력 상태 분기.
+          결과목록은 자체 섹션타이틀/카드가 full-bleed 라 px-8 패딩 컨테이너 밖에서 렌더. */}
+      {showResults ? (
+        <IntgSrch_Rslt keyword={executed} onNavigate={() => handleOpenChange(false)} />
+      ) : (
       <div className="flex flex-col gap-krds-9 px-krds-8 py-krds-8">
         {!isSearching ? (
           <>
@@ -338,6 +352,7 @@ function IntgSrchPage({ open, onOpenChange }: IntgSrchPageProps) {
           </>
         )}
       </div>
+      )}
     </FullPopup>
   )
 }

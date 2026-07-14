@@ -39,6 +39,8 @@
   --color-krds-bg-primary-strong: var(--krds-bg-primary-strong);
   --color-krds-bg-primary-subtle: var(--krds-bg-primary-subtle);
   --color-krds-bg-danger-subtle: var(--krds-bg-danger-subtle);
+  --color-krds-bg-secondary: var(--krds-bg-secondary);
+  --color-krds-bg-inverse: var(--krds-bg-inverse);
   --color-krds-text-strong: var(--krds-text-strong);
   --color-krds-text-muted: var(--krds-text-muted);
   --color-krds-text-subtle: var(--krds-text-subtle);

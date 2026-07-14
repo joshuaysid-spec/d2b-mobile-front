@@ -247,6 +247,7 @@
   --krds-bg-default: var(--krds-color-gray-0);
   --krds-bg-subtle: var(--krds-color-gray-5);
   --krds-bg-muted: var(--krds-color-gray-10);
+  --krds-bg-secondary: var(--krds-color-secondary-5);        /* D2B Figma — 프리로그인(스플래시·권한동의·로그인) 화면 배경 #eef2f7 */
   --krds-bg-inverse: var(--krds-color-gray-90);
   --krds-bg-primary: var(--krds-color-primary-50);
   --krds-bg-primary-strong: var(--krds-d2b-blue);            /* D2B Figma — 슬라이더 활성 트랙 등 강조 액션 채움(#0054e9) */

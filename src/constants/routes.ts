@@ -63,6 +63,12 @@ export const ROUTES = {
   /** 인증서 내보내기 (MUI-CM-04-M17). */
   CERT_CRTF_SEND: '/cert/send',
   MYPAGE: '/mypage',
+  /** 앱 실행 스플래시 (MUI-MS-01-M01). 셸(AppLayout) 밖 독립 풀스크린. */
+  SPLASH: '/splash',
+  /** 앱 접근권한 동의 (MUI-MS-01-M02). 셸 밖 풀스크린. */
+  APP_AUTHRT_AGRE: '/app-authrt-agre',
+  /** 앱 이용안내 (MUI-MS-01-P06). 셸 밖 풀스크린. */
+  APP_GUIDE: '/app-guide',
   /** 개발자용 컴포넌트 가이드 (PC 해상도, 모바일 셸 미적용). */
   GUIDE: '/guide',
 } as const
