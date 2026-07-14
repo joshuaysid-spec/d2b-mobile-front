@@ -78,10 +78,10 @@ header/2depth (AppLayout Header, variant:'sub', title:'국내조달안내')
 - `NumTitle` — 1~5 번호 헤더(17px bold ink, "N." 접두).
 - `Bullet` — ● 채움 불릿(17px, bold 옵션).
 - `Dash` — `-` 대시 하위(level 1=pl-6 / level 2=pl-12).
-- `Note` — 캐비엇/결론 노트(muted, 작은 마커). Figma 의 손 모양 마커는 에셋 미보유 → muted 스타일로 근사.
+- `Note` — 캐비엇/결론 노트. 마커 = Figma `sub_notice` 아이콘(손가락 포인터, `SubNoticeIcon` 인라인 SVG · fill=currentColor 로 red/gray 재색). 결론=#db083e(pl-0) · 캐비엇=#717171(pl-6).
 - `Lnk` — 외부 URL 링크(blue underline, 새 탭).
 - `PhoneBadge` — 어두운 원형 뱃지 + 흰 채움 `Call` (M07 PhoneItem 동일).
-- `CertCard` — 인증사업자 카드(faint bg, 회사명·PhoneBadge·Lnk). 로고 생략.
+- `CertCard` — 인증사업자 카드(border, 로고 이미지·회사명·PhoneBadge·Lnk). 로고 5종은 Figma 에셋 추출해 `src/assets/images/cert/*.png` 로 커밋(폐쇄망 대응). 단일 이미지(tradesign·crosscert)는 직접 다운로드, 멀티파트/스프라이트 로고(signgate·signkorea·yessign)는 `m_card` get_screenshot → PIL 로 로고 스트립 크롭·트림.
 - 절차 다이어그램: `FlowCard`(뱃지+타이틀+링크) · `Pill`(노란) · `Arrow`(연결선+arrowhead) · `FaintBox`(품목등록) · `GoalBox`(입찰참가, folder).
 
 정적 문구라 목업 상수/서비스 스텁 없음. URL 은 `<a target="_blank" rel="noreferrer">`.
@@ -102,4 +102,8 @@ header/2depth (AppLayout Header, variant:'sub', title:'국내조달안내')
 
 **인증사업자 카드 5** — 한국무역정보통신(☎1566-2119, www.tradesign.net) · 한국전자인증(☎1566-0566, www.crosscert.com) · 한국정보인증(☎1577-8787, www.signgate.com) · (주)코스콤 인증센터(☎1577-7337, www.signkorea.com) · 금융결재원 전자인증센터(☎1577-5500, www.yessign.or.kr).
 
-**섹션 3(품목등록)·4(유의사항)·5(입찰참가)** 는 ● 불릿 + `-` 대시(2단) + 캐비엇 노트로 구성. 섹션 5 는 경쟁입찰/공개수의 진행순서 각각에 "입찰참가신청서 작성시 유의사항 / 전자보증서 제출방법 / 입찰참가신청 진행상태 설명" 3개 `Infobox`(static) 포함.
+**섹션 3(품목등록)·4(유의사항)·5(입찰참가)** 는 ● 불릿 + `-` 대시(2단) + 캐비엇 노트로 구성.
+
+**폰트 굵기(Figma 실측):** ● 불릿은 기본 **Bold**(설계서 SEC4 두 항목만 Regular=`reg`). 대시 하위·캐비엇·노트·인증사업자 카드 회사명은 Regular. 섹션/번호 헤더(절차·방법·1~5)는 Bold.
+
+**섹션 5 진행순서 마커 = `(N)` 괄호 번호**(●아님, `ParenStep`, Bold): 경쟁입찰 (1)~(5) · 공개수의 (1)~(4). 각 진행순서의 **마지막 "입찰결과 확인"은 번호 없는 `Infobox`**(경쟁입찰 2항목/공개수의 1항목). 그 외 경쟁입찰 (3)단계에 "입찰참가신청서 작성시 유의사항 / 전자보증서 제출방법 / 입찰참가신청 진행상태 설명" 3개 `Infobox` 포함.
