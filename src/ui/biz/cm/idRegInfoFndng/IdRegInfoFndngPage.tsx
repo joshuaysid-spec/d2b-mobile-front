@@ -17,6 +17,7 @@
 //   - 아이디 찾기 실행/결과화면(MUI-CM-03-M05) 라우팅은 백엔드·후속화면 미연동 — console.log 경계 스텁.
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/ui/common/base/Button'
 import { InputBox } from '@/ui/common/base/InputBox'
@@ -32,6 +33,7 @@ import {
 const USER_SE_LABEL = '조달업체'
 
 export function IdRegInfoFndngPage() {
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -45,7 +47,8 @@ export function IdRegInfoFndngPage() {
   })
 
   const onSubmit = (data: IdRegInfoFndngForm) => {
-    console.log('[login] ID 등록정보로 찾기', { ...data, userSe: USER_SE_LABEL }) // 추후 API: authService.findIdByRegInfo → 결과화면(MUI-CM-03-M05)
+    console.log('[login] ID 등록정보로 찾기', { ...data, userSe: USER_SE_LABEL }) // 추후 API: authService.findIdByRegInfo
+    navigate('/login/find-id/result') // 결과화면(MUI-CM-03-M05)
   }
 
   // 셸(AppLayout) 안 화면 — 콘텐츠만 렌더.

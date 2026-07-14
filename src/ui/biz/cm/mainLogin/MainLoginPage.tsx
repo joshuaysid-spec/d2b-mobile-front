@@ -59,6 +59,11 @@ export function MainLoginPage() {
   const closeSheet = (open: boolean) => {
     if (!open) setOpenSheet(null)
   }
+  // 시트 내 인증 성공 → 시트 닫고 홈(로그인 완료). (추후: 소속업체 많으면 P14 업체선택)
+  const handleAuthSuccess = () => {
+    setOpenSheet(null)
+    navigate('/')
+  }
 
   const handleSelectMethod = (method: LoginMethod) => {
     // (추후: 인증 성공 → 소속업체 많으면 P14 → 홈)
@@ -133,16 +138,16 @@ export function MainLoginPage() {
 
       {/* 인증수단 바텀시트(P10~P13) — 카드 클릭 시 해당 시트 오픈 */}
       <BottomSheet open={openSheet === 'simpleAuth'} onOpenChange={closeSheet} title="간편인증">
-        <SimpleCert />
+        <SimpleCert onSuccess={handleAuthSuccess} />
       </BottomSheet>
       <BottomSheet open={openSheet === 'financeCert'} onOpenChange={closeSheet} title="금융인증서">
-        <FnstCert />
+        <FnstCert onSuccess={handleAuthSuccess} />
       </BottomSheet>
       <BottomSheet open={openSheet === 'jointCert'} onOpenChange={closeSheet} title="공동인증서">
-        <JntCert />
+        <JntCert onSuccess={handleAuthSuccess} />
       </BottomSheet>
       <BottomSheet open={openSheet === 'mobileId'} onOpenChange={closeSheet} title="모바일 신분증">
-        <MobileIdntyCert />
+        <MobileIdntyCert onSuccess={handleAuthSuccess} />
       </BottomSheet>
     </>
   )

@@ -64,12 +64,14 @@ export function IdFndngPage() {
   const navigate = useNavigate()
 
   const handleSelect = (method: AuthMethod) => {
-    // path 있으면 이동(등록정보로 찾기 → M04). 나머지 본인인증 수단은 추후 SDK 호출.
+    // path 있으면 이동(등록정보로 찾기 → M04). 나머지 본인인증 수단(간편/모바일/공동/금융)은
+    // 본인인증 성공 후 결과화면(M05)으로.
     if (method.path) {
       navigate(method.path)
       return
     }
-    console.log('[idFndng] 인증방식 선택', method.label) // 추후 API: authService.startIdInquiry
+    console.log('[idFndng] 본인인증', method.label) // 추후 API: authService.startIdInquiry
+    navigate('/login/find-id/result')
   }
 
   // 셸(AppLayout) 안 화면 — 콘텐츠만 반환.

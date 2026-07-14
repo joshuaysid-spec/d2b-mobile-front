@@ -32,7 +32,7 @@ function formatBirthInput(value: string): string {
 }
 
 /** 금융인증서 본인확인 폼 — BottomSheet 콘텐츠(로그인 방식선택에서 열림) + 페이지 공용. */
-export function FnstCert() {
+export function FnstCert({ onSuccess }: { onSuccess?: () => void }) {
   const {
     register,
     control,
@@ -48,6 +48,7 @@ export function FnstCert() {
 
   const onSubmit = (data: FnstCertForm) => {
     console.log('[fnstCert] 휴대폰 문자인증 요청', data)
+    onSuccess?.()
     // 추후: 금융인증 SDK — Any-ID 금융인증 프로세스 호출(본인확인 → 클라우드 저장소 연결 → 인증서 사용)
   }
 

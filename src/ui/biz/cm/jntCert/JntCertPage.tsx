@@ -22,9 +22,10 @@ import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 
 /** 공동인증서 안내/진입 — BottomSheet 콘텐츠(로그인 방식선택에서 열림) + 페이지 공용. */
-export function JntCert() {
+export function JntCert({ onSuccess }: { onSuccess?: () => void }) {
   const handleImportCert = () => {
     console.log('[JntCert] 인증서 가져오기') // 추후: 공동인증 SDK(Any-ID 공동인증 프로세스 호출)
+    onSuccess?.()
   }
 
   // 안내 영역은 중앙 정렬 + 하단 CTA. 바깥 패딩(px/pt/pb)은 호스트(BottomSheet/페이지 래퍼)가 소유.

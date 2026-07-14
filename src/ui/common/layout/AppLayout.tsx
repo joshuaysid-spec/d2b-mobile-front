@@ -8,6 +8,7 @@ import { BottomNavVisibleContext } from '@/ui/common/layout/bottomNavContext'
 // AppLayout 이 직접 마운트하는 cm 오버레이(헤더 유틸로 열림 · 라우트 아님).
 import { MenuPage } from '@/ui/biz/cm/menu/MenuPage'
 import { IntgSrchPage } from '@/ui/biz/cm/intgSrch/IntgSrchPage'
+import { LgoInfo } from '@/ui/biz/cm/lgoInfo/LgoInfo'
 import { useAuthStore } from '@/stores/authStore'
 import { ROUTES } from '@/constants/routes'
 import type { RouteHandle } from '@/types/navigation'
@@ -51,6 +52,8 @@ export function AppLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
   // 통합검색(MUI-MS-01-M09) 오버레이 — 헤더 통합검색(util='search') 클릭 시 열림. MenuPage 와 동일 패턴.
   const [searchOpen, setSearchOpen] = useState(false)
+  // 로그아웃 안내(MUI-CM-03-P18) — 로그아웃 시 노출, 확인하면 홈으로.
+  const [logoutInfoOpen, setLogoutInfoOpen] = useState(false)
 
   // 라우트 handle.header 메타로 헤더 모드 결정 — 가장 깊은(자식) 매치 우선. 없으면 main(로고).
   const matches = useMatches()
@@ -107,7 +110,7 @@ export function AppLayout() {
         onLogin={() => navigate('/login')}
         onLogout={() => {
           logout()
-          navigate(ROUTES.HOME)
+          setLogoutInfoOpen(true) // P18 로그아웃 안내 → 확인 시 홈
         }}
         onBack={handleBack}
         onLogo={() => navigate(ROUTES.HOME)}
@@ -153,11 +156,19 @@ export function AppLayout() {
         onLogout={() => {
           setMenuOpen(false)
           logout()
-          navigate(ROUTES.HOME)
+          setLogoutInfoOpen(true) // P18 로그아웃 안내
         }}
       />
       {/* 통합검색 오버레이 — 헤더 통합검색 클릭으로 열림(메인/서브 공통). */}
       <IntgSrchPage open={searchOpen} onOpenChange={setSearchOpen} />
+      {/* 로그아웃 안내(MUI-CM-03-P18) — 확인하면 홈으로 이동 */}
+      <LgoInfo
+        open={logoutInfoOpen}
+        onOpenChange={(open) => {
+          setLogoutInfoOpen(open)
+          if (!open) navigate(ROUTES.HOME)
+        }}
+      />
     </div>
     </BottomNavVisibleContext.Provider>
   )

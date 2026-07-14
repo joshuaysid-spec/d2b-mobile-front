@@ -92,8 +92,8 @@ export function PswdFndngPage() {
   const pickMethod = (method: AuthMethod) =>
     handleSubmit((data) => {
       console.log('[pw-find] 인증방식 선택', { method: method.value, ...data })
-      if (method.path) navigate(method.path)
-      // else: 추후 API: authService.requestPwReset / 인증 라우팅
+      if (method.path) navigate(method.path) // 등록정보로 찾기 → M07
+      else navigate('/login/find-pw/result') // 본인인증 → 결과(M08)
     })
 
   return (

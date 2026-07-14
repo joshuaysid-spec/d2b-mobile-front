@@ -17,6 +17,7 @@
 //   - 비밀번호찾기 실행/후속(결과 MUI-CM-03-M08) 라우팅은 백엔드 미연동 — console.log 경계 스텁.
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/ui/common/base/Button'
 import { InputBox } from '@/ui/common/base/InputBox'
@@ -29,6 +30,7 @@ import {
 } from '@/ui/biz/cm/pswdRegInfoFndng/PswdRegInfoFndngPage.schema'
 
 export function PswdRegInfoFndngPage() {
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -42,7 +44,8 @@ export function PswdRegInfoFndngPage() {
   })
 
   const onSubmit = (data: PswdRegInfoFndngForm) => {
-    console.log('[login] 등록정보로 비밀번호 찾기', data) // 추후 API: authService.findPasswordByRegInfo → 결과(MUI-CM-03-M08)
+    console.log('[login] 등록정보로 비밀번호 찾기', data) // 추후 API: authService.findPasswordByRegInfo
+    navigate('/login/find-pw/result') // 결과화면(MUI-CM-03-M08)
   }
 
   return (

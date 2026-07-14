@@ -36,10 +36,11 @@ const SIMPLE_CERT_PROVIDERS: SimpleCertProvider[] = [
 ]
 
 /** 간편인증 제공사 그리드 — BottomSheet 콘텐츠(로그인 방식선택에서 열림) + 페이지 공용. */
-export function SimpleCert() {
+export function SimpleCert({ onSuccess }: { onSuccess?: () => void }) {
   const handleSelectProvider = (provider: SimpleCertProvider) => {
     console.log('[SimpleCert] 간편인증 제공사 선택:', provider.id)
-    // 추후: Any-ID 간편인증 프로세스(SDK) 호출 — provider.id 로 제공사 지정
+    // 추후: Any-ID 간편인증 프로세스(SDK) 호출 → 성공 시 onSuccess
+    onSuccess?.()
   }
 
   return (

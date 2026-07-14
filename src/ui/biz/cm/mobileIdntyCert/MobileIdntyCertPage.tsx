@@ -38,10 +38,11 @@ const MOBILE_ID_APPS: MobileIdApp[] = [
 ]
 
 /** 모바일 신분증 발급 앱 그리드 + 안내 — BottomSheet 콘텐츠(로그인 방식선택에서 열림) + 페이지 공용. */
-export function MobileIdntyCert() {
+export function MobileIdntyCert({ onSuccess }: { onSuccess?: () => void }) {
   const handleSelectApp = (app: MobileIdApp) => {
     console.log('[MobileIdntyCert] 발급 앱 선택:', app.id)
-    // 추후: 모바일신분증 앱 호출 — 선택한 앱으로 행안부 모바일 신분증 발급/인증 프로세스 진입
+    // 추후: 모바일신분증 앱 호출 — 발급/인증 프로세스 진입 → 성공 시 onSuccess
+    onSuccess?.()
   }
 
   const handleUsageGuide = () => {
