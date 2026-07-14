@@ -27,6 +27,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigate } from 'react-router-dom'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
@@ -55,6 +56,7 @@ const STATUS_ITEMS = [
 type PswdRsltStatus = (typeof STATUS_ITEMS)[number]['value']
 
 export function PswdRsltPage() {
+  const navigate = useNavigate()
   // 성공/실패 결과 상태 — 기본 success. (데모용 로컬 토글, 추후 인증 결과로 대체)
   const [status, setStatus] = useState<PswdRsltStatus>('success')
 
@@ -72,10 +74,11 @@ export function PswdRsltPage() {
 
   const onSubmit = (data: PswdRsltForm) => {
     console.log('[pw-result] 비밀번호 변경', { userId: AUTHED_USER_ID, ...data }) // 추후 API: authService.changePassword
+    navigate('/login/id-pw') // 변경 완료 → 새 비밀번호로 로그인(MUI-CM-03-M02)
   }
 
   const handleUserRegisterGuide = () => {
-    console.log('[pw-result] 사용자 등록 안내 바로가기') // 추후 라우팅: 사용자 등록 안내(MUI-CM-03-M09)
+    navigate('/login/user-reg-info') // 사용자 등록 안내(MUI-CM-03-M09)
   }
 
   return (

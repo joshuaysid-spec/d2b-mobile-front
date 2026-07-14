@@ -31,7 +31,8 @@ function formatBirthInput(value: string): string {
   return parts.join('/')
 }
 
-export function FnstCertPage() {
+/** 금융인증서 본인확인 폼 — BottomSheet 콘텐츠(로그인 방식선택에서 열림) + 페이지 공용. */
+export function FnstCert() {
   const {
     register,
     control,
@@ -50,7 +51,6 @@ export function FnstCertPage() {
     // 추후: 금융인증 SDK — Any-ID 금융인증 프로세스 호출(본인확인 → 클라우드 저장소 연결 → 인증서 사용)
   }
 
-  // 셸(AppLayout) 안 화면 — 헤더/스크롤/뒤로가기는 AppLayout 소유. 페이지는 콘텐츠만 렌더.
   return (
     <>
       {/* 안내 타이틀(설계서/Figma 문구 그대로) */}
@@ -128,6 +128,17 @@ export function FnstCertPage() {
         </Button>
       </form>
     </>
+  )
+}
+FnstCert.displayName = 'FnstCert'
+
+// 페이지(라우트 /login/finance-cert) — 직접 진입 시 셸 안 콘텐츠로. (기본은 로그인 방식선택의 BottomSheet)
+// 셸(AppLayout) 안 화면 — 헤더/스크롤/뒤로가기는 AppLayout 소유. 페이지는 콘텐츠만 렌더.
+export function FnstCertPage() {
+  return (
+    <section className="flex flex-col gap-krds-9 px-krds-8 pt-krds-9 pb-krds-8">
+      <FnstCert />
+    </section>
   )
 }
 FnstCertPage.displayName = 'FnstCertPage'

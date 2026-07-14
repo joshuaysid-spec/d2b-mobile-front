@@ -16,6 +16,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
@@ -37,6 +38,7 @@ const HELP_ITEMS = [
 type CertMethod = 'simple' | 'self'
 
 export function BioInfoCertRegPage() {
+  const navigate = useNavigate()
   // 본인인증 완료 여부 — 완료 시 완료 화면(Figma 10020:87190)으로 전환. (하이브리드 인증 미연동 → 목업)
   const [verified, setVerified] = useState(false)
 
@@ -63,7 +65,8 @@ export function BioInfoCertRegPage() {
   // [생체인증 로그인] — 디바이스 생체인증 로그인 진행(성공 시 메인 홈)
   const handleBioLogin = () => {
     console.log('[bioInfoCertReg] 생체인증 로그인')
-    // 추후 API: authService.biometricLogin() → 성공 시 navigate(메인 홈 MUI-CM-01-...)
+    // 추후 API: authService.biometricLogin() → 성공 판정 후 메인 홈
+    navigate('/')
   }
 
   // 셸(AppLayout) 안 화면 — 헤더/스크롤/뒤로가기는 AppLayout 소유. 페이지는 콘텐츠만 렌더.

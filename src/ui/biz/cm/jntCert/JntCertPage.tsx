@@ -21,14 +21,15 @@
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 
-export function JntCertPage() {
+/** 공동인증서 안내/진입 — BottomSheet 콘텐츠(로그인 방식선택에서 열림) + 페이지 공용. */
+export function JntCert() {
   const handleImportCert = () => {
     console.log('[JntCert] 인증서 가져오기') // 추후: 공동인증 SDK(Any-ID 공동인증 프로세스 호출)
   }
 
-  // 셸(AppLayout) 안 화면 — 뷰포트를 채우도록 min-h-full, 안내 영역은 중앙 정렬 + 하단 CTA.
+  // 안내 영역은 중앙 정렬 + 하단 CTA. 바깥 패딩(px/pt/pb)은 호스트(BottomSheet/페이지 래퍼)가 소유.
   return (
-    <div className="flex min-h-full flex-col px-krds-8 pb-krds-8 pt-krds-9">
+    <div className="flex min-h-full flex-col">
       {/* 안내 영역(중앙) — 뱃지 + 타이틀 + '인증서 없음' 카드 */}
       <div className="flex flex-1 flex-col items-center justify-center gap-krds-8">
         {/* 공동인증서 뱃지 — 둥근 사각 배경 + 방패/체크 아이콘 */}
@@ -63,6 +64,16 @@ export function JntCertPage() {
         인증서 가져오기
       </Button>
     </div>
+  )
+}
+JntCert.displayName = 'JntCert'
+
+// 페이지(라우트 /login/joint-cert) — 직접 진입 시 셸 안 콘텐츠로. (기본은 로그인 방식선택의 BottomSheet)
+export function JntCertPage() {
+  return (
+    <section className="flex flex-col gap-krds-9 px-krds-8 pt-krds-9 pb-krds-8">
+      <JntCert />
+    </section>
   )
 }
 JntCertPage.displayName = 'JntCertPage'

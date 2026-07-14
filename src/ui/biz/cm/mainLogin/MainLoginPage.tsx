@@ -18,9 +18,12 @@ import { InputLabel } from '@/ui/common/base/InputLabel'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { SimpleCert } from '@/ui/biz/cm/simpleCert/SimpleCertPage'
+import { FnstCert } from '@/ui/biz/cm/fnstCert/FnstCertPage'
+import { JntCert } from '@/ui/biz/cm/jntCert/JntCertPage'
+import { MobileIdntyCert } from '@/ui/biz/cm/mobileIdntyCert/MobileIdntyCertPage'
 
 interface LoginMethod {
-  /** 인증방식 식별자 — 클릭 시 라우팅 분기 기준. */
+  /** 인증방식 식별자 — 클릭 시 라우팅/시트 분기 기준. */
   id: string
   /** 카드 라벨(설계서 문구 그대로). */
   label: string
@@ -28,18 +31,21 @@ interface LoginMethod {
   iconName: IconName
   /** 선택 시 이동할 인증화면 경로(라벨 아닌 데이터로 분기). */
   path: string
+  /** true = 바텀시트 모달로 열림(P10~P13). 미지정 = path 로 페이지 이동(생체·ID/PW). */
+  sheet?: boolean
 }
 
 // 설계서 인증방식 목록(순서 그대로). iconName 은 Figma 별도제작 아이콘의 임시 근사.
+// P10~P13(간편/모바일신분증/공동/금융)은 Figma상 바텀시트 → sheet:true.
 const LOGIN_METHODS: LoginMethod[] = [
   // TODO(디자인 에셋): certification_simple(KRDS 별도제작) — REGISTRY 미등록, Login 으로 임시 근사
-  { id: 'simpleAuth', label: '간편인증', iconName: 'Login', path: '/login/simple-cert' },
+  { id: 'simpleAuth', label: '간편인증', iconName: 'Login', path: '/login/simple-cert', sheet: true },
   // TODO(디자인 에셋): certification_mobile(KRDS 별도제작) — REGISTRY 미등록, AssignmentInd 로 임시 근사
-  { id: 'mobileId', label: '모바일신분증', iconName: 'AssignmentInd', path: '/login/mobile-id' },
+  { id: 'mobileId', label: '모바일신분증', iconName: 'AssignmentInd', path: '/login/mobile-id', sheet: true },
   // TODO(디자인 에셋): 공동인증서(KRDS 별도제작) — REGISTRY 미등록, VerifiedUser 로 임시 근사
-  { id: 'jointCert', label: '공동인증서', iconName: 'VerifiedUser', path: '/login/joint-cert' },
+  { id: 'jointCert', label: '공동인증서', iconName: 'VerifiedUser', path: '/login/joint-cert', sheet: true },
   // TODO(디자인 에셋): 금융인증서(KRDS 별도제작) — REGISTRY 미등록, Description 으로 임시 근사
-  { id: 'financeCert', label: '금융인증서', iconName: 'Description', path: '/login/finance-cert' },
+  { id: 'financeCert', label: '금융인증서', iconName: 'Description', path: '/login/finance-cert', sheet: true },
   // fingerprint — Material Symbols 정확 매핑
   { id: 'biometric', label: '생체인증', iconName: 'Fingerprint', path: '/login/biometric' },
   // TODO(디자인 에셋): id_password(KRDS 별도제작) — REGISTRY 미등록, Person 으로 임시 근사
@@ -48,13 +54,16 @@ const LOGIN_METHODS: LoginMethod[] = [
 
 export function MainLoginPage() {
   const navigate = useNavigate()
-  const [simpleCertOpen, setSimpleCertOpen] = useState(false)
+  // 열린 인증수단 바텀시트(method.id) — P10~P13. 생체·ID/PW 는 페이지 이동.
+  const [openSheet, setOpenSheet] = useState<string | null>(null)
+  const closeSheet = (open: boolean) => {
+    if (!open) setOpenSheet(null)
+  }
 
   const handleSelectMethod = (method: LoginMethod) => {
-    // 간편인증(P10)은 바텀시트 모달로 열고, 나머지는 해당 인증화면으로 이동.
     // (추후: 인증 성공 → 소속업체 많으면 P14 → 홈)
-    if (method.id === 'simpleAuth') {
-      setSimpleCertOpen(true)
+    if (method.sheet) {
+      setOpenSheet(method.id)
       return
     }
     navigate(method.path)
@@ -122,9 +131,18 @@ export function MainLoginPage() {
         </div>
       </section>
 
-      {/* 간편인증(P10) 바텀시트 — '간편인증' 카드 클릭 시. 제공사 선택 → SDK 호출 */}
-      <BottomSheet open={simpleCertOpen} onOpenChange={setSimpleCertOpen} title="간편인증">
+      {/* 인증수단 바텀시트(P10~P13) — 카드 클릭 시 해당 시트 오픈 */}
+      <BottomSheet open={openSheet === 'simpleAuth'} onOpenChange={closeSheet} title="간편인증">
         <SimpleCert />
+      </BottomSheet>
+      <BottomSheet open={openSheet === 'financeCert'} onOpenChange={closeSheet} title="금융인증서">
+        <FnstCert />
+      </BottomSheet>
+      <BottomSheet open={openSheet === 'jointCert'} onOpenChange={closeSheet} title="공동인증서">
+        <JntCert />
+      </BottomSheet>
+      <BottomSheet open={openSheet === 'mobileId'} onOpenChange={closeSheet} title="모바일 신분증">
+        <MobileIdntyCert />
       </BottomSheet>
     </>
   )

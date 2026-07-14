@@ -37,7 +37,8 @@ const MOBILE_ID_APPS: MobileIdApp[] = [
   { id: 'kbStar', label: 'KB스타뱅크', logoStub: 'KB' },
 ]
 
-export function MobileIdntyCertPage() {
+/** 모바일 신분증 발급 앱 그리드 + 안내 — BottomSheet 콘텐츠(로그인 방식선택에서 열림) + 페이지 공용. */
+export function MobileIdntyCert() {
   const handleSelectApp = (app: MobileIdApp) => {
     console.log('[MobileIdntyCert] 발급 앱 선택:', app.id)
     // 추후: 모바일신분증 앱 호출 — 선택한 앱으로 행안부 모바일 신분증 발급/인증 프로세스 진입
@@ -48,36 +49,34 @@ export function MobileIdntyCertPage() {
     // 추후: 모바일신분증 사용 가이드 안내 화면/외부 링크 연결
   }
 
-  // 셸(AppLayout) 안 화면 — 콘텐츠만 렌더.
+  // 바깥 페이지 패딩(px-*/pt-*/pb-*)은 호스트(BottomSheet/래퍼)가 소유 — 콘텐츠는 구조만 렌더.
   return (
     <>
       {/* 발급 앱 선택 그리드(4열) */}
-      <section className="px-krds-8 pt-krds-9">
-        <div className="grid grid-cols-4 gap-x-krds-3 gap-y-krds-8">
-          {MOBILE_ID_APPS.map((app) => (
-            <button
-              key={app.id}
-              type="button"
-              onClick={() => handleSelectApp(app)}
-              className="flex flex-col items-center gap-krds-3"
+      <div className="grid grid-cols-4 gap-x-krds-3 gap-y-krds-8">
+        {MOBILE_ID_APPS.map((app) => (
+          <button
+            key={app.id}
+            type="button"
+            onClick={() => handleSelectApp(app)}
+            className="flex flex-col items-center gap-krds-3"
+          >
+            {/* 브랜드 로고 자리 — 실제 로고 에셋으로 교체 예정(중립 플레이스홀더) */}
+            <span
+              aria-hidden
+              className="flex size-14 items-center justify-center rounded-krds-xl border border-krds-border-divider bg-krds-bg-secondary text-krds-body-sm font-bold text-krds-text-ink"
             >
-              {/* 브랜드 로고 자리 — 실제 로고 에셋으로 교체 예정(중립 플레이스홀더) */}
-              <span
-                aria-hidden
-                className="flex size-14 items-center justify-center rounded-krds-xl border border-krds-border-divider bg-krds-bg-secondary text-krds-body-sm font-bold text-krds-text-ink"
-              >
-                {app.logoStub}
-              </span>
-              <span className="text-center text-krds-body-xs leading-tight text-krds-text-ink">
-                {app.label}
-              </span>
-            </button>
-          ))}
-        </div>
-      </section>
+              {app.logoStub}
+            </span>
+            <span className="text-center text-krds-body-xs leading-tight text-krds-text-ink">
+              {app.label}
+            </span>
+          </button>
+        ))}
+      </div>
 
       {/* 안내문 + 사용 가이드 */}
-      <section className="flex flex-col gap-krds-5 px-krds-8 pt-krds-9 pb-krds-8">
+      <div className="flex flex-col gap-krds-5">
         <p className="flex items-start gap-krds-2 text-krds-body-sm leading-normal text-krds-text-muted">
           <Icon name="Campaign" size={18} className="mt-0.5 shrink-0" aria-hidden />
           <span className="min-w-px flex-1 wrap-break-word">
@@ -95,8 +94,18 @@ export function MobileIdntyCertPage() {
             사용 가이드
           </button>
         </div>
-      </section>
+      </div>
     </>
+  )
+}
+MobileIdntyCert.displayName = 'MobileIdntyCert'
+
+// 페이지(라우트 /login/mobile-id) — 직접 진입 시 셸 안 콘텐츠로. (기본은 로그인 방식선택의 BottomSheet)
+export function MobileIdntyCertPage() {
+  return (
+    <section className="flex flex-col gap-krds-9 px-krds-8 pt-krds-9 pb-krds-8">
+      <MobileIdntyCert />
+    </section>
   )
 }
 MobileIdntyCertPage.displayName = 'MobileIdntyCertPage'

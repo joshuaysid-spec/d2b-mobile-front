@@ -28,6 +28,8 @@ import { InputMessage } from '@/ui/common/base/InputMessage'
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { BzentyChc, MOCK_BZENTY_LIST } from '@/ui/biz/cm/bzentyChc/BzentyChc'
 import {
   idPswdLoginSchema,
   type IdPswdLoginForm,
@@ -77,6 +79,9 @@ export function IdPswdLoginPage() {
   const [pwVisible, setPwVisible] = useState(false)
   // 로그인 대상(업체/기관). '기관' 선택 시 아이디/비밀번호 찾기 섹션 숨김(설계서 2026-06-22 개정).
   const [loginTarget, setLoginTarget] = useState<string>('bzenty')
+  // 로그인 성공 후 소속 업체 선택(P14) 바텀시트.
+  const [bzentyOpen, setBzentyOpen] = useState(false)
+  const [bzentyCd, setBzentyCd] = useState(MOCK_BZENTY_LIST[0].bzentyCd)
 
   const {
     register,
@@ -92,6 +97,14 @@ export function IdPswdLoginPage() {
 
   const onSubmit = (data: IdPswdLoginForm) => {
     console.log('[login] ID/PW 로그인', { ...data, loginTarget }) // 추후 API: authService.login
+    // 로그인 성공 → 소속 업체가 여럿이면 업체 선택(P14) 팝업.
+    setBzentyOpen(true)
+  }
+
+  const handleBzentyLogin = () => {
+    console.log('[login] 업체 선택 로그인', bzentyCd) // 추후 API: authService.loginWith(bzentyCd)
+    setBzentyOpen(false)
+    navigate('/') // 홈으로
   }
 
   // 셸(AppLayout) 안 화면 — 헤더/스크롤/뒤로가기는 AppLayout 소유. 페이지는 콘텐츠만 렌더.
@@ -235,6 +248,25 @@ export function IdPswdLoginPage() {
           />
         </div>
       </section>
+
+      {/* 로그인 성공 → 업체 선택(P14) 바텀시트. 선택 로그인 → 홈 */}
+      <BottomSheet
+        open={bzentyOpen}
+        onOpenChange={setBzentyOpen}
+        title="업체 설정"
+        footer={
+          <div className="flex gap-krds-5">
+            <Button variant="secondary" className="shrink-0" onClick={() => setBzentyOpen(false)}>
+              로그아웃
+            </Button>
+            <Button variant="primary" className="flex-1" onClick={handleBzentyLogin}>
+              선택 로그인
+            </Button>
+          </div>
+        }
+      >
+        <BzentyChc items={MOCK_BZENTY_LIST} value={bzentyCd} onValueChange={setBzentyCd} />
+      </BottomSheet>
     </>
   )
 }

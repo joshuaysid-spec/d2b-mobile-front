@@ -13,21 +13,23 @@
 // 디자인 메모(보고 대상):
 //   - 지문 아이콘은 Figma 상 파란 원형 액센트가 겹친 KRDS 커스텀 일러스트(별도제작). 폰트 REGISTRY 엔
 //     플레인 'fingerprint' 글리프만 있어 카드 + Icon 'Fingerprint' 로 근사(액센트 오버레이 미표현).
+import { useNavigate } from 'react-router-dom'
+
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { Infobox } from '@/ui/common/composites/Infobox'
 
 export function BioInfoCertPage() {
+  const navigate = useNavigate()
+
   // [등록하기] — 생체인증 등록(MUI-CM-03-M15)으로 이동
   const handleRegister = () => {
-    console.log('[bioInfoCert] 생체인증 등록하기')
-    // 추후 라우팅: navigate(생체인증 등록 MUI-CM-03-M15)
+    navigate('/login/biometric/register')
   }
 
-  // [취소] — 이전 로그인 선택 화면(MainLogin)으로 이동
+  // [취소] — 이전 화면(로그인 선택 MainLogin)으로 이동
   const handleCancel = () => {
-    console.log('[bioInfoCert] 취소 — 로그인 선택 화면')
-    // 추후 라우팅: navigate(-1) 또는 로그인 선택 MUI-CM-03-M01
+    navigate(-1)
   }
 
   // 셸(AppLayout) 안 화면 — 헤더/스크롤/뒤로가기는 AppLayout 소유. 페이지는 콘텐츠만 렌더.

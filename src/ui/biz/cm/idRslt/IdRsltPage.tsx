@@ -13,6 +13,7 @@
 //   - 실패 안내 아이콘: 원형 정보 마크 → Info 로 근사.
 //   - status 는 목업 로컬 상태(기본 success). 실연동 시 아이디찾기 결과로 주입하고 데모 토글 제거.
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
@@ -30,18 +31,19 @@ const MOCK_ID_RSLT = {
 // const maskUserId = (id: string) => id.replace(/(?<=.{4}).(?=.{2})/g, '*')
 
 export function IdRsltPage() {
+  const navigate = useNavigate()
   // 목업: 기본 success. 실연동 시 아이디찾기(MUI-CM-03-M03) 결과로 주입(데모 토글 제거).
   const [status, setStatus] = useState<IdRsltStatus>('success')
   const isSuccess = status === 'success'
 
   const handleGoIdPwLogin = () => {
-    console.log('[idRslt] ID/PW 로그인 바로가기') // 추후 라우팅: ID/PW 로그인(MUI-CM-03-M02)
+    navigate('/login/id-pw') // ID/PW 로그인(MUI-CM-03-M02)
   }
   const handleFindPassword = () => {
-    console.log('[idRslt] 비밀번호 찾기') // 추후 라우팅: 비밀번호 찾기
+    navigate('/login/find-pw') // 비밀번호 찾기(MUI-CM-03-M06)
   }
   const handleUserRegisterGuide = () => {
-    console.log('[idRslt] 사용자 등록 안내 바로가기') // 추후 라우팅: 사용자 등록 안내
+    navigate('/login/user-reg-info') // 사용자 등록 안내(MUI-CM-03-M09)
   }
 
   // 셸(AppLayout) 안 화면 — 콘텐츠만 렌더. min-h-full flex 로 본문 중앙 + 하단 액션바 배치.

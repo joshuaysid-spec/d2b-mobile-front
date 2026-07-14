@@ -58,7 +58,7 @@ export function AppAuthrtAgre({ open, onOpenChange }: AppAuthrtAgreProps) {
                 <Icon
                   name={perm.icon}
                   size={24}
-                  color="var(--krds-text-primary)"
+                  className="text-krds-text-primary"
                   aria-hidden
                 />
                 <div className="flex flex-col">

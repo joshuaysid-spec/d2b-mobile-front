@@ -17,7 +17,7 @@ import { Empty } from '@/ui/common/feedback/Empty'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
 import { TagList } from '@/ui/common/composites/TagList'
-import { IntgSrch_Rslt } from './IntgSrch_Rslt'
+import { IntgSrch_Rslt } from '@/ui/biz/cm/intgSrch/IntgSrch_Rslt'
 import { cn } from '@/utils/cn'
 
 export interface IntgSrchPageProps {
