@@ -292,6 +292,26 @@ const CrtfReceivePage = lazy(() =>
 const CrtfSendPage = lazy(() =>
   import('@/ui/biz/cm/crtfSend/CrtfSendPage').then((m) => ({ default: m.CrtfSendPage })),
 )
+// 시스템소개(MUI-CM-05-M01, /intro/system) — biz/cm/introduce. 국방전자조달 소개 > 시스템소개.
+const IntroducePage = lazy(() =>
+  import('@/ui/biz/cm/introduce/IntroducePage').then((m) => ({ default: m.IntroducePage })),
+)
+// 주요특징(MUI-CM-05-M02, /intro/feature) — biz/cm/feature.
+const FeaturePage = lazy(() =>
+  import('@/ui/biz/cm/feature/FeaturePage').then((m) => ({ default: m.FeaturePage })),
+)
+// 연혁(MUI-CM-05-M03, /intro/history) — biz/cm/history.
+const HistoryPage = lazy(() =>
+  import('@/ui/biz/cm/history/HistoryPage').then((m) => ({ default: m.HistoryPage })),
+)
+// 관련시스템(MUI-CM-05-M05, /intro/related) — biz/cm/system.
+const SystemPage = lazy(() =>
+  import('@/ui/biz/cm/system/SystemPage').then((m) => ({ default: m.SystemPage })),
+)
+// 이용문의(MUI-CM-05-M06, /intro/inquiry) — biz/cm/inquiry.
+const InquiryPage = lazy(() =>
+  import('@/ui/biz/cm/inquiry/InquiryPage').then((m) => ({ default: m.InquiryPage })),
+)
 // 연관 진행 목록(설계서 미정의 — 진행현황 시트 세부단계 클릭 진입, /anl-prgrs) — biz/cm/anlPrgrsList.
 const AnlPrgrsListPage = lazy(() =>
   import('@/ui/biz/cm/anlPrgrsList/AnlPrgrsListPage').then((m) => ({
@@ -668,6 +688,56 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: '인증서 내보내기' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 시스템소개 (MUI-CM-05-M01) — 전체메뉴 국방전자조달소개 > 시스템소개
+        path: 'intro/system',
+        element: <IntroducePage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '시스템소개' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 주요특징 (MUI-CM-05-M02) — 전체메뉴 국방전자조달소개 > 주요특징
+        path: 'intro/feature',
+        element: <FeaturePage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '주요특징' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 연혁 (MUI-CM-05-M03) — 전체메뉴 국방전자조달소개 > 연혁
+        path: 'intro/history',
+        element: <HistoryPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '연혁' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 관련시스템 (MUI-CM-05-M05) — 전체메뉴 국방전자조달소개 > 관련시스템
+        path: 'intro/related',
+        element: <SystemPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '관련시스템' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 이용문의 (MUI-CM-05-M06) — 전체메뉴 국방전자조달소개 > 이용문의
+        path: 'intro/inquiry',
+        element: <InquiryPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '이용문의' },
           scrollReset: true,
         },
       },

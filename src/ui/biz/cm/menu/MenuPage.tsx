@@ -193,6 +193,11 @@ const MENU_ROUTES: Record<string, string> = {
   'cert-manage': ROUTES.CERT_CRTF_MNG, // 인증서 관리(MUI-CM-04-M14)
   'cert-import': ROUTES.CERT_CRTF_RECEIVE, // 인증서 가져오기(MUI-CM-04-M16)
   'cert-export': ROUTES.CERT_CRTF_SEND, // 인증서 내보내기(MUI-CM-04-M17)
+  'intro-system': ROUTES.INTRO_SYSTEM, // 시스템소개(MUI-CM-05-M01)
+  'intro-feature': ROUTES.INTRO_FEATURE, // 주요특징(MUI-CM-05-M02)
+  'intro-history': ROUTES.INTRO_HISTORY, // 연혁(MUI-CM-05-M03)
+  'intro-related-system': ROUTES.INTRO_RELATED, // 관련시스템(MUI-CM-05-M05)
+  'intro-contact': ROUTES.INTRO_INQUIRY, // 이용문의(MUI-CM-05-M06)
 }
 
 function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: MenuPageProps) {

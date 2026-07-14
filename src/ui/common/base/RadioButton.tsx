@@ -28,7 +28,9 @@ const RadioButton = React.forwardRef<
   <label
     className={cn(
       // chip base — Figma m_radiobutton: h-48 · px-10 · gap-4 · rounded-8
-      'group inline-flex h-12 min-w-[74px] cursor-pointer select-none items-center justify-center gap-krds-3 rounded-krds-8 px-krds-6',
+      // relative: 숨긴 raw 라디오(absolute)를 라벨 안에 가둔다 — 없으면 포커스 시 브라우저가
+      //   그 절대요소를 화면에 넣으려 스크롤 컨테이너를 크게 점프시켜 흰 화면처럼 보임(실기기).
+      'group relative inline-flex h-12 min-w-[74px] cursor-pointer select-none items-center justify-center gap-krds-3 rounded-krds-8 px-krds-6',
       'border border-krds-border-primary bg-background',
       'text-krds-body-md font-medium text-primary transition-colors',
       // 키보드 포커스 — 내부 radio item 이 focus-visible 일 때 칩에 링

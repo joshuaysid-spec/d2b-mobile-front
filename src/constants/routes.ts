@@ -62,6 +62,16 @@ export const ROUTES = {
   CERT_CRTF_RECEIVE: '/cert/receive',
   /** 인증서 내보내기 (MUI-CM-04-M17). */
   CERT_CRTF_SEND: '/cert/send',
+  /** 시스템소개 (MUI-CM-05-M01). 국방전자조달 소개 > 시스템소개. */
+  INTRO_SYSTEM: '/intro/system',
+  /** 주요특징 (MUI-CM-05-M02). 국방전자조달 소개 > 주요특징. */
+  INTRO_FEATURE: '/intro/feature',
+  /** 연혁 (MUI-CM-05-M03). 국방전자조달 소개 > 연혁. */
+  INTRO_HISTORY: '/intro/history',
+  /** 관련시스템 (MUI-CM-05-M05). 국방전자조달 소개 > 관련시스템. */
+  INTRO_RELATED: '/intro/related',
+  /** 이용문의 (MUI-CM-05-M06). 국방전자조달 소개 > 이용문의. */
+  INTRO_INQUIRY: '/intro/inquiry',
   MYPAGE: '/mypage',
   /** 개발자용 컴포넌트 가이드 (PC 해상도, 모바일 셸 미적용). */
   GUIDE: '/guide',
