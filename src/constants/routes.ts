@@ -76,6 +76,8 @@ export const ROUTES = {
   GUIDE_PREPARATION: '/guide/preparation01',
   /** 국방조달참여절차 (MUI-CM-05-M09). 이용안내 > 국내조달안내 > 국방조달참여절차. */
   GUIDE_DOMESTIC: '/guide/domestic01',
+  /** 국외조달원 등록절차 (MUI-CM-05-M12). 이용안내 > 국외조달안내 > 국외조달원 등록절차. */
+  GUIDE_FOREIGN: '/guide/foreign01',
   MYPAGE: '/mypage',
   /** 개발자용 컴포넌트 가이드 (PC 해상도, 모바일 셸 미적용). */
   GUIDE: '/guide',
