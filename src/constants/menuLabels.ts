@@ -24,4 +24,5 @@ export const LINKED_MENU_LABELS = {
   [ROUTES.GUIDE_PREPARATION]: '조달사전준비안내',
   [ROUTES.GUIDE_DOMESTIC]: '국내조달안내',
   [ROUTES.GUIDE_FOREIGN]: '국외조달안내',
+  [ROUTES.GUIDE_SITE]: '관련사이트',
 } as const

@@ -78,6 +78,8 @@ export const ROUTES = {
   GUIDE_DOMESTIC: '/guide/domestic01',
   /** 국외조달원 등록절차 (MUI-CM-05-M12). 이용안내 > 국외조달안내 > 국외조달원 등록절차. */
   GUIDE_FOREIGN: '/guide/foreign01',
+  /** 관련사이트 (MUI-CM-05-M15). 이용안내 > 관련사이트. */
+  GUIDE_SITE: '/guide/site',
   MYPAGE: '/mypage',
   /** 앱 실행 스플래시 (MUI-MS-01-M01). 셸(AppLayout) 밖 독립 풀스크린. */
   SPLASH: '/splash',
@@ -85,6 +87,8 @@ export const ROUTES = {
   APP_AUTHRT_AGRE: '/app-authrt-agre',
   /** 앱 이용안내 (MUI-MS-01-P06). 셸 밖 풀스크린. */
   APP_GUIDE: '/app-guide',
+  /** 설정 (MUI-MS-02-M01). 전체메뉴 > 설정. */
+  SETTINGS: '/settings',
   /** 개발자용 컴포넌트 가이드 (PC 해상도, 모바일 셸 미적용). */
   GUIDE: '/guide',
 } as const

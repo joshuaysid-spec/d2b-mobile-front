@@ -140,7 +140,7 @@ const MENU_TREE: MenuNode[] = [
       { id: 'guide-prep', label: LINKED_MENU_LABELS[ROUTES.GUIDE_PREPARATION] },
       { id: 'guide-domestic', label: LINKED_MENU_LABELS[ROUTES.GUIDE_DOMESTIC] },
       { id: 'guide-foreign', label: LINKED_MENU_LABELS[ROUTES.GUIDE_FOREIGN] },
-      { id: 'guide-related-site', label: '관련사이트' },
+      { id: 'guide-related-site', label: LINKED_MENU_LABELS[ROUTES.GUIDE_SITE] },
       { id: 'guide-glossary', label: '용어사전' },
       { id: 'guide-app', label: '앱이용안내' },
     ],
@@ -201,6 +201,7 @@ const MENU_ROUTES: Record<string, string> = {
   'guide-prep': ROUTES.GUIDE_PREPARATION, // 조달사전준비안내 > 사전준비사항(MUI-CM-05-M07)
   'guide-domestic': ROUTES.GUIDE_DOMESTIC, // 국내조달안내 > 국방조달참여절차(MUI-CM-05-M09)
   'guide-foreign': ROUTES.GUIDE_FOREIGN, // 국외조달안내 > 국외조달원 등록절차(MUI-CM-05-M12)
+  'guide-related-site': ROUTES.GUIDE_SITE, // 관련사이트(MUI-CM-05-M15)
 }
 
 function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: MenuPageProps) {
@@ -249,8 +250,8 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
       label: '설정',
       icon: <Icon name="Settings" size={24} aria-hidden />,
       onClick: () => {
-        console.log('[menu] 설정')
-        // 추후 라우팅: navigate(ROUTES.SETTINGS)
+        onOpenChange(false)
+        navigate(ROUTES.SETTINGS) // 설정(MUI-MS-02-M01)
       },
     },
   ]
