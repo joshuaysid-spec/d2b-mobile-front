@@ -31,7 +31,9 @@ const REGISTRY = {
   ArrowForward: 'arrow_forward',
   ArrowForwardIos: 'arrow_forward_ios',
   AssignmentGlobe: 'assignment_globe',
+  AccountBalance: 'account_balance',
   AssignmentInd: 'assignment_ind',
+  Badge: 'badge',
   CalendarToday: 'calendar_today',
   Call: 'call',
   Campaign: 'campaign',
@@ -49,6 +51,7 @@ const REGISTRY = {
   DeveloperGuide: 'developer_guide',
   Download: 'download',
   Edit: 'edit',
+  Encrypted: 'encrypted',
   Error: 'error',
   ExpandMore: 'expand_more',
   // Material Symbols 는 채움/아웃라인을 FILL 축으로 구분 — 'favorite'/'kid_star' 한 ligature 로 통합.
@@ -61,6 +64,9 @@ const REGISTRY = {
   Folder: 'folder',
   HeadsetMic: 'headset_mic',
   Home: 'home',
+  Hub: 'hub',
+  IdCard: 'id_card',
+  Image: 'image',
   Info: 'info',
   KeyboardDoubleArrowLeft: 'keyboard_double_arrow_left',
   KeyboardDoubleArrowRight: 'keyboard_double_arrow_right',
@@ -68,6 +74,7 @@ const REGISTRY = {
   LocationAway: 'location_away',
   Login: 'login',
   Logout: 'logout',
+  Map: 'map',
   Menu: 'menu',
   MoreVert: 'more_vert',
   NotificationAdd: 'notification_add',
@@ -76,6 +83,7 @@ const REGISTRY = {
   OpenInNew: 'open_in_new',
   Pause: 'pause',
   Person: 'person',
+  PhotoCamera: 'photo_camera',
   PlayArrow: 'play_arrow',
   Print: 'print',
   Public: 'public',
@@ -86,12 +94,14 @@ const REGISTRY = {
   Settings: 'settings',
   Share: 'share',
   SmartToy: 'smart_toy',
+  Smartphone: 'smartphone',
   SoundDetection: 'sound_detection_loud_sound',
   SubdirectoryArrowRight: 'subdirectory_arrow_right',
   TrendingFlat: 'trending_flat',
   Tune: 'tune',
   Upgrade: 'upgrade',
   Upload: 'upload',
+  Verified: 'verified',
   VerifiedUser: 'verified_user',
   Visibility: 'visibility',
   VisibilityOff: 'visibility_off',
@@ -102,7 +112,13 @@ export type IconName = keyof typeof REGISTRY
 
 /** 채움(FILL 1)이 기본 디자인인 아이콘 — 나머지는 아웃라인(FILL 0). fill prop 으로 개별 오버라이드.
  *  별/하트(솔리드가 자연스러움) + 상태 아이콘(성공/경고/에러 — Empty·AlertModal 처럼 채움이 기본). */
-const FILLED_BY_DEFAULT = new Set<IconName>(['CheckCircle', 'Error', 'Favorite', 'KidStar', 'Warning'])
+const FILLED_BY_DEFAULT = new Set<IconName>([
+  'CheckCircle',
+  'Error',
+  'Favorite',
+  'KidStar',
+  'Warning',
+])
 
 export interface IconProps {
   /** Material Symbols 아이콘 이름 (REGISTRY 키, PascalCase). 매칭 시 해당 글리프 렌더. */

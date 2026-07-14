@@ -454,6 +454,7 @@ const detail = (useLocation().state as BidPbancItem | null) ?? MOCK_BID_PBANC_DE
 
 ## PDCA / 문서
 
+- **반입(폐쇄망 이관) 직전에 `docs/closed-network-checklist.md` 를 확인한다** — 미구현 잔여 화면(BD-10 유형별 심사결과 등)·결정 대기 항목·폐쇄망 환경 확인 목록. 반입 전 확인이 필요한 사항이 생기면 이 문서에 추가.
 - bkit PDCA 워크플로우 사용. 기능별 plan/design 문서: `docs/01-plan/features/`, `docs/02-design/features/`.
 - 활성 기능: `mobile-app-scaffold`(스캐폴딩 — 코드 구현 완료), `krds-design-system`(토큰 + base 컴포넌트 — DO 단계).
 - 코드를 바꾸면 해당 design 문서도 동기화한다.

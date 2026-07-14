@@ -104,9 +104,7 @@ export function AppLayout() {
         variant={header?.variant ?? 'main'}
         title={header?.title}
         isLoggedIn={isLoggedIn}
-        onLogin={() => {
-          console.log('[header] 로그인') // 추후 라우팅: navigate(로그인 화면)
-        }}
+        onLogin={() => navigate('/login')}
         onLogout={() => {
           logout()
           navigate(ROUTES.HOME)
@@ -150,7 +148,7 @@ export function AppLayout() {
         user={user}
         onLogin={() => {
           setMenuOpen(false)
-          console.log('[menu] 로그인') // 추후 라우팅: navigate(로그인 화면)
+          navigate('/login')
         }}
         onLogout={() => {
           setMenuOpen(false)
