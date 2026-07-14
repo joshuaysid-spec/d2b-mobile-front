@@ -326,6 +326,10 @@ const Foreign01Page = lazy(() =>
     default: m.Foreign01Page,
   })),
 )
+// 관련사이트(MUI-CM-05-M15, /guide/site) — biz/cm/site. 이용안내 > 관련사이트.
+const SitePage = lazy(() =>
+  import('@/ui/biz/cm/site/SitePage').then((m) => ({ default: m.SitePage })),
+)
 // 이용문의(MUI-CM-05-M06, /intro/inquiry) — biz/cm/inquiry.
 const InquiryPage = lazy(() =>
   import('@/ui/biz/cm/inquiry/InquiryPage').then((m) => ({ default: m.InquiryPage })),
@@ -786,6 +790,16 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.GUIDE_FOREIGN] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 관련사이트 (MUI-CM-05-M15) — 전체메뉴 이용안내 > 관련사이트
+        path: 'guide/site',
+        element: <SitePage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.GUIDE_SITE] },
           scrollReset: true,
         },
       },
