@@ -21,4 +21,6 @@ export const LINKED_MENU_LABELS = {
   [ROUTES.SUPPORT_ARCHIVE_CTRT]: '계약관련서식자료실',
   [ROUTES.SUPPORT_SYS_IMPV]: '시스템개선안내',
   [ROUTES.SUPPORT_FAQ]: '자주묻는 질문',
+  [ROUTES.GUIDE_PREPARATION]: '조달사전준비안내',
+  [ROUTES.GUIDE_DOMESTIC]: '국내조달안내',
 } as const

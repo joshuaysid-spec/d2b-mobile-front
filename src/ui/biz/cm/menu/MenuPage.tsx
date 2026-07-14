@@ -137,8 +137,8 @@ const MENU_TREE: MenuNode[] = [
     id: 'guide',
     label: '이용안내',
     children: [
-      { id: 'guide-prep', label: '조달사전준비안내' },
-      { id: 'guide-domestic', label: '국내조달안내' },
+      { id: 'guide-prep', label: LINKED_MENU_LABELS[ROUTES.GUIDE_PREPARATION] },
+      { id: 'guide-domestic', label: LINKED_MENU_LABELS[ROUTES.GUIDE_DOMESTIC] },
       { id: 'guide-foreign', label: '국외조달안내' },
       { id: 'guide-related-site', label: '관련사이트' },
       { id: 'guide-glossary', label: '용어사전' },
@@ -198,6 +198,8 @@ const MENU_ROUTES: Record<string, string> = {
   'intro-history': ROUTES.INTRO_HISTORY, // 연혁(MUI-CM-05-M03)
   'intro-related-system': ROUTES.INTRO_RELATED, // 관련시스템(MUI-CM-05-M05)
   'intro-contact': ROUTES.INTRO_INQUIRY, // 이용문의(MUI-CM-05-M06)
+  'guide-prep': ROUTES.GUIDE_PREPARATION, // 조달사전준비안내 > 사전준비사항(MUI-CM-05-M07)
+  'guide-domestic': ROUTES.GUIDE_DOMESTIC, // 국내조달안내 > 국방조달참여절차(MUI-CM-05-M09)
 }
 
 function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: MenuPageProps) {

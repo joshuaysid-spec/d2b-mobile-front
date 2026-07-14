@@ -308,6 +308,18 @@ const HistoryPage = lazy(() =>
 const SystemPage = lazy(() =>
   import('@/ui/biz/cm/system/SystemPage').then((m) => ({ default: m.SystemPage })),
 )
+// 사전준비사항(MUI-CM-05-M07, /guide/preparation01) — biz/cm/preparation01. 이용안내 > 조달사전준비안내.
+const Preparation01Page = lazy(() =>
+  import('@/ui/biz/cm/preparation01/Preparation01Page').then((m) => ({
+    default: m.Preparation01Page,
+  })),
+)
+// 국방조달참여절차(MUI-CM-05-M09, /guide/domestic01) — biz/cm/domestic01. 이용안내 > 국내조달안내.
+const Domestic01Page = lazy(() =>
+  import('@/ui/biz/cm/domestic01/Domestic01Page').then((m) => ({
+    default: m.Domestic01Page,
+  })),
+)
 // 이용문의(MUI-CM-05-M06, /intro/inquiry) — biz/cm/inquiry.
 const InquiryPage = lazy(() =>
   import('@/ui/biz/cm/inquiry/InquiryPage').then((m) => ({ default: m.InquiryPage })),
@@ -738,6 +750,26 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: '이용문의' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 사전준비사항 (MUI-CM-05-M07) — 전체메뉴 이용안내 > 조달사전준비안내
+        path: 'guide/preparation01',
+        element: <Preparation01Page />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.GUIDE_PREPARATION] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 국방조달참여절차 (MUI-CM-05-M09) — 전체메뉴 이용안내 > 국내조달안내
+        path: 'guide/domestic01',
+        element: <Domestic01Page />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.GUIDE_DOMESTIC] },
           scrollReset: true,
         },
       },
