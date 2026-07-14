@@ -250,8 +250,8 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
       label: '설정',
       icon: <Icon name="Settings" size={24} aria-hidden />,
       onClick: () => {
-        console.log('[menu] 설정')
-        // 추후 라우팅: navigate(ROUTES.SETTINGS)
+        onOpenChange(false)
+        navigate(ROUTES.SETTINGS) // 설정(MUI-MS-02-M01)
       },
     },
   ]

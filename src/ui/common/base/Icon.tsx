@@ -86,6 +86,7 @@ const REGISTRY = {
   Settings: 'settings',
   Share: 'share',
   SmartToy: 'smart_toy',
+  Smartphone: 'smartphone',
   SoundDetection: 'sound_detection_loud_sound',
   SubdirectoryArrowRight: 'subdirectory_arrow_right',
   TrendingFlat: 'trending_flat',

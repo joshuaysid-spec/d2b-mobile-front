@@ -330,6 +330,10 @@ const Foreign01Page = lazy(() =>
 const SitePage = lazy(() =>
   import('@/ui/biz/cm/site/SitePage').then((m) => ({ default: m.SitePage })),
 )
+// 설정(MUI-MS-02-M01, /settings) — biz/cm/appStng. 전체메뉴 > 설정.
+const AppStngPage = lazy(() =>
+  import('@/ui/biz/cm/appStng/AppStngPage').then((m) => ({ default: m.AppStngPage })),
+)
 // 이용문의(MUI-CM-05-M06, /intro/inquiry) — biz/cm/inquiry.
 const InquiryPage = lazy(() =>
   import('@/ui/biz/cm/inquiry/InquiryPage').then((m) => ({ default: m.InquiryPage })),
@@ -800,6 +804,16 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.GUIDE_SITE] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 설정 (MUI-MS-02-M01) — 전체메뉴 > 설정
+        path: 'settings',
+        element: <AppStngPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '설정' },
           scrollReset: true,
         },
       },

@@ -81,6 +81,8 @@ export const ROUTES = {
   /** 관련사이트 (MUI-CM-05-M15). 이용안내 > 관련사이트. */
   GUIDE_SITE: '/guide/site',
   MYPAGE: '/mypage',
+  /** 설정 (MUI-MS-02-M01). 전체메뉴 > 설정. */
+  SETTINGS: '/settings',
   /** 개발자용 컴포넌트 가이드 (PC 해상도, 모바일 셸 미적용). */
   GUIDE: '/guide',
 } as const
