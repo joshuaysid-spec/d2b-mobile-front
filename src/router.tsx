@@ -13,6 +13,95 @@ import { LINKED_MENU_LABELS } from '@/constants/menuLabels'
 const HomePage = lazy(() =>
   import('@/ui/biz/cm/home/HomePage').then((m) => ({ default: m.HomePage })),
 )
+// 앱 실행 스플래시(MUI-MS-01-M01, /splash) — 셸(AppLayout) 밖 독립 풀스크린. biz/cm/splash.
+const SplashPage = lazy(() =>
+  import('@/ui/biz/cm/splash/SplashPage').then((m) => ({ default: m.SplashPage })),
+)
+// 앱 접근권한 동의(MUI-MS-01-M02, /app-authrt-agre) — 셸 밖 풀스크린. biz/cm/appAuthrtAgre.
+const AppAuthrtAgrePage = lazy(() =>
+  import('@/ui/biz/cm/appAuthrtAgre/AppAuthrtAgrePage').then((m) => ({
+    default: m.AppAuthrtAgrePage,
+  })),
+)
+// 앱 이용안내(MUI-MS-01-P06, /app-guide) — 셸 밖 풀스크린. biz/cm/appSrvcExpln.
+const AppSrvcExplnPage = lazy(() =>
+  import('@/ui/biz/cm/appSrvcExpln/AppSrvcExplnPage').then((m) => ({
+    default: m.AppSrvcExplnPage,
+  })),
+)
+// 로그인-방식 선택(MUI-CM-03-M01, /login) — 셸 안 + sub헤더. biz/cm/mainLogin.
+const MainLoginPage = lazy(() =>
+  import('@/ui/biz/cm/mainLogin/MainLoginPage').then((m) => ({ default: m.MainLoginPage })),
+)
+// ID/PW 로그인(MUI-CM-03-M02, /login/id-pw) — 셸 안 + sub헤더. biz/cm/idPswdLogin.
+const IdPswdLoginPage = lazy(() =>
+  import('@/ui/biz/cm/idPswdLogin/IdPswdLoginPage').then((m) => ({ default: m.IdPswdLoginPage })),
+)
+// 아이디 찾기(MUI-CM-03-M03, /login/find-id) — 셸 안 + sub헤더. biz/cm/idFndng.
+const IdFndngPage = lazy(() =>
+  import('@/ui/biz/cm/idFndng/IdFndngPage').then((m) => ({ default: m.IdFndngPage })),
+)
+// 비밀번호 찾기(MUI-CM-03-M06, /login/find-pw) — 셸 안 + sub헤더. biz/cm/pswdFndng.
+const PswdFndngPage = lazy(() =>
+  import('@/ui/biz/cm/pswdFndng/PswdFndngPage').then((m) => ({ default: m.PswdFndngPage })),
+)
+// 사용자 등록 안내(MUI-CM-03-M09, /login/user-reg-info) — 셸 안 + sub헤더. biz/cm/userRegInfo.
+const UserRegInfoPage = lazy(() =>
+  import('@/ui/biz/cm/userRegInfo/UserRegInfoPage').then((m) => ({ default: m.UserRegInfoPage })),
+)
+// 생체인증(MUI-CM-03-M14, /login/biometric) — 셸 안 + sub헤더. biz/cm/bioInfoCert.
+const BioInfoCertPage = lazy(() =>
+  import('@/ui/biz/cm/bioInfoCert/BioInfoCertPage').then((m) => ({ default: m.BioInfoCertPage })),
+)
+// PC QR 로그인(MUI-CM-03-M17, /login/pc-qr) — 셸 안 + sub헤더. biz/cm/pcQRLgn.
+const PcQRLgnPage = lazy(() =>
+  import('@/ui/biz/cm/pcQRLgn/PcQRLgnPage').then((m) => ({ default: m.PcQRLgnPage })),
+)
+// ID 등록정보로 찾기(MUI-CM-03-M04, /login/find-id/reg-info) — biz/cm/idRegInfoFndng.
+const IdRegInfoFndngPage = lazy(() =>
+  import('@/ui/biz/cm/idRegInfoFndng/IdRegInfoFndngPage').then((m) => ({
+    default: m.IdRegInfoFndngPage,
+  })),
+)
+// 아이디 찾기 결과(MUI-CM-03-M05, /login/find-id/result) — biz/cm/idRslt.
+const IdRsltPage = lazy(() =>
+  import('@/ui/biz/cm/idRslt/IdRsltPage').then((m) => ({ default: m.IdRsltPage })),
+)
+// PW 등록정보로 찾기(MUI-CM-03-M07, /login/find-pw/reg-info) — biz/cm/pswdRegInfoFndng.
+const PswdRegInfoFndngPage = lazy(() =>
+  import('@/ui/biz/cm/pswdRegInfoFndng/PswdRegInfoFndngPage').then((m) => ({
+    default: m.PswdRegInfoFndngPage,
+  })),
+)
+// PW 찾기 결과(MUI-CM-03-M08, /login/find-pw/result) — biz/cm/pswdRslt.
+const PswdRsltPage = lazy(() =>
+  import('@/ui/biz/cm/pswdRslt/PswdRsltPage').then((m) => ({ default: m.PswdRsltPage })),
+)
+// 생체인증 등록(MUI-CM-03-M15, /login/biometric/register) — biz/cm/bioInfoCertReg.
+const BioInfoCertRegPage = lazy(() =>
+  import('@/ui/biz/cm/bioInfoCertReg/BioInfoCertRegPage').then((m) => ({
+    default: m.BioInfoCertRegPage,
+  })),
+)
+// 간편인증(MUI-CM-03-P10, /login/simple-cert) — 인증프로세스. biz/cm/simpleCert.
+// (설계서·Figma는 BottomSheet — 트리거 배선 시 시트로 전환 가능. 현재는 페이지 라우팅.)
+const SimpleCertPage = lazy(() =>
+  import('@/ui/biz/cm/simpleCert/SimpleCertPage').then((m) => ({ default: m.SimpleCertPage })),
+)
+// 금융인증서(MUI-CM-03-P11, /login/finance-cert) — biz/cm/fnstCert.
+const FnstCertPage = lazy(() =>
+  import('@/ui/biz/cm/fnstCert/FnstCertPage').then((m) => ({ default: m.FnstCertPage })),
+)
+// 공동인증서(MUI-CM-03-P12, /login/joint-cert) — biz/cm/jntCert.
+const JntCertPage = lazy(() =>
+  import('@/ui/biz/cm/jntCert/JntCertPage').then((m) => ({ default: m.JntCertPage })),
+)
+// 모바일 신분증(MUI-CM-03-P13, /login/mobile-id) — biz/cm/mobileIdntyCert.
+const MobileIdntyCertPage = lazy(() =>
+  import('@/ui/biz/cm/mobileIdntyCert/MobileIdntyCertPage').then((m) => ({
+    default: m.MobileIdntyCertPage,
+  })),
+)
 // 조달계획 통합목록(MUI-OP-01-M01, 설계서 p.8) — biz/op/prcmPlanIntgList.
 const PrcmPlanIntgListPage = lazy(() =>
   import('@/ui/biz/op/prcmPlanIntgList/PrcmPlanIntgListPage').then((m) => ({
@@ -817,9 +906,136 @@ export const router = createBrowserRouter([
         handle: { header: { variant: 'sub', title: '시스템개선안내 상세' }, scrollReset: true },
       },
       { path: 'mypage', element: <MyPage />, handle: { showBottomNav: true } },
+      // 로그인 방식선택(MUI-CM-03-M01) — 셸 안 + sub헤더(뒤로+타이틀). 헤더는 AppLayout 소유.
+      {
+        path: 'login',
+        element: <MainLoginPage />,
+        handle: { header: { variant: 'sub', title: '로그인' }, scrollReset: true },
+      },
+      // ID/PW 로그인(MUI-CM-03-M02) — 셸 안 + sub헤더.
+      {
+        path: 'login/id-pw',
+        element: <IdPswdLoginPage />,
+        handle: { header: { variant: 'sub', title: 'ID/PW 로그인' }, scrollReset: true },
+      },
+      // 아이디 찾기(MUI-CM-03-M03)
+      {
+        path: 'login/find-id',
+        element: <IdFndngPage />,
+        handle: { header: { variant: 'sub', title: '아이디 찾기' }, scrollReset: true },
+      },
+      // 비밀번호 찾기(MUI-CM-03-M06)
+      {
+        path: 'login/find-pw',
+        element: <PswdFndngPage />,
+        handle: { header: { variant: 'sub', title: '비밀번호 찾기' }, scrollReset: true },
+      },
+      // 사용자 등록 안내(MUI-CM-03-M09)
+      {
+        path: 'login/user-reg-info',
+        element: <UserRegInfoPage />,
+        handle: { header: { variant: 'sub', title: '사용자 등록 안내' }, scrollReset: true },
+      },
+      // 생체인증(MUI-CM-03-M14)
+      {
+        path: 'login/biometric',
+        element: <BioInfoCertPage />,
+        handle: { header: { variant: 'sub', title: '생체인증' } },
+      },
+      // PC QR 로그인(MUI-CM-03-M17)
+      {
+        path: 'login/pc-qr',
+        element: <PcQRLgnPage />,
+        handle: { header: { variant: 'sub', title: 'PC QR 로그인' } },
+      },
+      // ID 등록정보로 찾기(MUI-CM-03-M04)
+      {
+        path: 'login/find-id/reg-info',
+        element: <IdRegInfoFndngPage />,
+        handle: { header: { variant: 'sub', title: 'ID 등록정보로 찾기' }, scrollReset: true },
+      },
+      // 아이디 찾기 결과(MUI-CM-03-M05)
+      {
+        path: 'login/find-id/result',
+        element: <IdRsltPage />,
+        handle: { header: { variant: 'sub', title: '아이디 찾기' }, scrollReset: true },
+      },
+      // PW 등록정보로 찾기(MUI-CM-03-M07)
+      {
+        path: 'login/find-pw/reg-info',
+        element: <PswdRegInfoFndngPage />,
+        handle: { header: { variant: 'sub', title: '비밀번호 찾기' }, scrollReset: true },
+      },
+      // PW 찾기 결과(MUI-CM-03-M08)
+      {
+        path: 'login/find-pw/result',
+        element: <PswdRsltPage />,
+        handle: { header: { variant: 'sub', title: '비밀번호 찾기' }, scrollReset: true },
+      },
+      // 생체인증 등록(MUI-CM-03-M15)
+      {
+        path: 'login/biometric/register',
+        element: <BioInfoCertRegPage />,
+        handle: { header: { variant: 'sub', title: '생체인증 등록' } },
+      },
+      // 간편인증(MUI-CM-03-P10)
+      {
+        path: 'login/simple-cert',
+        element: <SimpleCertPage />,
+        handle: { header: { variant: 'sub', title: '간편인증' } },
+      },
+      // 금융인증서(MUI-CM-03-P11)
+      {
+        path: 'login/finance-cert',
+        element: <FnstCertPage />,
+        handle: { header: { variant: 'sub', title: '금융인증서' } },
+      },
+      // 공동인증서(MUI-CM-03-P12)
+      {
+        path: 'login/joint-cert',
+        element: <JntCertPage />,
+        handle: { header: { variant: 'sub', title: '공동인증서' } },
+      },
+      // 모바일 신분증(MUI-CM-03-P13)
+      {
+        path: 'login/mobile-id',
+        element: <MobileIdntyCertPage />,
+        handle: { header: { variant: 'sub', title: '모바일 신분증' } },
+      },
       // 매칭 안 되는 경로 → 404 (errorElement 가 isRouteErrorResponse 404 로 렌더)
       { path: '*', element: <ErrorPage /> },
     ],
+  },
+  // 앱 실행 스플래시 — 셸(AppLayout) 밖 독립 풀스크린(헤더·바텀네비 없음).
+  // lazy chunk 라서 Suspense 로 감싸고, 에러는 errorElement 로 처리.
+  {
+    path: ROUTES.SPLASH,
+    element: (
+      <Suspense fallback={<PageLoading />}>
+        <SplashPage />
+      </Suspense>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  // 앱 접근권한 동의 — 셸 밖 풀스크린.
+  {
+    path: ROUTES.APP_AUTHRT_AGRE,
+    element: (
+      <Suspense fallback={<PageLoading />}>
+        <AppAuthrtAgrePage />
+      </Suspense>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  // 앱 이용안내 — 셸 밖 풀스크린.
+  {
+    path: ROUTES.APP_GUIDE,
+    element: (
+      <Suspense fallback={<PageLoading />}>
+        <AppSrvcExplnPage />
+      </Suspense>
+    ),
+    errorElement: <ErrorPage />,
   },
   // 개발자용 컴포넌트 가이드 — 모바일 셸(AppLayout) 밖, PC 해상도 전용.
   // lazy chunk 라서 Suspense 로 감싸고, 에러는 errorElement 로 처리.
