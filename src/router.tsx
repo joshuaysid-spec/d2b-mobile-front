@@ -409,6 +409,12 @@ const Domestic01Page = lazy(() =>
     default: m.Domestic01Page,
   })),
 )
+// 국외조달원 등록절차(MUI-CM-05-M12, /guide/foreign01) — biz/cm/foreign01. 이용안내 > 국외조달안내.
+const Foreign01Page = lazy(() =>
+  import('@/ui/biz/cm/foreign01/Foreign01Page').then((m) => ({
+    default: m.Foreign01Page,
+  })),
+)
 // 이용문의(MUI-CM-05-M06, /intro/inquiry) — biz/cm/inquiry.
 const InquiryPage = lazy(() =>
   import('@/ui/biz/cm/inquiry/InquiryPage').then((m) => ({ default: m.InquiryPage })),
@@ -859,6 +865,16 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.GUIDE_DOMESTIC] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 국외조달원 등록절차 (MUI-CM-05-M12) — 전체메뉴 이용안내 > 국외조달안내
+        path: 'guide/foreign01',
+        element: <Foreign01Page />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.GUIDE_FOREIGN] },
           scrollReset: true,
         },
       },

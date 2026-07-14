@@ -87,9 +87,10 @@ function Bullet({ t, reg }: { t: ReactNode; reg?: boolean }) {
 }
 
 // (N) 괄호 번호 스텝 — Bold, "(n)" 마커(불릿 없음). 설계서 SEC5 전자입찰 진행순서.
+// Figma: m_list pl-[24px] → 진행순서 헤더 아래로 pl-6 들여쓰기(하위 대시와 동일 기준선).
 function ParenStep({ n, t }: { n: number; t: ReactNode }) {
   return (
-    <div className="flex items-start gap-1 text-[17px] font-bold leading-normal text-krds-text-ink">
+    <div className="flex items-start gap-1 pl-6 text-[17px] font-bold leading-normal text-krds-text-ink">
       <span className="shrink-0 whitespace-nowrap">({n})</span>
       <span className="min-w-px flex-1 wrap-break-word">{t}</span>
     </div>
@@ -205,12 +206,22 @@ function Pill({ children }: { children: ReactNode }) {
   )
 }
 
-// 세로 연결선 + 아래 화살표.
+// 아래 방향 화살촉(Figma Polygon) — CSS 삼각형이라 연결선 끝에 틈 없이 딱 붙는다.
+function ArrowHead() {
+  return (
+    <span
+      className="h-0 w-0 border-x-[5px] border-t-[8px] border-x-transparent border-t-krds-text-primary-active"
+      aria-hidden
+    />
+  )
+}
+
+// 세로 연결선 + 아래 화살촉(붙어 있음).
 function DownArrow() {
   return (
     <div className="flex flex-col items-center">
       <span className="h-3 w-0.5 bg-krds-text-primary-active" />
-      <Icon name="ExpandMore" size={20} className="-mt-1 text-krds-text-primary-active" aria-hidden />
+      <ArrowHead />
     </div>
   )
 }
@@ -242,7 +253,7 @@ function ProcedureFlow() {
           <DownArrow />
           <Pill>부대조달, 시설공사</Pill>
           <span className="w-0.5 flex-1 bg-krds-text-primary-active" />
-          <Icon name="ExpandMore" size={20} className="-mt-1 text-krds-text-primary-active" aria-hidden />
+          <ArrowHead />
         </div>
       </div>
 
