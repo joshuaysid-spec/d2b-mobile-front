@@ -6,7 +6,7 @@ import { Badge } from '@/ui/common/base/Badge'
 import { BoardDetailView } from '@/ui/biz/cm/board/BoardDetailView'
 import type { FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { toNoticeDetail } from '@/ui/biz/cm/noticeList/noticeMock'
-import type { NoticeListItem } from '@/types/notice'
+import type { NoticeListItem } from '@/types/cm'
 
 export function NoticeDtlView({ mock, base }: { mock: NoticeListItem[]; base: string }) {
   const navigate = useNavigate()

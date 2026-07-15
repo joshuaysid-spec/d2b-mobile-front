@@ -4,7 +4,7 @@
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { CertCard } from '@/ui/biz/cm/crtfMng/CertCard'
-import type { CertItem } from '@/types/cert'
+import type { CertItem } from '@/types/cm'
 
 export interface CrtfDelPageProps {
   /** 삭제 대상(선택된 인증서). */

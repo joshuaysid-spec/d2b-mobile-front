@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react'
 
 import { cn } from '@/utils/cn'
-import type { CertItem } from '@/types/cert'
+import type { CertItem } from '@/types/cm'
 
 export interface CertCardProps {
   cert: CertItem

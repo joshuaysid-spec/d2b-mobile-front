@@ -1,7 +1,7 @@
 // 일반공지사항 목업 데이터 — 목록(NoticeListPage)과 상세(NoticeDtlPage)가 공유한다.
 // 상세의 이전글/다음글은 이 목록에서 현재 글의 앞/뒤 항목으로 계산한다. 추후 API(cmService) 로 교체.
 import { inflateNotice } from './noticeBoard'
-import type { NoticeListItem, NoticeDetail } from '@/types/notice'
+import type { NoticeListItem, NoticeDetail } from '@/types/cm'
 
 // 목업 seed(dl_resultList) — 설계서 항목명·형식 그대로.
 export const NOTICE_SEEDS: NoticeListItem[] = [

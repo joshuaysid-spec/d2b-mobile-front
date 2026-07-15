@@ -12,7 +12,7 @@ import {
   NOTICE_DEFAULT,
 } from '@/ui/biz/cm/noticeList/noticeBoard'
 import { SYSIMPV_MOCK } from '@/ui/biz/cm/rpstrList/rpstrMock'
-import type { SysImpvListItem } from '@/types/notice'
+import type { SysImpvListItem } from '@/types/cm'
 
 // 카드 매핑: 배지 구분(bizFldCd) + 제목(bbsTtl) + 작성자(wrtrNm)/작성일자(regDt).
 const toCard = (it: SysImpvListItem): Omit<CardListItem, 'id' | 'onClick'> => ({

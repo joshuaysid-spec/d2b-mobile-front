@@ -6,7 +6,7 @@ import { Badge } from '@/ui/common/base/Badge'
 import { BoardDetailView } from '@/ui/biz/cm/board/BoardDetailView'
 import type { FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { toRpstrDetail } from '@/ui/biz/cm/rpstrList/rpstrMock'
-import type { RpstrListItem } from '@/types/notice'
+import type { RpstrListItem } from '@/types/cm'
 
 export function RpstrDtlView({
   mock,

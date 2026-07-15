@@ -7,7 +7,7 @@ import { Badge } from '@/ui/common/base/Badge'
 import { BoardDetailView } from '@/ui/biz/cm/board/BoardDetailView'
 import type { FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { SYSIMPV_MOCK, toSysImpvDetail } from '@/ui/biz/cm/rpstrList/rpstrMock'
-import type { SysImpvListItem } from '@/types/notice'
+import type { SysImpvListItem } from '@/types/cm'
 
 export function SysImpv_rpstrDtl() {
   const navigate = useNavigate()

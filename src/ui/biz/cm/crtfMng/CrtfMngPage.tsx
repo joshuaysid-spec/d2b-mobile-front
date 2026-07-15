@@ -12,7 +12,7 @@ import { Toast } from '@/ui/common/composites/Toast'
 import { CertCard } from '@/ui/biz/cm/crtfMng/CertCard'
 import { MOCK_CERTS } from '@/ui/biz/cm/crtfMng/certMock'
 import { CrtfDelPage } from '@/ui/biz/cm/crtfDel/CrtfDelPage'
-import type { CertItem } from '@/types/cert'
+import type { CertItem } from '@/types/cm'
 
 // 데모용 비밀번호 — 실제 검증은 스마트PKI 솔루션.
 const MOCK_PASSWORD = '1234'

@@ -10,7 +10,7 @@ import type {
   DateRangePresetDef,
   DateRangeValue,
 } from '@/types/search-filter'
-import type { NoticeListItem, NoticeSearchFilter } from '@/types/notice'
+import type { NoticeListItem, NoticeSearchFilter } from '@/types/cm'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 

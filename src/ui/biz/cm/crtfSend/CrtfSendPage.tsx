@@ -8,7 +8,7 @@ import { Toast } from '@/ui/common/composites/Toast'
 import { CertCard } from '@/ui/biz/cm/crtfMng/CertCard'
 import { CertInfoBox } from '@/ui/biz/cm/crtfMng/CertInfoBox'
 import { MOCK_CERTS } from '@/ui/biz/cm/crtfMng/certMock'
-import type { CertItem } from '@/types/cert'
+import type { CertItem } from '@/types/cm'
 
 // 복사용 인증번호(12자리, 4×3) — PC 가 입력할 값. 스마트PKI 발급값, 데모 고정.
 const AUTH_BLOCKS = ['1234', '5678', '9012']

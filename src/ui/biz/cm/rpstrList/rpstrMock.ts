@@ -6,7 +6,7 @@ import type {
   RpstrDetail,
   SysImpvListItem,
   SysImpvDetail,
-} from '@/types/notice'
+} from '@/types/cm'
 
 // ── 일반자료실 (MUI-CM-04-M25/M26) ──────────────────────────────────────────
 export const RPSTR_SEEDS: RpstrListItem[] = [

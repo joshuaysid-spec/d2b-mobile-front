@@ -13,7 +13,7 @@ import { Badge } from '@/ui/common/base/Badge'
 import { Icon } from '@/ui/common/base/Icon'
 import { Calendar } from '@/ui/common/base/Calendar'
 import { cn } from '@/utils/cn'
-import type { MyPageSchedule, MyPageSchdlSeCd } from '@/types/mypage'
+import type { MyPageSchedule, MyPageSchdlSeCd } from '@/types/cm'
 
 // 구분별 배지 라벨/색. 개인(personal)은 Figma 상 중립(회색) 배지이나 Badge 팔레트에 gray 가
 // 없어 yellow 로 근사(보고 대상). 물품=blue · 공사=green.

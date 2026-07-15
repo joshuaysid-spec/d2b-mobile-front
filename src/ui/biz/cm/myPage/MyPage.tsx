@@ -23,7 +23,7 @@ import { MyPageCalendar } from '@/ui/biz/cm/myPage/MyPage_Calendar'
 import { useAuthStore } from '@/stores/authStore'
 import { ROUTES } from '@/constants/routes'
 import { cn } from '@/utils/cn'
-import type { MyPageSchedule } from '@/types/mypage'
+import type { MyPageSchedule } from '@/types/cm'
 
 // ── 목업 (설계서 데이터영역 형식 — API 연동 시 교체) ─────────────────────────
 const MOCK_BZENTY_NM = '가온산업' // 추후: 업체 정보 API(로그인 업체)
