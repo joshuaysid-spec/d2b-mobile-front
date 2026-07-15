@@ -30,6 +30,7 @@ import { BidPrtcpAperWrtPage_Stp5 } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAp
 import { BidPrtcpAperWrtPage_Stp6 } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage_Stp6'
 import { BidPrtcpAperWrtPage_Stp7 } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage_Stp7'
 import type { BidPrgrsItem } from '@/types/bd'
+import type { UploadedFile } from '@/types/file'
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 항목명/형식 그대로.
 const MOCK_DETAIL: BidPrgrsItem = {
@@ -79,12 +80,24 @@ const PBANC_FILES: FileDownloadItem[] = [
   { id: 'f2', name: '공고문.hwp', size: '786KB' },
 ]
 
+// 파일첨부 탭(Stp6) 초기 업로드 목록 목업 — 설계서 slide107 서류. guid 는 잠정 목업값(UUID형).
+// 상태를 호스트가 소유 → 제출(전자서명) 시 fileGuids 로 전달.
+const INITIAL_ATTACHED_FILES: UploadedFile[] = [
+  { guid: '11111111-1111-4111-8111-att1att1att1', orgnlFileNm: '청렴서약서.hwp', fileSz: 512 * 1024 },
+  {
+    guid: '22222222-2222-4222-8222-att2att2att2',
+    orgnlFileNm: '법인등기부등본.pdf',
+    fileSz: Math.round(1.2 * 1024 * 1024),
+  },
+]
+
 export function BidPrtcpAperWrtPage() {
   const navigate = useNavigate()
   const detail = (useLocation().state as BidPrgrsItem | null) ?? MOCK_DETAIL
   const [tab, setTab] = useState('일반정보')
   const [shortcutOpen, setShortcutOpen] = useState(false) // 플로팅 바로가기 시트
   const [rjctOpen, setRjctOpen] = useState(false) // 입찰참가등록반려 바텀시트(P07)
+  const [attachedFiles, setAttachedFiles] = useState<UploadedFile[]>(INITIAL_ATTACHED_FILES) // 파일첨부 탭(Stp6) 업로드 목록 — 제출 시 fileGuids
   const rjctRef = useRef<BidPrtcpAplyRjctHandle>(null) // P07 apply 모드 제출 핸들
 
   // 일반정보(slide115 dmt_bidPbancInfo) — 공고 식별값은 상세 항목, 나머지 일반정보 목업.
@@ -133,7 +146,10 @@ export function BidPrtcpAperWrtPage() {
       return
     }
     // 마지막 탭(문의및동의) 다음 = 전자서명(MUI-BD-04-M21). 서명 완료 시 신청완료(M08)로.
-    navigate(`/bd/prgrs/${detail.rNum}/elsgn`, { state: { detail, aplyType: 'apfr' } })
+    // 추후 API: 신청 제출 payload 에 첨부 GUID 목록(fileGuids) 포함 — 전자서명/제출 배선 시 사용.
+    const fileGuids = attachedFiles.map((f) => f.guid)
+    console.log('[M14] 신청 제출 — 첨부 GUID', fileGuids)
+    navigate(`/bd/prgrs/${detail.rNum}/elsgn`, { state: { detail, aplyType: 'apfr', fileGuids } })
   }
   const handlePrev = () => {
     if (tabIdx > 0) {
@@ -155,7 +171,13 @@ export function BidPrtcpAperWrtPage() {
       case '공동수급업체':
         return <BidPrtcpAperWrtPage_Stp5 detail={detail} />
       case '파일첨부':
-        return <BidPrtcpAperWrtPage_Stp6 detail={detail} />
+        return (
+          <BidPrtcpAperWrtPage_Stp6
+            detail={detail}
+            files={attachedFiles}
+            onFilesChange={setAttachedFiles}
+          />
+        )
       case '문의및동의':
         return <BidPrtcpAperWrtPage_Stp7 detail={detail} />
       default:

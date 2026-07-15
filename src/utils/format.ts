@@ -4,6 +4,19 @@ export function formatAmount(value: number): string {
   return `${value.toLocaleString('ko-KR')}원`
 }
 
+/**
+ * 파일 크기(byte)를 표시 문자열로 변환.
+ *   524288  → '512KB'
+ *   1258291 → '1.2MB'
+ *   800     → '800B'
+ */
+export function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes}B`
+  const kb = bytes / 1024
+  if (kb < 1024) return `${Math.round(kb)}KB`
+  return `${(kb / 1024).toFixed(1)}MB`
+}
+
 export function formatDate(value: string | Date): string {
   const date = typeof value === 'string' ? new Date(value) : value
   return date.toLocaleDateString('ko-KR')
