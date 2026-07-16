@@ -31,8 +31,8 @@
    - **검증 단계에서 새로 만든 항목명이 설계서에 실제로 있는지 확인**한다. 문서에서 못 찾은 항목명을 써야 하면, 임의로 만들지 말고 **사용자에게 "이 이름으로 만들어도 되는지" 먼저 물어본다.**
 5. **`router.tsx` 등록** — `lazy()` + `errorElement={<ErrorPage />}` + `handle`(아래 "라우트 handle 레퍼런스").
 6. **검증** — `npm run lint && npm run build`. chunk size 확인.
-
-**Figma 는 선택(대부분 불필요):**
+   - **⚠️ Figma 화면은 "폰트 두께(weight)·마진·패딩·gap·radius·색·정렬"까지 섬세하게 대조**한다. `get_design_context` 로 각 요소의 실측값(`font-['Pretendard_GOV:Bold'/'Medium'/'Regular']`, `p-[..]`, `gap-[..]`, `text-[..px]`, `#hex`)을 뽑아 **1:1**로 맞춘다(느낌으로 근사 금지). px→토큰 매핑: 2/4/6/8/10/12/16px = `krds-2/3/4/5/6/7/8`, 16px 패딩=`krds-8`.
+   - **구현 → 스크린샷(`get_screenshot`)과 재대조 → 어긋난 두께/간격/색을 재구현**하는 2패스로 마감한다. 특히 **숫자/뱃지/서브타이틀의 font-weight** 와 **섹션 배경색·행 값 색(muted vs ink)** 은 자주 틀리니 반드시 확인(예: M05 카드 subtitle=ink+Medium, 행 값=muted #555).
 - 대부분의 페이지 작업 = `/guide` 조립이라 **Figma MCP 안 써도 된다.**
 - Figma MCP 가 필요한 경우 = **`/guide` 에 없는 새 공통 컴포넌트를 디자인 원본대로 새로 만들 때**뿐.
 - **Figma MCP 연결 안 될 때:**

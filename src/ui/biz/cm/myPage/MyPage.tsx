@@ -79,7 +79,8 @@ function CountBadge({ count, tone }: { count: number; tone: 'section' | 'nav' })
   return (
     <span
       className={cn(
-        'flex shrink-0 items-center gap-1 text-krds-body-md leading-normal',
+        // Figma: 건수 프레임 전체가 Pretendard_GOV:Bold 상속 → 숫자+'건' 모두 Bold(숫자만 underline).
+        'flex shrink-0 items-center gap-1 text-krds-body-md font-bold leading-normal',
         tone === 'section' ? 'text-krds-text-primary-active' : 'text-krds-text-primary',
       )}
     >
@@ -184,19 +185,28 @@ export function MyPage() {
     navigate(ROUTES.BD_PRGRS, { state: { prgrsFilter: key } })
   }
   const goWorkHstry = () => {
-    console.log('[MyPage] 나의 업무이력현황') // 추후: MUI-CM-06-M02 진행업무현황
+    // 나의 업무 이력 현황(종료 이력, MUI-CM-06-M04).
+    navigate(ROUTES.MY_TASK_HSTRY)
+  }
+  const goPrgrsHstry = () => {
+    // 나의 진행 업무 현황(진행중 이력, MUI-CM-06-M02).
+    navigate(ROUTES.MY_PRGRS_HSTRY)
   }
   const goStaredBid = () => {
-    console.log('[MyPage] 관심입찰공고') // 추후: 관심 입찰공고 목록
+    // 관심입찰공고 목록(MUI-CM-06-M05).
+    navigate(ROUTES.ITRST_BID_PBANC)
   }
   const goDoc = (key: string) => {
-    console.log('[MyPage] 문서함 →', key) // 추후: 문서함 목록 이동 + 필터
+    // 문서함 목록(MUI-CM-06-M10). 하위 항목 키(received/sent/rejected/temp)를 초기 탭으로 전달.
+    navigate(ROUTES.DOC_BOX, { state: { docType: key } })
   }
   const goStaredLaw = () => {
-    console.log('[MyPage] 관심 법령') // 추후: 관심 법령 목록
+    // 관심 법령 목록(MUI-CM-06-M13).
+    navigate(ROUTES.ITRST_STT)
   }
   const goCalendarMore = () => {
-    console.log('[MyPage] 업무 캘린더 더보기') // 추후: 업무 캘린더 전체 화면
+    // 업무 캘린더 전체 화면(MUI-CM-06-M06).
+    navigate(ROUTES.TASK_CLDR)
   }
   // 일정 카드 — 입찰공고면 해당 공고 이동, 개인 스케줄이면 바텀시트 상세.
   const onSelectSchedule = (s: MyPageSchedule) => {
@@ -210,11 +220,13 @@ export function MyPage() {
 
   // 하단 바로가기(9) — 각 버튼 클릭 시 해당 페이지/팝업 호출(현재 스텁).
   const shortcuts = [
-    { id: 'myPosts', label: '나의 게시물', onClick: () => console.log('[MyPage] 나의 게시물') },
-    { id: 'bzentyInfo', label: '업체 정보관리', onClick: () => console.log('[MyPage] 업체 정보관리') },
+    { id: 'myPosts', label: '나의 게시물', onClick: () => navigate(ROUTES.MY_PST) },
+    // 업체정보관리 허브(M01) — 여기서 업체정보 상세(M02)·추가정보(M03)·추가등록·무역대리업(M15)·조달원확인서(M19) 등으로 분기.
+    { id: 'bzentyInfo', label: '업체 정보관리', onClick: () => navigate(ROUTES.BZENTY_INFO_MNG) },
     { id: 'userInfo', label: '사용자 정보관리', onClick: () => console.log('[MyPage] 사용자 정보관리') },
-    { id: 'cabinet', label: '디지털 캐비닛', onClick: () => console.log('[MyPage] 디지털 캐비닛') },
-    { id: 'noti', label: '알림 서비스 신청 및 해지', onClick: () => console.log('[MyPage] 알림 서비스 신청 및 해지') },
+    { id: 'cabinet', label: '디지털 캐비닛', onClick: () => navigate(ROUTES.DIGITAL_CABINET) },
+    // 알림 서비스 신청 및 해지(MUI-CM-02-M09).
+    { id: 'noti', label: '알림 서비스 신청 및 해지', onClick: () => navigate(ROUTES.NOTI_SRVC_APLY) },
     { id: 'withdraw', label: '회원탈퇴', onClick: () => console.log('[MyPage] 회원탈퇴') },
   ]
 
@@ -235,8 +247,13 @@ export function MyPage() {
         </button>
       </div>
 
-      {/* 2) 나의 진행업무현황(섹션 헤더) + 하위 */}
-      <CountRow title="나의 진행업무현황" count={PRGRS_TOTAL} variant="section" />
+      {/* 2) 나의 진행업무현황(섹션 헤더 → M02) + 하위(입찰참가신청 등 → 입찰진행 필터) */}
+      <CountRow
+        title="나의 진행업무현황"
+        count={PRGRS_TOTAL}
+        variant="section"
+        onClick={goPrgrsHstry}
+      />
       <SubMenuGroup items={PRGRS_ITEMS} onSelect={goPrgrs} />
 
       {/* 3) 나의 업무이력현황  4) 관심입찰공고 */}
@@ -250,8 +267,13 @@ export function MyPage() {
         onSelectSchedule={onSelectSchedule}
       />
 
-      {/* 8) 문서함(섹션 헤더) + 하위 */}
-      <CountRow title="문서함" count={DOC_TOTAL} variant="section" />
+      {/* 8) 문서함(섹션 헤더 → M10) + 하위(받은/보낸/반려/임시저장 → 문서함 목록 해당 탭) */}
+      <CountRow
+        title="문서함"
+        count={DOC_TOTAL}
+        variant="section"
+        onClick={() => navigate(ROUTES.DOC_BOX)}
+      />
       <SubMenuGroup items={DOC_ITEMS} onSelect={goDoc} />
 
       {/* 관심 법령 */}
@@ -283,7 +305,7 @@ export function MyPage() {
       >
         {detail && (
           <div className="flex flex-col gap-krds-5">
-            <Badge type="pastel" color="yellow" className="self-start">
+            <Badge type="pastel" color="blue" className="self-start">
               개인
             </Badge>
             <p className="text-krds-body-lg font-bold text-krds-text-ink">{detail.schdlCn}</p>

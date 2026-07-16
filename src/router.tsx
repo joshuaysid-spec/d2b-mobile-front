@@ -434,6 +434,156 @@ const AnlPrgrsListPage = lazy(() =>
   })),
 )
 const MyPage = lazy(() => import('@/ui/biz/cm/myPage/MyPage').then((m) => ({ default: m.MyPage })))
+// 업체정보관리 허브(MUI-CM-01-M01, /mypage/bzenty-info-mng) — biz/cm/bzentyGnrlInfoMng. 진입 버튼 목록.
+const BzentyGnrlInfoMngPage = lazy(() =>
+  import('@/ui/biz/cm/bzentyGnrlInfoMng/BzentyGnrlInfoMngPage').then((m) => ({
+    default: m.BzentyGnrlInfoMngPage,
+  })),
+)
+// 업체정보 상세(MUI-CM-01-M02, /mypage/bzenty-info) — biz/cm/bzentyGnrlInfoDtl. 업체일반/물품(내자)/시설/국내소재상사 탭 호스트.
+const BzentyGnrlInfoDtlPage = lazy(() =>
+  import('@/ui/biz/cm/bzentyGnrlInfoDtl/BzentyGnrlInfoDtlPage').then((m) => ({
+    default: m.BzentyGnrlInfoDtlPage,
+  })),
+)
+// 국내 조달원 확인서 신청 목록(MUI-CM-01-M19, /mypage/dmst-sos-cnfdoc) — biz/cm/dmstSosCnfdocList. 신청 팝업 P20 포함.
+const DmstSosCnfdocListPage = lazy(() =>
+  import('@/ui/biz/cm/dmstSosCnfdocList/DmstSosCnfdocListPage').then((m) => ({
+    default: m.DmstSosCnfdocListPage,
+  })),
+)
+// 추가정보 신청 목록(MUI-CM-01-M03, /mypage/add-reg-info-aply) — biz/cm/addRegInfoAplyList. 검색필터 P24(공통 SearchFilter).
+const AddRegInfoAplyListPage = lazy(() =>
+  import('@/ui/biz/cm/addRegInfoAplyList/AddRegInfoAplyListPage').then((m) => ({
+    default: m.AddRegInfoAplyListPage,
+  })),
+)
+// 추가정보 신청내역상세(MUI-CM-01-M03 상세, T05/T06) — biz/cm/addRegInfoAplyDtl. 추가정보구분별 물품(내자)/국내소재상사 콘텐츠.
+const AddRegInfoAplyDtlPage = lazy(() =>
+  import('@/ui/biz/cm/addRegInfoAplyDtl/AddRegInfoAplyDtlPage').then((m) => ({
+    default: m.AddRegInfoAplyDtlPage,
+  })),
+)
+// 업체정보 추가등록 폼(MUI-CM-01-M05/M22/M23) — biz/cm/dmstLctnColInfoAddReg. 선택 팝업(P06~P14)은 각 폼이 소유.
+const DmstLctnColInfoAddRegPage = lazy(() =>
+  import('@/ui/biz/cm/dmstLctnColInfoAddReg/DmstLctnColInfoAddRegPage').then((m) => ({
+    default: m.DmstLctnColInfoAddRegPage,
+  })),
+)
+const DmstLctnColInfoAddRegPagePic = lazy(() =>
+  import('@/ui/biz/cm/dmstLctnColInfoAddReg/DmstLctnColInfoAddRegPage_Pic').then((m) => ({
+    default: m.DmstLctnColInfoAddRegPage_Pic,
+  })),
+)
+const DmstLctnColInfoAddRegPageCmbz = lazy(() =>
+  import('@/ui/biz/cm/dmstLctnColInfoAddReg/DmstLctnColInfoAddRegPage_Cmbz').then((m) => ({
+    default: m.DmstLctnColInfoAddRegPage_Cmbz,
+  })),
+)
+// 국외조달원등록증신청안내(MUI-CM-01-P21, /mypage/ovs-dmst-sos) — biz/cm/dmstSosCnfdocList/OvsdmstSosCnfdoc.
+const OvsdmstSosCnfdoc = lazy(() =>
+  import('@/ui/biz/cm/dmstSosCnfdocList/OvsdmstSosCnfdoc').then((m) => ({
+    default: m.OvsdmstSosCnfdoc,
+  })),
+)
+// 군수품무역대리업 신청 및 발급(MUI-CM-01-M15~M18) — biz/cm/dfEqpmntTradeAgncAply*. 목록/상세/신규(갱신)/변경.
+const DfEqpmntTradeAgncAplyListPage = lazy(() =>
+  import('@/ui/biz/cm/dfEqpmntTradeAgncAplyList/DfEqpmntTradeAgncAplyListPage').then((m) => ({
+    default: m.DfEqpmntTradeAgncAplyListPage,
+  })),
+)
+const DfEqpmntTradeAgncAplyDtlPage = lazy(() =>
+  import('@/ui/biz/cm/dfEqpmntTradeAgncAplyDtl/DfEqpmntTradeAgncAplyDtlPage').then((m) => ({
+    default: m.DfEqpmntTradeAgncAplyDtlPage,
+  })),
+)
+const DfEqpmntTradeAgncAplyPage = lazy(() =>
+  import('@/ui/biz/cm/dfEqpmntTradeAgncAply/DfEqpmntTradeAgncAplyPage').then((m) => ({
+    default: m.DfEqpmntTradeAgncAplyPage,
+  })),
+)
+const DfEqpmntTradeAgncChgPage = lazy(() =>
+  import('@/ui/biz/cm/dfEqpmntTradeAgncChg/DfEqpmntTradeAgncChgPage').then((m) => ({
+    default: m.DfEqpmntTradeAgncChgPage,
+  })),
+)
+const ItrstBidPbancPage = lazy(() =>
+  import('@/ui/biz/cm/itrstBidPbanc/ItrstBidPbancPage').then((m) => ({
+    default: m.ItrstBidPbancPage,
+  })),
+)
+// 업무캘린더(MUI-CM-06-M06, /mypage/task-cldr) — biz/cm/taskCldr. 마이페이지 > 업무캘린더.
+const TaskCldrPage = lazy(() =>
+  import('@/ui/biz/cm/taskCldr/TaskCldrPage').then((m) => ({
+    default: m.TaskCldrPage,
+  })),
+)
+// 나의진행업무현황(MUI-CM-06-M02, /mypage/prgrs-hstry) — biz/cm/myPrgrsHstry. 세부스텝팝업 P03 호스트.
+const MyPrgrsHstryPage = lazy(() =>
+  import('@/ui/biz/cm/myPrgrsHstry/MyPrgrsHstryPage').then((m) => ({
+    default: m.MyPrgrsHstryPage,
+  })),
+)
+// 나의업무이력현황(MUI-CM-06-M04, /mypage/task-hstry) — biz/cm/myTaskHstry.
+const MyTaskHstryPage = lazy(() =>
+  import('@/ui/biz/cm/myTaskHstry/MyTaskHstryPage').then((m) => ({
+    default: m.MyTaskHstryPage,
+  })),
+)
+// 개인별수신처 관리(MUI-CM-06-M12, /mypage/indv-rcofc-mng) — biz/cm/indvRcofcMng. 조회 전용 목록.
+const IndvRcofcMngPage = lazy(() =>
+  import('@/ui/biz/cm/indvRcofcMng/IndvRcofcMngPage').then((m) => ({
+    default: m.IndvRcofcMngPage,
+  })),
+)
+// 관심법령(MUI-CM-06-M13, /mypage/itrst-stt) — biz/cm/itrstStt. 즐겨찾기 법령 목록(외부 링크).
+const ItrstSttPage = lazy(() =>
+  import('@/ui/biz/cm/itrstStt/ItrstSttPage').then((m) => ({
+    default: m.ItrstSttPage,
+  })),
+)
+// 나의 게시물(MUI-CM-06-M17, /mypage/my-pst) — biz/cm/myPst. 내가 작성한 게시물 목록.
+const MyPstPage = lazy(() =>
+  import('@/ui/biz/cm/myPst/MyPstPage').then((m) => ({
+    default: m.MyPstPage,
+  })),
+)
+// 디지털캐비닛(MUI-CM-06-M14, /mypage/digital-cabinet) — biz/cm/digitalCabinet. 폴더 목록 + P15 권한설정 시트.
+const DigitalCabinetPage = lazy(() =>
+  import('@/ui/biz/cm/digitalCabinet/DigitalCabinetPage').then((m) => ({
+    default: m.DigitalCabinetPage,
+  })),
+)
+// 폴더 내 파일 목록(MUI-CM-06-M16, /mypage/digital-cabinet/:fldrSn) — biz/cm/digitalCabinet.
+const DigitalCabinetFileListPage = lazy(() =>
+  import('@/ui/biz/cm/digitalCabinet/DigitalCabinetFileListPage').then((m) => ({
+    default: m.DigitalCabinetFileListPage,
+  })),
+)
+// 문서함 목록(MUI-CM-06-M10, /mypage/doc-box) — biz/cm/docBox.
+const DocBoxPage = lazy(() =>
+  import('@/ui/biz/cm/docBox/DocBoxPage').then((m) => ({
+    default: m.DocBoxPage,
+  })),
+)
+// 문서함 상세(MUI-CM-06-M11, /mypage/doc-box/:id) — biz/cm/docBoxDtl. T01/T02/T03 탭 호스트.
+const DocBoxDtlPage = lazy(() =>
+  import('@/ui/biz/cm/docBoxDtl/DocBoxDtlPage').then((m) => ({
+    default: m.DocBoxDtlPage,
+  })),
+)
+// 개인정보수정(MUI-CM-02-M04, /mypage/indv-info-mdfcn) — 비밀번호 인증 게이트.
+const IndvInfoMdfcnPage = lazy(() =>
+  import('@/ui/biz/cm/indvInfoMdfcn/IndvInfoMdfcnPage').then((m) => ({
+    default: m.IndvInfoMdfcnPage,
+  })),
+)
+// 알림서비스 신청 및 해지(MUI-CM-02-M09, /mypage/noti-srvc-aply) — 알림 수단/항목 설정.
+const NotiSrvcAplyPage = lazy(() =>
+  import('@/ui/biz/cm/notiSrvcAply/NotiSrvcAplyPage').then((m) => ({
+    default: m.NotiSrvcAplyPage,
+  })),
+)
 const ComponentGuidePage = lazy(() =>
   import('@/ui/dev/ComponentGuidePage').then((m) => ({
     default: m.ComponentGuidePage,
@@ -955,6 +1105,190 @@ export const router = createBrowserRouter([
         element: <MyPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '마이페이지' }, showBottomNav: true, scrollReset: true },
+      },
+      // 업체정보관리 허브(MUI-CM-01-M01) — 마이페이지 > 업체정보관리. 3뎁스라 BottomNav 숨김.
+      {
+        path: 'mypage/bzenty-info-mng',
+        element: <BzentyGnrlInfoMngPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '업체정보관리' }, scrollReset: true },
+      },
+      // 업체정보 상세(MUI-CM-01-M02) — 마이페이지 > 업체정보관리 > 상세. 3뎁스라 BottomNav 숨김(opt-in 생략).
+      {
+        path: 'mypage/bzenty-info',
+        element: <BzentyGnrlInfoDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '업체정보 상세' }, scrollReset: true },
+      },
+      // 국내 조달원 확인서 신청 목록(MUI-CM-01-M19) — 마이페이지 > 업체정보관리 > 국내조달원확인서신청목록.
+      //   진입점: 업체정보관리(MUI-CM-01-M01)·홈 바로가기('조달원 등록증(국내)') — M01 미구현이라 라우트만 등록(진입 배선은 추후).
+      //   3뎁스라 BottomNav 숨김(opt-in 생략). 목록 화면이라 scrollReset.
+      {
+        path: 'mypage/dmst-sos-cnfdoc',
+        element: <DmstSosCnfdocListPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '국내 조달원 확인서 신청 목록' }, scrollReset: true },
+      },
+      // 추가정보 신청 목록(MUI-CM-01-M03) — 마이페이지 > 업체정보관리 > 추가정보 신청 목록.
+      //   진입점: 업체정보관리(MUI-CM-01-M01) 미구현이라 라우트만 등록(진입 배선은 추후). 3뎁스라 BottomNav 숨김, 목록이라 scrollReset.
+      {
+        path: 'mypage/add-reg-info-aply',
+        element: <AddRegInfoAplyListPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '추가정보 신청 목록' }, scrollReset: true },
+      },
+      // 추가정보 신청내역상세(MUI-CM-01-M03 상세, T05/T06) — 목록에서 navigate state(항목)로 진입. 3뎁스라 BottomNav 숨김.
+      {
+        path: 'mypage/add-reg-info-aply/:id',
+        element: <AddRegInfoAplyDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '신청 내역 상세' }, scrollReset: true },
+      },
+      // 업체정보 추가등록 — 물품(내자)/담당자정보/국내소재상사(MUI-CM-01-M05/M22/M23).
+      //   진입점: 업체정보관리(MUI-CM-01-M01) 미구현이라 라우트만 등록(진입 배선은 추후 M01 경유). 3뎁스라 BottomNav 숨김.
+      {
+        path: 'mypage/bzenty-add-reg/cmdty',
+        element: <DmstLctnColInfoAddRegPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '업체정보 추가 등록' } },
+      },
+      {
+        path: 'mypage/bzenty-add-reg/pic',
+        element: <DmstLctnColInfoAddRegPagePic />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '업체정보 추가 등록' } },
+      },
+      {
+        path: 'mypage/bzenty-add-reg/dms-agt',
+        element: <DmstLctnColInfoAddRegPageCmbz />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '업체정보 추가 등록' } },
+      },
+      // 국외조달원등록증신청안내(MUI-CM-01-P21) — 마이페이지 > 업체정보관리 진입 안내(M01 미구현이라 라우트만 등록).
+      //   3뎁스라 BottomNav 숨김(opt-in 생략).
+      {
+        path: 'mypage/ovs-dmst-sos',
+        element: <OvsdmstSosCnfdoc />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '국외조달원등록증신청안내' } },
+      },
+      // 군수품무역대리업 신청 및 발급(MUI-CM-01-M15~M18) — 마이페이지 > 업체정보관리 > 군수품무역대리업 신청 목록.
+      //   진입점: 업체정보관리(MUI-CM-01-M01) 미구현이라 라우트만 등록(진입 배선은 추후). 3뎁스라 BottomNav 숨김.
+      //   M15 목록만 scrollReset(목록). M16 상세는 목록 카드→navigate state, M17/M18 은 목록 신청 시트에서 진입.
+      {
+        path: 'mypage/df-eqpmnt-trade-agnc',
+        element: <DfEqpmntTradeAgncAplyListPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '군수품무역대리업 신청 및 발급' }, scrollReset: true },
+      },
+      {
+        path: 'mypage/df-eqpmnt-trade-agnc/dtl',
+        element: <DfEqpmntTradeAgncAplyDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '군수품무역대리업 상세정보' }, scrollReset: true },
+      },
+      {
+        path: 'mypage/df-eqpmnt-trade-agnc/aply',
+        element: <DfEqpmntTradeAgncAplyPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '군수품무역대리업 신규(갱신)' }, scrollReset: true },
+      },
+      {
+        path: 'mypage/df-eqpmnt-trade-agnc/chg',
+        element: <DfEqpmntTradeAgncChgPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '군수품무역대리업 변경' }, scrollReset: true },
+      },
+      // 관심입찰공고(MUI-CM-06-M05) — 마이페이지 > 관심입찰공고. 3뎁스라 BottomNav 숨김(opt-in 생략).
+      {
+        path: 'mypage/itrst-bid-pbanc',
+        element: <ItrstBidPbancPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '관심입찰공고' }, scrollReset: true },
+      },
+      // 업무캘린더(MUI-CM-06-M06) — 마이페이지 > 업무캘린더. 3뎁스라 BottomNav 숨김(opt-in 생략).
+      {
+        path: 'mypage/task-cldr',
+        element: <TaskCldrPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '업무캘린더' }, scrollReset: true },
+      },
+      // 나의진행업무현황(MUI-CM-06-M02) — 마이페이지 > 나의 진행 업무 현황. 3뎁스라 BottomNav 숨김.
+      {
+        path: 'mypage/prgrs-hstry',
+        element: <MyPrgrsHstryPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '나의 진행 업무 현황' }, scrollReset: true },
+      },
+      // 나의업무이력현황(MUI-CM-06-M04) — 마이페이지 > 나의 업무 이력 현황. 3뎁스라 BottomNav 숨김.
+      {
+        path: 'mypage/task-hstry',
+        element: <MyTaskHstryPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '나의 업무 이력 현황' }, scrollReset: true },
+      },
+      // 개인별수신처 관리(MUI-CM-06-M12) — 마이페이지 > 문서함 > 개인별수신처관리. 조회 전용, BottomNav 숨김.
+      {
+        path: 'mypage/indv-rcofc-mng',
+        element: <IndvRcofcMngPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '개인별 수신처 관리' }, scrollReset: true },
+      },
+      // 관심법령(MUI-CM-06-M13) — 마이페이지 > 관심법령. 3뎁스라 BottomNav 숨김.
+      {
+        path: 'mypage/itrst-stt',
+        element: <ItrstSttPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '관심법령' }, scrollReset: true },
+      },
+      // 나의 게시물(MUI-CM-06-M17) — 마이페이지 > 나의 게시물. 3뎁스라 BottomNav 숨김.
+      {
+        path: 'mypage/my-pst',
+        element: <MyPstPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '나의 게시물' }, scrollReset: true },
+      },
+      // 디지털캐비닛(MUI-CM-06-M14) — 마이페이지 > 디지털캐비닛(폴더 목록). 3뎁스라 BottomNav 숨김.
+      {
+        path: 'mypage/digital-cabinet',
+        element: <DigitalCabinetPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '디지털캐비닛' }, scrollReset: true },
+      },
+      // 폴더 내 파일 목록(MUI-CM-06-M16) — 마이페이지 > 디지털캐비닛 > 폴더. 정적 목록이 먼저 매칭.
+      {
+        path: 'mypage/digital-cabinet/:fldrSn',
+        element: <DigitalCabinetFileListPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '폴더 내 파일 목록' }, scrollReset: true },
+      },
+      // 문서함 목록(MUI-CM-06-M10) — 마이페이지 > 문서함. 3뎁스라 BottomNav 숨김.
+      {
+        path: 'mypage/doc-box',
+        element: <DocBoxPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '문서함' }, scrollReset: true },
+      },
+      // 문서함 상세(MUI-CM-06-M11) — 마이페이지 > 문서함 > 문서함 상세. 정적 'doc-box' 목록이 먼저 매칭.
+      {
+        path: 'mypage/doc-box/:id',
+        element: <DocBoxDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '문서함 상세' }, scrollReset: true },
+      },
+      // 개인정보수정(MUI-CM-02-M04) — 사용자정보관리 > 개인정보수정(비밀번호 인증 게이트). 3뎁스라 BottomNav 숨김.
+      {
+        path: 'mypage/indv-info-mdfcn',
+        element: <IndvInfoMdfcnPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '개인정보수정' }, scrollReset: true },
+      },
+      // 알림서비스 신청 및 해지(MUI-CM-02-M09) — 마이페이지 > 알림 서비스 신청 및 해지.
+      {
+        path: 'mypage/noti-srvc-aply',
+        element: <NotiSrvcAplyPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '알림서비스 신청' }, scrollReset: true },
       },
       // 로그인 방식선택(MUI-CM-03-M01) — 셸 안 + sub헤더(뒤로+타이틀). 헤더는 AppLayout 소유.
       {

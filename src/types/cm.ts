@@ -267,3 +267,927 @@ export interface MyPageSchedule {
   /** 스케줄 내용 — 개인 스케줄 항목의 제목/상세(클릭 시 바텀시트로 표시). */
   schdlCn?: string
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 관심입찰공고 (MUI-CM-06-M05, ItrstBidPbancPage). 설계서 00.공통 v0.84 slide81·82.
+//   즐겨찾기(찜)한 입찰공고 목록. 데이터영역 = dl_itrstBidPbancList (항목명 영문 준수).
+//   ⚠️ 카드 레이아웃(Figma 10020:87664)은 발주예정월/발주기관/예산금액 행을 쓰나
+//      데이터영역(dl_itrstBidPbancList)엔 이 3개가 없다(공고/입찰 마감일시 위주). Figma 표기대로 두되
+//      항목명은 입찰(bd) 도메인 관례로 잠정 부여 — API 연동 시 실제 매핑 확인 필요.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * 관심입찰공고 목록 데이터영역(dl_itrstBidPbancList) 1건 — 설계서 항목명(영문) 준수.
+ * 목록엔 관심(찜) 항목만 노출되므로 itrst 기본 true. 별 토글 해제 시 false(페이지 유지 중엔 목록에 남음).
+ */
+export interface ItrstBidPbancItem {
+  /** 카드 식별자(상세 라우팅 키·목록 key). */
+  id: string
+  /** 관심 여부 — 별 하이라이트 on/off. 해제해도 페이지 유지 중엔 목록에 남고 별만 off(설계서 slide81). */
+  itrst: boolean
+  /** 업무구분(taskSeNm) — 물품/용역/공사/국외. 뱃지. 코드 GTSA0001. */
+  taskSeNm: string
+  /** 계약방법(ctrtMthd) — 수의계약/일반경쟁/제한경쟁 등. 뱃지. 코드 CTMC. */
+  ctrtMthd: string
+  /** 공고상태 — 정상공고/정정공고/취소공고 등. subtitle 앞 표기(데이터영역 pbancTpcd 계열). */
+  pbancStasNm: string
+  /** 공고번호-차수(pbancNoCycl) — subtitle. 예 '2026LGM000604191-01'. */
+  pbancNoCycl: string
+  /** 입찰건명(bidNm) — 카드 제목(2줄 말줄임). */
+  bidNm: string
+  /** 발주예정월 — 카드 행. ⚠️ 데이터영역 미정의(Figma 레이아웃) — API 연동 시 매핑 확인. */
+  orderPrnmntYm: string
+  /** 발주기관 — 카드 행. ⚠️ 데이터영역 미정의(Figma) — 매핑 확인. */
+  orderInstNm: string
+  /** 입찰방법(총액제/단가제) — 카드 행. Figma 라벨은 '계약방법'이나 값은 입찰방법(총액제) — 표기 그대로. */
+  bidMthd: string
+  /** 예산금액(원 정수) — 카드 행. ⚠️ 데이터영역 미정의(Figma) — 매핑 확인. 천단위 콤마 + ' 원'. */
+  bdgtAmt: number
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 업무캘린더 (MUI-CM-06-M06 TaskCldrPage / P07 일정상세 / P08 등록·수정 / P09 삭제).
+//   설계서 00.공통 v0.84 slide84~89. 웹경로: 메인 홈 > 마이페이지 > 업무캘린더.
+//   캘린더에 ① 즐겨찾기(찜)한 입찰공고 ② 개인이 등록한 일정 을 함께 표시(업무 있는 날 표식).
+//   데이터영역(dl_taskCldrList): 제목 schdlTtl(100·R) · 작성일자 wrtYmd(8·R).
+//   ⚠️ schdlDt(일정 일자)·schdlCn(내용)은 데이터영역에 없으나 화면(P07/P08)에 존재해 잠정 영문키 부여.
+//      (schdlDt = 캘린더 표식·선택 기준, schdlCn = P07/P08 '내용' 필드) — API 연동 시 실제 매핑 확인.
+//   구분(schdlSeCd)·공고번호(pbancNo)·공고명(pbancNm)은 마이페이지 캘린더(MyPageSchedule)와 동일 관례.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 업무캘린더 항목(관심 입찰공고 + 개인 일정 통합) — 마이페이지 캘린더 구분 코드 재사용. */
+export interface TaskCldrItem {
+  /** 로컬 식별자(목록 key·상세/삭제 대상 식별). */
+  id: string
+  /** 구분 — goods(물품)·construction(공사)=관심 입찰공고 / personal(개인)=작성 일정. */
+  schdlSeCd: MyPageSchdlSeCd
+  /** 일정 일자 'YYYY-MM-DD' — 캘린더 표식·날짜 선택 기준. ⚠️ 데이터영역 미정의(wrtYmd만 존재) — 잠정. */
+  schdlDt: string
+  /** 제목(schdlTtl) — 개인 일정 제목(P07/P08). 관심 공고는 공고명(pbancNm) 사용. */
+  schdlTtl?: string
+  /** 내용(schdlCn) — 개인 일정 상세(P07/P08 '내용'). ⚠️ 데이터영역 미정의 — 잠정. */
+  schdlCn?: string
+  /** 작성일자(wrtYmd) 'YYYY-MM-DD'. */
+  wrtYmd?: string
+  /** 공고번호(pbancNo) — 관심 입찰공고 항목에만. 클릭 시 해당 입찰공고로 이동. */
+  pbancNo?: string
+  /** 공고명(pbancNm) — 관심 입찰공고 항목의 제목. */
+  pbancNm?: string
+}
+
+/** P08 등록/수정 폼 값 — 선택 날짜·제목(필수) + 내용(선택). (스키마: TaskCldrReg.schema.ts) */
+export interface TaskCldrRegValues {
+  /** 선택 날짜(schdlDt) 'YYYY-MM-DD' — 필수. */
+  schdlDt: string
+  /** 제목(schdlTtl) — 필수. */
+  schdlTtl: string
+  /** 내용(schdlCn) — 선택. */
+  schdlCn: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 나의진행업무현황 (MUI-CM-06-M02 MyPrgrsHstryPage / 세부스텝팝업 P03 MyPrgrsHstryDtl).
+//   설계서 00.공통 v0.84 slide78·79. 진행중인 업무(입찰참가신청/적격심사 등) 목록 + 진행 단계 팝업.
+//   ⚠️ slide78·79 엔 항목설명(항목명 영문) 표가 없다. 아래 필드명은 화면 표기 기준 잠정 영문키(관례: bd/cm 도메인) —
+//      API 연동 시 실제 데이터영역 매핑 확인 필요.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 나의진행업무현황 목록(진행중) 1건 — 설계서 slide78 카드 표기 기준. */
+export interface MyPrgrsHstryItem {
+  /** 카드 식별자(목록 key·상세 라우팅). */
+  id: string
+  /** 판단번호(prcmNo) — subtitle. 예 '6000A' / '2026-00590'. */
+  prcmNo: string
+  /** 공고명/입찰건명(bidNm) — 카드 제목. */
+  bidNm: string
+  /** 신청일시(aplyDt) 'YYYY-MM-DD HH:mm' — 카드 행. ⚠️ 데이터영역 미확인 — 잠정. */
+  aplyDt: string
+  /** 진행상태(prgrsSttsNm) — 입찰참가신청/적격심사/기술평가/사양서평가 등. 뱃지. ⚠️ 잠정. */
+  prgrsSttsNm: string
+  /** 업무구분(taskSeNm) — 물품/용역/공사/국외. 뱃지. */
+  taskSeNm: string
+  /** 계약방법(ctrtMthd) — 수의계약/일반경쟁/제한경쟁 등. 뱃지. */
+  ctrtMthd: string
+  /**
+   * 현재 진행 단계 — 세부 스텝 팝업(P03)의 StepBar 구동값(조달계획~대금청구 중 현재 단계).
+   * ⚠️ 데이터영역 미정의 — StepBar 표시용 추가(관례). API 연동 시 진행단계 코드로 대체.
+   */
+  currentStage: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 나의업무이력현황 (MUI-CM-06-M04 MyTaskHstryPage). 설계서 00.공통 v0.84 slide80.
+//   종료된(완료/취소/포기) 업무 이력 목록. 상단 4분기 탭(입찰참가신청/입찰서제출/공개수의협상/계약).
+//   ⚠️ slide80 엔 항목설명 표가 없다. 필드명은 화면 표기 기준 잠정 영문키(관심입찰공고 카드와 동일 관례) —
+//      API 연동 시 실제 매핑 확인 필요.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 나의업무이력현황 목록(종료) 1건 — 설계서 slide80 카드 표기 기준. */
+export interface MyTaskHstryItem {
+  /** 카드 식별자(목록 key·상세 라우팅). */
+  id: string
+  /** 현황 구분(taskSttsNm) — 입찰참가신청/입찰서제출/공개수의협상/계약. 상단 탭·뱃지. ⚠️ 잠정. */
+  taskSttsNm: string
+  /** 판단번호(prcmNo) — subtitle. */
+  prcmNo: string
+  /** 공고명/입찰건명(bidNm) — 카드 제목. */
+  bidNm: string
+  /** 발주예정월 — 카드 행. ⚠️ 데이터영역 미확인(Figma/화면 표기) — 잠정. */
+  orderPrnmntYm: string
+  /** 발주기관 — 카드 행. ⚠️ 잠정. */
+  orderInstNm: string
+  /** 입찰방법(총액제/단가제) — 카드 행(화면 라벨은 '계약방법'). */
+  bidMthd: string
+  /** 예산금액(원 정수) — 카드 행. 천단위 콤마 + ' 원'. ⚠️ 잠정. */
+  bdgtAmt: number
+  /** 업무구분(taskSeNm) — 물품/용역/공사/국외. 뱃지. */
+  taskSeNm: string
+  /** 계약방법(ctrtMthd) — 수의계약/일반경쟁/제한경쟁 등. 뱃지. */
+  ctrtMthd: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 개인별수신처 관리 (MUI-CM-06-M12 IndvRcofcMngPage). 설계서 00.공통 v0.84 slide103·104.
+//   개인별 수신처 정보 목록(모바일 조회 전용, 상세 없음). 데이터영역 = dl_indvRcofcList (항목명 영문 준수).
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 개인별수신처 목록(dl_indvRcofcList) 1건 — 설계서 항목명(영문) 준수. */
+export interface IndvRcofcItem {
+  /** 목록 key(로컬 식별). */
+  id: string
+  /** 전자문서(eldocNm) — 전자문서명(예: '물량배정서'). 100자. 전자문서코드 XSTORECATE. */
+  eldocNm: string
+  /** 부서(deptNm). 100자. */
+  deptNm: string
+  /** 수신자ID(rcvrId) — Hidden. 16자. */
+  rcvrId: string
+  /** 수신부서(rcptnOgnzNm). 100자. */
+  rcptnOgnzNm: string
+  /** 수신자(rcvrNm). 20자. */
+  rcvrNm: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 관심법령 (MUI-CM-06-M13 ItrstSttPage). 설계서 00.공통 v0.84 slide105·106.
+//   즐겨찾기(별)한 관심 법령 목록. 클릭 시 외부 브라우저로 법령(sttUrl) 표시. 데이터영역 = dl_itrstSttList.
+//   ⚠️ 설계서 slide106 데이터영역은 '법령구분'과 '법령명'이 둘 다 sttNm 으로 표기됨(문서 오기로 판단).
+//      TS 키 충돌을 피하려 법령구분을 sttSeNm 으로 잠정 부여 — 항목명 확정 시 교체 필요.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 관심법령 목록(dl_itrstSttList) 1건 — 설계서 항목명(영문) 준수. */
+export interface ItrstSttItem {
+  /** 목록 key(로컬 식별). */
+  id: string
+  /** 관심(별) 여부 — 하이라이트 on/off. 해제해도 페이지 유지 중엔 목록에 남음(설계서 slide105). */
+  itrst: boolean
+  /** 법령구분(⚠️ 설계서 sttNm 중복 표기 — 법령명과 키 충돌로 sttSeNm 잠정). 200자. 법령구분코드 GTSC0017. */
+  sttSeNm: string
+  /** 법령약어(sttAbbrNm). 200자. */
+  sttAbbrNm: string
+  /** 법령명(sttNm). 300자. */
+  sttNm: string
+  /** 시행일자(sttEnfcYmd) — 'YYYY-MM-DD'. 8자. */
+  sttEnfcYmd: string
+  /** 링크(sttUrl) — 외부 법령 페이지 URL(관리자 작성). 500자. */
+  sttUrl: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 나의 게시물 (MUI-CM-06-M17 MyPstPage). 설계서 00.공통 v0.84 slide107.
+//   내가 작성한 게시물 목록(제목 + 작성일). 클릭 시 해당 게시물 화면으로 이동.
+//   ⚠️ slide107 엔 데이터영역(항목명 영문) 표가 없다. 아래 필드명은 화면 표기 기준 잠정 영문키(관례: cm) —
+//      API 연동 시 실제 매핑 확인 필요. (2026-07-13 개정: '작성 위치정보' 삭제)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 나의 게시물 목록 1건 — 설계서 slide107 화면 표기 기준(잠정 영문키). */
+export interface MyPstItem {
+  /** 목록 key(로컬 식별·상세 라우팅). */
+  id: string
+  /** 작성 제목(pstTtl) — 카드 제목(2줄까지, 넘치면 말줄임). ⚠️ 잠정. */
+  pstTtl: string
+  /** 작성일(wrtYmd) — 'YYYY-MM-DD'. ⚠️ 잠정. */
+  wrtYmd: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 디지털캐비닛 (MUI-CM-06-M14 DigitalCabinetPage 폴더목록 / M16 DigitalCabinetFileListPage 파일목록
+//   / P15 DigitalCabinetMng 폴더 설정 권한 관리). 설계서 00.공통 v0.84 slide108~112.
+//   폴더/파일 생성·삭제는 PC 전용(모바일 조회 + 권한설정). 데이터영역:
+//     폴더 dl_digitalCabinetFldrList · 권한 dl_digitalCabinetAuthrtList · 파일 dl_digitalCabinetFileList.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 폴더 접근권한(authrtSe) — 접근권한코드 GTSC0009(쓰기/읽기/없음). ⚠️ 실제 코드값은 API 연동 시 확인. */
+export type DigitalCabinetAuthrtSe = 'write' | 'read' | 'none'
+
+/** 폴더 사용자 권한(dl_digitalCabinetAuthrtList) 1건 — 설계서 항목명(영문) 준수. */
+export interface DigitalCabinetAuthrt {
+  /** 사용자(userNm). 200자. */
+  userNm: string
+  /** 권한(authrtSe) — 쓰기/읽기/없음. 접근권한코드 GTSC0009. */
+  authrtSe: DigitalCabinetAuthrtSe
+  /** 수정일시(mdfcnDt) — 'YYYY-MM-DD HH:mm'. 14자. */
+  mdfcnDt?: string
+}
+
+/** 디지털캐비닛 폴더(dl_digitalCabinetFldrList) 1건 — 설계서 항목명(영문) 준수. */
+export interface DigitalCabinetFldr {
+  /** 폴더ID(fldrSn) — Hidden. 10자. 파일목록/권한 조회 키. */
+  fldrSn: string
+  /** 폴더명(fldrNm). 50자. */
+  fldrNm: string
+  /** 폴더사이즈(fldrSz) — 표시값(예: '10MB'). 10자. */
+  fldrSz: string
+  /** 수정자(mdfrNm). 200자. */
+  mdfrNm?: string
+  /** 등록일시(regDt) — 14자. */
+  regDt?: string
+  /** 수정일시(mdfcnDt) — 'YYYY-MM-DD HH:mm'. 14자. */
+  mdfcnDt?: string
+  /** 폴더 권한 목록(P15 권한 설정). */
+  authrtList?: DigitalCabinetAuthrt[]
+}
+
+/** 디지털캐비닛 폴더 내 파일(dl_digitalCabinetFileList) 1건 — 설계서 항목명(영문) 준수. */
+export interface DigitalCabinetFile {
+  /** 파일ID(fileId) — Hidden. 38자. */
+  fileId: string
+  /** 파일명(fileNm). 255자. */
+  fileNm: string
+  /** 파일사이즈(fileSz) — 표시값(예: '369KB', MB 단위). 10자. */
+  fileSz: string
+  /** 유효기간(vldPrdEndYmd) — 'YYYY-MM-DD'. 8자. 없으면 '-'. */
+  vldPrdEndYmd?: string
+  /** 전자문서 여부(eldocYn) — 'Y' | 'N'. */
+  eldocYn: 'Y' | 'N'
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 문서함 (MUI-CM-06-M10 DocBoxPage 목록 / M11 DocBoxDtlPage 상세 / T01·T02·T03 탭).
+//   설계서 00.공통 v0.84 slide90~102. 웹경로: 메인 홈 > 마이페이지 > 문서함(> 문서함 상세).
+//   받은문서(dl_rcptnDocBoxList)·보낸문서(dl_sendDocBoxList)·임시저장(dl_tmprDocBoxList)·
+//   반려함(dl_rjctDocBoxList) 4개 데이터영역을 하나의 목록으로 합쳐 표시(최신순, 카드 상단 레이블로 구분).
+//   항목명(영문)은 각 데이터영역 표를 그대로 따른다(같은 의미의 컬럼은 재사용):
+//     송신처/반려처 trsmOgnzCd · 수신처 rcptnOgnzCd · 문서명 docNm · 도착일 rcptnDt ·
+//     수신일/확인일 rcptIdntyDt · 송신일/반려일 docWrtDt · 작성일 wrtYmd · 반려자 rturId ·
+//     반려여부 rjctYn · 반려사유 rjctRsn · 첨언 addCn · 첨부 edmsDocId.
+//   ⚠️ 문서구분(받은/보낸/반려/임시)은 데이터영역에 별도 코드컬럼이 없다(검색필터 '문서 구분' 표기 기반) —
+//      탭/카드레이블 구동용 파생키 docSeCd/docSeNm 으로 잠정 부여. API 연동 시 실제 구분 코드로 대체.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 문서구분 — 목록 탭 그룹(받은/보낸/반려/임시저장). ⚠️ 설계서 데이터영역 미정의(파생키). */
+export type DocBoxSeCd = 'received' | 'sent' | 'rejected' | 'temp'
+
+/**
+ * 문서함 목록(합산) 1건 — 4개 데이터영역(받은/보낸/임시/반려)을 합친 통합 아이템.
+ * 타입별로 채워지는 필드가 달라(날짜/기관 라벨) 공통 필드는 모두 optional 로 둔다.
+ * 상세(M11) 상단은 이 항목(navigate state)으로 그리고, 본문(문서내용/첨부목록)은 상세 목업으로 보완.
+ */
+export interface DocBoxItem {
+  /** 카드 식별자(목록 key·상세 라우팅). */
+  id: string
+  /** 문서구분(파생) — 탭 그룹. ⚠️ 데이터영역 미정의(검색필터 문서구분 표기 기반). */
+  docSeCd: DocBoxSeCd
+  /** 카드 상단 레이블(받은 문서/보낸 문서/임시저장/반려받은 문서/반려한 문서). ⚠️ 잠정(문서구분 표기). */
+  docSeNm: string
+  /** 문서명(docNm) — 카드 제목. 200자. */
+  docNm: string
+  /** 송신처/반려처(trsmOgnzCd) — 받은·반려 문서 기관명. 16자. */
+  trsmOgnzCd?: string
+  /** 수신처(rcptnOgnzCd) — 보낸 문서 기관명. 16자. */
+  rcptnOgnzCd?: string
+  /** 도착일(rcptnDt) — 받은·반려받은 문서. 'YYYY-MM-DD'. */
+  rcptnDt?: string
+  /** 수신일·확인일(rcptIdntyDt) — 받은/반려받은=수신일, 보낸=확인일. 'YYYY-MM-DD'. */
+  rcptIdntyDt?: string
+  /** 송신일·반려일(docWrtDt) — 보낸=송신일, 반려=반려일. 'YYYY-MM-DD'. */
+  docWrtDt?: string
+  /** 작성일(wrtYmd) — 임시저장 문서. 'YYYY-MM-DD'. 8자. */
+  wrtYmd?: string
+  /** 반려자(rturId) — 반려한 문서. 16자. */
+  rturId?: string
+  /** 반려여부(rjctYn) — 'Y'(반려한)/'N'(반려받은). ⚠️ Y/N 의미 상세설계 확인. */
+  rjctYn?: 'Y' | 'N'
+  /** 반려사유(rjctRsn) — 반려 문서. 4000자. 있으면 상세 반려사유 탭 노출. */
+  rjctRsn?: string
+  /** 첨언(addCn) — 500자. 있으면 카드 '첨언' 배지 + 상세 첨언상세보기(T02) 탭. */
+  addCn?: string
+  /** 첨부 EDMS 문서 ID(edmsDocId) — 38자. 있으면 카드 '첨부' 배지 + 상세 첨부파일(T03) 탭. */
+  edmsDocId?: string
+}
+
+/**
+ * 문서함 상세 첨부파일 1건 — 첨부문서다운로드 데이터영역(dl_atchDocList), MUI-CM-06-T03.
+ * 설계서 slide95·98 항목명(영문) 준수.
+ */
+export interface DocBoxAtchFile {
+  /** 첨부문서명(fileTtl) — 255자. */
+  fileTtl: string
+  /** 파일명(fileNm) — 실제 다운로드 파일명(예: '첨부파일명.hwp'). 255자. */
+  fileNm: string
+  /** 파일크기(표시용, 예: '786KB'). ⚠️ 데이터영역 미정의(화면 '[파일크기]' 표기) — 잠정. */
+  fileSize?: string
+  /** EDMS 문서 ID(edmsDocId) — 38자. */
+  edmsDocId?: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 업체정보관리 상세 (MUI-CM-01-M02 상세 / T01 업체일반 / T02 물품(내자) / T03 시설 / T04 국내소재상사).
+//   설계서 00.공통 v0.84 slide115~128(문서 P114~127). 웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 상세.
+//   자신이 속한 업체 정보 표시. 항목명(영문)은 각 탭 "항목 설명" 데이터영역 표(slide118~120·123·125)를 그대로 따른다.
+//   ⚠️ T04 국내소재상사(slide127·128)는 데이터영역(항목명 영문) 표가 설계서에 없어 화면 표기 기준 잠정 영문키 부여.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * 업체일반 데이터영역(dm_bzentyGnrlInfo) — MUI-CM-01-T01. 설계서 slide118 항목명(영문) 준수.
+ * 사업구분(bizCd)은 여러 개 노출될 수 있어 배열로 둔다(설계서 "사업구분은 여러 개 노출될 수 있음").
+ */
+export interface BzentyGnrlInfo {
+  /** 업체코드(bzentyCd) — 5자. 예 '100F'. */
+  bzentyCd: string
+  /** 상호명(bzentyNm) — 100자. */
+  bzentyNm: string
+  /** 영문상호명(bzentyEngNm) — 200자. */
+  bzentyEngNm: string
+  /** 사업자등록번호(brno) — 10자. 예 '123-45-67890'. */
+  brno: string
+  /** 국적(ntnCd) — 2자(코드) → 국적명 표시. 예 '대한민국'. */
+  ntnCd: string
+  /** 개업일자(opbizYmd) — 'YYYY-MM-DD'. 8자. */
+  opbizYmd: string
+  /** 홈페이지주소(hmpgAddr) — 50자. */
+  hmpgAddr: string
+  /** 주소(bzentyAddr) — 200자. 우편번호 포함 표시. */
+  bzentyAddr: string
+  /** 전화번호(rprsvTelno) — 25자. */
+  rprsvTelno: string
+  /** 팩스번호(rprsvFxno) — 40자. */
+  rprsvFxno: string
+  /** 법인설립일자(fndnYmd) — 'YYYY-MM-DD'. 8자. */
+  fndnYmd: string
+  /** 법인등록번호(crno) — 13자. */
+  crno: string
+  /** 본사사업자번호(hdofcBrno) — 10자. */
+  hdofcBrno: string
+  /** 종업원수(empCnt) — 10자. 예 '000 명'. */
+  empCnt: string
+  /** 사업구분(bizCd) — 5자(코드) → 명. 여러 개 노출 가능(물품(내자)/공사/용역/일반용역/외자). */
+  bizCd: string[]
+  /** 제조구분(entTpcd) — 2자(코드) → 명. 예 '제조'. */
+  entTpcd: string
+  /** 기업구분1(entShcd1) — 20자. 예 '중소기업'. */
+  entShcd1: string
+  /** 기업구분2(entShcd2) — 50자. 값이 있을 때만 표시. 예 '원호기업'. */
+  entShcd2?: string
+  /** 기업구분해당년도(entSeRlvtYr) — 4자. 예 '1999'. */
+  entSeRlvtYr: string
+  /** 지역코드(rgnCd) — 2자(코드) → 지역명. 예 '11-서울특별시'. */
+  rgnCd: string
+  /** 공장설립특례해당여부(fctryFndnSpcsYn) — 1자 'Y'/'N' → '해당'/'미해당'. */
+  fctryFndnSpcsYn: string
+  /** 본/지사(bplcSecd) — 1자(코드) → 명. 예 '1-본사'. */
+  bplcSecd: string
+}
+
+/** 상태/부정당 데이터영역(dl_bzentySttsList) 1건 — MUI-CM-01-T01. 설계서 slide118 항목명(영문) 준수. */
+export interface BzentyStts {
+  /** 상태코드(bzentyStcd) — 2자. */
+  bzentyStcd: string
+  /** 상태명(bzentyStNm) — 20자. 상태구분코드로 상태명 조회. 예 '양도,양수'. */
+  bzentyStNm: string
+  /** 발생일자(crtrYmd) — 'YYYY-MM-DD'. 8자. */
+  crtrYmd: string
+  /** 시작일자(bgngYmd) — 'YYYY-MM-DD'. 8자. */
+  bgngYmd: string
+  /** 종료일자(endYmd) — 'YYYY-MM-DD'. 8자. */
+  endYmd: string
+  /** 비고(rmrkCn) — 400자. */
+  rmrkCn: string
+}
+
+/**
+ * 수의계약배제 데이터영역(dl_bzentyRlsVltrnsRstricList) 1건 — MUI-CM-01-T01.
+ * 설계서 slide119 항목명(영문) 준수. 기본 3개월 필터/전체 조회(dm_bzentyRlsVltrnsRstric 이벤트).
+ */
+export interface BzentyRlsVltrnsRstric {
+  /** 공고번호(pbancNo) — 7자. */
+  pbancNo: string
+  /** 판단번호(prcmNo) — 38자. */
+  prcmNo: string
+  /** 공고명(pbancNm) — 100자. 공고번호로 공고명 조회. */
+  pbancNm: string
+  /** 개찰일자(bdopnYmd) — 'YYYY-MM-DD'. 8자. */
+  bdopnYmd: string
+  /** 발주기관(orderInstNm) — 200자. */
+  orderInstNm: string
+  /** 수의계약 배제기간(exclPrd) — 10자. 배제기간 종료일자–시작일자로 기간 설정. */
+  exclPrd: string
+  /** 계약포기사유(exclRsn) — 200자. */
+  exclRsn: string
+  /** 등록일자(regDt) — 'YYYY-MM-DD'. 10자. */
+  regDt: string
+}
+
+/** 대표자 데이터영역(dl_bzentyRprsvList) 1건 — MUI-CM-01-T01. 설계서 slide119 항목명(영문) 준수. */
+export interface BzentyRprsv {
+  /** 대표대표자여부(rprsvYn) — 1자 'Y'/'N' → '대대표'/'대표'. */
+  rprsvYn: string
+  /** 대표자명(rprsvNm) — 100자. */
+  rprsvNm: string
+  /** 대표자영문(rprsvEngNm) — 200자. */
+  rprsvEngNm: string
+  /** 대표자이메일주소(rprsvEmlAddr) — 50자. */
+  rprsvEmlAddr: string
+}
+
+/** 입찰대리인 데이터영역(dl_bzentyBidAgtList) 1건 — MUI-CM-01-T01. 설계서 slide120 항목명(영문) 준수. */
+export interface BzentyBidAgt {
+  /** 직위(agtJbpsNm) — 100자. */
+  agtJbpsNm: string
+  /** 성명(agtNm) — 100자. */
+  agtNm: string
+  /** 전화번호(agtEntlno) — 88자. */
+  agtEntlno: string
+}
+
+/** 등록품목명세 데이터영역(dl_regTrgtItemList) 1건 — MUI-CM-01-T02. 설계서 slide123 항목명(영문) 준수. */
+export interface RegTrgtItem {
+  /** 품목코드(itemCd) — 10자. */
+  itemCd: string
+  /** 품류코드(knditmCd) — 2자. */
+  knditmCd: string
+  /** 품류명(knditmCdNm) — 300자. 품류코드/명으로 표시. */
+  knditmCdNm: string
+  /** 구분(itemRgstrtSecdNm) — 100자. 품목등재구분(ITRGDVCD). 예 '제조'. */
+  itemRgstrtSecdNm: string
+  /** 품명(itemCdNm) — 300자. */
+  itemCdNm: string
+  /** 등록요건(itemRgstrtRqmtNm) — 100자. 등록요건코드로 등록요건명 조회. */
+  itemRgstrtRqmtNm: string
+  /** 품목적부판정(itemRvwRsltCn) — 200자. 예 '적격'. */
+  itemRvwRsltCn: string
+}
+
+/** 담당자정보 데이터영역(dm_picInfo) — MUI-CM-01-T02. 설계서 slide123 항목명(영문) 준수. */
+export interface PicInfo {
+  /** 담당자명(picNm) — 100자. */
+  picNm: string
+  /** 전화번호(picEntlno) — 88자. */
+  picEntlno: string
+  /** 팩스번호(picFxno) — 20자. */
+  picFxno: string
+  /** 이메일주소(picEmlAddr) — 50자. */
+  picEmlAddr: string
+}
+
+/**
+ * 대표품류및조합/단체 데이터영역(dm_knditmListAsctGrpList) 1건 — MUI-CM-01-T02.
+ * 설계서 slide123 항목명(영문) 준수. (설계서 대표품류코드 항목명이 knditmCdNm 로 중복 표기돼 코드는 knditmCd 로 둔다.)
+ */
+export interface KnditmAsctGrp {
+  /** 대표품류코드(knditmCd) — 2자. */
+  knditmCd: string
+  /** 대표품류(knditmCdNm) — 300자. 예 '05 / 피복'. */
+  knditmCdNm: string
+  /** 업태(bzstatCdNm) — 100자. 업태구분코드 MBTC. 예 '제조'. */
+  bzstatCdNm: string
+  /** 조합/단체코드(asctCd) — 3자. */
+  asctCd: string
+  /** 조합/단체(asctCdNm) — 300자. 예 '한국피복공업협동조합'. */
+  asctCdNm: string
+}
+
+/** 시설정보 데이터영역(dm_bzentyFcltInfo) — MUI-CM-01-T03. 설계서 slide125 항목명(영문) 준수. */
+export interface BzentyFcltInfo {
+  /** 대표업태(bzstatCdNm) — 100자. 예 '제조'. */
+  bzstatCdNm: string
+  /** 연락소(전화번호)(lcofcTelno) — 20자. */
+  lcofcTelno: string
+}
+
+/** 시설면허정보 데이터영역(dl_bzentyFcltLcnsList) 1건 — MUI-CM-01-T03. 설계서 slide125 항목명(영문) 준수. */
+export interface BzentyFcltLcns {
+  /** 공종(cnstpCdNm) — 100자. 예 '소방공사업'. */
+  cnstpCdNm: string
+  /** 업종코드(cnstpCd) — 4자. 예 '0001'. */
+  cnstpCd: string
+  /** 면허번호(lcnsNo) — 60자. */
+  lcnsNo: string
+  /** 시공능력 공시액(cnstAbltEvlAmt) — 17자. 원 단위 정수 문자열/표시값. */
+  cnstAbltEvlAmt: string
+  /** 면허유효기간 시작일(lcnsAcqsYmd) — 'YYYY-MM-DD'. 8자. */
+  lcnsAcqsYmd: string
+  /** 면허유효기간 종료일(lcnsExpryYmd) — 'YYYY-MM-DD'. 8자. */
+  lcnsExpryYmd: string
+  /** 폐업여부(bzentyStcd) — 2자(상태코드) → 표시. */
+  bzentyStcd: string
+}
+
+/**
+ * 주력분야 데이터영역(dl_bzentyFcltMfrcFldList) 1건 — MUI-CM-01-T03. 설계서 slide125 항목명(영문) 준수.
+ * (설계서 업종코드 항목명이 cnstpCdNm 로 중복 표기돼 코드는 cnstpCd 로 둔다 — 공종명과 키 충돌 방지.)
+ */
+export interface BzentyFcltMfrcFld {
+  /** 공종명(cnstpCdNm) — 100자. */
+  cnstpCdNm: string
+  /** 업종코드(cnstpCd) — 4자. */
+  cnstpCd: string
+  /** 주력분야(mfrcFldNm) — 100자. */
+  mfrcFldNm: string
+  /** 주력분야코드(mfrcFldCd) — 3자. */
+  mfrcFldCd: string
+  /** 해제일(mfrcFldRmvYmd) — 'YYYY-MM-DD'. 8자. 없으면 '-'. */
+  mfrcFldRmvYmd: string
+  /** 시공능력 공시액(cnstAbltEvlAmt) — 17자. */
+  cnstAbltEvlAmt: string
+  /** 평가액기준년도(evlAmtCrtrYr) — 4자. */
+  evlAmtCrtrYr: string
+  /** 지정일자(mfrcFldDsgnYmd) — 'YYYY-MM-DD'. 8자. */
+  mfrcFldDsgnYmd: string
+  /** 갱신일시(mdfcnDt) — 'YYYY-MM-DD HH:mm'. 14자. */
+  mdfcnDt: string
+  /** 입찰제한대상(excptnMttrCd) — 1자(특이사항코드) → 표시. */
+  excptnMttrCd: string
+}
+
+// ── T04 국내소재상사 ──────────────────────────────────────────────────────────
+// ⚠️ 국내소재상사(slide127·128)는 설계서에 데이터영역(항목명 영문) 표가 없다. 아래 필드명은
+//    화면 표기(영업정보/FSC/법인개인구분/해외관련) 기준 잠정 영문키 — API 연동 시 실제 데이터영역 매핑 확인 필요.
+
+/** 국내소재상사 영업정보 — MUI-CM-01-T04. ⚠️ 설계서 데이터영역 미정의(화면 표기 기준 잠정 영문키). */
+export interface DmsAgtSaleInfo {
+  /** 연간매출액(anlSaleAmt) — 천원 단위 정수. ⚠️ 잠정. */
+  anlSaleAmt: number
+  /** 자산규모(astScl) — 천원 단위 정수. ⚠️ 잠정. */
+  astScl: number
+  /** 여신한도(lncLmt) — 천원 단위 정수. ⚠️ 잠정. */
+  lncLmt: number
+  /** 주거래은행(mnTrnsBankNm) — 예 '한국외환은행'. ⚠️ 잠정. */
+  mnTrnsBankNm: string
+  /** 지점(brnchNm) — 예 '계동'. ⚠️ 잠정. */
+  brnchNm: string
+  /** 군납최초참여일(mlsplyFrstPtcpYmd) — 'YYYY-MM-DD'. ⚠️ 잠정. */
+  mlsplyFrstPtcpYmd: string
+  /** 거래기간 시작(trnsPrdFrom) — 'YYYY'. ⚠️ 잠정. */
+  trnsPrdFrom: string
+  /** 거래기간 종료(trnsPrdTo) — 'YYYY'. ⚠️ 잠정. */
+  trnsPrdTo: string
+  /** Dun's Number(dunsNo). ⚠️ 잠정. */
+  dunsNo: string
+}
+
+/** 국내소재상사 FSC(Federal Supply Classification) 코드 1건 — MUI-CM-01-T04. ⚠️ 설계서 데이터영역 미정의(잠정). */
+export interface DmsAgtFscCode {
+  /** FSC 코드(fscCd) — 예 '1111'. ⚠️ 잠정. */
+  fscCd: string
+  /** 군급명(gunGrdNm) — 예 '기타 항공기 부수품'. ⚠️ 잠정. */
+  gunGrdNm: string
+}
+
+/** 국내소재상사 법인/개인 구분 정보 — MUI-CM-01-T04. ⚠️ 설계서 데이터영역 미정의(잠정 영문키). */
+export interface DmsAgtCorpInfo {
+  /** 법인/개인 구분(corpIndvSe) — 'corp'(법인)/'indv'(개인). ⚠️ 잠정. */
+  corpIndvSe: 'corp' | 'indv'
+  /** 법인등기기관(corpRgstOrgnNm) — 예 '방위사업청'. ⚠️ 잠정. */
+  corpRgstOrgnNm: string
+  /** 법인등기일자(corpRgstYmd) — 'YYYY-MM-DD'. ⚠️ 잠정. */
+  corpRgstYmd: string
+  /** 법인등기목적(corpRgstPrps) — 예 '개업'. ⚠️ 잠정. */
+  corpRgstPrps: string
+  /** 사업자등록기관(bzrnoRgstOrgnNm) — 예 '방위사업청'. ⚠️ 잠정. */
+  bzrnoRgstOrgnNm: string
+  /** 취급품목(hdlItemNm) — 예 '무기'. ⚠️ 잠정. */
+  hdlItemNm: string
+  /** 업태(bzstatNm) — 예 '제조'. ⚠️ 잠정. */
+  bzstatNm: string
+  /** 보안측정부대(scrtMsrUnitNm) — 예 '보안부대'. ⚠️ 잠정. */
+  scrtMsrUnitNm: string
+  /** 보안측정일자(scrtMsrYmd) — 'YYYY-MM-DD'. ⚠️ 잠정. */
+  scrtMsrYmd: string
+  /** 보안측정점수(scrtMsrScr) — 예 90. ⚠️ 잠정. */
+  scrtMsrScr: number
+}
+
+/** 국내소재상사 해외관련 업체정보 1건 — MUI-CM-01-T04. ⚠️ 설계서 데이터영역 미정의(잠정 영문키). */
+export interface DmsAgtOvsBzenty {
+  /** 업체코드(ovsBzentyCd) — 예 '1111'. ⚠️ 잠정. */
+  ovsBzentyCd: string
+  /** 업체명(ovsBzentyNm) — 예 'Test Corp'. ⚠️ 잠정. */
+  ovsBzentyNm: string
+  /** 국적(ovsNtnNm) — 예 '프랑스'. ⚠️ 잠정. */
+  ovsNtnNm: string
+  /** 전화번호(ovsTelno) — 예 '+33-1-34-88-30-00'. ⚠️ 잠정. */
+  ovsTelno: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 조달원확인서 (MUI-CM-01-M19 신청 목록 / P20 신청서). 설계서 00.공통 v0.84 slide131~134(문서 P130~133).
+//   웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 국내조달원확인서신청목록(> 신청).
+//   항목명(영문)은 데이터영역 표(slide134)를 그대로 따른다.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * 조달원확인서 신청 목록 데이터영역(dl_resultList) 1건 — MUI-CM-01-M19. 설계서 slide134 항목명(영문) 준수.
+ * 상태(aplyRcptStts)는 '발급'으로 고정된다(신청 시 바로 발급, slide134 비고).
+ */
+export interface DmstSosCnfdocItem {
+  /** 목록 key(로컬 식별). 접수번호가 고유하나 key 안정성 위해 별도 id 부여. */
+  id: string
+  /** 접수번호(aplyRcptNo) — 12자. 예 '2026051812'. */
+  aplyRcptNo: string
+  /** 신청인(aplcntNm) — 100자. */
+  aplcntNm: string
+  /** 신청사유(aplyRsn) — 4000자. 예 '입찰참가용' / '확인용'. */
+  aplyRsn: string
+  /** 신청날짜(edpPrcsYmd) — 'YYYY-MM-DD'. 8자. */
+  edpPrcsYmd: string
+  /** 전화번호(aplcntTelno) — 25자. */
+  aplcntTelno: string
+  /** 상태(aplyRcptStts) — 10자. '발급'으로 고정(신청 시 바로 발급). */
+  aplyRcptStts: string
+}
+
+/** 조달원확인서 신청 검색조건(dm_searchInfo) — MUI-CM-01-M19. 설계서 slide134 항목명(영문) 준수. */
+export interface DmstSosCnfdocSearch {
+  /** 신청날짜(F)(edpPrcsYmdFrom) — 기간 시작 'YYYY-MM-DD'. 8자. */
+  edpPrcsYmdFrom: string
+  /** 신청날짜(T)(edpPrcsYmdTo) — 기간 종료 'YYYY-MM-DD'. 8자. */
+  edpPrcsYmdTo: string
+  /** 신청자(aplcntNm) — 100자. 부분입력 검색. */
+  aplcntNm: string
+}
+
+/**
+ * 조달원 확인서 신청서 데이터영역(dm_sosCnfdocAplyInfo) — MUI-CM-01-P20. 설계서 slide134 항목명(영문) 준수.
+ * 신청인 성명(aplcntNm)·연락처(aplcntTelno)는 ReadOnly(자동완성), 신청사유(aplyRsn)만 Editable·필수.
+ * (폼 검증 스키마는 신청사유만 다룬다 — DmstSosCnfdocAply.schema.ts)
+ */
+export interface DmstSosCnfdocAplyInfo {
+  /** 신청인 성명(aplcntNm) — 100자. 자동완성(read-only). */
+  aplcntNm: string
+  /** 신청인 연락처(aplcntTelno) — 25자. 자동완성(read-only). */
+  aplcntTelno: string
+  /** 신청사유(aplyRsn) — 4000자. Editable·필수. */
+  aplyRsn: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 추가정보 신청 목록 (MUI-CM-01-M03 신청 목록 / P24 검색필터). 설계서 00.공통 v0.84 slide137~139(문서 P136~138).
+//   웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 추가정보 신청 목록(> 검색필터).
+//   영문 화면 ID: addRegInfoAplyList(앱메뉴 260701a). 항목명(영문)은 데이터영역 표(slide139)를 그대로 따른다.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * 추가등록정보 신청 목록 데이터영역(dl_resultList) 1건 — MUI-CM-01-M03. 설계서 slide139 항목명(영문) 준수.
+ * 카드 클릭 시 처리상태(prgrsSttsNm) 무관하게 상세(T05 물품(내자)신청 / T06 국내소재상사신청) 진입.
+ */
+export interface AddRegInfoAplyItem {
+  /** 목록 key(로컬 식별). 접수번호가 고유하나 key 안정성 위해 별도 id 부여. */
+  id: string
+  /** 접수번호(rcptNo) — 12자. 예 '2020101010'. */
+  rcptNo: string
+  /** 신청일자(aplyYmd) — 'YYYY-MM-DD'. 8자. 예 '2020-10-10'. */
+  aplyYmd: string
+  /** 전화번호(rprsvTelno) — 25자. 예 '02-1234-5678'. */
+  rprsvTelno: string
+  /** 업무구분(bizCdNm) — 100자. 물품(내자)/공사/용역/일반용역/외자. */
+  bizCdNm: string
+  /** 추가정보구분(addInfoCdNm) — 100자. 물품(내자)/국내소재상사. */
+  addInfoCdNm: string
+  /** 진행(처리)상태(prgrsSttsNm) — 10자. 접수('U')/반송('R')/승인('F'). */
+  prgrsSttsNm: string
+}
+
+/**
+ * 추가등록정보 신청 목록 검색조건(dm_searchInfo) — MUI-CM-01-M03/P24. 설계서 slide139 항목명(영문) 준수.
+ * 기간·처리상태·품명은 데이터영역 표에 정의됨. 구분(bizCdNm)은 P24 '구분 설정' 화면 표기 기준 잠정 검색키(⚠️ dm_searchInfo 미정의).
+ */
+export interface AddRegInfoAplySearch {
+  /** 기간(F)(aplyYmdFrom) — 기간 시작 'YYYY-MM-DD'. 8자. 선택. */
+  aplyYmdFrom: string
+  /** 기간(T)(aplyYmdTo) — 기간 종료 'YYYY-MM-DD'. 8자. 선택. */
+  aplyYmdTo: string
+  /** 처리상태(prgrsSttsNm) — 10자. 전체('A')/접수('U')/반송('R')/승인('F'). 선택. */
+  prgrsSttsNm: string
+  /** 품명(itemNm) — 200자. 부분입력 검색. */
+  itemNm: string
+  /** ⚠️ 구분(bizCdNm) — P24 '구분 설정' select. dm_searchInfo 미정의(잠정 검색키, 확인 필요). */
+  bizCdNm?: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 군수품무역대리업 신청 및 발급 (MUI-CM-01-M15~M18). 설계서 00.공통 v0.84 slide178~189.
+//   M15 신청 및 발급 목록 · M16 신청 내역 상세 · M17 신규(갱신) · M18 변경.
+//   데이터영역: dl_dfEqpmntTradAgncAplyList(목록) · dm_dfEqpmntTradAgncAplyInfo(접수/업체) ·
+//     dl_dfEqpmntTradAgncAplyAtchFileList(첨부서류) · dl_scrtyMsrmtPrsnlList(보안측정인원).
+//   항목명(영문)은 데이터영역 표(slide180·184·188)를 그대로 따른다.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 군수품무역대리업 신청 목록(dl_dfEqpmntTradAgncAplyList) 1건 — MUI-CM-01-M15. 설계서 slide180. */
+export interface DfEqpmntTradeAgncAplyItem {
+  /** 목록 key(로컬 식별). 접수번호가 고유하나 key 안정성 위해 별도 id 부여. */
+  id: string
+  /** 구분(regAplySecd) — 신규/갱신/변경. 1자. */
+  regAplySecd: string
+  /** 접수번호(rcptNo) — 접수년도(4)+접수일련번호(4). 예 '2026-0020'. */
+  rcptNo: string
+  /** 요청일자(rcptYmd) — 'YYYY-MM-DD'. 8자. */
+  rcptYmd: string
+  /** 승인일자(aprvYmd) — 'YYYY-MM-DD'. 없으면 ''. */
+  aprvYmd: string
+  /** 실효·말소일자(ersrYmd) — 'YYYY-MM-DD'. 없으면 ''. */
+  ersrYmd: string
+  /** 만료일자(expryYmd) — 'YYYY-MM-DD'. 없으면 ''. */
+  expryYmd: string
+  /** 진행상황(aprvSecdNm) — 말소/실효/승인/제출/반려/저장. 10자. */
+  aprvSecdNm: string
+}
+
+/**
+ * 군수품무역대리업 신청 접수·업체 정보(dm_dfEqpmntTradAgncAplyInfo) — MUI-CM-01-M16/M17/M18 공용.
+ * 설계서 slide180·184·188. 조회결과(ReadOnly). 반려사유(atrzRjctRsn)는 반려 시에만.
+ */
+export interface DfEqpmntTradeAgncAplyInfo {
+  /** 접수번호(rcptNo) — 8자. */
+  rcptNo: string
+  /** 신청일시(rcptYmd) — 'YYYY-MM-DD'. 8자. */
+  rcptYmd: string
+  /** 처리일시(atrzYmd) — 'YYYY-MM-DD'. 8자. 없으면 ''. */
+  atrzYmd: string
+  /** 처리구분(atrzStcd) — 승인('S')/반려('R') 표시명. 1자. */
+  atrzStcd: string
+  /** 신청구분(regAplySecd) — 신규/갱신/변경. 1자. */
+  regAplySecd: string
+  /** 업태(bzstatCdNm) — 100자. */
+  bzstatCdNm: string
+  /** 상호(bzentyNm) — 100자. */
+  bzentyNm: string
+  /** 대표자성명(rprsvNm) — 100자. */
+  rprsvNm: string
+  /** 전화번호(bzentyTelno) — 20자. */
+  bzentyTelno: string
+  /** 팩스번호(bzentyFxno) — 20자. */
+  bzentyFxno: string
+  /** 이메일주소(bzentyEmlAddr) — 50자. */
+  bzentyEmlAddr: string
+  /** 사업자번호(brno) — 8자. */
+  brno: string
+  /** 설립일자(fndnYmd) — 'YYYY-MM-DD'. 8자. */
+  fndnYmd: string
+  /** 주소(bzentyAddr) — 200자. */
+  bzentyAddr: string
+  /** 반려사유(atrzRjctRsn) — 500자. 반려 시에만 표시. */
+  atrzRjctRsn?: string
+}
+
+/**
+ * 군수품무역대리업 첨부서류(dl_dfEqpmntTradAgncAplyAtchFileList) 1건 — MUI-CM-01-M16/M17/M18.
+ * 설계서 slide180·184·188. fileTtl(첨부서류명, 고정) + fileNm(첨부파일명, 선택). size/required 는 UI 표시용.
+ */
+export interface DfEqpmntTradeAgncAtchFile {
+  /** 첨부 슬롯 식별자(고유). */
+  id: string
+  /** 첨부서류명(fileTtl) — 200자. 등록신청서/이력서/청렴서약서/고용현황/기타 등. */
+  fileTtl: string
+  /** 첨부파일명(fileNm) — 300자. 미첨부면 ''. */
+  fileNm?: string
+  /** 파일 용량(표시용, 데이터영역 외). 예 '786KB'. */
+  size?: string
+  /** 필수 첨부(*) 표시 여부(설계서 slide182·186 '*'). */
+  required?: boolean
+  /** ⚠️ 첨부일자 — Figma(10020:83291) 파일 행에 표기(2026-01-01). 설계서 dl_dfEqpmntTradAgncAplyAtchFileList 미정의(잠정 표시용). */
+  regYmd?: string
+}
+
+/**
+ * 군수품무역대리업 보안측정인원(dl_scrtyMsrmtPrsnlList) 1건 — MUI-CM-01-M17/M18. 설계서 slide184·188.
+ */
+export interface DfEqpmntScrtyMsrmtPrsnl {
+  /** 목록 key(로컬 식별). */
+  id: string
+  /** 성명(taskHdlrNm) — 100자. */
+  taskHdlrNm: string
+  /** ⚠️ 주민등록번호 — Figma(10020:83291) 보안측정인원 행에 마스킹 표기(260526-*******). 설계서 dl_scrtyMsrmtPrsnlList 미정의(잠정 rrno·표시용). */
+  rrno?: string
+  /** 적격여부(taskHdlrRsltCd) — 적격/부적격. 1자(적격여부코드). */
+  taskHdlrRsltCd: string
+  /** 보안측정일(taskHndlYmd) — 'YYYY-MM-DD'. 8자. */
+  taskHndlYmd: string
+  /** 첨부파일(fileNm) — 300자. */
+  fileNm: string
+  /** 구분(aprvSecdNm) — 심사대기/수정대기/승인완료. 10자. */
+  aprvSecdNm: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 업체정보 추가등록 (MUI-CM-01-M05 물품(내자) / M22 담당자정보 / M23 국내소재상사 + 선택 팝업 P06~P12).
+//   설계서 00.공통 v0.84 slide149~177(문서 P148~176). 웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 업체정보 추가 등록.
+//   폼 입력값 타입은 각 폼 옆 *.schema.ts(z.infer)에 두고, 여기엔 목록/선택 팝업 아이템·폼 내 표 행 타입만 둔다.
+//   ⚠️ 국내소재상사(M23/T06)·등록품목명세 상태 컬럼 등은 설계서 데이터영역(항목명 영문) 표가 없어 화면 표기 기준 잠정 영문키.
+//      (FSC 는 상세 DmsAgtFscCode 재사용 — fscCd/gunGrdNm.)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** P06 품류선택(KnditmChc) 1건 — 설계서 slide161(품류코드/품류명). */
+export interface KnditmChcItem {
+  /** 품류코드(knditmCd) — 예 '11740'. */
+  knditmCd: string
+  /** 품류명(knditmCdNm) — 예 '피복'. */
+  knditmCdNm: string
+}
+
+/** P07 조합/단체선택(AsctGrpChc) 1건 — 설계서 slide163(조합코드/단체명). */
+export interface AsctGrpChcItem {
+  /** 조합/단체코드(asctCd) — 예 '11000'. */
+  asctCd: string
+  /** 조합/단체명(asctCdNm) — 예 '한국피복공업협동조합'. */
+  asctCdNm: string
+}
+
+/** P12 주거래은행선택(BankChc) 1건 — 설계서 slide173(코드/은행명). */
+export interface BankChcItem {
+  /** 은행코드(bankCd) — 예 '00500000'. */
+  bankCd: string
+  /** 은행명(bankNm) — 예 '농협은행'. */
+  bankNm: string
+}
+
+/**
+ * P08 등록대상품목선택(RegTrgtItemChc) 결과 1건 — 설계서 slide165.
+ * 항목명(영문)은 업체정보 상세 등록품목명세(RegTrgtItem) 관례 준수. 삭제여부(delYn)는 slide165 표 컬럼.
+ */
+export interface RegTrgtItemChcItem {
+  /** 품목코드(itemCd) — 예 '1234567890'. */
+  itemCd: string
+  /** 품명(itemCdNm) — 예 '물컵'. */
+  itemCdNm: string
+  /** 품류코드(knditmCd) — 예 '05'. */
+  knditmCd: string
+  /** 품류명(knditmCdNm) — 예 '피복'. */
+  knditmCdNm: string
+  /** 등록요건(itemRgstrtRqmtNm) — 예 '해당업종 사업자 / 공장등록'. */
+  itemRgstrtRqmtNm: string
+  /** 삭제여부(delYn) — 'Y'/'N'. slide165 표 컬럼. */
+  delYn: 'Y' | 'N'
+}
+
+/**
+ * P09 품목조회(ItemInq, 품목상세정보) — Figma 10020:85135 / 설계서 slide167.
+ * 품목코드 + 업종코드/업종명. ⚠️ 업종코드/명은 slide167 화면 표기(업종코드 12345 / 업종명 기타) 기준 잠정 영문키.
+ */
+export interface ItemInqDetail {
+  /** 품목코드(itemCd) — 예 '1234567890'. */
+  itemCd: string
+  /** 업종코드(bzstatCd) — 예 '1234'. ⚠️ 잠정. */
+  bzstatCd: string
+  /** 업종명(bzstatNm) — 예 '제조업'. ⚠️ 잠정. */
+  bzstatNm: string
+}
+
+/**
+ * M05 등록품목명세 폼 표 행(AddRegItemRow) — 설계서 slide151 표 컬럼.
+ * 등록품목명세(RegTrgtItem) 항목명 + 상태 컬럼(승인/만료/갱신요청/접수상태).
+ * ⚠️ 승인일자/만료일자/갱신요청일/접수상태 항목명은 slide151 화면 표기 기준 잠정 영문키.
+ */
+export interface AddRegItemRow {
+  /** 로컬 식별자(목록 key·선택/삭제 대상). */
+  id: string
+  /** 품목코드(itemCd). */
+  itemCd: string
+  /** 품류코드(knditmCd). */
+  knditmCd: string
+  /** 품류명(knditmCdNm). */
+  knditmCdNm: string
+  /** 품명(itemCdNm). */
+  itemCdNm: string
+  /** 구분(itemRgstrtSecdNm) — 예 '제조'. */
+  itemRgstrtSecdNm: string
+  /** 등록요건(itemRgstrtRqmtNm) — 예 '공장등록'. */
+  itemRgstrtRqmtNm: string
+  /** 적격여부(itemRvwRsltCn) — 예 '적격'. */
+  itemRvwRsltCn: string
+  /** 승인일자(aprvYmd) — 'YYYY-MM-DD'. ⚠️ 잠정. */
+  aprvYmd: string
+  /** 만료일자(expryYmd) — 'YYYY-MM-DD'. ⚠️ 잠정. */
+  expryYmd: string
+  /** 갱신요청일(rnwlReqYmd) — 'YYYY-MM-DD'. ⚠️ 잠정. */
+  rnwlReqYmd: string
+  /** 접수상태(rcptSttsNm) — 예 '신청'/'갱신신청'. ⚠️ 잠정. */
+  rcptSttsNm: string
+}
+
+/**
+ * M23/P10 보안측정인원(ScrtyMsrmtPrsn) — 설계서 slide156·169.
+ * ⚠️ 설계서에 데이터영역(항목명 영문) 표가 없어 화면 표기 기준 잠정 영문키(성명/적격여부/보안측정일/첨부파일).
+ *    인원 정보(성명/적격/측정일)는 필수 아님, 첨부파일만 필수(slide169). (2026-07-01 개정: 주민등록번호 삭제)
+ */
+export interface ScrtyMsrmtPrsn {
+  /** 로컬 식별자(목록 key·선택/삭제 대상). */
+  id: string
+  /** 성명(prsnNm) — ⚠️ 잠정. */
+  prsnNm: string
+  /** 적격여부(qualYn) — '적격'/'부적격'. ⚠️ 잠정. */
+  qualYn: string
+  /** 보안측정일(scrtMsrYmd) — 'YYYY-MM-DD'. ⚠️ 잠정. */
+  scrtMsrYmd: string
+  /** 첨부파일명(fileName) — 예 '증명서.pdf'. ⚠️ 잠정. */
+  fileName: string
+}

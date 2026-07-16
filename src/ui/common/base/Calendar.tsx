@@ -430,11 +430,9 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
                 >
                   {d.date()}
                   {scheduled && (
+                    // 일정 dot 은 셀 배경(오늘 네이비 채움 포함)과 무관하게 항상 빨강(디자인 확정).
                     <span
-                      className={cn(
-                        'absolute bottom-1 left-1/2 size-[6px] -translate-x-1/2 rounded-full',
-                        isSelectedLike ? 'bg-white' : 'bg-krds-feedback-danger',
-                      )}
+                      className="absolute bottom-1 left-1/2 size-[6px] -translate-x-1/2 rounded-full bg-krds-feedback-danger"
                       aria-hidden
                     />
                   )}

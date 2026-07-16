@@ -15,12 +15,12 @@ import { Calendar } from '@/ui/common/base/Calendar'
 import { cn } from '@/utils/cn'
 import type { MyPageSchedule, MyPageSchdlSeCd } from '@/types/cm'
 
-// 구분별 배지 라벨/색. 개인(personal)은 Figma 상 중립(회색) 배지이나 Badge 팔레트에 gray 가
-// 없어 yellow 로 근사(보고 대상). 물품=blue · 공사=green.
-const SCHDL_BADGE: Record<MyPageSchdlSeCd, { label: string; color: 'blue' | 'green' | 'yellow' }> = {
+// 구분별 배지 라벨. Figma(10020:84091 m_label badge)는 물품/공사/개인 모두 동일한 중립
+// pastel-blue(bg #f5f9ff / border #c1d1ee / text #0f316e) → 색을 구분별로 가르지 않고 전부 blue.
+const SCHDL_BADGE: Record<MyPageSchdlSeCd, { label: string; color: 'blue' }> = {
   goods: { label: '물품', color: 'blue' },
-  construction: { label: '공사', color: 'green' },
-  personal: { label: '개인', color: 'yellow' },
+  construction: { label: '공사', color: 'blue' },
+  personal: { label: '개인', color: 'blue' },
 }
 
 interface ScheduleCardProps {

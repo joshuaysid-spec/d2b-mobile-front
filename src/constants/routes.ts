@@ -81,6 +81,58 @@ export const ROUTES = {
   /** 관련사이트 (MUI-CM-05-M15). 이용안내 > 관련사이트. */
   GUIDE_SITE: '/guide/site',
   MYPAGE: '/mypage',
+  /** 업체정보 상세 (MUI-CM-01-M02). 마이페이지 > 업체정보관리 > 상세(업체일반/물품(내자)/시설/국내소재상사 탭). */
+  /** 업체정보관리 허브 (MUI-CM-01-M01). 마이페이지 > 업체정보관리(진입 버튼 목록). */
+  BZENTY_INFO_MNG: '/mypage/bzenty-info-mng',
+  BZENTY_INFO_DTL: '/mypage/bzenty-info',
+  /** 국내 조달원 확인서 신청 목록 (MUI-CM-01-M19). 마이페이지 > 업체정보관리 > 국내조달원확인서신청목록(신청 팝업 P20). */
+  DMST_SOS_CNFDOC: '/mypage/dmst-sos-cnfdoc',
+  /** 추가정보 신청 목록 (MUI-CM-01-M03, addRegInfoAplyList). 마이페이지 > 업체정보관리 > 추가정보 신청 목록(검색필터 P24). */
+  ADD_REG_INFO_APLY: '/mypage/add-reg-info-aply',
+  /** 추가정보 신청내역상세 (MUI-CM-01-M03 상세, T05/T06, `:id`). 이동: `/mypage/add-reg-info-aply/${id}` + navigate state(항목). */
+  ADD_REG_INFO_APLY_DETAIL: '/mypage/add-reg-info-aply/:id',
+  /** 업체정보 추가등록 — 물품(내자) (MUI-CM-01-M05, DmstLctnColInfoAddRegPage). 진입점 M01(업체정보관리) 미구현 — route만 등록. */
+  BZENTY_ADD_REG_CMDTY: '/mypage/bzenty-add-reg/cmdty',
+  /** 업체정보 추가등록 — 담당자정보 (MUI-CM-01-M22, DmstLctnColInfoAddRegPage_Pic). 진입점 M01 미구현 — route만 등록. */
+  BZENTY_ADD_REG_PIC: '/mypage/bzenty-add-reg/pic',
+  /** 업체정보 추가등록 — 국내소재상사 (MUI-CM-01-M23, DmstLctnColInfoAddRegPage_Cmbz). 진입점 M01 미구현 — route만 등록. */
+  BZENTY_ADD_REG_DMS_AGT: '/mypage/bzenty-add-reg/dms-agt',
+  /** 국외조달원등록증신청안내 (MUI-CM-01-P21). 마이페이지 > 업체정보관리 > 업체정보 조회/추가정보 진입 안내. */
+  OVS_DMST_SOS: '/mypage/ovs-dmst-sos',
+  /** 군수품무역대리업 신청 및 발급 목록 (MUI-CM-01-M15). 마이페이지 > 업체정보관리 > 군수품무역대리업 신청 목록(신규/갱신/변경 진입). */
+  DF_EQPMNT_TRADE_AGNC: '/mypage/df-eqpmnt-trade-agnc',
+  /** 군수품무역대리업 신청 내역 상세 (MUI-CM-01-M16). 목록 > 신청 내역 상세(navigate state). */
+  DF_EQPMNT_TRADE_AGNC_DTL: '/mypage/df-eqpmnt-trade-agnc/dtl',
+  /** 군수품무역대리업 신규(갱신) 작성 (MUI-CM-01-M17). 목록 > 신규/갱신(navigate state {mode}). */
+  DF_EQPMNT_TRADE_AGNC_APLY: '/mypage/df-eqpmnt-trade-agnc/aply',
+  /** 군수품무역대리업 변경 작성 (MUI-CM-01-M18). 목록 > 변경. */
+  DF_EQPMNT_TRADE_AGNC_CHG: '/mypage/df-eqpmnt-trade-agnc/chg',
+  /** 관심입찰공고 (MUI-CM-06-M05). 마이페이지 > 관심입찰공고(즐겨찾기한 입찰공고 목록). */
+  ITRST_BID_PBANC: '/mypage/itrst-bid-pbanc',
+  /** 업무캘린더 (MUI-CM-06-M06). 마이페이지 > 업무캘린더(즐겨찾기 공고 + 개인 일정 캘린더). */
+  TASK_CLDR: '/mypage/task-cldr',
+  /** 나의진행업무현황 (MUI-CM-06-M02). 마이페이지 > 나의 진행 업무 현황(진행중 이력 목록 + 세부스텝 P03). */
+  MY_PRGRS_HSTRY: '/mypage/prgrs-hstry',
+  /** 나의업무이력현황 (MUI-CM-06-M04). 마이페이지 > 나의 업무 이력 현황(종료 이력 목록). */
+  MY_TASK_HSTRY: '/mypage/task-hstry',
+  /** 개인별수신처 관리 (MUI-CM-06-M12). 마이페이지 > 문서함 > 개인별수신처관리(조회 전용 목록). */
+  INDV_RCOFC_MNG: '/mypage/indv-rcofc-mng',
+  /** 관심법령 (MUI-CM-06-M13). 마이페이지 > 관심법령(즐겨찾기한 법령 목록). */
+  ITRST_STT: '/mypage/itrst-stt',
+  /** 나의 게시물 (MUI-CM-06-M17). 마이페이지 > 나의 게시물(내가 작성한 게시물 목록). */
+  MY_PST: '/mypage/my-pst',
+  /** 디지털캐비닛 (MUI-CM-06-M14). 마이페이지 > 디지털캐비닛(자료 폴더 목록). */
+  DIGITAL_CABINET: '/mypage/digital-cabinet',
+  /** 폴더 내 파일 목록 (MUI-CM-06-M16, `:fldrSn`). 이동: `/mypage/digital-cabinet/${fldrSn}`. */
+  DIGITAL_CABINET_FILES: '/mypage/digital-cabinet/:fldrSn',
+  /** 문서함 (MUI-CM-06-M10). 마이페이지 > 문서함(받은/보낸/반려/임시저장 문서 목록). */
+  DOC_BOX: '/mypage/doc-box',
+  /** 문서함 상세 (MUI-CM-06-M11, `:id`). 이동: `/mypage/doc-box/${id}`. */
+  DOC_BOX_DETAIL: '/mypage/doc-box/:id',
+  /** 개인정보수정 (MUI-CM-02-M04, IndvInfoMdfcnPage). 사용자정보관리 > 개인정보수정(비밀번호 인증 게이트). */
+  INDV_INFO_MDFCN: '/mypage/indv-info-mdfcn',
+  /** 알림서비스 신청 및 해지 (MUI-CM-02-M09, NotiSrvcAplyPage). 마이페이지 > 알림 서비스 신청 및 해지. */
+  NOTI_SRVC_APLY: '/mypage/noti-srvc-aply',
   /** 앱 실행 스플래시 (MUI-MS-01-M01). 셸(AppLayout) 밖 독립 풀스크린. */
   SPLASH: '/splash',
   /** 앱 접근권한 동의 (MUI-MS-01-M02). 셸 밖 풀스크린. */

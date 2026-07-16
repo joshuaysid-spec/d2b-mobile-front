@@ -36,6 +36,8 @@ export interface DateRangeInputProps {
   /** 프리셋 칩(빠른 선택 버튼) UI 표시 여부. 기본 true. false 면 트리거 박스만 노출. */
   showPresets?: boolean
   sheetTitle?: React.ReactNode
+  /** 시트 하단 확정 버튼 라벨. 기본 '확인'. (예: 조달원확인서 기간선택은 '저장') */
+  confirmLabel?: React.ReactNode
   fetchHolidays?: (year: number, month: number) => Promise<string[]>
   minDate?: string
   maxDate?: string
@@ -88,6 +90,7 @@ const DateRangeInput = ({
   presets = DEFAULT_PRESETS,
   showPresets = true,
   sheetTitle = '기간 선택',
+  confirmLabel = '확인',
   fetchHolidays,
   minDate,
   maxDate,
@@ -226,7 +229,7 @@ const DateRangeInput = ({
         title={sheetTitle}
         footer={
           <Button className="w-full" onClick={handleConfirm}>
-            확인
+            {confirmLabel}
           </Button>
         }
       >

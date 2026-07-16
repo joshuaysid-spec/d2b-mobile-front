@@ -171,7 +171,12 @@ function SideInput({
         {...inputProps}
         value={value}
         onChange={onChange}
-        onClick={onOpen}
+        // 내부 캘린더(onOpen)와 함께 inputProps.onClick(예: DateRangeInput 의 BottomSheet openSheet)도 호출한다.
+        // (기존엔 onClick={onOpen} 이 inputProps.onClick 을 덮어써, 클릭/탭으로 시트가 안 열리던 버그를 수정)
+        onClick={(e) => {
+          onOpen()
+          inputProps?.onClick?.(e)
+        }}
         onFocus={(e) => {
           setFocused(true)
           onOpen()
