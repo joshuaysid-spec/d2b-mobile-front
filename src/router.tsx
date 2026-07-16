@@ -584,6 +584,48 @@ const NotiSrvcAplyPage = lazy(() =>
     default: m.NotiSrvcAplyPage,
   })),
 )
+// 사용자정보관리 허브(MUI-CM-02-M01, /mypage/indv-info-mng).
+const IndvInfoMngPage = lazy(() =>
+  import('@/ui/biz/cm/indvInfoMng/IndvInfoMngPage').then((m) => ({
+    default: m.IndvInfoMngPage,
+  })),
+)
+// 개인(생체)/비밀번호 인증(MUI-CM-02-M02, /mypage/indv-cert).
+const IndvCertPage = lazy(() =>
+  import('@/ui/biz/cm/indvCert/IndvCertPage').then((m) => ({
+    default: m.IndvCertPage,
+  })),
+)
+// 개인정보상세(MUI-CM-02-M03, /mypage/indv-info-dtl) — 조회. 목록 진입 시 수신설정/버튼 숨김.
+const IndvInfoDtlPage = lazy(() =>
+  import('@/ui/biz/cm/indvInfoDtl/IndvInfoDtlPage').then((m) => ({
+    default: m.IndvInfoDtlPage,
+  })),
+)
+// 비밀번호 변경(MUI-CM-02-M05, /mypage/pswd-chg) — RHF+zod 폼.
+const PswdChgPage = lazy(() =>
+  import('@/ui/biz/cm/pswdChg/PswdChgPage').then((m) => ({
+    default: m.PswdChgPage,
+  })),
+)
+// 개인 신원 확인(MUI-CM-02-M06, /mypage/indv-idnt-idnty) — 인증서 기반.
+const IndvIdntIdntyPage = lazy(() =>
+  import('@/ui/biz/cm/indvIdntIdnty/IndvIdntIdntyPage').then((m) => ({
+    default: m.IndvIdntIdntyPage,
+  })),
+)
+// 업체 소속 사용자 목록(MUI-CM-02-M07, /mypage/prcm-bzenty-user-mng) — 상태변경 시트 P08 포함.
+const PrcmBzentyUserMngPage = lazy(() =>
+  import('@/ui/biz/cm/prcmBzentyUserMng/PrcmBzentyUserMngPage').then((m) => ({
+    default: m.PrcmBzentyUserMngPage,
+  })),
+)
+// 회원탈퇴(MUI-CM-02-P10, /mypage/mb-withdrawal).
+const MbWithdrawalPage = lazy(() =>
+  import('@/ui/biz/cm/mbWithdrawal/MbWithdrawalPage').then((m) => ({
+    default: m.MbWithdrawalPage,
+  })),
+)
 const ComponentGuidePage = lazy(() =>
   import('@/ui/dev/ComponentGuidePage').then((m) => ({
     default: m.ComponentGuidePage,
@@ -1289,6 +1331,55 @@ export const router = createBrowserRouter([
         element: <NotiSrvcAplyPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '알림서비스 신청' }, scrollReset: true },
+      },
+      // 사용자정보관리 허브(MUI-CM-02-M01) — 마이페이지 > 사용자 정보관리. 3뎁스라 BottomNav 숨김.
+      {
+        path: 'mypage/indv-info-mng',
+        element: <IndvInfoMngPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '사용자 정보관리' }, scrollReset: true },
+      },
+      // 개인(생체)/비밀번호 인증(MUI-CM-02-M02) — 사용자정보관리 > 개인정보 접근 전 본인 인증.
+      {
+        path: 'mypage/indv-cert',
+        element: <IndvCertPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '개인 인증' }, scrollReset: true },
+      },
+      // 개인정보상세(MUI-CM-02-M03) — 사용자정보관리 > 개인정보 상세(조회).
+      {
+        path: 'mypage/indv-info-dtl',
+        element: <IndvInfoDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '개인정보 상세' }, scrollReset: true },
+      },
+      // 비밀번호 변경(MUI-CM-02-M05) — 사용자정보관리 > 비밀번호 변경.
+      {
+        path: 'mypage/pswd-chg',
+        element: <PswdChgPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '비밀번호 변경' }, scrollReset: true },
+      },
+      // 개인 신원 확인(MUI-CM-02-M06) — 사용자정보관리 > 개인신원확인(인증서 기반).
+      {
+        path: 'mypage/indv-idnt-idnty',
+        element: <IndvIdntIdntyPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '개인 신원 확인' }, scrollReset: true },
+      },
+      // 업체 소속 사용자 목록(MUI-CM-02-M07) — 사용자정보관리 > 소속 사용자 목록(상태변경 P08 시트).
+      {
+        path: 'mypage/prcm-bzenty-user-mng',
+        element: <PrcmBzentyUserMngPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '소속 사용자 목록' }, scrollReset: true },
+      },
+      // 회원탈퇴(MUI-CM-02-P10) — 사용자정보관리 > 회원탈퇴.
+      {
+        path: 'mypage/mb-withdrawal',
+        element: <MbWithdrawalPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '회원탈퇴' }, scrollReset: true },
       },
       // 로그인 방식선택(MUI-CM-03-M01) — 셸 안 + sub헤더(뒤로+타이틀). 헤더는 AppLayout 소유.
       {

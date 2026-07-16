@@ -223,11 +223,13 @@ export function MyPage() {
     { id: 'myPosts', label: '나의 게시물', onClick: () => navigate(ROUTES.MY_PST) },
     // 업체정보관리 허브(M01) — 여기서 업체정보 상세(M02)·추가정보(M03)·추가등록·무역대리업(M15)·조달원확인서(M19) 등으로 분기.
     { id: 'bzentyInfo', label: '업체 정보관리', onClick: () => navigate(ROUTES.BZENTY_INFO_MNG) },
-    { id: 'userInfo', label: '사용자 정보관리', onClick: () => console.log('[MyPage] 사용자 정보관리') },
+    // 사용자정보관리 허브(MUI-CM-02-M01) — 개인정보/비번변경/신원확인/소속사용자/알림/회원탈퇴로 분기.
+    { id: 'userInfo', label: '사용자 정보관리', onClick: () => navigate(ROUTES.INDV_INFO_MNG) },
     { id: 'cabinet', label: '디지털 캐비닛', onClick: () => navigate(ROUTES.DIGITAL_CABINET) },
     // 알림 서비스 신청 및 해지(MUI-CM-02-M09).
     { id: 'noti', label: '알림 서비스 신청 및 해지', onClick: () => navigate(ROUTES.NOTI_SRVC_APLY) },
-    { id: 'withdraw', label: '회원탈퇴', onClick: () => console.log('[MyPage] 회원탈퇴') },
+    // 회원탈퇴(MUI-CM-02-P10).
+    { id: 'withdraw', label: '회원탈퇴', onClick: () => navigate(ROUTES.MB_WITHDRAWAL) },
   ]
 
   return (

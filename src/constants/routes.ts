@@ -129,8 +129,22 @@ export const ROUTES = {
   DOC_BOX: '/mypage/doc-box',
   /** 문서함 상세 (MUI-CM-06-M11, `:id`). 이동: `/mypage/doc-box/${id}`. */
   DOC_BOX_DETAIL: '/mypage/doc-box/:id',
+  /** 사용자정보관리 허브 (MUI-CM-02-M01, IndvInfoMngPage). 마이페이지 > 사용자 정보관리(진입 버튼 목록). */
+  INDV_INFO_MNG: '/mypage/indv-info-mng',
+  /** 개인(생체)/비밀번호 인증 (MUI-CM-02-M02, IndvCertPage). 사용자정보관리 > 개인정보 접근 전 본인 인증. */
+  INDV_CERT: '/mypage/indv-cert',
+  /** 개인정보상세 (MUI-CM-02-M03, IndvInfoDtlPage). 사용자정보관리 > 개인정보 상세(조회). 목록 진입 시 state.from='userList'. */
+  INDV_INFO_DTL: '/mypage/indv-info-dtl',
   /** 개인정보수정 (MUI-CM-02-M04, IndvInfoMdfcnPage). 사용자정보관리 > 개인정보수정(비밀번호 인증 게이트). */
   INDV_INFO_MDFCN: '/mypage/indv-info-mdfcn',
+  /** 비밀번호 변경 (MUI-CM-02-M05, PswdChgPage). 사용자정보관리 > 비밀번호 변경. */
+  PSWD_CHG: '/mypage/pswd-chg',
+  /** 개인 신원 확인 (MUI-CM-02-M06, IndvIdntIdntyPage). 사용자정보관리 > 개인신원확인(인증서 기반). */
+  INDV_IDNT_IDNTY: '/mypage/indv-idnt-idnty',
+  /** 업체 소속 사용자 목록 (MUI-CM-02-M07, PrcmBzentyUserMngPage). 사용자정보관리 > 소속 사용자 목록(상태변경 P08 시트). */
+  PRCM_BZENTY_USER_MNG: '/mypage/prcm-bzenty-user-mng',
+  /** 회원탈퇴 (MUI-CM-02-P10, MbWithdrawalPage). 사용자정보관리 > 회원탈퇴. */
+  MB_WITHDRAWAL: '/mypage/mb-withdrawal',
   /** 알림서비스 신청 및 해지 (MUI-CM-02-M09, NotiSrvcAplyPage). 마이페이지 > 알림 서비스 신청 및 해지. */
   NOTI_SRVC_APLY: '/mypage/noti-srvc-aply',
   /** 앱 실행 스플래시 (MUI-MS-01-M01). 셸(AppLayout) 밖 독립 풀스크린. */

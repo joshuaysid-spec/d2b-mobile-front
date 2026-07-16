@@ -43,8 +43,9 @@ export function SimpleCert({ onSuccess }: { onSuccess?: () => void }) {
     onSuccess?.()
   }
 
+  // Figma 10020:87374 그리드 실측: 4열 · gap-x 16 · gap-y 20 · 아이콘 박스 54px.
   return (
-    <div className="grid grid-cols-4 gap-x-krds-5 gap-y-krds-8">
+    <div className="grid grid-cols-4 gap-x-krds-8 gap-y-krds-9">
       {SIMPLE_CERT_PROVIDERS.map((provider) => (
         <button
           key={provider.id}
@@ -52,8 +53,9 @@ export function SimpleCert({ onSuccess }: { onSuccess?: () => void }) {
           onClick={() => handleSelectProvider(provider)}
           className="flex flex-col items-center gap-krds-3"
         >
-          {/* TODO(디자인 에셋): 브랜드 로고 SVG (예: KB국민/PASS/토스…) — 현재 근사 글리프로 임시 표기 */}
-          <span className="flex size-[56px] items-center justify-center rounded-krds-xl border border-krds-border-divider bg-background shadow-krds-card">
+          {/* TODO(디자인 에셋): 실제 브랜드 로고 SVG(KB국민/PASS/토스/카카오뱅크/네이버/하나/뱅크샐러드/우리/신한/NH/카카오톡)
+              — 상표 에셋 확보 후 <img src={...} /> 로 교체. 현재는 근사 글리프로 임시 표기. */}
+          <span className="flex size-[54px] items-center justify-center rounded-krds-xl border border-krds-border-divider bg-background shadow-krds-card">
             <Icon name="VerifiedUser" size={28} aria-hidden className="text-krds-text-primary" />
           </span>
           <span className="text-krds-body-sm text-krds-text-ink">{provider.label}</span>
