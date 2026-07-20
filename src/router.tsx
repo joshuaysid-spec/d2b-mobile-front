@@ -389,6 +389,12 @@ const PrfmncPrdocDtlPage = lazy(() =>
     default: m.PrfmncPrdocDtlPage,
   })),
 )
+// 실적증명서 신청 플로우(MUI-CM-04-M10/M12/T12/T13, /support/dcmnt-issu-aply/prfmnc-prdoc/reg).
+const PrfmncPrdocRegPage = lazy(() =>
+  import('@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocRegPage').then((m) => ({
+    default: m.PrfmncPrdocRegPage,
+  })),
+)
 // 인증센터(MUI-CM-04-M13, /cert) — biz/cm/certMng. 홈 유관기관 바로가기 진입.
 const CertMngPage = lazy(() =>
   import('@/ui/biz/cm/certMng/CertMngPage').then((m) => ({ default: m.CertMngPage })),
@@ -1009,6 +1015,17 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: '실적증명서 신청 목록' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 실적증명서 신청 플로우 (MUI-CM-04-M10 계약선택 → M12 신청정보 → T12/T13 실적정보)
+        // 정적 세그먼트('reg')라 아래 ':prfmncRcptNo' 상세보다 우선 매칭(RRv6 랭킹).
+        path: 'support/dcmnt-issu-aply/prfmnc-prdoc/reg',
+        element: <PrfmncPrdocRegPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '실적증명서 신청' },
           scrollReset: true,
         },
       },

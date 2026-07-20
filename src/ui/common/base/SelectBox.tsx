@@ -99,7 +99,10 @@ const SelectBoxItem = React.forwardRef<
     )}
     {...props}
   >
-    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+    {/* 긴 옵션명은 한 줄 말줄임 — 드롭다운 폭(트리거 폭)을 넘지 않게(SelectContent max-w 와 세트). */}
+    <SelectPrimitive.ItemText className="block min-w-0 flex-1 truncate">
+      {children}
+    </SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 ))
 SelectBoxItem.displayName = 'SelectBoxItem'
@@ -118,6 +121,8 @@ function SelectBox({
       <SelectContent
         className={cn(
           'rounded-krds-8 border-krds-border-field bg-background shadow-krds-2',
+          // 드롭다운 폭 = 트리거 폭 고정(raw viewport 는 min-w 만 지정) — 긴 옵션이 화면을 넘지 않게.
+          'max-w-(--radix-select-trigger-width)',
         )}
       >
         <SelectGroup>
