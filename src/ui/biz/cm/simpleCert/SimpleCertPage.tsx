@@ -7,32 +7,46 @@
 //   - 설계서는 이 화면을 "간편인증 선택 팝업"으로, Figma(10020:87374)는 BottomSheet(4열 그리드)로 표현.
 //     확정결정(BUILD-GUIDE #1)에 따라 CM-03 은 전부 셸 안 sub헤더 페이지 → 팝업이 아닌 콘텐츠 페이지로 구현.
 //     비주얼(4열 제공사 그리드)만 Figma 를 따름.
-//   - 제공사 브랜드 로고(KB국민/PASS/토스/카카오뱅크/네이버/하나/뱅크샐러드/우리/신한/NH/카카오톡)는
-//     KRDS 폰트 아이콘 REGISTRY 에 없음 → 공통 근사 글리프(VerifiedUser)로 임시 표기.
-//     실제 브랜드 로고 SVG 에셋으로 교체 필요(각 항목 TODO(디자인 에셋)).
+//   - 제공사 브랜드 로고 11종은 Figma 에셋에서 추출해 self-host(src/assets/images/cert/brand/*.png —
+//     폐쇄망 대응, CDN 금지). 박스 54px · rounded-12 · border #d1d7e0 · 이미지 cover(토스만 contain).
 //   - 제공사 목록/순서는 설계서(p50) 및 Figma 와 일치(11종).
-import { Icon } from '@/ui/common/base/Icon'
+import banksaladLogo from '@/assets/images/cert/brand/banksalad.png'
+import hanaLogo from '@/assets/images/cert/brand/hana.png'
+import kakaobankLogo from '@/assets/images/cert/brand/kakaobank.png'
+import kakaotalkLogo from '@/assets/images/cert/brand/kakaotalk.png'
+import kbLogo from '@/assets/images/cert/brand/kb.png'
+import naverLogo from '@/assets/images/cert/brand/naver.png'
+import nhCertLogo from '@/assets/images/cert/brand/nhCert.png'
+import passLogo from '@/assets/images/cert/brand/pass.png'
+import shinhanLogo from '@/assets/images/cert/brand/shinhan.png'
+import tossLogo from '@/assets/images/cert/brand/toss.png'
+import wooriLogo from '@/assets/images/cert/brand/woori.png'
+import { cn } from '@/utils/cn'
 
 interface SimpleCertProvider {
   /** 제공사 식별자 — 선택 시 SDK 호출 분기 기준. */
   id: string
   /** 제공사 라벨(설계서/Figma 문구 그대로). */
   label: string
+  /** 브랜드 로고(Figma 추출 에셋). */
+  logo: string
+  /** 이미지 맞춤 — 여백 보존 에셋(토스)만 contain, 기본 cover(Figma 실측). */
+  fit?: 'contain'
 }
 
 // 설계서 p50 · Figma 10020:87374 의 간편인증 제공사 목록(순서 그대로, 11종).
 const SIMPLE_CERT_PROVIDERS: SimpleCertProvider[] = [
-  { id: 'kb', label: '국민인증서' },
-  { id: 'telco', label: '통신사PASS' },
-  { id: 'toss', label: '토스' },
-  { id: 'kakaobank', label: '카카오뱅크' },
-  { id: 'naver', label: '네이버' },
-  { id: 'hana', label: '하나인증서' },
-  { id: 'banksalad', label: '뱅크샐러드' },
-  { id: 'woori', label: '우리인증서' },
-  { id: 'shinhan', label: '신한인증서' },
-  { id: 'nh', label: 'NH인증서' },
-  { id: 'kakaotalk', label: '카카오톡' },
+  { id: 'kb', label: '국민인증서', logo: kbLogo },
+  { id: 'telco', label: '통신사PASS', logo: passLogo },
+  { id: 'toss', label: '토스', logo: tossLogo, fit: 'contain' },
+  { id: 'kakaobank', label: '카카오뱅크', logo: kakaobankLogo },
+  { id: 'naver', label: '네이버', logo: naverLogo },
+  { id: 'hana', label: '하나인증서', logo: hanaLogo },
+  { id: 'banksalad', label: '뱅크샐러드', logo: banksaladLogo },
+  { id: 'woori', label: '우리인증서', logo: wooriLogo },
+  { id: 'shinhan', label: '신한인증서', logo: shinhanLogo },
+  { id: 'nh', label: 'NH인증서', logo: nhCertLogo },
+  { id: 'kakaotalk', label: '카카오톡', logo: kakaotalkLogo },
 ]
 
 /** 간편인증 제공사 그리드 — BottomSheet 콘텐츠(로그인 방식선택에서 열림) + 페이지 공용. */
@@ -43,7 +57,7 @@ export function SimpleCert({ onSuccess }: { onSuccess?: () => void }) {
     onSuccess?.()
   }
 
-  // Figma 10020:87374 그리드 실측: 4열 · gap-x 16 · gap-y 20 · 아이콘 박스 54px.
+  // Figma 10020:87374 그리드 실측: 4열 · gap-x 16 · gap-y 20 · 아이콘 박스 54px · 라벨 14px.
   return (
     <div className="grid grid-cols-4 gap-x-krds-8 gap-y-krds-9">
       {SIMPLE_CERT_PROVIDERS.map((provider) => (
@@ -53,12 +67,17 @@ export function SimpleCert({ onSuccess }: { onSuccess?: () => void }) {
           onClick={() => handleSelectProvider(provider)}
           className="flex flex-col items-center gap-krds-3"
         >
-          {/* TODO(디자인 에셋): 실제 브랜드 로고 SVG(KB국민/PASS/토스/카카오뱅크/네이버/하나/뱅크샐러드/우리/신한/NH/카카오톡)
-              — 상표 에셋 확보 후 <img src={...} /> 로 교체. 현재는 근사 글리프로 임시 표기. */}
-          <span className="flex size-[54px] items-center justify-center rounded-krds-xl border border-krds-border-divider bg-background shadow-krds-card">
-            <Icon name="VerifiedUser" size={28} aria-hidden className="text-krds-text-primary" />
+          <span className="size-[54px] shrink-0 overflow-hidden rounded-krds-xl border border-krds-border-divider bg-white">
+            <img
+              src={provider.logo}
+              alt=""
+              aria-hidden
+              className={cn('size-full', provider.fit === 'contain' ? 'object-contain' : 'object-cover')}
+            />
           </span>
-          <span className="text-krds-body-sm text-krds-text-ink">{provider.label}</span>
+          <span className="text-center text-[14px] leading-normal text-krds-text-ink">
+            {provider.label}
+          </span>
         </button>
       ))}
     </div>
