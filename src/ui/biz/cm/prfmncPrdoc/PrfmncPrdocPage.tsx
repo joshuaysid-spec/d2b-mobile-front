@@ -9,6 +9,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
+import { ROUTES } from '@/constants/routes'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { Infobox } from '@/ui/common/composites/Infobox'
@@ -240,8 +241,8 @@ export function PrfmncPrdocPage() {
   }
   const handleAply = () => {
     setAplySheetOpen(false)
-    // 추후: 실적증명서 신청(MUI-CM-04-M08 플로우 — 계약정보선택 P21 CtrtInfoChc)로 navigate
-    console.log('[PrfmncPrdoc] 실적증명서 신청(M08 미구현)')
+    // 실적증명서 신청 플로우(MUI-CM-04-M10 계약선택 → M12 → T12/T13)
+    navigate(ROUTES.SUPPORT_PRFMNC_PRDOC_REG)
   }
 
   // ── ⚠️ 임시 목업 검색/페이징 (API 연동 시 블록 삭제) ──

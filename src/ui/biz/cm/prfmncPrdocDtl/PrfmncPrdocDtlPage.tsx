@@ -7,8 +7,9 @@
 //   - (+) 시트: 신청 및 수정='저장' · 발급/제출='발급'(제출→MUI-CM-04-P20 미구현 스텁) ·
 //     삭제='반려'/'저장'/'회송'(확인 팝업 "정말 삭제하시겠습니까?")
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
+import { ROUTES } from '@/constants/routes'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { Button } from '@/ui/common/base/Button'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
@@ -55,6 +56,7 @@ function renderTabContent(tab: string) {
 }
 
 export function PrfmncPrdocDtlPage() {
+  const navigate = useNavigate()
   const [tab, setTab] = useState('ctrt')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [actionOpen, setActionOpen] = useState(false) // (+) 상태별 액션 시트
@@ -72,8 +74,8 @@ export function PrfmncPrdocDtlPage() {
       variant: 'secondary' as const,
       onClick: () => {
         setActionOpen(false)
-        // 추후: 실적증명서 신청/수정(MUI-CM-04-M08·M12 플로우)로 navigate
-        console.log('[PrfmncPrdocDtl] 신청 및 수정(M08 미구현)')
+        // 실적증명서 신청 플로우(MUI-CM-04-M10 계약선택 → M12 → T12/T13)
+        navigate(ROUTES.SUPPORT_PRFMNC_PRDOC_REG)
       },
     },
     ...(stcd === '발급'

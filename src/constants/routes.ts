@@ -62,6 +62,8 @@ export const ROUTES = {
   SUPPORT_PRFMNC_PRDOC: '/support/dcmnt-issu-aply/prfmnc-prdoc',
   /** 실적증명서 확인(상세) (MUI-CM-04-M07, `:prfmncRcptNo`). 목록 카드 클릭 진입. */
   SUPPORT_PRFMNC_PRDOC_DTL: '/support/dcmnt-issu-aply/prfmnc-prdoc/:prfmncRcptNo',
+  /** 실적증명서 신청 플로우 (MUI-CM-04-M10 계약선택 → M12 신청정보 → T12/T13 실적정보). */
+  SUPPORT_PRFMNC_PRDOC_REG: '/support/dcmnt-issu-aply/prfmnc-prdoc/reg',
   /** 인증센터 (MUI-CM-04-M13). 홈 유관기관 바로가기 진입. */
   CERT: '/cert',
   /** 인증서 관리 (MUI-CM-04-M14). 인증센터 > 인증서 관리 진입. */
