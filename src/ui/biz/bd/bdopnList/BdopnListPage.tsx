@@ -3,7 +3,8 @@
 // 구성: 업무도움(Infobox) + 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더(총건수·page size)
 //      + 카드 리스트(CardList) + 더보기 + 맨위로 FAB.
 // 개찰목록 카드는 설계서 MUI-BD-08-M01 대로 정보행이 공고일자·개찰일시 2행(입찰공고 목록은 4행).
-// 데이터/페이징/검색은 페이지가 소유. 목록은 목업(dlt_bdopnList), 핸들러는 API 경계 스텁(console.log).
+// 데이터는 useBdopnList(queries/bd) — 목업/실연동은 bdService(USE_MOCK)가 전환. 목업 데이터는 mocks/bd.ts.
+// 키워드 검색·더보기(페이징)는 페이지 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행).
 // 화면 타이틀('개찰목록')은 전역 Header(라우트 handle)가 제공 → 페이지 본문엔 타이틀 안 그림.
 // 상세필터 풀팝업은 공통 SearchFilter 셸 사용 — 검색조건은 입찰공고 필터(MUI-BD-01-M02)와 동일.
 // 설계서 개찰 검색필터(MUI-BD-08-M02 slide145)가 "입찰 공고와 동일한 검색 필터"라 BidPbancIntgListPage
@@ -12,6 +13,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { useBdopnList } from '@/queries/bd'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
@@ -199,50 +201,8 @@ const DEFAULT_FILTER: SearchFilterValue = {
   newTech: 'no',
 }
 
-// 개찰목록 데이터(설계서 slide144 데이터영역) — 목업, 추후 bdService.getBdopnList 매핑.
-// 필드/코드값/형식은 설계서 그대로(공고상태·업무구분·입찰방식 코드값, 공고번호 형식, 일시 형식).
-const dlt_bdopnList: BdopnItem[] = [
-  {
-    id: '1',
-    bidPbancNo: '2026LGM000604191-01',
-    bidPbancNm: '(26-물품-04) 간편한 아침식 제조 및 납품',
-    pbancStasNm: '정상공고',
-    taskSeNm: '물품',
-    bidMthdNm: '경쟁입찰',
-    pbancDt: '2026-02-12',
-    opbidDt: '2026-03-26 11:00',
-  },
-  {
-    id: '2',
-    bidPbancNo: '2026LGM000598220-01',
-    bidPbancNm: '(26-용역-12) 정보화시스템 유지관리 용역',
-    pbancStasNm: '정정공고',
-    taskSeNm: '용역',
-    bidMthdNm: '공개수의',
-    pbancDt: '2026-02-10',
-    opbidDt: '2026-03-20 11:00',
-  },
-  {
-    id: '3',
-    bidPbancNo: '2026LGM000601077-01',
-    bidPbancNm: '(26-공사-07) 군 관사 리모델링 공사',
-    pbancStasNm: '취소공고',
-    taskSeNm: '공사',
-    bidMthdNm: '제한경쟁',
-    pbancDt: '2026-02-05',
-    opbidDt: '2026-03-16 11:00',
-  },
-  {
-    id: '4',
-    bidPbancNo: '2026LGM000605432-01',
-    bidPbancNm: '(26-국외-02) 정밀부품 국외 도입',
-    pbancStasNm: '긴급공고',
-    taskSeNm: '국외',
-    bidMthdNm: '협상에의한계약',
-    pbancDt: '2026-02-14',
-    opbidDt: '2026-03-12 11:00',
-  },
-]
+// 개찰목록 데이터는 useBdopnList(bdService.getBdopnList) 가 공급 — 목업은 mocks/bd.ts(구 인라인 dlt_bdopnList 이관).
+// 상세(BidRsltDtlPage)는 useBidRsltDetail(id) 로 재조회(그 목업 분기가 mocks/bd.ts 의 getBdopnById lookup 사용).
 
 // 국외 개찰 카드 = 상세 상단 요약 공통 데이터 (MUI-BD-09-M71 slide402) — 목록 최상단 고정.
 // 카드 클릭 시 이 값을 navigate state 로 넘겨 상세 상단(배지/번호/사업명/요약행)을 카드와 동일하게 표시.
@@ -318,23 +278,6 @@ const OVS_NGTN_CARD: CardListItem = {
   ],
 }
 
-const TOTAL = 258 // 총 건수(목업 — 실제 API total)
-// 목업 확장 — 보유 4건을 인덱스로 복제해 TOTAL 건 구성(공고번호·id 는 고유하게).
-const MOCK_BDOPN_LIST: BdopnItem[] = Array.from({ length: TOTAL }, (_, i) => {
-  const base = dlt_bdopnList[i % dlt_bdopnList.length]
-  return { ...base, id: String(i + 1), bidPbancNo: `${base.bidPbancNo.slice(0, -3)}-${i + 1}` }
-})
-
-/**
- * id 로 개찰목록 1건 조회 — 입찰결과상세(BidRsltDtlPage)가 URL 의 :id 로 재조회해
- * 상단(뱃지/공고번호/타이틀/공고일자/개찰일시)을 채우는 용도. id 기반이라 새로고침/직접진입에도 값 유지.
- * 추후 bdService.getBidRsltDetail(id) 로 교체(목업 공유 종료).
- */
-export function getBdopnById(id: string | undefined): BdopnItem | undefined {
-  if (!id) return undefined
-  return MOCK_BDOPN_LIST.find((it) => it.id === id)
-}
-
 export function BdopnListPage() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false) // 상세필터 풀팝업
@@ -348,49 +291,44 @@ export function BdopnListPage() {
     null,
   )
 
-  // ── API 경계 스텁 (백엔드 연동 시 services/bd·queries/bd 로 대체). console 로 동작 확인 ──
+  // 목록 조회 — 전체 목록(목업/실연동은 bdService.getBdopnList 의 USE_MOCK 분기가 전환).
+  const { data } = useBdopnList()
+
+  // ── 목록 핸들러 — 확정값 상태만 갱신(조회는 useBdopnList + 아래 클라이언트 필터가 담당) ──
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)
     setPage(1)
     setKeyword('')
     setAppliedSearch(null)
-    console.log('[BdopnList] 상세필터 검색', value)
-    // bdService.getBdopnList(toRequest(value)) → 목록 재조회
   }
   const handleQuickSearch = () => {
     const target = targets[0] ?? 'bidPbancNm'
     setAppliedSearch({ keyword: keyword.trim(), target })
     setPage(1)
-    console.log('[BdopnList] 빠른검색', { keyword, target })
-    // bdService.getBdopnList({ keyword, searchTarget: target, ... }) 로 서버 검색.
   }
   const handlePageSize = (size: number) => {
     setPageSize(size)
     setPage(1)
-    console.log('[BdopnList] pageSize →', size)
   }
   const handleLoadMore = () => {
-    const next = page + 1
-    setPage(next)
-    console.log('[BdopnList] loadMore → page', next)
+    setPage(page + 1)
   }
   const handleCardClick = (it: BdopnItem) => {
-    // 입찰결과상세(개찰상세, MUI-BD-09-M01) 이동. 상세는 URL 의 :id 로 getBdopnById 재조회해
+    // 입찰결과상세(개찰상세, MUI-BD-09-M01) 이동. 상세는 URL 의 :id 로 useBidRsltDetail 재조회해
     // 상단(뱃지/공고번호/타이틀/공고일자/개찰일시)을 이 카드와 동일하게 채움 → 새로고침에도 유지.
     navigate(`/bd/result/${it.id}`)
   }
 
-  // ── ⚠️ 임시 목업 검색/페이징 (API 연동 시 이 블록 통째로 교체) ⚠️ ─────────────────────
-  //   filteredList: 검색대상(공고명→bidPbancNm · 공고번호→bidPbancNo)으로 부분일치(대소문자 무시).
-  //   visibleList: 더보기 누른 만큼(page*pageSize)만 노출.
+  // ── 키워드 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 이 블록 삭제) ──
   const filteredList = useMemo(() => {
-    if (!appliedSearch || !appliedSearch.keyword) return MOCK_BDOPN_LIST
+    const list = data ?? []
+    if (!appliedSearch || !appliedSearch.keyword) return list
     const kw = appliedSearch.keyword.toLowerCase()
-    return MOCK_BDOPN_LIST.filter((it) => {
+    return list.filter((it) => {
       const field = appliedSearch.target === 'bidPbancNo' ? it.bidPbancNo : it.bidPbancNm
       return field.toLowerCase().includes(kw)
     })
-  }, [appliedSearch])
+  }, [appliedSearch, data])
 
   const total = filteredList.length
   const loaded = Math.min(page * pageSize, total)

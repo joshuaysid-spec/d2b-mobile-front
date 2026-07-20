@@ -2,13 +2,15 @@
 // 레퍼런스: 조달계획 통합목록 PrcmPlanIntgListPage (구성·상태·페이징 동일 패턴).
 // 구성: 업무도움(Infobox) + 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더(총건수·page size)
 //      + 카드 리스트(CardList) + 더보기 + 맨위로 FAB.
-// 데이터/페이징/검색은 페이지가 소유. 목록은 목업(dlt_bidPbancList), 핸들러는 API 경계 스텁(console.log).
+// 데이터는 useBidPbancList(queries/bd) — 목업/실연동은 bdService(USE_MOCK)가 전환. 목업 데이터는 mocks/bd.ts.
+// 키워드 검색·더보기(페이징)는 페이지 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행).
 // 화면 타이틀('입찰공고')은 전역 Header(라우트 handle)가 제공 → 페이지 본문엔 타이틀 안 그림(설계서 Figma 타이틀 제거).
 // 상세필터 풀팝업은 공통 SearchFilter 셸 + 동적 resolver(MUI-BD-01-M02, 설계서 slide14/19/21 기준).
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
+import { useBidPbancList } from '@/queries/bd'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
@@ -242,86 +244,8 @@ const DEFAULT_FILTER: SearchFilterValue = {
   ntchYn: 'N',
 }
 
-// 입찰공고 통합목록 데이터(설계서 1.4 데이터영역) — 목업, 추후 bdService.getList 매핑.
-// 필드/코드값/형식은 설계서 그대로(공고상태·업무구분·입찰방식 코드값, 공고번호 형식, 일시 형식).
-const dlt_bidPbancList: BidPbancItem[] = [
-  {
-    id: '1',
-    rnum: 1,
-    pbancTpcd: '정상공고',
-    g2BBidPbancNo: 'LDG0097',
-    g2BBidPbancCycl: '01',
-    rfrncNo: '2026LGM000604191',
-    rprsItemNm: '(26-물품-04) 간편한 아침식 제조 및 납품',
-    csrtName: '-',
-    orderInstNm: '국방부조달본부',
-    prdcpIdntySmdocDdlnDt: '2026-03-15 15:00',
-    bidClrsDt: '2026-03-16 15:00',
-    tndrSbmsnDdlnDt: '2026-03-17 15:00',
-    brprc: 184_500_000,
-    taskSeNm: '물품',
-  },
-  {
-    id: '2',
-    rnum: 2,
-    pbancTpcd: '정정공고',
-    g2BBidPbancNo: 'LDG0098',
-    g2BBidPbancCycl: '01',
-    rfrncNo: '2026LGM000598220',
-    rprsItemNm: '(26-용역-12) 정보화시스템 유지관리 용역',
-    csrtName: '-',
-    orderInstNm: '방위사업청',
-    prdcpIdntySmdocDdlnDt: '2026-03-09 15:00',
-    bidClrsDt: '2026-03-10 15:00',
-    tndrSbmsnDdlnDt: '2026-03-11 15:00',
-    brprc: 96_000_000,
-    taskSeNm: '용역',
-  },
-  {
-    id: '3',
-    rnum: 3,
-    pbancTpcd: '취소공고',
-    g2BBidPbancNo: 'LDG0099',
-    g2BBidPbancCycl: '01',
-    rfrncNo: '2026LGM000601077',
-    rprsItemNm: '(26-공사-07) 군 관사 리모델링 공사',
-    csrtName: '군 관사 리모델링 공사',
-    orderInstNm: '육군본부',
-    prdcpIdntySmdocDdlnDt: '2026-03-04 15:00',
-    bidClrsDt: '2026-03-05 15:00',
-    tndrSbmsnDdlnDt: '2026-03-06 15:00',
-    brprc: 1_250_000_000,
-    taskSeNm: '공사',
-  },
-  {
-    id: '4',
-    rnum: 4,
-    pbancTpcd: '긴급공고',
-    g2BBidPbancNo: 'LDG0100',
-    g2BBidPbancCycl: '01',
-    rfrncNo: '2026LGM000605432',
-    rprsItemNm: '(26-국외-02) 정밀부품 국외 도입',
-    csrtName: '-',
-    orderInstNm: '해군본부',
-    prdcpIdntySmdocDdlnDt: '2026-03-01 15:00',
-    bidClrsDt: '2026-03-02 15:00',
-    tndrSbmsnDdlnDt: '2026-03-03 15:00',
-    brprc: 532_800_000,
-    taskSeNm: '국외',
-  },
-]
-
-const TOTAL = 258 // 총 건수(목업 — 실제 API total)
-// 목업 확장 — 보유 4건을 인덱스로 복제해 TOTAL 건 구성(공고번호·id·순번은 고유하게).
-const MOCK_LIST: BidPbancItem[] = Array.from({ length: TOTAL }, (_, i) => {
-  const base = dlt_bidPbancList[i % dlt_bidPbancList.length]
-  return {
-    ...base,
-    id: String(i + 1),
-    rnum: i + 1,
-    g2BBidPbancNo: `LDG${String(97 + i).padStart(4, '0')}`,
-  }
-})
+// 목록 데이터는 useBidPbancList(bdService.getList) 가 공급 — 목업 데이터는 mocks/bd.ts(구 인라인 이관).
+// 키워드 검색·더보기(페이징)는 아직 페이지 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행).
 
 export function BidPbancIntgListPage() {
   const navigate = useNavigate()
@@ -336,31 +260,30 @@ export function BidPbancIntgListPage() {
     null,
   )
 
-  // ── API 경계 스텁 (백엔드 연동 시 services/bd·queries/bd 로 대체). console 로 동작 확인 ──
+  // 목록 조회 — 전체 목록(목업/실연동은 bdService.getList 의 USE_MOCK 분기가 전환).
+  // 서버 페이징/키워드 검색 전환 시: req 에 page/pageSize/keyword 를 넣으면 queryKey 가 바뀌어 재조회된다.
+  const { data } = useBidPbancList()
+
+  // ── 목록 핸들러 — 확정값 상태만 갱신(조회는 useBidPbancList + 아래 클라이언트 필터가 담당) ──
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)
     setPage(1)
     setKeyword('')
     setAppliedSearch(null)
-    console.log('[BidList] 상세필터 검색', value)
-    // bdService.getList(toRequest(value)) → 목록 재조회
+    // 서버 필터 전환 시: useBidPbancList req 에 filter(value)를 포함시켜 재조회한다.
   }
   const handleQuickSearch = () => {
     const target = targets[0] ?? 'rprsItemNm'
     setAppliedSearch({ keyword: keyword.trim(), target })
     setPage(1)
-    console.log('[BidList] 빠른검색', { keyword, target })
-    // bdService.getList({ keyword, searchTarget: target, ... }) 로 서버 검색.
+    // 서버 검색 전환 시: useBidPbancList req 에 keyword/searchTarget 포함(현재는 아래 filteredList 클라 필터).
   }
   const handlePageSize = (size: number) => {
     setPageSize(size)
     setPage(1)
-    console.log('[BidList] pageSize →', size)
   }
   const handleLoadMore = () => {
-    const next = page + 1
-    setPage(next)
-    console.log('[BidList] loadMore → page', next)
+    setPage(page + 1)
   }
   const handleCardClick = (it: BidPbancItem) => {
     // 업무구분(taskSeNm) 데이터 필드로 국내/국외 상세 분기 — 목록 아이템을 state 로 전달(즉시표시 초기값).
@@ -373,17 +296,18 @@ export function BidPbancIntgListPage() {
     navigate(`/bd/${it.id}`, { state: it })
   }
 
-  // ── ⚠️ 임시 목업 검색/페이징 (API 연동 시 이 블록 통째로 교체) ⚠️ ─────────────────────
-  //   filteredList: 검색대상(공고명→bidPbancNm · 공고번호→bidPbancNo)으로 부분일치(대소문자 무시).
+  // ── 키워드 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 이 블록 삭제) ──
+  //   filteredList: 조회 결과(data)를 검색대상(공고명→rprsItemNm · 공고번호→g2BBidPbancNo)으로 부분일치.
   //   visibleList: 더보기 누른 만큼(page*pageSize)만 노출.
   const filteredList = useMemo(() => {
-    if (!appliedSearch || !appliedSearch.keyword) return MOCK_LIST
+    const list = data ?? []
+    if (!appliedSearch || !appliedSearch.keyword) return list
     const kw = appliedSearch.keyword.toLowerCase()
-    return MOCK_LIST.filter((it) => {
+    return list.filter((it) => {
       const field = appliedSearch.target === 'g2BBidPbancNo' ? it.g2BBidPbancNo : it.rprsItemNm
       return field.toLowerCase().includes(kw)
     })
-  }, [appliedSearch])
+  }, [appliedSearch, data])
 
   const total = filteredList.length
   const loaded = Math.min(page * pageSize, total)

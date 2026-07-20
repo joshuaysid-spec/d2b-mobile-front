@@ -13,12 +13,15 @@
 //
 // 설계서 반영 메모:
 //   - '비밀번호 마스킹 - 비밀번호 입력 시 마스킹 보기 아이콘 표시'(설계서 콘텐츠영역) → 눈 아이콘 토글.
-//   - 로그인/아이디찾기/비번찾기/사용자등록 라우팅은 백엔드·후속화면 미연동 — console.log 경계 스텁.
+//   - 로그인 = authService.login → 소속 업체 2건 이상이면 업체선택(P14) → loginWith 로 확정 →
+//     authStore(토큰+유저) 저장 → 홈 이동. 실패는 AlertModal 안내(ApiError.message).
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from 'react-router-dom'
 
+import { authService } from '@/services/auth'
+import { useAuthStore } from '@/stores/authStore'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
 import { Icon, type IconName } from '@/ui/common/base/Icon'
@@ -28,12 +31,15 @@ import { InputMessage } from '@/ui/common/base/InputMessage'
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
+import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
-import { BzentyChc, MOCK_BZENTY_LIST } from '@/ui/biz/cm/bzentyChc/BzentyChc'
+import { BzentyChc } from '@/ui/biz/cm/bzentyChc/BzentyChc'
 import {
   idPswdLoginSchema,
   type IdPswdLoginForm,
 } from '@/ui/biz/cm/idPswdLogin/IdPswdLoginPage.schema'
+import type { ApiError } from '@/types/api'
+import type { BzentyChcItem, LoginResult } from '@/types/domain'
 
 // 로그인 대상 구분(설계서 2026-06-22 개정: 업체·기관 선택 추가).
 // 기관 선택 시 아이디/비밀번호 찾기 섹션 숨김.
@@ -76,18 +82,23 @@ const LinkCard = ({ label, leadingIcon, onClick }: LinkCardProps) => (
 
 export function IdPswdLoginPage() {
   const navigate = useNavigate()
+  const setAccessToken = useAuthStore((s) => s.setAccessToken)
+  const setUser = useAuthStore((s) => s.setUser)
   const [pwVisible, setPwVisible] = useState(false)
   // 로그인 대상(업체/기관). '기관' 선택 시 아이디/비밀번호 찾기 섹션 숨김(설계서 2026-06-22 개정).
   const [loginTarget, setLoginTarget] = useState<string>('bzenty')
-  // 로그인 성공 후 소속 업체 선택(P14) 바텀시트.
+  // 로그인 성공 후 소속 업체 선택(P14) 바텀시트 — 목록은 로그인 응답(bzentyList)으로 채움.
   const [bzentyOpen, setBzentyOpen] = useState(false)
-  const [bzentyCd, setBzentyCd] = useState(MOCK_BZENTY_LIST[0].bzentyCd)
+  const [bzentyList, setBzentyList] = useState<BzentyChcItem[]>([])
+  const [bzentyCd, setBzentyCd] = useState('')
+  // 로그인 실패 안내(AlertModal) — null 이면 닫힘.
+  const [loginError, setLoginError] = useState<string | null>(null)
 
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<IdPswdLoginForm>({
     resolver: zodResolver(idPswdLoginSchema),
     mode: 'onSubmit',
@@ -95,16 +106,40 @@ export function IdPswdLoginPage() {
     defaultValues: { userId: '', password: '' },
   })
 
-  const onSubmit = (data: IdPswdLoginForm) => {
-    console.log('[login] ID/PW 로그인', { ...data, loginTarget }) // 추후 API: authService.login
-    // 로그인 성공 → 소속 업체가 여럿이면 업체 선택(P14) 팝업.
-    setBzentyOpen(true)
+  // 로그인 확정 — 토큰/유저를 authStore 에 저장(store 가 localStorage 브리지 소유) 후 홈 이동.
+  const finalizeLogin = (result: LoginResult) => {
+    setAccessToken(result.accessToken)
+    setUser(result.user)
+    setBzentyOpen(false)
+    navigate('/')
   }
 
-  const handleBzentyLogin = () => {
-    console.log('[login] 업체 선택 로그인', bzentyCd) // 추후 API: authService.loginWith(bzentyCd)
-    setBzentyOpen(false)
-    navigate('/') // 홈으로
+  const toErrorMessage = (err: unknown) =>
+    (err as ApiError | null)?.message ?? '로그인에 실패했습니다. 잠시 후 다시 시도해주세요.'
+
+  const onSubmit = async (data: IdPswdLoginForm) => {
+    try {
+      const result = await authService.login({ ...data, loginTarget })
+      if (result.bzentyList.length > 1) {
+        // 소속 업체가 여럿 → 업체 선택(P14) 팝업에서 확정.
+        setBzentyList(result.bzentyList)
+        setBzentyCd(result.bzentyList[0].bzentyCd)
+        setBzentyOpen(true)
+        return
+      }
+      finalizeLogin(result)
+    } catch (err) {
+      setLoginError(toErrorMessage(err))
+    }
+  }
+
+  const handleBzentyLogin = async () => {
+    try {
+      finalizeLogin(await authService.loginWith(bzentyCd))
+    } catch (err) {
+      setBzentyOpen(false)
+      setLoginError(toErrorMessage(err))
+    }
   }
 
   // 셸(AppLayout) 안 화면 — 헤더/스크롤/뒤로가기는 AppLayout 소유. 페이지는 콘텐츠만 렌더.
@@ -173,8 +208,8 @@ export function IdPswdLoginPage() {
           {errors.password && <InputMessage type="error">{errors.password.message}</InputMessage>}
         </div>
 
-        <Button type="submit" className="w-full">
-          로그인
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? '로그인 중…' : '로그인'}
         </Button>
       </form>
 
@@ -265,8 +300,20 @@ export function IdPswdLoginPage() {
           </div>
         }
       >
-        <BzentyChc items={MOCK_BZENTY_LIST} value={bzentyCd} onValueChange={setBzentyCd} />
+        <BzentyChc items={bzentyList} value={bzentyCd} onValueChange={setBzentyCd} />
       </BottomSheet>
+
+      {/* 로그인 실패 안내 */}
+      <AlertModal
+        open={loginError !== null}
+        onOpenChange={(open) => {
+          if (!open) setLoginError(null)
+        }}
+        variant="error"
+        title="로그인 실패"
+        description={loginError}
+        primaryAction={{ label: '확인', onClick: () => setLoginError(null) }}
+      />
     </>
   )
 }

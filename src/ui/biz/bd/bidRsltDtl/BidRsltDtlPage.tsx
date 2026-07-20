@@ -4,11 +4,13 @@
 //   + 탭 콘텐츠(일반정보=이 파일 인라인=M01 / 품목정보=BidRsltDtlList M02 / 입찰결과=BidRsltDtl M03 / 협상결과=BidRsltDtl2 M04)
 //   + 맨위로 FAB.
 // 상세화면이라 검색필터 없음. 데이터는 목업(추후 bdService.getBidRsltDetail). 헤더는 전역 Header(AppLayout).
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useState } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import { getBdopnById } from '@/ui/biz/bd/bdopnList/BdopnListPage'
+import { useBidRsltDetail } from '@/queries/bd'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
+import { PageLoading } from '@/ui/common/feedback/PageLoading'
+import type { BdopnItem } from '@/types/bd'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
@@ -126,7 +128,8 @@ function GeneralInfo() {
   const navigate = useNavigate()
   const { id } = useParams()
   // 이행/적격심사 신청 화면(MUI-BD-10)으로 이동 — 상단 요약을 그릴 개찰목록 항목을 state 로 전달.
-  const item = getBdopnById(id)
+  // 호스트(BidRsltDtlPage)와 동일 queryKey 라 캐시 재사용(추가 조회 없음).
+  const { data: item } = useBidRsltDetail(id ?? '')
   // 이행/적격심사 포기신청 풀팝업(MUI-BD-10-P21) 열림 상태.
   const [abndOpen, setAbndOpen] = useState(false)
 
@@ -234,20 +237,21 @@ export function BidRsltDtlPage() {
   }
 
   const { id } = useParams()
-  // 개찰목록 카드의 id 로 재조회 — 상단 뱃지·공고번호·타이틀·공고일자·개찰일시를 그 카드와 동일하게 표시.
-  // id 기반이라 새로고침/직접진입에도 값 유지. 추후 bdService.getBidRsltDetail(id) 로 교체.
-  const item = getBdopnById(id)
-  // 요약정보 행(공고일자·개찰일시) — 선택 카드와 동일 값.
-  const summaryRows: SummaryInfoRow[] = [
-    { label: '공고일자', value: item?.pbancDt ?? '-' },
-    { label: '개찰일시', value: item?.opbidDt ?? '-' },
-  ]
+  // 개찰목록 카드의 id 로 재조회(useBidRsltDetail) — 상단 뱃지·공고번호·타이틀·공고일자·개찰일시 표시.
+  // 목록이 state 없이 이동하므로 placeholder 없음 → 조회 완료까지 PageLoading. 새로고침/직접진입에도 id 로 유지.
+  const stateItem = useLocation().state as BdopnItem | null
+  const { data: item } = useBidRsltDetail(id ?? '', stateItem ?? undefined)
   // 진행단계(prgrsStg) — 입찰결과상세이므로 '입찰'(개찰/낙찰). 추후 bdService 응답으로 대체.
   const [prgrsStg] = useState('입찰')
   const steps = stepsByStg(prgrsStg)
-  useEffect(() => {
-    console.log('[BidRsltDtl] 입찰결과상세 조회', id) // 추후 API: bdService.getBidRsltDetail(id)
-  }, [id])
+
+  if (!item) return <PageLoading />
+
+  // 요약정보 행(공고일자·개찰일시) — 선택 카드와 동일 값.
+  const summaryRows: SummaryInfoRow[] = [
+    { label: '공고일자', value: item.pbancDt ?? '-' },
+    { label: '개찰일시', value: item.opbidDt ?? '-' },
+  ]
 
   return (
     <div ref={rootRef} className="flex w-full flex-col">

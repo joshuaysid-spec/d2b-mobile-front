@@ -1,16 +1,21 @@
 // 조달계획 상세 (MUI-OP-01-M03, Figma 9300-37444). 카드 클릭 → /op/:id 진입.
 // 구성(Figma contents area): 요약정보(SummaryInfo) + 스텝바(StepBar) + 탭(TabList)
 //   + 탭 콘텐츠(탭별 컴포넌트 분리: PrcmPlanDtl / PrcmPlanDtl_PrdList / PrcmPlanDtl_OpnnList / PrcmPlanDtl_spclCtrt / PrcmPlanDtl_Doc).
-// 데이터는 목업(상단=목록에서 넘어온 항목, 없으면 페이지 fallback 목업). 백엔드 미연동.
+// 상단(요약/헤더) 데이터: 목록 navigate state 를 placeholder 로 즉시 렌더 + useOpPlanDetail 조회로 확정.
+//   직접 URL 진입(state 없음)이면 조회 완료까지 PageLoading. 목업/실연동은 opService(USE_MOCK)가 전환.
 // 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당이라 본문은 콘텐츠만 렌더.
 import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import type { OpPlanItem, OpPlanDetail } from '@/types/op'
+import { useOpPlanDetail } from '@/queries/op'
+import { opService } from '@/services/op'
+import type { OpPlanItem } from '@/types/op'
+import type { ApiError } from '@/types/api'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
+import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
@@ -32,24 +37,8 @@ import { PrcmPlanDtl_OpnnList } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_OpnnLi
 import { PrcmPlanDtl_spclCtrt } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_spclCtrt'
 import { PrcmPlanDtl_Doc } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_Doc'
 
-// 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — 설계서 dlt_prcmPlanList 항목명/형식 그대로.
-// 평소엔 목록에서 navigate(state)로 받은 항목으로 상단을 그린다(아래 detail).
-const MOCK_PLAN_DETAIL: OpPlanDetail = {
-  id: '0',
-  srchType: 'plan',
-  no: 1,
-  taskSeNm: '물품',
-  prcmNo: '6000A',
-  orderPrnmntYm: '2026-03',
-  prcmPlanNm: "'26년 K5방독면",
-  deptCd: '화력총괄계약팀',
-  userNm: '홍길동',
-  ctrtMthdCd: '수의계약',
-  bidMthdCd: '전자입찰',
-  drctnAmt: 11616000,
-  implPrgrsStcd: '조달계획',
-  prgrsStg: '조달',
-}
+// (구 페이지 fallback 목업 MOCK_PLAN_DETAIL 은 mocks/op.ts 의 planDetail 로 이관 —
+//  직접 URL 진입 시 useOpPlanDetail 조회가 공급한다.)
 
 // ── 탭 (Figma m_tab) ──────────────────────────────────────────────────────
 const TABS: TabItem[] = [
@@ -95,6 +84,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 
 export function PrcmPlanDtlPage() {
   const navigate = useNavigate()
+  const { id = '' } = useParams()
   const [tab, setTab] = useState('detail')
   // 스크롤 시 상단 블록(요약+스텝+탭) 축소 + sticky 동작 — 로직은 훅에서. (overflow-anchor 진동방지 포함)
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -108,11 +98,19 @@ export function PrcmPlanDtlPage() {
     reValidateMode: 'onBlur',
     defaultValues: { phone: '', agree: 'no' },
   })
+  // 알림신청 실패 안내(AlertModal) — null 이면 닫힘.
+  const [notifyError, setNotifyError] = useState<string | null>(null)
   const handleNotifyApply = notiForm.handleSubmit(
-    (data) => {
-      console.log('[P10] 입찰공고 알림신청', data) // 추후 API: opService.applyNotify
-      setNotifyOpen(false)
-      notiForm.reset()
+    async (data) => {
+      try {
+        await opService.applyNotify({ id, phone: data.phone, agree: data.agree === 'yes' })
+        setNotifyOpen(false)
+        notiForm.reset()
+      } catch (err) {
+        setNotifyError(
+          (err as ApiError | null)?.message ?? '알림신청에 실패했습니다. 잠시 후 다시 시도해주세요.',
+        )
+      }
     },
     (errors) => {
       // 첫 에러 필드로 스크롤(Radix 그룹은 자동 포커스 불가 → 수동). main#app-scroll 셸 기준.
@@ -129,11 +127,14 @@ export function PrcmPlanDtlPage() {
   const [outputModalOpen, setOutputModalOpen] = useState(false)
   const handleOutput = () => setOutputModalOpen(true)
 
-  // 목록 → 상세 데이터 전달: 목록에서 navigate(state)로 넘어온 항목으로 상단을 그린다.
-  //   직접 URL 진입(state 없음)이면 페이지 목업(MOCK_PLAN_DETAIL)으로 대체. (백엔드 미연동)
-  const detail = (useLocation().state as OpPlanItem | null) ?? MOCK_PLAN_DETAIL
+  // 목록 → 상세 데이터 전달: navigate state 를 placeholder 로 즉시 렌더 + id 조회로 확정.
+  //   직접 URL 진입(state 없음)이면 조회 완료까지 PageLoading(아래 early return).
+  const stateItem = useLocation().state as OpPlanItem | null
+  const { data: detail } = useOpPlanDetail(id, stateItem ?? undefined)
   // 진행단계(아이템 속성 prgrsStg) — detail 로 구동(없으면 '조달' fallback).
-  const steps = stepsByStg(detail.prgrsStg ?? '조달')
+  const steps = stepsByStg(detail?.prgrsStg ?? '조달')
+
+  if (!detail) return <PageLoading />
 
   return (
     <div ref={rootRef} className="flex w-full flex-col">
@@ -266,6 +267,18 @@ export function PrcmPlanDtlPage() {
             품목명세서 출력
           </Button>
         }
+      />
+
+      {/* 알림신청(P10) 실패 안내 */}
+      <AlertModal
+        open={notifyError !== null}
+        onOpenChange={(open) => {
+          if (!open) setNotifyError(null)
+        }}
+        variant="error"
+        title="알림신청 실패"
+        description={notifyError}
+        primaryAction={{ label: '확인', onClick: () => setNotifyError(null) }}
       />
     </div>
   )

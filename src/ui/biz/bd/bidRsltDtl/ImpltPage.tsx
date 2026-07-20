@@ -7,7 +7,7 @@
 import { useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import { getBdopnById } from '@/ui/biz/bd/bdopnList/BdopnListPage'
+import { getBdopnById } from '@/mocks/bd'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { buildProgressSheet } from '@/ui/common/composites/stepPresets'

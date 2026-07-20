@@ -1,12 +1,13 @@
 // 조달계획 통합목록(MUI-OP-01-M01, node 9300-36815). Design Ref: op-list-page.design.
 // 구성: 업무도움(Infobox) + 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더(총건수·page size)
 //      + 카드 리스트(CardList, Card 재사용) + 더보기 + 맨위로 FAB.
-// 데이터/페이징/검색은 페이지가 소유. 목록은 목업(dlt_prcmPlanList), 더보기·page size·빠른검색은 API 경계 스텁
-//   (Plan SC: 핸들러 실행 + console.log 로 변수 변화 확인). 상세필터 풀팝업(SearchFilter)은 기구현.
+// 데이터: useOpPlanList(queries/op) — 목업/실연동은 opService(USE_MOCK)가 전환. 목업 데이터는 mocks/op.ts.
+// 키워드 검색·더보기(페이징)는 아직 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행 — queries/op.ts 참조).
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
+import { useOpPlanList } from '@/queries/op'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SectionDivider } from '@/ui/common/base/SectionDivider'
@@ -356,150 +357,9 @@ const ANNUAL_SEARCH_TARGETS = [
   { value: 'prcmReqNo', label: '조달요구번호' },
 ]
 
-// 조달계획 통합목록 데이터(dlt_prcmPlanList, 기획서 p15 1.4) — 목업, 추후 API(opService.getList).
+// 목록 데이터는 useOpPlanList(검색유형별 조회)가 공급 — 목업 데이터는 mocks/op.ts(구 인라인 목업 이관).
 // 검색유형별 업무구분: plan=물품/용역/공사/국외 · spec=물품/용역/공사(국외 없음) · annual=국외만.
 // 카드 클릭 라우팅은 srchType 으로만 분기(handleCardClick): plan→/op/:id, spec→/op/spec/:id, annual→/op/ovs/:id.
-// (실제로는 srchType 별 별도 조회 — 여기선 1개 변수에 혼합)
-const TOTAL = 100 // 총 건수(목업 — 실제 API total)
-const dlt_prcmPlanList: OpPlanItem[] = [
-  // 조달계획 · 국내(물품/용역/공사) → /op/:id (국내 분기)
-  {
-    id: '1',
-    srchType: 'plan',
-    no: 1,
-    taskSeNm: '물품',
-    ctrtMthdCd: '수의계약',
-    bidMthdCd: '전자입찰',
-    prcmNo: '6000A',
-    prcmPlanNm: "'26년 K5방독면",
-    orderPrnmntYm: '2026-03',
-    deptCd: '화력총괄계약팀',
-    userNm: '김조달',
-    drctnAmt: 11616000,
-    implPrgrsStcd: '조달계획',
-  },
-  {
-    id: '2',
-    srchType: 'plan',
-    no: 2,
-    taskSeNm: '용역',
-    ctrtMthdCd: '일반경쟁',
-    bidMthdCd: '전자입찰',
-    prcmNo: '6000B',
-    prcmPlanNm: "'26년 정보화 유지보수 사업",
-    orderPrnmntYm: '2026-04',
-    deptCd: '정보화팀',
-    userNm: '이정보',
-    drctnAmt: 92472000,
-    implPrgrsStcd: '공고게시',
-  },
-  {
-    id: '3',
-    srchType: 'plan',
-    no: 3,
-    taskSeNm: '공사',
-    ctrtMthdCd: '제한경쟁',
-    bidMthdCd: '전자입찰',
-    prcmNo: '6000C',
-    prcmPlanNm: "'26년 막사 보수 공사",
-    orderPrnmntYm: '2026-02',
-    deptCd: '시설관리단',
-    userNm: '박시설',
-    drctnAmt: 158000000,
-    implPrgrsStcd: '계약대기',
-  },
-  // 조달계획 · 국외(업무구분) — srchType=plan 이므로 조달계획상세(/op/:id)로 이동
-  {
-    id: '4',
-    srchType: 'plan',
-    no: 4,
-    taskSeNm: '국외',
-    ctrtMthdCd: '일반경쟁',
-    bidMthdCd: '전자입찰',
-    prcmNo: '6000D',
-    prcmPlanNm: "'26년 야간투시경 해외구매",
-    orderPrnmntYm: '2026-05',
-    deptCd: '해외조달팀',
-    userNm: '최해외',
-    drctnAmt: 540000000,
-    implPrgrsStcd: '계약완료',
-  },
-  // 사전규격 · 국내(물품/용역/공사 — 국외 없음) → /op/spec/:id
-  {
-    id: '5',
-    srchType: 'spec',
-    no: 5,
-    taskSeNm: '용역',
-    ctrtMthdCd: '일반경쟁',
-    bidMthdCd: '전자입찰',
-    prcmNo: '6000E',
-    prcmPlanNm: "'26년 통신장비 사전규격",
-    orderPrnmntYm: '2026-03',
-    deptCd: '통신정보팀',
-    userNm: '정통신',
-    drctnAmt: 47200000,
-    implPrgrsStcd: '조달계획',
-  },
-  {
-    id: '7',
-    srchType: 'spec',
-    no: 6,
-    taskSeNm: '물품',
-    ctrtMthdCd: '수의계약',
-    bidMthdCd: '전자입찰',
-    prcmNo: '6000G',
-    prcmPlanNm: "'26년 전투화 사전규격",
-    orderPrnmntYm: '2026-04',
-    deptCd: '피복관리팀',
-    userNm: '한피복',
-    drctnAmt: 33500000,
-    implPrgrsStcd: '조달계획',
-  },
-  {
-    id: '8',
-    srchType: 'spec',
-    no: 7,
-    taskSeNm: '공사',
-    ctrtMthdCd: '제한경쟁',
-    bidMthdCd: '전자입찰',
-    prcmNo: '6000H',
-    prcmPlanNm: "'26년 정비고 증축 사전규격",
-    orderPrnmntYm: '2026-05',
-    deptCd: '시설관리단',
-    userNm: '박시설',
-    drctnAmt: 210000000,
-    implPrgrsStcd: '공고게시',
-  },
-  // 연간조달계획 · 국외만 → /op/ovs/:id (국외 분기)
-  {
-    id: '6',
-    srchType: 'annual',
-    no: 8,
-    taskSeNm: '국외',
-    ctrtMthdCd: '일반경쟁',
-    bidMthdCd: '전자입찰',
-    prcmNo: '6000F',
-    prcmPlanNm: "'26년 연간 군수품 해외조달",
-    orderPrnmntYm: '2026-06',
-    deptCd: '해외조달팀',
-    userNm: '최해외',
-    drctnAmt: 880000000,
-    implPrgrsStcd: '계약대기',
-  },
-]
-
-// ⚠️⚠️ 임시 목업 — API 연동 시 이 상수(MOCK_LIST)와 아래 컴포넌트 안의 filteredList/visibleList 로직을
-//   통째로 삭제하고 다시 짠다. ⚠️⚠️
-// 지금은 "보유한 6건"을 TOTAL(100)건으로 부풀려, 더보기 누를 때마다 page*pageSize 만큼 잘라 보여준다
-//   (그래서 더보기 1번 = 카드 10개씩 추가되는 것처럼 보임). 검색도 이 배열을 클라이언트에서 필터.
-// 변경 예정: 보유 데이터를 부풀려 슬라이스/필터하는 대신, 서버 API(opService.getList)로
-//   "다음 페이지/검색결과를 새로 fetch 해 누적"하는 로직으로 교체한다.
-//   → MOCK_LIST · filteredList(useMemo) · visibleList(slice) 모두 제거 대상.
-const MOCK_LIST: OpPlanItem[] = Array.from({ length: TOTAL }, (_, i) => {
-  const base = dlt_prcmPlanList[i % dlt_prcmPlanList.length]
-  // id·prcmNo·no 는 고유해야 하므로 인덱스로 구분 (key 안정성 + 판단번호 검색 데모용)
-  return { ...base, id: String(i + 1), no: i + 1, prcmNo: `${base.prcmNo}-${i + 1}` }
-})
 
 export function PrcmPlanIntgListPage() {
   const navigate = useNavigate()
@@ -529,7 +389,11 @@ export function PrcmPlanIntgListPage() {
   const schema = useMemo(() => buildOpSearchSchema(tab), [tab])
   const tabDefaultValue = useMemo(() => buildDefaultValue(tab), [tab])
 
-  // ── API 경계 스텁 (백엔드 연동 시 services/op·queries/op 로 대체). console 로 동작 확인 ──
+  // 목록 조회 — 검색유형(탭)별 전체 목록(목업/실연동은 opService 의 USE_MOCK 분기가 전환).
+  // 서버 페이징/키워드 검색 전환 시: req 에 page/pageSize/keyword 를 넣으면 queryKey 가 바뀌어 재조회된다.
+  const { data: planData } = useOpPlanList({ srchType: tab })
+
+  // ── 목록 핸들러 — 확정값 상태만 갱신(조회는 useOpPlanList + 아래 클라이언트 필터가 담당) ──
   // 검색유형 탭 전환 — 목록 유형 변경 + 관련 상태 리셋(page/빠른검색/필터). 구 normalize(업무구분 보정)는
   // 여기서 filter 를 그 유형 기본값(buildDefaultValue)으로 통째로 리셋하며 흡수한다.
   const handleTabChange = (next: string) => {
@@ -543,8 +407,7 @@ export function PrcmPlanIntgListPage() {
     setAppliedSearch(null)
     // 빠른검색 대상을 새 유형 기본값으로(연간조달=재고번호, 그 외=조달명).
     setTargets([type === 'annual' ? 'stockNo' : 'prcmPlanNm'])
-    console.log('[OpList] 검색유형 탭 전환', type)
-    // services/op.ts: opService.getList({ srchType: type, ... }) → 유형별 목록 재조회
+    // 탭 변경 → useOpPlanList queryKey 변경 → 유형별 목록 자동 재조회.
   }
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)
@@ -552,27 +415,21 @@ export function PrcmPlanIntgListPage() {
     setPage(1) // 필터 적용 시 첫 페이지부터
     setKeyword('') // 검색필터 팝업에서 '검색' 실행 시 빠른검색 입력값 비움(닫기는 유지 — handleSearch 만 호출됨)
     setAppliedSearch(null) // 빠른검색어 초기화
-    console.log('[OpList] 상세필터 검색', value)
-    // services/op.ts: opService.getList(toRequest(tab, value)) → 목록 재조회
+    // 서버 필터 전환 시: useOpPlanList req 에 filter(value)를 포함시켜 재조회한다(현재는 클라 필터 미적용 표시용).
   }
   const handleQuickSearch = () => {
     // 검색대상(targets)은 single 칩이라 항상 1개만 선택됨 — 첫 값을 검색 기준으로 사용.
     const target = targets[0] ?? 'prcmPlanNm'
     setAppliedSearch({ keyword: keyword.trim(), target })
     setPage(1) // 새 검색은 첫 페이지부터
-    console.log('[OpList] 빠른검색', { keyword, target })
-    // 실제로는 opService.getList({ keyword, searchTarget: target, ... }) 로 서버 검색.
-    // 현재는 목업(dlt_prcmPlanList)을 클라이언트에서 필터(아래 filteredList) 한다.
+    // 서버 검색 전환 시: useOpPlanList req 에 keyword/searchTarget 포함(현재는 아래 filteredList 클라 필터).
   }
   const handlePageSize = (size: number) => {
     setPageSize(size)
     setPage(1)
-    console.log('[OpList] pageSize →', size) // 실제로는 page=1·pageSize=size 로 재조회
   }
   const handleLoadMore = () => {
-    const next = page + 1
-    setPage(next)
-    console.log('[OpList] loadMore → page', next) // 실제로는 다음 페이지 fetch 후 누적
+    setPage(page + 1)
   }
   // 카드 클릭 라우팅 — 검색유형(srchType)으로만 분기(taskSeNm 하드코딩 분기 제거).
   //   조달계획(plan)  → 조달계획상세 (/op/:id)      ※ 국외 업무구분이어도 항상 조달계획상세
@@ -591,29 +448,20 @@ export function PrcmPlanIntgListPage() {
     })
   }
 
-  // ── ⚠️ 임시 목업 검색/페이징 (API 연동 시 이 블록 통째로 삭제 후 재작성) ⚠️ ──────────
-  // [현재] 보유한 MOCK_LIST 를 클라이언트에서 필터(검색) + 슬라이스(더보기) 한다.
-  //   filteredList: SEARCH_TARGET(검색대상)에 따라 검색 필드를 바꿔 부분일치(대소문자 무시)로 거름.
-  //     - 'prcmPlanNm'(조달명)  → 카드 제목(it.prcmPlanNm)
-  //     - 'prcmNo'(판단번호) → 판단번호(it.prcmNo)
-  //     - 연간조달 'stockNo'(재고번호)/'prcmReqNo'(조달요구번호) → 목업에 필드 없어 prcmNo 로 대체(API 연동 시 매핑)
-  //     아직 검색 실행 전(appliedSearch null)이거나 검색어가 비면 전체(MOCK_LIST).
-  //   visibleList: 더보기 누른 만큼(page*pageSize=loaded)만 잘라서 노출 → 더보기 1번에 10개씩 추가.
-  // [변경 예정] 위 "보유 데이터 필터 + 슬라이스" 대신, 검색·더보기 모두 서버 API 호출로 교체:
-  //   opService.getList({ page, pageSize, keyword, searchTarget }) 결과를 받아 누적/치환한다.
-  //   → filteredList(useMemo) · visibleList(slice) 제거하고 fetch 한 데이터로 cardItems 를 만든다.
+  // ── 키워드 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 이 블록 삭제) ──
+  //   filteredList: 조회 결과(planData.list)를 빠른검색 확정값으로 부분일치(대소문자 무시) 필터.
+  //     - 'prcmPlanNm'(조달명) → 제목 · 그 외(판단번호·재고번호·조달요구번호) → prcmNo(목업 한계, API 연동 시 매핑)
+  //   visibleList: 더보기 누른 만큼(page*pageSize)만 노출.
+  //   서버 전환 시: keyword/page 를 useOpPlanList req 로 옮기고 planData.total 을 총건수로 사용.
   const filteredList = useMemo(() => {
-    // ① 검색유형(탭) 필터 — 현재 탭의 데이터만 노출(기본 조달계획). 목록은 항상 한 유형만.
-    const byType = MOCK_LIST.filter((it) => it.srchType === tab)
-    // ② 빠른검색 키워드 필터(검색 실행 시에만)
-    if (!appliedSearch || !appliedSearch.keyword) return byType
+    const list = planData?.list ?? []
+    if (!appliedSearch || !appliedSearch.keyword) return list
     const kw = appliedSearch.keyword.toLowerCase()
-    return byType.filter((it) => {
-      // 조달명만 제목 검색, 나머지(판단번호·재고번호·조달요구번호)는 prcmNo 검색(목업 한계).
+    return list.filter((it) => {
       const field = appliedSearch.target === 'prcmPlanNm' ? it.prcmPlanNm : it.prcmNo
       return field.toLowerCase().includes(kw)
     })
-  }, [appliedSearch, tab])
+  }, [appliedSearch, planData])
 
   // 총건수·더보기는 항상 걸러진(검색유형+검색어) 결과 기준.
   const total = filteredList.length

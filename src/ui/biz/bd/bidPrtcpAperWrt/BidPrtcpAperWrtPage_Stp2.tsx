@@ -1,64 +1,20 @@
 // 입찰참가신청서작성 - 품목내역 (MUI-BD-04-M06, 설계서 slide99~).
 // 신청서 마법사의 '품목내역' 스텝 탭 콘텐츠. 요약/스텝/탭/하단 액션바는 페이지(BidPrtcpAperWrtPage) 소유 —
-// 이 컴포넌트는 PageTitle + 섹션(품목 카드 반복)만 렌더한다.
-// 항목명/형식은 설계서 데이터영역(dlt_itemList) 그대로 — 품목 타입은 BidAbndAperWrt 의 ItemListRow 와 동일 모양 재사용.
+// 이 컴포넌트는 PageTitle + 섹션(품목 카드 반복) + 더보기만 렌더한다.
+// 품목 목록은 useBidItemList(bdService.getBidItemList) 가 공급 — 목업은 mocks/bd.ts(구 인라인 이관).
+import { useState } from 'react'
+
+import { useBidItemList } from '@/queries/bd'
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Button } from '@/ui/common/base/Button'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { BidPrgrsItem } from '@/types/bd'
+import type { BidItemListRow, BidPrgrsItem } from '@/types/bd'
 
-// 품목내역 (설계서 dlt_itemList 항목명 그대로) — BidAbndAperWrt 의 ItemListRow 와 동일 모양 재사용.
-interface ItemListRow {
-  rNum: string // 번호
-  clsfNo: string // 항목번호
-  fscCdNtnItemIdntfNo: string // 재고번호
-  itemNm: string // 품명
-  spcfctNo: string // 규격
-  unitNm: string // 단위
-  drctnQty: string // 수량
-  drctnUntprc: string // 단가
-  drctnAmt: string // 금액
-}
+// 더보기 한 번에 추가로 노출할 건수(페이지 크기).
+const PAGE_SIZE = 5
 
-// ── 품목내역 목업 (설계서 dlt_itemList 값/형식 그대로) ─────────────────
-const MOCK_ITEMS: ItemListRow[] = [
-  {
-    rNum: '1',
-    clsfNo: '000 000 000',
-    fscCdNtnItemIdntfNo: '-',
-    itemNm: '특수작전용대물타격무인항공기 구성품',
-    spcfctNo: '00',
-    unitNm: 'EA',
-    drctnQty: '1',
-    drctnUntprc: '619,520,000.00 원',
-    drctnAmt: '619,520,000.00 원',
-  },
-  {
-    rNum: '2',
-    clsfNo: '000 000 000',
-    fscCdNtnItemIdntfNo: '-',
-    itemNm: '특수작전용대물타격무인항공기 지상통제장비',
-    spcfctNo: '00',
-    unitNm: 'EA',
-    drctnQty: '1',
-    drctnUntprc: '619,520,000.00 원',
-    drctnAmt: '619,520,000.00 원',
-  },
-  {
-    rNum: '3',
-    clsfNo: '000 000 000',
-    fscCdNtnItemIdntfNo: '-',
-    itemNm: '특수작전용대물타격무인항공기 정비지원장비',
-    spcfctNo: '00',
-    unitNm: 'EA',
-    drctnQty: '1',
-    drctnUntprc: '619,520,000.00 원',
-    drctnAmt: '619,520,000.00 원',
-  },
-]
-
-function itemRows(item: ItemListRow): TableRow[] {
+function itemRows(item: BidItemListRow): TableRow[] {
   return [
     { label: '항목번호', value: item.clsfNo },
     { label: '재고번호', value: item.fscCdNtnItemIdntfNo },
@@ -72,30 +28,39 @@ function itemRows(item: ItemListRow): TableRow[] {
 }
 
 export function BidPrtcpAperWrtPage_Stp2({ detail }: { detail: BidPrgrsItem }) {
+  // 품목 목록 조회 — 목업/실연동은 bdService.getBidItemList 의 USE_MOCK 분기가 전환.
+  const { data } = useBidItemList(detail.pbancNo)
+  const items = data ?? []
+  // 더보기 페이징(클라이언트) — 서버 페이징 전환 시 page 파라미터로 이행.
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+  const visibleItems = items.slice(0, visibleCount)
+  const hasMore = visibleCount < items.length
+
   return (
     <>
       <PageTitle as="h2" className="px-4 pb-2 pt-4">
         품목내역
       </PageTitle>
 
-      <SectionTitle as="h3" topDivider info={`총 ${MOCK_ITEMS.length}건`} className="bg-white">
+      <SectionTitle as="h3" topDivider info={`총 ${items.length}건`} className="bg-white">
         품목내역
       </SectionTitle>
 
       <div className="flex flex-col gap-krds-7 px-4 py-4">
-        {MOCK_ITEMS.map((item) => (
+        {visibleItems.map((item) => (
           <Table key={item.rNum} rows={itemRows(item)} />
         ))}
 
-        {/* 더보기 — 클릭 시 다음 페이지 로드(추후 API). */}
-        <Button
-          variant="secondary"
-          className="w-full"
-          onClick={() => console.log('[M06] 품목내역 더보기', detail.pbancNo)}
-          // 추후 API: bdService.getBidItemList(pbancNo, page)
-        >
-          더보기 (10/100)
-        </Button>
+        {/* 더보기 — 추가 항목 없으면 숨김. */}
+        {hasMore && (
+          <Button
+            variant="secondary"
+            className="w-full"
+            onClick={() => setVisibleCount((c) => Math.min(c + PAGE_SIZE, items.length))}
+          >
+            더보기 ({visibleItems.length}/{items.length})
+          </Button>
+        )}
       </div>
     </>
   )

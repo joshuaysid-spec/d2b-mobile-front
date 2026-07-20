@@ -1191,3 +1191,344 @@ export interface ScrtyMsrmtPrsn {
   /** 첨부파일명(fileName) — 예 '증명서.pdf'. ⚠️ 잠정. */
   fileName: string
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ── API 요청/응답 타입(추정 — TODO(백엔드 확정)) ──────────────────────────────
+//   cmService/도메인 소형 서비스(bzentyService 등)의 요청 파라미터·응답 봉투 타입.
+//   설계서 데이터영역에 없는(화면·목업에서만 관찰되는) 형태라 잠정 정의 — 백엔드 스펙 확정 시 교체.
+//   ⚠️ services/cm.ts 전용. 페이지는 여전히 위쪽 데이터영역 타입(항목명 영문)만 참조한다.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── 통합검색 (MUI-MS-01-M09/M10 IntgSrch, MenuPage) ──
+/** 통합검색 결과 1건(스텁) — 추후 카테고리별 결과 봉투로 확장. */
+export interface SearchResult {
+  /** 안정적 고유 식별자. */
+  id: string
+  /** 검색 결과 제목. */
+  title: string
+}
+
+/** 최근 검색어 1건(IntgSrch dm_recentSearch) — 태그로 표시(삭제 가능). */
+export interface RecentSearch {
+  /** 삭제 식별 키. */
+  id: string
+  /** 검색어. */
+  keyword: string
+}
+
+/** 자주 찾는/연관 서비스 링크 1건 — NavigationItemList 로 표시. */
+export interface SearchServiceLink {
+  /** 안정적 고유 식별자. */
+  id: string
+  /** 서비스(메뉴)명. */
+  label: string
+}
+
+// ── 연관진행현황 (MUI-CM 연관 건 조회, AnlPrgrsListPage) ──
+/** 연관진행현황 1건 — ⚠️ 설계서 데이터영역 미정의(화면 표기 기준 잠정). */
+export interface AnlPrgrsItem {
+  /** 목록 key. */
+  id: string
+  /** 업무구분(taskSeNm) — 물품/용역/공사/국외. 뱃지. */
+  taskSeNm: string
+  /** 통합참조번호(rfrncNo). */
+  rfrncNo: string
+  /** 사업명/건명(bizNm). */
+  bizNm: string
+  /** 표시 행(라벨/값) — 카드 상세 행. */
+  rows: { label: string; value: string }[]
+}
+
+// ── 알림현황 (MUI-MS-01-M13 NotiPrstPage) ──
+/** 알림 1건 — ⚠️ 페이지 로컬 타입에서 이관(설계서 데이터영역 미정의, 잠정). */
+export interface NotiItem {
+  /** 목록 key. */
+  id: string
+  /** 알림 구분(카테고리) — 입찰/계약/공지 등. */
+  category: string
+  /** 알림 제목/내용. */
+  title: string
+  /** 발생일시 'YYYY-MM-DD HH:mm'. */
+  date: string
+  /** 읽음 여부. */
+  read: boolean
+}
+
+// ── 조달업체 사용자 관리 (MUI-CM PrcmBzentyUserMngPage) ──
+/** 사용자 상태코드 — 정상('Y')/임시('T')/해지('N')/수정('M'). ⚠️ 코드값 백엔드 확정 필요. */
+export type UserSttsCd = 'Y' | 'T' | 'N' | 'M'
+
+/** 조달업체 소속 사용자 1건 — ⚠️ 페이지 로컬 타입에서 이관(설계서 데이터영역 미정의, 잠정). */
+export interface BzentyUser {
+  /** 목록 key. */
+  id: string
+  /** 사용자ID(userId). */
+  userId: string
+  /** 성명(userNm). */
+  userNm: string
+  /** 부서(deptNm). */
+  deptNm: string
+  /** 전화번호(telno). */
+  telno: string
+  /** 휴대번호(mbtlNo). */
+  mbtlNo: string
+  /** 비고(rmrk). */
+  rmrk: string
+  /** 사용자유형명(userTyNm) — 관리자/일반 등. */
+  userTyNm: string
+  /** 상태코드(userSttsCd). */
+  userSttsCd: UserSttsCd
+  /** 상태명(userSttsNm) — 정상/임시/해지 등. */
+  userSttsNm: string
+}
+
+/** 조달업체 사용자 검색 요청 — criteria(항목) + keyword. */
+export interface BzentyUserSearch {
+  /** 검색 기준 — 'userNm' | 'userId' | 'deptNm'. */
+  criteria: string
+  /** 검색어. */
+  keyword: string
+  /** 페이지(1-base, 선택). */
+  page?: number
+  /** 페이지 크기(선택). */
+  pageSize?: number
+}
+
+// ── 만족도 조사 (introduce/SatisfactionSurvey) ──
+/** 만족도 조사 제출 요청. */
+export interface SatisfactionPayload {
+  /** 만족도 — 'veryGood' | 'good' | 'normal' | 'bad' | 'veryBad'. */
+  satisfaction: string
+  /** 의견(자유 입력, 선택). */
+  content: string
+}
+
+// ── FAQ / 게시판 (FaqListPage, BoardListView) ──
+/** FAQ 목록 조회 요청 — 검색어(제목/내용)·구분·페이징. */
+export interface FaqListRequest {
+  /** 제목(qstnTtl) 부분검색(선택). */
+  qstnTtl?: string
+  /** 내용(contsCn) 부분검색(선택). */
+  contsCn?: string
+  /** 구분(bizFldCd) — FAQ 구분 코드(선택). */
+  bizFldCd?: string
+  /** 페이지(1-base, 선택). */
+  page?: number
+  /** 페이지 크기(선택). */
+  pageSize?: number
+}
+
+/** 게시판 종류 — 공지사항/자료실/시스템개선안내(엔드포인트 분기용). */
+export type BoardKind = 'notice' | 'rpstr' | 'sysImpv'
+
+/** 게시판 목록 아이템(종류별 유니온) — getBoardList 반환 원소. */
+export type BoardListItem = NoticeListItem | RpstrListItem | SysImpvListItem
+
+/** 게시판 목록 조회 요청 — 종류별 검색조건을 optional 로 합친 봉투. */
+export interface BoardListRequest {
+  /** 제목(bbsTtl/rpstrTtl) 부분검색(선택). */
+  bbsTtl?: string
+  /** 제목(자료실 rpstrTtl) 부분검색(선택). */
+  rpstrTtl?: string
+  /** 내용(bbsCn) 부분검색(선택). */
+  bbsCn?: string
+  /** 내용(자료실 contsCn) 부분검색(선택). */
+  contsCn?: string
+  /** 작성자(wrtrNm) 부분검색(선택). */
+  wrtrNm?: string
+  /** 작성일자 범위(regDt FROM~TO, 선택). */
+  regDt?: DateRangeValue
+  /** 페이지(1-base, 선택). */
+  page?: number
+  /** 페이지 크기(선택). */
+  pageSize?: number
+}
+
+// ── 문서함 (DocBoxPage, DocBoxDtlPage) ──
+/** 문서함 목록 조회 요청 — 문서구분(탭)·페이징. */
+export interface DocBoxListRequest {
+  /** 문서구분(docSeCd) — 받은/보낸/반려/임시저장. */
+  docSeCd: DocBoxSeCd
+  /** 페이지(1-base, 선택). */
+  page?: number
+  /** 페이지 크기(선택). */
+  pageSize?: number
+}
+
+/** 문서함 상세(M11) 응답 — 문서내용 + 첨부목록(상단 요약은 목록 아이템 재사용). */
+export interface DocBoxDetail {
+  /** 문서내용(docCn). */
+  docCn: string
+  /** 첨부파일 목록(T03). */
+  atchList: DocBoxAtchFile[]
+}
+
+// ── 관심입찰공고 (ItrstBidPbancPage) ──
+/** 관심입찰공고 목록 조회 요청 — 검색필터에서 파생. */
+export interface ItrstBidListRequest {
+  /** 개찰일자 범위(bdopnYmd FROM~TO, 선택). */
+  bdopnYmd?: DateRangeValue
+  /** 통합참조번호(intgRfrncNo, 선택). */
+  intgRfrncNo?: string
+  /** 공고번호(pbancNo, 선택). */
+  pbancNo?: string
+  /** 공고품목명(pbancItemNm, 선택). */
+  pbancItemNm?: string
+  /** 페이지(1-base, 선택). */
+  page?: number
+  /** 페이지 크기(선택). */
+  pageSize?: number
+}
+
+// ── 업체정보 추가등록 (dmstLctnColInfoAddReg) ──
+/** P08 등록대상 품목 검색 요청 — 품류/품명/업종. */
+export interface RegTrgtItemSearch {
+  /** 품류코드(knditmCd). */
+  knditmCd: string
+  /** 품명(itemNm) 부분검색. */
+  itemNm: string
+  /** 업종코드(bzstatCd). */
+  bzstatCd: string
+}
+
+/** M05 물품(내자) 추가등록 신청 요청 — 화면 입력값 취합. */
+export interface AddRegPayload {
+  /** 본/지사(bplcSecd). */
+  bplcSecd: string
+  /** ISO 여부(isoYn). */
+  isoYn: string
+  /** 대표자영문(rprsvEngNm). */
+  rprsvEngNm: string
+  /** 영문주소(addrEng). */
+  addrEng: string
+  /** 선택 품류(P06). */
+  knditm: KnditmChcItem | null
+  /** 업태(bzstat). */
+  bzstat: string
+  /** 선택 조합/단체(P07). */
+  asctGrp: AsctGrpChcItem | null
+  /** 등록품목명세 행. */
+  items: AddRegItemRow[]
+  /** 약관 동의. */
+  agreed: boolean
+}
+
+/** M23 국내소재상사 추가등록 신청 요청 — 화면 입력값 취합. */
+export interface AddRegDmsAgtPayload {
+  /** 본/지사(bplcSecd). */
+  bplcSecd: string
+  /** ISO 여부(isoYn). */
+  isoYn: string
+  /** 대표자영문(rprsvEngNm). */
+  rprsvEngNm: string
+  /** 영문주소(addrEng). */
+  addrEng: string
+  /** 법인/개인 구분(corpIndvSe). */
+  corpIndvSe: string
+  /** 법인등기기관(corpRgstOrgnNm). */
+  corpRgstOrgnNm: string
+  /** 법인등기일자(corpRgstYmd). */
+  corpRgstYmd: string
+  /** 법인등기목적(corpRgstPrps). */
+  corpRgstPrps: string
+  /** 취급품목(hdlItemNm). */
+  hdlItemNm: string
+  /** 업태(bzstatNm). */
+  bzstatNm: string
+  /** 사업자등록기관(bzrnoRgstOrgnNm). */
+  bzrnoRgstOrgnNm: string
+  /** 보안측정부대(scrtMsrUnitNm). */
+  scrtMsrUnitNm: string
+  /** 보안측정일자(scrtMsrYmd). */
+  scrtMsrYmd: string
+  /** 보안측정결과(scrtMsrRslt). */
+  scrtMsrRslt: string
+  /** 보안측정인원. */
+  persons: ScrtyMsrmtPrsn[]
+  /** FSC 코드 목록. */
+  fscList: DmsAgtFscCode[]
+  /** 연간매출액(anlSaleAmt). */
+  anlSaleAmt: string
+  /** 자산규모(astScl). */
+  astScl: string
+  /** 여신한도(lncLmt). */
+  lncLmt: string
+  /** 선택 주거래은행(P12). */
+  bank: BankChcItem | null
+  /** 지점(brnchNm). */
+  brnchNm: string
+  /** 군납최초참여일(mlsplyFrstPtcpYmd). */
+  mlsplyFrstPtcpYmd: string
+  /** 거래기간 시작(trnsPrdFrom). */
+  trnsPrdFrom: string
+  /** 거래기간 종료(trnsPrdTo). */
+  trnsPrdTo: string
+  /** Dun's Number(dunsNo). */
+  dunsNo: string
+  /** 약관 동의. */
+  agreed: boolean
+}
+
+/** 추가정보 신청 상세(T05 물품(내자)/T06 국내소재상사) 응답 — 구분별로 채워지는 필드가 달라 optional. */
+export interface AddRegInfoAplyDetail {
+  /** T05 등록품목명세. */
+  regTrgtItemList?: RegTrgtItem[]
+  /** T05 담당자정보. */
+  picInfo?: PicInfo
+  /** T05 대표품류/조합·단체. */
+  knditmAsctGrpList?: KnditmAsctGrp[]
+  /** T06 보안측정인원. */
+  scrtyMsrmtPrsnlList?: ScrtyMsrmtPrsn[]
+  /** T06 FSC 코드. */
+  fscList?: DmsAgtFscCode[]
+}
+
+// ── 군수품무역대리업 (dfEqpmntTradeAgnc) ──
+/** M17 신규/갱신 신청 요청 — 구분(mode) + 첨부. */
+export interface DfEqpmntTradeAgncAplyPayload {
+  /** 신청 구분 — 'new'(신규) | 'renew'(갱신). */
+  mode: 'new' | 'renew'
+  /** 첨부서류. */
+  files: DfEqpmntTradeAgncAtchFile[]
+}
+
+/** M18 변경 신청 요청 — 첨부(구분 없음). */
+export interface DfEqpmntTradeAgncChgPayload {
+  /** 첨부서류. */
+  files: DfEqpmntTradeAgncAtchFile[]
+}
+
+// ── 업체정보관리 상세 (bzentyService, MUI-CM-01-M02) ──
+/** 업체일반(T01) 상세 응답 — 일반 + 상태/수배/대표자/입찰대리인. */
+export interface BzentyGnrlDetail {
+  /** 업체일반. */
+  gnrlInfo: BzentyGnrlInfo
+  /** 상태/부정당. */
+  sttsList: BzentyStts[]
+  /** 수의계약배제. */
+  rlsVltrnsList: BzentyRlsVltrnsRstric[]
+  /** 대표자. */
+  rprsvList: BzentyRprsv[]
+  /** 입찰대리인. */
+  bidAgtList: BzentyBidAgt[]
+}
+
+/** 물품(내자)(T02) 상세 응답 — 등록품목명세 + 담당자 + 대표품류/조합. */
+export interface BzentyCmdtyInfo {
+  /** 등록품목명세. */
+  regTrgtItemList: RegTrgtItem[]
+  /** 담당자정보. */
+  picInfo: PicInfo
+  /** 대표품류/조합·단체. */
+  knditmAsctGrpList: KnditmAsctGrp[]
+}
+
+/** 시설(T03) 상세 응답 — 시설정보 + 면허 + 주력분야. */
+export interface BzentyFcltDetail {
+  /** 시설정보. */
+  fcltInfo: BzentyFcltInfo
+  /** 시설면허. */
+  lcnsList: BzentyFcltLcns[]
+  /** 주력분야. */
+  mfrcList: BzentyFcltMfrcFld[]
+}

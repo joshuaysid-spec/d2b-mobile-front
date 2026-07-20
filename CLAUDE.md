@@ -25,7 +25,7 @@
    - **⚠️ 기존 공통에 없어 새 공통 컴포넌트(`base`/`composites`)나 새 variant 를 만들어야 하면, 만들기 전에 사용자에게 "새로 만들어도 되는지" 먼저 물어본다.** (도메인 전용 조립물 — `biz/{도메인}/` 의 페이지·탭·바텀시트 콘텐츠·`*FullPopup` 등 — 은 예외로 바로 생성)
 3. **폴더/파일 생성** — "파일 명명 규칙"의 화면ID→파일명 변환 + 도메인 폴더 코드(op/bd/ct/...) 준수.
    - **새 화면은 먼저 설계서/앱메뉴 문서에서 해당 화면의 영문 화면 ID 를 확인해 파일/폴더명에 반영**(예: 알림현황 MUI-MS-01-M13 → `cm/notiPrst/NotiPrstPage`). 임의 영문명(`NotificationPage` 등) 금지 — MS/CM 공통 화면도 동일.
-4. **조립 + 목업** — 표/필드는 데이터 배열로 구동. 데이터는 파일 내 목업 상수, 핸들러는 `console.log` + `// 추후 API: xxxService.yyy` 주석으로 경계 표시.
+4. **조립 + 데이터 연결** — 표/필드는 데이터 배열로 구동. **조회/저장은 서비스 실호출**(조회 = `queries/{도메인}.ts` useQuery 훅, 제출 = 서비스 직접 `await` — "API 연동 컨벤션" 절). 필요한 메서드가 서비스에 없으면 해당 `services/{도메인}.ts` 에 EP+USE_MOCK 분기 패턴으로 추가하고 목업은 `mocks/{도메인}.ts` 에 둔다.
    - **목업은 기획서(설계서)의 "데이터영역·항목설명·검색조건·속성값"을 참고해 실제 API 응답처럼 만든다.** 필드명(키)·코드값·자릿수·형식(날짜·번호 마스킹 등)을 설계서 그대로 맞추고(예: 입찰공고번호 `2024L0M0030A1F1-01` 형식·코드값 `정상공고`), 도메인 타입(`src/types/{도메인}.ts`)에 그 필드를 정의한다. **의미 없는 더미("test", `aaa`, 무작위 숫자) 금지** — API 연동 시 키/형식만 바꾸면 되도록.
    - **⚠️ 항목명(변수·필드·키)은 반드시 설계서 항목명(영문 ID)을 그대로 쓴다 — 임의 작명 금지.** 목데이터든 상태 변수든 새 키를 만들 때 먼저 설계서(데이터영역/항목설명 표의 "항목명(영문)")에서 해당 항목을 찾는다(예: 진행상태 = `implPrgrsStcd`, 입찰진행상태명 = `bidStatNm`). `LifecycleStage` 처럼 문서에 없는 이름을 새로 지어내지 말 것. 그 값은 한 아이템의 속성 1개일 뿐이면 별도 추상화 모듈로 빼지 말고 해당 **도메인 아이템 타입의 필드**로 둔다.
    - **검증 단계에서 새로 만든 항목명이 설계서에 실제로 있는지 확인**한다. 문서에서 못 찾은 항목명을 써야 하면, 임의로 만들지 말고 **사용자에게 "이 이름으로 만들어도 되는지" 먼저 물어본다.**
@@ -388,9 +388,9 @@ import { Icon } from '@/ui/common/base/Icon'
 - 읽기전용 표시 필드는 `InputBox`/`TextArea` 에 `disabled` 로 재사용.
 - 액션 버튼은 시트 `footer` 슬롯에 둔다(스크롤 본문에 두면 overflow 로 하단 border 잘림).
 
-**3) 목업 + API 경계 스텁.**
-데이터는 파일 내 목업 상수, 핸들러는 `console.log` + `// 추후 API: opService.xxx` 주석으로 경계 표시. (실제 fetch/라우팅 미구현 자리를 명확히)
-- **목업 값은 설계서의 데이터영역·항목설명·검색조건·속성값을 그대로 반영**해 실제 API 응답처럼 만든다(필드명·코드값·자릿수·형식 일치, 임의 더미 금지). → "새 페이지 작성 절차" step 4 참고.
+**3) 데이터 연결 — 서비스 실호출 ("API 연동 컨벤션" 절).**
+조회는 `queries/{도메인}.ts` useQuery 훅, 제출은 서비스 직접 `await`. 목업↔실연동은 서비스(`USE_MOCK`)가 전환하므로 페이지에 `console.log` 스텁·인라인 목업을 새로 만들지 않는다.
+- **목업 값(mocks/{도메인}.ts)은 설계서의 데이터영역·항목설명·검색조건·속성값을 그대로 반영**해 실제 API 응답처럼 만든다(필드명·코드값·자릿수·형식 일치, 임의 더미 금지). → "새 페이지 작성 절차" step 4 참고.
 
 **4) 유사 화면 = 페이지를 함부로 나누지 않는다 (API 다른 건 분리 사유 아님).**
 - **같은 구조 + API/값/라벨만 다름**(국내·국외 조달계획상세) → **1 페이지** + `type` 파라미터로 service 선택 + config 로 라벨/탭 차이 흡수. 페이지 복제 금지.
@@ -402,7 +402,7 @@ import { Icon } from '@/ui/common/base/Icon'
 - 레퍼런스: `src/ui/biz/op/prcmPlanIntgList/PrcmPlanIntgListPage.tsx`.
 - 표준 조립(위→아래): `SectionTitle`(검색조건 바) → `SearchCondition`(빠른검색어 + 대상칩 + 필터버튼) → `ListSectionHeader`(총건수·페이지크기) → `CardList`(카드 목록, `Badge`) → 더보기 `Button` → `FloatingActionButton`(맨위로) → `SearchFilter`(상세필터 풀팝업). 전부 기존 공통 — 신규 생성 금지.
 - 상태 분리: `filter`(상세필터 확정값) · `keyword`/`targets`(빠른검색 입력 중) · `appliedSearch`(검색 실행 시에만 확정) · `page`/`pageSize`(더보기). **빠른검색은 입력 중 거르지 않고 검색 실행(버튼/Enter) 시에만** `appliedSearch` 로 확정한다.
-- 데이터/페이징은 목업 + API 경계 스텁: `MOCK_LIST` → `filteredList`(useMemo) → `visibleList`(slice). 핸들러는 `console.log` + `// opService.getList(...)` 주석. API 연동 시 이 블록을 통째로 교체.
+- 데이터: **목록 useQuery 훅**(`useOpPlanList` 등)이 공급 — 키워드 필터/더보기 페이징은 당분간 클라이언트 로직(`filteredList` useMemo → `visibleList` slice) 유지, 서버 페이징 전환 시 훅 파라미터로 이행. 목업 데이터는 `mocks/{도메인}.ts`.
 - 카드 클릭 라우팅은 **데이터 필드(예: `srchType`)로 분기** — 라벨 문자열 하드코딩 분기 금지. 맨위로 스크롤은 `#app-scroll`(window 아님).
 
 **2) 검색필터 화면은 새로 만들지 말고 cm 의 `SearchFilter` 를 사용한다.**
@@ -417,29 +417,33 @@ import { Icon } from '@/ui/common/base/Icon'
   4. 사용 화면은 selectionField 의 `searchSheet` 에 새 종류만 선언 — **시트 파일을 페이지에서 import 하지 않는다.**
 - 적용 예: `PrcmPlanIntgListPage`(검색유형별 `buildOpSearchSchema` resolver + `normalizeOpSearch`) · `HomePage`(정적 schema).
 
-## 목록 → 상세 데이터 전달 (navigate state + 페이지 목업) — 모든 목록/상세 공통 표준
+## API 연동 컨벤션 (2026-07-20 서비스 레이어 구축 — 구 "페이지 인라인 목업 + service 스텁 금지" 정책 폐기)
 
-> **모든 목록 화면에서 상세로 이동할 때 이 패턴을 따른다.** 클릭한 항목을 navigate state 로 넘겨 상세 **상단(요약/헤더)** 을 그 객체로 그린다. **백엔드 미연동(폐쇄망) 단계에서는 service 스텁을 만들지 않는다** — 상세 본문/탭은 컴포넌트 내 목업으로 구동하고, 상단은 넘어온 항목으로 그린다.
+> **서비스 레이어가 전 도메인에 존재한다**: `src/services/{bd,cm,op,auth,file}.ts` (15개 서비스 객체, ~190 메서드).
+> 각 메서드 = `if (USE_MOCK) 목업(mocks/) : apiClient 실호출(EP 맵)` 분기. 폐쇄망 반입 후 연동 절차는
+> `docs/closed-network-checklist.md` §4 (`.env` 2줄 + EP 맵 대조 + 잔여 페이지 배선).
 
-**1) 목록 — 클릭한 항목을 navigate state 로 넘긴다.**
+**핵심 규칙:**
+1. **새 페이지/배선 페이지는 `console.log` 스텁이 아니라 서비스를 실호출**한다 — 조회는 `src/queries/{도메인}.ts` 의 useQuery 훅(소비가 생길 때 추가, `{도메인}Keys` queryKey 중앙관리), 저장/제출은 핸들러에서 서비스 직접 `await` + try/catch(`ApiError.message` → `AlertModal`/`InputMessage`).
+2. **엔드포인트는 서비스 파일 상단 `EP` 상수 맵에만** 둔다(추정 REST, JSDoc 에 화면 ID+소비 파일). 페이지에 URL 문자열 금지. 반입 후 EP 맵만 수정(메서드 본문 불변).
+3. **목업 데이터 위치**: 배선된 페이지의 목업은 `src/mocks/{도메인}.ts` (단일 소스, 페이지의 `MOCK_*` 상수를 이동). **미배선 페이지는 인라인 목업 유지** — 그 페이지를 배선할 때 이동한다. 서비스의 미배선 메서드 목업은 최소 대표값(1~3건).
+4. **실호출 타이핑**: 응답 인터셉터가 봉투를 벗기므로 `apiClient.get<T, T>(url, { params })` 처럼 axios 2번째 제네릭에 알맹이 타입 지정. 다운로드는 `get<Blob, Blob>(url, { responseType: 'blob' })`. `any` 금지.
+5. **인증**: 토큰 저장은 `authStore.setAccessToken`(localStorage 브리지 내장 — 직접 localStorage 만지지 말 것). 로그인 응답 매핑은 `services/auth.ts` 의 `LoginResult` 로 격리.
+
+**목록 → 상세 데이터 전달 (navigate state = placeholderData):**
 ```tsx
-navigate(`/bd/${item.id}`, { state: item })   // 클릭한 항목(목록 카드 데이터) 전체 전달
+// 목록 — 클릭 항목을 state 로 전달(즉시 렌더용). id 는 URL path 로도 전달.
+navigate(`/op/${item.id}`, { state: item })
+
+// 상세 — state 를 placeholder 로 즉시 렌더 + id 조회로 확정. 직접 URL 진입은 조회 완료까지 PageLoading.
+const stateItem = useLocation().state as OpPlanItem | null
+const { data: detail } = useOpPlanDetail(id, stateItem ?? undefined)  // placeholderData: stateItem
+if (!detail) return <PageLoading />
 ```
-- state 로 넘기는 값 = 목록 아이템 타입(예: `BidPbancItem`). id 는 URL path 로도 같이 전달(`:id`).
+- 적용 예: `PrcmPlanDtlPage`(상세) · `PrcmPlanIntgListPage`(목록 useQuery + 클라 필터/페이징 유지) · `IdPswdLoginPage`(제출 await + 실패 AlertModal).
+- 페이지 fallback `MOCK_*` 상수는 두지 않는다 — 직접 URL 진입 데이터는 조회(목업 모드면 mocks/)가 공급.
 
-**2) 상세 — state 객체로 상단을 그린다 + 페이지 fallback 목업.**
-```tsx
-// 목록에서 넘어온 항목으로 상단(요약/헤더)을 그린다. 직접 URL 진입(state 없음)이면 페이지 목업.
-const detail = (useLocation().state as BidPbancItem | null) ?? MOCK_BID_PBANC_DETAIL
-```
-- **상단(요약/헤더)은 `detail`(넘어온 항목)로 그린다.** 본문/탭은 컴포넌트 내 목업.
-- **직접 URL 진입·새로고침(state 없음)** 대비 **페이지 내 fallback 목업 상수**(`MOCK_*`, 설계서 항목명/형식 그대로)를 두어 화면이 비거나 깨지지 않게 한다.
-- **service 스텁(`xxxService.getXxxDetail`)·`useEffect` 조회·`setDetail` 을 만들지 않는다** — 폐쇄망/백엔드 미연동 단계에서 죽은 코드만 늘어난다(과거 방식 폐기). API 연동 시점에 이 줄을 실제 조회로 바꾼다.
-
-**3) 타입은 설계서 데이터영역 기준.**
-- 상세/목록 아이템 타입(`BidPbancItem`·`OpPlanItem` 등)은 `src/types/{도메인}.ts` 에 **설계서 데이터영역(섹션/필드)의 항목명·형식 그대로** 정의한다. 상단이 목록 아이템보다 많은 필드가 필요하면(국외 상세의 USD 예산 등) 그 부분만 페이지 목업으로 보완한다.
-
-**4) 적용 대상.** 조달계획(op)·입찰공고(bd)·입찰진행(bd/prgrs) 등 **모든 목록→상세**. 새 목록/상세 추가 시도 동일. (목록도 service 없이 페이지 인라인 목업 + state 전달.)
+**타입은 설계서 데이터영역 기준(유지).** 아이템/상세 타입은 `src/types/{도메인}.ts` 에 설계서 항목명·형식 그대로. 요청/응답 미확정분은 각 도메인 타입 파일의 `TODO(백엔드 확정)` 섹션에.
 
 ## 폼 검증 (react-hook-form + zod)
 

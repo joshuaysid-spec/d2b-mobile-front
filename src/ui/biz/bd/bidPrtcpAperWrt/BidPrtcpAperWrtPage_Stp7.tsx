@@ -4,6 +4,7 @@
 // 이 탭이 동의서 BottomSheet 컨테이너(선택 동의서 title, footer=저장 후 닫기/취소)와 저장 확인 AlertModal 을 직접 소유.
 import { useState } from 'react'
 
+import { bdService } from '@/services/bd'
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { AgreementList } from '@/ui/common/composites/AgreementList'
@@ -13,6 +14,7 @@ import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { AgreementForm, AGREEMENTS, type AgreementData } from '@/ui/biz/bd/bidPrtcpAperWrt/AgreementForm'
+import type { ApiError } from '@/types/api'
 import type { BidPrgrsItem } from '@/types/bd'
 
 // 문의처 / 담당자 — 설계서 '문의처 담당자 연락처 정보 표시'.
@@ -37,6 +39,7 @@ export function BidPrtcpAperWrtPage_Stp7({ detail }: { detail: BidPrgrsItem }) {
   const [selected, setSelected] = useState<AgreementData | null>(null) // 현재 열람 중인 동의서
   const [sheetOpen, setSheetOpen] = useState(false) // 동의서 바텀시트
   const [confirmOpen, setConfirmOpen] = useState(false) // 저장 확인 모달
+  const [saveError, setSaveError] = useState<string | null>(null) // 동의서 저장 실패 안내(null=닫힘)
 
   const toggle = (id: string, on: boolean) =>
     setChecked((prev) => (on ? [...new Set([...prev, id])] : prev.filter((v) => v !== id)))
@@ -44,19 +47,27 @@ export function BidPrtcpAperWrtPage_Stp7({ detail }: { detail: BidPrgrsItem }) {
   // 전체 동의 토글 — 전체 on·off(전체/부분 상태 계산은 AgreementList 내부).
   const toggleAll = (on: boolean) => setChecked(on ? AGREEMENTS.map((a) => a.id) : [])
 
+  // 동의서 열람 — 본문은 설계서 원문(AGREEMENTS 로컬 상수)으로 렌더(getAgreement 목업은 단건 제네릭이라 다건 콘텐츠 미대체).
   const openAgreement = (a: AgreementData) => {
     setSelected(a)
     setSheetOpen(true)
-    console.log('[M14] 동의서 열람', a.id) // 추후 API: bdService.getAgreement
   }
 
-  // 저장 후 닫기 → 확인 모달에서 확정 시 해당 동의서를 동의 완료 처리.
-  const confirmSave = () => {
-    if (selected) {
-      setChecked((prev) => [...new Set([...prev, selected.id])])
-      console.log('[M14] 동의서 저장', selected.id) // 추후 API: bdService.saveAgreement
+  // 저장 후 닫기 → 확인 모달 확정 시 서비스 직접 await, 성공 시 동의 완료 처리. 실패 시 AlertModal 안내.
+  const confirmSave = async () => {
+    if (!selected) {
+      setSheetOpen(false)
+      return
     }
-    setSheetOpen(false)
+    try {
+      await bdService.saveAgreement(selected.id)
+      setChecked((prev) => [...new Set([...prev, selected.id])])
+      setSheetOpen(false)
+    } catch (err) {
+      setSaveError(
+        (err as ApiError | null)?.message ?? '동의서 저장에 실패했습니다. 잠시 후 다시 시도해주세요.',
+      )
+    }
   }
 
   return (
@@ -123,6 +134,18 @@ export function BidPrtcpAperWrtPage_Stp7({ detail }: { detail: BidPrgrsItem }) {
         title="동의하시겠습니까?"
         secondaryAction={{ label: '취소' }}
         primaryAction={{ label: '확인', onClick: confirmSave }}
+      />
+
+      {/* 동의서 저장 실패 안내 */}
+      <AlertModal
+        open={saveError !== null}
+        onOpenChange={(open) => {
+          if (!open) setSaveError(null)
+        }}
+        variant="error"
+        title="동의서 저장 실패"
+        description={saveError}
+        primaryAction={{ label: '확인', onClick: () => setSaveError(null) }}
       />
     </>
   )

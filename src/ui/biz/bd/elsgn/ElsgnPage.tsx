@@ -10,14 +10,18 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { useElsgnCertList } from '@/queries/bd'
+import { bdService } from '@/services/bd'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
+import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { cn } from '@/utils/cn'
-import type { AplyFlowState, BidPrgrsItem } from '@/types/bd'
+import type { ApiError } from '@/types/api'
+import type { AplyFlowState, BidPrgrsItem, ElsgnCert } from '@/types/bd'
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 항목명/형식 그대로.
 const MOCK_DETAIL: BidPrgrsItem = {
@@ -42,21 +46,6 @@ const MOCK_DETAIL: BidPrgrsItem = {
   regRjctYn: false,
 }
 
-// 전자서명 인증서 1건 — 설계서 slide132(인증서명 + 유효기간). 추후 API: bdService.getElsgnCertList().
-interface ElsgnCert {
-  id: string
-  /** 인증서명 (certNm) */
-  certNm: string
-  /** 유효기간 (vldPdEndDt) — 예: '2025-10-30' */
-  vldPdEndDt: string
-}
-
-const MOCK_CERTS: ElsgnCert[] = [
-  { id: 'cert1', certNm: '인증서 1', vldPdEndDt: '2025-10-30' },
-  { id: 'cert2', certNm: '인증서 2', vldPdEndDt: '2025-10-30' },
-  { id: 'cert3', certNm: '인증서 3', vldPdEndDt: '2025-10-30' },
-]
-
 // 가상키패드 키 배열(설계서 slide132: 숫자 0~9 + 정정/취소). 3열 × 4행 그리드.
 const KEYPAD_KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '정정', '0', '취소'] as const
 const PWD_MAX = 8
@@ -71,6 +60,11 @@ export function ElsgnPage() {
   const [step, setStep] = useState<'cert' | 'pwd'>('cert')
   const [selectedCertId, setSelectedCertId] = useState<string | null>(null)
   const [pwd, setPwd] = useState('')
+  const [signError, setSignError] = useState<string | null>(null) // 전자서명 실패 안내(null=닫힘)
+
+  // 전자서명 인증서 목록 — 목업/실연동은 bdService.getElsgnCertList 의 USE_MOCK 분기가 전환.
+  const { data: certData } = useElsgnCertList()
+  const certs = certData ?? []
 
   // 시트 초기화 — 닫거나 다시 열 때 단계/선택/비밀번호 리셋.
   const resetSheet = () => {
@@ -102,19 +96,25 @@ export function ElsgnPage() {
     setPwd((prev) => (prev.length >= PWD_MAX ? prev : prev + key))
   }
 
-  // 서명 완료 → 신청완료(MUI-BD-06-M08) 로 이동. 접수번호/일시는 목업 생성값.
-  const handleSign = () => {
-    console.log('[M21] 전자서명 완료', { certId: selectedCertId, pbancNo: detail.pbancNo })
-    // 추후 API: bdService.signElsgn(...) 결과의 접수번호/일시
-    setSheetOpen(false)
-    navigate(`/bd/prgrs/${detail.rNum}/aply-cmptn`, {
-      state: {
-        detail,
-        aplyType,
-        rcptNo: '0000 000 0000',
-        rcptDt: '2025-10-31 12:30',
-      } satisfies AplyFlowState,
-    })
+  // 서명 완료 → 신청완료(MUI-BD-06-M08) 로 이동. 접수번호/일시는 signElsgn 응답값.
+  const handleSign = async () => {
+    try {
+      const receipt = await bdService.signElsgn(selectedCertId ?? '', detail.pbancNo)
+      setSheetOpen(false)
+      navigate(`/bd/prgrs/${detail.rNum}/aply-cmptn`, {
+        state: {
+          detail,
+          aplyType,
+          rcptNo: receipt.rcptNo,
+          rcptDt: receipt.rcptDt,
+        } satisfies AplyFlowState,
+      })
+    } catch (err) {
+      setSheetOpen(false)
+      setSignError(
+        (err as ApiError | null)?.message ?? '전자서명에 실패했습니다. 잠시 후 다시 시도해주세요.',
+      )
+    }
   }
 
   // 시트 footer — 단계별: cert=취소/다음(선택해야 활성) · pwd=취소/전자서명(확인)
@@ -197,15 +197,23 @@ export function ElsgnPage() {
         footer={sheetFooter}
       >
         {step === 'cert' ? (
-          <ElsgnCertList
-            certs={MOCK_CERTS}
-            selectedId={selectedCertId}
-            onSelect={setSelectedCertId}
-          />
+          <ElsgnCertList certs={certs} selectedId={selectedCertId} onSelect={setSelectedCertId} />
         ) : (
           <ElsgnPwdKeypad pwd={pwd} onKey={handleKeypad} />
         )}
       </BottomSheet>
+
+      {/* 전자서명 실패 안내 */}
+      <AlertModal
+        open={signError !== null}
+        onOpenChange={(open) => {
+          if (!open) setSignError(null)
+        }}
+        variant="error"
+        title="전자서명 실패"
+        description={signError}
+        primaryAction={{ label: '확인', onClick: () => setSignError(null) }}
+      />
     </div>
   )
 }

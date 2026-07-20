@@ -18,9 +18,9 @@ coverage
 /playwright-report/
 /playwright/.cache/
 
-# env (예: .env.example 만 커밋)
+# env (.env.example + .env.production 템플릿만 커밋 — production 은 공란 주소 템플릿이라 비밀값 없음.
+#  폐쇄망 반입 후 VITE_API_BASE_URL 만 채운다. 상세: docs/closed-network-checklist.md §4)
 .env.development
-.env.production
 .env.local
 *.local
 

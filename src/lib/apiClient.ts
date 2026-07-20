@@ -1,5 +1,7 @@
 import axios, { type AxiosError, type AxiosResponse } from 'axios'
 import { STORAGE_KEYS } from '@/constants/storage'
+import { USE_MOCK } from '@/lib/env'
+import { useAuthStore } from '@/stores/authStore'
 import type { ApiError } from '@/types/api'
 
 // frontend-architecture.md §6.1 — axios 인스턴스 + 인터셉터
@@ -41,7 +43,12 @@ apiClient.interceptors.response.use(
     return body
   },
   (error: AxiosError) => {
-    // TODO: 세션 만료(401) 처리 — 로그인 화면 이동, 토큰 갱신 등
+    // 세션 만료(401) — 토큰/유저 초기화 후 로그인 화면으로 하드 이동(라우터 비의존 최소 구현).
+    // TODO(백엔드 확정): refresh 토큰 재발급 플로우 — 백엔드 스펙 확정 시 재발급 시도 후 실패 시 로그아웃으로 확장.
+    if (!USE_MOCK && error.response?.status === 401) {
+      useAuthStore.getState().logout()
+      window.location.assign('/login')
+    }
     return Promise.reject(error)
   },
 )

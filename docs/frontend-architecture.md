@@ -222,8 +222,9 @@ src/
 
 | 파일 | 역할 |
 |------|------|
-| `lib/apiClient.ts` | axios 인스턴스 생성 + 인터셉터 설정. baseURL은 `.env`에서 가져옴. 요청 시 인증 토큰 자동 첨부, 응답 시 웹스퀘어 공통 응답 포맷(`{code, message, data}`) 언래핑, 세션 만료 처리 담당. |
+| `lib/apiClient.ts` | axios 인스턴스 생성 + 인터셉터 설정. baseURL은 `.env`(`VITE_API_BASE_URL`)에서 가져옴. 요청 시 인증 토큰(Bearer, localStorage) 자동 첨부. 응답 시 백엔드 공통 봉투 `{metadata:{status},data}` 언래핑 — `status.success === false` 면 HTTP 200 이라도 `ApiError`({code,message,details})로 reject, 성공이면 `data` 알맹이만 반환(서비스는 봉투를 모름). 실모드(`!USE_MOCK`) 401 응답 시 `authStore.logout()` + `/login` 이동. |
 | `lib/queryClient.ts` | React Query의 QueryClient 인스턴스. 전역 staleTime, retry 정책 등 기본 옵션 정의. |
+| `lib/env.ts` | 환경 스위치. `USE_MOCK`(=`VITE_USE_MOCK !== 'false'`, 안전 기본값 목업 ON)과 `mockDelay()`. 폐쇄망 실연동 = `.env` 에서 `VITE_USE_MOCK=false` + `VITE_API_BASE_URL` 만 변경. |
 
 **의존 방향:** `services/`가 `lib/apiClient`를 import해서 사용. `lib/`은 외부 라이브러리만 의존.
 
@@ -249,12 +250,20 @@ src/
 
 도메인별 API 호출 함수 모음. `lib/apiClient`를 사용해 HTTP 요청을 보내고, 백엔드 응답을 프론트 도메인 모델로 변환. 순수 async 함수로 React hook이 아님.
 
+**실제 구현 (도메인당 1파일 — types/{도메인}.ts 와 동일 원칙):**
+
 | 파일 | 역할 |
 |------|------|
-| `services/account.ts` | 계좌 도메인 API. `accountService` 객체로 export. `getList()`, `getDetail()`, `close()` 등 메소드 포함. |
-| `services/transfer.ts` | 이체 도메인 API. `transferService` 객체. |
-| `services/auth.ts` | 인증 도메인 API. 로그인/로그아웃/토큰 갱신. |
-| `services/common.ts` | 공통 API. 코드값 조회, 약관 조회, 공지사항 등 도메인 무관 공통 API. `commonService` 객체. |
+| `services/bd.ts` | 입찰(BD) 도메인 API. `bdService` 객체(~100 메서드). |
+| `services/cm.ts` | 공통관리(CM) 도메인 API. `cmService` + 화면 클러스터별 소형 서비스(`docBoxService`·`taskCldrService`·`bzentyService`·`itrstBidService` 등 11객체)를 한 파일에서 export. |
+| `services/op.ts` | 조달(OP) 도메인 API. `opService` 객체. |
+| `services/auth.ts` | 인증 도메인 API. 로그인/찾기/변경. 백엔드 응답을 `LoginResult`(안정 형태)로 매핑해 페이지/스토어 격리. |
+| `services/file.ts` | 파일첨부(횡단 관심사). `fileService` — upload/remove/download/pickFromCabinet. |
+
+**서비스 파일 공통 규약 (폐쇄망 준비 컨벤션):**
+- 파일 상단 `const EP = {...}` — 엔드포인트 경로 상수 맵(추정 REST). **폐쇄망 반입 후 실백엔드 경로 확정 시 이 맵만 수정**(메서드 본문 불변). 파라미터 경로는 화살표 함수, 각 엔트리 JSDoc 에 화면 ID + 소비 파일.
+- 메서드 본문: `if (USE_MOCK) return mockDelay(MOCK_X.yyy)` 분기 + 실호출 `apiClient.get<T, T>(EP.X, { params })` (응답 인터셉터가 봉투를 벗기므로 axios 2번째 제네릭에 알맹이 타입 지정). 다운로드는 `get<Blob, Blob>(url, { responseType: 'blob' })`.
+- 목업 데이터는 `src/mocks/{도메인}.ts` 로 분리 — 미배선 페이지는 인라인 목업 유지, 페이지 배선 시 그 페이지의 `MOCK_*` 상수를 mocks/ 로 이동(단일 소스).
 
 **처리 흐름:**
 1. 프론트 변수명 → 백엔드 변수명 변환 (예: `customerNo` → `custNo`)
@@ -302,16 +311,19 @@ function toAccount(res: any): Account {
 
 ### 7.2 `queries/` - React Query Wrapper
 
-`services/`의 함수를 `useQuery`/`useMutation`으로 감싸 캐싱, 로딩/에러 상태, 캐시 무효화를 담당하는 hook 모음. 페이지에서 직접 호출하는 인터페이스.
+`services/`의 함수를 `useQuery`로 감싸 캐싱, 로딩/에러 상태를 담당하는 hook 모음. 페이지에서 직접 호출하는 인터페이스.
 
 | 파일 | 역할 |
 |------|------|
-| `queries/account.ts` | 계좌 도메인 hook. `useAccountList()`, `useAccountDetail()`, `useCloseAccount()` 등. queryKey 중앙 관리(`accountKeys`). |
-| `queries/transfer.ts` | 이체 도메인 hook. |
-| `queries/auth.ts` | 인증 도메인 hook. |
-| `queries/common.ts` | 공통 API hook. `useCodeList()`, `useTerms()` 등. |
+| `queries/op.ts` | 조달 도메인 hook. `useOpPlanList()`, `useOpPlanDetail()` 등. queryKey 중앙 관리(`opKeys`). |
+| `queries/bd.ts` | 입찰 도메인 hook(핵심 플로우 소비분). |
 
-**`services/` ↔ `queries/` 1:1 매칭 원칙:** 도메인 단위로 두 폴더에 같은 이름의 파일이 짝지어짐.
+**`services/` ↔ `queries/` 1:1 매칭 원칙:** 도메인 단위로 두 폴더에 같은 이름의 파일이 짝지어짐. 단, hook 은 **소비 페이지가 배선될 때** 추가한다(전 메서드 선제 hook 화 금지 — 죽은 코드 방지).
+
+**적용 규약:**
+- **조회 = useQuery 훅** · **저장/제출 = 페이지 핸들러에서 서비스 직접 `await`** (`useMutation` 은 캐시 무효화가 필요한 경우에만).
+- 목록→상세: 상세 훅에 `placeholderData: navigate state` 를 넘겨 목록 카드 데이터로 즉시 렌더 후 조회로 확정(구 `state ?? MOCK` 패턴 대체). 적용 예: `PrcmPlanDtlPage`.
+- 에러: 서비스 reject(`ApiError`)를 페이지 try/catch 로 받아 `AlertModal`/`InputMessage` 로 안내. 적용 예: `IdPswdLoginPage`.
 
 **파일 내부 구조 예시:**
 ```typescript

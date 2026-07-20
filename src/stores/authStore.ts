@@ -1,4 +1,6 @@
 import { create } from 'zustand'
+import { STORAGE_KEYS } from '@/constants/storage'
+import { USE_MOCK } from '@/lib/env'
 import type { User } from '@/types/domain'
 
 // frontend-architecture.md §8.1 — 클라이언트 전역 상태(통합 store).
@@ -25,15 +27,31 @@ interface AuthState {
   markAllRead: () => void
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  // ⚠️ 목업(백엔드 미연동) 단계 기본값 = 로그인 상태 — 업체담당자 전용 화면(국외 보관함 등) 테스트용.
-  //    로그인 화면/API 연동 시 null/false 로 되돌리고 실제 로그인 플로우에서 setAccessToken 호출.
-  accessToken: 'mock-access-token',
-  isLoggedIn: true,
-  setAccessToken: (token) => set({ accessToken: token, isLoggedIn: Boolean(token) }),
-  logout: () => set({ accessToken: null, isLoggedIn: false, user: null, hasUnread: false }),
+// 목업 모드: 로그인 상태 기본값 — 업체담당자 전용 화면(국외 보관함 등) 테스트용.
+// 실모드: localStorage 토큰으로 부팅(WebView 재로드 후 세션 유지). apiClient 요청 인터셉터도
+// localStorage 를 읽으므로 setAccessToken/logout 이 store·localStorage 를 함께 갱신한다(브리지).
+const initialToken = USE_MOCK
+  ? 'mock-access-token'
+  : localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
 
-  user: { customerNo: '0012345678', name: '홍길동' }, // 목업 사용자 — API 연동 시 null
+export const useAuthStore = create<AuthState>((set) => ({
+  accessToken: initialToken,
+  isLoggedIn: Boolean(initialToken),
+  setAccessToken: (token) => {
+    if (token) {
+      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, token)
+    } else {
+      localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
+    }
+    set({ accessToken: token, isLoggedIn: Boolean(token) })
+  },
+  logout: () => {
+    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
+    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
+    set({ accessToken: null, isLoggedIn: false, user: null, hasUnread: false })
+  },
+
+  user: USE_MOCK ? { customerNo: '0012345678', name: '홍길동' } : null, // 목업 사용자
   setUser: (user) => set({ user }),
 
   hasUnread: false,

@@ -32,13 +32,56 @@
   (Figma 데이터·구글폰트 등은 개발 환경 전용).
 - [ ] **빌드 검증** — `npm run lint && npm run build` 통과, chunk size 경고(600KB) 없는지 확인.
 
-## 4. API 연동 경계 (반입 후 백엔드 연동 시작점)
+## 4. API 연동 절차 (반입 후 — 2026-07-20 서비스 레이어 구축으로 개정)
 
-- 모든 목록/상세는 **페이지 내 목업 + `// 추후 API: xxxService.yyy` 주석**으로 경계 표시됨.
-  반입 후 연동 시 각 페이지의 목업 블록(`MOCK_*`, `dl_*`/`dlt_*` 상수)을 통째로 교체.
-- 연관 진행 목록(`AnlPrgrsListPage`)의 `MOCK_ANL_ITEMS` 는 연관 건 조회 API(기준 `rfrncNo` + 세부단계)로 교체.
-- 일부 상세의 진행단계(`prgrsStg`)가 고정값(사전규격·국외조달계획 `'조달'`, 국외입찰서·이행 `'입찰'`) —
+> **서비스 레이어가 전 도메인에 구축됨**: `src/services/{bd,cm,op,auth,file}.ts` (15개 서비스 객체,
+> 페이지 주석이 참조하던 ~190 메서드 전부 실존). 각 메서드는 `if (USE_MOCK) 목업 : apiClient 실호출`
+> 분기이며, 목업 데이터는 `src/mocks/{도메인}.ts`. 반입 후 연동은 아래 3단계.
+
+### 4-1. `.env.production` 채우기 (필수, 2줄)
+
+```
+VITE_API_BASE_URL=http://<내부 API 서버>   ← 기입
+VITE_USE_MOCK=false                        ← 확인
+```
+
+### 4-2. EP(엔드포인트) 맵 대조 — `src/services/*.ts` 5개 파일 상단
+
+- 각 서비스 파일 상단 `const EP = {...}` 가 **추정 REST 경로**(JSDoc 에 화면 ID + 소비 파일 명시).
+  실백엔드 경로와 다른 엔트리만 수정 — **메서드 본문은 건드리지 않는다.**
+- 요청/응답 필드 중 미확정분은 `src/types/*.ts` 의 `TODO(백엔드 확정)` 섹션 참조.
+  응답 형태가 다르면 서비스 메서드 안에서 도메인 타입으로 매핑(페이지 무변경 원칙).
+- 봉투: apiClient 응답 인터셉터가 `{metadata:{status},data}` 를 벗겨 `data` 반환.
+  봉투 형식이 다르면 `src/lib/apiClient.ts` 인터셉터 한 곳만 수정.
+- 인증: 로그인 응답 → `LoginResult`(`types/domain.ts`) 매핑은 `services/auth.ts` 에 격리.
+  refresh 토큰 재발급 플로우는 미구현(`apiClient.ts` 401 처리의 TODO) — 백엔드 스펙 확정 시 확장.
+
+### 4-3. 잔여 페이지 배선 (기계적 — 핵심 플로우는 배선 완료)
+
+- **배선 완료(참조 예시)**: 로그인(`IdPswdLoginPage`) · 조달계획 목록/상세(`PrcmPlanIntgListPage`·
+  `PrcmPlanDtlPage`) · bd 메인 플로우 · 파일업로드(`BidPrtcpAperWrtPage_Stp6`).
+- 잔여 페이지는 인라인 목업 유지 중 — `// 추후 API: xxxService.yyy` 주석의 메서드가 전부 실존하므로
+  ① 조회는 `queries/{도메인}.ts` 에 useQuery 훅 추가 후 호출 ② 저장/제출은 서비스 직접 `await`
+  ③ 페이지 `MOCK_*` 상수를 `src/mocks/{도메인}.ts` 로 이동(단일 소스) 순으로 교체한다.
+  (컨벤션 상세: `docs/frontend-architecture.md` §7)
+- 연관 진행 목록(`AnlPrgrsListPage`)의 `MOCK_ANL_ITEMS` → `cmService.getAnlPrgrsList(rfrncNo, substep)`.
+- 일부 상세의 진행단계(`prgrsStg`) 고정값(사전규격·국외조달계획 `'조달'`, 국외입찰서·이행 `'입찰'`) —
   상세 조회 응답의 진행단계로 교체.
+
+### 4-3-1. 목업 걷어내기 (전 화면 연동 안정화 후 — 서두르지 말 것)
+
+- 연동 기간에는 목업을 유지한다 — 백엔드 장애/미완성 시 `VITE_USE_MOCK=true` 로 되돌려 화면 개발을 계속하는 보험.
+  실모드에서 목업 분기는 실행되지 않으며(빌드가 일부 분기 자동 제거), 부담은 mocks/ 데이터 수십 KB 번들 무게뿐.
+- 전 화면 연동 완료 후 정리(삭제만, 수정 없음 — 리그레션 저위험):
+  - [ ] 각 서비스 메서드의 `if (USE_MOCK) ...` 분기 삭제 (`grep -rn USE_MOCK src/` 로 전수 확인)
+  - [ ] `src/mocks/` 폴더 · `src/lib/env.ts` · `.env*` 의 `VITE_USE_MOCK` 줄 삭제
+  - [ ] 미배선 페이지에 남은 인라인 `MOCK_*` 상수도 그 페이지 배선 시점에 함께 제거됐는지 확인
+
+### 4-4. 전환 스모크 (반입 직전/직후)
+
+- 목업 모드(`VITE_USE_MOCK=true`): 로그인 → 업체선택 → 홈 / 조달계획 목록 → 상세 / bd 공고 → 신청 → 투찰 흐름 확인.
+- 실모드(`VITE_USE_MOCK=false`, 백엔드 연결 전): 로그아웃 상태로 부팅되고, 배선 페이지가 에러/빈 상태를
+  안내(백화면·크래시 없음)하는지 확인. 401 수신 시 `/login` 이동.
 
 ## 5. 앱실행·로그인(00공통 MS-01/CM-03) 반입 전 확인 (2026-07-14 배치)
 

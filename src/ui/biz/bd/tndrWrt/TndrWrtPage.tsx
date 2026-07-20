@@ -8,6 +8,8 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { bdService } from '@/services/bd'
+import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { Infobox } from '@/ui/common/composites/Infobox'
@@ -20,6 +22,7 @@ import { TndrWrt_Stp4 } from '@/ui/biz/bd/tndrWrt/TndrWrt_Stp4'
 import { TndrWrt_Stp5 } from '@/ui/biz/bd/tndrWrt/TndrWrt_Stp5'
 import { TndrWrt_Stp6 } from '@/ui/biz/bd/tndrWrt/TndrWrt_Stp6'
 import { TndrWrt_Stp7 } from '@/ui/biz/bd/tndrWrt/TndrWrt_Stp7'
+import type { ApiError } from '@/types/api'
 import type { BidPrgrsItem } from '@/types/bd'
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 slide121 예시값 그대로.
@@ -64,6 +67,7 @@ export function TndrWrtPage() {
     { value: '약관동의', label: '약관동의' },
   ]
   const [tab, setTab] = useState('일반정보')
+  const [submitError, setSubmitError] = useState<string | null>(null) // 입찰서 저장 실패 안내(null=닫힘)
 
   // 탭 = 하위 스텝. 다음/이전으로 탭 이동, 마지막 탭(약관동의)의 [신청] = 전자서명(M21) → 신청완료(M08).
   const tabOrder = tabs.map((t) => t.value)
@@ -74,14 +78,20 @@ export function TndrWrtPage() {
     setTab(next)
     document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
   }
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!isLastTab) {
       goTab(tabOrder[tabIdx + 1])
       return
     }
-    // 신청(설계서 slide131 제출 클릭) — 입찰서 저장 후 전자서명. 추후 API: bdService.saveTndr(...)
-    console.log('[TndrWrt] 입찰서 신청(제출)')
-    navigate(`/bd/prgrs/${detail.rNum}/elsgn`, { state: { detail, aplyType: 'tndr' } })
+    // 신청(설계서 slide131 제출 클릭) — 입찰서 저장 후 전자서명(M21). 실패 시 AlertModal 안내.
+    try {
+      await bdService.saveTndr({ pbancNo: detail.pbancNo })
+      navigate(`/bd/prgrs/${detail.rNum}/elsgn`, { state: { detail, aplyType: 'tndr' } })
+    } catch (err) {
+      setSubmitError(
+        (err as ApiError | null)?.message ?? '입찰서 저장에 실패했습니다. 잠시 후 다시 시도해주세요.',
+      )
+    }
   }
   const handlePrev = () => {
     if (!isFirstTab) {
@@ -152,6 +162,18 @@ export function TndrWrtPage() {
         onTop={() =>
           document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
         }
+      />
+
+      {/* 입찰서 저장(신청) 실패 안내 */}
+      <AlertModal
+        open={submitError !== null}
+        onOpenChange={(open) => {
+          if (!open) setSubmitError(null)
+        }}
+        variant="error"
+        title="입찰서 신청 실패"
+        description={submitError}
+        primaryAction={{ label: '확인', onClick: () => setSubmitError(null) }}
       />
     </div>
   )

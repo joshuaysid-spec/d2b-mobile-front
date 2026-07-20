@@ -8,23 +8,10 @@
 //   선택 상태(value)와 footer 버튼(로그아웃 / 선택 로그인)은 부모가 소유한다 —
 //   footer 의 [선택 로그인] 이 선택된 업체코드를 필요로 하므로 상태를 부모가 들고 있어야 하기 때문.
 //
-//   부모(페이지) 조립 예시:
+//   부모(페이지) 조립 예시 — 적용: idPswdLogin/IdPswdLoginPage(로그인 응답 bzentyList 주입):
 //   ┌───────────────────────────────────────────────────────────────────────────
-//   │ const [open, setOpen] = useState(false)
-//   │ const [bzentyCd, setBzentyCd] = useState(MOCK_BZENTY_LIST[0].bzentyCd)
-//   │
-//   │ <BottomSheet
-//   │   open={open}
-//   │   onOpenChange={setOpen}
-//   │   title="업체 설정"
-//   │   footer={
-//   │     <div className="flex gap-krds-5">
-//   │       <Button variant="secondary" className="shrink-0" onClick={handleLogout}>로그아웃</Button>
-//   │       <Button variant="primary" className="flex-1" onClick={() => handleLoginWith(bzentyCd)}>선택 로그인</Button>
-//   │     </div>
-//   │   }
-//   │ >
-//   │   <BzentyChc items={MOCK_BZENTY_LIST} value={bzentyCd} onValueChange={setBzentyCd} />
+//   │ <BottomSheet open={open} onOpenChange={setOpen} title="업체 설정" footer={...로그아웃/선택 로그인}>
+//   │   <BzentyChc items={loginResult.bzentyList} value={bzentyCd} onValueChange={setBzentyCd} />
 //   │ </BottomSheet>
 //   └───────────────────────────────────────────────────────────────────────────
 //
@@ -32,31 +19,13 @@
 //   업체코드=bzentyCd · 업체명=bzentyNm · 사업자등록번호=bizRegNo (src/types/bd.ts 선례).
 import { RadioGroup, RadioGroupItem } from '@/ui/raw/radio-group'
 import { cn } from '@/utils/cn'
+import type { BzentyChcItem } from '@/types/domain'
 
-/**
- * 로그인 대상 업체 1건.
- * TODO(설계서 확인): P14 전용 데이터영역 표의 정식 항목명은 미확인 — bd 도메인 확립 규약(bzentyCd/bzentyNm/bizRegNo)으로 근사.
- * 공용화 시 코디네이터가 src/types/{cm|bd}.ts 로 승격.
- */
-export interface BzentyItem {
-  /** 업체코드 (bzentyCd) — 선택 키 · 라우팅/로그인 기준 */
-  bzentyCd: string
-  /** 업체명 (bzentyNm) */
-  bzentyNm: string
-  /** 사업자등록번호 (bizRegNo) — 예: '123-45-67890' */
-  bizRegNo: string
-}
-
-// 목업 — 설계서/Figma 값(A/B/C 업체명 + 사업자등록번호). 추후 API: authService.getMyBzentyList().
-export const MOCK_BZENTY_LIST: BzentyItem[] = [
-  { bzentyCd: 'BZ001', bzentyNm: 'A 업체명', bizRegNo: '123-45-67890' },
-  { bzentyCd: 'BZ002', bzentyNm: 'B 업체명', bizRegNo: '147-02-58369' },
-  { bzentyCd: 'BZ003', bzentyNm: 'C 업체명', bizRegNo: '258-01-47369' },
-]
-
+// 업체 목록 데이터는 로그인 응답(LoginResult.bzentyList, @/types/domain BzentyChcItem)으로 주입된다.
+// (구 페이지 내 MOCK_BZENTY_LIST 는 mocks/auth.ts 로 이관 — 목업 로그인 응답이 공급)
 export interface BzentyChcProps {
-  /** 선택 대상 업체 목록 */
-  items: BzentyItem[]
+  /** 선택 대상 업체 목록 — 로그인 응답 bzentyList. */
+  items: BzentyChcItem[]
   /** 선택된 업체코드 (controlled) */
   value: string
   /** 선택 변경 콜백 */

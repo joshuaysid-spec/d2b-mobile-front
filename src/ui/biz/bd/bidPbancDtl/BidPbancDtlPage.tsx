@@ -7,9 +7,12 @@
 import { useRef, useState } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 
+import { useBidPbancDetail } from '@/queries/bd'
+import { bdService } from '@/services/bd'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
-import type { BidPbancItem, BidPbancDetail, BidPrgrsItem } from '@/types/bd'
+import { PageLoading } from '@/ui/common/feedback/PageLoading'
+import type { BidPbancItem, BidPrgrsItem } from '@/types/bd'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
@@ -60,24 +63,6 @@ function renderTabContent(tab: string) {
   }
 }
 
-// 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — 설계서 dlt_bidPbancIntgList 항목명/형식 그대로.
-const MOCK_BID_PBANC_DETAIL: BidPbancDetail = {
-  id: '0',
-  rnum: 1,
-  pbancTpcd: '긴급공고',
-  g2BBidPbancNo: 'LDG0097',
-  g2BBidPbancCycl: '1',
-  rfrncNo: '2025LDG56349',
-  rprsItemNm: '특수작전용대물타격무인항공기',
-  csrtName: '-',
-  orderInstNm: '육군 탄약지원사령부',
-  prdcpIdntySmdocDdlnDt: '2025-12-22 17:00',
-  bidClrsDt: '2025-12-23 17:00',
-  tndrSbmsnDdlnDt: '2025-12-24 10:00',
-  brprc: 619520000,
-  prgrsStg: '입찰',
-}
-
 // 단계표시기(StepBar) 5단계 라벨 — 설계서 단계표시기(조달→입찰→계약→이행→대금청구).
 // 현재 단계는 아이템 속성 prgrsStg(진행단계) 값으로 결정. (bidStatNm 은 입찰 세부상태로 별개)
 const STEP_LABELS = ['조달', '입찰', '계약', '이행', '대금청구'] as const
@@ -111,8 +96,15 @@ export function BidPbancDtlPage() {
   // 로그인 필요 동작 — 비로그인 시 로그인 안내(P15) 노출하고 동작 차단. authStore 직접 구독.
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
 
+  // 목록 → 상세 데이터 전달: navigate state 를 placeholder 로 즉시 렌더 + id 조회로 확정.
+  //   직접 URL 진입(state 없음)이면 조회 완료까지 PageLoading(아래 early return). 목업/실연동은 bdService(USE_MOCK)가 전환.
+  const { id = '' } = useParams()
+  const stateItem = useLocation().state as BidPbancItem | null
+  const { data: detail } = useBidPbancDetail(id, stateItem ?? undefined)
+
   // 즐겨찾기(관심공고) 토글 — 로그인 필요. 등록/제외에 따라 아이콘(라인↔채움) + 토스트(P13).
-  const handleToggleFavorite = () => {
+  // 낙관적 갱신(즉시 반영) 후 서비스 직접 await, 실패 시 이전 상태로 복원.
+  const handleToggleFavorite = async () => {
     if (!isLoggedIn) {
       setLoginGuideOpen(true)
       return
@@ -123,13 +115,15 @@ export function BidPbancDtlPage() {
       open: true,
       message: next ? '관심공고에 등록 되었습니다.' : '관심공고에서 제외 되었습니다.',
     })
-    console.log('[BidDetail] 관심공고', next ? '등록' : '제외', id) // 추후 API: bdService.toggleFavorite
+    try {
+      await bdService.toggleFavorite(id, next)
+    } catch {
+      setFavorite(!next) // 실패 → 낙관적 갱신 롤백
+    }
   }
 
-  // 목록 → 상세 데이터 전달: 목록에서 navigate(state)로 넘어온 항목으로 상단을 그린다.
-  //   직접 URL 진입(state 없음)이면 페이지 목업(MOCK_BID_PBANC_DETAIL)으로 대체. (백엔드 미연동)
-  const { id } = useParams()
-  const detail = (useLocation().state as BidPbancItem | null) ?? MOCK_BID_PBANC_DETAIL
+  if (!detail) return <PageLoading />
+
   // 진행단계(prgrsStg) — detail 기반. 미정 시 입찰공고이므로 '입찰' 기본.
   const steps = stepsByStg(detail.prgrsStg ?? '입찰')
 

@@ -6,8 +6,10 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { bdService } from '@/services/bd'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { AgreementList } from '@/ui/common/composites/AgreementList'
+import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
@@ -15,6 +17,7 @@ import { Infobox } from '@/ui/common/composites/Infobox'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { WrotAgreForm, WROTS, type WrotData } from '@/ui/biz/bd/wrotAgrePage/WrotAgreForm'
+import type { ApiError } from '@/types/api'
 import type { BidPrgrsItem } from '@/types/bd'
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 항목명/형식 그대로(BidPrtcpAperWrtPage 와 동일 형태).
@@ -71,6 +74,7 @@ export function WrotAgrePage() {
   const [checked, setChecked] = useState<string[]>([]) // 동의 완료된 서약서 id
   const [selected, setSelected] = useState<WrotData | null>(null) // 현재 열람 중인 서약서
   const [sheetOpen, setSheetOpen] = useState(false) // 서약서 바텀시트
+  const [saveError, setSaveError] = useState<string | null>(null) // 서약서 저장 실패 안내(null=닫힘)
 
   const toggle = (id: string, on: boolean) =>
     setChecked((prev) => (on ? [...new Set([...prev, id])] : prev.filter((v) => v !== id)))
@@ -78,19 +82,27 @@ export function WrotAgrePage() {
   // 전체 동의 토글 — 전체 on·off(전체/부분 상태 계산은 AgreementList 내부에서 처리).
   const toggleAll = (on: boolean) => setChecked(on ? [...ALL_IDS] : [])
 
+  // 서약서 열람 — 본문은 설계서 원문(WROTS 로컬 상수)으로 렌더(getWrot 목업은 단건 제네릭이라 다건 콘텐츠 미대체).
   const openWrot = (w: WrotData) => {
     setSelected(w)
     setSheetOpen(true)
-    console.log('[M01] 서약서 열람', w.id) // 추후 API: bdService.getWrot
   }
 
-  // 저장 후 닫기 → 해당 서약서를 동의 완료 처리.
-  const saveWrot = () => {
-    if (selected) {
-      setChecked((prev) => [...new Set([...prev, selected.id])])
-      console.log('[M01] 서약서 저장', selected.id) // 추후 API: bdService.saveWrot
+  // 저장 후 닫기 → 서비스 직접 await, 성공 시 해당 서약서를 동의 완료 처리. 실패 시 AlertModal 안내.
+  const saveWrot = async () => {
+    if (!selected) {
+      setSheetOpen(false)
+      return
     }
-    setSheetOpen(false)
+    try {
+      await bdService.saveWrot(selected.id)
+      setChecked((prev) => [...new Set([...prev, selected.id])])
+      setSheetOpen(false)
+    } catch (err) {
+      setSaveError(
+        (err as ApiError | null)?.message ?? '서약서 저장에 실패했습니다. 잠시 후 다시 시도해주세요.',
+      )
+    }
   }
 
   const handleNext = () => {
@@ -178,6 +190,18 @@ export function WrotAgrePage() {
       >
         {selected && <WrotAgreForm key={selected.id} wrot={selected} />}
       </BottomSheet>
+
+      {/* 서약서 저장 실패 안내 */}
+      <AlertModal
+        open={saveError !== null}
+        onOpenChange={(open) => {
+          if (!open) setSaveError(null)
+        }}
+        variant="error"
+        title="서약서 저장 실패"
+        description={saveError}
+        primaryAction={{ label: '확인', onClick: () => setSaveError(null) }}
+      />
     </div>
   )
 }

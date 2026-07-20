@@ -145,10 +145,9 @@ export function BidPrtcpAperWrtPage() {
       goTab(tabOrder[tabIdx + 1])
       return
     }
-    // 마지막 탭(문의및동의) 다음 = 전자서명(MUI-BD-04-M21). 서명 완료 시 신청완료(M08)로.
-    // 추후 API: 신청 제출 payload 에 첨부 GUID 목록(fileGuids) 포함 — 전자서명/제출 배선 시 사용.
+    // 마지막 탭(문의및동의) 다음 = 전자서명(MUI-BD-04-M21). 실제 신청 제출은 전자서명(elsgn) 단계에서
+    // bdService.signElsgn 으로 확정된다 — 첨부 GUID 목록(fileGuids)을 그 화면으로 넘긴다.
     const fileGuids = attachedFiles.map((f) => f.guid)
-    console.log('[M14] 신청 제출 — 첨부 GUID', fileGuids)
     navigate(`/bd/prgrs/${detail.rNum}/elsgn`, { state: { detail, aplyType: 'apfr', fileGuids } })
   }
   const handlePrev = () => {
