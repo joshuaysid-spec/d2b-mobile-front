@@ -244,6 +244,255 @@ export interface SysImpvListItem {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// 실적증명서 신청 목록 (MUI-CM-04-M06). 설계서 00.공통 v0.84 slide240~241.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 실적증명서 신청 목록 항목(dl_resultList) — 항목명(영문)은 설계서 그대로. */
+export interface PrfmncPrdocItem {
+  /** 접수번호 (R, 11) — 목록 key. */
+  prfmncRcptNo: string
+  /** 계약번호(차수) (R, 11) */
+  ctrtNo: string
+  /** 계약구분 (R, 2) — 물품/공사 등 */
+  ctrtSe: string
+  /** 계약건명 (R, 100) */
+  ctrtNm: string
+  /** 대표품명 (R, 200) */
+  rprsItemNm: string
+  /** 실적신청금액 (R, 25.3) */
+  ctrtAmt: number
+  /** 발주기관 (R, 100) — 화면 표기 라벨은 '발급기관'(slide240 목업) */
+  orderInst: string
+  /** 신청일자 (R, 8) */
+  aplyYmd: string
+  /** 처리일자 (R, 8, 선택) — 미처리 시 '-' 표시 */
+  prcsYmd?: string
+  /** 진행상태 (R, 1) — 신청/접수/처리중/발급/반려/보류 */
+  prgrsStcd: string
+}
+
+/**
+ * 실적증명서 신청 목록 검색조건(dm_searchInfo) — 설계서 항목명(영문) 준수.
+ * 기간은 FROM/TO(aplyYmdFrom/aplyYmdTo) 범위이므로 DateRangeValue 1키로 표현한다(regDt 컨벤션).
+ */
+export interface PrfmncPrdocSearchFilter {
+  /** 기간(aplyYmdFrom~aplyYmdTo). */
+  aplyYmd: DateRangeValue
+  /** 계약번호(ctrtNo). */
+  ctrtNo: string
+  /** 처리상태(prcsStts) — 전체/신청/접수/처리중/발급/반려/보류(코드값 미정). */
+  prcsStts: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 실적증명서 확인(상세) (MUI-CM-04-M07 · T01 계약정보 · T03 신청정보 unitB).
+// 설계서 00.공통 v0.84 slide243~250(화면) · slide266~270(항목 설명). 항목명(영문)은 설계서 그대로.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 실적증명서 신청 접수(dm_prfmncPrdocAplyInfo). */
+export interface PrfmncPrdocAplyInfo {
+  /** 접수번호 (R, 11) */
+  prfmncRcptNo: string
+  /**
+   * 진행상태 코드(UG02).
+   * 부대: A접수/P처리중·발급/S신청/R반려/I저장 · 방위사업청: I저장/R접수/G처리중/C처리완료/P발급/Y회송/V보류
+   */
+  prfmncPrgrsSttsCd: string
+}
+
+/** 계약정보(dm_ctrtInfo) — T01 계약정보 탭. */
+export interface PrfmncPrdocCtrtInfo {
+  /** 계약번호 (R, 35) — 설계서 항목명 "ctrtNo/CtrtOd"(계약번호+차수 조합 표시). */
+  ctrtNo: string
+  /** 차수 — 설계서 표기 그대로 CtrtOd(대문자 C). 표시: `${ctrtNo}(${CtrtOd})`. */
+  CtrtOd: string
+  /** 계약구분 (R, 2) — 1:물품/군수품, 2:시설공사, 3:용역 */
+  ctrtCnNm: string
+  /** 계약건명 (R, 200) */
+  ctrtNm: string
+  /** 대표품명 (R, 100) */
+  rprsItemNm: string
+  /** 계약금액 (R, 22) */
+  ctrtAmt: number
+  /** 발주기관 (R, 200) */
+  orderInstNm: string
+  /** 계약담당관 (R, 100) */
+  picNm: string
+  /** 계약담당관 연락처 (R, 100) */
+  enPicTel: string
+}
+
+/** 신청정보 입력(dm_prfmncPrdocAplyInptInfo 1.3 + 1.4) — 신청정보 탭 공통. */
+export interface PrfmncPrdocAplyInptInfo {
+  /** 신청인 연락처 (R, 100) */
+  entlno: string
+  /** 발급수량 (R, 10) */
+  dmndQty: string
+  /** 제출처 (R, 100) */
+  submOrgn: string
+  /** 사용목적 (R, 2) */
+  usePrpsCd: string
+  /** 상세 내용 (R, 200) — 사용목적 '기타'일 경우만 */
+  etcUsePrps?: string
+  /** 납품/지출년도 (R, 4) */
+  prfmncYr?: string
+  /** 납품금액 (R, 22) */
+  prfmncIdntyAmt?: number
+  /** 선금금액 (R, 22) */
+  prpamtIdntyAmt?: number
+  /** 정산금액 (R, 22) */
+  clclnAmt?: number
+  /** 착수금액 (R, 22) */
+  otstDmndAmt?: number
+  /** 중도금액 (R, 22) */
+  mdwyDmndAmt?: number
+  /** 보증보험번호 (R, 30) */
+  grnteInsrncNo?: string
+  /** 확인요청사항 (R, 100) */
+  idntyDmndMttr?: string
+  /** 정산일자 (R, 8) — 사용목적에 따라 납품일자로 바뀌기도 함 */
+  clclnYmd?: string
+}
+
+/** 시공자(대표)(dm_prfmncPrdocAplyRprsInfo) — T03. */
+export interface PrfmncPrdocAplyRprsInfo {
+  /** 회사명 (R, 100) */
+  bzentyNm: string
+  /** 면허번호 (R, 100) */
+  lcnsNoVl: string
+  /** 대표자 (R, 100) */
+  rprsvNm: string
+  /** 영업소재지 (R, 200) */
+  salsLctnAddr: string
+  /** 전화번호 (R, 20) */
+  telno: string
+}
+
+/** 계약 및 준공(총공사 기준)(dm_prfmncPrdocAplyWholCstrnInfo) — T03. */
+export interface PrfmncPrdocAplyWholCstrnInfo {
+  /** 계약일자 (R, 8) */
+  ctrtYmd: string
+  /** 착공일자 (R, 8) */
+  bgncstYmd?: string
+  /** 준공일자 (R, 8) — 제출유형 5(실적자료 발주기관 확인서)면 '준공예정일자' 표기 */
+  cmcnYmd?: string
+  /** 공사금액[준공+관급] (R, 22) */
+  cstrnAmt: number
+  /** 중공금액 (R, 22) — 화면 표기 '준공금액'. 제출유형 5면 '계약금액' 표기 */
+  cmcnAmt?: number
+  /** 관급금액 (R, 22) */
+  gvspAmt?: number
+}
+
+/** 계약 및 준공(금차공사 기준)(dm_prfmncPrdocAplyCstrnInfo) — T03. 항목명 접미 `2`. */
+export interface PrfmncPrdocAplyCstrnInfo {
+  ctrtYmd2?: string
+  bgncstYmd2?: string
+  cmcnYmd2?: string
+  cstrnAmt2?: number
+  cmcnAmt2?: number
+  gvspAmt2?: number
+}
+
+/** 공사설정(dm_prfmncPrdocAplyCstrnTypeInfo) — T03 공사성질. 다중 선택 값의 조합 문자열 표시. */
+export interface PrfmncPrdocAplyCstrnTypeInfo {
+  /** 건설공사 — cnstrNewCstrnYn/cnstrExpnCstrnYn/cnstrRmdlCstrnYn 값(신규/확장/개보수, 다중) */
+  cnstrDivs?: string
+  /** 전기/그 밖의 — eltyNewCstrnYn/eltyEpxnCstrnYn/eltyRlocatCstrnYn/eltyEstblCstrnYn/eltyRprwrkYn 값(다중) */
+  eltyDivs?: string
+}
+
+/** 공동도급 여부(dm_prfmncPrdocAplyJntCtrcInfo) — T03. */
+export interface PrfmncPrdocAplyJntCtrcInfo {
+  /** 건설공사 (R, 1) — 공동이행방식/분담이행방식/단독도급 */
+  jntCtrcCd?: string
+}
+
+/**
+ * 실적의 종류·시공자 카드·세부정보(dm_prfmncPrdocAplyprfmncTypeInfo) — T03.
+ * 시공자(대표)/시공자 1/시공자 2 카드가 같은 영역을 반복 사용.
+ */
+export interface PrfmncPrdocAplyPrfmncTypeInfo {
+  /** 실적의종류 — prfmncCncptDesignYn/…/prfmncEtcYn 값(다중 선택) */
+  rsltDivs?: string
+  /** 회사명 (E/R, 200) */
+  cnstBzentyNm?: string
+  /** 사업자등록번호 (E/R, 100) */
+  enbrno?: string
+  /** 대표자명 (E, 200) */
+  rprsvNm?: string
+  /** 공사금액 (E, 22) — 화면 표기 '공시금액'(지분율 병기) */
+  cstrnAmt?: number
+  /** 전체공사 시공금액(관급포함) (E, 22) */
+  wholCstrnCnstAmt?: number
+  /** 준공금액 (E, 22) — 지분율 병기 */
+  cmcnAmt?: number
+  /** 관급금액 (E, 22) */
+  gvspAmt?: number
+  /** 전체공사 시공규모 (E, 4000) */
+  wholCstrnCnstSclExpln?: string
+  /** 시공회사별 실적공종 또는 PQ공종 시공 규모,방법(공법) (E, 4000) */
+  cnstBcoSclMthdCn?: string
+  /** 시공회사별 실적공종 또는 PQ공종의 금액 (E, 4000) */
+  cnstBcoCnstAmtCn?: string
+  /** 시공회사별 실적공종 또는 PQ공종의 중공금액 (E, 4000) */
+  cnstBcoCmcnAmtCn?: string
+  /** 시공회사별 실적공종 또는 PQ공종의 관급금액 (E, 4000) — ⚠️ 설계서에서 "실적증명 발급일 기준 시공내용"도 같은 항목명으로 중복 정의(오기 추정) */
+  cnstBcoGvspAmtCn?: string
+}
+
+/** 하도급 내용(dm_prfmncPrdocAplySbctrInfo) — T03. 최대 3건, 정보 없으면 숨김. */
+export interface PrfmncPrdocAplySbctrInfo {
+  /** 하도급자 (E, 100) */
+  sbctrSeNm?: string
+  /** 하도급공사규모 및 내용 (E, 100) */
+  sbctrCstrnSclCn?: string
+  /** 하도급금액 (E, 100) — 화면 표기 '하도금금액[준공+관급]' */
+  sbctrAmt?: number
+}
+
+/** 최저가 적정성심사관련 시공실적자료(dm_prfmncPrdocAplyLwprcInfo) — T03. */
+export interface PrfmncPrdocAplyLwprcInfo {
+  /** 구분 (R, 100) — 화면 표기 '시공내용' */
+  cnstCn?: string
+  /** 사용장비명 (R, 100) */
+  useEqpmntNm?: string
+  /** 장비규격 (R, 100) */
+  eqpmntSpcfctCn?: string
+  /** 투입대수 누계 (R, 100) */
+  inputCntomCn?: string
+  /** 작업량 누계 (R, 100) */
+  wkqtyActotCn?: string
+  /** 작업시간 누계 (R, 100) */
+  jobHrActotCn?: string
+  /** 시간당 작업량 (R, 100) */
+  ptmWkqtyCn?: string
+  /** 기타 참고사항 (R, 100) */
+  etcRefMttr?: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 업체정보 (dm_bzentyInfo). 설계서 00.공통 slide191 — MUI-CM-02-M01 사용자정보관리 데이터영역.
+//   민원서류발급신청(MUI-CM-04-M04) 상단 업체정보가 "MUI-CM-02-M01 화면 재사용"으로 공유.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 업체정보 — 항목명(영문)은 설계서 dm_bzentyInfo 그대로. */
+export interface BzentyInfo {
+  /** 업체명 (R, 100) */
+  bzentyNm: string
+  /** 사업자등록번호 (R, 10) */
+  brno: string
+  /** 업체코드 (R, 5) */
+  bzentyCd: string
+  /** 대표자명 (R, 100) */
+  rprsvNm: string
+  /** 등록일 (R, 8) */
+  bzentyRgstrtYmd: string
+  /** 법인등록번호 (R, 13, 선택) */
+  crno?: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // 마이페이지 (MUI-CM-06-M01). 설계서 00.공통 slide75 "업무 캘린더" 데이터영역.
 //   - 캘린더에는 ① 관심(찜)한 입찰공고 ② 개인이 작성한 스케줄 을 합쳐 최대 3건 표시.
 //   - 공고번호/공고명 항목명은 입찰(bd) 도메인 컨벤션(pbancNo/pbancNm)을 그대로 따른다.

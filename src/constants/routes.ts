@@ -54,6 +54,14 @@ export const ROUTES = {
   SUPPORT_SYS_IMPV_DETAIL: '/support/sys-impv/:contsNo',
   /** 자주묻는질문 (MUI-CM-04-M03). */
   SUPPORT_FAQ: '/support/faq',
+  /** 민원서류발급신청 (MUI-CM-04-M04). 고객센터 > 민원서류발급신청 허브. */
+  SUPPORT_DCMNT_ISSU_APLY: '/support/dcmnt-issu-aply',
+  /** 신청절차 및 안내 (MUI-CM-04-M05). 민원서류발급신청 허브 > 신청 절차 및 안내. */
+  SUPPORT_APLY_STEP_INFO: '/support/dcmnt-issu-aply/aply-step-info',
+  /** 실적증명서 신청 목록 (MUI-CM-04-M06). 민원서류발급신청 허브 > 실적 증명서 신청 목록. */
+  SUPPORT_PRFMNC_PRDOC: '/support/dcmnt-issu-aply/prfmnc-prdoc',
+  /** 실적증명서 확인(상세) (MUI-CM-04-M07, `:prfmncRcptNo`). 목록 카드 클릭 진입. */
+  SUPPORT_PRFMNC_PRDOC_DTL: '/support/dcmnt-issu-aply/prfmnc-prdoc/:prfmncRcptNo',
   /** 인증센터 (MUI-CM-04-M13). 홈 유관기관 바로가기 진입. */
   CERT: '/cert',
   /** 인증서 관리 (MUI-CM-04-M14). 인증센터 > 인증서 관리 진입. */
