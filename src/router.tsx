@@ -395,6 +395,12 @@ const PrfmncPrdocRegPage = lazy(() =>
     default: m.PrfmncPrdocRegPage,
   })),
 )
+// 국외조달원등록증신청목록(MUI-CM-04-M21, /support/dcmnt-issu-aply/ovs-sos-cnfdoc).
+const OvsSosCnfdocListPage = lazy(() =>
+  import('@/ui/biz/cm/ovsSosCnfdocList/OvsSosCnfdocListPage').then((m) => ({
+    default: m.OvsSosCnfdocListPage,
+  })),
+)
 // 인증센터(MUI-CM-04-M13, /cert) — biz/cm/certMng. 홈 유관기관 바로가기 진입.
 const CertMngPage = lazy(() =>
   import('@/ui/biz/cm/certMng/CertMngPage').then((m) => ({ default: m.CertMngPage })),
@@ -1036,6 +1042,16 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: '실적증명서 확인' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 국외조달원등록증신청목록 (MUI-CM-04-M21) — 민원서류발급신청 허브 진입
+        path: 'support/dcmnt-issu-aply/ovs-sos-cnfdoc',
+        element: <OvsSosCnfdocListPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '국외 조달원 등록증' },
           scrollReset: true,
         },
       },

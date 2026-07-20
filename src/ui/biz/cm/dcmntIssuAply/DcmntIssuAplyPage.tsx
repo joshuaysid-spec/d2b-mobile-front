@@ -63,8 +63,8 @@ export function DcmntIssuAplyPage() {
     {
       id: 'ovsSosCnfdocList',
       label: '국외 조달원 등록증 신청 목록',
-      // 추후: navigate — 국외조달원등록증신청목록(MUI-CM-04-M09, OvsSosCnfdocListPage)
-      onClick: () => console.log('[DcmntIssuAply] 국외 조달원 등록증 신청 목록'),
+      // 국외조달원등록증신청목록(MUI-CM-04-M21, OvsSosCnfdocListPage)
+      onClick: () => navigate(ROUTES.SUPPORT_OVS_SOS_CNFDOC),
     },
     {
       id: 'ovsSosCnfdocReg',

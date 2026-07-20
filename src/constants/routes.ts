@@ -64,6 +64,8 @@ export const ROUTES = {
   SUPPORT_PRFMNC_PRDOC_DTL: '/support/dcmnt-issu-aply/prfmnc-prdoc/:prfmncRcptNo',
   /** 실적증명서 신청 플로우 (MUI-CM-04-M10 계약선택 → M12 신청정보 → T12/T13 실적정보). */
   SUPPORT_PRFMNC_PRDOC_REG: '/support/dcmnt-issu-aply/prfmnc-prdoc/reg',
+  /** 국외조달원등록증신청목록 (MUI-CM-04-M21). 민원서류발급신청 허브 > 국외 조달원 등록증 신청 목록. */
+  SUPPORT_OVS_SOS_CNFDOC: '/support/dcmnt-issu-aply/ovs-sos-cnfdoc',
   /** 인증센터 (MUI-CM-04-M13). 홈 유관기관 바로가기 진입. */
   CERT: '/cert',
   /** 인증서 관리 (MUI-CM-04-M14). 인증센터 > 인증서 관리 진입. */
