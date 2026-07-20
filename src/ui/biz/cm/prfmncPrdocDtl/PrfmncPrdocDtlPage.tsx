@@ -20,6 +20,7 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { ButtonGroup, type ButtonGroupItem } from '@/ui/common/composites/ButtonGroup'
 import { PrfmncPrdocDtl_Cn } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_Cn'
 import { PrfmncPrdocDtl_UnitB } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_UnitB'
+import { PrfmncPrdocSbmsnFullPopup } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocSbmsnFullPopup'
 import type { PrfmncPrdocItem } from '@/types/cm'
 
 // 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — dl_resultList 항목명/형식 그대로(slide240).
@@ -61,16 +62,17 @@ export function PrfmncPrdocDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [actionOpen, setActionOpen] = useState(false) // (+) 상태별 액션 시트
   const [deleteOpen, setDeleteOpen] = useState(false) // 삭제 확인 팝업
+  const [sbmsnOpen, setSbmsnOpen] = useState(false) // 실적증명서 제출 풀팝업(MUI-CM-04-P20)
 
   // 목록 → 상세 데이터 전달: navigate(state)로 넘어온 항목으로 상단을 그린다(표준).
   const detail = (useLocation().state as PrfmncPrdocItem | null) ?? MOCK_PRFMNC_DETAIL
 
-  // 상태별 액션(slide243) — 표시 상태(prgrsStcd)로 구동. 코드값(UG02) 확정 시 코드 기준으로 교체.
-  // 신청 및 수정은 항상 노출(2026-07-20 수정 요청 — 설계서 원문은 '저장' 상태 한정).
+  // (+) 액션 3종 — 항상 노출(2026-07-20 수정 요청. 설계서 원문의 상태별 노출 규칙
+  //   — 신청및수정='저장'/발급·제출='발급'/삭제='반려·저장·회송' — 은 API 연동 시 재검토).
   const stcd = detail.prgrsStcd
   const actionItems: ButtonGroupItem[] = [
     {
-      label: '신청 및 수정',
+      label: '실적증명서 신청 및 수정',
       variant: 'secondary' as const,
       onClick: () => {
         setActionOpen(false)
@@ -78,39 +80,22 @@ export function PrfmncPrdocDtlPage() {
         navigate(ROUTES.SUPPORT_PRFMNC_PRDOC_REG)
       },
     },
-    ...(stcd === '발급'
-      ? [
-          {
-            label: '발급',
-            variant: 'secondary' as const,
-            onClick: () => {
-              setActionOpen(false)
-              console.log('[PrfmncPrdocDtl] 실적증명서 발급 — PDF(진본성) 스텁')
-            },
-          },
-          {
-            label: '제출',
-            variant: 'secondary' as const,
-            onClick: () => {
-              setActionOpen(false)
-              // 추후: 실적증명서 제출(MUI-CM-04-P20 PrfmncPrdocSbmsn)
-              console.log('[PrfmncPrdocDtl] 실적증명서 제출(P20 미구현)')
-            },
-          },
-        ]
-      : []),
-    ...(stcd === '반려' || stcd === '저장' || stcd === '회송'
-      ? [
-          {
-            label: '삭제',
-            variant: 'secondary' as const,
-            onClick: () => {
-              setActionOpen(false)
-              setDeleteOpen(true)
-            },
-          },
-        ]
-      : []),
+    {
+      label: '실적증명서 제출',
+      variant: 'secondary' as const,
+      onClick: () => {
+        setActionOpen(false)
+        setSbmsnOpen(true) // 실적증명서 제출 풀팝업(MUI-CM-04-P20)
+      },
+    },
+    {
+      label: '실적증명서 삭제',
+      variant: 'secondary' as const,
+      onClick: () => {
+        setActionOpen(false)
+        setDeleteOpen(true)
+      },
+    },
   ]
 
   return (
@@ -172,24 +157,27 @@ export function PrfmncPrdocDtlPage() {
       />
 
       {/* (+) 액션 바텀시트 — 컨테이너는 페이지 소유(공통 BottomSheet 조립).
-          신청 및 수정(항상) + 발급/제출('발급') + 삭제('반려'/'저장'/'회송'). */}
+          실적증명서 신청 및 수정 / 제출 / 삭제 3종 고정(2026-07-20 요청). */}
       <BottomSheet open={actionOpen} onOpenChange={setActionOpen} title="실적증명서">
         <ButtonGroup layout="vertical" items={actionItems} />
       </BottomSheet>
 
-      {/* 삭제 확인 팝업 — "정말 삭제하시겠습니까?" (N/Y, slide243) */}
+      {/* 삭제 확인 팝업 — "실적증명서를 삭제 하시겠습니까?" (아니오/삭제, 2026-07-20 요청) */}
       <AlertModal
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
         variant="info"
         title="실적증명서 삭제"
-        description="정말 삭제하시겠습니까?"
+        description="실적증명서를 삭제 하시겠습니까?"
         secondaryAction={{ label: '아니오' }}
         primaryAction={{
-          label: '예',
+          label: '삭제',
           onClick: () => console.log('[PrfmncPrdocDtl] 삭제(API 미연동)', detail.prfmncRcptNo),
         }}
       />
+
+      {/* 실적증명서 제출 풀팝업 (MUI-CM-04-P20) — (+)시트 [실적증명서 제출] */}
+      <PrfmncPrdocSbmsnFullPopup open={sbmsnOpen} onOpenChange={setSbmsnOpen} />
     </div>
   )
 }

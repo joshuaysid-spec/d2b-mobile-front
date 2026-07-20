@@ -298,6 +298,18 @@ export interface PrfmncPrdocAplyInfo {
    * 부대: A접수/P처리중·발급/S신청/R반려/I저장 · 방위사업청: I저장/R접수/G처리중/C처리완료/P발급/Y회송/V보류
    */
   prfmncPrgrsSttsCd: string
+  /** 발급번호 (R, 20) — 실적증명서 제출(MUI-CM-04-P20, slide330 1.1)에서 정의. */
+  issuNo?: string
+}
+
+/** 제출 협회(dl_sbmsnAsctnList) — 실적증명서 제출(MUI-CM-04-P20, slide330 1.3). */
+export interface SbmsnAsctnItem {
+  /** 제출협회명 (R, 100) */
+  sbmsnSttsNm: string
+  /** 상태 (R, 2) — 전송중/송신완료/실패/제출취소. 미제출이면 없음(레이블 미표시). */
+  sttsVl?: string
+  /** 비고 (E, 4000) — 제출취소 시 취소사유. 송신완료 시 입력/버튼 활성화. */
+  rmrkCn?: string
 }
 
 /** 계약정보(dm_ctrtInfo) — T01 계약정보 탭. */
@@ -469,6 +481,74 @@ export interface PrfmncPrdocAplyLwprcInfo {
   ptmWkqtyCn?: string
   /** 기타 참고사항 (R, 100) */
   etcRefMttr?: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 국외조달원등록증신청목록 (MUI-CM-04-M21). 설계서 00.공통 v0.84 slide331~333.
+// 상세 화면 없음(카드 클릭 = OZ 리포트 연결) — 카드 표시 필드는 상세 영역(dm_ovsSosAplyDtlInfo)
+// 항목명을 재사용한다.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 진행상태(prcsStcd) 코드 — 신청(P)/반려(R)/승인(A). */
+export type OvsSosPrcsStcd = 'P' | 'R' | 'A'
+
+/** 국외조달원 신청 목록 항목(dl_resultList + 카드 표시용 상세 항목) — 항목명(영문) 설계서 그대로. */
+export interface OvsSosCnfdocItem {
+  /** 접수번호 (R, 12) — 목록 key. */
+  aplyRcptNo: string
+  /** 발급대상 업체 (R, 100) */
+  trgtBzentyCdNm: string
+  /** 진행상태 (R, 1) — P신청/R반려/A승인 */
+  prcsStcd: OvsSosPrcsStcd
+  /** 신청일자 (R, 8) */
+  aplyYmd: string
+  /** 승인일자 (R, 8, 선택) */
+  aprvYmd?: string
+  /** 발급신청 사유 (R, 4000 — dm_ovsSosAplyDtlInfo) — 카드 2줄 클램프 표시 */
+  aplyRsn: string
+  /** 반려 사유 (R, 4000, 선택) — 반려 시 발급사유 대신 표시 */
+  rjctRsn?: string
+  /** 신청인 연락처 (R — dm_ovsSosAplyDtlInfo aplcntEntlno) */
+  aplcntEntlno: string
+  /** ⚠️ 신청인 성명 — 설계서 영문 항목명 미정의(카드 '신청인' 표기) → 잠정 명칭, 확정 시 교체. */
+  aplcntNm: string
+  /** ⚠️ 회사명 — 설계서 영문 항목명 미정의(카드 '회사명' 표기) → 잠정 명칭, 확정 시 교체. */
+  bzentyNm: string
+}
+
+/** 국외조달원 신청 목록 검색조건(dm_searchInfo) — 기간 FROM/TO 는 DateRangeValue 1키(regDt 컨벤션). */
+export interface OvsSosCnfdocSearchFilter {
+  /** 기간(aplyYmdFrom~aplyYmdTo). */
+  aplyYmd: DateRangeValue
+  /** 진행상태(prcsStcd) — 전체/신청(P)/반려(R)/승인(A). */
+  prcsStcd: string
+  /** 발급대상 업체명(trgtBzentyCdNm). */
+  trgtBzentyCdNm: string
+}
+
+/**
+ * 국외조달원등록증신청 — 신청인(dm_ovsSosAplyInfo). 설계서 slide335. MUI-CM-04-P22.
+ * 회사명·성명은 자동완성(readonly), 직위·연락처는 편집(비어 있으면 빈 상태).
+ */
+export interface OvsSosAplyInfo {
+  /** 성명 (R, 100) */
+  empNm: string
+  /** 회사명 (R, 100) */
+  bzentyNm: string
+  /** 직위 (E, 100) */
+  aplcntJbgdNm: string
+  /** 연락처 (E, 88) */
+  aplcntEntlno: string
+}
+
+/** 국외조달원등록증신청 — 조달원 등록증(dm_ovsSosAplyDataInfo). 설계서 slide335. */
+export interface OvsSosAplyDataInfo {
+  /** 업체명1 (E, 100) — 조달업체선택(P23)으로 선택 */
+  bzentyNm1: string
+  /** 업체명2 (E, 100) */
+  bzentyNm2: string
+  /** 발급신청사유 (E, 4000) */
+  aplyRsn: string
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
