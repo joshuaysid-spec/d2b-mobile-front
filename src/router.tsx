@@ -365,6 +365,30 @@ const SysImpvRpstrListPage = lazy(() =>
 const FaqListPage = lazy(() =>
   import('@/ui/biz/cm/faqList/FaqListPage').then((m) => ({ default: m.FaqListPage })),
 )
+// 민원서류발급신청(MUI-CM-04-M04, /support/dcmnt-issu-aply) — biz/cm/dcmntIssuAply. 고객센터 허브.
+const DcmntIssuAplyPage = lazy(() =>
+  import('@/ui/biz/cm/dcmntIssuAply/DcmntIssuAplyPage').then((m) => ({
+    default: m.DcmntIssuAplyPage,
+  })),
+)
+// 신청절차 및 안내(MUI-CM-04-M05, /support/dcmnt-issu-aply/aply-step-info) — biz/cm/aplyStepInfo.
+const AplyStepInfoPage = lazy(() =>
+  import('@/ui/biz/cm/aplyStepInfo/AplyStepInfoPage').then((m) => ({
+    default: m.AplyStepInfoPage,
+  })),
+)
+// 실적증명서 신청 목록(MUI-CM-04-M06, /support/dcmnt-issu-aply/prfmnc-prdoc) — biz/cm/prfmncPrdoc.
+const PrfmncPrdocPage = lazy(() =>
+  import('@/ui/biz/cm/prfmncPrdoc/PrfmncPrdocPage').then((m) => ({
+    default: m.PrfmncPrdocPage,
+  })),
+)
+// 실적증명서 확인(상세)(MUI-CM-04-M07, /support/dcmnt-issu-aply/prfmnc-prdoc/:prfmncRcptNo).
+const PrfmncPrdocDtlPage = lazy(() =>
+  import('@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtlPage').then((m) => ({
+    default: m.PrfmncPrdocDtlPage,
+  })),
+)
 // 인증센터(MUI-CM-04-M13, /cert) — biz/cm/certMng. 홈 유관기관 바로가기 진입.
 const CertMngPage = lazy(() =>
   import('@/ui/biz/cm/certMng/CertMngPage').then((m) => ({ default: m.CertMngPage })),
@@ -955,6 +979,46 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.SUPPORT_FAQ] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 민원서류발급신청 (MUI-CM-04-M04) — 전체메뉴 고객센터 > 민원서류발급신청 진입
+        path: 'support/dcmnt-issu-aply',
+        element: <DcmntIssuAplyPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.SUPPORT_DCMNT_ISSU_APLY] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 신청절차 및 안내 (MUI-CM-04-M05) — 민원서류발급신청 허브 > 신청 절차 및 안내 진입
+        path: 'support/dcmnt-issu-aply/aply-step-info',
+        element: <AplyStepInfoPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '신청절차 및 안내' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 실적증명서 신청 목록 (MUI-CM-04-M06) — 민원서류발급신청 허브 > 실적 증명서 신청 목록 진입
+        path: 'support/dcmnt-issu-aply/prfmnc-prdoc',
+        element: <PrfmncPrdocPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '실적증명서 신청 목록' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 실적증명서 확인(상세) (MUI-CM-04-M07) — 실적증명서 신청 목록 카드 클릭 진입
+        path: 'support/dcmnt-issu-aply/prfmnc-prdoc/:prfmncRcptNo',
+        element: <PrfmncPrdocDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '실적증명서 확인' },
           scrollReset: true,
         },
       },
