@@ -107,7 +107,7 @@ const MENU_TREE: MenuNode[] = [
       { id: 'support-archive-form', label: LINKED_MENU_LABELS[ROUTES.SUPPORT_ARCHIVE_CTRT] },
       { id: 'support-improve', label: LINKED_MENU_LABELS[ROUTES.SUPPORT_SYS_IMPV] },
       { id: 'support-faq', label: LINKED_MENU_LABELS[ROUTES.SUPPORT_FAQ] },
-      { id: 'support-civil-doc', label: '민원서류발급신청' },
+      { id: 'support-civil-doc', label: LINKED_MENU_LABELS[ROUTES.SUPPORT_DCMNT_ISSU_APLY] },
       { id: 'support-law', label: '법령조회' },
     ],
   },
@@ -190,6 +190,7 @@ const MENU_ROUTES: Record<string, string> = {
   'support-archive-form': ROUTES.SUPPORT_ARCHIVE_CTRT, // 계약관련서식자료실(M29)
   'support-improve': ROUTES.SUPPORT_SYS_IMPV, // 시스템개선안내(M31)
   'support-faq': ROUTES.SUPPORT_FAQ, // 자주묻는질문(M03)
+  'support-civil-doc': ROUTES.SUPPORT_DCMNT_ISSU_APLY, // 민원서류발급신청(M04)
   'cert-manage': ROUTES.CERT_CRTF_MNG, // 인증서 관리(MUI-CM-04-M14)
   'cert-import': ROUTES.CERT_CRTF_RECEIVE, // 인증서 가져오기(MUI-CM-04-M16)
   'cert-export': ROUTES.CERT_CRTF_SEND, // 인증서 내보내기(MUI-CM-04-M17)
