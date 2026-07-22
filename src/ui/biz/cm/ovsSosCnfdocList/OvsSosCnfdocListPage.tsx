@@ -3,7 +3,7 @@
 // 기 신청 내역 카드 목록(진행상태 신청/반려/승인). **상세 화면 없음**.
 // 카드 클릭: 신청(P)/승인(A) → 서류 출력 확인 팝업(MUI-BD-01-P14, AlertModal 인라인) → OZ 리포트(스텁).
 //   반려(R) → 카드에 반려사유만 표시, 클릭 무동작(팝업/상세 없음). (2026-07-20 요청)
-// 하단 [신청] 버튼 → 국외조달원등록증신청(MUI-CM-04-P22 OvsSosCnfdocReg) 풀팝업 → 완료 토스트 + 목록 리프래시.
+// 하단 [신청] 버튼 → 국외조달원등록증신청(MUI-CM-04-P22) — 현재 미구현 스텁(2026-07-20 풀팝업 제거).
 // 검색필터는 공통 SearchFilter 셸 schema 주입(기간*/검색어 발급 업체명/구분 진행상태).
 // mock 상단은 빠른검색 없이 필터 버튼만 — SearchCondition 필터 버튼과 동일 스타일 로컬 버튼.
 import { useMemo, useState } from 'react'
@@ -16,9 +16,7 @@ import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
-import { Toast } from '@/ui/common/composites/Toast'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
-import { OvsSosCnfdocRegFullPopup } from '@/ui/biz/cm/ovsSosCnfdocList/OvsSosCnfdocRegFullPopup'
 import { cn } from '@/utils/cn'
 import type {
   SearchFilterSchema,
@@ -147,8 +145,6 @@ export function OvsSosCnfdocListPage() {
   const [page, setPage] = useState(1)
   const [outputOpen, setOutputOpen] = useState(false) // 서류 출력 확인(MUI-BD-01-P14)
   const [outputTarget, setOutputTarget] = useState<OvsSosCnfdocItem | null>(null)
-  const [regOpen, setRegOpen] = useState(false) // 국외조달원등록증신청 풀팝업(MUI-CM-04-P22)
-  const [aplyToastOpen, setAplyToastOpen] = useState(false) // 신청 완료 토스트
 
   const defaultValue = useMemo(() => buildDefaultValue(), [])
 
@@ -251,7 +247,14 @@ export function OvsSosCnfdocListPage() {
         className="sticky bottom-0 z-30 border-t border-krds-border-divider bg-background px-4 pt-3"
         style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
       >
-        <Button variant="primary" className="w-full" onClick={() => setRegOpen(true)}>
+        <Button
+          variant="primary"
+          className="w-full"
+          onClick={() => {
+            // 추후: 국외조달원등록증신청(MUI-CM-04-P22 OvsSosCnfdocReg)
+            console.log('[OvsSosCnfdocList] 국외조달원등록증 신청(P22 미구현)')
+          }}
+        >
           신청
         </Button>
       </div>
@@ -291,21 +294,6 @@ export function OvsSosCnfdocListPage() {
             ),
         }}
       />
-
-      {/* 국외조달원등록증신청 풀팝업 (MUI-CM-04-P22) — 하단 [신청] 버튼 */}
-      <OvsSosCnfdocRegFullPopup
-        open={regOpen}
-        onOpenChange={setRegOpen}
-        onSubmitted={() => {
-          setAplyToastOpen(true) // 완료 토스트(slide334)
-          setPage(1) // 목록 리프래시(신청 항목 발급 가능 상태) — 추후 API 재조회
-        }}
-      />
-
-      {/* 신청 완료 토스트 (slide334) */}
-      <Toast open={aplyToastOpen} onClose={() => setAplyToastOpen(false)}>
-        신청 되었습니다.
-      </Toast>
     </div>
   )
 }
