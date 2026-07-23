@@ -1,0 +1,1202 @@
+// 계약(CT) 도메인 목업 데이터 — USE_MOCK=true 일 때 ctService 가 반환.
+// 설계서(03.계약 v0.83) 계약통합목록 데이터영역 항목·형식·slide18 목업값을 반영(임의 더미 금지).
+// ⚠️ 폐쇄망 반입 후 실백엔드 연동 시 이 파일은 사용되지 않는다(서비스가 apiClient 분기).
+import type {
+  CmdtyCtrdocDtl,
+  CmdtyCtrdocDtstResult,
+  CmdtyCtrtDtstResult,
+  CmdtyElctrCtrtPrgrsDtl,
+  CmdtyGnrlCtrdocDtl,
+  CmdtyMdfcnCtrdocDtl,
+  CmdtyMdfcnCtrdocDtstResult,
+  CstrnCtrdocDtl,
+  CstrnElctrCtrtPrgrsDtl,
+  CtrtAdocResult,
+  CtrtBzenty,
+  CtrtCnstpFlw,
+  CtrtFctry,
+  CtrtGrnteResult,
+  CtrtIntgListItem,
+  CtrtJntGrnte,
+  CtrtLastDtstItem,
+  CtrtPrgrsStts,
+  CtrtRjctRsn,
+  CtrtSpclCnd,
+  CtrtStmtxResult,
+  OvsBacntInfo,
+  OvsCmbzCtrdocDtl,
+  OvsCmbzCtrtDtstResult,
+  OvsCmbzDtstResult,
+  OvsCmbzTrgt,
+  OvsCtrtAdocResult,
+  OvsCtrtDtstResult,
+  OvsElctrCtrtDtl,
+  PymtDfryInfoInqItem,
+  PymtDfryInfoItem,
+} from '@/types/ct'
+
+// 계약통합목록 카드(설계서 slide18 목업: 판단번호 99001 / 계약번호 2025000000-01 등).
+// 업무구분(물품/용역/공사/국외) × 계약상태 × 진행상태 조합 대표 샘플.
+const CTRT_INTG_LIST: CtrtIntgListItem[] = [
+  {
+    id: '20250000001-01',
+    rnum: 1,
+    taskSecd: '물품',
+    ctrtPrgrsStcd: '서류요청',
+    ctrtYmd: '2026-02-10',
+    prcmNo: '99001',
+    ctrtNo: '20250000001',
+    ctrtCycl: '01',
+    ctrtNm: '물품 구매',
+    orderInstNm: '제8385부대',
+    ctrtAmt: 11616000,
+    ctrtMthdCd: '수의계약',
+    bidMthdCd: '총액제',
+    ofcctrNm: '김계약',
+    addCn: '납품 일정 협의 필요',
+    elsgnVl: '1 / 4',
+    ctrtStatNm: '계약진행',
+  },
+  {
+    id: '20250000002-01',
+    rnum: 2,
+    taskSecd: '공사',
+    ctrtPrgrsStcd: '서류요청',
+    ctrtYmd: '2026-01-03',
+    prcmNo: '99001',
+    ctrtNo: '20250000002',
+    ctrtCycl: '01',
+    ctrtNm: '000 시설공사',
+    orderInstNm: '국군재정관리단',
+    ctrtAmt: 2596060616000,
+    ctrtMthdCd: '제한경쟁',
+    bidMthdCd: '총액제',
+    ofcctrNm: '박공사',
+    docId: 'DOC2026000000000012',
+    elsgnVl: '1 / 4',
+    ctrtStatNm: '계약진행',
+  },
+  {
+    id: '20250000003-01',
+    rnum: 3,
+    taskSecd: '용역',
+    ctrtPrgrsStcd: '서류등록',
+    ctrtYmd: '2026-03-18',
+    prcmNo: '99002',
+    ctrtNo: '20250000003',
+    ctrtCycl: '01',
+    ctrtNm: "'26년 정보시스템 유지관리 용역",
+    orderInstNm: '방위사업청',
+    ctrtAmt: 92472000,
+    ctrtMthdCd: '일반경쟁',
+    bidMthdCd: '단가제',
+    ofcctrNm: '이용역',
+    ctrtStatNm: '계약진행',
+  },
+  {
+    id: '20250000004-02',
+    rnum: 4,
+    taskSecd: '물품',
+    ctrtPrgrsStcd: '체결의뢰',
+    ctrtYmd: '2026-04-02',
+    prcmNo: '99003',
+    ctrtNo: '20250000004',
+    ctrtCycl: '02',
+    ctrtNm: 'K5 방독면 정화통 구매(수정)',
+    orderInstNm: '육군군수사령부',
+    ctrtAmt: 384120000,
+    ctrtMthdCd: '지명경쟁',
+    bidMthdCd: '단가제',
+    mdfcnRncd: '물량 변경',
+    ofcctrNm: '최수정',
+    addCn: '수정계약 요청 수신',
+    ctrtStatNm: '계약수정',
+  },
+  {
+    id: '20250000005-01',
+    rnum: 5,
+    taskSecd: '국외',
+    ctrtPrgrsStcd: '서류반려',
+    ctrtYmd: '2026-05-11',
+    prcmNo: '99004',
+    ctrtNo: '20250000005',
+    ctrtCycl: '01',
+    ctrtNm: '항공기 부품 국외 구매',
+    orderInstNm: '방위사업청',
+    ctrtAmt: 1250000000,
+    ctrtMthdCd: '협상에의한계약(전자)',
+    bidMthdCd: '총액제',
+    ofcctrNm: '한국외',
+    docId: 'DOC2026000000000034',
+    ctrtStatNm: '계약진행',
+  },
+  {
+    id: '20250000006-01',
+    rnum: 6,
+    taskSecd: '물품',
+    ctrtPrgrsStcd: '체결의뢰',
+    ctrtYmd: '2026-06-24',
+    prcmNo: '99005',
+    ctrtNo: '20250000006',
+    ctrtCycl: '01',
+    ctrtNm: '전투식량 II형 구매',
+    orderInstNm: '육군교육사령부',
+    ctrtAmt: 57800000,
+    ctrtMthdCd: '일반경쟁',
+    bidMthdCd: '총액제',
+    ofcctrNm: '정확정',
+    elsgnVl: '4 / 4',
+    ctrtStatNm: '계약확정',
+  },
+  {
+    id: '20250000007-01',
+    rnum: 7,
+    taskSecd: '물품',
+    ctrtPrgrsStcd: '체결의뢰',
+    ctrtYmd: '2026-01-30',
+    prcmNo: '99006',
+    ctrtNo: '20250000007',
+    ctrtCycl: '01',
+    ctrtNm: '000000 모델 구매(일반계약)',
+    orderInstNm: '제8385부대',
+    ctrtAmt: 11616000,
+    ctrtMthdCd: '제한경쟁',
+    bidMthdCd: '총액제',
+    ofcctrNm: '박일반',
+    ctrtStatNm: '계약최종', // 타 계약서 분기 목업 — 일반계약서상세(M05)
+    ctrdocTpNm: '물품일반계약서',
+  },
+  {
+    id: '20250000008-01',
+    rnum: 8,
+    taskSecd: '물품',
+    ctrtPrgrsStcd: '체결의뢰',
+    ctrtYmd: '2026-01-30',
+    prcmNo: '99007',
+    ctrtNo: '20250000008',
+    ctrtCycl: '01',
+    ctrtNm: '000000 모델 구매(총액제)',
+    orderInstNm: '제8385부대',
+    ctrtAmt: 11616000,
+    ctrtMthdCd: '수의계약',
+    bidMthdCd: '총액제',
+    ofcctrNm: '김총액',
+    ctrtStatNm: '계약최종', // 타 계약서 분기 목업 — 총액계약서상세(M07)
+    ctrdocTpNm: '물품총액계약서',
+  },
+  {
+    id: '20250000009-01',
+    rnum: 9,
+    taskSecd: '물품',
+    ctrtPrgrsStcd: '체결의뢰',
+    ctrtYmd: '2026-01-30',
+    prcmNo: '99008',
+    ctrtNo: '20250000009',
+    ctrtCycl: '01',
+    ctrtNm: '000000 모델 구매(단가제)',
+    orderInstNm: '제8385부대',
+    ctrtAmt: 11616000,
+    ctrtMthdCd: '수의계약',
+    bidMthdCd: '단가제',
+    ofcctrNm: '이단가',
+    ctrtStatNm: '계약최종', // 타 계약서 분기 목업 — 단가계약서상세(M08)
+    ctrdocTpNm: '물품단가계약서',
+  },
+  {
+    id: '20250000010-01',
+    rnum: 10,
+    taskSecd: '공사',
+    ctrtPrgrsStcd: '체결의뢰',
+    ctrtYmd: '2026-01-30',
+    prcmNo: '99001',
+    ctrtNo: '20250000010',
+    ctrtCycl: '01',
+    ctrtNm: '000000 공사',
+    orderInstNm: '제8385부대',
+    ctrtAmt: 11616000,
+    ctrtMthdCd: '제한경쟁',
+    bidMthdCd: '총액제',
+    ofcctrNm: '홍길동',
+    ctrtStatNm: '계약확정', // 공사 계약확정 분기 목업 — 공사계약서상세(M10)
+  },
+]
+
+// ── MUI-CT-01-M03 물품전자계약진행상세 — 설계서 slide23~24 목업값 반영 ─────────
+const CTRT_PRGRS_DTL: CmdtyElctrCtrtPrgrsDtl = {
+  ctrtNo: '20250000001',
+  ctrtCycl: '01',
+  ctrdocTpcd: '6',
+  ctrdocTpNm: '물품제조구매계약서',
+  ctrtNm: '물품 구매',
+  prcmNo: '99001',
+  orderInstNm: '제8385부대',
+  ctrtMthdCd: '제한경쟁',
+  pvctRncd: undefined, // 수의계약 아님 → '-' 표시
+  ctrtPrgrsStcd: '체결의뢰', // 40-계약체결의뢰(slide32) — 바로가기 버튼 매트릭스 구동
+  pfrAplcnMthdCd: '국계령 제XX조 ...',
+  ctrtYmd: '2026-02-10',
+  ctrtBgngYmd: '2026-01-01',
+  ctrtEndYmd: '2026-12-31',
+  dlvgdsBgngYmd: '2026-01-01',
+  dlvgdsEndYmd: '2026-12-31',
+  dlvgdsPlcNm: '경기도 00시 00구 00동 000-00',
+  bscbgtCtrtAmt: 1000000,
+  govbndCtrtAmt: 1000000,
+  sumAmt: 2000000,
+  tbkpngAmt: 2000000,
+  grnteAmt: 1000,
+  lqdmgRt: 0.15,
+  itemSumAmt: 2100000,
+  managers: [{ tkcgSecd: '계약담당', picNm: '홍길동 주무관' }],
+  taskSecd: '물품',
+  bidMthdCd: '경쟁입찰',
+  ctrtStatNm: '계약진행',
+  ctrtAmt: 11616000,
+}
+
+// 계약업체(T02) — 여러 업체 반복 표시(slide25, Figma 154708: A/B 2개 업체).
+const CTRT_BZENTYS: CtrtBzenty[] = [
+  {
+    id: '111-11-11111',
+    bzentyNm: 'A 업체',
+    brno: '111-11-11111',
+    rprsvNm: '홍길동',
+    fnstCd: '농협',
+    dpstrNm: 'A 업체',
+    elsgnDt: '2025-12-01 10:00:00',
+    depsPayMthdCd: '전자보증',
+    grnteAmt: 500000,
+    enacno: '111111-00000-01',
+    acnutNo: '**********',
+    // 공사(T10) 확장 필드 — slide40 목업값(물품 탭에서는 미표시)
+    bzentySeCd: '대표',
+    signYn: 'Y',
+    telno: '02-111-2222',
+    crno: '123456-0123456',
+    lctnAddr: '서울특별시 종로구 …',
+  },
+  {
+    id: '222-22-22222',
+    bzentyNm: 'B 업체',
+    brno: '222-22-22222',
+    rprsvNm: '김대표',
+    fnstCd: '국민은행',
+    dpstrNm: 'B 업체',
+    elsgnDt: '2025-12-02 14:30:00',
+    depsPayMthdCd: '전자보증',
+    grnteAmt: 500000,
+    enacno: '222222-00000-02',
+    acnutNo: '**********',
+  },
+]
+
+// 생산공장(T02 하단, 방위사업청 계약의 경우 표시 — 여러 건 가능, slide25).
+const CTRT_FCTRYS: CtrtFctry[] = [
+  {
+    id: 'fctry-1',
+    fctryAddr: '생산공장 명칭',
+    fctryDaddr: '경기도 00시 00구 00동 000-00',
+    fctryOzip: '00000',
+  },
+]
+
+// 반송/취소 사유(T03) — 단계별 타이틀 4종(slide26·Figma 154930: 낙찰단가/제출서류/계약서/계약취소).
+const CTRT_RJCT_RSNS: CtrtRjctRsn[] = [
+  {
+    id: 'rjct-1',
+    title: '낙찰단가반송사유',
+    rjctRsn: '낙찰단가 배분 내역이 품목별 계약단가와 불일치하여 반송합니다.',
+  },
+  {
+    id: 'rjct-2',
+    title: '제출서류반송사유',
+    rjctRsn: '제출서류 중 산출내역서 금액이 계약금액과 불일치하여 반송합니다. 수정 후 재제출 바랍니다.',
+  },
+  {
+    id: 'rjct-3',
+    title: '계약서 반송 사유',
+    rjctRsn: '계약서 특수조건 조항 확인 요청으로 반송합니다.',
+  },
+  {
+    id: 'rjct-4',
+    title: '계약 취소 사유',
+    rjctRsn: '발주기관 소요 변경으로 계약이 취소되었습니다.',
+  },
+]
+
+// 첨부서류(T04) — 계약관/계약업체 2섹션(slide27 목업값: 파일명 없거나 크기 없으면 '-').
+const CTRT_ADOCS: CtrtAdocResult = {
+  refDocs: [
+    { id: 'ref-1', ctrtAdocCd: '물품제조구매계약서', fileNm: '첨부파일명.hwp', fileSize: '786KB' },
+    { id: 'ref-2', ctrtAdocCd: '계약명세서', fileNm: '첨부파일명.hwp', fileSize: '786KB' },
+  ],
+  sbmsnDocs: [
+    { id: 'sbmsn-1', ctrtAdocCd: '산출내역서', fileNm: '첨부파일명.hwp', fileSize: '786KB' },
+    {
+      id: 'sbmsn-2',
+      ctrtAdocCd: '법인등기부등본',
+      fileNm: '첨부파일명이너무길면어떻게 노출되는지확인.hwp',
+      fileSize: undefined, // 크기 정보 없음 → '-' 표시(slide27)
+    },
+  ],
+}
+
+// ── MUI-CT-01-M09 공사전자계약진행상세 — 설계서 slide38~39 목업값 반영 ─────────
+const CSTRN_CTRT_PRGRS_DTL: CstrnElctrCtrtPrgrsDtl = {
+  ctrtNo: '20250000002',
+  ctrtCycl: '01',
+  fcltLbsvcSecd: '공사계약서',
+  ctrtNm: '000 시설공사',
+  prcmNo: '99001',
+  orderInstNm: '제8385부대',
+  ctrtMthdCd: '제한경쟁',
+  pvctRncd: undefined, // 수의계약 아님 → '-' 표시
+  ctrtPrgrsStcd: '체결의뢰', // 40-계약체결의뢰(slide47 매트릭스) — 바로가기 구동
+  flwGrnteYn: 'Y',
+  bgncstYmd: '2025-01-01',
+  cmcnYmd: '2025-12-31',
+  etcMttr: undefined,
+  ctrtYmd: '2025-01-01',
+  ctrtBgngYmd: '2025-01-01',
+  ctrtEndYmd: '2025-12-31',
+  scbdrCfmtnYmd: '2025-12-31',
+  bidYmd: '2025-01-01',
+  pfrAplcnMthdCd: '국계령 제XX조 ...',
+  bidMthdCd: '총액제',
+  prcsRsn: '계약확정',
+  mdfcnCtrtRncd: '기타',
+  relBssCn: '00000',
+  bscbgtCtrtAmt: 1000000,
+  govbndCtrtAmt: 1000000,
+  sumAmt: 2000000,
+  tbkpngAmt: 2000000,
+  grnteAmt: 1000,
+  lqdmgRt: 0.15,
+  pbdbtPrchsAmt: 300000000,
+  scbrt: 88,
+  scsbdAmt: 500000000,
+  prnmntAmt: 550000000,
+  nhbdPrchsAmt: 200000000,
+  managers: [{ tkcgSecd: '계약담당관', picNm: '홍길동 8급' }],
+  taskSecd: '공사',
+  ctrtStatNm: '계약진행',
+  ctrtAmt: 2596060616000,
+}
+
+// 하자담보책임(T11) — 여러 데이터가 있는 경우 추가 표시(slide41).
+const CTRT_CNSTP_FLWS: CtrtCnstpFlw[] = [
+  {
+    id: 'flw-1',
+    cnstpNm: '철근콘크리트공사',
+    cnstpCtrtAmt: 300000000,
+    dfrpGrnteAmtRt: 3,
+    wrtrspPrdCn: '5 년',
+  },
+  {
+    id: 'flw-2',
+    cnstpNm: '토공사',
+    cnstpCtrtAmt: 150000000,
+    dfrpGrnteAmtRt: 2,
+    wrtrspPrdCn: '2 년',
+  },
+]
+
+// ── MUI-CT-01-M05 물품일반계약서상세 — 설계서 slide63~65 목업값 ────────────────
+const CMDTY_GNRL_CTRDOC_DTL: CmdtyGnrlCtrdocDtl = {
+  ctrtNo: '20250000007',
+  ctrtCycl: '01',
+  prcmNo: '99006',
+  orderInstNm: '제8385부대',
+  ctrdocTpcd: '물품제조구매계약서',
+  intgRfrncNo: '20260130',
+  ctrtMthdCd: '제한경쟁',
+  ctrtYmd: '2026-01-30',
+  scrtNo: '0000-0000-00',
+  pvctRncd: undefined,
+  etcMttr: undefined,
+  bscbgtCtrtAmt: 1000000,
+  govbndCtrtAmt: 1000000,
+  sumAmt: 2000000,
+  tcstrnBkpngAmt: 2000000,
+  grnteAmt: 1000,
+  lqdmgRt: 0.15,
+  depsPayMthdCd: '전자보증',
+  pfrAplcnMthdCd: '국계령 제XX조 ...',
+  dlvgdsYmd: '2026-12-31',
+  dlvgdsPlcNm: '경기도 00시 00구 00동 000-00',
+  bzenty: {
+    bzentyNm: 'A 업체',
+    brno: '111-11-11111',
+    rprsvNm: '홍길동',
+    telno: '02-1234-6789',
+    bzentyAddr: '서울특별시 종로구 …',
+    fnstCd: '농협',
+    actno: '111111-00000-01',
+    dpstrNm: 'A 업체',
+  },
+  managers: [
+    { tkcgSecd: '구매담당', picNm: '홍길동 8급' },
+    { tkcgSecd: '원가담당', picNm: '김길동 8급' },
+    { tkcgSecd: '계약담당', picNm: '박길동 7급' },
+  ],
+  taskSecd: '물품',
+  rprsItemNm: '000000 모델',
+  ctrtAmt: 11616000,
+}
+
+// ── MUI-CT-01-M06 물품수정계약서상세 — 설계서 slide76~77 목업값 ────────────────
+const CMDTY_MDFCN_CTRDOC_DTL: CmdtyMdfcnCtrdocDtl = {
+  ctrtNo: '20250000004',
+  ctrtCycl: '02',
+  ctrtYmd: '2026-01-30',
+  orgctNo: '20250000004',
+  orgctYmd: '2026-01-30',
+  rprsItemNm: '000000 모델',
+  mdfcnRncd: '물량 변경',
+  etcMttr: "계약특수조건 제11조 ① 항 \"XX년 계약납기 조정(....",
+  mdfcnCtrtIncrsAmt: 1000000,
+  mdfcnCtrtCtbkAmt: 1000000,
+  grnteAmt: 1000000,
+  diffAmt: 1000000,
+  depsSecd: '[K]공제조합보증서',
+  bzenty: {
+    bzentyNm: 'A 업체',
+    brno: '111-11-11111',
+    rprsvNm: '홍길동',
+    telno: '02-1234-6789',
+    bzentyAddr: '서울특별시 종로구 …',
+    fnstCd: '농협',
+    actno: '111111-00000-01',
+    dpstrNm: 'A 업체',
+  },
+  managers: [{ tkcgSecd: '계약담당', picNm: '홍길동 8급' }],
+  pbancNo: '99003',
+  taskSecd: '물품',
+  bidMthdCd: '총액제',
+  ctrtMthdCd: '수의계약',
+  ctrtStatNm: '계약수정',
+  orderInstNm: '육군군수사령부',
+  ctrtAmt: 384120000,
+}
+
+// 수정계약명세서(T23·P13) — 설계서 slide78·93 목업값(을/으로 2건).
+const CMDTY_MDFCN_CTRDOC_DTST: CmdtyMdfcnCtrdocDtstResult = {
+  ctrtInfo: {
+    ctrtNo: '20250000004',
+    mdfcnCtrtCycl: '01',
+    ctrtNm: '00사단 주차장 신축 자재 구매',
+    bzentyNm: 'A 업체',
+  },
+  mdfcnArtclNm: '수량',
+  items: [
+    {
+      id: 'mdfcn-1',
+      rnum: 1,
+      se: '으로',
+      prcmRqtNo: 'MWDW26010001',
+      invtNo: '8405000000',
+      prcmRqtInstCd: '육군',
+      fscCd: '일반우의',
+      bgtCd: '장기국채',
+      bgtSecd: '1700-0000-0000',
+      biz: '1200-000-0000',
+      aprvYmd: '2025-01-01',
+    },
+    {
+      id: 'mdfcn-2',
+      rnum: 2,
+      se: '을',
+      prcmRqtNo: 'MWDW26010001',
+      invtNo: '8405000000',
+      prcmRqtInstCd: '육군',
+      fscCd: '일반우의',
+      bgtCd: '장기국채',
+      bgtSecd: '1700-0000-0000',
+      biz: '1200-000-0000',
+      aprvYmd: '2025-01-01',
+    },
+  ],
+  sums: {
+    sumCtrtQty: 20000,
+    sumCtrtAmt: 300000000,
+    sumQqtyIcdcDsctn: 20000,
+    sumAmtIcdcDsctn: 300000000,
+  },
+}
+
+// 물품최종계약명세서(P12) — 설계서 slide91 목업값.
+const CTRT_LAST_DTST_ITEMS: CtrtLastDtstItem[] = [
+  {
+    id: 'last-1',
+    ctrtNo: '20250000001',
+    prcmRqtNo: 'MB2026010002',
+    invtNo: '000 000 0000',
+    fscCd: '전선',
+    ctrtQty: 1000,
+    ctrtUntprc: 500,
+    ctrtAmt: 500000,
+    dudt: '2026-12-31',
+    plcdlv: '50001001',
+    plcdlvQty: 1000,
+  },
+]
+
+// 특수조건(T24) — 설계서 slide79 목업값.
+const CTRT_SPCL_CND: CtrtSpclCnd = {
+  spclCnd:
+    '용역계약 특수조건(XXX 모델)\n제1조(계약당사자 등의 표시) 이 특수조건에서 사용하는 계약당사자 동의 표시는 다음과 같다.',
+}
+
+// ── MUI-CT-01-M07/M08 물품총액/단가계약서상세 — 설계서 slide48~49·56~57 목업값 ──
+const CMDTY_CTRDOC_DTL_BASE = {
+  rprsItemNm: '000000 모델',
+  ctrtCycl: '01',
+  ctrtYmd: '2026-01-30',
+  pbancNo: '99001',
+  ctrtMthdCd: '수의계약',
+  dlvgdsYmd: '2026-01-30',
+  dlvgdsPlcNm: '제8385부대',
+  etcMttr: undefined,
+  pfrAplcnMthdCd: '국계령 제XX조 ...',
+  bscbgtCtrtAmt: 1000000,
+  govbndCtrtAmt: 1000000,
+  sumAmt: 2000000,
+  tbkpngAmt: 2000000,
+  grnteAmt: 1000,
+  lqdmgRt: 0.15,
+  bzenty: {
+    bzentyNm: 'A 업체',
+    brno: '111-11-11111',
+    rprsvNm: '홍길동',
+    telno: '02-1234-6789',
+    bzentyAddr: '서울특별시 종로구 …',
+    fnstCd: '농협',
+    actno: '111111-00000-01',
+    dpstrNm: 'A 업체',
+    payMthdCd: '전자보증',
+  },
+  managers: [{ tkcgSecd: '계약담당', picNm: '홍길동 8급' }],
+  taskSecd: '물품',
+  ctrtStatNm: '계약확정',
+  orderInstNm: '제8385부대',
+  ctrtAmt: 11616000,
+}
+
+const CMDTY_CTRDOC_DTLS: Record<'gramt' | 'untprc', CmdtyCtrdocDtl> = {
+  // 총액제(M07)
+  gramt: { ...CMDTY_CTRDOC_DTL_BASE, ctrtNo: '20250000008', bidMthdCd: '총액제' },
+  // 단가제(M08) — 부서명·조달판단번호 추가(slide57)
+  untprc: {
+    ...CMDTY_CTRDOC_DTL_BASE,
+    ctrtNo: '20250000009',
+    bidMthdCd: '단가제',
+    deptCd: '000-0000-00',
+    prcmNo: '99008',
+  },
+}
+
+// 계약명세서 탭(T14/T17) — 예산구분 그룹(장기국채/총계/예산별 소계, slide50·58).
+const CMDTY_CTRDOC_DTSTS: Record<'gramt' | 'untprc', CmdtyCtrdocDtstResult> = {
+  gramt: {
+    deptCd: '000 부서',
+    prcmNo: '111-11-11111',
+    groups: [
+      {
+        id: 'grp-1',
+        bgtCd: '장기국채',
+        items: [
+          {
+            id: 'g-1',
+            bzentyNm: undefined, // 공동계약업체 없음 → '-'
+            prcmRqtNo: 'MWDW26010001',
+            invtNo: '8404000000',
+            fscCd: '일반우의',
+            aplcnEqpmntCd: undefined,
+            prcmRqtInstCd: '육군',
+            bgtSecd: '1200-0000-0000',
+          },
+        ],
+      },
+      {
+        id: 'grp-2',
+        bgtCd: '총계',
+        items: [{ id: 'g-2', bgtSecd: '1200-0000-0000' }],
+      },
+      {
+        id: 'grp-3',
+        bgtCd: '예산별 소계',
+        items: [{ id: 'g-3', bgtSecd: '1200-0000-0000' }],
+      },
+    ],
+  },
+  untprc: {
+    deptCd: '000 부서',
+    prcmNo: '111-11-11111',
+    groups: [
+      {
+        id: 'grp-1',
+        bgtCd: '장기국채',
+        items: [
+          {
+            id: 'u-1',
+            clsfNo: undefined,
+            invtNo: '8405000000',
+            fscCd: '일반우의',
+            unitCd: 'EA',
+            ctrtQty: 100,
+            ctrtUntprc: 10000,
+            itemAmt: 1000000,
+            dudt: '2026-12-31',
+            plcdlv: '50001001',
+            plcdlvQty: 100,
+          },
+        ],
+      },
+      {
+        id: 'grp-2',
+        bgtCd: '총계',
+        items: [{ id: 'u-2', bgtSecd: '1200-0000-0000' }],
+      },
+    ],
+  },
+}
+
+// ── MUI-CT-01-M10 공사계약서상세 — 설계서 slide69~72 목업값 ───────────────────
+const CSTRN_CTRDOC_DTL: CstrnCtrdocDtl = {
+  ctrtNo: '20250000010',
+  ctrtCycl: '01',
+  fcltLbsvcSecd: '공사계약서',
+  ctrtNm: '000000 공사',
+  prcmNo: '99001',
+  orderInstNm: '제8385부대',
+  ctrtMthdCd: '제한경쟁',
+  depsPayMthdCd: '전자보증',
+  bgncstYmd: '2026-01-30',
+  cmcnYmd: '2026-12-30',
+  ctrtYmd: '2026-01-30',
+  etcMttr: undefined,
+  pvctRncd: undefined,
+  pfrAplcnMthdCd: '국계령 제XX조 ...',
+  bscbgtCtrtAmt: 1000000,
+  govbndCtrtAmt: 1000000,
+  sumAmt: 2000000,
+  tcstrnBkpngAmt: 2000000,
+  grnteAmt: 1000,
+  lqdmgRt: 0.15,
+  bzenty: {
+    bzentyNm: 'A 업체',
+    brno: '111-11-11111',
+    rprsvNm: '홍길동',
+    telno: '02-1234-6789',
+    bzentyAddr: '서울특별시 종로구 …',
+    fnstCd: '농협',
+    actno: '111111-00000-01',
+    dpstrNm: 'A 업체',
+  },
+  managers: [{ tkcgSecd: '계약담당', picNm: '홍길동 8급' }],
+  taskSecd: '공사',
+  ctrtStatNm: '계약확정',
+  ctrtAmt: 11616000,
+}
+
+// 연대보증(T21) — 추가 내용에 따라 표시(slide72).
+const CTRT_JNT_GRNTES: CtrtJntGrnte[] = [
+  {
+    id: 'jnt-1',
+    rnum: 1,
+    bzentyNm: 'A 업체',
+    fnstCd: '농협',
+    brno: '123-45-67890',
+    actno: '00000-0000-00',
+    rprsvNm: '홍길동',
+    dpstrNm: 'A 업체',
+    bzentyAddr: '서울특별시 종로구 …',
+    telno: '02-1234-5678',
+  },
+]
+
+// ── MUI-CT-01-M15 대금지불정보목록 — 설계서 slide100~101 목업값 ────────────────
+const PYMT_DFRY_INFO_LIST: PymtDfryInfoItem[] = [
+  {
+    id: 'pymt-1',
+    rnum: 1,
+    checkPblcnYmd: '2025-12-23',
+    evdncNo: '000001',
+    ctrtNo: '20250000001',
+    ctrtNm: '물품 구매',
+    taskSeNm: '물품',
+    expndAmt: 11616000,
+    lqdmgAmt: 0,
+    nttrRdmAmt: 0,
+    bzentyNm: 'A 업체',
+  },
+  {
+    id: 'pymt-2',
+    rnum: 2,
+    checkPblcnYmd: '2025-11-15',
+    evdncNo: '000002',
+    ctrtNo: '20250000002',
+    ctrtNm: '000 시설공사',
+    taskSeNm: '공사',
+    expndAmt: 259606000,
+    lqdmgAmt: 1500000,
+    nttrRdmAmt: 0,
+    bzentyNm: 'B 업체',
+  },
+]
+
+// 대금지불정보조회(P16) — 설계서 slide102 목업값.
+const PYMT_DFRY_INFO_INQS: PymtDfryInfoInqItem[] = [
+  {
+    id: 'pymt-inq-1',
+    expndYmd: '2025-12-23',
+    ctrtNo: '20250000001',
+    dsbofrEvdncNo: '0000001',
+    expndAmt: 11616000,
+    bzentyNm: 'A 업체',
+    rtnSe: undefined, // 반납 아님 → '-' 표시
+  },
+]
+
+// 계약진행상태(P17) — 설계서 slide84 목업값(국내: 처리상태/부대·업체/처리일시).
+const CTRT_PRGRS_STTS: CtrtPrgrsStts[] = [
+  {
+    id: 'stts-1',
+    ctrtPrgrsStcd: '계약서작성',
+    prcsSbsdBzenty: '000000부대',
+    prcsDt: '2026-01-01 01:01:00',
+  },
+  {
+    id: 'stts-2',
+    ctrtPrgrsStcd: '서류요청',
+    prcsSbsdBzenty: 'ㅌㅌㅌ부대',
+    prcsDt: '2026-01-01 01:01:00',
+  },
+  {
+    id: 'stts-3',
+    ctrtPrgrsStcd: '서류등록',
+    prcsSbsdBzenty: 'A 업체',
+    prcsDt: '2026-01-01 01:01:00',
+  },
+]
+
+// 보증서 확인팝업(M73) — 설계서 T73(slide160) 목업값.
+const CTRT_GRNTES: CtrtGrnteResult = {
+  ctrtInfo: { ctrtNo: '20250000001 (01)', ctrtYmd: '2026-02-10' },
+  wtgrInfos: [
+    {
+      id: 'wtgr-1',
+      ctrtBzentyCd: 'A 업체',
+      bzentySeCd: '대표업체',
+      payMthdCd: '전자보증서',
+      payYmd: '2026-03-01',
+      wtgrScrtNo: '111112345',
+      grnteBgngYmd: '2026-03-01',
+      grnteEndYmd: '2026-03-10',
+      grnteAmt: 12300000,
+      grnteInstNm: '서울보증',
+      depsExmptnRsnCd: undefined, // 면제 아님 → '-' 표시
+      ctrtYmd: '2026-03-05',
+    },
+  ],
+}
+
+// 인지세 확인팝업(M74) — 설계서 T74(slide162) 목업값.
+const CTRT_STMTX: CtrtStmtxResult = {
+  ctrtInfo: { ctrtYr: '2025', ctrtNo: '20250000001', ctrtOd: '01' },
+  payInfos: [
+    {
+      id: 'stmtx-1',
+      ctrtNo: '20250000001',
+      useYn: '미사용',
+      bzentyCd: '7001F',
+      bzentyNm: 'A 업체',
+      enbrno: '123-45-67890',
+      payNo: '2011030000000001',
+      payYmd: '2026-03-10',
+      payAmt: 10000000,
+      rmrkCn: undefined,
+    },
+  ],
+  payAmt: { payTrgtAmt: 123456, payAmt: 5771427, unpaidAmt: 3933.29 },
+}
+
+// 물품계약명세서(P11) — 설계서 slide87 목업값(품목 2건).
+const CMDTY_CTRT_DTST: CmdtyCtrtDtstResult = {
+  ctrtInfo: {
+    ctrtNo: '20250000001',
+    ctrtCycl: '01',
+    prcmNo: '99001',
+    orderInstNm: '00사단',
+    ctrtNm: '00사단 주차장 신축 자재 구매',
+    bizTpcd: '구매',
+    ctrtAmt: 2000000,
+    bscbgtCtrtAmt: 1000000,
+    govbndCtrtAmt: 1000000,
+  },
+  items: [
+    {
+      id: 'dtst-1',
+      rnum: 1,
+      clsfNo: '000 000 0000',
+      bgtCd: '일반예산',
+      prcmRqtNo: 'MB2026010001',
+      fscCd: '패널, 조명기구용',
+      spcfctNo: '1000001',
+      spcfctKndCd: '기타',
+      unitCd: 'EA',
+      ctrtQty: 100,
+      plcdlv: '50001001',
+      dlvQty: 100,
+      dudt: '2026-12-31',
+      itemAmt: 1000000,
+    },
+    {
+      id: 'dtst-2',
+      rnum: 2,
+      clsfNo: '000 000 0000',
+      bgtCd: '일반예산',
+      prcmRqtNo: 'MB2026010002',
+      fscCd: '전선',
+      spcfctNo: '1000002',
+      spcfctKndCd: '기타',
+      unitCd: 'M',
+      ctrtQty: 1000,
+      plcdlv: '50001001',
+      dlvQty: 1000,
+      dudt: '2026-12-31',
+      itemAmt: 500000,
+    },
+  ],
+}
+
+// ── MUI-CT-01-M71 국외전자계약진행상세 — 설계서 slide149~151 목업값 ────────────
+const OVS_ELCTR_CTRT_DTL: OvsElctrCtrtDtl = {
+  ctrtNo: 'KD111111111',
+  ctrtCycl: '00',
+  pbancNo: '99001',
+  intgRfrncNo: undefined,
+  ctrtNm: 'MODEL-3',
+  ctrtYmd: '2025-03-03',
+  elctrCtrtPrgrsSttsCd: '서류요청',
+  orderInstNm: '국제확정전력운영계약팀',
+  prcmRqtInstCd: '육군',
+  bizSeCd: '전력운영사업',
+  ctrtBzentyCd: 'TESLA',
+  ctrtAmt: '1,000.00',
+  ctrtRsnCd: undefined,
+  ctrtPrgrsCd: '제조계약서',
+  grntePrdDayCnt: '24개월',
+  picId: '최인선',
+  fwkSeCd: 'G',
+  gnrlCndCd: '1',
+  gnrlCndNm: undefined,
+  bzentyCd: undefined,
+  ntnCd: '미국',
+  cmdtySgn: 'D',
+  prdctnBzentyCd: undefined,
+  ctrtMthdNm: '일반경쟁',
+  crncCd: '미 달러',
+  pvctRsnCd: undefined,
+  pymtDfryCndCd: '인수도조건',
+  grnteAmtDepstRt: '10',
+  prcCndCd: 'Free Carrier : 운송인인도조건',
+  inspShpCd: '공급자 2년 보증형태',
+  itemCnt: '19',
+  bizTypeCd: '구매',
+  expcDudtYmd: '2025-03-30',
+  bizAprvYmd: undefined,
+  implTypeItemCd: '수리부속',
+  lastShpgYmd: undefined,
+  ofstCndCd: undefined,
+  ofstBizMngNo: undefined,
+  unCpc: undefined,
+  dudtMm: undefined,
+  aprvYmd: undefined,
+  prttnShpgYn: 'N',
+  prttnShpgNmtm: '0',
+  arrsLimRt: '10(%)',
+  lqdmgRt: '0.15(%)',
+  rdprcRt: '0(%)',
+  rdprcAmt: undefined,
+  ctrtGrnteAmt: '1,000',
+  payMthdCd: '전자보증서',
+  trnsMthdCd: '선박',
+  scrtNo: '없음',
+  stmtxAplcnCd: '미사용',
+  stmtxPayAmt: '0 원',
+  ctrtAmts: {
+    ctrtFrcncyAmt: '123,456.00 NTD',
+    ctrtKrwAmt: '5,771,427 KRW',
+    ctrtUsdAmt: '3,933.29 USD',
+  },
+  prchsShps: [
+    { id: 'aog', label: 'AOG', dudt: '0', arrsLimRt: '0 (%)', rdprcRt: '0 (%)' },
+    { id: 'emrg', label: 'URGENT', dudt: '0', arrsLimRt: '0 (%)', rdprcRt: '0 (%)' },
+    { id: 'routn', label: 'ROUTINE', dudt: '0', arrsLimRt: '0 (%)', rdprcRt: '0 (%)' },
+  ],
+  bzentys: [
+    {
+      id: 'ovs-bz-1',
+      ctrtBzentyNm: 'TESLA',
+      enbrno: '111-11-11111',
+      rprsvNm: '홍길동',
+      fnstCd: 'HSBC',
+      dpstrNm: 'TESLA',
+      elsgnYmd: '2025-03-03',
+      depsPayMthdCd: '보증보험',
+      grnteAmt: '10,000 USD',
+      bacntRlnmNo: '123456',
+      enacno: '11111-11-111111',
+    },
+  ],
+  managers: [{ tkcgSecd: '-', picNm: '최인선' }],
+  taskSecd: '국외',
+  summaryAmt: '3,933.29 USD',
+}
+
+// 국외 계좌정보(T72) — 설계서 slide156 목업값.
+const OVS_BACNT_INFO: OvsBacntInfo = {
+  ctrtInfo: {
+    ctrtNo: 'KD111111111 (00)',
+    orderInstNm: '국제확정전력운영계약팀',
+    crtrNm: 'MODEL-3',
+    bizTypeCd: '구매',
+  },
+  bzentyInfo: {
+    ctrtBzentyNm: 'TESLA',
+    enbrno: '111-11-11111',
+    rprsvNm: '홍길동',
+    bzentyAddr: '서울특별시 종로구 …',
+    bzentyAddr2: 'Seoul, Korea',
+  },
+  bacntInfo: {
+    fnstCd: '123456',
+    fnstEnbrno: '123-45-67890',
+    fnstNm: '농협',
+    atrzMthCd: '송금',
+    dpstrNm: '홍길동',
+    bacntRlnmNo: '123456',
+    enacno: '11111-11-111111',
+  },
+  dsgnPtr: {
+    dsgnPtrNm: '김길동',
+    ptrAddr: '서울특별시 종로구 …',
+    ptrEntlno: '02-1234-5678',
+    ptrFxno: '02-2345-6789',
+  },
+  mkrPtr: { mkrNm: 'SAMSUNG', mkrNtnNm: 'KOREA' },
+}
+
+// 국외 계약명세서(T75) — 설계서 slide164 목업값.
+const OVS_CTRT_DTST: OvsCtrtDtstResult = {
+  ctrtInfo: {
+    ctrtNo: 'KD111111111',
+    jdgmtNo: 'AAA12345',
+    orderInstNm: '국제확정전력운영계약팀',
+    crtrNm: 'MODEL-3',
+    bizTypeCd: '구매',
+    ctrtFrcncyAmt: '￦ 3,000,000 원',
+    ctrtAmt: '[USD] 3,000.00',
+    ctrtUsdAmt: '$ 3,000',
+  },
+  items: [
+    {
+      id: 'ovs-dtst-1',
+      regSn: 1,
+      artclNo: '003',
+      prcmRqtNo: 'MBC123456789',
+      unitNm: 'EA',
+      itemQty: 3,
+      fscCdInvtNo: '0000-123456789',
+      prtsNo: '12345',
+      aplcnEqpmnt: '1234567',
+      plcdlvCd: '-',
+      itemUntprc: 1000,
+      itemNm: 'MODEL-3 수리부속',
+      bgtSeCd: undefined,
+      dudtYmd: undefined,
+      ctrtAmt: 3000,
+    },
+  ],
+  sumAmt: 10000000,
+}
+
+// 국외 첨부서류(T76) — 국내와 동일 + 직인등록정보(slide167).
+const OVS_CTRT_ADOCS: OvsCtrtAdocResult = {
+  refDocs: [
+    {
+      id: 'ovs-ref-1',
+      ctrtDcmntNm: '물품제조구매계약서',
+      ctrtDcmntFile: '첨부파일명.hwp',
+      fileSize: '786KB',
+    },
+    {
+      id: 'ovs-ref-2',
+      ctrtDcmntNm: '계약명세서',
+      ctrtDcmntFile: '첨부파일명이너무길면어떻게노출.zip',
+      fileSize: '786KB',
+    },
+  ],
+  sbmsnDocs: [
+    {
+      id: 'ovs-sbmsn-1',
+      ctrtDcmntNm: '물품제조구매계약서',
+      ctrtDcmntFile: '첨부파일명.hwp',
+      fileSize: '786KB',
+    },
+  ],
+  ofslRegs: [{ id: 'ofsl-1', bzentyNm: 'TESLA', ofslFileNm: '직인파일.png', ofslFileRegYn: 'Y' }],
+}
+
+// ── MUI-CT-01-M77 상업계약서상세 — 설계서 slide178~181 목업값 ──────────────────
+const OVS_CMBZ_CTRDOC_DTL: OvsCmbzCtrdocDtl = {
+  ofcctrDeptNm: '국제확정전력운영계약팀',
+  picNm: '홍길동',
+  ctrtNo: 'KD111111111',
+  prchsDmndNo: 'AAA12345 등',
+  itemNm: 'IX3',
+  bizSeCd: '전력운영사업',
+  ctrtMthdNm: '일반경쟁',
+  ctrtShpCd: '확정계약',
+  crncCd: 'USD',
+  frcncyAmts: {
+    bscbgtFrcncyAmt: '0 USD',
+    thsyrGovbndFrcncyAmt: '0 USD',
+    ltrmGovbndFrcncyAmt: '0 USD',
+    gramtFrcncy: '1,000,000 USD',
+  },
+  krwAmts: {
+    bscbgtAmt: '0 KRW',
+    thsyrGovbndAmt: '0 KRW',
+    ltrmGovbndAmt: '0 KRW',
+    gramt: '1,000,000,000 KRW',
+  },
+  addInfo: {
+    ctrtGrnteAmt: '100,000 KRW',
+    ctrtGrnteAmtRt: '10.00 %',
+    lqdmgRt: '0.00 %',
+    prpamt: '0.00 USD',
+    prpamtRt: '0.00 %',
+    qltyGrntePrd: '0 일',
+    trnsMthdCd: '선박',
+    shplc: 'GR01',
+    prcCndCd: 'Free Carrier : 운송인인도조건',
+    lastDudtYmd: '2026-03-03',
+    inspShpCd: undefined,
+    prttnShpgNmtm: undefined,
+  },
+  guideCn:
+    '방위사업청 계약담당 공무원과 계약상대자는 붙임의 계약문서에 의하여 위 물품에 대한 구매계약을 체결하고 신의에 따라 성실히 계약상의 의무를 이행할 것을 확인하며, 이 계약의 증거로 계약서를 작성하며 당사자가 기명 날인 후 각각 1통씩 보관한다.',
+  attachedDocs: ['계약서표지', '계약 일반조건', '계약 특수조건', '물품명세서', '기타 증거 자료'],
+  pbancNo: '99001',
+  taskSecd: '국외',
+  ctrtYmd: '2025-03-03',
+  orderInstNm: '국제확정전력운영계약팀',
+  summaryAmt: '3,933.29 USD',
+}
+
+// 상업계약서 계약명세서(T78) — GRAND-TOTAL + 그룹 목록(slide180).
+const OVS_CMBZ_DTST: OvsCmbzDtstResult = {
+  gramt: '100.00 USD',
+  groups: [
+    { id: 'cmbz-grp-1', no: 1, prchsDmndNo: 'AAA12345', groupNo: '001', itemGramt: '100.00' },
+    { id: 'cmbz-grp-2', no: 2, prchsDmndNo: 'AAA12345', groupNo: '002', itemGramt: '100.00' },
+  ],
+}
+
+// 상업계약서 계약대상(T79) — slide181.
+const OVS_CMBZ_TRGT: OvsCmbzTrgt = {
+  ofcctrNm: '방위사업청 계약관',
+  bzenty: {
+    ctrtBzentyNm: '[7001F] TESLA',
+    ctrtBzentyAddr: '서울특별시 종로구 …',
+    rprsvNm: '홍길동',
+    ctrtBzentyEntlno: '02-1234-5678',
+    ctrtBzentyFxno: '02-2345-6789',
+    enbrno: '123-45-67890',
+    dunsNo: undefined,
+  },
+  agent: {
+    bzentyNm: '테스트업체',
+    bzentyAddr: '서울특별시 종로구 …',
+    bzentyEntlno: '02-1234-5678',
+    bzentyFxno: '02-2345-6789',
+  },
+}
+
+// 상업계약서명세서(P78) — slide185 목업값.
+const OVS_CMBZ_CTRT_DTST: OvsCmbzCtrtDtstResult = {
+  ctrtInfo: {
+    ctrtNo: 'KD111111111',
+    prchsDmndNo: 'AAA12345',
+    ctrtNm: 'IX3',
+    groupNo: '001',
+    ctrtBzentyNm: 'TESLA',
+    ctrtMthdNm: '일반경쟁',
+    crncCd: 'USD',
+  },
+  items: [
+    {
+      id: 'cmbz-item-1',
+      artclNo: '2',
+      prcmRqtNo: 'MBCLMH13630691',
+      invtNo: '012305317',
+      prtsNo: '958AS535',
+      itemNm: 'LAUNCHER,ROCKET,AI',
+      bgtSeCd: '16',
+      unitNm: 'EA',
+      itemQty: 17,
+      itemUntprc: '10.00 USD',
+      gramt: '170.00 USD',
+    },
+    {
+      id: 'cmbz-item-2',
+      artclNo: '2',
+      prcmRqtNo: 'MBCLMH13630691',
+      invtNo: '012305317',
+      prtsNo: '958AS535',
+      itemNm: 'LAUNCHER,ROCKET,AI',
+      bgtSeCd: '16',
+      unitNm: 'EA',
+      itemQty: 17,
+      itemUntprc: '10.00 USD',
+      gramt: '170.00 USD',
+    },
+  ],
+  itemGramt: '340.00',
+}
+
+export const MOCK_CT = {
+  ctrtIntgList: CTRT_INTG_LIST,
+  ctrtPrgrsDtl: CTRT_PRGRS_DTL,
+  cstrnCtrtPrgrsDtl: CSTRN_CTRT_PRGRS_DTL,
+  ctrtCnstpFlws: CTRT_CNSTP_FLWS,
+  cstrnCtrdocDtl: CSTRN_CTRDOC_DTL,
+  ctrtJntGrntes: CTRT_JNT_GRNTES,
+  pymtDfryInfoList: PYMT_DFRY_INFO_LIST,
+  pymtDfryInfoInqs: PYMT_DFRY_INFO_INQS,
+  ctrtPrgrsStts: CTRT_PRGRS_STTS,
+  ovsElctrCtrtDtl: OVS_ELCTR_CTRT_DTL,
+  ovsBacntInfo: OVS_BACNT_INFO,
+  ovsCtrtDtst: OVS_CTRT_DTST,
+  ovsCtrtAdocs: OVS_CTRT_ADOCS,
+  ovsCmbzCtrdocDtl: OVS_CMBZ_CTRDOC_DTL,
+  ovsCmbzDtst: OVS_CMBZ_DTST,
+  ovsCmbzTrgt: OVS_CMBZ_TRGT,
+  ovsCmbzCtrtDtst: OVS_CMBZ_CTRT_DTST,
+  cmdtyGnrlCtrdocDtl: CMDTY_GNRL_CTRDOC_DTL,
+  cmdtyMdfcnCtrdocDtl: CMDTY_MDFCN_CTRDOC_DTL,
+  cmdtyCtrdocDtls: CMDTY_CTRDOC_DTLS,
+  cmdtyCtrdocDtsts: CMDTY_CTRDOC_DTSTS,
+  cmdtyMdfcnCtrdocDtst: CMDTY_MDFCN_CTRDOC_DTST,
+  ctrtLastDtstItems: CTRT_LAST_DTST_ITEMS,
+  ctrtSpclCnd: CTRT_SPCL_CND,
+  ctrtBzentys: CTRT_BZENTYS,
+  ctrtFctrys: CTRT_FCTRYS,
+  ctrtRjctRsns: CTRT_RJCT_RSNS,
+  ctrtAdocs: CTRT_ADOCS,
+  ctrtGrntes: CTRT_GRNTES,
+  ctrtStmtx: CTRT_STMTX,
+  cmdtyCtrtDtst: CMDTY_CTRT_DTST,
+}

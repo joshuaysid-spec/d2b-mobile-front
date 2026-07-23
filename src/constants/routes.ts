@@ -20,6 +20,10 @@ export const ROUTES = {
   BD_SRNG_RSLT: '/bd/srng-rslt',
   /** 개찰목록 (MUI-BD-08-M01). */
   BD_OPBID: '/bd/opbid',
+  /** 계약 통합목록 (MUI-CT-01-M01). */
+  CT: '/ct',
+  /** 대금지불정보목록 (MUI-CT-01-M15). */
+  CT_PYMT: '/ct/pymt',
   /** 입찰결과상세(개찰상세) (MUI-BD-09-M01~M04, `:id` 파라미터). 이동: `/bd/result/${id}`. */
   BD_RESULT_DETAIL: '/bd/result/:id',
   NOTIFICATION: '/notification',

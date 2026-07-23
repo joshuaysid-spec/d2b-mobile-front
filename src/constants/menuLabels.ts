@@ -13,6 +13,8 @@ export const LINKED_MENU_LABELS = {
   [ROUTES.BD]: '입찰공고통합목록',
   [ROUTES.BD_PRGRS]: '입찰진행목록',
   [ROUTES.BD_OPBID]: '개찰목록',
+  [ROUTES.CT]: '계약통합목록',
+  [ROUTES.CT_PYMT]: '대금지불정보목록',
   [ROUTES.SUPPORT_NOTICE]: '일반공지사항',
   [ROUTES.SUPPORT_NOTICE_DAPA]: '방위사업청공지사항',
   [ROUTES.SUPPORT_NOTICE_DMDFRC]: '수요부대별공지사항',

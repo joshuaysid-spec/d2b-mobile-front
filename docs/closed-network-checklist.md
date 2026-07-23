@@ -23,6 +23,16 @@
   - `OvsLockerPbanItem.tmprBidCnStts` / `bidPrtcpAplyStts` (보관함 카드 상태 버튼 구동)
   - `BidPrgrsItem` 진행 상태값(apfrStatNm/tndrStatNm 등) · `bidPrcSysNm`/`ctrtMthdNm` 등
   - 각 위치는 `src/types/bd.ts` 의 "설계서 데이터영역 미정의 임시 항목" 블록 주석 참조.
+  - **CT(계약) 임시 키** (`src/types/ct.ts`, 2026-07-23 CT-01 전 화면 구현 시 BD 선례로 추가):
+    - `CtrtIntgListItem.ctrtStatNm`(계약상태 뱃지: 계약진행/수정/최종/확정 — 목록·상세 분기 구동)
+    - `CtrtIntgListItem.ctrdocTpNm`(계약서유형 — 계약최종 카드의 M05/M07/M08 분기, CRTC 확정 시 교체)
+    - `CmdtyMdfcnCtrdocDtl.pbancNo` · `OvsElctrCtrtDtl.pbancNo`(문서정보 공고번호 — 항목표 미정의)
+    - `CmdtyElctrCtrtPrgrsDtl.itemSumAmt`(계약금액 표 '품목별 합계' — 항목표 미정의)
+    - T10 계약업체 '계약유형'(대표/구성) = `bzentySeCd` 재사용 · T03 반송/취소사유 탭 영문 ID 파생(`_RjctRsn`)
+    - M73/M74(보증서/인지세 확인팝업) 영문 화면 ID 미기재 — 임시 파일명 `GrnteCnfrm`/`StmtxCnfrm`
+- [ ] **CT 상세 분기 기준 확정**: 목록 카드 → 상세 분기(slide22)가 목록 데이터영역에 없는 항목
+  (계약상태·계약서유형)에 의존 — 백엔드 응답 확정 시 `CtrtIntgListPage.handleCardClick` 분기 정비.
+  바로가기 시트(M03/M09)의 진행단계별 버튼 노출 매트릭스(slide32/47)도 상태코드 확정 시 데이터 구동 전환.
 
 ## 2-1. 반입 직전 마지막 결정 — EP 맵 구조 유지 여부
 
