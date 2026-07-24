@@ -70,6 +70,10 @@ export const ROUTES = {
   SUPPORT_PRFMNC_PRDOC_REG: '/support/dcmnt-issu-aply/prfmnc-prdoc/reg',
   /** 국외조달원등록증신청목록 (MUI-CM-04-M21). 민원서류발급신청 허브 > 국외 조달원 등록증 신청 목록. */
   SUPPORT_OVS_SOS_CNFDOC: '/support/dcmnt-issu-aply/ovs-sos-cnfdoc',
+  /** 국외조달원등록증신청 (MUI-CM-04-M22). 국외 조달원 등록증 신청 목록 > 신청. */
+  SUPPORT_OVS_SOS_CNFDOC_REG: '/support/dcmnt-issu-aply/ovs-sos-cnfdoc/reg',
+  /** 법령조회=법령정보 (MUI-CM-04-M24). 고객센터 > 법령조회(법령 목록·외부링크). */
+  SUPPORT_STT_INFO_LIST: '/support/stt-info-list',
   /** 인증센터 (MUI-CM-04-M13). 홈 유관기관 바로가기 진입. */
   CERT: '/cert',
   /** 인증서 관리 (MUI-CM-04-M14). 인증센터 > 인증서 관리 진입. */

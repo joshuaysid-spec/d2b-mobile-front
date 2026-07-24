@@ -551,6 +551,22 @@ export interface OvsSosAplyDataInfo {
   aplyRsn: string
 }
 
+/**
+ * 조달업체선택 결과 항목(dl_resultList) — MUI-CM-04-P23 `ovsSosCnfdocChc`.
+ * 국외조달원등록증신청(M22)의 [업체선택] 바텀시트 검색 결과. 설계서 00.공통 v0.84 slide343.
+ * 항목명(영문)은 설계서 dl_resultList 그대로.
+ */
+export interface OvsSosBzentyChcItem {
+  /** 업체코드 (R, 5) — 목록 key */
+  bzentyCd: string
+  /** 업체명 (R, 100) */
+  bzentyNm: string
+  /** 대표자명 (R, 100) */
+  rprsvNm: string
+  /** 대표전화 (R, 25) */
+  rprsvTelno: string
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // 업체정보 (dm_bzentyInfo). 설계서 00.공통 slide191 — MUI-CM-02-M01 사용자정보관리 데이터영역.
 //   민원서류발급신청(MUI-CM-04-M04) 상단 업체정보가 "MUI-CM-02-M01 화면 재사용"으로 공유.
@@ -779,6 +795,55 @@ export interface ItrstSttItem {
   sttEnfcYmd: string
   /** 링크(sttUrl) — 외부 법령 페이지 URL(관리자 작성). 500자. */
   sttUrl: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 법령조회 = 법령정보 (MUI-CM-04-M24 SttInfoListPage). 설계서 00.공통 v0.84 slide344·345.
+//   고객센터 > 법령조회. 법령구분(싱글 셀렉트)·법령명으로 조회, 카드 클릭 시 외부 브라우저로
+//   법령 원문(sttUrl) 이동, 즐겨찾기(sttItrst) 토글. 항목명(영문)은 slide345 dl_resultList 정본 그대로.
+//   ⚠️ 관심법령(ItrstSttItem)은 slide106 오기로 법령구분을 sttSeNm 으로 뒀으나, M24 는 정본대로 sttType.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 법령구분(sttType) 코드값 — GTSC0017. '전체'는 필터 전용(데이터값 아님). */
+export const STT_TYPES = [
+  '법령',
+  '대통령령',
+  '부령',
+  '조례',
+  '행정규칙',
+  '훈령',
+  '예규',
+  '고시',
+  '지침',
+  '공고',
+  '임의법령',
+] as const
+export type SttType = (typeof STT_TYPES)[number]
+
+/** 법령정보조회 검색조건(dm_searchInfo) — 설계서 slide345. */
+export interface SttInfoSearchFilter {
+  /** 법령구분(sttType) — 전체/11종. '전체'는 필터 전용. */
+  sttType: SttType | '전체'
+  /** 법령명(sttNm) — Like 검색어. */
+  sttNm: string
+}
+
+/** 법령정보조회 목록(dl_resultList) 1건 — 설계서 slide345 항목명(영문) 그대로. */
+export interface SttInfoItem {
+  /** 목록 key(로컬 식별) — 설계서 순번(no)은 표시순서라 안정 key 용 id 로 대체. */
+  id: string
+  /** 법령구분(sttType) — 200자. 코드 GTSC0017. */
+  sttType: SttType
+  /** 법령약어(sttAbbrNm) — 200자. */
+  sttAbbrNm: string
+  /** 법령명(sttNm) — 300자. */
+  sttNm: string
+  /** 시행일자(sttEnfcYmd) — 'YYYY-MM-DD'. 8자. */
+  sttEnfcYmd: string
+  /** 링크(sttUrl) — 외부 법령 원문 URL. 500자. */
+  sttUrl: string
+  /** 즐겨찾기(sttItrst) — 즐겨찾기유무(설계서 R,1자 → UI boolean). */
+  sttItrst: boolean
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

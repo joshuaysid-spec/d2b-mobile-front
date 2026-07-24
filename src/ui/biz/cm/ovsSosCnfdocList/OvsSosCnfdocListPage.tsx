@@ -3,10 +3,11 @@
 // 기 신청 내역 카드 목록(진행상태 신청/반려/승인). **상세 화면 없음**.
 // 카드 클릭: 신청(P)/승인(A) → 서류 출력 확인 팝업(MUI-BD-01-P14, AlertModal 인라인) → OZ 리포트(스텁).
 //   반려(R) → 카드에 반려사유만 표시, 클릭 무동작(팝업/상세 없음). (2026-07-20 요청)
-// 하단 [신청] 버튼 → 국외조달원등록증신청(MUI-CM-04-P22) — 현재 미구현 스텁(2026-07-20 풀팝업 제거).
+// 하단 [신청] 버튼 → 국외조달원등록증신청(MUI-CM-04-M22 OvsSosCnfdocRegPage) 페이지로 이동(2026-07-20 팝업→페이지).
 // 검색필터는 공통 SearchFilter 셸 schema 주입(기간*/검색어 발급 업체명/구분 진행상태).
 // mock 상단은 빠른검색 없이 필터 버튼만 — SearchCondition 필터 버튼과 동일 스타일 로컬 버튼.
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
 import { Badge } from '@/ui/common/base/Badge'
@@ -18,6 +19,7 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { cn } from '@/utils/cn'
+import { ROUTES } from '@/constants/routes'
 import type {
   SearchFilterSchema,
   SearchFilterValue,
@@ -138,6 +140,7 @@ const MOCK_LIST: OvsSosCnfdocItem[] = Array.from({ length: TOTAL }, (_, i) => {
 })
 
 export function OvsSosCnfdocListPage() {
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false) // 검색필터 풀팝업
   const [filter, setFilter] = useState<SearchFilterValue>(() => buildDefaultValue())
   const [filterApplied, setFilterApplied] = useState(false)
@@ -250,10 +253,7 @@ export function OvsSosCnfdocListPage() {
         <Button
           variant="primary"
           className="w-full"
-          onClick={() => {
-            // 추후: 국외조달원등록증신청(MUI-CM-04-P22 OvsSosCnfdocReg)
-            console.log('[OvsSosCnfdocList] 국외조달원등록증 신청(P22 미구현)')
-          }}
+          onClick={() => navigate(ROUTES.SUPPORT_OVS_SOS_CNFDOC_REG)}
         >
           신청
         </Button>

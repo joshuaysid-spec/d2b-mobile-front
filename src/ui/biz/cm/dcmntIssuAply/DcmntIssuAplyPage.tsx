@@ -69,8 +69,8 @@ export function DcmntIssuAplyPage() {
     {
       id: 'ovsSosCnfdocReg',
       label: '국외 조달원 등록증 신청',
-      // 추후: navigate — 국외조달원등록증신청(MUI-CM-04-P10, OvsSosCnfdocReg)
-      onClick: () => console.log('[DcmntIssuAply] 국외 조달원 등록증 신청'),
+      // 국외조달원등록증신청(MUI-CM-04-M22, OvsSosCnfdocRegPage) — 메뉴에서 바로 신청(slide340).
+      onClick: () => navigate(ROUTES.SUPPORT_OVS_SOS_CNFDOC_REG),
     },
   ]
 

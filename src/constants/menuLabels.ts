@@ -24,6 +24,7 @@ export const LINKED_MENU_LABELS = {
   [ROUTES.SUPPORT_SYS_IMPV]: '시스템개선안내',
   [ROUTES.SUPPORT_FAQ]: '자주묻는 질문',
   [ROUTES.SUPPORT_DCMNT_ISSU_APLY]: '민원서류발급신청',
+  [ROUTES.SUPPORT_STT_INFO_LIST]: '법령조회',
   [ROUTES.GUIDE_PREPARATION]: '조달사전준비안내',
   [ROUTES.GUIDE_DOMESTIC]: '국내조달안내',
   [ROUTES.GUIDE_FOREIGN]: '국외조달안내',

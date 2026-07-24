@@ -461,6 +461,18 @@ const OvsSosCnfdocListPage = lazy(() =>
     default: m.OvsSosCnfdocListPage,
   })),
 )
+// 국외조달원등록증신청(MUI-CM-04-M22, /support/dcmnt-issu-aply/ovs-sos-cnfdoc/reg) — biz/cm/ovsSosCnfdocReg.
+const OvsSosCnfdocRegPage = lazy(() =>
+  import('@/ui/biz/cm/ovsSosCnfdocReg/OvsSosCnfdocRegPage').then((m) => ({
+    default: m.OvsSosCnfdocRegPage,
+  })),
+)
+// 법령조회=법령정보(MUI-CM-04-M24, /support/stt-info-list) — biz/cm/sttInfoList.
+const SttInfoListPage = lazy(() =>
+  import('@/ui/biz/cm/sttInfoList/SttInfoListPage').then((m) => ({
+    default: m.SttInfoListPage,
+  })),
+)
 // 인증센터(MUI-CM-04-M13, /cert) — biz/cm/certMng. 홈 유관기관 바로가기 진입.
 const CertMngPage = lazy(() =>
   import('@/ui/biz/cm/certMng/CertMngPage').then((m) => ({ default: m.CertMngPage })),
@@ -1175,6 +1187,27 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: '국외 조달원 등록증' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 국외조달원등록증신청 (MUI-CM-04-M22) — 목록(M21) 하단 [신청] 진입.
+        // 정적 세그먼트 'reg' — 상세 :param 라우트 없음(형제 목록과 충돌 없음).
+        path: 'support/dcmnt-issu-aply/ovs-sos-cnfdoc/reg',
+        element: <OvsSosCnfdocRegPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '국외 조달원 등록증 신청' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 법령조회=법령정보 (MUI-CM-04-M24) — 고객센터 > 법령조회(전체메뉴 support-law).
+        path: 'support/stt-info-list',
+        element: <SttInfoListPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '법령조회' },
           scrollReset: true,
         },
       },
