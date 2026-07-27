@@ -1,4 +1,4 @@
-// 개인 인증서 확인 — MUI-CM-02-M06 개인신원확인의 인증서 비밀번호 확인 단계(설계서 00.공통 v0.84 slide201).
+// 개인 인증서 확인 — MUI-CM-02-P11 인증서확인(CrtfIdnty). 개인신원확인(M06)의 인증서 비밀번호 확인 단계(설계서 00.공통 v0.84 slide201).
 // BottomSheet 콘텐츠 전용 컴포넌트(컨테이너/footer/open 은 부모 IndvIdntIdntyPage 가 소유 — CLAUDE.md 바텀시트 패턴).
 // 안내문 + 선택된 인증서 카드 + 인증서 비밀번호 입력(+ 인증 실패 메시지).
 import { InputBox } from '@/ui/common/base/InputBox'

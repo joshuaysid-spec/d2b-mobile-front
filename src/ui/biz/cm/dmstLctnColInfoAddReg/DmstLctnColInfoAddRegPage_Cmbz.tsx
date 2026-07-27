@@ -1,7 +1,7 @@
 // 업체정보 추가등록 — 국내소재상사 (MUI-CM-01-M23, dmstLctnColInfoAddReg_Cmbz). 설계서 slide156~157(문서 P155~156).
 //   웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 업체정보 추가 등록(국내소재상사).
 //   구성(아코디언): 일반정보 · 법인/개인 구분 · 보안측정인원 · FSC · 영업정보 + 제출서류 안내(Infobox) + 조회 동의여부 → [추가 등록 신청][취소].
-//   소유 팝업(컨테이너=이 페이지): P10 보안측정인원등록(ScrtyMsrmtPrsnlReg) · P11 FSC선택(FSCChc) · P12 주거래은행선택(BankChc) · P14 확인(AlertModal 인라인).
+//   소유 팝업(컨테이너=이 페이지): P10 보안측정인원등록(ScrtyMsrmtPrsnlReg) · P11 FSC선택(FSCChc) · P12 주거래은행선택(BankChc) · MUI-CM-01-P14 확인팝업(Confirm — 별도 파일 없이 AlertModal 인라인 처리 확정).
 //   ⚠️ 국내소재상사(T04/M23)는 설계서에 데이터영역(항목명 영문) 표가 없어 화면 표기 기준 잠정 영문키(types/cm 참고).
 //      디자인(Figma) 없음 → 설계서(pptx)로 작업. 데이터=목업, 저장=API 경계 스텁(console.log). (2026-07-01 개정: 주민등록번호 삭제)
 import { useRef, useState } from 'react'
