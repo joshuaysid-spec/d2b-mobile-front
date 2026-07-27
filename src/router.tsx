@@ -523,6 +523,36 @@ const Foreign01Page = lazy(() =>
     default: m.Foreign01Page,
   })),
 )
+// 청렴계약제(MUI-CM-05-M08, /guide/preparation02) — biz/cm/preparation02. 이용안내 > 국내조달안내.
+const Preparation02Page = lazy(() =>
+  import('@/ui/biz/cm/preparation02/Preparation02Page').then((m) => ({
+    default: m.Preparation02Page,
+  })),
+)
+// 전자입찰절차 국내(MUI-CM-05-M10, /guide/domestic02) — biz/cm/domestic02. 이용안내 > 국내조달안내.
+const Domestic02Page = lazy(() =>
+  import('@/ui/biz/cm/domestic02/Domestic02Page').then((m) => ({
+    default: m.Domestic02Page,
+  })),
+)
+// 전자대금청구절차(MUI-CM-05-M11, /guide/domestic03) — biz/cm/domestic03. 이용안내 > 국내조달안내.
+const Domestic03Page = lazy(() =>
+  import('@/ui/biz/cm/domestic03/Domestic03Page').then((m) => ({
+    default: m.Domestic03Page,
+  })),
+)
+// 국외조달원 등록/변경안내(MUI-CM-05-M13, /guide/foreign02) — biz/cm/foreign02. 이용안내 > 국외조달안내.
+const Foreign02Page = lazy(() =>
+  import('@/ui/biz/cm/foreign02/Foreign02Page').then((m) => ({
+    default: m.Foreign02Page,
+  })),
+)
+// 전자입찰절차 국외(MUI-CM-05-M14, /guide/foreign03) — biz/cm/foreign03. 이용안내 > 국외조달안내.
+const Foreign03Page = lazy(() =>
+  import('@/ui/biz/cm/foreign03/Foreign03Page').then((m) => ({
+    default: m.Foreign03Page,
+  })),
+)
 // 관련사이트(MUI-CM-05-M15, /guide/site) — biz/cm/site. 이용안내 > 관련사이트.
 const SitePage = lazy(() =>
   import('@/ui/biz/cm/site/SitePage').then((m) => ({ default: m.SitePage })),
@@ -1328,6 +1358,56 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.GUIDE_FOREIGN] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 청렴계약제 (MUI-CM-05-M08) — 이용안내 > 국내조달안내 > 청렴계약제
+        path: 'guide/preparation02',
+        element: <Preparation02Page />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '청렴계약제' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 전자입찰절차 국내 (MUI-CM-05-M10) — 이용안내 > 국내조달안내 > 전자입찰절차
+        path: 'guide/domestic02',
+        element: <Domestic02Page />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '전자입찰절차' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 전자대금청구절차 (MUI-CM-05-M11) — 이용안내 > 국내조달안내 > 전자대금청구절차
+        path: 'guide/domestic03',
+        element: <Domestic03Page />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '전자대금청구절차' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 국외조달원 등록/변경안내 (MUI-CM-05-M13) — 이용안내 > 국외조달안내 > 국외조달원 등록/변경안내
+        path: 'guide/foreign02',
+        element: <Foreign02Page />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '국외조달원 등록/변경안내' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 전자입찰절차 국외 (MUI-CM-05-M14) — 이용안내 > 국외조달안내 > 전자입찰절차
+        path: 'guide/foreign03',
+        element: <Foreign03Page />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '전자입찰절차' },
           scrollReset: true,
         },
       },
