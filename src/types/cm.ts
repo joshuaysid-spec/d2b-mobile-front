@@ -269,6 +269,12 @@ export interface PrfmncPrdocItem {
   prcsYmd?: string
   /** 진행상태 (R, 1) — 신청/접수/처리중/발급/반려/보류 */
   prgrsStcd: string
+  /**
+   * 제출유형(증명서 종류) 코드 — 신청정보 탭 분기(방위사업청/unitB~I/비시설) 판단용.
+   * 설계서 화면엔 "제출유형" 문구만 있고 항목 설명에 영문 항목명 미정의(slide251~271) →
+   * TODO(설계서 영문ID 미확인). 값 예: '1'~'10'(1/2/5=unitB · 3=C · 4=D · 6=E · 7=F · 8=G · 9=H · 10=I).
+   */
+  sbmsnTyCd?: string
 }
 
 /**
@@ -332,6 +338,12 @@ export interface PrfmncPrdocCtrtInfo {
   picNm: string
   /** 계약담당관 연락처 (R, 100) */
   enPicTel: string
+  /**
+   * 제출유형(증명서 종류) 코드 — 실적정보 입력 탭 분기(방위사업청/unitB~I/비시설) 판단용.
+   * 설계서 화면 "제출유형" 문구만 존재·항목 설명 영문 항목명 미정의 → TODO(설계서 영문ID 미확인).
+   * 값 예: '1'~'10'(1/2/5=unitB · 3=C · 4=D · 6=E · 7=F · 8=G · 9=H · 10=I).
+   */
+  sbmsnTyCd?: string
 }
 
 /** 신청정보 입력(dm_prfmncPrdocAplyInptInfo 1.3 + 1.4) — 신청정보 탭 공통. */
@@ -481,6 +493,385 @@ export interface PrfmncPrdocAplyLwprcInfo {
   ptmWkqtyCn?: string
   /** 기타 참고사항 (R, 100) */
   etcRefMttr?: string
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 실적증명서 확인/신청 분기 탭 unitC~unitI · AplyInfo (계약구분 부대+시설공사/비시설).
+// 확인(상세) T04~T11 · 신청(등록) T14~T21 이 같은 데이터영역을 공유한다.
+// 설계서 00.공통 v0.84 화면 slide257~271·301~314 · 항목 설명 slide276~290. 항목명(영문)은
+// 설계서 "항목 설명" 표의 항목명(영문) 그대로. 데이터영역명(dm_prfmncPrdocAplyCstrnDsctnInfo 등)이
+// unit 별로 필드가 달라 재사용되므로, TS 인터페이스는 unit 접미사로 구분하고 JSDoc 에 원 데이터영역+slide 표기.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * 신청인(dm_prfmncPrdocAplyAplcntInfo) — unitC~I 공통 표시(항목 설명 1.13/1.15/1.18/1.20/1.24/1.30/1.32).
+ * unit 별로 노출 항목이 조금씩 달라(증명서용도·전화번호·등록번호 유무) 필드를 합집합으로 선택 사용.
+ */
+export interface PrfmncPrdocAplcntInfo {
+  /** 상호 (R, 200) */
+  bzentyNm?: string
+  /** 대표자 (R, 200) */
+  rprsvNm?: string
+  /** 영업소 소재지 (R, 200) — 1.13/1.18/1.30 salsLctnAddr */
+  salsLctnAddr?: string
+  /** 소재지 (R, 200) — 1.15/1.20/1.24 lctnAddr */
+  lctnAddr?: string
+  /** 업종 및 등록번호 / 허가번호 / 등록번호 (R, 100) */
+  lcnsNoVl?: string
+  /** 증명서용도 (R, 100) — 1.15 unitD */
+  prdocUsgCn?: string
+  /** 전화번호 (R, 100) — 1.20/1.24 entlno */
+  entlno?: string
+  /** 등록번호 (R, 20) — 1.24 unitG bldrRegNo */
+  bldrRegNo?: string
+}
+
+/** 공사내역(dm_prfmncPrdocAplyCstrnDsctnInfo 1.14) — unitC(T04/T14). */
+export interface PrfmncPrdocCstrnDsctnInfoC {
+  /** 공사명 (R, 300) */
+  cstrnNm?: string
+  /** 총공사금액 (R, 22) */
+  tcstrnAmt?: number
+  /** 현장 소재지 (R, 200) */
+  grndsLctnAddr?: string
+  /** 공사유형 (R, 50) */
+  cstrnTypeNm?: string
+  /** 인 허가 기관 (R, 200) */
+  lcpmtInstNm?: string
+  /** 주력분야 (R, 100) */
+  mfrcFldNm?: string
+  /** 인 허가 년월일 (R, 8) */
+  lcpmtYmd?: string
+  /** 세부공종(종합) (R, 50) */
+  snthsDtlCnstpNm?: string
+  /** 실적년도 (R, 4) */
+  prfmncYr?: string
+  /** 계약연월일 (R, 8) */
+  ctrtYmd?: string
+  /** 착공연월 (R, 8) */
+  bgncstYmd?: string
+  /** 준공(예정)연월 (R, 8) */
+  cmcnYmd?: string
+  /** 당년도 계약액 또는 이월금액 (R, 25,3) */
+  thyrCtrtAmt?: number
+  /** 총계약금액 (R, 25,3) */
+  tctrtAmt?: number
+  /** 당년도 기성액 (R, 22) */
+  thyrPxcndAmt?: number
+  /** 전년도까지 누계기성액 (R, 22) */
+  prvyrPxcndActotAmt?: number
+  /** 당년도 기성지급액 (R, 22) */
+  thyrPxcndGiveAmt?: number
+  /** 전년도까지 누계지급액 (R, 22) */
+  prvyrGiveActotAmt?: number
+  /** 당년도 발주자공급자재액 (R, 22) */
+  thyrOdrSplyMtrlAmt?: number
+  /** 전년도까지 누계관급자재액 (R, 22) */
+  prvyrGvspMtrlActotAmt?: number
+  /** 그 밖의 사항(공사의 규모 공법, 공동 도급내역 등) (R, 4000) */
+  etcMttr?: string
+}
+
+/** 건설폐기물 수집/운반용역 이행실적(dm_prfmncPrdocAplyClctCnvncInfo 1.16) — unitD(T05/T15). */
+export interface PrfmncPrdocClctCnvncInfo {
+  /** 용역명 (R, 100) */
+  clctCnvncLbsvcNm?: string
+  /** 계약일자 (R, 8) */
+  clctCnvncCtrtYmd?: string
+  /** 계약기간 (R, 8) */
+  clctCnvncCtrtBgngYmd?: string
+  /** 건설폐기물의 종류 (R, 50) */
+  clctCnvncCndspKndNm?: string
+  /** 위탁량(톤) (R, 100) */
+  clctCnvncCnsgnQtyCn?: string
+  /** 계약금액 (R, 25,3) */
+  clctCnvncCtrtAmt?: number
+  /** 기성실적 (R, 25,3) */
+  clctCnvncPxcndPrfmncAmt?: number
+  /** 비고 (R, 4000) */
+  clctCnvncRmrkCn?: string
+}
+
+/** 건설폐기물 중간처리용역 이행실적(dm_prfmncPrdocAplyMdPrcsLbsvcInfo 1.17) — unitD(T05/T15). */
+export interface PrfmncPrdocMdPrcsLbsvcInfo {
+  /** 용역명 (R, 100) */
+  mdPrcsLbsvcNm?: string
+  /** 계약일자 (R, 8) */
+  mdPrcsCtrtYmd?: string
+  /** 계약기간 (R, 100) */
+  mdPrcsCtprCn?: string
+  /** 건설폐기물의 종류 (R, 50) */
+  mdPrcsCndspKndNm?: string
+  /** 위탁량(톤) (R, 100) */
+  mdPrcsCnSgnQtyCn?: string
+  /** 계약금액 (R, 25,3) */
+  mdPrcsCtrtAmt?: number
+  /** 기성실적 (R, 25,3) */
+  mdPrcsPxCndPrfmncAmt?: number
+  /** 비고 (R, 4000) */
+  mdPrcsRmrkCn?: string
+}
+
+/** 공사내역(dm_prfmncPrdocAplyCstrnDsctnInfo 1.19) — unitE(T06/T16) 정보통신공사. */
+export interface PrfmncPrdocCstrnDsctnInfoE {
+  /** 공사명 (R, 300) */
+  cstrnNm?: string
+  /** 계약연월 (R, 8) */
+  ctrtYmd?: string
+  /** 착공연월 (R, 8) */
+  bgncstYmd?: string
+  /** 준공연월 (R, 8) */
+  cmcnYmd?: string
+  /** 전년도 이월공사액 (R, 22) */
+  prvyrPxcndActotAmt?: number
+  /** 하도급금액 (R, 22) */
+  thyrPxcndGiveAmt?: number
+  /** 당년도 계약액 (R, 22) */
+  tctrtAmt?: number
+  /** 당년도 미기성액 (R, 22) */
+  prvyrGiveActotAmt?: number
+  /** 당년도 기성액 (R, 22) */
+  thyrPxcndAmt?: number
+}
+
+/** 소방시설 공사내역(dm_prfmncPrdocAplyFrsvcCstrnDsctnInfo 1.21) — unitF(T07/T17). */
+export interface PrfmncPrdocFrsvcCstrnDsctnInfo {
+  /** 공사명 (R, 300) */
+  cstrnNm?: string
+  /** 업종 (R, 50) */
+  tpbizNm?: string
+  /** 공사현장 (R, 200) */
+  cstrnGrndsAddr?: string
+  /** 공사지역 (R, 200) */
+  cstrnRgnNm?: string
+  /** 발주자 (R, 200) */
+  orderInstNm?: string
+  /** 원도급자 (R, 200) */
+  orgctrNm?: string
+  /** 계약체결일 (R, 8) */
+  ctrtYmd?: string
+  /** 착공일 (R, 8) */
+  bgncstYmd?: string
+  /** 준공일 (R, 8) */
+  cmcnYmd?: string
+  /** 계약방법 (R, 50) */
+  ctrtMthdNm?: string
+  /** 도급종류 (R, 50) */
+  ctrcKndNm?: string
+  /** 공사종류 (R, 50) */
+  cstrnKndNm?: string
+}
+
+/** 소방시설 공사실적 금액(dm_prfmncPrdocAplyFrsvcCstrnPrfmncInfo 1.22) — unitF(T07/T17). */
+export interface PrfmncPrdocFrsvcCstrnPrfmncInfo {
+  /** 총 도급계약금액 (R, 25,3) */
+  ctrcTctrtAmt?: number
+  /** 전년까지의 누계 기성액 (R, 22) */
+  prvyrPxcndActotAmt?: number
+  /** 전년까지의 미기성액 (R, 22) */
+  prvyrNestblAmt?: number
+  /** 해당연도 계약액 (R, 25,3) */
+  thyrCtrtAmt?: number
+  /** 해당연도 기성액 (R, 22) */
+  thyrPxcndAmt?: number
+  /** 해당연도 미기성액 (R, 22) */
+  thyrNestblAmt?: number
+  /** 하도급 업체명 (R, 22) */
+  sbctrBzentyNm?: string
+  /** 하도급 등록번호 (R, 22) */
+  sbctrRegNo?: string
+  /** 하도급 금액 (R, 25,3) */
+  sbctrAmt?: number
+}
+
+/** 전기공사 내역(dm_prfmncPrdocAplyEltyCstrnDsctnInfo 1.25) — unitG(T08/T18). */
+export interface PrfmncPrdocEltyCstrnDsctnInfo {
+  /** 공사명 (R, 300) */
+  cstrnNm?: string
+  /** 공사종류 (R, 50) */
+  cstrnKndNm?: string
+  /** 공사현장 (R, 200) */
+  cstrnGrndsNm?: string
+  /** 원도급자 (R, 200) */
+  orgctrNm?: string
+  /** 발주자 (R, 200) */
+  orderIntstNm?: string
+  /** 등록번호(원도급자) (R, 20) */
+  orgctrRegNo?: string
+  /** 계약일자 (R, 8) */
+  ctrtYmd?: string
+  /** 착공일자 (R, 8) — 설계서 항목명 그대로 bgncstYmd8 */
+  bgncstYmd8?: string
+  /** 준공일자 (R, 8) */
+  cmcnYmd?: string
+  /** 실적년도 (R, 4) */
+  prfmncYr?: string
+  /** 계약방법 (R, 50) */
+  ctrtMthdNm?: string
+  /** 도급종류 (R, 50) */
+  ctrcKndNm?: string
+}
+
+/** 전기공사실적 금액(dm_prfmncPrdocAplyEltyCstrnPrfmncInfo 1.26) — unitG(T08/T18). */
+export interface PrfmncPrdocEltyCstrnPrfmncInfo {
+  /** 총 도급계약금액 (R, 25,3) */
+  ctrcTctrtAmt?: number
+  /** 전년까지의 누계 기성액 (R, 22) */
+  prvyrPxcndActotAmt?: number
+  /** 전년도 이월액 (R, 25,3) */
+  prvyrCrfwAmt?: number
+  /** 해당연도 기성액 (R, 22) */
+  thyrPxcndAmt?: number
+  /** 하도급 금액 (R, 22) */
+  sbctrAmt?: number
+  /** 미기성액 (R, 22) */
+  thyrNestblAmt?: number
+  /** 관급자재액 (R, 22) */
+  gvspMtrlAmt?: number
+  /** 기성액(다른공사포함) (R, 22) */
+  etcCstrnKndPxcndAmt?: number
+  /** 계약액(추가 또는 변경분) (R, 25,3) */
+  thyrCtrtAmt?: number
+}
+
+/** 하도급내역(dm_prfmncPrdocAplySbctrInfo 1.27) — unitG(T08/T18). 최대 2건(설계서 접미 2). */
+export interface PrfmncPrdocSbctrDsctnInfo {
+  /** 하도급업체명 (R, 200) */
+  sbctrBzentyNm?: string
+  /** 하도금액 (R, 25,3) */
+  sbctrAmt?: number
+  /** 등록번호 (R, 30) */
+  sbctrRegNo?: string
+  /** 대표자 (R, 200) */
+  sbctrRprsvNm?: string
+}
+
+/**
+ * 복합공사종류(다른 공사 종류 포함) 실적 명세 1행(dm_prfmncPrdocAplyMltCstrnInfo 1.29 / 화면 slide265~268).
+ * 설계서 1.29 는 공사종류별 접두(elty/frsvc/mcwk/pbwks/arch/comm/etc)로 필드를 flat 정의하나,
+ * 화면은 공사(종)명 반복 테이블이라 행 모델로 표현. 열 항목명은 공통 항목명(영문) 재사용.
+ */
+export interface PrfmncPrdocMltCstrnRow {
+  /** 공사(종)명 (R) */
+  cstrnKndNm?: string
+  /** 계약액 (R, 25,3) */
+  ctrtAmt?: number
+  /** 착공연월일 (R, 8) */
+  bgncstYmd?: string
+  /** 준공연월일 (R, 8) */
+  cmcnYmd?: string
+  /** 지난연도 기성액 (R, 22) */
+  prvyrPxcndAmt?: number
+  /** 해당연도 기성액 (R, 22) */
+  thyrPxcndAmt?: number
+  /** 하도급금액 (R, 22) */
+  sbctrAmt?: number
+  /** 미기성금액 (R, 22) */
+  nestblAmt?: number
+}
+
+/** 시공규모(dm_prfmncPrdocAplyCnstSclInfo 1.28) — unitG(T08/T18). */
+export interface PrfmncPrdocCnstSclInfo {
+  /** 시공규모 (R, 4000) */
+  cnstSclExpln?: string
+}
+
+/** 공사내역(dm_prfmncPrdocAplyCstrnDsctnInfo 1.31) — unitH(T09/T19) 세부공종(전문). */
+export interface PrfmncPrdocCstrnDsctnInfoH {
+  /** 공사명 (R, 300) */
+  cstrnNm?: string
+  /** 총공사금액 (R, 22) */
+  tcstrnAmt?: number
+  /** 현장소재지 (R, 200) */
+  grndsLctnAddr?: string
+  /** 공사유형 (R, 50) */
+  cstrnTypeNm?: string
+  /** 인 허가 기관 (R, 200) */
+  lcpmtInstNm?: string
+  /** 주력분야 (R, 100) */
+  mfrcFldNm?: string
+  /** 인 허가 년월일 (R, 8) */
+  lcpmtYmd?: string
+  /** 세부공종(전문) (R, 50) */
+  telgmDtlCnstpNm?: string
+  /** 실적년도 (R, 4) */
+  prfmncYr?: string
+  /** 계약연월 (R, 8) */
+  ctrtYmd?: string
+  /** 착공연월 (R, 8) */
+  bgncstYmd?: string
+  /** 준공(예정)연월 (R, 8) */
+  cmcnYmd?: string
+  /** 당년도 계약액 또는 이월금액 (R, 25,3) */
+  thyrCtrtAmt?: number
+  /** 총계약금액 (R, 25,3) */
+  tctrtAmt?: number
+  /** 당년도 기성액 (R, 22) */
+  thyrPxcndAmt?: number
+  /** 전년도까지 누계기성액 (R, 22) */
+  prvyrPxcndActotAmt?: number
+  /** 당년도 기성지급액 (R, 22) */
+  thyrPxcndGiveAmt?: number
+  /** 전년도까지 누계지급액 (R, 22) */
+  prvyrGiveActotAmt?: number
+}
+
+/** 공사내역(dm_prfmncPrdocAplyCstrnDsctnInfo 1.33) — unitI(T10/T20) 직접시공분. */
+export interface PrfmncPrdocCstrnDsctnInfoI {
+  /** 공사명 (R, 300) */
+  cstrnNm?: string
+  /** 총공사금액 (R, 22) */
+  tcstrnAmt?: number
+  /** 현장소재지 (R, 200) */
+  grndsLctnAddr?: string
+  /** 공종 (R, 50) */
+  cnstpNm?: string
+  /** 인 허가 기관 (R, 200) */
+  lcpmtInstNm?: string
+  /** 실적년도 (R, 4) */
+  prfmncYr?: string
+  /** 연도 (R, 4) */
+  year?: string
+  /** 해당년도 기성액 (R, 22) */
+  thyrPxcndAmt?: number
+  /** 세부공종(전문공사) (R, 50) */
+  telgmDtlCnstpNm?: string
+  /** 기성액 (R, 22) */
+  pxcndAmt?: number
+  /** 계약연월일 (R, 8) */
+  ctrtYmd?: string
+  /** 착공연월일 (R, 8) */
+  bgncstYmd?: string
+  /** 준공연월일 (R, 8) */
+  cmcnYmd?: string
+}
+
+/** 추가사항(dm_prfmncPrdocAplyAddMttrInfo 1.34) — AplyInfo(T11/T21) 부대+비시설공사. */
+export interface PrfmncPrdocAddMttrInfo {
+  /** 실적년도(F) (R, 4) */
+  prfmncYr1?: string
+  /** 실적년도(T) (R, 4) */
+  prfmncYr2?: string
+  /** 실적구분 (R, 1) */
+  prfmncSeCd?: string
+  /** 실적비율(%) (R, 5,2) — 설계서 항목명 대문자 시작 PrfmncDmndRt */
+  PrfmncDmndRt?: number
+  /** 실적금액 (R, 22) — 설계서 항목명 대문자 시작 PrfmncDmndAmt */
+  PrfmncDmndAmt?: number
+  /** 규격(품질, 성능통) (R, 100) */
+  spcfct?: string
+  /** 납품일자 (R, 8) */
+  dlvgdsYmd?: string
+  /** 단위 (R, 100) */
+  unitNm?: string
+  /** 수량 (R, 18,3) */
+  prfmncQty?: number
+  /** 용역범위 및 기준(면적, 금액(원) 등) (R, 100) */
+  lbsvcScp?: string
+  /** 규모 (R, 100) */
+  scl?: string
+  /** 비고 (R, 4000) */
+  etcCn?: string
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
