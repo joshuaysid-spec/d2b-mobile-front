@@ -19,6 +19,11 @@
   - slide5 "화면 목록" = 화면ID↔영문ID↔한글명 → 폴더/파일명 근거. "기획서 pXX" = `slide(XX+1).xml`.
 - 기능별 plan/design: `docs/01-plan/features/`, `docs/02-design/features/`.
 
+**⚠️ 미작업(미구현) 화면 ID 체크·진척 카운트 기준 — 설계서 pptx 원본이 유일 기준.**
+- `docs/spec/화면ID-목록.md` 는 **과거 추출 스냅샷**이라 설계서 개정(신규 화면·M↔P 전환·T 탭 재편)이 반영 안 돼 있다 — **이 md 로 카운트하지 말 것.** (예: 공통 v0.84 는 169개인데 md 는 122개)
+- 절차: 해당 도메인 pptx 를 zip 으로 풀어 전 슬라이드 `<a:t>` 텍스트 추출 → 텍스트 런이 쪼개져 있으므로 **공백/구분자 제거 후** `MUI-XX-##-[MPT]##` 정규식으로 **"화면 목록 (N/M)" 표 슬라이드들**에서 ID 집합을 만든다(목차·흐름도 슬라이드 제외, 중복 제거). 화면 목록 표가 여러 섹션에 흩어져 있으니(공통은 7~9·67~71·217~220·346·356·365·378) 전 슬라이드를 스캔해 찾는다.
+- 구현 여부 대조: `src/ui/biz/**` 파일 내 화면 ID 주석 grep 을 1차 근거로 하되, **ID 미스매치**(설계서 개정으로 구 ID 태깅된 파일, 예: 업무캘린더 M07/M08/M09 ↔ 코드 P07/P08/P09)가 있으니 미구현 판정 전에 **영문 화면명으로 파일 존재를 재확인**한다. `router.tsx`/`routes.ts`/서비스의 ID 참조만으로는 구현으로 치지 않는다.
+
 **순서:**
 1. **설계서에서 화면 확인** — 담당 화면의 화면ID·구성(섹션/필드/탭)·동작을 `docs/spec/` 에서 읽는다.
 2. **`/guide` 에서 쓸 컴포넌트 고르기** — 브라우저로 `/guide`(ComponentGuidePage) 열어 공통 base/composites 카탈로그 확인. **여기 있는 걸 조립**(FullPopup·BottomSheet·AlertModal·Accordion·Table·InputBox·TextArea·RadioButtonGroup·CheckboxGroup·ButtonGroup·FileDownloadList·SummaryInfo·StepBar·TabList 등). 신규 생성 전 `common/composites`·`base` 중복 확인 필수.
@@ -311,7 +316,7 @@ import { Icon } from '@/ui/common/base/Icon'
 
 ## Figma (디자인 원본)
 
-- Figma Dev Mode MCP 사용. file key: `r4EjbQsz172SB5tQdX2bqV` (mobile).
+- Figma Dev Mode MCP 사용. **현행 file key: `GUnQ6XMmbindVZQ9MLEDcQ`** (`개인용-260723`, 2026-07-27 확인 — CM-05 안내 화면들 이 파일 기준으로 구현). 구 파일 `r4EjbQsz172SB5tQdX2bqV`(mobile)은 이전 구현 참조용 — 노드 번호 체계(10020-XXXXX)는 두 파일이 동일.
 - 디자인 읽기 도구: `mcp__figma-dev-mode__get_design_context` / `get_metadata` / `get_screenshot` / `get_variable_defs`.
 - Figma 디자인 데이터는 웹페이지 fetch 로 못 읽는다 — 반드시 MCP 사용. Figma 데스크톱 앱 실행 + Dev Mode MCP Server 활성화 필요.
 - **D2B 색상**: 별도 색상 팔레트 프레임이 없어, 컴포넌트 디자인에서 추출한 실측값을
