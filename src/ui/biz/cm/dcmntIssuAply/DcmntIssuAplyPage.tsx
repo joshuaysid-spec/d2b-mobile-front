@@ -57,7 +57,7 @@ export function DcmntIssuAplyPage() {
     {
       id: 'prfmncPrdocReg',
       label: '실적 증명서 신청',
-      // 실적증명서 신청 플로우(MUI-CM-04-M10 계약선택 → M12 → T12/T13)
+      // 실적증명서 신청 플로우(MUI-CM-04-P21 계약선택 → M12 → T12/T13)
       onClick: () => navigate(ROUTES.SUPPORT_PRFMNC_PRDOC_REG),
     },
     {

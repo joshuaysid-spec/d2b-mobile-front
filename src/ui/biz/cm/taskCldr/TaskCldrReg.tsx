@@ -1,4 +1,4 @@
-// MUI-CM-06-P08 업무캘린더 등록/수정 — 바텀시트 콘텐츠(컨테이너 BottomSheet·footer 는 부모 TaskCldrPage 소유).
+// MUI-CM-06-M08 업무캘린더 등록/수정 — 바텀시트 콘텐츠(컨테이너 BottomSheet·footer 는 부모 TaskCldrPage 소유). (구 P08 — v0.84 에서 M08 로 재편)
 // 설계서 00.공통 v0.84 slide87 / Figma 10020:87484(등록)·10020:87490(수정). 등록/수정 동일 폼.
 //
 // Figma 실측(px, 1:1):

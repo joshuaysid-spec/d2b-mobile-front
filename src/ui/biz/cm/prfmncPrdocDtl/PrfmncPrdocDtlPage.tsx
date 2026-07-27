@@ -134,7 +134,7 @@ export function PrfmncPrdocDtlPage() {
       variant: 'secondary' as const,
       onClick: () => {
         setActionOpen(false)
-        // 실적증명서 신청 플로우(MUI-CM-04-M10 계약선택 → M12 → T12/T13)
+        // 실적증명서 신청 플로우(MUI-CM-04-P21 계약선택 → M12 → T12/T13)
         navigate(ROUTES.SUPPORT_PRFMNC_PRDOC_REG)
       },
     },

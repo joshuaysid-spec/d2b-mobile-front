@@ -1,5 +1,5 @@
 // 실적증명서 신청 플로우 컨테이너 — 설계서 00.공통 v0.84 slide286~294.
-// 스텝 화면: 계약정보선택(MUI-CM-04-M10 CtrtInfoChc) → 신청정보입력(M12 PrfmncPrdocReg_AplyInpt)
+// 스텝 화면: 계약정보선택(MUI-CM-04-P21 CtrtInfoChc, 구 M10) → 신청정보입력(M12 PrfmncPrdocReg_AplyInpt)
 //   → 실적정보 입력(계약구분 분기: 방위사업청 T12 PrfmncPrdocReg_D2b / 부대+시설공사 T13 PrfmncPrdocReg_UnitB).
 // 설계서에 플로우 전체 화면 ID 가 없어(스텝 화면만 정의) 폴더명(prfmncPrdocReg) 기반 컨테이너(도메인 조립물).
 // 부대+비시설공사 분기는 미구현(요청 범위: unitB 까지) — 안내 스텁.

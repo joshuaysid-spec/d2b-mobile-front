@@ -145,8 +145,8 @@ export function HomePage() {
 
   // 공지 탭
   const [noticeTab, setNoticeTab] = useState('dapa')
-  // 홈 첫 진입 흐름: 앱 이용안내(MUI-MS-01-P06) → 중요 공지(MUI-MS-01-P08).
-  // 첫 진입이면 P06 먼저(오버레이) → 닫으면 P08. 이미 봤으면 바로 P08. (세션 기준 — 추후 localStorage/서버)
+  // 홈 첫 진입 흐름: 앱 이용안내(MUI-MS-01-M06, 구 P06) → 중요 공지(MUI-MS-01-P08).
+  // 첫 진입이면 M06 먼저(오버레이) → 닫으면 P08. 이미 봤으면 바로 P08. (세션 기준 — 추후 localStorage/서버)
   const [guideOpen, setGuideOpen] = useState(() => !sessionStorage.getItem('appLaunchGuideSeen'))
   const [noticeOpen, setNoticeOpen] = useState(() => !!sessionStorage.getItem('appLaunchGuideSeen'))
   const handleGuideClose = () => {
