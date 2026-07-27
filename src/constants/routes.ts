@@ -66,7 +66,7 @@ export const ROUTES = {
   SUPPORT_PRFMNC_PRDOC: '/support/dcmnt-issu-aply/prfmnc-prdoc',
   /** 실적증명서 확인(상세) (MUI-CM-04-M07, `:prfmncRcptNo`). 목록 카드 클릭 진입. */
   SUPPORT_PRFMNC_PRDOC_DTL: '/support/dcmnt-issu-aply/prfmnc-prdoc/:prfmncRcptNo',
-  /** 실적증명서 신청 플로우 (MUI-CM-04-M10 계약선택 → M12 신청정보 → T12/T13 실적정보). */
+  /** 실적증명서 신청 플로우 (MUI-CM-04-P21 계약선택 → M12 신청정보 → T12/T13 실적정보). */
   SUPPORT_PRFMNC_PRDOC_REG: '/support/dcmnt-issu-aply/prfmnc-prdoc/reg',
   /** 국외조달원등록증신청목록 (MUI-CM-04-M21). 민원서류발급신청 허브 > 국외 조달원 등록증 신청 목록. */
   SUPPORT_OVS_SOS_CNFDOC: '/support/dcmnt-issu-aply/ovs-sos-cnfdoc',
@@ -181,7 +181,7 @@ export const ROUTES = {
   SPLASH: '/splash',
   /** 앱 접근권한 동의 (MUI-MS-01-M02). 셸 밖 풀스크린. */
   APP_AUTHRT_AGRE: '/app-authrt-agre',
-  /** 앱 이용안내 (MUI-MS-01-P06). 셸 밖 풀스크린. */
+  /** 앱 이용안내 (MUI-MS-01-M06, 구 P06 표기). 셸 밖 풀스크린. */
   APP_GUIDE: '/app-guide',
   /** 설정 (MUI-MS-02-M01). 전체메뉴 > 설정. */
   SETTINGS: '/settings',

@@ -12,9 +12,12 @@ import type {
   FindIdRequest,
   FindPasswordRequest,
   IdInquiryResult,
+  IntgAcntIdCheckResult,
+  IntgAcntTarget,
   LoginRequest,
   LoginResult,
   MemberVerifyRequest,
+  RegisterIntgAcntRequest,
 } from '@/types/domain'
 
 const EP = {
@@ -38,6 +41,12 @@ const EP = {
   MY_BZENTY_LIST: '/v1/auth/my/bzentys',
   /** 앱 접근권한 동의 — MUI-MS-01 (appAuthrtAgre/AppAuthrtAgrePage) */
   APP_PERMISSION_AGREE: '/v1/auth/app-permissions/agree',
+  /** 통합계정 등록 대상 조회(본인인증 후) — MUI-CM-03-M22 (newId/NewIdPwReg) */
+  INTG_ACNT_TARGET: '/v1/auth/intg-account/target',
+  /** 통합계정 아이디 중복확인 — MUI-CM-03-M22 (newId/NewIdPwReg) */
+  INTG_ACNT_ID_CHECK: '/v1/auth/intg-account/id-check',
+  /** 통합계정 등록 — MUI-CM-03-M22 (newId/NewIdPwReg) */
+  INTG_ACNT_REGISTER: '/v1/auth/intg-account',
 } as const
 
 export const authService = {
@@ -111,5 +120,27 @@ export const authService = {
   async agreeAppPermission(permissionIds: string[]): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
     return apiClient.post<void, void>(EP.APP_PERMISSION_AGREE, { permissionIds })
+  },
+
+  // ── 통합 로그인 계정 등록(MUI-CM-03-M22) ──────────────────────────────────
+
+  /** 통합계정 등록 대상 조회 — 본인인증(CI 획득) 후 성명·기존 사용자 아이디 목록 반환. */
+  async getIntgAcntTarget(): Promise<IntgAcntTarget> {
+    if (USE_MOCK) return mockDelay(MOCK_AUTH.intgAcntTarget)
+    return apiClient.get<IntgAcntTarget, IntgAcntTarget>(EP.INTG_ACNT_TARGET)
+  },
+
+  /** 통합계정 아이디 중복확인 — 등록하려는 아이디의 사용 가능 여부 반환. */
+  async checkIntgAcntId(userId: string): Promise<IntgAcntIdCheckResult> {
+    if (USE_MOCK) return mockDelay(MOCK_AUTH.intgAcntIdCheck)
+    return apiClient.get<IntgAcntIdCheckResult, IntgAcntIdCheckResult>(EP.INTG_ACNT_ID_CHECK, {
+      params: { userId },
+    })
+  },
+
+  /** 통합계정 등록 — 통합 로그인 계정(아이디·비밀번호)을 생성한다. */
+  async registerIntgAcnt(req: RegisterIntgAcntRequest): Promise<void> {
+    if (USE_MOCK) return mockDelay(undefined)
+    return apiClient.post<void, void>(EP.INTG_ACNT_REGISTER, req)
   },
 }

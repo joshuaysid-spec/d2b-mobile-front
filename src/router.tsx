@@ -23,7 +23,7 @@ const AppAuthrtAgrePage = lazy(() =>
     default: m.AppAuthrtAgrePage,
   })),
 )
-// 앱 이용안내(MUI-MS-01-P06, /app-guide) — 셸 밖 풀스크린. biz/cm/appSrvcExpln.
+// 앱 이용안내(MUI-MS-01-M06, /app-guide) — 셸 밖 풀스크린. biz/cm/appSrvcExpln. (설계서 slide7 목록 기준 M06 — slide365 는 P06 표기, 문서 내 불일치)
 const AppSrvcExplnPage = lazy(() =>
   import('@/ui/biz/cm/appSrvcExpln/AppSrvcExplnPage').then((m) => ({
     default: m.AppSrvcExplnPage,
@@ -82,6 +82,20 @@ const BioInfoCertRegPage = lazy(() =>
   import('@/ui/biz/cm/bioInfoCertReg/BioInfoCertRegPage').then((m) => ({
     default: m.BioInfoCertRegPage,
   })),
+)
+// 생체인증 등록완료(MUI-CM-03-M20, /login/biometric/register/result) — biz/cm/bioInfoCertReg.
+const BioInfoCertRsltPage = lazy(() =>
+  import('@/ui/biz/cm/bioInfoCertReg/BioInfoCertRsltPage').then((m) => ({
+    default: m.BioInfoCertRsltPage,
+  })),
+)
+// 통합로그인 계정등록(MUI-CM-03-M22, /login/new-id) — biz/cm/newId.
+const NewIdPwReg = lazy(() =>
+  import('@/ui/biz/cm/newId/NewIdPwReg').then((m) => ({ default: m.NewIdPwReg })),
+)
+// 통합로그인 계정등록완료(MUI-CM-03-M23, /login/new-id/result) — biz/cm/newId.
+const NewIdCmptn = lazy(() =>
+  import('@/ui/biz/cm/newId/NewIdCmptn').then((m) => ({ default: m.NewIdCmptn })),
 )
 // 간편인증(MUI-CM-03-P10, /login/simple-cert) — 인증프로세스. biz/cm/simpleCert.
 // (설계서·Figma는 BottomSheet — 트리거 배선 시 시트로 전환 가능. 현재는 페이지 라우팅.)
@@ -449,7 +463,7 @@ const PrfmncPrdocDtlPage = lazy(() =>
     default: m.PrfmncPrdocDtlPage,
   })),
 )
-// 실적증명서 신청 플로우(MUI-CM-04-M10/M12/T12/T13, /support/dcmnt-issu-aply/prfmnc-prdoc/reg).
+// 실적증명서 신청 플로우(MUI-CM-04-P21/M12/T12/T13, /support/dcmnt-issu-aply/prfmnc-prdoc/reg).
 const PrfmncPrdocRegPage = lazy(() =>
   import('@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocRegPage').then((m) => ({
     default: m.PrfmncPrdocRegPage,
@@ -1190,7 +1204,7 @@ export const router = createBrowserRouter([
         },
       },
       {
-        // 실적증명서 신청 플로우 (MUI-CM-04-M10 계약선택 → M12 신청정보 → T12/T13 실적정보)
+        // 실적증명서 신청 플로우 (MUI-CM-04-P21 계약선택 → M12 신청정보 → T12/T13 실적정보)
         // 정적 세그먼트('reg')라 아래 ':prfmncRcptNo' 상세보다 우선 매칭(RRv6 랭킹).
         path: 'support/dcmnt-issu-aply/prfmnc-prdoc/reg',
         element: <PrfmncPrdocRegPage />,
@@ -1785,6 +1799,24 @@ export const router = createBrowserRouter([
         path: 'login/biometric/register',
         element: <BioInfoCertRegPage />,
         handle: { header: { variant: 'sub', title: '생체인증 등록' } },
+      },
+      // 생체인증 등록완료(MUI-CM-03-M20)
+      {
+        path: 'login/biometric/register/result',
+        element: <BioInfoCertRsltPage />,
+        handle: { header: { variant: 'sub', title: '생체인증 등록' } },
+      },
+      // 통합로그인 계정등록(MUI-CM-03-M22)
+      {
+        path: 'login/new-id',
+        element: <NewIdPwReg />,
+        handle: { header: { variant: 'sub', title: '통합 로그인 계정 등록' }, scrollReset: true },
+      },
+      // 통합로그인 계정등록완료(MUI-CM-03-M23)
+      {
+        path: 'login/new-id/result',
+        element: <NewIdCmptn />,
+        handle: { header: { variant: 'sub', title: '통합 로그인 계정 등록 완료' }, scrollReset: true },
       },
       // 간편인증(MUI-CM-03-P10)
       {
