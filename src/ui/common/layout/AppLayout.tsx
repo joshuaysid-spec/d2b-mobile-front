@@ -148,7 +148,7 @@ export function AppLayout() {
         <BottomNav
           onAction={(id) => {
             if (id === 'search') setSearchOpen(true)
-            if (id === 'chatbot') console.log('[nav] 챗봇') // 추후: 챗봇 연결
+            if (id === 'chatbot') navigate(ROUTES.CHATBOT) // 챗봇문의(MUI-MS-01-M11)
           }}
         />
       )}

@@ -245,8 +245,8 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
         </div>
       ),
       onClick: () => {
-        console.log('[menu] 챗봇상담')
-        // 추후 라우팅: open chatbot
+        onOpenChange(false) // 전체메뉴 닫고 이동
+        navigate(ROUTES.CHATBOT) // 챗봇문의(MUI-MS-01-M11)
       },
     },
     {

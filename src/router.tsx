@@ -575,6 +575,10 @@ const SitePage = lazy(() =>
 const AppStngPage = lazy(() =>
   import('@/ui/biz/cm/appStng/AppStngPage').then((m) => ({ default: m.AppStngPage })),
 )
+// 챗봇문의(MUI-MS-01-M11, /chatbot) — biz/cm/chatbot. BottomNav 챗봇 / 전체메뉴 챗봇상담 진입(외부 솔루션 임베드 자리).
+const ChatbotPage = lazy(() =>
+  import('@/ui/biz/cm/chatbot/ChatbotPage').then((m) => ({ default: m.ChatbotPage })),
+)
 // 이용문의(MUI-CM-05-M06, /intro/inquiry) — biz/cm/inquiry.
 const InquiryPage = lazy(() =>
   import('@/ui/biz/cm/inquiry/InquiryPage').then((m) => ({ default: m.InquiryPage })),
@@ -1443,6 +1447,15 @@ export const router = createBrowserRouter([
         handle: {
           header: { variant: 'sub', title: '설정' },
           scrollReset: true,
+        },
+      },
+      {
+        // 챗봇문의 (MUI-MS-01-M11) — BottomNav 챗봇 / 전체메뉴 챗봇상담
+        path: 'chatbot',
+        element: <ChatbotPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '챗봇문의' },
         },
       },
       // 게시판 상세 — 목록 카드 클릭 진입. 정적 목록경로(dapa/dmdfrc/ctrt 등)가 RRv6 랭킹으로 우선 매칭됨.
