@@ -1,4 +1,4 @@
-// 이행/적격심사상세 - '입찰/반려 정보' 탭 (MUI-BD-10-M02, 설계서 02입찰 slide164 / 데이터영역 slide166).
+// 이행/적격심사상세 - '입찰/반려 정보' 탭 (MUI-BD-10-T02(구 M02 — v1.83 재편), 설계서 02입찰 slide164 / 데이터영역 slide166).
 // 입찰결과(dmt_bidRslt) 표 + 반려사유(rjctRsn). "내 업체 정보만 표시". 데이터는 목업(추후 API).
 import { TextArea } from '@/ui/common/base/TextArea'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'

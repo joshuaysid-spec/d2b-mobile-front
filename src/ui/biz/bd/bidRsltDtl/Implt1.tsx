@@ -1,4 +1,4 @@
-// 이행/적격심사상세 - '일반정보' 탭 (MUI-BD-10-M01, 설계서 02입찰 slide163 / 데이터영역 slide166~167).
+// 이행/적격심사상세 - '일반정보' 탭 (MUI-BD-10-T01(구 M01 탭 — v1.83 재편), 설계서 02입찰 slide163 / 데이터영역 slide166~167).
 // 공고정보(dmt_pbancInfo) 표 + 참고서류(dlt_refDcmnt) 다운로드 + 법 위반 처벌이력 확인서 양식.
 // 데이터는 목업(추후 API: scwin.getImpltElgbSrngDtlInfo). 항목명은 설계서 그대로.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'

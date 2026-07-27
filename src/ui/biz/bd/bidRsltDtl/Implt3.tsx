@@ -1,4 +1,4 @@
-// 이행/적격심사상세 - '파일첨부' 탭 (MUI-BD-10-M03, 설계서 02입찰 slide165 / 데이터영역 slide167).
+// 이행/적격심사상세 - '파일첨부' 탭 (MUI-BD-10-T03(구 M03 — v1.83 재편), 설계서 02입찰 slide165 / 데이터영역 slide167).
 // 첨부서류(dlt_adoc) + 추가첨부서류(dlt_addAdoc) — 업로드 변형(파일 추가/삭제). 데이터는 목업(추후 API).
 import { useState } from 'react'
 

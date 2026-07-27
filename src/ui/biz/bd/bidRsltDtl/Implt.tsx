@@ -1,7 +1,7 @@
-// 이행/적격심사결과상세 - '심사결과' 탭 (MUI-BD-10-M04 물품=Cmdty, 설계서 02입찰 slide169 / 데이터영역 slide170).
+// 이행/적격심사결과 - '심사결과' 탭 (MUI-BD-10-T05 물품(구 M04 — v1.83 재편)=Cmdty, 설계서 02입찰 v1.83 slide173 / 데이터영역 slide174).
 // 심사결과(dmt_srngRslt) 표 — "내 업체 정보만 표시". 데이터는 목업(추후 API: scwin.getImpltElgbSrngRsltDtlInfo).
-// ⚠️ 물품(Cmdty) 라벨 기준(제조능력=srngScr2, 재무상태=srngScr4). 용역/공사 등 세부구분(M04~M19)은
-//    이 목업/라벨만 교체하면 됨(구조 동일).
+// ⚠️ 물품(Cmdty) 표시 라벨 기준(제조능력=srngScr2, 재무상태=srngScr4, 기타1/2=etc1/etc2 — 데이터영역 밖 표시항목).
+//    용역(T06)/공사(T17)/기술용역(T18) 등 A군 flat 유형은 라벨만 상이 → ImpltElgblRslt_* 별 파일. 유형 분기는 ImpltPage.renderResultTab.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { ImpltElgbSrngResult } from '@/types/bd'

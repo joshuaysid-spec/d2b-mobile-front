@@ -1,4 +1,4 @@
-// 이행/적격심사포기신청(MUI-BD-10-P21) 폼 검증 스키마 — 이 폼 전용이라 co-locate.
+// 이행/적격심사포기신청(MUI-BD-10-P02, 구 P21) 폼 검증 스키마 — 이 폼 전용이라 co-locate.
 // zod 스키마 = 검증 규칙 + 타입(z.infer)의 단일 진실원천. (설계서 slide284 데이터영역 dmt_impltElgbSrngAbndRsn)
 import { z } from 'zod'
 

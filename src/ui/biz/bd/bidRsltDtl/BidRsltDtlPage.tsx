@@ -1,7 +1,7 @@
-// 입찰결과상세(개찰상세, MUI-BD-09-M01~M04). 개찰목록 카드 클릭 → /bd/result/:id 진입.
+// 입찰결과상세 컨테이너(개찰상세, MUI-BD-09-M01(구 M01 — v1.83 재편), 구성 탭 T01~T04). 개찰목록 카드 클릭 → /bd/result/:id 진입.
 // 레퍼런스: 입찰공고 상세 BidPbancDtlPage (요약정보+스텝바+탭+탭콘텐츠 동일 패턴).
 // 구성: 요약정보(SummaryInfo, 즐겨찾기) + 스텝바(StepBar, 입찰) + 탭4(일반정보/품목정보/입찰결과/협상결과)
-//   + 탭 콘텐츠(일반정보=이 파일 인라인=M01 / 품목정보=BidRsltDtlList M02 / 입찰결과=BidRsltDtl M03 / 협상결과=BidRsltDtl2 M04)
+//   + 탭 콘텐츠(일반정보=이 파일 인라인=T01 / 품목정보=BidRsltDtlList T02 / 입찰결과=BidRsltDtl T03 / 협상결과=BidRsltDtl2 T04)
 //   + 맨위로 FAB.
 // 상세화면이라 검색필터 없음. 데이터는 목업(추후 bdService.getBidRsltDetail). 헤더는 전역 Header(AppLayout).
 import { useState } from 'react'
@@ -29,7 +29,7 @@ import { BidRsltDtl } from '@/ui/biz/bd/bidRsltDtl/BidRsltDtl'
 import { BidRsltDtl2 } from '@/ui/biz/bd/bidRsltDtl/BidRsltDtl2'
 import { ImpltElgbSrngAbndAply } from '@/ui/biz/bd/bidRsltDtl/ImpltElgbSrngAbndAply'
 
-// ── 탭 (설계서 6.1 화면목록 MUI-BD-09-M01~M04) ───────────────────────────────
+// ── 탭 (설계서 6.1 화면목록 MUI-BD-09-T01~T04) ───────────────────────────────
 const TABS: TabItem[] = [
   { value: 'general', label: '일반정보' },
   { value: 'item', label: '품목정보' },
@@ -130,7 +130,7 @@ function GeneralInfo() {
   // 이행/적격심사 신청 화면(MUI-BD-10)으로 이동 — 상단 요약을 그릴 개찰목록 항목을 state 로 전달.
   // 호스트(BidRsltDtlPage)와 동일 queryKey 라 캐시 재사용(추가 조회 없음).
   const { data: item } = useBidRsltDetail(id ?? '')
-  // 이행/적격심사 포기신청 풀팝업(MUI-BD-10-P21) 열림 상태.
+  // 이행/적격심사 포기신청 풀팝업(MUI-BD-10-P02, 구 P21) 열림 상태.
   const [abndOpen, setAbndOpen] = useState(false)
 
   return (
@@ -183,7 +183,7 @@ function GeneralInfo() {
         />
       </div>
 
-      {/* 이행/적격심사 포기신청 풀팝업(MUI-BD-10-P21) */}
+      {/* 이행/적격심사 포기신청 풀팝업(MUI-BD-10-P02, 구 P21) */}
       <ImpltElgbSrngAbndAply open={abndOpen} onOpenChange={setAbndOpen} detail={item} />
     </>
   )
