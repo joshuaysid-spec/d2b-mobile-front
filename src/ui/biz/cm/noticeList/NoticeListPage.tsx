@@ -6,11 +6,12 @@ import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes'
 import { BoardListView } from '@/ui/biz/cm/board/BoardListView'
 import {
-  NOTICE_SEARCH_SCHEMA,
+  NOTICE_SEARCH_SCHEMA_WITH_CATEGORY,
   NOTICE_SEARCH_TARGETS,
-  NOTICE_DEFAULT,
+  NOTICE_DEFAULT_WITH_CATEGORY,
   noticeToCard,
   noticeMatchKeyword,
+  noticeMatchFilter,
   noticeIsPinned,
 } from './noticeBoard'
 import { NOTICE_MOCK } from './noticeMock'
@@ -23,10 +24,11 @@ export function NoticeListPage() {
       getId={(it) => it.contsNo}
       toCard={noticeToCard}
       matchKeyword={noticeMatchKeyword}
+      matchFilter={noticeMatchFilter}
       isPinned={noticeIsPinned}
       searchTargets={NOTICE_SEARCH_TARGETS}
-      searchSchema={NOTICE_SEARCH_SCHEMA}
-      defaultFilter={{ ...NOTICE_DEFAULT }}
+      searchSchema={NOTICE_SEARCH_SCHEMA_WITH_CATEGORY}
+      defaultFilter={{ ...NOTICE_DEFAULT_WITH_CATEGORY }}
       onCardClick={(it) => navigate(`${ROUTES.SUPPORT_NOTICE}/${it.contsNo}`, { state: it })}
       emptyText="공지사항이 없습니다."
     />

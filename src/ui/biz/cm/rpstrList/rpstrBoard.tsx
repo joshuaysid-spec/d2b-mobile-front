@@ -21,7 +21,8 @@ const RPSTR_DATE_PRESETS: DateRangePresetDef[] = [
   { label: '기간검색', custom: true },
 ]
 
-// 검색필터 schema — 구분설정(bizFldCd)은 제외. 기간설정(작성일자, 필수) + 검색어(제목 rpstrTtl/내용 contsCn/작성자 wrtrNm).
+// 검색필터 schema — 기간설정(작성일자, 필수) + 검색어(제목 rpstrTtl/내용 contsCn/작성자 wrtrNm).
+// 구분 설정(bizFldCd)은 자료실에는 미노출(요청, 2026-07-27) — 공지사항 목록에만 적용.
 export const RPSTR_SEARCH_SCHEMA: SearchFilterSchema = {
   title: '검색필터',
   sections: [

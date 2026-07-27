@@ -79,12 +79,16 @@ export interface NoticeListItem {
 
 /**
  * 공지사항 검색조건(dm_searchInfo) — 설계서 항목명(영문) 준수.
- * 구분(bizFldCd 구분설정)은 요청에 따라 검색필터에서 제외한다.
  * 작성일자는 FROM/TO(둘 다 regDt) 범위이므로 DateRangeValue 로 표현한다.
  */
 export interface NoticeSearchFilter {
   /** 작성일자 범위(regDt FROM~TO). */
   regDt: DateRangeValue
+  /**
+   * 상태(emrg) — 긴급/일반. 검색필터 '구분 설정 > 상태'(설계서 slide226).
+   * 'all'=전체(기본). 구분 설정 미노출 화면(방위사업청 공지 등)에서는 생략.
+   */
+  emrg?: string
   /** 제목(bbsTtl). */
   bbsTtl: string
   /** 내용(bbsCn). */
@@ -207,7 +211,10 @@ export interface RpstrListItem {
   inqNocs: number
 }
 
-/** 자료실 검색조건(dm_searchInfo) — 구분(bizFldCd)은 요청에 따라 제외. */
+/**
+ * 자료실 검색조건(dm_searchInfo) — 설계서 slide230 항목명(영문) 준수.
+ * 구분(bizFldCd)은 데이터영역엔 있으나 자료실 검색필터엔 미노출(요청, 2026-07-27) — 공지사항만 노출.
+ */
 export interface RpstrSearchFilter {
   /** 작성일자 범위(regDt FROM~TO). */
   regDt: DateRangeValue

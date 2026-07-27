@@ -26,6 +26,8 @@ export interface BoardListViewProps<T> {
   toCard: (item: T) => Omit<CardListItem, 'id' | 'onClick'>
   /** 상단 검색어 부분일치(검색대상 target 별). */
   matchKeyword: (item: T, keyword: string, target: string) => boolean
+  /** 상세필터(구분 설정 등) 부합 여부. 없으면 상세필터로 목록을 거르지 않음(스텁). */
+  matchFilter?: (item: T, filter: SearchFilterValue) => boolean
   /** 상위고정(정렬 상단). 없으면 정렬 안 함(자료실 등). */
   isPinned?: (item: T) => boolean
   /** 검색대상 칩(제목/내용 등). */
@@ -45,6 +47,7 @@ export function BoardListView<T>({
   getId,
   toCard,
   matchKeyword,
+  matchFilter,
   isPinned,
   searchTargets,
   searchSchema,
@@ -96,11 +99,13 @@ export function BoardListView<T>({
   const filteredList = useMemo(() => {
     const kw = appliedSearch?.keyword ?? ''
     const target = appliedSearch?.target ?? ''
-    const matched = kw ? list.filter((it) => matchKeyword(it, kw, target)) : list
+    let matched = kw ? list.filter((it) => matchKeyword(it, kw, target)) : list
+    // 상세필터(구분 설정 등) — 적용된 filter 로 거른다. matchFilter 없으면 거르지 않음.
+    if (matchFilter) matched = matched.filter((it) => matchFilter(it, filter))
     // 상위고정(upFix='Y')을 앞으로(공지사항). isPinned 없으면 원순서 유지.
     if (!isPinned) return matched
     return [...matched].sort((a, b) => Number(isPinned(b)) - Number(isPinned(a)))
-  }, [appliedSearch, list, matchKeyword, isPinned])
+  }, [appliedSearch, list, matchKeyword, matchFilter, filter, isPinned])
 
   const total = filteredList.length
   const loaded = Math.min(page * pageSize, total)
