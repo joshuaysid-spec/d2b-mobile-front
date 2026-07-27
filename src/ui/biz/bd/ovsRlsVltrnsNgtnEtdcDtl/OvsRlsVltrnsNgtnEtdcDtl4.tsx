@@ -1,4 +1,4 @@
-// 공개수의협상 견적서 조회(상세) - 첨부파일 (MUI-BD-12-M81/T81, 설계서 slide433). 다운로드 전용.
+// 공개수의협상 견적서 조회(상세) - 첨부파일 (MUI-BD-12-T81(구 M81 — v1.83 재편), 설계서 slide433). 다운로드 전용.
 // 구분 4종(견적제안서/공급자증명서/제작사증명서/기타 공고요구서류) 다운로드 + 유의사항(2건).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'

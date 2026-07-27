@@ -45,8 +45,14 @@ const PYMT_SEARCH_SCHEMA: SearchFilterSchema = {
           label: '통합참조번호',
           placeholder: '번호를 입력하세요.',
         },
-        // 계약번호 — 직접 입력. 추후: 계약번호검색 공통팝업(MUI-EX-02-P79) 시트 연동.
-        { type: 'text', key: 'ctrtNo', label: '계약번호', placeholder: '번호를 입력하세요.' },
+        // 계약번호 — 계약번호조회 공통시트(MUI-EX-02-P79, OvsCtrtNoInq) 연동. 셸이 시트를 직접 연다.
+        {
+          type: 'selectionField',
+          key: 'ctrtNo',
+          label: '계약번호',
+          placeholder: '번호를 선택하세요.',
+          searchSheet: 'ctrtNo',
+        },
       ],
     },
   ],

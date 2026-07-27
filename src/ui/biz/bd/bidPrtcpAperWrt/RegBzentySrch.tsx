@@ -1,4 +1,4 @@
-// 입찰참가신청서작성 > 공동수급업체(M10) > 등록업체검색 팝업(P11).
+// 입찰참가신청서작성 > 공동수급업체(MUI-BD-04-M10) > 등록업체검색 팝업(MUI-BD-04-P11).
 // 바텀시트 콘텐츠 전용 컴포넌트 — 컨테이너(<BottomSheet title="업체 검색">)는 부모(BidPrtcpAperWrtPage_Stp5)가 소유.
 // 단순 조회/선택 팝업이라 forwardRef/useImperativeHandle 불필요 — onSelect 콜백만 노출.
 // 상단 검색바(구분 SelectBox 업체명/사업자번호 + 검색어 InputBox + 검색 Button) → 결과 총건수 → 결과 리스트(클릭 시 onSelect).

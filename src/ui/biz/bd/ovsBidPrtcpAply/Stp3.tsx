@@ -1,4 +1,4 @@
-// 스탭3 입찰 보증금 (MUI-BD-04-M74 OvsBidPrtcpAplyPage_Stp3 · 설계서 slide335~336 · 데이터 slide339 · 이벤트 slide341).
+// 스탭3 입찰 보증금 (MUI-BD-04-T74(구 M74 — v1.83 재편) OvsBidPrtcpAplyPage_Stp3 · 설계서 slide335~336 · 데이터 slide339 · 이벤트 slide341).
 // 호스트 페이지(OvsBidPrtcpAplyPage)의 '입찰 보증금' 탭 본문만 담당 — 요약/스텝/탭/하단 액션바는 페이지 소유.
 // 구성: 페이지타이틀 → 입찰보증금 구분 SelectBox(비면제/면제, sbx_depositType_onchange 로 데이터 영역 전환)
 //   → 입찰참가사업 및 입찰보증금 목록(사업별 Table)

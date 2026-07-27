@@ -1,4 +1,4 @@
-// 국외 입찰서 상세 (MUI-BD-06-M75~M79, 설계서 국외입찰 slide375~379 · 항목설명 slide380~384).
+// 국외 입찰서 상세 (MUI-BD-06-M75(컨테이너) · 탭 T75~T79(구 M75~M79 — v1.83 재편), 설계서 국외입찰 slide375~379 · 항목설명 slide380~384).
 // 진입: 국외 입찰진행 상세 → 입찰서 조회 → /bd/ovs/prgrs/:id/tndr (navigate state = 진행 항목).
 // 레퍼런스(국내): BidRsltDtlPage(다중탭 상세 — useCollapsibleHeader + SummaryInfo/StepBar/TabList sticky)
 //   + BidPrgsDtlInqPage(FAB 바로가기 시트, 조회/신청 바텀시트는 부모가 컨테이너/footer 소유).

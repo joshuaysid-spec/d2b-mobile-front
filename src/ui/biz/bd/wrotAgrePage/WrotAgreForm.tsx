@@ -1,7 +1,9 @@
-// 입찰참가신청서작성 - 서약서동의(MUI-BD-04-M01) 서약서 P02~P04 통합 콘텐츠.
+// 입찰참가신청서작성 - 서약서동의(MUI-BD-04-M01) 서약서 MUI-BD-04-P02·P03·P04 통합 콘텐츠.
 // 바텀시트 콘텐츠 전용 컴포넌트 — 컨테이너(BottomSheet)/footer 는 부모(WrotAgrePage)가 소유.
 // 서약서 3종은 구조가 동일(본문 단락 + 하단 '동의 선택' 라디오)하고 내용만 달라 1개 컴포넌트 + 데이터 3건으로 구성.
 // 본문 텍스트는 설계서(서약서 P02~P04 · slide91) 원문 그대로.
+// ※ v1.83 목록표(slide59)의 P04 설명 '행정정보공동이용동의서'는 오기 — P04 디자인(slide99)은
+//   '하도급대금의 지급관련 확인 및 확약서'로 코드(w_p04)와 일치. 디자인 슬라이드가 정본.
 import { useState } from 'react'
 
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'

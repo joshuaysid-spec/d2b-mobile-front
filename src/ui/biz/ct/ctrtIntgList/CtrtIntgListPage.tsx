@@ -100,8 +100,14 @@ const CT_SEARCH_SCHEMA: SearchFilterSchema = {
       title: '검색어 (일부 입력 가능)',
       fields: [
         { type: 'text', key: 'ctrtNm', label: '계약건명', placeholder: '계약건명을 입력하세요.' },
-        // 계약번호 — 직접 입력(숫자검색). 추후: 계약번호검색 공통팝업(MUI-EX-02-P79) 시트 연동.
-        { type: 'text', key: 'ctrtNo', label: '계약번호', placeholder: '번호를 입력하세요.' },
+        // 계약번호 — 계약번호조회 공통시트(MUI-EX-02-P79, OvsCtrtNoInq) 연동. 셸이 시트를 직접 연다.
+        {
+          type: 'selectionField',
+          key: 'ctrtNo',
+          label: '계약번호',
+          placeholder: '번호를 선택하세요.',
+          searchSheet: 'ctrtNo',
+        },
         // 발주기관 → 발주부서(기관)검색(MUI-BD-01-P04, DeptInq) — 셸이 시트를 직접 연다.
         {
           type: 'selectionField',

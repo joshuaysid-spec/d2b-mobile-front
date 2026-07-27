@@ -1,4 +1,4 @@
-// 스탭1 일반정보 (MUI-BD-04-M72 OvsBidPrtcpAplyPage_Stp1 · 설계서 slide333 · 데이터 slide338).
+// 스탭1 일반정보 (MUI-BD-04-T72(구 M72 — v1.83 재편) OvsBidPrtcpAplyPage_Stp1 · 설계서 slide333 · 데이터 slide338).
 // 호스트 페이지(OvsBidPrtcpAplyPage)의 '일반정보' 탭 본문만 담당 — 요약/스텝/탭/하단 액션바는 페이지 소유.
 // 구성: 일반정보 Table(dm_bscPbancInfo: 공고번호·개찰일시·입찰보증금 총액[달러금액])
 //   → 공지사항 Infobox → 신청업체 Table(dm_sbtInfo) → 입찰보증금 납입 서약문 박스(설계서 slide333 원문).

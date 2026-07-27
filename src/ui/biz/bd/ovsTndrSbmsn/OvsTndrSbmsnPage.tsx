@@ -1,4 +1,4 @@
-// 국외 입찰서제출 - 스탭1 일반정보 (MUI-BD-06-M71, 설계서 08국외입찰진행 slide366·370).
+// 국외 입찰서제출 - 스탭1 일반정보 (MUI-BD-06-M71 컨테이너 · 스탭1 일반정보 T71(구 M71 탭 — v1.83 재편), 설계서 08국외입찰진행 slide366·370).
 // 접속: 홈 > 입찰 진행 > 입찰서제출 (/bd/ovs/prgrs/:id/tndr-sbmsn).
 // 레이아웃(국내 TndrWrtPage·BidPrtcpAperWrtPage 패턴 그대로): 요약(SummaryInfo) → 진행단계(StepBar)
 //   → 업무도움(Infobox) → 스탭 탭(TabList: 1.일반정보 / 2.입찰참여품목 / 3.첨부파일) → 탭 콘텐츠

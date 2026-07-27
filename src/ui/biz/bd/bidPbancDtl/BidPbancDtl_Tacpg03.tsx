@@ -1,4 +1,4 @@
-// 입찰공고 상세 - '품목명세서' 탭 (MUI-BD-01-M09, Figma 9300-41867).
+// 입찰공고 상세 - '품목명세서' 탭 (MUI-BD-01-T03(구 M09 — v1.83 재편), Figma 9300-41867).
 // 품목 명세 테이블(군급-재고번호는 '보기' 버튼). 업무구분 [물품]일 때만 노출(컨테이너에서 제어).
 // 데이터는 목업(추후 bdService.getDetail).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'

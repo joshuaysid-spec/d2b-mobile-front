@@ -1,4 +1,4 @@
-// 입찰공고 상세 - '계약특수조건' 탭 (MUI-BD-01-M10, 설계서 slide42).
+// 입찰공고 상세 - '계약특수조건' 탭 (MUI-BD-01-T04(구 M10 — v1.83 재편), 설계서 slide42).
 // 상단 기본정보 테이블 + 계약특수조건 전문(번호별, 축약 없이 전체 표시). 경쟁입찰 중 내용 있을 때만 노출.
 // (전용 Figma 노드 미제공 — 설계서 데이터영역 + 상세 탭 공통 패턴으로 구성.) 데이터는 목업.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'

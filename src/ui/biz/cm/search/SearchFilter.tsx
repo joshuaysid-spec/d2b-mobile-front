@@ -12,6 +12,7 @@ import { SearchFilterField } from './SearchFilterField'
 import { ItemInq } from './ItemInq'
 import { PrdcrInq } from './PrdcrInq'
 import { DeptInq } from './DeptInq'
+import { OvsCtrtNoInq } from './OvsCtrtNoInq'
 import { RgnSrch } from './RgnSrch'
 import { LcnsInfoSrch } from './LcnsInfoSrch'
 import type {
@@ -85,6 +86,7 @@ const SearchFilter = ({
   const deptRef = React.useRef<SearchSheetHandle>(null)
   const regionRef = React.useRef<SearchSheetHandle>(null)
   const licenseRef = React.useRef<SearchSheetHandle>(null)
+  const ctrtNoRef = React.useRef<SearchSheetHandle>(null)
 
   const closeSheet = (nextOpen: boolean) => {
     if (!nextOpen) setSheet(null)
@@ -244,6 +246,27 @@ const SearchFilter = ({
         footer={sheetFooter(licenseRef)}
       >
         <LcnsInfoSrch ref={licenseRef} onSelect={handleSheetSelect} />
+      </BottomSheet>
+      {/* 계약번호조회(MUI-EX-02-P79) — 확정형 시트: 내부 [검색]은 콘텐츠 소유, footer=[닫기/계약번호 선택](Figma·설계서 slide84). */}
+      <BottomSheet
+        open={sheet?.kind === 'ctrtNo'}
+        onOpenChange={closeSheet}
+        title="계약번호조회"
+        footer={
+          <ButtonGroup
+            layout="asymmetric"
+            items={[
+              { label: '닫기', variant: 'secondary', onClick: () => setSheet(null) },
+              {
+                label: '계약번호 선택',
+                variant: 'primary',
+                onClick: () => ctrtNoRef.current?.confirm?.(),
+              },
+            ]}
+          />
+        }
+      >
+        <OvsCtrtNoInq ref={ctrtNoRef} onSelect={handleSheetSelect} />
       </BottomSheet>
     </>
   )

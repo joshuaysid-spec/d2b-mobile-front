@@ -1,4 +1,4 @@
-// 국외 입찰참가신청서 상세 - 탭4 첨부파일 (MUI-BD-04-M81, 설계서 slide352·355).
+// 국외 입찰참가신청서 상세 - 탭4 첨부파일 (MUI-BD-04-T79(구 M81 — v1.83 재편), 설계서 slide352·355).
 // 페이지(OvsBidPrtcpApfrDtlPage)가 renderTabContent 로 렌더하는 탭 콘텐츠 — 요약/스텝/탭은 페이지 소유.
 // 구성: 첨부파일 목록(dl_docList — 첨부서류명 + 첨부파일명[파일크기] + 다운로드, FileDownloadList 재사용)
 //   + 입찰 확약문(안내) Infobox(설계서 확약/구비서류 문안 그대로).

@@ -1,4 +1,4 @@
-// 국외 입찰참가신청서 상세 - 탭2 업체정보 (MUI-BD-04-M79, 설계서 slide350·353).
+// 국외 입찰참가신청서 상세 - 탭2 업체정보 (MUI-BD-04-T77(구 M79 — v1.83 재편), 설계서 slide350·353).
 // 페이지(OvsBidPrtcpApfrDtlPage)가 renderTabContent 로 렌더하는 탭 콘텐츠 — 요약/스텝/탭은 페이지 소유.
 // 구성: 입찰업체(dm_splyInfo) Table + 입찰보증금 지급각서(LETTER OF GUARANTEE FOR PAYMENT OF BID BOND) 영문 전문.
 //   영문 각서의 #입찰업체명(splyBzentyNm)·#보증금액(bidGrnteAmt)은 데이터로 치환(설계서 placeholder).

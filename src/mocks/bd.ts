@@ -680,7 +680,7 @@ const regions: RegionResult[] = [
 // 국외(Overseas) 클러스터
 // ══════════════════════════════════════════════════════════════════════════
 
-// ── 국외 입찰공고 상세 (MUI-BD-01-M71~M73) ─────────────────────────────────
+// ── 국외 입찰공고 상세 (MUI-BD-01-M71 · T71~T73(구 M71~M73 — v1.83 재편)) ─────────────────────────────────
 const ovsBidPbancDetail: OvsBidPbancDetail = {
   pbancNo: 'EFD0007',
   pbancOd: '2',
@@ -736,7 +736,7 @@ const ovsAtchDocList: OvsAtchDoc[] = [
   { no: 2, atchDocNm: '일반조건', atchFileNm: 'general.pdf', fileSz: '128 KB' },
 ]
 
-// ── 국외 입찰참가신청서 (MUI-BD-04-M71~M83) ────────────────────────────────
+// ── 국외 입찰참가신청서 (MUI-BD-04-M71·M78 컨테이너 · T71~T79 · P75/P76/P82/P83(구 M72~M81 — v1.83 재편)) ────────────────────────────────
 const ovsBidRegRsltList: OvsBidRegRsltItem[] = [
   { no: '1', prchsDmndNo: 'BAD839380-001', bizNm: '500MD부품', cfmtnRslt: '적격', cfmtnYmd: '2025-12-24' },
 ]
@@ -835,7 +835,7 @@ const ovsBidWtgrInfo: OvsBidWtgrInfo = {
   bdngDdlnDt: '2025-12-24 10:00:00',
 }
 
-// ── 국외 입찰결과 (MUI-BD-09-M71~M73) ──────────────────────────────────────
+// ── 국외 입찰결과 (MUI-BD-09-M71 · T71~T73(구 M71~M73 — v1.83 재편)) ──────────────────────────────────────
 const ovsBidRsltUnitPriceItems: OvsBidRsltUnitPriceItem[] = [
   {
     clsfNo: '1',
@@ -1060,7 +1060,7 @@ const ovsTndrDocList: OvsTndrDoc[] = [
   { id: 'otd-1', atchDocNm: '입찰서', atchFileNm: 'tender.pdf', fileSz: '256 KB' },
 ]
 
-// ── 국외 이전공고 입찰내역 (MUI-BD-01-M76·M79) ─────────────────────────────
+// ── 국외 이전공고 입찰내역 (MUI-BD-01-M76 · P79(구 M79 — v1.83 재편)) ─────────────────────────────
 const bfrPbancLockerList: BfrPbancInfoItem[] = [
   {
     no: 1,

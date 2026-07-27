@@ -317,6 +317,7 @@ import { Icon } from '@/ui/common/base/Icon'
 ## Figma (디자인 원본)
 
 - Figma Dev Mode MCP 사용. **현행 file key: `GUnQ6XMmbindVZQ9MLEDcQ`** (`개인용-260723`, 2026-07-27 확인 — CM-05 안내 화면들 이 파일 기준으로 구현). 구 파일 `r4EjbQsz172SB5tQdX2bqV`(mobile)은 이전 구현 참조용 — 노드 번호 체계(10020-XXXXX)는 두 파일이 동일.
+  - 이행(EX) 계열 신규 디자인은 `5M6FlyQBdHgeNrgIG2XhIN`(`개인용-2607427`)에도 있음(예: EX-02-P79 계약번호조회) — 사용자가 준 링크의 file key 를 따라가면 됨.
 - 디자인 읽기 도구: `mcp__figma-dev-mode__get_design_context` / `get_metadata` / `get_screenshot` / `get_variable_defs`.
 - Figma 디자인 데이터는 웹페이지 fetch 로 못 읽는다 — 반드시 MCP 사용. Figma 데스크톱 앱 실행 + Dev Mode MCP Server 활성화 필요.
 - **D2B 색상**: 별도 색상 팔레트 프레임이 없어, 컴포넌트 디자인에서 추출한 실측값을

@@ -24,7 +24,7 @@ export const ROUTES = {
   CT: '/ct',
   /** 대금지불정보목록 (MUI-CT-01-M15). */
   CT_PYMT: '/ct/pymt',
-  /** 입찰결과상세(개찰상세) (MUI-BD-09-M01~M04, `:id` 파라미터). 이동: `/bd/result/${id}`. */
+  /** 입찰결과상세(개찰상세) (MUI-BD-09-M01 · T01~T04(구 M01~M04 — v1.83 재편), `:id` 파라미터). 이동: `/bd/result/${id}`. */
   BD_RESULT_DETAIL: '/bd/result/:id',
   NOTIFICATION: '/notification',
   SUPPORT: '/support',

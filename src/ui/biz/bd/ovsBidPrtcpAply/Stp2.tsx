@@ -1,4 +1,4 @@
-// 스탭2 업체정보 (MUI-BD-04-M73 OvsBidPrtcpAplyPage_Stp2 · 설계서 slide334 · 데이터 slide338 dm_splyInfo).
+// 스탭2 업체정보 (MUI-BD-04-T73(구 M73 — v1.83 재편) OvsBidPrtcpAplyPage_Stp2 · 설계서 slide334 · 데이터 slide338 dm_splyInfo).
 // 호스트 페이지(OvsBidPrtcpAplyPage)의 '업체정보' 탭 본문만 담당 — 요약/스텝/탭/하단 액션바는 페이지 소유.
 // 구성: 페이지타이틀 → 입찰업체 Table(dm_splyInfo — 업체코드만 편집 E, 나머지 R)
 //   → LETTER OF GUARANTEE FOR PAYMENT OF BID BOND 본문 박스(설계서 slide334 영문 원문,

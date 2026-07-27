@@ -21,22 +21,25 @@ export type SearchFilterFieldValue = string | string[] | DateRangeValue | PriceR
  * 공통 검색 바텀시트 종류 — selectionField 가 SearchFilter 셸에서 직접 여는 검색 시트.
  * 'item'=품목별조회(MUI-OP-01-P71, ItemInq) · 'producer'=생산자조회(P72, PrdcrInq) ·
  * 'dept'=발주부서(기관)조회(MUI-BD-01-P04, DeptInq) · 'region'=지역검색(MUI-BD-01-P03, RgnSrch) ·
- * 'license'=면허정보검색(MUI-BD-01-P05, LcnsInfoSrch).
+ * 'license'=면허정보검색(MUI-BD-01-P05, LcnsInfoSrch) · 'ctrtNo'=계약번호조회(MUI-EX-02-P79, OvsCtrtNoInq).
  * 콘텐츠 컴포넌트는 biz/cm/search 에 있으며(BottomSheet 컨테이너는 SearchFilter 셸이 슬롯으로 소유),
  * 종류만 config 로 선언한다(도메인 문자열 하드코딩 회피).
  */
-export type SearchSheetKind = 'item' | 'producer' | 'dept' | 'region' | 'license'
+export type SearchSheetKind = 'item' | 'producer' | 'dept' | 'region' | 'license' | 'ctrtNo'
 
 /**
  * 공통 검색 시트 콘텐츠(ItemInq/PrdcrInq/DeptInq)의 명령형 핸들.
  * 시트 footer(초기화/검색)는 SearchFilter 셸(BottomSheet 컨테이너)이 소유하므로,
  * 폼 상태를 가진 콘텐츠가 ref 로 동작만 노출한다(상태는 콘텐츠 안에 캡슐화).
+ * ('ctrtNo'=계약번호조회(MUI-EX-02-P79, OvsCtrtNoInq)는 footer 가 [닫기/계약번호 선택]이라 confirm 사용)
  */
 export interface SearchSheetHandle {
   /** footer '초기화' — 입력값/검색결과 초기화 */
   reset: () => void
   /** footer '검색' — 현재 조건으로 목록 조회 */
   search: () => void
+  /** footer 확정 버튼(예: P79 '계약번호 선택') — 라디오 선택값을 호출 필드로 반환. 확정형 시트만 구현. */
+  confirm?: () => void
 }
 
 // ── 필드 정의 — `type` 으로 분기되는 discriminated union ──────────────────

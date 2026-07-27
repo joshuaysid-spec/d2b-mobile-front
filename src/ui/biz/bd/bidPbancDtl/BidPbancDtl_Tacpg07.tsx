@@ -1,4 +1,4 @@
-// 입찰공고 상세 - '입찰진행현황' 탭 (MUI-BD-01-M12, Figma 9300-41670).
+// 입찰공고 상세 - '입찰진행현황' 탭 (MUI-BD-01-T06(구 M12 — v1.83 재편), Figma 9300-41670).
 // 차수별 진행 카드(정보 테이블 + '입찰결과 바로가기') 목록. 입찰진행 전이면 노출 안 됨(컨테이너 제어).
 // 데이터는 목업(추후 bdService.getBidProgress).
 import { Button } from '@/ui/common/base/Button'
