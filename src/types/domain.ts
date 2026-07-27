@@ -47,7 +47,8 @@ export interface LoginResult {
   /**
    * 통합 로그인 계정 등록 필요 여부(intgAcntRegRqrdYn) — 구버전 아이디로 로그인 시 true.
    * true 면 통합로그인계정등록안내(MUI-CM-03-P21, NewIdChgInfo) 팝업을 띄워 통합계정등록(M22)으로 유도한다.
-   * TODO(백엔드 확정): 항목 영문 ID 는 로그인 응답 스펙 미확정 — 잠정 키. 목업은 기본 미설정(정상 로그인 흐름 유지).
+   * ※ 임의 확정 키(2026-07-27 사용자 승인, 로그인 응답 스펙 미확정) — 백엔드 연동 시 실키와 대조만(불일치 시 교체).
+   * 목업은 기본 미설정(정상 로그인 흐름 유지).
    */
   intgAcntRegRqrdYn?: boolean
 }
@@ -127,7 +128,8 @@ export interface IntgAcntIdCheckResult {
 
 /**
  * 통합계정 등록 요청 — NewIdPwReg 통합 아이디 등록하기(btn_save_onclick). 설계서 slide36 dm_userInfo.
- * TODO(백엔드 확정): 통합계정아이디 항목의 영문 ID 가 설계서 데이터영역에 미제공 — 로그인 계열 규약대로 userId 잠정 사용.
+ * ※ 통합계정아이디는 설계서 데이터영역에 영문 ID 미제공 — 로그인 계열 규약대로 userId 로 임의 확정(2026-07-27 사용자 승인).
+ *   백엔드 연동 시 실키와 대조만(불일치 시 교체).
  */
 export interface RegisterIntgAcntRequest {
   /** 주민등록번호(userRrno) — '######-#######'. CI 값 존재 시 백엔드에서 생략 가능. */

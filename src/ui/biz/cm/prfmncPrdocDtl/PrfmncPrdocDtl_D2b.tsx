@@ -7,9 +7,9 @@
 //   보증회사제출-당해·예정(납품금)=납품·정산·보증보험번호·확인요청사항·정산일자 /
 //   적격심사제출·입찰참가용=납품·납품일자 / 기타=전부.
 //
-// ⚠️ 항목명 미확인: 세부정보 표가 '신청금액/발급금액' 쌍(+처리사유)으로 나뉘나 설계서 항목 설명은
+// ⚠️ 세부정보 표가 '신청금액/발급금액' 쌍(+처리사유)으로 나뉘나 설계서 항목 설명은
 //   단일 금액(dm_prfmncPrdocAplyInptInfo)만 정의 → 신청측은 설계서 키 재사용, 발급측/처리사유는
-//   TODO(설계서 영문ID 미확인) 임시 키(*IssuAmt·prcsRsnCn). 확정 시 교체.
+//   임의 확정 키(*IssuAmt·prcsRsnCn — 2026-07-27 사용자 승인). 백엔드 연동 시 실키와 대조만(불일치 시 교체).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { PrfmncPrdocAplyInptInfo } from '@/types/cm'
@@ -33,7 +33,7 @@ const APLY_INPT: PrfmncPrdocAplyInptInfo = {
   clclnYmd: '2026-02-02',
 }
 
-// 발급금액(신청측 대응 발급값)·처리사유 — 설계서 항목명 미정의 → 임시 키. TODO(설계서 영문ID 미확인).
+// 발급금액(신청측 대응 발급값)·처리사유 — 설계서 항목명 미정의 → 임의 확정 키(사용자 승인, 백엔드 연동 시 대조).
 const ISSU = {
   prcsRsnCn: '처리사유 표시', // 처리사유
   prfmncIssuAmt: 1000000, // 납품발급금액

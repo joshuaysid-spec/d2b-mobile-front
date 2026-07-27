@@ -34,7 +34,7 @@ const CSTRN: PrfmncPrdocCstrnDsctnInfoI = {
   cmcnYmd: '2020-01-13',
 }
 
-// 그 밖의 사항 — 화면(slide270)엔 표시되나 항목 설명 1.33 미정의 → 임시 표시. TODO(설계서 영문ID 미확인).
+// 그 밖의 사항 — 화면(slide270)엔 표시되나 항목 설명 1.33 미정의 → etcMttr 로 임의 확정(사용자 승인, 백엔드 연동 시 대조).
 const ETC_MTTR = '내용 표시 영역은 내용에 맞춰 높이를 조정하여 표시'
 
 const APLY_ROWS: TableRow[] = [
