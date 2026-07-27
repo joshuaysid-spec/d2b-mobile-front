@@ -19,7 +19,16 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { ButtonGroup, type ButtonGroupItem } from '@/ui/common/composites/ButtonGroup'
 import { PrfmncPrdocDtl_Cn } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_Cn'
+import { PrfmncPrdocDtl_D2b } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_D2b'
 import { PrfmncPrdocDtl_UnitB } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_UnitB'
+import { PrfmncPrdocDtl_UnitC } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_UnitC'
+import { PrfmncPrdocDtl_UnitD } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_UnitD'
+import { PrfmncPrdocDtl_UnitE } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_UnitE'
+import { PrfmncPrdocDtl_UnitF } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_UnitF'
+import { PrfmncPrdocDtl_UnitG } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_UnitG'
+import { PrfmncPrdocDtl_UnitH } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_UnitH'
+import { PrfmncPrdocDtl_UnitI } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_UnitI'
+import { PrfmncPrdocDtl_AplyInfo } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_AplyInfo'
 import { PrfmncPrdocSbmsnFullPopup } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocSbmsnFullPopup'
 import type { PrfmncPrdocItem } from '@/types/cm'
 
@@ -43,14 +52,63 @@ const TABS: TabItem[] = [
   { value: 'aply', label: '신청정보' },
 ]
 
-function renderTabContent(tab: string) {
+// 신청정보 탭 분기(slide243~271) — 기관/계약구분/제출유형(증명서 종류)으로 결정.
+//   방위사업청 → D2b(T02) · 부대+시설공사 → 제출유형별 unitB~I(T03~T10) · 부대+비시설공사 → AplyInfo(T11).
+// 제출유형 코드(sbmsnTyCd)는 설계서 항목명 미정의(TODO) — 값이 없으면 시설공사 기본 unitB.
+function resolveAplyBranch(detail: PrfmncPrdocItem) {
+  if (detail.orderInst === '방위사업청') return 'd2b'
+  if (detail.ctrtSe !== '공사') return 'aplyInfo' // 부대+비시설공사
+  switch (detail.sbmsnTyCd) {
+    case '3':
+      return 'unitC'
+    case '4':
+      return 'unitD'
+    case '6':
+      return 'unitE'
+    case '7':
+      return 'unitF'
+    case '8':
+      return 'unitG'
+    case '9':
+      return 'unitH'
+    case '10':
+      return 'unitI'
+    default:
+      return 'unitB' // 유형 1/2/5 및 미지정
+  }
+}
+
+function renderAplyTab(detail: PrfmncPrdocItem) {
+  switch (resolveAplyBranch(detail)) {
+    case 'd2b':
+      return <PrfmncPrdocDtl_D2b />
+    case 'unitC':
+      return <PrfmncPrdocDtl_UnitC />
+    case 'unitD':
+      return <PrfmncPrdocDtl_UnitD />
+    case 'unitE':
+      return <PrfmncPrdocDtl_UnitE />
+    case 'unitF':
+      return <PrfmncPrdocDtl_UnitF />
+    case 'unitG':
+      return <PrfmncPrdocDtl_UnitG />
+    case 'unitH':
+      return <PrfmncPrdocDtl_UnitH />
+    case 'unitI':
+      return <PrfmncPrdocDtl_UnitI />
+    case 'aplyInfo':
+      return <PrfmncPrdocDtl_AplyInfo />
+    default:
+      return <PrfmncPrdocDtl_UnitB />
+  }
+}
+
+function renderTabContent(tab: string, detail: PrfmncPrdocItem) {
   switch (tab) {
     case 'ctrt':
       return <PrfmncPrdocDtl_Cn />
     case 'aply':
-      // 신청정보는 기관/계약에 따라 3분류(slide244): 방위사업청(T02)/부대+시설공사(T03 unitB)/
-      // 부대+비시설공사. 현재 T03(unitB)만 구현 — 나머지 분기는 해당 탭 컴포넌트 추가 시 여기서 분기.
-      return <PrfmncPrdocDtl_UnitB />
+      return renderAplyTab(detail)
     default:
       return null
   }
@@ -76,7 +134,7 @@ export function PrfmncPrdocDtlPage() {
       variant: 'secondary' as const,
       onClick: () => {
         setActionOpen(false)
-        // 실적증명서 신청 플로우(MUI-CM-04-M10 계약선택 → M12 → T12/T13)
+        // 실적증명서 신청 플로우(MUI-CM-04-P21 계약선택 → M12 → T12/T13)
         navigate(ROUTES.SUPPORT_PRFMNC_PRDOC_REG)
       },
     },
@@ -133,7 +191,7 @@ export function PrfmncPrdocDtlPage() {
       </div>
 
       {/* 탭 콘텐츠 — 짧은 탭도 헤더 접힘을 지탱할 스크롤 높이 확보(진동 방지) */}
-      <div className="min-h-[100dvh]">{renderTabContent(tab)}</div>
+      <div className="min-h-[100dvh]">{renderTabContent(tab, detail)}</div>
 
       {/* 하단 발급 버튼 — '발급' 상태에서만(신청·저장 등 타 상태 숨김, slide243) */}
       {stcd === '발급' && (

@@ -1,4 +1,4 @@
-// MUI-CM-06-P08 업무캘린더 등록/수정 폼 스키마 (react-hook-form + zod).
+// MUI-CM-06-M08 업무캘린더 등록/수정 폼 스키마 (react-hook-form + zod). (구 P08 — v0.84 에서 M08 로 재편)
 // 설계서 00.공통 v0.84 slide87 — 선택 날짜*·제목* 필수, 내용 선택. (미입력 유효성 정보 표시)
 // zod v4: 에러 메시지는 { error: '...' }. 값 타입은 TaskCldrRegValues(@/types/cm)와 정합.
 import { z } from 'zod'

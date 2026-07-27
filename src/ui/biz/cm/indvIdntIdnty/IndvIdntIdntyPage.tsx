@@ -1,5 +1,7 @@
 // 개인 신원 확인 — MUI-CM-02-M06. 설계서 00.공통 v0.84 slide199~201.
 // 레이아웃은 Figma 87175(생체인증) 템플릿 참고, 내용/흐름은 설계서.
+// ⚠️ v0.84 목록표의 인증서관리(MUI-CM-02-M10 CrtfMng)·인증서확인(MUI-CM-02-P11 CrtfIdnty)은 별도 화면이 아니라
+//   이 화면 내 시트로 처리(설계서 경로도 IndvIdntIdntyPage 재사용 표기): 인증서 선택 시트=M10 · 비밀번호 확인 시트=P11.
 //
 // 흐름:
 //   랜딩(slide199): 아이콘 + 안내문 "개인 신원 확인을 진행합니다." + 도움말 + [취소]/[개인신원확인]
@@ -97,7 +99,7 @@ export function IndvIdntIdntyPage() {
         />
       </div>
 
-      {/* 인증서 선택 BottomSheet(slide200) — "개인 인증서". 컨테이너/open 은 부모 소유, 콘텐츠(카드 목록)는 인라인. */}
+      {/* 인증서 선택 BottomSheet(slide200) — "개인 인증서" = MUI-CM-02-M10 인증서관리(CrtfMng). 컨테이너/open 은 부모 소유, 콘텐츠(카드 목록)는 인라인. */}
       <BottomSheet open={selectOpen} onOpenChange={setSelectOpen} title="개인 인증서">
         <div className="flex flex-col gap-krds-5">
           {MOCK_CERTS.map((c) => (
@@ -106,7 +108,7 @@ export function IndvIdntIdntyPage() {
         </div>
       </BottomSheet>
 
-      {/* 개인 인증서 확인 BottomSheet(slide201) — 비밀번호 입력. footer 는 부모 소유, 콘텐츠는 IndvIdntIdnty_CrtfCnfrm. */}
+      {/* 개인 인증서 확인 BottomSheet(slide201) — 비밀번호 입력 = MUI-CM-02-P11 인증서확인(CrtfIdnty). footer 는 부모 소유, 콘텐츠는 IndvIdntIdnty_CrtfCnfrm. */}
       <BottomSheet
         open={confirmCert !== null}
         onOpenChange={(o) => {

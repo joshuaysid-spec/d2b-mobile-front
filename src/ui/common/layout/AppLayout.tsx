@@ -77,6 +77,15 @@ export function AppLayout() {
     if (location.key !== 'default') navigate(-1)
     else navigate(ROUTES.HOME)
   }
+
+  // 외부(셸 밖 화면 등)에서 navigate(path, { state: { openMenu: true } }) 로 진입하면 전체메뉴를 연다.
+  // (MenuPage 는 라우트가 아니라 AppLayout 오버레이라 직접 이동 불가 — 앱이용안내(MUI-MS-01-M06) '메뉴' 항목이 사용)
+  useEffect(() => {
+    if ((location.state as { openMenu?: boolean } | null)?.openMenu) {
+      setMenuOpen(true)
+      navigate(location.pathname, { replace: true, state: null }) // 재방문/뒤로가기 시 재오픈 방지
+    }
+  }, [location.state, location.pathname, navigate])
   // 스크롤 처리는 아래 effect #2 한 곳에서 (PUSH/REPLACE→맨위, POP→복원).
   //   ※ pathname 기준으로 무조건 top:0 하던 effect 는 POP 복원을 덮어써서 제거함.
   // 1) 현재 화면의 스크롤을 계속 저장(떠나기 직전 값 보존)
@@ -139,7 +148,7 @@ export function AppLayout() {
         <BottomNav
           onAction={(id) => {
             if (id === 'search') setSearchOpen(true)
-            if (id === 'chatbot') console.log('[nav] 챗봇') // 추후: 챗봇 연결
+            if (id === 'chatbot') navigate(ROUTES.CHATBOT) // 챗봇문의(MUI-MS-01-M11)
           }}
         />
       )}

@@ -66,7 +66,7 @@ export const ROUTES = {
   SUPPORT_PRFMNC_PRDOC: '/support/dcmnt-issu-aply/prfmnc-prdoc',
   /** 실적증명서 확인(상세) (MUI-CM-04-M07, `:prfmncRcptNo`). 목록 카드 클릭 진입. */
   SUPPORT_PRFMNC_PRDOC_DTL: '/support/dcmnt-issu-aply/prfmnc-prdoc/:prfmncRcptNo',
-  /** 실적증명서 신청 플로우 (MUI-CM-04-M10 계약선택 → M12 신청정보 → T12/T13 실적정보). */
+  /** 실적증명서 신청 플로우 (MUI-CM-04-P21 계약선택 → M12 신청정보 → T12/T13 실적정보). */
   SUPPORT_PRFMNC_PRDOC_REG: '/support/dcmnt-issu-aply/prfmnc-prdoc/reg',
   /** 국외조달원등록증신청목록 (MUI-CM-04-M21). 민원서류발급신청 허브 > 국외 조달원 등록증 신청 목록. */
   SUPPORT_OVS_SOS_CNFDOC: '/support/dcmnt-issu-aply/ovs-sos-cnfdoc',
@@ -94,10 +94,20 @@ export const ROUTES = {
   INTRO_INQUIRY: '/intro/inquiry',
   /** 사전준비사항 (MUI-CM-05-M07). 이용안내 > 조달사전준비안내 > 사전준비사항. */
   GUIDE_PREPARATION: '/guide/preparation01',
+  /** 청렴계약제 (MUI-CM-05-M08). 이용안내 > 국내조달안내 > 청렴계약제. */
+  GUIDE_PREPARATION02: '/guide/preparation02',
   /** 국방조달참여절차 (MUI-CM-05-M09). 이용안내 > 국내조달안내 > 국방조달참여절차. */
   GUIDE_DOMESTIC: '/guide/domestic01',
+  /** 전자입찰절차(국내) (MUI-CM-05-M10). 이용안내 > 국내조달안내 > 전자입찰절차. */
+  GUIDE_DOMESTIC02: '/guide/domestic02',
+  /** 전자대금청구절차 (MUI-CM-05-M11). 이용안내 > 국내조달안내 > 전자대금청구절차. */
+  GUIDE_DOMESTIC03: '/guide/domestic03',
   /** 국외조달원 등록절차 (MUI-CM-05-M12). 이용안내 > 국외조달안내 > 국외조달원 등록절차. */
   GUIDE_FOREIGN: '/guide/foreign01',
+  /** 국외조달원 등록/변경안내 (MUI-CM-05-M13). 이용안내 > 국외조달안내 > 국외조달원 등록/변경안내. */
+  GUIDE_FOREIGN02: '/guide/foreign02',
+  /** 전자입찰절차(국외) (MUI-CM-05-M14). 이용안내 > 국외조달안내 > 전자입찰절차. */
+  GUIDE_FOREIGN03: '/guide/foreign03',
   /** 관련사이트 (MUI-CM-05-M15). 이용안내 > 관련사이트. */
   GUIDE_SITE: '/guide/site',
   MYPAGE: '/mypage',
@@ -171,8 +181,12 @@ export const ROUTES = {
   SPLASH: '/splash',
   /** 앱 접근권한 동의 (MUI-MS-01-M02). 셸 밖 풀스크린. */
   APP_AUTHRT_AGRE: '/app-authrt-agre',
-  /** 앱 이용안내 (MUI-MS-01-P06). 셸 밖 풀스크린. */
+  /** 앱 이용안내 (MUI-MS-01-M06, 구 P06 표기). 셸 밖 풀스크린. */
   APP_GUIDE: '/app-guide',
+  /** 챗봇문의 (MUI-MS-01-M11). 외부 챗봇 솔루션 임베드 자리 — BottomNav 챗봇/전체메뉴 챗봇상담 진입. */
+  CHATBOT: '/chatbot',
+  /** 생체인증 (MUI-CM-03-M14). 로그인 방식선택·전체메뉴 인증센터 > 생체인증 진입. */
+  LOGIN_BIOMETRIC: '/login/biometric',
   /** 설정 (MUI-MS-02-M01). 전체메뉴 > 설정. */
   SETTINGS: '/settings',
   /** 개발자용 컴포넌트 가이드 (PC 해상도, 모바일 셸 미적용). */

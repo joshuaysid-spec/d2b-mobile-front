@@ -1,5 +1,5 @@
 // 실적증명서 신청 플로우 컨테이너 — 설계서 00.공통 v0.84 slide286~294.
-// 스텝 화면: 계약정보선택(MUI-CM-04-M10 CtrtInfoChc) → 신청정보입력(M12 PrfmncPrdocReg_AplyInpt)
+// 스텝 화면: 계약정보선택(MUI-CM-04-P21 CtrtInfoChc, 구 M10) → 신청정보입력(M12 PrfmncPrdocReg_AplyInpt)
 //   → 실적정보 입력(계약구분 분기: 방위사업청 T12 PrfmncPrdocReg_D2b / 부대+시설공사 T13 PrfmncPrdocReg_UnitB).
 // 설계서에 플로우 전체 화면 ID 가 없어(스텝 화면만 정의) 폴더명(prfmncPrdocReg) 기반 컨테이너(도메인 조립물).
 // 부대+비시설공사 분기는 미구현(요청 범위: unitB 까지) — 안내 스텁.
@@ -18,6 +18,14 @@ import { CtrtInfoChc } from '@/ui/biz/cm/prfmncPrdocReg/CtrtInfoChc'
 import { PrfmncPrdocReg_AplyInpt } from '@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocReg_AplyInpt'
 import { PrfmncPrdocReg_D2b } from '@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocReg_D2b'
 import { PrfmncPrdocReg_UnitB } from '@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocReg_UnitB'
+import { PrfmncPrdocReg_UnitC } from '@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocReg_UnitC'
+import { PrfmncPrdocReg_UnitD } from '@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocReg_UnitD'
+import { PrfmncPrdocReg_UnitE } from '@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocReg_UnitE'
+import { PrfmncPrdocReg_UnitF } from '@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocReg_UnitF'
+import { PrfmncPrdocReg_UnitG } from '@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocReg_UnitG'
+import { PrfmncPrdocReg_UnitH } from '@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocReg_UnitH'
+import { PrfmncPrdocReg_UnitI } from '@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocReg_UnitI'
+import { PrfmncPrdocReg_AplyInfo } from '@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocReg_AplyInfo'
 import {
   aplyInptSchema,
   APLY_INPT_DEFAULTS,
@@ -26,6 +34,32 @@ import {
 import type { PrfmncPrdocCtrtInfo } from '@/types/cm'
 
 const STEP_LABELS = ['계약 정보 선택', '신청정보 입력', '실적정보 입력'] as const
+
+// 실적정보(step3) 탭 분기 렌더 — 방위사업청(d2b, T12)/시설공사 제출유형별 unitB~I(T13~T20)/비시설(aplyInfo, T21).
+function renderPrfmncTab(branch: string) {
+  switch (branch) {
+    case 'd2b':
+      return <PrfmncPrdocReg_D2b />
+    case 'unitC':
+      return <PrfmncPrdocReg_UnitC />
+    case 'unitD':
+      return <PrfmncPrdocReg_UnitD />
+    case 'unitE':
+      return <PrfmncPrdocReg_UnitE />
+    case 'unitF':
+      return <PrfmncPrdocReg_UnitF />
+    case 'unitG':
+      return <PrfmncPrdocReg_UnitG />
+    case 'unitH':
+      return <PrfmncPrdocReg_UnitH />
+    case 'unitI':
+      return <PrfmncPrdocReg_UnitI />
+    case 'aplyInfo':
+      return <PrfmncPrdocReg_AplyInfo />
+    default:
+      return <PrfmncPrdocReg_UnitB /> // 유형 1/2/5 및 미지정
+  }
+}
 
 export function PrfmncPrdocRegPage() {
   const navigate = useNavigate()
@@ -45,14 +79,29 @@ export function PrfmncPrdocRegPage() {
   })
   const usePrpsCd = form.watch('usePrpsCd')
 
-  // 계약구분 분기(slide286): 방위사업청 → 사용목적+T12 · 부대+시설공사 → 제출유형+T13(unitB) ·
-  // 부대+비시설공사 → 미구현(unitC~ — 추후).
-  const branch: 'd2b' | 'unitB' | 'other' =
+  // 계약구분 분기(slide286): 방위사업청 → 사용목적+T12(d2b) · 부대+시설공사 → 제출유형별 T13~T20(unitB~I) ·
+  // 부대+비시설공사 → T21(aplyInfo). 제출유형 코드(sbmsnTyCd)는 설계서 항목명 미정의(TODO) — 없으면 unitB.
+  type RegBranch =
+    | 'd2b'
+    | 'unitB'
+    | 'unitC'
+    | 'unitD'
+    | 'unitE'
+    | 'unitF'
+    | 'unitG'
+    | 'unitH'
+    | 'unitI'
+    | 'aplyInfo'
+  const facilityUnit: RegBranch =
+    ({ '3': 'unitC', '4': 'unitD', '6': 'unitE', '7': 'unitF', '8': 'unitG', '9': 'unitH', '10': 'unitI' } as const)[
+      selectedCtrt?.sbmsnTyCd ?? ''
+    ] ?? 'unitB'
+  const branch: RegBranch =
     !selectedCtrt || selectedCtrt.orderInstNm === '방위사업청'
       ? 'd2b'
       : selectedCtrt.ctrtCnNm === '시설공사'
-        ? 'unitB'
-        : 'other'
+        ? facilityUnit
+        : 'aplyInfo'
 
   const scrollTop = () =>
     document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
@@ -128,19 +177,14 @@ export function PrfmncPrdocRegPage() {
       {/* 스텝 콘텐츠 */}
       {step === 1 && <CtrtInfoChc selected={selectedCtrt} onSelect={handleSelect} />}
       {step === 2 && (
-        <PrfmncPrdocReg_AplyInpt control={form.control} branch={branch} usePrpsCd={usePrpsCd} />
+        // AplyInpt(신청정보)는 사용목적(d2b/비시설)/제출유형(시설공사) 2분류만 필요 → 3-way 로 축약.
+        <PrfmncPrdocReg_AplyInpt
+          control={form.control}
+          branch={branch === 'd2b' ? 'd2b' : branch === 'aplyInfo' ? 'other' : 'unitB'}
+          usePrpsCd={usePrpsCd}
+        />
       )}
-      {step === 3 &&
-        (branch === 'unitB' ? (
-          <PrfmncPrdocReg_UnitB />
-        ) : branch === 'd2b' ? (
-          <PrfmncPrdocReg_D2b />
-        ) : (
-          // 부대+비시설공사(unitC~) — 미구현(요청 범위: unitB 까지)
-          <p className="p-4 text-[17px] leading-normal text-krds-text-subtle">
-            해당 계약 구분의 실적정보 입력 화면은 준비 중입니다.
-          </p>
-        ))}
+      {step === 3 && renderPrfmncTab(branch)}
 
       {/* 스텝 콘텐츠가 짧아도 footer 가 뜨지 않게 나머지 공간 채움 */}
       <div className="flex-1" />

@@ -2,7 +2,7 @@
 //   웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 업체정보 추가 등록(물품(내자)).
 //   구성(아코디언): 일반정보 · 대표품류 및 조합/단체 · 등록품목명세 + 유의사항(Infobox) + 조회 동의여부 → [추가 등록 신청][취소].
 //   소유 팝업(컨테이너=이 페이지): P06 품류선택(KnditmChc) · P07 조합/단체(AsctGrpChc) · P08 등록대상품목(RegTrgtItemChc)
-//     · P09 품목조회(ItemInq) · P13 행정정보공동이용사전동의서(PbamdsInfoJntUtztnBfhdWtcs) · P14 확인(AlertModal 인라인).
+//     · P09 품목조회(ItemInq) · P13 행정정보공동이용사전동의서(PbamdsInfoJntUtztnBfhdWtcs) · MUI-CM-01-P14 확인팝업(Confirm — 별도 파일 없이 AlertModal 인라인 처리 확정).
 //   ⚠️ 디자인(Figma) 없음 → 설계서(pptx)로 작업. 데이터=목업(설계서 항목명/형식), 저장=API 경계 스텁(console.log).
 //   신청 흐름(slide152/175/177): 조회 동의 체크 → P13 사전동의서 → [동의하고 신청하기] → P14 확인 → 완료 토스트.
 //     미동의 상태로 [추가 등록 신청] → 경고 모달(그대로 신청/닫기) → 그대로 신청 → P14 확인.

@@ -63,28 +63,28 @@ const MENU_TREE: MenuNode[] = [
     children: [
       { id: 'ct-list', label: LINKED_MENU_LABELS[ROUTES.CT] },
       { id: 'ct-payment', label: LINKED_MENU_LABELS[ROUTES.CT_PYMT] },
-      { id: 'ct-cancel', label: '해지/해제목록' },
+      { id: 'ct-cancel', label: '해지/해제 목록' },
     ],
   },
   {
     id: 'ex',
     label: '이행',
     children: [
-      { id: 'ex-inspect-list', label: '검사통합목록' },
-      { id: 'ex-inspect-report', label: '검사및납품조서현황목록' },
-      { id: 'ex-quote-req', label: '견적의뢰서목록' },
-      { id: 'ex-quote-noti', label: '견적통보서목록' },
-      { id: 'ex-order-req', label: '발주의뢰서목록' },
-      { id: 'ex-order-noti', label: '발주통보서목록' },
+      { id: 'ex-inspect-list', label: '검사 통합 목록' },
+      { id: 'ex-inspect-report', label: '검사 및 납품조서 현황 목록' },
+      { id: 'ex-quote-req', label: '견적 의뢰서 목록' },
+      { id: 'ex-quote-noti', label: '견적 통보서 목록' },
+      { id: 'ex-order-req', label: '발주 의뢰서 목록' },
+      { id: 'ex-order-noti', label: '발주 통보서 목록' },
     ],
   },
   {
     id: 'wm',
     label: '대금청구 및 사후',
     children: [
-      { id: 'wm-claim-list', label: '대금청구통합목록' },
-      { id: 'wm-payment-return', label: '대금지불정보(반납)' },
-      { id: 'wm-claim-progress', label: '대금청구진행현황' },
+      { id: 'wm-claim-list', label: '대금 청구 통합 목록' },
+      { id: 'wm-payment-return', label: '대금 지불정보 (반납)' },
+      { id: 'wm-claim-progress', label: '대금 청구 진행 현황' },
     ],
   },
   {
@@ -115,9 +115,9 @@ const MENU_TREE: MenuNode[] = [
     id: 'cert',
     label: '인증센터',
     children: [
-      { id: 'cert-manage', label: '인증서관리' },
-      { id: 'cert-import', label: '인증서가져오기' },
-      { id: 'cert-export', label: '인증서내보내기' },
+      { id: 'cert-manage', label: '인증서 관리' },
+      { id: 'cert-import', label: '인증서 가져오기' },
+      { id: 'cert-export', label: '인증서 내보내기' },
       { id: 'cert-bio', label: '생체인증' },
     ],
   },
@@ -125,11 +125,11 @@ const MENU_TREE: MenuNode[] = [
     id: 'intro',
     label: '국방전자조달소개',
     children: [
-      { id: 'intro-system', label: '시스템소개' },
-      { id: 'intro-feature', label: '주요특징' },
+      { id: 'intro-system', label: '시스템 소개' },
+      { id: 'intro-feature', label: '주요 특징' },
       { id: 'intro-history', label: '연혁' },
       { id: 'intro-infographics', label: '인포그래픽스' },
-      { id: 'intro-related-system', label: '관련시스템' },
+      { id: 'intro-related-system', label: '관련 시스템' },
       { id: 'intro-contact', label: '이용문의' },
     ],
   },
@@ -142,7 +142,7 @@ const MENU_TREE: MenuNode[] = [
       { id: 'guide-foreign', label: LINKED_MENU_LABELS[ROUTES.GUIDE_FOREIGN] },
       { id: 'guide-related-site', label: LINKED_MENU_LABELS[ROUTES.GUIDE_SITE] },
       { id: 'guide-glossary', label: '용어사전' },
-      { id: 'guide-app', label: '앱이용안내' },
+      { id: 'guide-app', label: '앱 이용안내' },
     ],
   },
 ]
@@ -197,6 +197,7 @@ const MENU_ROUTES: Record<string, string> = {
   'cert-manage': ROUTES.CERT_CRTF_MNG, // 인증서 관리(MUI-CM-04-M14)
   'cert-import': ROUTES.CERT_CRTF_RECEIVE, // 인증서 가져오기(MUI-CM-04-M16)
   'cert-export': ROUTES.CERT_CRTF_SEND, // 인증서 내보내기(MUI-CM-04-M17)
+  'cert-bio': ROUTES.LOGIN_BIOMETRIC, // 생체인증(MUI-CM-03-M14)
   'intro-system': ROUTES.INTRO_SYSTEM, // 시스템소개(MUI-CM-05-M01)
   'intro-feature': ROUTES.INTRO_FEATURE, // 주요특징(MUI-CM-05-M02)
   'intro-history': ROUTES.INTRO_HISTORY, // 연혁(MUI-CM-05-M03)
@@ -206,6 +207,7 @@ const MENU_ROUTES: Record<string, string> = {
   'guide-domestic': ROUTES.GUIDE_DOMESTIC, // 국내조달안내 > 국방조달참여절차(MUI-CM-05-M09)
   'guide-foreign': ROUTES.GUIDE_FOREIGN, // 국외조달안내 > 국외조달원 등록절차(MUI-CM-05-M12)
   'guide-related-site': ROUTES.GUIDE_SITE, // 관련사이트(MUI-CM-05-M15)
+  'guide-app': ROUTES.APP_GUIDE, // 앱 이용안내(MUI-MS-01-M06)
 }
 
 function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: MenuPageProps) {
@@ -245,8 +247,8 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
         </div>
       ),
       onClick: () => {
-        console.log('[menu] 챗봇상담')
-        // 추후 라우팅: open chatbot
+        onOpenChange(false) // 전체메뉴 닫고 이동
+        navigate(ROUTES.CHATBOT) // 챗봇문의(MUI-MS-01-M11)
       },
     },
     {

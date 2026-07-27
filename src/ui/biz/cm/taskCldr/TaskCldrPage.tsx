@@ -6,9 +6,9 @@
 //   ① 월 캘린더(base Calendar) — 즐겨찾기(찜) 공고 + 개인 일정이 있는 날 dot 표식.
 //   ② 선택 날짜 헤더('2026년 8월 12일') — bg-primary-faint.
 //   ③ 선택 날짜의 일정 카드(전체) — 관심 공고(공고번호+공고명) / 개인 일정(제목). 없으면 '표시할 일정이 없습니다.'
-//   ④ 일정 등록하기 버튼 → P08 등록 시트.
-// 바텀시트(P07 상세·P08 등록/수정)는 컨테이너(BottomSheet)를 페이지가 소유, 콘텐츠만 분리(TaskCldrDtl/TaskCldrReg).
-// 삭제(P09)는 AlertModal + 완료 토스트. 데이터=목업(설계서 항목명/형식), 동작=API 경계 스텁(console.log + '// 추후 …').
+//   ④ 일정 등록하기 버튼 → M08 등록 시트.
+// 바텀시트(M07 상세·M08 등록/수정)는 컨테이너(BottomSheet)를 페이지가 소유, 콘텐츠만 분리(TaskCldrDtl/TaskCldrReg).
+// 삭제(M09)는 AlertModal + 완료 토스트. 데이터=목업(설계서 항목명/형식), 동작=API 경계 스텁(console.log + '// 추후 …').
 import { useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
@@ -121,9 +121,9 @@ export function TaskCldrPage() {
   const [selected, setSelected] = useState<string>(() => dayjs().format('YYYY-MM-DD'))
 
   // 바텀시트/모달/토스트 상태.
-  const [detailItem, setDetailItem] = useState<TaskCldrItem | null>(null) // P07 상세
-  const [regSheet, setRegSheet] = useState<{ mode: 'reg' | 'edit'; target: TaskCldrItem | null } | null>(null) // P08 등록/수정
-  const [deleteTarget, setDeleteTarget] = useState<TaskCldrItem | null>(null) // P09 삭제 확인
+  const [detailItem, setDetailItem] = useState<TaskCldrItem | null>(null) // M07 상세
+  const [regSheet, setRegSheet] = useState<{ mode: 'reg' | 'edit'; target: TaskCldrItem | null } | null>(null) // M08 등록/수정
+  const [deleteTarget, setDeleteTarget] = useState<TaskCldrItem | null>(null) // M09 삭제 확인
   const [toast, setToast] = useState<string | null>(null)
   const regRef = useRef<TaskCldrRegHandle>(null)
 
@@ -132,7 +132,7 @@ export function TaskCldrPage() {
   const dateHeader = dayjs(selected).format('YYYY년 M월 D일')
 
   // ── 동작 스텁 (API 연동 시 services/queries 로 교체) ──
-  // 카드 클릭 — 관심 공고면 해당 공고 이동, 개인 일정이면 P07 상세 바텀시트.
+  // 카드 클릭 — 관심 공고면 해당 공고 이동, 개인 일정이면 M07 상세 바텀시트.
   const handleCardClick = (item: TaskCldrItem) => {
     if (item.schdlSeCd === 'personal') {
       setDetailItem(item)
@@ -144,13 +144,13 @@ export function TaskCldrPage() {
 
   // 등록 시트 열기 — 선택 날짜를 기본값으로.
   const openReg = () => setRegSheet({ mode: 'reg', target: null })
-  // 수정 시트 열기(P07 → 수정) — 대상 일정 프리필.
+  // 수정 시트 열기(M07 → 수정) — 대상 일정 프리필.
   const openEdit = (item: TaskCldrItem) => {
     setDetailItem(null)
     setRegSheet({ mode: 'edit', target: item })
   }
 
-  // P08 제출(등록/수정) — 목업 반영 + 시트 닫기.
+  // M08 제출(등록/수정) — 목업 반영 + 시트 닫기.
   const handleRegSubmit = (values: TaskCldrRegSchemaValues) => {
     if (regSheet?.mode === 'edit' && regSheet.target) {
       const id = regSheet.target.id
@@ -176,7 +176,7 @@ export function TaskCldrPage() {
     setRegSheet(null)
   }
 
-  // P07 → 삭제 → P09 확인 모달.
+  // M07 → 삭제 → M09 확인 모달.
   const openDelete = (item: TaskCldrItem) => {
     setDetailItem(null)
     setDeleteTarget(item)
@@ -231,7 +231,7 @@ export function TaskCldrPage() {
         </Button>
       </div>
 
-      {/* P07 일정 상세 정보 — footer: [삭제][수정] (컨테이너/footer 페이지 소유). */}
+      {/* M07 일정 상세 정보 — footer: [삭제][수정] (컨테이너/footer 페이지 소유). */}
       <BottomSheet
         open={detailItem !== null}
         onOpenChange={(open) => !open && setDetailItem(null)}
@@ -251,7 +251,7 @@ export function TaskCldrPage() {
         {detailItem && <TaskCldrDtl item={detailItem} />}
       </BottomSheet>
 
-      {/* P08 일정 등록/수정 — 동일 폼(mode 로 타이틀/버튼만 구분). footer: [취소][등록|수정]. */}
+      {/* M08 일정 등록/수정 — 동일 폼(mode 로 타이틀/버튼만 구분). footer: [취소][등록|수정]. */}
       <BottomSheet
         open={regSheet !== null}
         onOpenChange={(open) => !open && setRegSheet(null)}
@@ -277,7 +277,7 @@ export function TaskCldrPage() {
         )}
       </BottomSheet>
 
-      {/* P09 삭제 확인 (설계서 slide88) */}
+      {/* M09 삭제 확인 (설계서 slide88) */}
       <AlertModal
         open={deleteTarget !== null}
         onOpenChange={(open) => !open && setDeleteTarget(null)}

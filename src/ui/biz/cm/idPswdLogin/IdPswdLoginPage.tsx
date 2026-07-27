@@ -34,6 +34,7 @@ import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { BzentyChc } from '@/ui/biz/cm/bzentyChc/BzentyChc'
+import { NewIdChgInfo } from '@/ui/biz/cm/newId/NewIdChgInfo'
 import {
   idPswdLoginSchema,
   type IdPswdLoginForm,
@@ -93,6 +94,8 @@ export function IdPswdLoginPage() {
   const [bzentyCd, setBzentyCd] = useState('')
   // 로그인 실패 안내(AlertModal) — null 이면 닫힘.
   const [loginError, setLoginError] = useState<string | null>(null)
+  // 통합 로그인 계정등록안내(P21) 팝업 — 구버전 아이디 로그인 시 노출. null 이면 닫힘.
+  const [newIdInfo, setNewIdInfo] = useState<{ userNm: string } | null>(null)
 
   const {
     register,
@@ -120,6 +123,11 @@ export function IdPswdLoginPage() {
   const onSubmit = async (data: IdPswdLoginForm) => {
     try {
       const result = await authService.login({ ...data, loginTarget })
+      if (result.intgAcntRegRqrdYn) {
+        // 구버전 아이디 로그인 → 통합 로그인 계정등록안내(P21) 팝업으로 통합계정등록(M22) 유도.
+        setNewIdInfo({ userNm: result.user.name })
+        return
+      }
       if (result.bzentyList.length > 1) {
         // 소속 업체가 여럿 → 업체 선택(P14) 팝업에서 확정.
         setBzentyList(result.bzentyList)
@@ -313,6 +321,22 @@ export function IdPswdLoginPage() {
         title="로그인 실패"
         description={loginError}
         primaryAction={{ label: '확인', onClick: () => setLoginError(null) }}
+      />
+
+      {/* 통합 로그인 계정등록안내(MUI-CM-03-P21) — 구버전 아이디 로그인 시. 확인 → 통합계정등록(M22) */}
+      <AlertModal
+        open={newIdInfo !== null}
+        onOpenChange={(open) => {
+          if (!open) setNewIdInfo(null)
+        }}
+        variant="info"
+        title="통합 로그인 계정 등록 안내"
+        description={<NewIdChgInfo />}
+        secondaryAction={{ label: '취소', onClick: () => setNewIdInfo(null) }}
+        primaryAction={{
+          label: '통합 로그인 계정 등록',
+          onClick: () => navigate('/login/new-id', { state: { userNm: newIdInfo?.userNm } }),
+        }}
       />
     </>
   )
