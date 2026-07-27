@@ -185,6 +185,8 @@ export const ROUTES = {
   APP_GUIDE: '/app-guide',
   /** 챗봇문의 (MUI-MS-01-M11). 외부 챗봇 솔루션 임베드 자리 — BottomNav 챗봇/전체메뉴 챗봇상담 진입. */
   CHATBOT: '/chatbot',
+  /** 생체인증 (MUI-CM-03-M14). 로그인 방식선택·전체메뉴 인증센터 > 생체인증 진입. */
+  LOGIN_BIOMETRIC: '/login/biometric',
   /** 설정 (MUI-MS-02-M01). 전체메뉴 > 설정. */
   SETTINGS: '/settings',
   /** 개발자용 컴포넌트 가이드 (PC 해상도, 모바일 셸 미적용). */

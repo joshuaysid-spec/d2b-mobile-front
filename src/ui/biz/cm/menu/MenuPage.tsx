@@ -197,6 +197,7 @@ const MENU_ROUTES: Record<string, string> = {
   'cert-manage': ROUTES.CERT_CRTF_MNG, // 인증서 관리(MUI-CM-04-M14)
   'cert-import': ROUTES.CERT_CRTF_RECEIVE, // 인증서 가져오기(MUI-CM-04-M16)
   'cert-export': ROUTES.CERT_CRTF_SEND, // 인증서 내보내기(MUI-CM-04-M17)
+  'cert-bio': ROUTES.LOGIN_BIOMETRIC, // 생체인증(MUI-CM-03-M14)
   'intro-system': ROUTES.INTRO_SYSTEM, // 시스템소개(MUI-CM-05-M01)
   'intro-feature': ROUTES.INTRO_FEATURE, // 주요특징(MUI-CM-05-M02)
   'intro-history': ROUTES.INTRO_HISTORY, // 연혁(MUI-CM-05-M03)
@@ -206,6 +207,7 @@ const MENU_ROUTES: Record<string, string> = {
   'guide-domestic': ROUTES.GUIDE_DOMESTIC, // 국내조달안내 > 국방조달참여절차(MUI-CM-05-M09)
   'guide-foreign': ROUTES.GUIDE_FOREIGN, // 국외조달안내 > 국외조달원 등록절차(MUI-CM-05-M12)
   'guide-related-site': ROUTES.GUIDE_SITE, // 관련사이트(MUI-CM-05-M15)
+  'guide-app': ROUTES.APP_GUIDE, // 앱 이용안내(MUI-MS-01-M06)
 }
 
 function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: MenuPageProps) {
