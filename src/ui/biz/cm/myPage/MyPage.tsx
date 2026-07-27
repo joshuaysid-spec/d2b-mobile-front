@@ -36,11 +36,13 @@ const PRGRS_ITEMS = [
 ]
 const PRGRS_TOTAL = 31
 
-const DOC_ITEMS = [
+const DOC_ITEMS: { key: string; label: string; count?: number }[] = [
   { key: 'received', label: '받은 문서', count: 24 },
   { key: 'sent', label: '보낸 문서', count: 10 },
   { key: 'rejected', label: '반려 문서', count: 1 },
   { key: 'temp', label: '임시저장', count: 0 },
+  // 개인별수신처 관리(MUI-CM-06-M12) — 설계서 웹경로 "마이페이지 > 문서함 - 개인별수신처 관리". 건수 없는 링크 행.
+  { key: 'indvRcofc', label: '개인별 수신처 관리' },
 ]
 const DOC_TOTAL = 35
 
@@ -142,11 +144,12 @@ function LinkRow({ label, onClick, last }: { label: string; onClick: () => void;
 }
 
 // 하위 메뉴 그룹 — 헤더 아래 하위 항목(입찰참가신청 등). 17px Bold + 건수(blue).
+// count 없는 항목(개인별 수신처 관리 같은 단순 링크 행)은 건수 대신 우측 화살표를 표시.
 function SubMenuGroup({
   items,
   onSelect,
 }: {
-  items: { key: string; label: string; count: number }[]
+  items: { key: string; label: string; count?: number }[]
   onSelect: (key: string) => void
 }) {
   return (
@@ -161,7 +164,11 @@ function SubMenuGroup({
           <span className="min-w-px flex-1 text-krds-body-md font-bold leading-normal text-krds-text-ink">
             {it.label}
           </span>
-          <CountBadge count={it.count} tone="nav" />
+          {it.count != null ? (
+            <CountBadge count={it.count} tone="nav" />
+          ) : (
+            <Icon name="ArrowForwardIos" size={20} aria-hidden className="shrink-0 text-krds-text-ink" />
+          )}
         </button>
       ))}
     </div>
@@ -197,6 +204,11 @@ export function MyPage() {
     navigate(ROUTES.ITRST_BID_PBANC)
   }
   const goDoc = (key: string) => {
+    // 개인별 수신처 관리(MUI-CM-06-M12) — 문서함 하위 링크 행.
+    if (key === 'indvRcofc') {
+      navigate(ROUTES.INDV_RCOFC_MNG)
+      return
+    }
     // 문서함 목록(MUI-CM-06-M10). 하위 항목 키(received/sent/rejected/temp)를 초기 탭으로 전달.
     navigate(ROUTES.DOC_BOX, { state: { docType: key } })
   }
