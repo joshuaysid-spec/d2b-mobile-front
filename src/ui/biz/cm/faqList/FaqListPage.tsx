@@ -98,6 +98,7 @@ export function FaqListPage() {
   const loaded = Math.min(page * pageSize, total)
   const faqItems: FaqItemView[] = filtered.slice(0, loaded).map((it) => ({
     id: it.bbsId,
+    no: it.no,
     category: it.bizFldCd,
     question: it.qstnTtl,
     answer: it.contsCn,

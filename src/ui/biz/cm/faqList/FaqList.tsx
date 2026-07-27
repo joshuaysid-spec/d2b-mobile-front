@@ -1,7 +1,7 @@
 // 자주묻는질문 아코디언(MUI-CM-04-M03) — Figma 10020-87532(m_accordian).
 // 질문 클릭 시 답변을 펼친다. 다중 열림(다른 질문을 눌러도 이전 답변은 닫히지 않음, 설계서 slide232).
 // 기존 공통 AccordionSection 은 타이틀 고정높이/말줄임/화살표가 달라 맞지 않아, FAQ 전용 disclosure 로 조립
-//   (aria-expanded/aria-controls 로 접근성 유지). 질문/답변 = Q/A 배지 + 구분 배지.
+//   (aria-expanded/aria-controls 로 접근성 유지). 질문 = 순번(넘버링) + 구분 배지 / 답변 = '답변' 라벨(설계서 slide242).
 import { Badge } from '@/ui/common/base/Badge'
 import { Icon } from '@/ui/common/base/Icon'
 import { SectionDivider } from '@/ui/common/base/SectionDivider'
@@ -11,6 +11,8 @@ import { cn } from '@/utils/cn'
 export interface FaqItemView {
   /** 고유 id(bbsId) — key·aria-controls. */
   id: string
+  /** 순번(no) — 질문 앞 넘버링(설계서 slide242). */
+  no: number
   /** 구분(bizFldCd) 배지 라벨. */
   category: string
   /** 질문(qstnTtl) — 말줄임 없이 전체 표시. */
@@ -46,7 +48,7 @@ function FaqList({ items, openIds, onToggle, emptyText = '자주묻는 질문이
         return (
           <div key={it.id} className="flex w-full flex-col">
             <SectionDivider />
-            {/* 질문 — 클릭 시 답변 토글. Q 배지 + 구분 배지 + 질문(말줄임 없음). */}
+            {/* 질문 — 클릭 시 답변 토글. 순번(넘버링) + 구분 배지 + 질문(말줄임 없음). */}
             <button
               type="button"
               aria-expanded={open}
@@ -56,9 +58,9 @@ function FaqList({ items, openIds, onToggle, emptyText = '자주묻는 질문이
             >
               <div className="flex min-w-px flex-1 flex-col gap-krds-3">
                 <div className="flex flex-wrap items-center gap-krds-5">
-                  <Badge type="pastel" color="blue">
-                    Q
-                  </Badge>
+                  <span className="text-[17px] font-bold leading-normal text-krds-text-primary">
+                    {it.no}
+                  </span>
                   <Badge type="pastel" color="blue">
                     {it.category}
                   </Badge>
@@ -74,15 +76,15 @@ function FaqList({ items, openIds, onToggle, emptyText = '자주묻는 질문이
                 className={cn('shrink-0 transition-transform duration-200', open && 'rotate-180')}
               />
             </button>
-            {/* 답변 — 펼침 시. A 배지 + 답변 내용(여러 줄 그대로). */}
+            {/* 답변 — 펼침 시. '답변' 라벨 + 답변 내용(여러 줄 그대로). */}
             {open && (
               <div
                 id={`faq-answer-${it.id}`}
                 role="region"
                 className="flex w-full flex-col items-start gap-krds-5 bg-krds-bg-primary-faint px-4 py-krds-6"
               >
-                <Badge type="pastel" color="blue" className="size-[27px] shrink-0 p-0">
-                  A
+                <Badge type="pastel" color="blue" className="shrink-0">
+                  답변
                 </Badge>
                 <p className="w-full whitespace-pre-wrap text-[17px] leading-normal text-krds-text-ink wrap-break-word">
                   {it.answer}
