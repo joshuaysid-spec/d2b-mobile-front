@@ -218,7 +218,8 @@ export function MyPage() {
     navigate(`/bd/${s.id}`)
   }
 
-  // 하단 바로가기(9) — 각 버튼 클릭 시 해당 페이지/팝업 호출(현재 스텁).
+  // 하단 바로가기(9) — 설계서 v0.84 slide82(2026-07-13 수정: 국외보관함 추가·회원탈퇴 제거) 구성.
+  // 회원탈퇴는 사용자 정보관리(MUI-CM-02-M01) 화면에서 진입.
   const shortcuts = [
     { id: 'myPosts', label: '나의 게시물', onClick: () => navigate(ROUTES.MY_PST) },
     // 업체정보관리 허브(M01) — 여기서 업체정보 상세(M02)·추가정보(M03)·추가등록·무역대리업(M15)·조달원확인서(M19) 등으로 분기.
@@ -228,8 +229,8 @@ export function MyPage() {
     { id: 'cabinet', label: '디지털 캐비닛', onClick: () => navigate(ROUTES.DIGITAL_CABINET) },
     // 알림 서비스 신청 및 해지(MUI-CM-02-M09).
     { id: 'noti', label: '알림 서비스 신청 및 해지', onClick: () => navigate(ROUTES.NOTI_SRVC_APLY) },
-    // 회원탈퇴(MUI-CM-02-P10).
-    { id: 'withdraw', label: '회원탈퇴', onClick: () => navigate(ROUTES.MB_WITHDRAWAL) },
+    // 국외 보관함(MUI-CM-01-M71) — 국외 보관함 공고 목록.
+    { id: 'ovsLocker', label: '국외 보관함', onClick: () => navigate('/bd/ovs/locker') },
   ]
 
   return (
