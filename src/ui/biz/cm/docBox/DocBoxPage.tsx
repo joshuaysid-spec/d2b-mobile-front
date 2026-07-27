@@ -13,6 +13,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Badge } from '@/ui/common/base/Badge'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
+import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Button } from '@/ui/common/base/Button'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
@@ -198,6 +199,18 @@ export function DocBoxPage() {
           </Button>
         </div>
       )}
+
+      {/* 개인별수신처 관리(MUI-CM-06-M12) 진입 — 설계서 웹경로 "마이페이지 > 문서함 - 개인별수신처 관리"(slide109). */}
+      <NavigationItemList
+        className="pb-6"
+        items={[
+          {
+            id: 'indv-rcofc',
+            label: '개인별수신처 관리',
+            onClick: () => navigate(ROUTES.INDV_RCOFC_MNG),
+          },
+        ]}
+      />
 
       {/* 맨 위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main). */}
       <FloatingActionButton
