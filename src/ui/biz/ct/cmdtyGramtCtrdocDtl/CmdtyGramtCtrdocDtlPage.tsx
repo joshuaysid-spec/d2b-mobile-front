@@ -2,7 +2,7 @@
 // 설계서 03.계약 v0.83 slide48~62. 두 화면은 같은 3탭 구조에 "부서명·조달판단번호만 상이"(slide57)
 // + 계약명세서 항목 세트 차이 → CLAUDE.md '같은 구조 = 1페이지 + type 파라미터' 원칙 적용.
 // 계약통합목록 카드(물품 계약최종 — 총액/단가 계약서) 클릭 → /ct/gramt/:id · /ct/untprc/:id.
-// 탭: 상세정보(T13/T16 _Cn) · 계약명세서(T14/T17 _Ctrt) · 특수조건(T15/T18 — M06 _Spcl 재사용).
+// 탭: 상세정보(T13/T16 _Cn) · 계약명세서(T14/T17 _Ctrt) · 특수조건(T15/T18 _Spcl, 총액/단가 공용).
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -19,7 +19,7 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { CmdtyGramtCtrdocDtl_Cn } from '@/ui/biz/ct/cmdtyGramtCtrdocDtl/CmdtyGramtCtrdocDtl_Cn'
 import { CmdtyGramtCtrdocDtl_Ctrt } from '@/ui/biz/ct/cmdtyGramtCtrdocDtl/CmdtyGramtCtrdocDtl_Ctrt'
-import { CmdtyMdfcnCtrdocDtl_Spcl } from '@/ui/biz/ct/cmdtyMdfcnCtrdocDtl/CmdtyMdfcnCtrdocDtl_Spcl'
+import { CmdtyGramtCtrdocDtl_Spcl } from '@/ui/biz/ct/cmdtyGramtCtrdocDtl/CmdtyGramtCtrdocDtl_Spcl'
 import type { CtCtrdocType } from '@/types/ct'
 
 export interface CmdtyGramtCtrdocDtlPageProps {
@@ -118,11 +118,11 @@ export function CmdtyGramtCtrdocDtlPage({ type = 'gramt' }: CmdtyGramtCtrdocDtlP
         </div>
       </div>
 
-      {/* 탭 콘텐츠 — 특수조건(T15/T18)은 M06 특수조건 탭 재사용(동일 spclCnd 데이터영역) */}
+      {/* 탭 콘텐츠 — 특수조건은 총액제(T15)/단가제(T18) 공용(동일 spclCnd 데이터영역) */}
       <div className="min-h-[100dvh]">
         {tab === 'detail' && <CmdtyGramtCtrdocDtl_Cn detail={detail} />}
         {tab === 'ctrt' && <CmdtyGramtCtrdocDtl_Ctrt type={type} />}
-        {tab === 'spcl' && <CmdtyMdfcnCtrdocDtl_Spcl />}
+        {tab === 'spcl' && <CmdtyGramtCtrdocDtl_Spcl />}
       </div>
 
       {/* FAB — 맨위로 */}

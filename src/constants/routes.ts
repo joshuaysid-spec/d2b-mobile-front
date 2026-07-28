@@ -24,7 +24,19 @@ export const ROUTES = {
   CT: '/ct',
   /** 대금지불정보목록 (MUI-CT-01-M15). */
   CT_PYMT: '/ct/pymt',
-  /** 입찰결과상세(개찰상세) (MUI-BD-09-M01~M04, `:id` 파라미터). 이동: `/bd/result/${id}`. */
+  /** 해지/해제 목록 (MUI-CT-03-M01). */
+  CT_CNCLTN: '/ct/cncltn',
+  /** 해지/해제 물품일반계약 상세 (MUI-CT-03-M02, `:id`). 이동: `/ct/cncltn/${id}`. */
+  CT_CNCLTN_DETAIL: '/ct/cncltn/:id',
+  /** 해지/해제 일반총액제계약 상세 (MUI-CT-03-M03, `:id`). 이동: `/ct/cncltn/gramt/${id}`. */
+  CT_CNCLTN_GRAMT_DETAIL: '/ct/cncltn/gramt/:id',
+  /** 해지/해제 일반단가제계약 상세 (MUI-CT-03-M04, `:id`). 이동: `/ct/cncltn/untprc/${id}`. */
+  CT_CNCLTN_UNTPRC_DETAIL: '/ct/cncltn/untprc/:id',
+  /** 해지/해제 수정계약 상세 (MUI-CT-03-M05, `:id`). 이동: `/ct/cncltn/mdfcn/${id}`. */
+  CT_CNCLTN_MDFCN_DETAIL: '/ct/cncltn/mdfcn/:id',
+  /** 해지/해제 공사계약 상세 (MUI-CT-03-M06, `:id`). 이동: `/ct/cncltn/cstrn/${id}`. */
+  CT_CNCLTN_CSTRN_DETAIL: '/ct/cncltn/cstrn/:id',
+  /** 입찰결과상세(개찰상세) (MUI-BD-09-M01 · T01~T04(구 M01~M04 — v1.83 재편), `:id` 파라미터). 이동: `/bd/result/${id}`. */
   BD_RESULT_DETAIL: '/bd/result/:id',
   NOTIFICATION: '/notification',
   SUPPORT: '/support',

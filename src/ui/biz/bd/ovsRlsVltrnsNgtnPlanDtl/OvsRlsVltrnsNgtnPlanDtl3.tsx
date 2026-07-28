@@ -1,4 +1,4 @@
-// 공개수의협상계획상세 - '첨부서류' 탭 (MUI-BD-12-M73/T73, 설계서 02입찰 slide414).
+// 공개수의협상계획상세 - '첨부서류' 탭 (MUI-BD-12-T73(구 M73 — v1.83 재편), 설계서 02입찰 slide414).
 // 첨부파일 목록(구분별) — 공고문안/일반조건/특수조건/기타첨부. FileDownloadList(다운로드).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'

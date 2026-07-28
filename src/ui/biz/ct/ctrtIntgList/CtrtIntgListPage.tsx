@@ -100,8 +100,14 @@ const CT_SEARCH_SCHEMA: SearchFilterSchema = {
       title: '검색어 (일부 입력 가능)',
       fields: [
         { type: 'text', key: 'ctrtNm', label: '계약건명', placeholder: '계약건명을 입력하세요.' },
-        // 계약번호 — 직접 입력(숫자검색). 추후: 계약번호검색 공통팝업(MUI-EX-02-P79) 시트 연동.
-        { type: 'text', key: 'ctrtNo', label: '계약번호', placeholder: '번호를 입력하세요.' },
+        // 계약번호 — 계약번호조회 공통시트(MUI-EX-02-P79, OvsCtrtNoInq) 연동. 셸이 시트를 직접 연다.
+        {
+          type: 'selectionField',
+          key: 'ctrtNo',
+          label: '계약번호',
+          placeholder: '번호를 선택하세요.',
+          searchSheet: 'ctrtNo',
+        },
         // 발주기관 → 발주부서(기관)검색(MUI-BD-01-P04, DeptInq) — 셸이 시트를 직접 연다.
         {
           type: 'selectionField',
@@ -200,9 +206,10 @@ export function CtrtIntgListPage() {
     setPage(page + 1)
   }
   // 카드 클릭 — 업무구분·상태별 상세 분기(slide22 이벤트):
-  //   물품(진행/확정) → M03·M04(화면 동일, /ct/:id) · 물품(계약수정) → M06(/ct/mdfcn/:id)
-  //   물품(계약최종=타 계약서) → M05 일반계약서(/ct/gnrl/:id — 계약서유형 확정 시 M07/M08 분기 추가)
-  //   공사(진행) → M09(/ct/cstrn/:id) · 국외 → M71/M72(미구현 스텁).
+  //   물품(진행) → M03(/ct/:id) · 물품(계약확정) → M04(/ct/cfmtn/:id) · 물품(계약수정) → M06(/ct/mdfcn/:id)
+  //   물품(계약최종=타 계약서) → 계약서유형(ctrdocTpNm)으로 M05 일반/M07 총액/M08 단가 분기
+  //   공사(진행) → M09(/ct/cstrn/:id) · 공사(확정) → M10(/ct/cstrn-doc/:id)
+  //   국외(진행) → M71(/ct/ovs/:id) · 국외(계약확정) → M72(/ct/ovs/cfmtn/:id).
   const handleCardClick = (item: CtrtIntgListItem) => {
     if (item.taskSecd === '물품') {
       if (item.ctrtStatNm === '계약수정') {
@@ -219,6 +226,11 @@ export function CtrtIntgListPage() {
         navigate(`/ct/${route}/${item.id}`, { state: item })
         return
       }
+      if (item.ctrtStatNm === '계약확정') {
+        // 물품전자계약확정상세(MUI-CT-01-M04) — 진행상세(M03)와 화면 동일하나 스펙상 별도 화면.
+        navigate(`/ct/cfmtn/${item.id}`, { state: item })
+        return
+      }
       navigate(`/ct/${item.id}`, { state: item })
       return
     }
@@ -232,7 +244,11 @@ export function CtrtIntgListPage() {
       return
     }
     if (item.taskSecd === '국외') {
-      // 국외 → M71 국외전자계약진행상세(확정 M72 는 동일 화면 겸용, slide146).
+      // 국외 '계약확정' → M72 국외전자계약확정상세 · 그 외 → M71 진행상세(slide146).
+      if (item.ctrtStatNm === '계약확정') {
+        navigate(`/ct/ovs/cfmtn/${item.id}`, { state: item })
+        return
+      }
       navigate(`/ct/ovs/${item.id}`, { state: item })
       return
     }

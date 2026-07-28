@@ -7,7 +7,7 @@
 // 키워드 검색·더보기(페이징)는 페이지 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행).
 // 화면 타이틀('개찰목록')은 전역 Header(라우트 handle)가 제공 → 페이지 본문엔 타이틀 안 그림.
 // 상세필터 풀팝업은 공통 SearchFilter 셸 사용 — 검색조건은 입찰공고 필터(MUI-BD-01-M02)와 동일.
-// 설계서 개찰 검색필터(MUI-BD-08-M02 slide145)가 "입찰 공고와 동일한 검색 필터"라 BidPbancIntgListPage
+// 설계서 개찰 검색필터(MUI-BD-08-P01(구 M02 — v1.83 재편) slide145)가 "입찰 공고와 동일한 검색 필터"라 BidPbancIntgListPage
 // 의 BID_FILTER_SCHEMA 와 항목·라벨·placeholder·옵션을 일치시킨다. 개찰 고유 차이는 일자 토글뿐:
 // 개찰/공고 → 개찰/협상. 검색시트(dept/region/license)는 셸 내장 재사용 — 신규 시트 없음.
 import { useMemo, useState } from 'react'
@@ -36,7 +36,7 @@ const SEARCH_TARGETS = [
   { value: 'bidPbancNo', label: '공고번호' },
 ]
 
-// ── 상세필터(개찰목록 MUI-BD-08-M02) schema — 입찰공고 필터(MUI-BD-01-M02)와 동일 ──
+// ── 상세필터(개찰목록 MUI-BD-08-P01(구 M02 — v1.83 재편)) schema — 입찰공고 필터(MUI-BD-01-M02)와 동일 ──
 // BidPbancIntgListPage 의 BID_FILTER_SCHEMA 와 항목·라벨·placeholder·옵션 일치. 개찰 차이는 일자 토글뿐.
 // 일자설정 빠른칩 — 설계서 레이아웃(slide145): 최근 1/3/6개월 + 기간검색(직접 입력).
 const DATE_PRESETS: DateRangePresetDef[] = [
@@ -219,7 +219,7 @@ const OVS_BDOPN_SUMMARY: OvsBidRsltSummary = {
   bdngDdlnDt: '2026-03-26 11:00',
   bdopnDt: '2026-03-30',
 }
-// 총액제 카드 — 단가제 카드 복사 후 입찰유형만 총액제로. (상세는 추후 제작 — MUI-BD-09-M73)
+// 총액제 카드 — 단가제 카드 복사 후 입찰유형만 총액제로. (상세는 추후 제작 — MUI-BD-09-T73(구 M73 — v1.83 재편))
 const OVS_BDOPN_SUMMARY_TOTAL: OvsBidRsltSummary = { ...OVS_BDOPN_SUMMARY, bidTypeNm: '총액제' }
 
 // 요약 데이터 → 국외 개찰 카드. 배지 순서: 업무구분(국외) 먼저, 입찰방식(경쟁입찰) 맨 마지막, 사이 입찰유형(단가제/총액제).
@@ -337,9 +337,9 @@ export function BdopnListPage() {
   // 목업 → Card props 매핑. 개찰목록 정보행 = 공고일자·개찰일시 2행(설계서 MUI-BD-08-M01).
   // 국외 입찰결과조회 카드(MUI-BD-09-M71)는 최상단 고정 — 국내 목록 앞에 prepend.
   const cardItems: CardListItem[] = [
-    // 국외(단가제) 카드 → 국외 입찰결과조회 상세(MUI-BD-09-M71·M72). 상단 요약을 카드와 동일하게 state 로 전달.
+    // 국외(단가제) 카드 → 국외 입찰결과조회 상세(MUI-BD-09-M71 · T72(구 M72 — v1.83 재편)). 상단 요약을 카드와 동일하게 state 로 전달.
     { ...OVS_BDOPN_CARD, onClick: () => navigate('/bd/ovs/result/ovs-m71', { state: OVS_BDOPN_SUMMARY }) },
-    // 국외(총액제) 카드 → 국외 입찰결과조회 상세(총액제, MUI-BD-09-M71·M73). 배지(총액제)로 결과 탭 분기.
+    // 국외(총액제) 카드 → 국외 입찰결과조회 상세(총액제, MUI-BD-09-M71 · T73(구 M73 — v1.83 재편)). 배지(총액제)로 결과 탭 분기.
     { ...OVS_BDOPN_CARD_TOTAL, onClick: () => navigate('/bd/ovs/result/ovs-m73', { state: OVS_BDOPN_SUMMARY_TOTAL }) },
     // 국외·수의계약 카드 → 공개수의협상계획상세(MUI-BD-12-M71). 수의계약 배지 조건일 때만 진입.
     { ...OVS_NGTN_CARD, onClick: () => navigate('/bd/ovs/rls-ngtn/ovs-ngtn-m71', { state: OVS_NGTN_SUMMARY }) },

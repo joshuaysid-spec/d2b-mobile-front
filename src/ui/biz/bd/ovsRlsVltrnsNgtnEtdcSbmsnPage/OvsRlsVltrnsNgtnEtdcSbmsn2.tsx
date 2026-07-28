@@ -1,4 +1,4 @@
-// 공개수의협상 견적서 작성 - 스탭2 업체정보 (MUI-BD-12-M75/T75, 설계서 slide421).
+// 공개수의협상 견적서 작성 - 스탭2 업체정보 (MUI-BD-12-T75(구 M75 — v1.83 재편), 설계서 slide421).
 // 신청업체/입찰업체 = Accordion. 신청업체 업체코드=조회, 입찰업체 업체코드=SelectBox(w-full).
 // 입찰업체 사업자번호(줄내림)DUNS NUM. 데이터는 목업(추후 API).
 import { useState } from 'react'

@@ -1,4 +1,4 @@
-// 공개수의협상계획상세 - '품목정보' 탭 (MUI-BD-12-M72/T72, 설계서 02입찰 slide413).
+// 공개수의협상계획상세 - '품목정보' 탭 (MUI-BD-12-T72(구 M72 — v1.83 재편), 설계서 02입찰 slide413).
 // 품목 목록 — 조달계획 상세 품목명세서 탭과 동일 패턴: ListSectionHeader + 카드(기본 4행 + 내역 펼쳐보기/접기) + 더보기.
 import { memo, useCallback, useMemo, useState } from 'react'
 

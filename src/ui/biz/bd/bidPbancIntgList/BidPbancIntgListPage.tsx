@@ -288,7 +288,7 @@ export function BidPbancIntgListPage() {
   const handleCardClick = (it: BidPbancItem) => {
     // 업무구분(taskSeNm) 데이터 필드로 국내/국외 상세 분기 — 목록 아이템을 state 로 전달(즉시표시 초기값).
     if (it.taskSeNm === '국외') {
-      // 국외 입찰공고 상세(MUI-BD-01-M71~M73, /bd/ovs/:id)
+      // 국외 입찰공고 상세(MUI-BD-01-M71 · 탭 T71~T73(구 M71~M73 — v1.83 재편), /bd/ovs/:id)
       navigate(`/bd/ovs/${it.id}`, { state: it })
       return
     }

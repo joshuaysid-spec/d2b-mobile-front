@@ -61,7 +61,7 @@ export function HelpDisclosure({
         />
       </button>
       {open && hasContent && (
-        <div className="bg-krds-bg-primary-faint px-krds-8 pb-krds-8">
+        <div className="bg-krds-bg-primary-faint p-krds-8">
           {children ?? (
             <ul className="flex flex-col gap-krds-5">
               {items!.map((t, i) => (

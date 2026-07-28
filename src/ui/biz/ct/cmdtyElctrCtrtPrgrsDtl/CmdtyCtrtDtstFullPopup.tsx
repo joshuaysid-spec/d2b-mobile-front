@@ -69,11 +69,11 @@ export function CmdtyCtrtDtstFullPopup({
         </Button>
       }
     >
-      <div className="flex flex-col gap-8 pb-8">
+      <div className="flex flex-col">
         {/* 계약정보 (slide88 1.1) */}
-        <section className="flex flex-col gap-krds-7">
+        <section className="flex flex-col">
           <SectionTitle as="h3">계약정보</SectionTitle>
-          <div className="px-4">
+          <div className="px-4 pb-krds-8">
             <Table
               rows={[
                 {
@@ -105,11 +105,11 @@ export function CmdtyCtrtDtstFullPopup({
         </section>
 
         {/* 계약품목정보 (slide88 1.2 — 품목별 반복) */}
-        <section className="flex flex-col gap-krds-7">
+        <section className="flex flex-col">
           <SectionTitle as="h3" topDivider info={`총 ${items.length}건`}>
             계약품목정보
           </SectionTitle>
-          <div className="flex flex-col gap-krds-7 px-4">
+          <div className="flex flex-col gap-krds-8 px-4 pb-krds-8">
             {items.map((it) => (
               <Table key={it.id} rows={itemRows(it)} />
             ))}

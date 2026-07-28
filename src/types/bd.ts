@@ -70,6 +70,12 @@ export interface BdopnItem {
   pbancDt: string
   /** 개찰일시 (예: '2026-03-26 11:00') — 카드 2행 */
   opbidDt: string
+  /**
+   * 이행/적격심사결과 탭 유형 판별 임시 키 ([[ImpltElgbSrngTyCd]]).
+   * ⚠️ TODO(설계서 영문ID 미확인 — 임시 확정, BD 선례): 설계서(02입찰 v1.83)에 유형 판별용 코드 항목이
+   *   정의돼 있지 않아 신 화면ID 소문자('t04'~'t21')로 임시 부여. 값 없으면 심사결과 탭은 물품(t05) 기본.
+   */
+  srngTyCd?: ImpltElgbSrngTyCd
 }
 /**
  * 입찰진행 목록 카드 1건 (MUI-BD-03-M01, 설계서 slide68 데이터영역 dlt_bidPrgrsList).
@@ -145,7 +151,7 @@ export type BidPbancDetail = BidPbancItem
 export type BidPrgrsDetail = BidPrgrsItem & { clsfNo?: string }
 
 /**
- * 이행/적격심사상세 – 일반정보 공고정보 (MUI-BD-10-M01, 설계서 slide166 데이터영역 dmt_pbancInfo).
+ * 이행/적격심사상세 – 일반정보 공고정보 (MUI-BD-10-T01(구 M01 — v1.83 재편), 설계서 slide166 데이터영역 dmt_pbancInfo).
  * 항목명(영문)·자리수는 설계서 그대로. 대표품명/비고는 콘텐츠 표시 항목(데이터영역 외).
  */
 export interface ImpltElgbSrngPbancInfo {
@@ -180,7 +186,7 @@ export interface ImpltElgbSrngPbancInfo {
 }
 
 /**
- * 이행/적격심사상세 – 입찰결과 (MUI-BD-10-M02, 설계서 slide166 데이터영역 dmt_bidRslt).
+ * 이행/적격심사상세 – 입찰결과 (MUI-BD-10-T02(구 M02 — v1.83 재편), 설계서 slide166 데이터영역 dmt_bidRslt).
  */
 export interface ImpltElgbSrngBidRslt {
   /** 낙찰순위 (scsbdRnk, 10) */
@@ -196,7 +202,7 @@ export interface ImpltElgbSrngBidRslt {
 }
 
 /**
- * 이행/적격심사결과상세 – 심사결과 (MUI-BD-10-M04 물품, 설계서 slide170 데이터영역 dmt_srngRslt).
+ * 이행/적격심사결과상세 – 심사결과 (MUI-BD-10-T05(구 M04 — v1.83 재편) 물품, 설계서 slide170 데이터영역 dmt_srngRslt).
  * 물품(Cmdty) 라벨 기준(제조능력=srngScr2, 재무상태=srngScr4). 용역/공사 등은 라벨만 상이.
  */
 export interface ImpltElgbSrngResult {
@@ -220,6 +226,81 @@ export interface ImpltElgbSrngResult {
   tscr: string
   /** 판정결과 (jgmtRsltCd → 표시명) */
   jgmtRsltNm: string
+}
+
+// ── 이행/적격심사결과 유형별 심사결과 탭 (MUI-BD-10-T04~T21, 설계서 02입찰 v1.83 slide173~282) ────────
+// 입찰결과상세에서 이행/적격심사결과가 있을 때 노출되는 '심사결과' 탭. 유형(물품/용역/공사/중기청 계열/폐기물용역 등)
+// 18종으로 갈리며, 구조가 3가지 family(A: flat srngScr 표 · B/C: 심사분야 채점 루브릭)로 나뉜다.
+
+/**
+ * 심사결과 탭 유형 판별 임시 키 (신 화면ID 소문자).
+ * ⚠️ TODO(설계서 영문ID 미확인 — 임시 확정, BD 선례 apfrStatNm/tndrStatNm 등과 동일 방식):
+ *   설계서에 유형 판별 코드 항목이 없어 't04'~'t21'로 임시 부여. 값 없으면 물품(t05) 기본.
+ * - t04 통사(g2b, 설계서 디자인 슬라이드 부재로 보류) · t05 물품(기구현 [[Implt]]) · t06 용역
+ * - t07~t16 중기청 계열(10억미만 물품/제조/구매 연·고시금액) · t17 공사 · t18 기술용역
+ * - t19 3억미만공사 · t20 고시금액미만용역 · t21 고시금액미만폐기물용역
+ */
+export type ImpltElgbSrngTyCd =
+  | 't04' | 't05' | 't06' | 't07' | 't08' | 't09' | 't10' | 't11' | 't12'
+  | 't13' | 't14' | 't15' | 't16' | 't17' | 't18' | 't19' | 't20' | 't21'
+
+/**
+ * A군(물품/용역/공사/기술용역) 심사결과 값 — 데이터영역 dmt_srngRslt(srngScr1~8 + 총계/판정).
+ * 8개 심사항목의 라벨은 유형별로 다르나(용역/공사/기술용역은 srngScr1~8 = 표시 순서) 값 형식은 공통.
+ * 물품(T05)만 표시 라벨이 데이터영역과 달라 기존 [[ImpltElgbSrngResult]]를 그대로 사용(재작성 금지).
+ * 값 형식: srngScr* = 5,2 · 입찰가격 열은 콤마+' 원' · tscr = 15,2(' 점') · jgmtRsltNm = 판정명.
+ */
+export interface ImpltElgbSrngScoreSet {
+  srngScr1: string
+  srngScr2: string
+  srngScr3: string
+  srngScr4: string
+  srngScr5: string
+  srngScr6: string
+  srngScr7: string
+  srngScr8: string
+  /** 점수총계 (tscr, 15,2) */
+  tscr: string
+  /** 판정결과 (jgmtRsltCd → 표시명) */
+  jgmtRsltNm: string
+}
+
+/**
+ * B/C군 심사 루브릭 한 행 — 심사항목/배점(만점)/심사평점(내 업체 점수).
+ * ⚠️ 심사항목은 설계서에 영문 항목명 미표기(한글 라벨만) → 표시 전용 문자열로 둔다(신규 키 신설 안 함).
+ * 배점/평점 미확정은 undefined → 화면에서 '-'.
+ */
+export interface ImpltElgbSrngRubricRow {
+  /** 심사항목 라벨 (설계서 한글 그대로) */
+  item: string
+  /** 배점(만점) — 설계서 표기(예: '30', '+3 ~ -2') */
+  allot?: string
+  /** 심사평점 — 내 업체 점수(목업; 추후 scwin.getImpltElgbSrngRsltDtlInfo) */
+  score?: string
+}
+
+/**
+ * B/C군 심사분야(대분류) 단위 섹션 — 예: 'I. 당해물품납품이행능력' / '(가) 당해물품 납품이행능력'.
+ * 하위 심사항목 rows 를 아코디언 1섹션 + 표 1개로 렌더.
+ */
+export interface ImpltElgbSrngRubricSection {
+  /** 심사분야명 */
+  field: string
+  /** 분야 소계 배점(있으면 타이틀 우측 표기) */
+  allot?: string
+  rows: ImpltElgbSrngRubricRow[]
+}
+
+/**
+ * 유형별 심사 루브릭 (B/C군) — 심사분야 섹션들 + 총계/판정.
+ * 공용 렌더러 [[ImpltElgblRsltRubric]]가 이 데이터를 아코디언+표로 렌더한다.
+ */
+export interface ImpltElgbSrngRubric {
+  sections: ImpltElgbSrngRubricSection[]
+  /** 점수총계(심사평점 계) */
+  tscr?: string
+  /** 판정결과(적격/부적격 등) */
+  jgmtRsltNm?: string
 }
 
 /**
@@ -252,7 +333,7 @@ export interface OvsBidRsltSummary {
 }
 
 /**
- * 국외 입찰결과조회 - 일반정보 (MUI-BD-09-M71, 설계서 slide403 일반 데이터 영역).
+ * 국외 입찰결과조회 - 일반정보 (MUI-BD-09-T71(구 M71 — v1.83 재편), 설계서 slide403 일반 데이터 영역).
  * ⚠️ M71 데이터영역에 영문 항목명 미표기 → 국외 입찰서 상세(OvsTndrDtlItem) 관례 차용.
  * 개찰목록 국외(단가제) 카드 → 이 화면 진입. navigate state / 페이지 fallback 목업 타입.
  */
@@ -300,7 +381,7 @@ export interface OvsBidRsltGeneral {
 }
 
 /**
- * 국외 입찰결과조회 - 입찰결과(단가제) 목록 1건 (MUI-BD-09-M72, 설계서 slide404 입찰결과 단가제 데이터영역).
+ * 국외 입찰결과조회 - 입찰결과(단가제) 목록 1건 (MUI-BD-09-T72(구 M72 — v1.83 재편), 설계서 slide404 입찰결과 단가제 데이터영역).
  */
 export interface OvsBidRsltUnitPriceItem {
   /** 항목번호 (clsfNo) */
@@ -328,7 +409,7 @@ export interface OvsBidRsltUnitPriceItem {
 }
 
 /**
- * 국외 입찰결과조회 - 입찰결과(총액제) 목록 1건 (MUI-BD-09-M73, 설계서 slide405 입찰결과 총액제 데이터영역).
+ * 국외 입찰결과조회 - 입찰결과(총액제) 목록 1건 (MUI-BD-09-T73(구 M73 — v1.83 재편), 설계서 slide405 입찰결과 총액제 데이터영역).
  * 총액제는 업체별 결과(입찰업체/사업자번호/지시금액/입찰금액/달러금액/입찰결과). 현황 요약 없음.
  */
 export interface OvsBidRsltTotalItem {
@@ -349,7 +430,7 @@ export interface OvsBidRsltTotalItem {
 }
 
 /**
- * 국외 입찰결과현황(단가제) 요약 (MUI-BD-09-M72, 설계서 slide404 입찰결과현황 데이터영역).
+ * 국외 입찰결과현황(단가제) 요약 (MUI-BD-09-T72(구 M72 — v1.83 재편), 설계서 slide404 입찰결과현황 데이터영역).
  * 결과품목 소계(건수) + 원/달러 금액 소계 — 낙찰/조건부/동가낙찰/소계.
  */
 export interface OvsBidRsltUnitPriceStatus {
@@ -391,7 +472,7 @@ export interface OvsRlsVltrnsSummary {
   bdopnDt: string
 }
 
-/** 국외 공개수의협상계획상세 - 일반정보 (MUI-BD-12-M71/T71, slide412 공고일반). */
+/** 국외 공개수의협상계획상세 - 일반정보 (MUI-BD-12-T71(구 M71 — v1.83 재편), slide412 공고일반). */
 export interface OvsRlsVltrnsGeneral {
   pbancNo: string
   /** 공고구분 (pbancType) */
@@ -424,7 +505,7 @@ export interface OvsRlsVltrnsGeneral {
   picMblTelno: string
 }
 
-/** 국외 공개수의협상계획상세 - 품목정보 목록 1건 (MUI-BD-12-M72/T72, slide413 품목목록). */
+/** 국외 공개수의협상계획상세 - 품목정보 목록 1건 (MUI-BD-12-T72(구 M72 — v1.83 재편), slide413 품목목록). */
 export interface OvsRlsVltrnsItem {
   /** 항목번호 (clsfNo) */
   clsfNo: string
@@ -513,7 +594,7 @@ export interface OvsRlsVltrnsEtdcBzenty {
   }
 }
 
-/** 국외 공개수의협상견적서제출 - 스탭3 입찰참여품목(단가제) 1건 (MUI-BD-12-M76/T76, slide422·435). 항목명 = 설계서 데이터영역 영문(dl_bidItemList). */
+/** 국외 공개수의협상견적서제출 - 스탭3 입찰참여품목(단가제) 1건 (MUI-BD-12-T76(구 M76 — v1.83 재편), slide422·435). 항목명 = 설계서 데이터영역 영문(dl_bidItemList). */
 export interface OvsRlsVltrnsEtdcItem {
   /** 항목번호 (frcptlArtclNo) */
   frcptlArtclNo: string
@@ -543,7 +624,7 @@ export interface OvsRlsVltrnsEtdcItem {
 }
 
 /**
- * 국외 공개수의협상견적서상세(조회) - 입찰품목 1건 (MUI-BD-12-M80/T80, slide432·435).
+ * 국외 공개수의협상견적서상세(조회) - 입찰품목 1건 (MUI-BD-12-T80(구 M80 — v1.83 재편), slide432·435).
  * 항목명 = 설계서 데이터영역 영문(dl_bidItemList). 읽기전용 표시값. itemSbstSe='Y' 시 품목대체첨부문서·수정재고/부품번호 노출.
  */
 export interface OvsRlsVltrnsEtdcDtlItem {
@@ -577,7 +658,7 @@ export interface OvsRlsVltrnsEtdcDtlItem {
   crncNm: string
 }
 
-/** 국외 공개수의협상계획상세 - 첨부서류 1건 (MUI-BD-12-M73/T73, slide414 첨부파일). */
+/** 국외 공개수의협상계획상세 - 첨부서류 1건 (MUI-BD-12-T73(구 M73 — v1.83 재편), slide414 첨부파일). */
 export interface OvsRlsVltrnsAtchDoc {
   /** 식별자 (id) — 목록 key */
   id: string
@@ -617,7 +698,7 @@ export interface OvsRlsVltrnsSrngRsltSummary {
 }
 
 /**
- * 국외 공개수의협상결과조회 - 조회결과 1건 (MUI-BD-12-M83, slide443·445).
+ * 국외 공개수의협상결과조회 - 조회결과 1건 (MUI-BD-12-T83(구 M83 — v1.83 재편), slide443·445).
  * 항목명 = 설계서 데이터영역 영문(dl_bidRsltList).
  */
 export interface OvsRlsVltrnsSrngRsltItem {
@@ -673,7 +754,7 @@ export interface AplyFlowState {
   rcptDt?: string
 }
 
-// ── 국외 입찰공고 상세 (MUI-BD-01-M71~M73, 설계서 slide289~296) ─────────────────
+// ── 국외 입찰공고 상세 (MUI-BD-01-M71 · T71~T73(구 M71~M73 — v1.83 재편), 설계서 slide289~296) ─────────────────
 
 /** 품목목록 1건 (dl_itemList, 설계서 slide295 1.4) — 품목 목록 탭(M72) */
 export interface OvsBidItem {
@@ -789,7 +870,7 @@ export interface OvsLockerPbanItem {
   ctrtMthdNm: string
 }
 
-// ── 입찰내역 작성 (MUI-BD-01-M76~M78, 설계서 slide312~319) ─────────────────────
+// ── 입찰내역 작성 (MUI-BD-01-M76 · T74~T76(구 M76~M78 — v1.83 재편), 설계서 slide312~319) ─────────────────────
 
 /** 공고일반 데이터 영역 (dm_bscPbancInfo, 설계서 slide316) */
 export interface BscPbancInfo {
@@ -910,7 +991,7 @@ export interface AlonbsBidCnInfo {
   usdExrt: string
 }
 
-// ── 이전공고입찰내역등록 (MUI-BD-01-M79, 설계서 slide320·322·323) ────────────────
+// ── 이전공고입찰내역등록 (MUI-BD-01-P79(구 M79 — v1.83 재편), 설계서 slide320·322·323) ────────────────
 
 /** 보관함 이전공고 1건 (1.1 보관함목록 데이터 영역 dl_pbancInfo, 설계서 slide322) */
 export interface BfrPbancInfoItem {
@@ -965,7 +1046,7 @@ export interface BfrPbancBidCnItem {
   crncNm: string
 }
 
-// ── 국외 입찰참가신청서 작성 (MUI-BD-04-M71~M77·P75·P76, 설계서 slide324~347) ────
+// ── 국외 입찰참가신청서 작성 (MUI-BD-04-M71 · T71~T75 · P75·P76(구 M71~M77 — v1.83 재편), 설계서 slide324~347) ────
 
 /** 서약서 데이터 영역 (MUI-BD-04-P03, 설계서 slide332 dl_resultInfo). */
 export interface OvsProbWrotAgreResultInfo {
@@ -979,7 +1060,7 @@ export interface OvsProbWrotAgreResultInfo {
   prcmRqtInstNm: string
 }
 
-/** 공고일반 데이터 영역 (MUI-BD-04-M72, 설계서 slide338 dm_bscPbancInfo). */
+/** 공고일반 데이터 영역 (MUI-BD-04-T72(구 M72 — v1.83 재편), 설계서 slide338 dm_bscPbancInfo). */
 export interface OvsBscPbancInfo {
   /** 공고번호 (pbancNo, 7) */
   pbancNo: string
@@ -992,7 +1073,7 @@ export interface OvsBscPbancInfo {
 }
 
 /**
- * 신청업체 데이터 영역 (dm_sbtInfo — 작성 MUI-BD-04-M72 slide338 · 상세 MUI-BD-04-M78 slide353 공용).
+ * 신청업체 데이터 영역 (dm_sbtInfo — 작성 MUI-BD-04-T72(구 M72 — v1.83 재편) slide338 · 상세 MUI-BD-04-M78 slide353 공용).
  * 두 화면의 설계서 정의(항목명·자리수)가 동일해 하나로 통합.
  */
 export interface OvsSbtInfo {
@@ -1013,7 +1094,7 @@ export interface OvsSbtInfo {
 }
 
 /**
- * 입찰업체 데이터 영역 (dm_splyInfo — 작성 MUI-BD-04-M73 slide338 · 상세 MUI-BD-04-M78 slide353 공용).
+ * 입찰업체 데이터 영역 (dm_splyInfo — 작성 MUI-BD-04-T73(구 M73 — v1.83 재편) slide338 · 상세 MUI-BD-04-M78 slide353 공용).
  * 두 화면의 설계서 정의(항목명·자리수)가 동일해 하나로 통합.
  */
 export interface OvsSplyInfo {
@@ -1036,7 +1117,7 @@ export interface OvsSplyInfo {
 }
 
 /**
- * 입찰참가사업 및 입찰보증금 1건 (MUI-BD-04-M74, 설계서 slide339 dl_bizList·dl_bizExmptnList 공통 R 필드).
+ * 입찰참가사업 및 입찰보증금 1건 (MUI-BD-04-T74(구 M74 — v1.83 재편), 설계서 slide339 dl_bizList·dl_bizExmptnList 공통 R 필드).
  * 편집(E) 필드(chckBidGrnteAmt·grntePayMth·wtgrNo·grnteInstNm·grntePyslDocNo)는 Stp3 의 입력 상태로 관리.
  */
 export interface OvsBidPrtcpBizItem {
@@ -1211,7 +1292,7 @@ export interface OvsTndrSbmsnDetail {
   bidMthdNm?: '단가제' | '총액제'
 }
 
-// ── 국외 입찰서 상세 (MUI-BD-06-M75~M79, 설계서 slide375~384) ───────────────────
+// ── 국외 입찰서 상세 (MUI-BD-06-M75 · T75~T79(구 M75~M79 — v1.83 재편), 설계서 slide375~384) ───────────────────
 
 /**
  * 국외 입찰서 상세 공고일반 항목 (설계서 slide380 데이터영역 dm_bscPbancInfo) — 항목명(영문) 설계서 그대로.
@@ -1348,7 +1429,7 @@ export interface BidAtchFileInfo {
   fileSz: string
 }
 
-/** 입찰진행 현황 1건 (MUI-BD-01-M12 입찰진행 탭). */
+/** 입찰진행 현황 1건 (MUI-BD-01-T06(구 M12 — v1.83 재편) 입찰진행 탭). */
 export interface BidProgressRow {
   id: string
   /** 공고번호 */
@@ -1367,7 +1448,7 @@ export interface BidProgressRow {
   prgrsStas: string
 }
 
-/** 입찰결과(내 업체) 1건 (MUI-BD-09-M03). */
+/** 입찰결과(내 업체) 1건 (MUI-BD-09-T03(구 M03 — v1.83 재편)). */
 export interface BidRsltRow {
   id: string
   /** 순번 */
@@ -1386,7 +1467,7 @@ export interface BidRsltRow {
   result: string
 }
 
-/** 협상결과 1건 (MUI-BD-09-M04). */
+/** 협상결과 1건 (MUI-BD-09-T04(구 M04 — v1.83 재편)). */
 export interface NegoRsltRow {
   id: string
   /** 차수 */
@@ -1405,7 +1486,7 @@ export interface NegoRsltRow {
   result: string
 }
 
-/** 입찰결과 품목정보 1건 (MUI-BD-09-M02). */
+/** 입찰결과 품목정보 1건 (MUI-BD-09-T02(구 M02 — v1.83 재편)). */
 export interface BidRsltProductItem {
   id: string
   /** 항목번호 */
@@ -1566,7 +1647,7 @@ export interface BidSelectOption {
   label: string
 }
 
-/** 환율정보 통화 옵션 (MUI-BD-01-M77/M78) — 달러환산율 포함. */
+/** 환율정보 통화 옵션 (MUI-BD-01-T75/T76(구 M77/M78 — v1.83 재편)) — 달러환산율 포함. */
 export interface CrncOption {
   value: string
   label: string
@@ -1665,7 +1746,7 @@ export interface OvsLockerBidItem {
   crncCd: string
 }
 
-/** 국외 입찰공고 상세 공고일반 (MUI-BD-01-M71, dm_bscPbancInfo). */
+/** 국외 입찰공고 상세 공고일반 (MUI-BD-01-T71(구 M71 — v1.83 재편), dm_bscPbancInfo). */
 export interface OvsBidPbancDetail {
   /** 공고번호 (7) */
   pbancNo: string
@@ -1724,7 +1805,7 @@ export interface OvsBidRegRsltItem {
   cfmtnYmd?: string
 }
 
-/** 국외 입찰서 첨부문서 1건 (MUI-BD-06-M79). */
+/** 국외 입찰서 첨부문서 1건 (MUI-BD-06-T79(구 M79 — v1.83 재편)). */
 export interface OvsTndrDoc {
   id: string
   /** 첨부서류명 */
@@ -1736,7 +1817,7 @@ export interface OvsTndrDoc {
 }
 
 /**
- * 국외 입찰서 입찰참여품목(단가제) 1건 (MUI-BD-06-M72 작성 · M77 상세 공용 superset).
+ * 국외 입찰서 입찰참여품목(단가제) 1건 (MUI-BD-06-T72(구 M72 — v1.83 재편) 작성 · MUI-BD-06-T77(구 M77 — v1.83 재편) 상세 공용 superset).
  * 작성(M72) 화면은 splyBzentyNm 를, 상세(M77) 화면은 입찰단가/금액·달러 필드를 추가로 표시.
  */
 export interface OvsTndrItitbItem {

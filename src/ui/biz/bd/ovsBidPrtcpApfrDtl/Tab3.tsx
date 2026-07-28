@@ -1,4 +1,4 @@
-// 국외 입찰참가신청서 상세 - 탭3 입찰 보증금 (MUI-BD-04-M80, 설계서 slide350·351·354).
+// 국외 입찰참가신청서 상세 - 탭3 입찰 보증금 (MUI-BD-04-T78(구 M80 — v1.83 재편), 설계서 slide350·351·354).
 // 페이지(OvsBidPrtcpApfrDtlPage)가 renderTabContent 로 렌더하는 탭 콘텐츠 — 요약/스텝/탭은 페이지 소유.
 // 구성: 입찰보증금 구분(보증금 비면제/면제 라디오 — 표시 목록 전환) + 입찰참가사업 및 입찰보증금 목록
 //   (사업별 AccordionSection + Table, 비면제=dl_bizList / 면제=dl_bizExmptnList) + 더보기

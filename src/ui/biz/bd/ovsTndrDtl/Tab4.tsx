@@ -1,4 +1,4 @@
-// 국외 입찰서 상세 — 탭4 첨부파일 (MUI-BD-06-M79, 설계서 slide379 · 항목설명 slide384).
+// 국외 입찰서 상세 — 탭4 첨부파일 (MUI-BD-06-T79(구 M79 — v1.83 재편), 설계서 slide379 · 항목설명 slide384).
 // 첨부파일 목록(dl_docList) — 항목번호 + 첨부서류명(atchDocNm) 라벨 + 파일행(atchFileNm [fileSz] + 다운로드).
 // 항목명(영문) 설계서 그대로. 데이터는 목업 — 추후 API: bdService.getOvsTndrDocList.
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'

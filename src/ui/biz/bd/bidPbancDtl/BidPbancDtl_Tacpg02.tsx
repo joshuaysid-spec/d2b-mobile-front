@@ -1,4 +1,4 @@
-// 입찰공고 상세 - '기초예비가격' 탭 (MUI-BD-01-M08, Figma 9300-41466).
+// 입찰공고 상세 - '기초예비가격' 탭 (MUI-BD-01-T02(구 M08 — v1.83 재편), Figma 9300-41466).
 // 업무도움(Infobox) + 기초예비가격 산출 항목 테이블. 경쟁입찰일 때만 노출(컨테이너에서 제어).
 // 데이터는 목업(추후 bdService.getDetail).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'

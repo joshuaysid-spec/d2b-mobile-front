@@ -1,4 +1,4 @@
-// 국외 공개수의협상계획상세 — MUI-BD-12-M71(T71 일반정보)/T72(품목정보)/T73(첨부서류). 설계서 slide411~414.
+// 국외 공개수의협상계획상세 — MUI-BD-12-M71(컨테이너) · 탭 T71 일반정보 · T72 품목정보 · T73 첨부서류(구 M71~M73 — v1.83 재편). 설계서 slide411~414.
 // 진입: 개찰목록 국외·수의계약 카드 클릭(수의계약 배지 조건일 때만) → /bd/ovs/rls-ngtn/:id (state = 카드 요약).
 // 레퍼런스: OvsBidRsltDtlPage / OvsTndrDtlPage. ⚠️ 설계서 우선 — StepBar·즐겨찾기·출력 없음(사용자 확정).
 import { useState } from 'react'

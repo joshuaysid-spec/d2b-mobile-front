@@ -1,4 +1,4 @@
-// 국외 입찰참가신청서 작성 (MUI-BD-04-M71~M77 · 설계서 09국외입찰진행 slide324~341).
+// 국외 입찰참가신청서 작성 (MUI-BD-04-M71(컨테이너) · T71 서약서동의목록 · 스탭 T72~T75(구 M72~M77 — v1.83 재편) · 설계서 09국외입찰진행 slide324~341).
 // 라우트: /bd/ovs/prgrs/:id/aply — 국내(bidPrtcpAperWrt)와 동일한 '한 페이지 + 스탭 마법사' 구조(다음=다음탭).
 // 흐름(설계서 slide327 화면 흐름도):
 //   서약서동의 목록(M71) → [다음으로] → 신청서 4탭(M72 일반정보 / M73 업체정보 / M74 입찰 보증금 / M77 첨부파일)
@@ -32,7 +32,7 @@ import type { AplyFlowState, BidPrgrsItem, OvsProbWrotAgreResultInfo } from '@/t
 // 도메인 타입 — 설계서 데이터영역 항목명(영문) 그대로. 공유 타입은 @/types/bd 로 이관.
 // ────────────────────────────────────────────────────────────────────────────
 
-/** 첨부서류 1건 (MUI-BD-04-M77, 설계서 slide340 dl_docList). id 는 목록 key 용(고유).
+/** 첨부서류 1건 (MUI-BD-04-T75(구 M77 — v1.83 재편), 설계서 slide340 dl_docList). id 는 목록 key 용(고유).
  *  ⚠️ 상세 화면(ovsBidPrtcpApfrDtl)의 동명 OvsAtchDocItem 과 필드가 다름(그쪽은 id 없음)
  *     — 설계서 기반 이름이라 개명하지 않고 화면별로 각자 유지. */
 export interface OvsAtchDocItem {

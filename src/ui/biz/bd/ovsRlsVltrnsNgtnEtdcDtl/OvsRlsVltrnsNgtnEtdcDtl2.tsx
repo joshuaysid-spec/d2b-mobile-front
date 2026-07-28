@@ -1,4 +1,4 @@
-// 공개수의협상 견적서 조회(상세) - 업체정보 (MUI-BD-12-M79/T79, 설계서 slide431). 읽기전용.
+// 공개수의협상 견적서 조회(상세) - 업체정보 (MUI-BD-12-T79(구 M79 — v1.83 재편), 설계서 slide431). 읽기전용.
 // 신청업체/입찰업체 = Accordion. 견적서 작성(M75)과 동일하되 입찰업체 업체코드=값 표시(SelectBox 아님).
 // 주민등록번호 없음(2026-07-01 설계 수정). 데이터는 목업(추후 API).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'

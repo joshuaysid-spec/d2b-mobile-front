@@ -1,8 +1,9 @@
-// 이행/적격심사상세(MUI-BD-10-M01~M04). 입찰결과상세 > 일반정보 > '이행적격심사 신청하기' → /bd/implt/:id.
+// 이행/적격심사상세 컨테이너(MUI-BD-10-M01, 설계서 02입찰 v1.83). 입찰결과상세 > 일반정보 > '이행적격심사 신청하기' → /bd/implt/:id.
 // 레퍼런스: 입찰결과상세 BidRsltDtlPage (요약정보+스텝바+탭+탭콘텐츠 동일 패턴).
 // 구성: 요약정보(SummaryInfo) + 스텝바(StepBar, 입찰) + 탭4(일반정보/입찰·반려정보/파일첨부/심사결과)
-//   + 탭 콘텐츠(일반정보=Implt1 M01 / 입찰·반려정보=Implt2 M02 / 파일첨부=Implt3 M03 / 심사결과=Implt M04)
+//   + 탭 콘텐츠(일반정보=Implt1 T01 / 입찰·반려정보=Implt2 T02 / 파일첨부=Implt3 T03 / 심사결과=유형별 T04~T21)
 //   + 탭별 하단 액션(다음으로/이전/취소/제출하기/목록) + 맨위로 FAB.
+// 심사결과 탭은 유형(srngTyCd)별 18종(T04~T21)으로 갈림 — 물품(T05)=Implt, 그 외는 ImpltElgblRslt_* 로 분기(renderResultTab).
 // 상세화면이라 검색필터 없음. 상단은 개찰목록 항목(navigate state)으로 그림 + 직접진입 fallback 목업.
 import { useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -19,9 +20,26 @@ import { Implt1 } from '@/ui/biz/bd/bidRsltDtl/Implt1'
 import { Implt2 } from '@/ui/biz/bd/bidRsltDtl/Implt2'
 import { Implt3 } from '@/ui/biz/bd/bidRsltDtl/Implt3'
 import { Implt } from '@/ui/biz/bd/bidRsltDtl/Implt'
-import type { BdopnItem } from '@/types/bd'
+// 심사결과 탭 유형별(MUI-BD-10-T06~T21) — 유형 판별 임시 키 srngTyCd 로 분기. T04 통사(g2b)는 설계서 부재로 보류.
+import { ImpltElgblRslt_Lbsvc } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_Lbsvc'
+import { ImpltElgblRslt_ItemsUnderKrw1B } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_ItemsUnderKrw1B'
+import { ImpltElgblRslt_ManufacturingofItemsUnderKrw1B } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_ManufacturingofItemsUnderKrw1B'
+import { ImpltElgblRslt_ManufacturingofItemsUnderKrw1B_2015 } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_ManufacturingofItemsUnderKrw1B_2015'
+import { ImpltElgblRslt_ManufacturingofItemsUnderKrw1B_2018 } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_ManufacturingofItemsUnderKrw1B_2018'
+import { ImpltElgblRslt_PurchaseofItemsUnderKrw1B } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_PurchaseofItemsUnderKrw1B'
+import { ImpltElgblRslt_PurchaseofItemsUnderKrw1B_2015 } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_PurchaseofItemsUnderKrw1B_2015'
+import { ImpltElgblRslt_PurchaseofItemsUnderKrw1B_2018 } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_PurchaseofItemsUnderKrw1B_2018'
+import { ImpltElgblRslt_BelowThreshold } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_BelowThreshold'
+import { ImpltElgblRslt_ThresholdKrw1B } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_ThresholdKrw1B'
+import { ImpltElgblRslt_OverKrw1B } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_OverKrw1B'
+import { ImpltElgblRslt_Cstrn } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_Cstrn'
+import { ImpltElgblRslt_TechLbsvc } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_TechLbsvc'
+import { ImpltElgblRslt_Krw300MCstrn } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_Krw300MCstrn'
+import { ImpltElgblRslt_BelowThresholdLbsvc } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_BelowThresholdLbsvc'
+import { ImpltElgblRslt_BelowThresholdDspLbsvc } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_BelowThresholdDspLbsvc'
+import type { BdopnItem, ImpltElgbSrngTyCd } from '@/types/bd'
 
-// ── 탭 (설계서 slide134 화면목록 MUI-BD-10-M01~M04) ──────────────────────────
+// ── 탭 (설계서 v1.83 slide138 화면목록 — 컨테이너 M01 · 탭 T01~T03(구 M01~M03) · 심사결과 T04~T21) ──
 const TABS: TabItem[] = [
   { value: 'general', label: '일반정보' },
   { value: 'bidRjct', label: '입찰/반려 정보' },
@@ -52,8 +70,51 @@ const MOCK_DETAIL: BdopnItem = {
   opbidDt: '2025-12-24 10:30',
 }
 
-// 탭 콘텐츠 렌더 (설계서 탭별 화면 M01~M04)
-function renderTabContent(tab: string) {
+// 심사결과 탭(T04~T21) 유형별 렌더 — 유형 판별 임시 키 srngTyCd 로 18종 분기.
+// ⚠️ T04 통사(g2b)는 설계서(02.입찰 v1.83) 디자인 슬라이드 부재로 보류(추후 설계 보강 시 추가).
+//    값 없음/통사(t04)/미지정은 물품(T05=Implt) 기본 폴백.
+function renderResultTab(srngTyCd?: ImpltElgbSrngTyCd) {
+  switch (srngTyCd) {
+    case 't06':
+      return <ImpltElgblRslt_Lbsvc />
+    case 't07':
+      return <ImpltElgblRslt_ItemsUnderKrw1B />
+    case 't08':
+      return <ImpltElgblRslt_ManufacturingofItemsUnderKrw1B />
+    case 't09':
+      return <ImpltElgblRslt_ManufacturingofItemsUnderKrw1B_2015 />
+    case 't10':
+      return <ImpltElgblRslt_PurchaseofItemsUnderKrw1B />
+    case 't11':
+      return <ImpltElgblRslt_PurchaseofItemsUnderKrw1B_2015 />
+    case 't12':
+      return <ImpltElgblRslt_ManufacturingofItemsUnderKrw1B_2018 />
+    case 't13':
+      return <ImpltElgblRslt_PurchaseofItemsUnderKrw1B_2018 />
+    case 't14':
+      return <ImpltElgblRslt_BelowThreshold />
+    case 't15':
+      return <ImpltElgblRslt_ThresholdKrw1B />
+    case 't16':
+      return <ImpltElgblRslt_OverKrw1B />
+    case 't17':
+      return <ImpltElgblRslt_Cstrn />
+    case 't18':
+      return <ImpltElgblRslt_TechLbsvc />
+    case 't19':
+      return <ImpltElgblRslt_Krw300MCstrn />
+    case 't20':
+      return <ImpltElgblRslt_BelowThresholdLbsvc />
+    case 't21':
+      return <ImpltElgblRslt_BelowThresholdDspLbsvc />
+    // t04(통사·보류) · t05(물품) · undefined → 물품 기본
+    default:
+      return <Implt />
+  }
+}
+
+// 탭 콘텐츠 렌더 (설계서 탭별 화면: 일반정보 T01 / 입찰·반려정보 T02 / 파일첨부 T03 / 심사결과 T04~T21)
+function renderTabContent(tab: string, srngTyCd?: ImpltElgbSrngTyCd) {
   switch (tab) {
     case 'general':
       return <Implt1 />
@@ -62,7 +123,7 @@ function renderTabContent(tab: string) {
     case 'file':
       return <Implt3 />
     case 'result':
-      return <Implt />
+      return renderResultTab(srngTyCd)
     default:
       return null
   }
@@ -202,7 +263,7 @@ export function ImpltPage() {
 
       {/* 탭 콘텐츠 — 짧은 탭도 헤더 접힘 지탱 위해 최소 높이 확보(진동 방지). */}
       <div className="min-h-[100dvh]">
-        {renderTabContent(tab)}
+        {renderTabContent(tab, detail.srngTyCd)}
 
         {/* 탭별 하단 액션 — 우측 플로팅 버튼(48px + 하단 10px + safe-area)에 안 가리도록 여백 확보. */}
         {footer && (

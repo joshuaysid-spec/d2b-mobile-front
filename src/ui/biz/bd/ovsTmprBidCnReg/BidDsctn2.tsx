@@ -1,4 +1,4 @@
-// 입찰내역 작성 - 입찰내역(총액제) (MUI-BD-01-M78, 설계서 07국외입찰공고상세 slide315·318·319)
+// 입찰내역 작성 - 입찰내역(총액제) (MUI-BD-01-T76(구 M78 — v1.83 재편), 설계서 07국외입찰공고상세 slide315·318·319)
 // 호스트 페이지(OvsTmprBidCnRegPage)의 '품목 목록' 탭 본문(총액제) — 요약/탭/FAB 는 페이지 소유.
 // 구성: PageTitle → 입찰 품목(총 N건, ReadOnly Table 반복 · dl_alonbsItemList) → 더보기 →
 //   입찰내역(dl_alonbsBidCnInfo: 입찰업체/화폐단위/입찰금액 입력 + 달러금액/달러환산율 계산) →

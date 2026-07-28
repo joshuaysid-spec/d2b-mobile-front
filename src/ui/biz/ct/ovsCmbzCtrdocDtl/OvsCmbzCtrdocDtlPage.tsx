@@ -15,10 +15,12 @@ import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { Button } from '@/ui/common/base/Button'
 import { OvsCmbzCtrdocDtl_Stts } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrdocDtl_Stts'
 import { OvsCmbzCtrdocDtl_Ctrt } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrdocDtl_Ctrt'
 import { OvsCmbzCtrdocDtl_Trgt } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrdocDtl_Trgt'
-import { OvsCmbzCtrtDtstFullPopup } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrtDtstFullPopup'
+import { OvsCmbzCtrtDtst } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrtDtst'
 
 // ── 탭 (slide178 탭바: 계약현황/계약명세서/계약대상) ───────────────────────────
 const TABS: TabItem[] = [
@@ -132,8 +134,19 @@ export function OvsCmbzCtrdocDtlPage() {
         }}
       />
 
-      {/* P78 상업계약서명세서 — 계약명세서 탭 그룹 클릭 시 */}
-      <OvsCmbzCtrtDtstFullPopup open={dtstOpen} onOpenChange={setDtstOpen} />
+      {/* P78 상업계약서명세서 — 계약명세서 탭 그룹 클릭 시(디자인 10020:154303 = 바텀시트) */}
+      <BottomSheet
+        open={dtstOpen}
+        onOpenChange={setDtstOpen}
+        title="계약명세서 상세"
+        footer={
+          <Button variant="secondary" className="w-full" onClick={() => setDtstOpen(false)}>
+            닫기
+          </Button>
+        }
+      >
+        <OvsCmbzCtrtDtst open={dtstOpen} />
+      </BottomSheet>
     </div>
   )
 }

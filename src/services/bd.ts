@@ -72,7 +72,7 @@ const EP = {
   PBANC_DTL: (id: string) => `/v1/bds/pbancs/${id}`,
   /** 입찰공고 상세(보완 필드) — MUI-BD-01-M07 (bidPbancDtl/BidPbancDtlPage) */
   PBANC_PRGRS_DTL: (id: string) => `/v1/bds/pbancs/${id}/progress-detail`,
-  /** 입찰진행 현황 — MUI-BD-01-M12 (bidPbancDtl/BidPbancDtl_Tacpg07) */
+  /** 입찰진행 현황 — MUI-BD-01-T06(구 M12 — v1.83 재편) (bidPbancDtl/BidPbancDtl_Tacpg07) */
   PBANC_PROGRESS: (id: string) => `/v1/bds/pbancs/${id}/progress`,
   /** 관심공고 토글 — MUI-BD-01-P13 (bidPbancDtl/BidPbancDtlPage · bidRsltDtl · ovsBidPbancDtl) */
   FAVORITE: (id: string) => `/v1/bds/pbancs/${id}/favorite`,
@@ -82,11 +82,11 @@ const EP = {
   BDOPN_LIST: '/v1/bds/bdopns',
   /** 개찰(입찰결과) 상세 — MUI-BD-09-M01 (bidRsltDtl/BidRsltDtlPage) */
   BDOPN_DTL: (id: string) => `/v1/bds/bdopns/${id}`,
-  /** 입찰결과(내 업체) — MUI-BD-09-M03 (bidRsltDtl/BidRsltDtl) */
+  /** 입찰결과(내 업체) — MUI-BD-09-T03(구 M03 — v1.83 재편) (bidRsltDtl/BidRsltDtl) */
   BID_RSLT: (id: string) => `/v1/bds/bdopns/${id}/results`,
-  /** 협상결과 — MUI-BD-09-M04 (bidRsltDtl/BidRsltDtl2) */
+  /** 협상결과 — MUI-BD-09-T04(구 M04 — v1.83 재편) (bidRsltDtl/BidRsltDtl2) */
   NEGO_RSLT: (id: string) => `/v1/bds/bdopns/${id}/nego-results`,
-  /** 입찰결과 품목정보 — MUI-BD-09-M02 (bidRsltDtl/BidRsltDtlList) */
+  /** 입찰결과 품목정보 — MUI-BD-09-T02(구 M02 — v1.83 재편) (bidRsltDtl/BidRsltDtlList) */
   BID_RSLT_ITEMS: (id: string) => `/v1/bds/bdopns/${id}/items`,
   /** 이행/적격심사 신청 — MUI-BD-10 (bidRsltDtl/BidRsltDtlPage) */
   PFMNC_ELGBL_SCRN: (id: string) => `/v1/bds/bdopns/${id}/elgbl-screenings`,
@@ -162,53 +162,53 @@ const EP = {
   // ── 국외(Overseas) ──
   /** 국외 입찰공고 상세 — MUI-BD-01-M71 (ovsBidPbancDtl/OvsBidPbancDtlPage) */
   OVS_PBANC_DTL: (id: string) => `/v1/bds/ovs/pbancs/${id}`,
-  /** 국외 품목 목록 — MUI-BD-01-M72 (ovsBidPbancDtl/OvsBidPbancDtl) */
+  /** 국외 품목 목록 — MUI-BD-01-T72(구 M72 — v1.83 재편) (ovsBidPbancDtl/OvsBidPbancDtl) */
   OVS_BID_ITEMS: (id: string) => `/v1/bds/ovs/pbancs/${id}/items`,
   /** 국외 품목 첨부문서 — MUI-BD-01-P76 (ovsBidPbancDtl/OvsBidPbancDtl · OvsBidPbanc_AtchFileInq) */
   OVS_ITEM_ATCH: (frcptlArtclNo: string) => `/v1/bds/ovs/items/${frcptlArtclNo}/atch-files`,
   /** 국외 품목 첨부파일 다운로드 — MUI-BD-01-P76 */
   OVS_ITEM_ATCH_FILE: (no: number) => `/v1/bds/ovs/item-atch-files/${no}/download`,
-  /** 국외 공고 첨부서류 목록 — MUI-BD-01-M73 (ovsBidPbancDtl/OvsBidPbancDtl2) */
+  /** 국외 공고 첨부서류 목록 — MUI-BD-01-T73(구 M73 — v1.83 재편) (ovsBidPbancDtl/OvsBidPbancDtl2) */
   OVS_BID_ATCH_DOCS: (id: string) => `/v1/bds/ovs/pbancs/${id}/atch-docs`,
-  /** 국외 공고 첨부서류 다운로드 — MUI-BD-01-M73 */
+  /** 국외 공고 첨부서류 다운로드 — MUI-BD-01-T73(구 M73 — v1.83 재편) */
   OVS_BID_ATCH_DOC_FILE: (no: number) => `/v1/bds/ovs/atch-docs/${no}/download`,
-  /** 국외 보관함 품목 추가/삭제 — MUI-BD-01-M72 (ovsBidPbancDtl/OvsBidPbancDtl) */
+  /** 국외 보관함 품목 추가/삭제 — MUI-BD-01-T72(구 M72 — v1.83 재편) (ovsBidPbancDtl/OvsBidPbancDtl) */
   OVS_LOCKER_ITEM: (frcptlArtclNo: string) => `/v1/bds/ovs/locker/items/${frcptlArtclNo}`,
 
   /** 국외 입찰참가신청 등록결과 — MUI-BD-04-P83 (ovsBidPrtcpApfrDtl/OvsBidRegRsltByBiz) */
   OVS_BID_REG_RSLT: '/v1/bds/ovs/bid-prtcp/reg-results',
   /** 국외 입찰참가신청 취소 — MUI-BD-04-P82 (ovsBidPrtcpApfrDtl/OvsBidPrtcpRtrcnAply) */
   OVS_BID_PRTCP_RTRCN: '/v1/bds/ovs/bid-prtcp/retractions',
-  /** 국외 입찰보증금 목록(면제구분) — MUI-BD-04-M80 (ovsBidPrtcpApfrDtl/Tab3) */
+  /** 국외 입찰보증금 목록(면제구분) — MUI-BD-04-T78(구 M80 — v1.83 재편) (ovsBidPrtcpApfrDtl/Tab3) */
   OVS_BID_GRNTE_LIST: '/v1/bds/ovs/bid-prtcp/guarantees',
-  /** 국외 보증서류 다운로드 — MUI-BD-04-M80 (ovsBidPrtcpApfrDtl/Tab3) */
+  /** 국외 보증서류 다운로드 — MUI-BD-04-T78(구 M80 — v1.83 재편) (ovsBidPrtcpApfrDtl/Tab3) */
   OVS_GRNTE_DOC: (docNo: string) => `/v1/bds/ovs/guarantee-docs/${docNo}/download`,
-  /** 국외 첨부파일 다운로드 — MUI-BD-04-M81 (ovsBidPrtcpApfrDtl/Tab4) */
+  /** 국외 첨부파일 다운로드 — MUI-BD-04-T79(구 M81 — v1.83 재편) (ovsBidPrtcpApfrDtl/Tab4) */
   OVS_ATCH_FILE: (atchFileNm: string) => `/v1/bds/ovs/atch-files/${atchFileNm}/download`,
-  /** 국외 입찰참가 첨부서류 업로드 — MUI-BD-04-M77 (ovsBidPrtcpAply/AtchDocReg) */
+  /** 국외 입찰참가 첨부서류 업로드 — MUI-BD-04-T75(구 M77 — v1.83 재편) (ovsBidPrtcpAply/AtchDocReg) */
   OVS_BID_PRTCP_ATCH: '/v1/bds/ovs/bid-prtcp/atch-docs',
-  /** 국외 입찰참가 첨부서류 삭제 — MUI-BD-04-M77 */
+  /** 국외 입찰참가 첨부서류 삭제 — MUI-BD-04-T75(구 M77 — v1.83 재편) */
   OVS_BID_PRTCP_ATCH_ITEM: (id: string) => `/v1/bds/ovs/bid-prtcp/atch-docs/${id}`,
   /** 국외 서약서 조회/저장 — MUI-BD-04-P03 (ovsBidPrtcpAply/OvsBidPrtcpAplyPage · OvsProbWrotAgre) */
   OVS_PROB_WROT: (wrotId: string) => `/v1/bds/ovs/prob-wrots/${wrotId}`,
   /** 국외 서약서 선택 — MUI-BD-04-P03 */
   OVS_PROB_WROT_CHOICE: (wrotId: string) => `/v1/bds/ovs/prob-wrots/${wrotId}/choice`,
-  /** 국외 입찰참가신청서 등록 — MUI-BD-04-M77 (ovsBidPrtcpAply/OvsBidPrtcpAplyPage) */
+  /** 국외 입찰참가신청서 등록 — MUI-BD-04-T75(구 M77 — v1.83 재편) (ovsBidPrtcpAply/OvsBidPrtcpAplyPage) */
   OVS_BID_PRTCP_APLY: '/v1/bds/ovs/bid-prtcp/applies',
   /** 국외 입찰보증서 상세 — MUI-BD-04-P76 (ovsBidPrtcpAply/OvsBidWtgrDtlFullPopup) */
   OVS_WTGR_DTL: (wtgrNo: string) => `/v1/bds/ovs/wtgrs/${wtgrNo}`,
   /** 국외 입찰보증서 목록 — MUI-BD-04-P75 (ovsBidPrtcpAply/OvsBidWtgrInqFullPopup) */
   OVS_WTGR_LIST: '/v1/bds/ovs/wtgrs',
-  /** 국외 입찰업체 정보 — MUI-BD-04-M73 (ovsBidPrtcpAply/Stp2) */
+  /** 국외 입찰업체 정보 — MUI-BD-04-T73(구 M73 — v1.83 재편) (ovsBidPrtcpAply/Stp2) */
   OVS_SPLY_INFO: (splyBzentyCd: string) => `/v1/bds/ovs/sply-bzentys/${splyBzentyCd}`,
-  /** 국외 보증문서 업로드(연대보증서/지급각서/보증보험/납부서) — MUI-BD-04-M74 (ovsBidPrtcpAply/Stp3) */
+  /** 국외 보증문서 업로드(연대보증서/지급각서/보증보험/납부서) — MUI-BD-04-T74(구 M74 — v1.83 재편) (ovsBidPrtcpAply/Stp3) */
   OVS_GRNTE_UPLOAD: '/v1/bds/ovs/guarantee-docs',
-  /** 국외 입찰보증금 사업목록(구분) — MUI-BD-04-M74 (ovsBidPrtcpAply/Stp3) */
+  /** 국외 입찰보증금 사업목록(구분) — MUI-BD-04-T74(구 M74 — v1.83 재편) (ovsBidPrtcpAply/Stp3) */
   OVS_GRNTE_BIZ_LIST: '/v1/bds/ovs/bid-prtcp/guarantee-bizs',
-  /** 국외 입찰보증서 적용 — MUI-BD-04-M74 (ovsBidPrtcpAply/Stp3) */
+  /** 국외 입찰보증서 적용 — MUI-BD-04-T74(구 M74 — v1.83 재편) (ovsBidPrtcpAply/Stp3) */
   OVS_WTGR_APPLY: '/v1/bds/ovs/wtgrs/applies',
 
-  /** 국외 입찰결과 — MUI-BD-09-M72/M73 (ovsBidRsltDtl/OvsBidRsltDtl2 · OvsBidRsltDtl3) */
+  /** 국외 입찰결과 — MUI-BD-09-T72/T73(구 M72/M73 — v1.83 재편) (ovsBidRsltDtl/OvsBidRsltDtl2 · OvsBidRsltDtl3) */
   OVS_BID_RSLT: '/v1/bds/ovs/bid-results',
   /** 국외 환율정보 — MUI-BD-01-M74 (ovsExchrtList/OvsExchrtListFullPopup) */
   OVS_EXCHANGE_RATES: '/v1/bds/ovs/exchange-rates',
@@ -225,31 +225,31 @@ const EP = {
 
   /** 국외 공개수의협상 견적서 취소 — MUI-BD-12-P82 (ovsRlsVltrnsNgtnEtdcDtl/OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt) */
   OVS_RLS_VLTRNS_ETDC_RTRCN: '/v1/bds/ovs/rls-vltrns/etdc-retractions',
-  /** 국외 공개수의협상 견적서 품목 — MUI-BD-12-M76 (ovsRlsVltrnsNgtnEtdcSbmsnPage/OvsRlsVltrnsNgtnEtdcSbmsn3) */
+  /** 국외 공개수의협상 견적서 품목 — MUI-BD-12-T76(구 M76 — v1.83 재편) (ovsRlsVltrnsNgtnEtdcSbmsnPage/OvsRlsVltrnsNgtnEtdcSbmsn3) */
   OVS_RLS_VLTRNS_ETDC_ITEMS: '/v1/bds/ovs/rls-vltrns/etdc-items',
   /** 국외 공개수의협상 견적서 제출 — MUI-BD-12-M74 (ovsRlsVltrnsNgtnEtdcSbmsnPage/OvsRlsVltrnsNgtnEtdcSbmsnPage) */
   OVS_RLS_VLTRNS_ETDC: (id: string) => `/v1/bds/ovs/rls-vltrns/${id}/etdc`,
-  /** 국외 공개수의협상 품목정보 — MUI-BD-12-M72 (ovsRlsVltrnsNgtnPlanDtl/OvsRlsVltrnsNgtnPlanDtl2) */
+  /** 국외 공개수의협상 품목정보 — MUI-BD-12-T72(구 M72 — v1.83 재편) (ovsRlsVltrnsNgtnPlanDtl/OvsRlsVltrnsNgtnPlanDtl2) */
   OVS_RLS_VLTRNS_ITEMS: '/v1/bds/ovs/rls-vltrns/items',
-  /** 국외 공개수의협상 첨부서류 — MUI-BD-12-M73 (ovsRlsVltrnsNgtnPlanDtl/OvsRlsVltrnsNgtnPlanDtl3) */
+  /** 국외 공개수의협상 첨부서류 — MUI-BD-12-T73(구 M73 — v1.83 재편) (ovsRlsVltrnsNgtnPlanDtl/OvsRlsVltrnsNgtnPlanDtl3) */
   OVS_RLS_VLTRNS_ATCH_DOCS: '/v1/bds/ovs/rls-vltrns/atch-docs',
-  /** 국외 공개수의협상 심사결과 — MUI-BD-12-M83 (ovsRlsVltrnsNgtnSrngRsltInq/OvsRlsVltrnsNgtnSrngRsltInq2) */
+  /** 국외 공개수의협상 심사결과 — MUI-BD-12-T83(구 M83 — v1.83 재편) (ovsRlsVltrnsNgtnSrngRsltInq/OvsRlsVltrnsNgtnSrngRsltInq2) */
   OVS_RLS_VLTRNS_SRNG_RSLT: '/v1/bds/ovs/rls-vltrns/srng-results',
-  /** 국외 공개수의협상 첨부파일 다운로드 — MUI-BD-12-M81 (ovsRlsVltrnsNgtnEtdcDtl/OvsRlsVltrnsNgtnEtdcDtl4) */
+  /** 국외 공개수의협상 첨부파일 다운로드 — MUI-BD-12-T81(구 M81 — v1.83 재편) (ovsRlsVltrnsNgtnEtdcDtl/OvsRlsVltrnsNgtnEtdcDtl4) */
   OVS_ETDC_FILE: (id: string) => `/v1/bds/ovs/rls-vltrns/etdc-files/${id}/download`,
 
-  /** 국외 임시입찰내역 문서 업로드 — MUI-BD-01-M77 (ovsTmprBidCnReg/BidDsctn) */
+  /** 국외 임시입찰내역 문서 업로드 — MUI-BD-01-T75(구 M77 — v1.83 재편) (ovsTmprBidCnReg/BidDsctn) */
   OVS_BID_CN_DOC: '/v1/bds/ovs/tmpr-bid-cn/docs',
-  /** 국외 통화 목록 — MUI-BD-01-M77 (ovsTmprBidCnReg/BidDsctn) */
+  /** 국외 통화 목록 — MUI-BD-01-T75(구 M77 — v1.83 재편) (ovsTmprBidCnReg/BidDsctn) */
   OVS_CRNC_LIST: '/v1/bds/ovs/currencies',
-  /** 국외 입찰업체 목록 — MUI-BD-01-M77 (ovsTmprBidCnReg/BidDsctn) */
+  /** 국외 입찰업체 목록 — MUI-BD-01-T75(구 M77 — v1.83 재편) (ovsTmprBidCnReg/BidDsctn) */
   OVS_BID_BZENTY_LIST: '/v1/bds/ovs/bid-bzentys',
-  /** 국외 임시입찰내역 저장/삭제 — MUI-BD-01-M77/M78 (ovsTmprBidCnReg/BidDsctn · BidDsctn2) */
+  /** 국외 임시입찰내역 저장/삭제 — MUI-BD-01-T75/T76(구 M77/M78 — v1.83 재편) (ovsTmprBidCnReg/BidDsctn · BidDsctn2) */
   OVS_TMPR_BID_CN: (intgRfrncNo: string) => `/v1/bds/ovs/tmpr-bid-cn/${intgRfrncNo}`,
   /** 국외 이전공고 입찰내역(통합참조번호) — MUI-BD-01-M76 (ovsTmprBidCnReg/OvsTmprBidCnRegPage) */
   OVS_BFR_PBANC_BID_CN: (intgRfrncNo: string) => `/v1/bds/ovs/tmpr-bid-cn/${intgRfrncNo}/prev-bid-cn`,
 
-  /** 국외 이전공고 보관함목록 — MUI-BD-01-M79 (ovsBfrTmprBidBidCnReg/OvsBfrTmprBidBidCnRegPage) */
+  /** 국외 이전공고 보관함목록 — MUI-BD-01-P79(구 M79 — v1.83 재편) (ovsBfrTmprBidBidCnReg/OvsBfrTmprBidBidCnRegPage) */
   BFR_PBANC_LOCKER_LIST: (lockerId: string) => `/v1/bds/ovs/locker/${lockerId}/prev-pbancs`,
   /** 국외 이전공고 입찰내역목록 — MUI-BD-01-P80 (ovsBfrTmprBidBidCnReg/BfrPbancBidDsctnItemDtlFullPopup) */
   BFR_PBANC_BID_CN: (pbancNo: string) => `/v1/bds/ovs/prev-pbancs/${pbancNo}/bid-cn`,
@@ -260,19 +260,19 @@ const EP = {
   OVS_BID_RTRCN: '/v1/bds/ovs/tndrs/retractions',
   /** 국외 입찰서 상세 — MUI-BD-06-M75 (ovsTndrDtl/OvsTndrDtlPage) */
   OVS_TNDR_DTL: (id: string) => `/v1/bds/ovs/tndrs/${id}`,
-  /** 국외 입찰서 입찰참여품목 — MUI-BD-06-M72/M77 (ovsTndrDtl/Tab3 · ovsTndrSbmsn/Stp2) */
+  /** 국외 입찰서 입찰참여품목 — MUI-BD-06-T72/T77(구 M72/M77 — v1.83 재편) (ovsTndrDtl/Tab3 · ovsTndrSbmsn/Stp2) */
   OVS_TNDR_ITEMS: '/v1/bds/ovs/tndrs/items',
-  /** 국외 입찰서 첨부문서 목록 — MUI-BD-06-M79 (ovsTndrDtl/Tab4) */
+  /** 국외 입찰서 첨부문서 목록 — MUI-BD-06-T79(구 M79 — v1.83 재편) (ovsTndrDtl/Tab4) */
   OVS_TNDR_DOCS: '/v1/bds/ovs/tndrs/docs',
-  /** 국외 입찰서 첨부문서 다운로드 — MUI-BD-06-M79 */
+  /** 국외 입찰서 첨부문서 다운로드 — MUI-BD-06-T79(구 M79 — v1.83 재편) */
   OVS_TNDR_DOC_FILE: (atchFileNm: string) => `/v1/bds/ovs/tndrs/docs/${atchFileNm}/download`,
-  /** 국외 입찰서 제출(투찰) — MUI-BD-06-M74 (ovsTndrSbmsn/OvsTndrSbmsnPage) */
+  /** 국외 입찰서 제출(투찰) — MUI-BD-06-T74(구 M74 — v1.83 재편) (ovsTndrSbmsn/OvsTndrSbmsnPage) */
   OVS_TNDR_SUBMIT: '/v1/bds/ovs/tndrs',
-  /** 국외 입찰서 첨부문서 조회(품목대체/MOQ) — MUI-BD-06-M72 (ovsTndrSbmsn/Stp2) */
+  /** 국외 입찰서 첨부문서 조회(품목대체/MOQ) — MUI-BD-06-T72(구 M72 — v1.83 재편) (ovsTndrSbmsn/Stp2) */
   OVS_ATCH_DOC: '/v1/bds/ovs/tndrs/atch-docs',
-  /** 국외 입찰서 파일 업로드 — MUI-BD-06-M74 (ovsTndrSbmsn/Stp3) */
+  /** 국외 입찰서 파일 업로드 — MUI-BD-06-T74(구 M74 — v1.83 재편) (ovsTndrSbmsn/Stp3) */
   OVS_TNDR_FILE: '/v1/bds/ovs/tndrs/files',
-  /** 국외 입찰서 파일 삭제 — MUI-BD-06-M74 */
+  /** 국외 입찰서 파일 삭제 — MUI-BD-06-T74(구 M74 — v1.83 재편) */
   OVS_TNDR_FILE_ITEM: (id: string) => `/v1/bds/ovs/tndrs/files/${id}`,
 } as const
 
@@ -570,7 +570,7 @@ export const bdService = {
   // 국외(Overseas)
   // ══════════════════════════════════════════════════════════════════════════
 
-  // ── 국외 입찰공고 상세 (MUI-BD-01-M71~M73) ─────────────────────────────────
+  // ── 국외 입찰공고 상세 (MUI-BD-01-M71 · T71~T73(구 M71~M73 — v1.83 재편)) ─────────────────────────────────
 
   /** 국외 입찰공고 상세(공고일반) 조회. */
   async getOvsBidPbancDetail(id: string): Promise<OvsBidPbancDetail> {
@@ -778,7 +778,7 @@ export const bdService = {
     return apiClient.post<void, void>(EP.OVS_WTGR_APPLY, { pbancNo, prchsDmndNo, wtgrNo })
   },
 
-  // ── 국외 입찰결과 (MUI-BD-09-M71~M73) ──────────────────────────────────────
+  // ── 국외 입찰결과 (MUI-BD-09-M71 · T71~T73(구 M71~M73 — v1.83 재편)) ──────────────────────────────────────
 
   /** 국외 입찰결과 페이지 조회(단가제/총액제는 응답 형태로 분기). */
   async getOvsBidRslt(page: number): Promise<OvsBidRsltUnitPriceItem[] | OvsBidRsltTotalItem[]> {
@@ -888,7 +888,7 @@ export const bdService = {
     )
   },
 
-  // ── 국외 임시입찰내역/이전공고 (MUI-BD-01-M76~M79) ─────────────────────────
+  // ── 국외 임시입찰내역/이전공고 (MUI-BD-01-M76 · T75·T76 · P79(구 M76~M79 — v1.83 재편)) ─────────────────────────
 
   /** 국외 임시입찰내역 문서 업로드(품목대체/MOQ). */
   async uploadOvsBidCnDoc(
