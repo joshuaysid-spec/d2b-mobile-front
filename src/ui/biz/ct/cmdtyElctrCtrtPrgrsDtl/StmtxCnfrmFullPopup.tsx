@@ -47,11 +47,11 @@ export function StmtxCnfrmFullPopup({ open, onOpenChange }: StmtxCnfrmFullPopupP
         </Button>
       }
     >
-      <div className="flex flex-col gap-8 pb-8">
+      <div className="flex flex-col">
         {/* 계약 정보 (dm_ctrtInfo) */}
-        <section className="flex flex-col gap-krds-7">
+        <section className="flex flex-col">
           <SectionTitle as="h3">계약 정보</SectionTitle>
-          <div className="px-4">
+          <div className="px-4 pb-krds-8">
             <Table
               rows={[
                 { label: '계약년도', value: data?.ctrtInfo.ctrtYr ?? '-' },
@@ -63,11 +63,11 @@ export function StmtxCnfrmFullPopup({ open, onOpenChange }: StmtxCnfrmFullPopupP
         </section>
 
         {/* 인지세 정보 (dl_stmtxPayInfo — 여러 건 반복) */}
-        <section className="flex flex-col gap-krds-7">
+        <section className="flex flex-col">
           <SectionTitle as="h3" topDivider>
             인지세 정보
           </SectionTitle>
-          <div className="flex flex-col gap-krds-7 px-4">
+          <div className="flex flex-col gap-krds-8 px-4 pb-krds-8">
             {(data?.payInfos ?? []).map((p) => (
               <Table key={p.id} rows={payInfoRows(p)} />
             ))}
@@ -75,11 +75,11 @@ export function StmtxCnfrmFullPopup({ open, onOpenChange }: StmtxCnfrmFullPopupP
         </section>
 
         {/* 납부금액 정보 (dm_payAmt) */}
-        <section className="flex flex-col gap-krds-7">
+        <section className="flex flex-col">
           <SectionTitle as="h3" topDivider>
             납부금액 정보
           </SectionTitle>
-          <div className="px-4">
+          <div className="px-4 pb-krds-8">
             <Table
               rows={[
                 {

@@ -251,7 +251,7 @@ pretendard-gov 패키지 설치
 | `InputLabel` | `src/ui/common/base/InputLabel.tsx` | Input 위 17px Bold 라벨 (Figma m_input_label 9300-27867) | `required` 디폴트 true · 좌측 빨강 `*` |
 | `InputMessage` | `src/ui/common/base/InputMessage.tsx` | 폼 필드 하단 메시지 (Figma m_input_message 9300-27870) | `type`: info(파랑·Info 아이콘) / error(빨강·Cancel 아이콘) |
 | `PageTitle` | `src/ui/common/base/PageTitle.tsx` | 페이지/최상위 영역 타이틀 (Figma m_page title_24 9300-27179) | 24px Bold · `as` 헤딩 레벨 변경 |
-| `SectionTitle` | `src/ui/common/base/SectionTitle.tsx` | 하위 영역/아코디언/테이블 타이틀 (Figma m_section title_19 9300-27190) | `bgColor`: white / blue · `topDivider` · `info` 우측 슬롯 |
+| `SectionTitle` | `src/ui/common/base/SectionTitle.tsx` | 하위 영역/아코디언/테이블 타이틀 (Figma m_section title 9140:3760 — 구 9300-27190의 'info 시 #ECF1FA 강조' 규칙은 폐기) | `bgColor`: white / blue · `topDivider` · `info` 우측 슬롯(배경 무관) |
 | `SectionDivider` | `src/ui/common/base/SectionDivider.tsx` | 영역 구분선 (Figma m_section divider 9300-27188) | 1px · color = `krds-border-divider` (#d1d7e0) |
 | `SelectionFieldBox` | `src/ui/common/base/SelectionFieldBox.tsx` | 선택 트리거 박스(아톰) — 클릭 시 외부 시트/모달이 열려 값 수신 (Figma m_selection field_box 9300-29018) | `value` · `placeholder` · `error` · `readOnly` · `disabled` · `onClear`(value 있고 활성 시 X 노출) · 우측 `>` 항상 표시 · 7 state(default/focus/filled/error/error_focus/read-only/disabled) props 조합 + `:focus-visible` 로 자동 도출 |
 | `Tag` | `src/ui/common/base/Tag.tsx` | 칩형 태그 (Figma m_tag 9300-27119) | bg-white + 1px field 보더 + rounded-full · 15px Regular ink · `closable` 또는 `onClose` 제공 시 우측 X(Cancel) 노출 · onClose 없이 closable 만 true 면 X 표시되나 클릭 비활성 |

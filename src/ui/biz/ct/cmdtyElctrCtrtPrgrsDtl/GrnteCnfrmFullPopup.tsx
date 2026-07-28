@@ -49,11 +49,11 @@ export function GrnteCnfrmFullPopup({ open, onOpenChange }: GrnteCnfrmFullPopupP
         </Button>
       }
     >
-      <div className="flex flex-col gap-8 pb-8">
+      <div className="flex flex-col">
         {/* 계약 정보 (dm_ctrtInfo) */}
-        <section className="flex flex-col gap-krds-7">
+        <section className="flex flex-col">
           <SectionTitle as="h3">계약 정보</SectionTitle>
-          <div className="px-4">
+          <div className="px-4 pb-krds-8">
             <Table
               rows={[
                 { label: '계약번호', value: data?.ctrtInfo.ctrtNo ?? '-' },
@@ -64,11 +64,11 @@ export function GrnteCnfrmFullPopup({ open, onOpenChange }: GrnteCnfrmFullPopupP
         </section>
 
         {/* 보증서 정보 (dm_wtgrInfo — 여러 건 반복) */}
-        <section className="flex flex-col gap-krds-7">
+        <section className="flex flex-col">
           <SectionTitle as="h3" topDivider>
             보증서 정보
           </SectionTitle>
-          <div className="flex flex-col gap-krds-7 px-4">
+          <div className="flex flex-col gap-krds-8 px-4 pb-krds-8">
             {(data?.wtgrInfos ?? []).map((w) => (
               <Table key={w.id} rows={wtgrRows(w)} />
             ))}

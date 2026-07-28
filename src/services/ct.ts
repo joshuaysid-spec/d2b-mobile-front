@@ -110,7 +110,7 @@ const EP = {
   OVS_CMBZ_DTST: (id: string) => `/v1/cts/commercial-contracts/${id}/item-spec-groups`,
   /** 상업계약서 계약대상 — MUI-CT-01-T79 (ovsCmbzCtrdocDtl/OvsCmbzCtrdocDtl_Trgt) */
   OVS_CMBZ_TRGT: (id: string) => `/v1/cts/commercial-contracts/${id}/parties`,
-  /** 상업계약서명세서 — MUI-CT-01-P78 (ovsCmbzCtrdocDtl/OvsCmbzCtrtDtstFullPopup) */
+  /** 상업계약서명세서 — MUI-CT-01-P78 (ovsCmbzCtrdocDtl/OvsCmbzCtrtDtst) */
   OVS_CMBZ_CTRT_DTST: (id: string) => `/v1/cts/commercial-contracts/${id}/item-specs`,
   /** 해지/해제 목록 — MUI-CT-03-M01 (ctrtCncltnRmvList/CtrtCncltnRmvListPage) */
   CNCLTN_RMV_LIST: '/v1/cts/cancellations',

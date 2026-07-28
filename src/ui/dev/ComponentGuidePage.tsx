@@ -1517,7 +1517,7 @@ export function ComponentGuidePage() {
           <Section
             id="sectiontitle"
             title="SectionTitle"
-            desc="Figma m_section title_19(9300-27190) 1:1. 하위 영역/아코디언/테이블 타이틀. 19px Bold · min-h 56 · padding 10px 16px. bgColor white|blue · topDivider · info(우측 슬롯, 17px primary-active)."
+            desc="Figma m_section title(9140:3760) 1:1. 하위 영역/아코디언/테이블 타이틀. 19px Bold · min-h 56 · padding 10px 16px. bgColor white|blue · topDivider · info(우측 슬롯, 17px primary-active — 배경은 bgColor 를 따름, 자동 강조 없음)."
           >
             <Row label="bgColor">
               <Specimen caption='bgColor="white" (default)'>
