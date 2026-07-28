@@ -63,7 +63,7 @@ const MENU_TREE: MenuNode[] = [
     children: [
       { id: 'ct-list', label: LINKED_MENU_LABELS[ROUTES.CT] },
       { id: 'ct-payment', label: LINKED_MENU_LABELS[ROUTES.CT_PYMT] },
-      { id: 'ct-cancel', label: '해지/해제 목록' },
+      { id: 'ct-cancel', label: LINKED_MENU_LABELS[ROUTES.CT_CNCLTN] },
     ],
   },
   {
@@ -184,6 +184,7 @@ const MENU_ROUTES: Record<string, string> = {
   'bd-open': ROUTES.BD_OPBID, // 개찰(개찰목록 MUI-BD-08-M01)
   'ct-list': ROUTES.CT, // 계약통합목록(MUI-CT-01-M01)
   'ct-payment': ROUTES.CT_PYMT, // 대금지불정보목록(MUI-CT-01-M15)
+  'ct-cancel': ROUTES.CT_CNCLTN, // 해지/해제 목록(MUI-CT-03-M01)
   'support-notice-general': ROUTES.SUPPORT_NOTICE, // 일반공지사항(MUI-CM-04-M01)
   'support-notice-dapa': ROUTES.SUPPORT_NOTICE_DAPA, // 방위사업청공지사항(M21)
   'support-notice-unit': ROUTES.SUPPORT_NOTICE_DMDFRC, // 수요부대별공지사항(M23)
