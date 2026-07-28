@@ -170,10 +170,28 @@ const CmdtyMdfcnCtrdocDtlPage = lazy(() =>
     default: m.CmdtyMdfcnCtrdocDtlPage,
   })),
 )
-// 물품총액/단가계약서상세(MUI-CT-01-M07/M08, /ct/gramt/:id · /ct/untprc/:id — 1페이지+type).
+// 물품총액계약서상세(MUI-CT-01-M07, /ct/gramt/:id).
 const CmdtyGramtCtrdocDtlPage = lazy(() =>
   import('@/ui/biz/ct/cmdtyGramtCtrdocDtl/CmdtyGramtCtrdocDtlPage').then((m) => ({
     default: m.CmdtyGramtCtrdocDtlPage,
+  })),
+)
+// 물품단가계약서상세(MUI-CT-01-M08, /ct/untprc/:id) — biz/ct/cmdtyUntprcCtrdocDtl(전용 컨테이너+탭 T16~T18).
+const CmdtyUntprcCtrdocDtlPage = lazy(() =>
+  import('@/ui/biz/ct/cmdtyUntprcCtrdocDtl/CmdtyUntprcCtrdocDtlPage').then((m) => ({
+    default: m.CmdtyUntprcCtrdocDtlPage,
+  })),
+)
+// 물품전자계약확정상세(MUI-CT-01-M04, /ct/cfmtn/:id) — biz/ct/cmdtyElctrCtrtCfmtnDtl.
+const CmdtyElctrCtrtCfmtnDtlPage = lazy(() =>
+  import('@/ui/biz/ct/cmdtyElctrCtrtCfmtnDtl/CmdtyElctrCtrtCfmtnDtlPage').then((m) => ({
+    default: m.CmdtyElctrCtrtCfmtnDtlPage,
+  })),
+)
+// 국외전자계약확정상세(MUI-CT-01-M72, /ct/ovs/cfmtn/:id) — biz/ct/ovsElctrCtrtCfmtn.
+const OvsElctrCtrtCfmtnPage = lazy(() =>
+  import('@/ui/biz/ct/ovsElctrCtrtCfmtn/OvsElctrCtrtCfmtnPage').then((m) => ({
+    default: m.OvsElctrCtrtCfmtnPage,
   })),
 )
 // 공사계약서상세(MUI-CT-01-M10, /ct/cstrn-doc/:id) — biz/ct/cstrnCtrdocDtl.
@@ -198,6 +216,42 @@ const OvsElctrCtrtPrgrsDtlPage = lazy(() =>
 const OvsCmbzCtrdocDtlPage = lazy(() =>
   import('@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrdocDtlPage').then((m) => ({
     default: m.OvsCmbzCtrdocDtlPage,
+  })),
+)
+// 해지/해제 목록(MUI-CT-03-M01, /ct/cncltn) — biz/ct/ctrtCncltnRmvList.
+const CtrtCncltnRmvListPage = lazy(() =>
+  import('@/ui/biz/ct/ctrtCncltnRmvList/CtrtCncltnRmvListPage').then((m) => ({
+    default: m.CtrtCncltnRmvListPage,
+  })),
+)
+// 해지/해제 물품일반계약 상세(MUI-CT-03-M02, /ct/cncltn/:id) — biz/ct/cmdtyCtrtCncltnRmvDtl.
+const CmdtyCtrtCncltnRmvDtlPage = lazy(() =>
+  import('@/ui/biz/ct/cmdtyCtrtCncltnRmvDtl/CmdtyCtrtCncltnRmvDtlPage').then((m) => ({
+    default: m.CmdtyCtrtCncltnRmvDtlPage,
+  })),
+)
+// 해지/해제 일반총액제계약 상세(MUI-CT-03-M03, /ct/cncltn/gramt/:id) — biz/ct/cncltnRmvGnrlCtrtGramtDtl.
+const CncltnRmvGnrlCtrtGramtDtlPage = lazy(() =>
+  import('@/ui/biz/ct/cncltnRmvGnrlCtrtGramtDtl/CncltnRmvGnrlCtrtGramtDtlPage').then((m) => ({
+    default: m.CncltnRmvGnrlCtrtGramtDtlPage,
+  })),
+)
+// 해지/해제 일반단가제계약 상세(MUI-CT-03-M04, /ct/cncltn/untprc/:id) — biz/ct/cncltnRmvGnrlCtrtUntprcDtl.
+const CncltnRmvGnrlCtrtUntprcDtlPage = lazy(() =>
+  import('@/ui/biz/ct/cncltnRmvGnrlCtrtUntprcDtl/CncltnRmvGnrlCtrtUntprcDtlPage').then((m) => ({
+    default: m.CncltnRmvGnrlCtrtUntprcDtlPage,
+  })),
+)
+// 해지/해제 수정계약 상세(MUI-CT-03-M05, /ct/cncltn/mdfcn/:id) — biz/ct/cncltnRmvMdfcnCtrtDtl.
+const CncltnRmvMdfcnCtrtDtlPage = lazy(() =>
+  import('@/ui/biz/ct/cncltnRmvMdfcnCtrtDtl/CncltnRmvMdfcnCtrtDtlPage').then((m) => ({
+    default: m.CncltnRmvMdfcnCtrtDtlPage,
+  })),
+)
+// 해지/해제 공사계약 상세(MUI-CT-03-M06, /ct/cncltn/cstrn/:id) — biz/ct/cstrnCtrtCncltnRmvDtl.
+const CstrnCtrtCncltnRmvDtlPage = lazy(() =>
+  import('@/ui/biz/ct/cstrnCtrtCncltnRmvDtl/CstrnCtrtCncltnRmvDtlPage').then((m) => ({
+    default: m.CstrnCtrtCncltnRmvDtlPage,
   })),
 )
 // 입찰공고 통합목록(MUI-BD-01-M01, /bd) — biz/bd/bidPbancIntgList.
@@ -851,7 +905,21 @@ export const router = createBrowserRouter([
       },
       {
         path: 'ct/untprc/:id',
-        element: <CmdtyGramtCtrdocDtlPage type="untprc" />,
+        element: <CmdtyUntprcCtrdocDtlPage />,
+        handle: { header: { variant: 'sub', title: '계약 상세조회' } },
+      },
+      {
+        // 물품전자계약확정상세 (MUI-CT-01-M04) — 목록 물품 '계약확정' 카드 진입.
+        path: 'ct/cfmtn/:id',
+        element: <CmdtyElctrCtrtCfmtnDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '전자계약상세' } },
+      },
+      {
+        // 국외전자계약확정상세 (MUI-CT-01-M72) — 목록 국외 '계약확정' 카드 진입.
+        path: 'ct/ovs/cfmtn/:id',
+        element: <OvsElctrCtrtCfmtnPage />,
+        errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
       {
@@ -876,6 +944,40 @@ export const router = createBrowserRouter([
       {
         path: 'ct/ovs/:id',
         element: <OvsElctrCtrtPrgrsDtlPage />,
+        handle: { header: { variant: 'sub', title: '계약 상세조회' } },
+      },
+      {
+        path: 'ct/cncltn',
+        element: <CtrtCncltnRmvListPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.CT_CNCLTN] },
+          scrollReset: true,
+          showBottomNav: true,
+        },
+      },
+      {
+        path: 'ct/cncltn/gramt/:id',
+        element: <CncltnRmvGnrlCtrtGramtDtlPage />,
+        handle: { header: { variant: 'sub', title: '계약 상세조회' } },
+      },
+      {
+        path: 'ct/cncltn/untprc/:id',
+        element: <CncltnRmvGnrlCtrtUntprcDtlPage />,
+        handle: { header: { variant: 'sub', title: '계약 상세조회' } },
+      },
+      {
+        path: 'ct/cncltn/mdfcn/:id',
+        element: <CncltnRmvMdfcnCtrtDtlPage />,
+        handle: { header: { variant: 'sub', title: '계약 상세조회' } },
+      },
+      {
+        path: 'ct/cncltn/cstrn/:id',
+        element: <CstrnCtrtCncltnRmvDtlPage />,
+        handle: { header: { variant: 'sub', title: '계약 상세조회' } },
+      },
+      {
+        path: 'ct/cncltn/:id',
+        element: <CmdtyCtrtCncltnRmvDtlPage />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
       {

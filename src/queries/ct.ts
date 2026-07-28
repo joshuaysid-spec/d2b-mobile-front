@@ -3,7 +3,7 @@
 // queryKey 는 ctKeys 로 중앙 관리 — 무효화/프리페치 시 여기서만 참조.
 import { useQuery } from '@tanstack/react-query'
 import { ctService } from '@/services/ct'
-import type { CtCtrdocType, CtrtIntgListRequest } from '@/types/ct'
+import type { CncltnRmvListRequest, CtCtrdocType, CtrtIntgListRequest } from '@/types/ct'
 
 export const ctKeys = {
   ctrtIntgList: (req: CtrtIntgListRequest) => ['ct', 'ctrtIntgList', req] as const,
@@ -37,6 +37,19 @@ export const ctKeys = {
   ovsCmbzDtst: (id: string) => ['ct', 'ovsCmbzDtst', id] as const,
   ovsCmbzTrgt: (id: string) => ['ct', 'ovsCmbzTrgt', id] as const,
   ovsCmbzCtrtDtst: (id: string) => ['ct', 'ovsCmbzCtrtDtst', id] as const,
+  cncltnRmvList: (req: CncltnRmvListRequest) => ['ct', 'cncltnRmvList', req] as const,
+  cmdtyCncltnRmvDtl: (id: string) => ['ct', 'cmdtyCncltnRmvDtl', id] as const,
+  cmdtyCncltnRmvBzentys: (id: string) => ['ct', 'cmdtyCncltnRmvBzentys', id] as const,
+  cmdtyCncltnRmvNoti: (id: string) => ['ct', 'cmdtyCncltnRmvNoti', id] as const,
+  cncltnRmvGnrlCtrtDtl: (id: string, type: CtCtrdocType) =>
+    ['ct', 'cncltnRmvGnrlCtrtDtl', type, id] as const,
+  cncltnRmvGnrlCtrtDtst: (id: string, type: CtCtrdocType) =>
+    ['ct', 'cncltnRmvGnrlCtrtDtst', type, id] as const,
+  cncltnRmvSpcl: (id: string) => ['ct', 'cncltnRmvSpcl', id] as const,
+  cncltnRmvMdfcnCtrtDtl: (id: string) => ['ct', 'cncltnRmvMdfcnCtrtDtl', id] as const,
+  cncltnRmvMdfcnCtrtDtst: (id: string) => ['ct', 'cncltnRmvMdfcnCtrtDtst', id] as const,
+  cstrnCncltnRmvDtl: (id: string) => ['ct', 'cstrnCncltnRmvDtl', id] as const,
+  cstrnCncltnRmvAdocs: (id: string) => ['ct', 'cstrnCncltnRmvAdocs', id] as const,
 }
 
 /** 계약 통합목록 — 키워드 세부 필터/더보기 페이징은 페이지 클라이언트 로직 유지(서버 전환 시 req 로 이행). */
@@ -304,5 +317,105 @@ export function useOvsCmbzCtrtDtst(id: string, enabled: boolean) {
     queryKey: ctKeys.ovsCmbzCtrtDtst(id),
     queryFn: () => ctService.getOvsCmbzCtrtDtst(id),
     enabled: Boolean(id) && enabled,
+  })
+}
+
+// ── 해지/해제 계열 (MUI-CT-03) ──────────────────────────────────────────────
+
+/** 해지/해제 목록(M01) — 키워드/더보기 페이징은 페이지 클라이언트 로직 유지. */
+export function useCncltnRmvList(req: CncltnRmvListRequest = {}) {
+  return useQuery({
+    queryKey: ctKeys.cncltnRmvList(req),
+    queryFn: () => ctService.getCncltnRmvList(req),
+  })
+}
+
+/** 물품 해지/해제 상세정보(M02/T01). */
+export function useCmdtyCncltnRmvDtl(id: string) {
+  return useQuery({
+    queryKey: ctKeys.cmdtyCncltnRmvDtl(id),
+    queryFn: () => ctService.getCmdtyCncltnRmvDtl(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 물품 해지/해제 계약업체 탭(T02). */
+export function useCmdtyCncltnRmvBzentys(id: string) {
+  return useQuery({
+    queryKey: ctKeys.cmdtyCncltnRmvBzentys(id),
+    queryFn: () => ctService.getCmdtyCncltnRmvBzentys(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 해지/해제 정보 탭(T03) — 통보내용 + 참조서류. */
+export function useCmdtyCncltnRmvNoti(id: string) {
+  return useQuery({
+    queryKey: ctKeys.cmdtyCncltnRmvNoti(id),
+    queryFn: () => ctService.getCmdtyCncltnRmvNoti(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 해지/해제 일반계약(총액 gramt / 단가 untprc) 상세정보(M03/M04). */
+export function useCncltnRmvGnrlCtrtDtl(id: string, type: CtCtrdocType) {
+  return useQuery({
+    queryKey: ctKeys.cncltnRmvGnrlCtrtDtl(id, type),
+    queryFn: () => ctService.getCncltnRmvGnrlCtrtDtl(id, type),
+    enabled: Boolean(id),
+  })
+}
+
+/** 해지/해제 일반계약 계약명세서 탭(T05/T08). */
+export function useCncltnRmvGnrlCtrtDtst(id: string, type: CtCtrdocType) {
+  return useQuery({
+    queryKey: ctKeys.cncltnRmvGnrlCtrtDtst(id, type),
+    queryFn: () => ctService.getCncltnRmvGnrlCtrtDtst(id, type),
+    enabled: Boolean(id),
+  })
+}
+
+/** 해지/해제 특수조건 탭(T06/T09/T12). */
+export function useCncltnRmvSpcl(id: string) {
+  return useQuery({
+    queryKey: ctKeys.cncltnRmvSpcl(id),
+    queryFn: () => ctService.getCncltnRmvSpcl(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 해지/해제 수정계약 상세정보(M05/T10). */
+export function useCncltnRmvMdfcnCtrtDtl(id: string) {
+  return useQuery({
+    queryKey: ctKeys.cncltnRmvMdfcnCtrtDtl(id),
+    queryFn: () => ctService.getCncltnRmvMdfcnCtrtDtl(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 해지/해제 수정계약 계약명세서 탭(T11). */
+export function useCncltnRmvMdfcnCtrtDtst(id: string) {
+  return useQuery({
+    queryKey: ctKeys.cncltnRmvMdfcnCtrtDtst(id),
+    queryFn: () => ctService.getCncltnRmvMdfcnCtrtDtst(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 해지/해제 공사계약 상세정보(M06/T13). */
+export function useCstrnCncltnRmvDtl(id: string) {
+  return useQuery({
+    queryKey: ctKeys.cstrnCncltnRmvDtl(id),
+    queryFn: () => ctService.getCstrnCncltnRmvDtl(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 해지/해제 공사계약 첨부서류 탭(T14). */
+export function useCstrnCncltnRmvAdocs(id: string) {
+  return useQuery({
+    queryKey: ctKeys.cstrnCncltnRmvAdocs(id),
+    queryFn: () => ctService.getCstrnCncltnRmvAdocs(id),
+    enabled: Boolean(id),
   })
 }

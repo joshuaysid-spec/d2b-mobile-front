@@ -7,6 +7,7 @@ import { apiClient } from '@/lib/apiClient'
 import { USE_MOCK, mockDelay } from '@/lib/env'
 import { MOCK_CT } from '@/mocks/ct'
 import type {
+  CmdtyCncltnRmvDtl,
   CmdtyCtrdocDtl,
   CmdtyCtrdocDtstResult,
   CmdtyCtrtDtstResult,
@@ -14,6 +15,12 @@ import type {
   CmdtyGnrlCtrdocDtl,
   CmdtyMdfcnCtrdocDtl,
   CmdtyMdfcnCtrdocDtstResult,
+  CncltnRmvGnrlCtrtDtl,
+  CncltnRmvListRequest,
+  CncltnRmvListResult,
+  CncltnRmvMdfcnCtrtDtl,
+  CncltnRmvNotiResult,
+  CstrnCncltnRmvDtl,
   CstrnCtrdocDtl,
   CstrnElctrCtrtPrgrsDtl,
   CtCtrdocType,
@@ -105,6 +112,30 @@ const EP = {
   OVS_CMBZ_TRGT: (id: string) => `/v1/cts/commercial-contracts/${id}/parties`,
   /** 상업계약서명세서 — MUI-CT-01-P78 (ovsCmbzCtrdocDtl/OvsCmbzCtrtDtstFullPopup) */
   OVS_CMBZ_CTRT_DTST: (id: string) => `/v1/cts/commercial-contracts/${id}/item-specs`,
+  /** 해지/해제 목록 — MUI-CT-03-M01 (ctrtCncltnRmvList/CtrtCncltnRmvListPage) */
+  CNCLTN_RMV_LIST: '/v1/cts/cancellations',
+  /** 물품 해지/해제 상세정보 — MUI-CT-03-M02/T01 (cmdtyCtrtCncltnRmvDtl/CmdtyCtrtCncltnRmvDtl_Cn) */
+  CMDTY_CNCLTN_RMV_DTL: (id: string) => `/v1/cts/cancellations/${id}`,
+  /** 물품 해지/해제 계약업체 — MUI-CT-03-T02 (cmdtyCtrtCncltnRmvDtl/CmdtyCtrtCncltnRmvDtl_Artcl) */
+  CMDTY_CNCLTN_RMV_BZENTYS: (id: string) => `/v1/cts/cancellations/${id}/bzentys`,
+  /** 해지/해제 정보(통보내용+참조서류) — MUI-CT-03-T03 (cmdtyCtrtCncltnRmvDtl/CmdtyCtrtCncltnRmvDtl_SpclCnd) */
+  CMDTY_CNCLTN_RMV_NOTI: (id: string) => `/v1/cts/cancellations/${id}/notices`,
+  /** 해지/해제 일반계약(총액/단가) 상세정보 — MUI-CT-03-M03/M04 (cncltnRmvGnrlCtrt*Dtl/*_Cn) */
+  CNCLTN_RMV_GNRL_CTRT_DTL: (id: string, type: CtCtrdocType) =>
+    `/v1/cts/cancellations/${type === 'gramt' ? 'lump-sum' : 'unit-price'}/${id}`,
+  /** 해지/해제 일반계약 계약명세서 — MUI-CT-03-T05/T08 (cncltnRmvGnrlCtrt*Dtl/*_Artcl) */
+  CNCLTN_RMV_GNRL_CTRT_DTST: (id: string, type: CtCtrdocType) =>
+    `/v1/cts/cancellations/${type === 'gramt' ? 'lump-sum' : 'unit-price'}/${id}/item-specs`,
+  /** 해지/해제 특수조건 — MUI-CT-03-T06/T09/T12 (cncltnRmv*Dtl/*_Spcl) */
+  CNCLTN_RMV_SPCL: (id: string) => `/v1/cts/cancellations/${id}/special-conditions`,
+  /** 해지/해제 수정계약 상세정보 — MUI-CT-03-M05/T10 (cncltnRmvMdfcnCtrtDtl/CncltnRmvMdfcnCtrtDtl_Cn) */
+  CNCLTN_RMV_MDFCN_CTRT_DTL: (id: string) => `/v1/cts/cancellations/modified/${id}`,
+  /** 해지/해제 수정계약 계약명세서 — MUI-CT-03-T11 (cncltnRmvMdfcnCtrtDtl/CncltnRmvMdfcnCtrtDtl_Ctrt) */
+  CNCLTN_RMV_MDFCN_CTRT_DTST: (id: string) => `/v1/cts/cancellations/modified/${id}/item-specs`,
+  /** 해지/해제 공사계약 상세정보 — MUI-CT-03-M06/T13 (cstrnCtrtCncltnRmvDtl/CstrnCtrtCncltnRmvDtl_Cn) */
+  CSTRN_CNCLTN_RMV_DTL: (id: string) => `/v1/cts/cancellations/construction/${id}`,
+  /** 해지/해제 공사계약 첨부서류 — MUI-CT-03-T14 (cstrnCtrtCncltnRmvDtl/CstrnCtrtCncltnRmvDtl_Adoc) */
+  CSTRN_CNCLTN_RMV_ADOCS: (id: string) => `/v1/cts/cancellations/construction/${id}/attached-docs`,
 } as const
 
 export const ctService = {
@@ -320,5 +351,86 @@ export const ctService = {
   async getOvsCmbzCtrtDtst(id: string): Promise<OvsCmbzCtrtDtstResult> {
     if (USE_MOCK) return mockDelay(MOCK_CT.ovsCmbzCtrtDtst)
     return apiClient.get<OvsCmbzCtrtDtstResult, OvsCmbzCtrtDtstResult>(EP.OVS_CMBZ_CTRT_DTST(id))
+  },
+
+  // ── 해지/해제 계열 (MUI-CT-03) ────────────────────────────────────────────
+
+  /** 해지/해제 목록(M01) 조회 — 키워드/페이징은 페이지 클라이언트 로직 소관. */
+  async getCncltnRmvList(req: CncltnRmvListRequest = {}): Promise<CncltnRmvListResult> {
+    if (USE_MOCK) {
+      const list = MOCK_CT.cncltnRmvList
+      return mockDelay({ list, total: list.length })
+    }
+    return apiClient.get<CncltnRmvListResult, CncltnRmvListResult>(EP.CNCLTN_RMV_LIST, {
+      params: req,
+    })
+  },
+
+  /** 물품 해지/해제 상세정보(M02/T01) 조회. */
+  async getCmdtyCncltnRmvDtl(id: string): Promise<CmdtyCncltnRmvDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_CT.cmdtyCncltnRmvDtl)
+    return apiClient.get<CmdtyCncltnRmvDtl, CmdtyCncltnRmvDtl>(EP.CMDTY_CNCLTN_RMV_DTL(id))
+  },
+
+  /** 물품 해지/해제 계약업체(T02) 조회 — 여러 업체 반복. */
+  async getCmdtyCncltnRmvBzentys(id: string): Promise<CtrtBzenty[]> {
+    if (USE_MOCK) return mockDelay(MOCK_CT.cmdtyCncltnRmvBzentys)
+    return apiClient.get<CtrtBzenty[], CtrtBzenty[]>(EP.CMDTY_CNCLTN_RMV_BZENTYS(id))
+  },
+
+  /** 해지/해제 정보(T03) 조회 — 통보내용(반복) + 참조서류. */
+  async getCmdtyCncltnRmvNoti(id: string): Promise<CncltnRmvNotiResult> {
+    if (USE_MOCK) return mockDelay(MOCK_CT.cmdtyCncltnRmvNoti)
+    return apiClient.get<CncltnRmvNotiResult, CncltnRmvNotiResult>(EP.CMDTY_CNCLTN_RMV_NOTI(id))
+  },
+
+  /** 해지/해제 일반계약(총액 gramt / 단가 untprc) 상세정보(M03/M04) 조회. */
+  async getCncltnRmvGnrlCtrtDtl(id: string, type: CtCtrdocType): Promise<CncltnRmvGnrlCtrtDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_CT.cncltnRmvGnrlCtrtDtls[type])
+    return apiClient.get<CncltnRmvGnrlCtrtDtl, CncltnRmvGnrlCtrtDtl>(
+      EP.CNCLTN_RMV_GNRL_CTRT_DTL(id, type),
+    )
+  },
+
+  /** 해지/해제 일반계약 계약명세서(T05/T08) 조회 — 예산구분 그룹별 품목(CmdtyCtrdocDtstResult 재사용). */
+  async getCncltnRmvGnrlCtrtDtst(id: string, type: CtCtrdocType): Promise<CmdtyCtrdocDtstResult> {
+    if (USE_MOCK) return mockDelay(MOCK_CT.cncltnRmvGnrlCtrtDtsts[type])
+    return apiClient.get<CmdtyCtrdocDtstResult, CmdtyCtrdocDtstResult>(
+      EP.CNCLTN_RMV_GNRL_CTRT_DTST(id, type),
+    )
+  },
+
+  /** 해지/해제 특수조건(T06/T09/T12) 조회. */
+  async getCncltnRmvSpcl(id: string): Promise<CtrtSpclCnd> {
+    if (USE_MOCK) return mockDelay(MOCK_CT.cncltnRmvSpcl)
+    return apiClient.get<CtrtSpclCnd, CtrtSpclCnd>(EP.CNCLTN_RMV_SPCL(id))
+  },
+
+  /** 해지/해제 수정계약 상세정보(M05/T10) 조회. */
+  async getCncltnRmvMdfcnCtrtDtl(id: string): Promise<CncltnRmvMdfcnCtrtDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_CT.cncltnRmvMdfcnCtrtDtl)
+    return apiClient.get<CncltnRmvMdfcnCtrtDtl, CncltnRmvMdfcnCtrtDtl>(
+      EP.CNCLTN_RMV_MDFCN_CTRT_DTL(id),
+    )
+  },
+
+  /** 해지/해제 수정계약 계약명세서(T11) 조회 — CmdtyMdfcnCtrdocDtstResult 재사용. */
+  async getCncltnRmvMdfcnCtrtDtst(id: string): Promise<CmdtyMdfcnCtrdocDtstResult> {
+    if (USE_MOCK) return mockDelay(MOCK_CT.cncltnRmvMdfcnCtrtDtst)
+    return apiClient.get<CmdtyMdfcnCtrdocDtstResult, CmdtyMdfcnCtrdocDtstResult>(
+      EP.CNCLTN_RMV_MDFCN_CTRT_DTST(id),
+    )
+  },
+
+  /** 해지/해제 공사계약 상세정보(M06/T13) 조회. */
+  async getCstrnCncltnRmvDtl(id: string): Promise<CstrnCncltnRmvDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_CT.cstrnCncltnRmvDtl)
+    return apiClient.get<CstrnCncltnRmvDtl, CstrnCncltnRmvDtl>(EP.CSTRN_CNCLTN_RMV_DTL(id))
+  },
+
+  /** 해지/해제 공사계약 첨부서류(T14) 조회 — 해지해제/계약업체 2섹션(CtrtAdocResult 재사용). */
+  async getCstrnCncltnRmvAdocs(id: string): Promise<CtrtAdocResult> {
+    if (USE_MOCK) return mockDelay(MOCK_CT.cstrnCncltnRmvAdocs)
+    return apiClient.get<CtrtAdocResult, CtrtAdocResult>(EP.CSTRN_CNCLTN_RMV_ADOCS(id))
   },
 }

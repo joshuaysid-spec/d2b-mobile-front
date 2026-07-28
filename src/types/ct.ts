@@ -1343,6 +1343,312 @@ export interface OvsCmbzCtrtDtstResult {
   itemGramt: string
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-CT-03 해지/해제 계열 (설계서 03.계약 v0.83 slide104~144)
+//   M01 해지/해제 목록 · M02 물품일반 상세 · M03 일반총액제 · M04 일반단가제
+//   · M05 수정계약 · M06 공사계약. 항목명은 설계서 항목설명(slide106·112~113·119~121·
+//   127~129·135~137·143) 그대로. 계약명세서/특수조건/첨부서류는 CT-01 결과 타입 재사용.
+// ⚠️ 카드 클릭 → 계약유형별 상세 분기(slide107)의 라우팅 판별 필드는 설계서 데이터영역
+//   미정의 → 임시 키 dtlRouteCd(TODO). 나머지 항목명은 설계서 그대로.
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 해지/해제 상세 라우팅 구분 — 카드 클릭 분기(M02~M06). ⚠️ 설계서 미정의 임시 키. */
+export type CncltnRmvRouteCd = 'gnrl' | 'gramt' | 'untprc' | 'mdfcn' | 'cstrn'
+
+/** 해지/해제 목록(M01) 카드 1건 — slide106 1.2 데이터영역 항목명 그대로. */
+export interface CncltnRmvListItem {
+  /** 목록 key/상세 라우팅용 고유 식별자 — `${ctrtNo}-${ctrtCycl}` (배열 인덱스 key 금지). */
+  id: string
+  /** 번호 — 조회결과 자료 순번. */
+  rnum: number
+  /** 업무구분 — 물품/용역/공사(국외는 목록 대상 아님, slide105 국외 비활성화). */
+  taskSecd: string
+  /** 판단(공사)번호 — 물품=판단번호, 공사=공사번호(slide104 문서정보). */
+  prcmNo: string
+  /** 계약번호 (11). */
+  ctrtNo: string
+  /** 차수. */
+  ctrtCycl: string
+  /** 계약건명. */
+  ctrtNm: string
+  /** 계약일자 (YYYY-MM-DD). */
+  ctrtYmd: string
+  /** 해지해제일자 (YYYY-MM-DD). */
+  cncltnRmvYmd: string
+  /** 발주기관. */
+  orderInstNm: string
+  /** 계약금액 (17,2). */
+  ctrtAmt: number
+  /** 계약방법 (상위코드: CTMC). */
+  ctrtMthdCd: string
+  /** 입찰구분 (상위코드: BDTC) — 카드 '입찰구분' 뱃지(총액제/단가제). */
+  bidMthdCd: string
+  /** 구분 — 해지/해제(cncltnRmvSecd 표시명, 1:해지 2:해제). */
+  cncltnRmvSecd: string
+  /** 진행상태 — 계약해지/계약해제/해지해제확정 등 카드 계약상태 뱃지(slide104 표시레이블). */
+  cncltnRmvStatNm: string
+  /** 해지해제사유 (500). */
+  cncltnRmvRsn: string
+  /** 계약담당 (상위코드: PCC + 담당관명). */
+  fcltPicNm: string
+  /** 상세 라우팅 구분 — 카드 클릭 분기(slide107). ⚠️ 설계서 미정의 임시 키. */
+  dtlRouteCd: CncltnRmvRouteCd
+}
+
+/** 해지/해제 목록 조회 요청 — 서버 필터/페이징 전환 시 filter·page 를 여기로 이행. */
+export interface CncltnRmvListRequest {
+  filter?: SearchFilterValue
+}
+
+/** 해지/해제 목록 조회 결과. */
+export interface CncltnRmvListResult {
+  list: CncltnRmvListItem[]
+  total: number
+}
+
+/** 물품 해지/해제 상세정보(M02 T01) — slide109·112 데이터영역. */
+export interface CmdtyCncltnRmvDtl {
+  /** 계약번호 (11). */
+  ctrtNo: string
+  /** 차수 — 문서정보 표기. */
+  ctrtCycl: string
+  /** 계약서유형 (상위코드: CRTC) — 표시명(물품제조구매계약서 등). */
+  ctrdocTpcd: string
+  /** 계약명 (300). */
+  ctrtNm: string
+  /** 판단번호 (38). */
+  prcmNo: string
+  /** 발주기관 (200). */
+  orderInstNm: string
+  /** 계약방법 (상위코드: CTMC). */
+  ctrtMthdCd: string
+  /** 수의계약사유 (상위코드: PCRC) — 없으면 '-'. */
+  pvctRncd?: string
+  /** 계약진행상태 (상위코드: UA22). */
+  ctrtPrgrsStcd: string
+  /** 계약일자 (yyyy-mm-dd). */
+  ctrtYmd: string
+  /** 계약시작일자 (yyyy-mm-dd) — 계약기간 시작. */
+  ctrtBgngYmd: string
+  /** 계약종료일자 (yyyy-mm-dd) — 계약기간 끝. */
+  ctrtEndYmd: string
+  /** 해지해제구분 (1:해지 2:해제) — 표시명. */
+  cncltnRmvSecd: string
+  /** 해지해제일자 (yyyy-mm-dd). */
+  cncltnRmvYmd: string
+  /** 해지해제사유 (500). */
+  cncltnRmvRsn: string
+  /** 물가변동계약금액조정방법 (상위코드: PARA). */
+  pfrAplcnMthdCd?: string
+  /** 계약금액-일반예산(본조) (17,2). */
+  bscbgtCtrtAmt: number
+  /** 계약금액-국채 (17,2). */
+  govbndCtrtAmt: number
+  /** 계약금액-합계 (17,2). */
+  sumAmt: number
+  /** 총제조부기금액 (17,2). */
+  tbkpngAmt: number
+  /** 계약보증금 (17,2). */
+  grnteAmt: number
+  /** 지체상금율 (9,4). */
+  lqdmgRt: number
+  /** 담당자 정보 — 구분(rlprSecd 표시명) + 성명/계급(picNm). slide112 1.2. */
+  managers: { tkcgSecd: string; picNm: string }[]
+  /** 상단 요약 — 뱃지(업무구분/계약방법/계약상태)·타이틀(품명)·행(해지해제일자/발주기관/계약금액). */
+  taskSecd: string
+  ctrtStatNm?: string
+  rprsItemNm: string
+  ctrtAmt: number
+}
+
+/** 해지해제 통보내용(M02 T03) 1건 — slide113 1.5 데이터영역. */
+export interface CncltnRmvNoti {
+  id: string
+  /** 통보차수 (7). */
+  ctrtCycl: string
+  /** 통지일시 (yyyy-mm-dd hh:mm:ss). */
+  ctrtPrgrsSttsDt: string
+  /** 통보메일내용 (4000). */
+  rjctRsn: string
+}
+
+/** 해지해제 정보(M02 T03) 조회 결과 — 통보내용(반복) + 참조서류(slide111·113 1.4). */
+export interface CncltnRmvNotiResult {
+  notis: CncltnRmvNoti[]
+  /** 해지해제 참조서류 — cncltnRmvDmndAdocNm(서류명)/fileNm(첨부파일명). CtrtAdocFile 재사용. */
+  adocs: CtrtAdocFile[]
+}
+
+/** 해지/해제 일반계약(총액제 M03/단가제 M04) 상세정보(T04/T07) — slide119~120·127~128. */
+export interface CncltnRmvGnrlCtrtDtl {
+  /** 물품명 (200). */
+  rprsItemNm: string
+  /** 계약번호 (11). */
+  ctrtNo: string
+  /** 차수. */
+  ctrtCycl: string
+  /** 계약일자 (yyyy-mm-dd). */
+  ctrtYmd: string
+  /** 공고번호 (7). */
+  pbancNo: string
+  /** 입찰방법 (상위코드: BDTC) — 총액제/단가제. */
+  bidMthdCd: string
+  /** 계약방법 (상위코드: CTMC). */
+  ctrtMthdCd: string
+  /** 납품일자 (yyyy-mm-dd). */
+  dlvgdsYmd?: string
+  /** 납품장소 (100). */
+  dlvgdsPlcNm?: string
+  /** 기타사항 (4000). */
+  etcMttr?: string
+  /** 해지해제일 (yyyy-mm-dd). */
+  cncltnRmvYmd: string
+  /** 해지해제사유 (500). */
+  cncltnRmvRsn: string
+  /** 물가변동율적용방법 (상위코드: PARA). */
+  pfrAplcnMthdCd?: string
+  /** 납부방법 (상위코드: GMCC). */
+  payMthdCd?: string
+  /** 본조 (17,2). */
+  bscbgtCtrtAmt: number
+  /** 국채 (17,2). */
+  govbndCtrtAmt: number
+  /** 합계 (17,2). */
+  sumAmt: number
+  /** 총제조부기금액 (17,2). */
+  tbkpngAmt: number
+  /** 계약보증금 (17,2). */
+  grnteAmt: number
+  /** 지체상금율 (9,4). */
+  lqdmgRt: number
+  /** 업체정보 — 상호/사업자/대표자/전화/주소/금융기관/계좌번호/예금주(slide119). */
+  bzenty: {
+    bzentyNm: string
+    brno: string
+    rprsvNm: string
+    telno: string
+    bzentyAddr: string
+    fnstCd: string
+    actno: string
+    dpstrNm: string
+  }
+  /** 담당자 정보. */
+  managers: { tkcgSecd: string; picNm: string }[]
+  /** 상단 요약 — 뱃지(업무구분/입찰방법/계약상태)·행(해지해제일자/발주기관/계약금액). */
+  taskSecd: string
+  ctrtStatNm?: string
+  orderInstNm: string
+  ctrtAmt: number
+}
+
+/** 해지/해제 수정계약 상세정보(M05 T10) — slide135 데이터영역(CmdtyMdfcnCtrdocDtl + 해지해제). */
+export interface CncltnRmvMdfcnCtrtDtl {
+  /** 계약번호 (11). */
+  ctrtNo: string
+  /** 차수. */
+  ctrtCycl: string
+  /** 계약일자 (yyyy-mm-dd). */
+  ctrtYmd: string
+  /** 원계약번호 (11). */
+  orgctNo: string
+  /** 원계약일자 (yyyy-mm-dd). */
+  orgctYmd: string
+  /** 품명 (WTB_PVB166) — 표시명. */
+  rprsItemNm: string
+  /** 수정계약사유 (상위코드: MRC). */
+  mdfcnRncd: string
+  /** 기타사항 (4000). */
+  etcMttr?: string
+  /** 해지해제일 (yyyy-mm-dd). */
+  cncltnRmvYmd: string
+  /** 해지해제사유 (500). */
+  cncltnRmvRsn: string
+  /** 계약금액-증액 (17,2). */
+  mdfcnCtrtIncrsAmt: number
+  /** 계약금액-감액 (17,2). */
+  mdfcnCtrtCtbkAmt: number
+  /** 추가보증금-계약 (17,2). */
+  grnteAmt: number
+  /** 추가보증금-차액 (17,2). */
+  diffAmt: number
+  /** 보증금구분 (상위코드: GDC) — 표시명. */
+  depsSecd: string
+  /** 업체정보 — 상호/사업자/대표자/전화/주소/금융기관/계좌번호/예금주(slide131). */
+  bzenty: {
+    bzentyNm: string
+    brno: string
+    rprsvNm: string
+    telno: string
+    bzentyAddr: string
+    fnstCd: string
+    actno: string
+    dpstrNm: string
+  }
+  /** 담당자 정보 — 계약담당공무원(ofcctrNm) 등. */
+  managers: { tkcgSecd: string; picNm: string }[]
+  /** 상단 요약 — 공고번호(임시 키)·뱃지(업무구분/입찰구분/계약상태)·행(해지해제일자/발주기관/계약금액). */
+  pbancNo?: string
+  taskSecd: string
+  bidMthdCd: string
+  ctrtStatNm?: string
+  orderInstNm: string
+  ctrtAmt: number
+}
+
+/** 해지/해제 공사계약 상세정보(M06 T13) — slide141·143 데이터영역. */
+export interface CstrnCncltnRmvDtl {
+  /** 계약번호 (11). */
+  ctrtNo: string
+  /** 차수. */
+  ctrtCycl: string
+  /** 계약건명 (300). */
+  ctrtNm: string
+  /** 공사번호 (38). */
+  prcmNo: string
+  /** 장/단기 구분 (상위코드: UB50) — 표시명. */
+  lshtmSecd: string
+  /** 수의계약사유 (상위코드: PCRC) — 없으면 '-'. */
+  pvctRncd?: string
+  /** 계약진행상태 (상위코드: UA22). */
+  ctrtPrgrsStcd: string
+  /** 착공년월일 (yyyy-mm-dd). */
+  bgncstYmd: string
+  /** 준공년월일 (yyyy-mm-dd). */
+  cmcnYmd: string
+  /** 기타사항 (4000). */
+  etcMttr?: string
+  /** 물가변동계약금액조정방법 (상위코드: PARA). */
+  pfrAplcnMthdCd?: string
+  /** 해지해제구분 (1:해지확정 2:해제확정) — 표시명. */
+  cncltnRmvSecd: string
+  /** 해지해제일자 (yyyy-mm-dd). */
+  cncltnRmvYmd: string
+  /** 해지해제확정사유 (200). */
+  cncltnRmvCfmtnRsn: string
+  /** 계약금액-일반예산 (17,2). */
+  bscbgtCtrtAmt: number
+  /** 계약금액-국채 (17,2). */
+  govbndCtrtAmt: number
+  /** 계약금액-합계 (17,2). */
+  sumAmt: number
+  /** 품목별 합계 (17,2). */
+  itemSumAmt: number
+  /** 총공사부기금액 (17,2). */
+  tcstrnBkpngAmt: number
+  /** 계약보증금 (17,2). */
+  grnteAmt: number
+  /** 지체상금률 (9,4). */
+  lqdmgRt: number
+  /** 담당자 정보 — 구분 + 부대/성명/계급(deptNm 포함 표시, slide141). */
+  managers: { tkcgSecd: string; picNm: string }[]
+  /** 상단 요약 — 뱃지(업무구분/계약방법/계약상태)·타이틀(계약건명)·행(해지해제일자/발주기관/계약금액). */
+  taskSecd: string
+  ctrtMthdCd: string
+  ctrtStatNm?: string
+  orderInstNm: string
+  ctrtAmt: number
+}
+
 // ── TODO(백엔드 확정) ────────────────────────────────────────────────────────
 // - 검색조건 mdfcnCtrtDmndrcofc(수정계약요청수신)·mdfcnRncd(수정계약사유): 설계서에 '항목 확인 불가.
 //   항목명과 코드 전달'(slide18 4-2) — 코드 확정 시 검색필터 UI 추가.

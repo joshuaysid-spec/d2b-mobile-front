@@ -23,7 +23,7 @@ import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
 import { CstrnElctrCtrtPrgrsDtl_Cn } from '@/ui/biz/ct/cstrnElctrCtrtPrgrsDtl/CstrnElctrCtrtPrgrsDtl_Cn'
 import { CstrnElctrCtrtPrgrsDtl_Artcl } from '@/ui/biz/ct/cstrnElctrCtrtPrgrsDtl/CstrnElctrCtrtPrgrsDtl_Artcl'
 import { CstrnElctrCtrtPrgrsDtl_Flw } from '@/ui/biz/ct/cstrnElctrCtrtPrgrsDtl/CstrnElctrCtrtPrgrsDtl_Flw'
-import { CmdtyElctrCtrtPrgrsDtl_Adoc } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyElctrCtrtPrgrsDtl_Adoc'
+import { CstrnElctrCtrtPrgrsDtl_Adoc } from '@/ui/biz/ct/cstrnElctrCtrtPrgrsDtl/CstrnElctrCtrtPrgrsDtl_Adoc'
 import { GrnteCnfrmFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/GrnteCnfrmFullPopup'
 import { StmtxCnfrmFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/StmtxCnfrmFullPopup'
 import { CtrtPrgrsSttsInqFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CtrtPrgrsSttsInqFullPopup'
@@ -158,8 +158,8 @@ export function CstrnElctrCtrtPrgrsDtlPage() {
         {tab === 'detail' && <CstrnElctrCtrtPrgrsDtl_Cn detail={detail} />}
         {tab === 'bzenty' && <CstrnElctrCtrtPrgrsDtl_Artcl />}
         {tab === 'flw' && <CstrnElctrCtrtPrgrsDtl_Flw />}
-        {/* 첨부서류 — 국내 공통 구조(slide42 = slide27) → M03 첨부서류 탭 재사용 */}
-        {tab === 'adoc' && <CmdtyElctrCtrtPrgrsDtl_Adoc />}
+        {/* 첨부서류(T12) — 국내 공통 구조(slide42 = slide27), 전용 탭 컴포넌트 */}
+        {tab === 'adoc' && <CstrnElctrCtrtPrgrsDtl_Adoc />}
       </div>
 
       {/* 플로팅 버튼 — 맨위로(항상) + 상세정보 탭에서 '+' 바로가기 */}
