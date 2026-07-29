@@ -75,6 +75,8 @@ import type {
   UserSttsCd,
   DigitalCabinetAuthrtSe,
   MyPstItem,
+  // 실적증명서 제출
+  SbmsnAsctnItem,
 } from '@/types/cm'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -233,6 +235,17 @@ const EP = {
   // ── 나의 게시물 (myPstService, MUI-CM-06-M17) ──
   /** 나의 게시물 목록. */
   MY_POST_LIST: '/v1/cms/my-posts',
+
+  // ── 실적증명서 제출 (prfmncPrdocService, MUI-CM-04-P20) ──
+  /** 제출 협회 목록(dl_sbmsnAsctnList) — On-Load. */
+  PRFMNC_PRDOC_SBMSN_ASCTNS: (prfmncRcptNo: string) =>
+    `/v1/cms/prfmnc-prdocs/${prfmncRcptNo}/sbmsn-asctns`,
+  /** 제출하기 — 선택 협회로 실적증명서 제출(멀티). */
+  PRFMNC_PRDOC_SBMSN: (prfmncRcptNo: string) =>
+    `/v1/cms/prfmnc-prdocs/${prfmncRcptNo}/sbmsn`,
+  /** 제출취소 — 비고(취소사유) 입력 후 협회로 재전송. */
+  PRFMNC_PRDOC_SBMSN_CANCEL: (prfmncRcptNo: string) =>
+    `/v1/cms/prfmnc-prdocs/${prfmncRcptNo}/sbmsn/cancel`,
 } as const
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -677,5 +690,40 @@ export const myPstService = {
   async getList(): Promise<MyPstItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.myPstList)
     return apiClient.get<MyPstItem[], MyPstItem[]>(EP.MY_POST_LIST)
+  },
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// prfmncPrdocService — 실적증명서 제출(MUI-CM-04-P20 PrfmncPrdocSbmsn).
+// 설계서 00.공통 v0.84 slide336 "2. 이벤트 설명" 3건과 1:1.
+//   소비: src/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtlPage.tsx (+ PrfmncPrdocSbmsn 콘텐츠)
+// ─────────────────────────────────────────────────────────────────────────────
+export const prfmncPrdocService = {
+  /** On-Load(scwin.onpageload) — 제출 협회 목록(dl_sbmsnAsctnList) 조회. */
+  async getSbmsnAsctnList(prfmncRcptNo: string): Promise<SbmsnAsctnItem[]> {
+    if (USE_MOCK) return mockDelay(MOCK_CM.sbmsnAsctnList)
+    return apiClient.get<SbmsnAsctnItem[], SbmsnAsctnItem[]>(
+      EP.PRFMNC_PRDOC_SBMSN_ASCTNS(prfmncRcptNo),
+    )
+  },
+  /** 제출하기(scwin.btn_sbmsn_onclick) — 발급된 실적증명서를 선택 협회로 제출(멀티). */
+  async submit(params: { prfmncRcptNo: string; sbmsnSttsNms: string[] }): Promise<void> {
+    if (USE_MOCK) return mockDelay(undefined)
+    await apiClient.post<void, void>(EP.PRFMNC_PRDOC_SBMSN(params.prfmncRcptNo), {
+      sbmsnSttsNms: params.sbmsnSttsNms,
+    })
+  },
+  /**
+   * 제출취소(scwin.btn_sbmsnRtrcn_onclick) — 협회로 제출된 건에 오류가 있어
+   * 비고(rmrkCn)에 취소사유를 입력한 뒤 다시 협회로 전송한다.
+   */
+  async cancelSubmit(params: {
+    prfmncRcptNo: string
+    items: { sbmsnSttsNm: string; rmrkCn?: string }[]
+  }): Promise<void> {
+    if (USE_MOCK) return mockDelay(undefined)
+    await apiClient.post<void, void>(EP.PRFMNC_PRDOC_SBMSN_CANCEL(params.prfmncRcptNo), {
+      items: params.items,
+    })
   },
 }

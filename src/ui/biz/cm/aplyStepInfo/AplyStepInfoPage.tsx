@@ -62,22 +62,22 @@ const CAUTION_ITEMS: string[] = [
 export function AplyStepInfoPage() {
   return (
     <div className="flex w-full flex-col gap-4 p-4">
-      {/* 실적증명서 신청 절차 및 안내 */}
+      {/* 실적증명서 신청 절차 및 안내 (절차 플로우 + 안내 + 유의사항) */}
       <div className="flex flex-col gap-2">
         <SecTitle>실적증명서 신청 절차 및 안내</SecTitle>
         <Bullet bold t={PRCDR_FLOW} />
         {GUIDE_ITEMS.map((t) => (
           <Bullet key={t} t={t} />
         ))}
-      </div>
-
-      {/* 담당부서 및 연락처 — 공통 Table */}
-      <div className="flex flex-col gap-2">
-        <SecTitle>담당부서 및 연락처</SecTitle>
-        <Table rows={CONTACT_ROWS} />
         {CAUTION_ITEMS.map((t) => (
           <Bullet key={t} t={t} />
         ))}
+      </div>
+
+      {/* 담당부서 및 연락처 — 공통 Table. 요청(2026-07-27)에 따라 제일 하단에 배치. */}
+      <div className="flex flex-col gap-2">
+        <SecTitle>담당부서 및 연락처</SecTitle>
+        <Table rows={CONTACT_ROWS} />
       </div>
     </div>
   )

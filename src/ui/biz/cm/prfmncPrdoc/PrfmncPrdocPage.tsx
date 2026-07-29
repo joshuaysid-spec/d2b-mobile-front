@@ -256,13 +256,16 @@ export function PrfmncPrdocPage() {
   const loaded = Math.min(page * pageSize, total)
   const visibleList = filteredList.slice(0, loaded)
 
-  // 목업 → Card props 매핑 (slide240 카드: 배지 계약구분·진행상태 / 접수·계약번호 / 품명 /
+  // 목업 → Card props 매핑 (slide240 카드: 배지 '계약구분'·진행상태 / 접수·계약번호 / 품명 /
   //   실적 신청금액·발급기관·신청일자·처리일자). 타이틀: 물품=대표품명 · 공사=계약건명(목업 표기).
   const cardItems: CardListItem[] = visibleList.map((it) => ({
     id: it.prfmncRcptNo,
+    // 배지 — 계약구분(고정 텍스트, 요청 2026-07-27) + 진행상태 값(신청/발급 등).
     badges: (
       <>
-        <Badge>{it.ctrtSe}</Badge>
+        <Badge type="pastel" color="blue">
+          계약구분
+        </Badge>
         <Badge>{it.prgrsStcd}</Badge>
       </>
     ),
