@@ -185,6 +185,10 @@ export function HomePage() {
       navigate(ROUTES.BD_OPBID)
       return
     }
+    if (label === '계약') {
+      navigate(ROUTES.CT)
+      return
+    }
     console.log('[Home] 서비스 바로가기', label) // 추후: 각 서비스 화면 이동
   }
 
