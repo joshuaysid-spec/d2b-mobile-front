@@ -4,12 +4,14 @@
 // Figma 전용 프레임 없음 → 내부 상세 컨벤션 준수.
 // 상태별 액션(slide243, 표시 상태 prgrsStcd 구동):
 //   - 하단 "실적증명서 발급" 버튼: '발급' 상태에서만 표시(발급 문서는 PDF 진본성 검사 대상 — 스텁)
-//   - (+) 시트: 신청 및 수정='저장' · 발급/제출='발급'(제출→MUI-CM-04-P20 미구현 스텁) ·
+//   - (+) 시트: 신청 및 수정='저장' · 발급/제출='발급'(제출→MUI-CM-04-P20 제출 바텀시트) ·
 //     삭제='반려'/'저장'/'회송'(확인 팝업 "정말 삭제하시겠습니까?")
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
+import { useSbmsnAsctnList } from '@/queries/cm'
+import { prfmncPrdocService } from '@/services/cm'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { Button } from '@/ui/common/base/Button'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
@@ -29,8 +31,9 @@ import { PrfmncPrdocDtl_UnitG } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_
 import { PrfmncPrdocDtl_UnitH } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_UnitH'
 import { PrfmncPrdocDtl_UnitI } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_UnitI'
 import { PrfmncPrdocDtl_AplyInfo } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_AplyInfo'
-import { PrfmncPrdocSbmsnFullPopup } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocSbmsnFullPopup'
-import type { PrfmncPrdocItem } from '@/types/cm'
+import { PrfmncPrdocSbmsn } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocSbmsn'
+import type { PrfmncPrdocItem, SbmsnAsctnItem } from '@/types/cm'
+import type { ApiError } from '@/types/api'
 
 // 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — dl_resultList 항목명/형식 그대로(slide240).
 const MOCK_PRFMNC_DETAIL: PrfmncPrdocItem = {
@@ -120,10 +123,60 @@ export function PrfmncPrdocDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [actionOpen, setActionOpen] = useState(false) // (+) 상태별 액션 시트
   const [deleteOpen, setDeleteOpen] = useState(false) // 삭제 확인 팝업
-  const [sbmsnOpen, setSbmsnOpen] = useState(false) // 실적증명서 제출 풀팝업(MUI-CM-04-P20)
 
   // 목록 → 상세 데이터 전달: navigate(state)로 넘어온 항목으로 상단을 그린다(표준).
   const detail = (useLocation().state as PrfmncPrdocItem | null) ?? MOCK_PRFMNC_DETAIL
+
+  // ── 실적증명서 제출(MUI-CM-04-P20) — 컨테이너/상태는 부모가 소유(전용 래퍼 없음) ──
+  const [sbmsnOpen, setSbmsnOpen] = useState(false) // 제출 바텀시트
+  const [sbmsnConfirmOpen, setSbmsnConfirmOpen] = useState(false) // 제출 확인 모달
+  const [sbmsnError, setSbmsnError] = useState<string | null>(null)
+  const [sbmsnItems, setSbmsnItems] = useState<SbmsnAsctnItem[]>([])
+  const [sbmsnSelected, setSbmsnSelected] = useState<string[]>([]) // 선택 협회명(멀티)
+
+  // On-Load(slide336 scwin.onpageload) — 시트가 열릴 때만 조회.
+  const { data: sbmsnAsctnList } = useSbmsnAsctnList(detail.prfmncRcptNo, sbmsnOpen)
+
+  // 조회 결과를 편집 가능한 로컬 상태로 반영(비고 rmrkCn 는 입력 대상).
+  useEffect(() => {
+    if (sbmsnAsctnList) setSbmsnItems(sbmsnAsctnList)
+  }, [sbmsnAsctnList])
+
+  // 송신완료 건이 선택되면 footer '제출하기' → '제출취소'(slide335 기능 버튼).
+  const hasSentSelected = sbmsnItems.some(
+    (it) => it.sttsVl === '송신완료' && sbmsnSelected.includes(it.sbmsnSttsNm),
+  )
+
+  const closeSbmsn = (open: boolean) => {
+    setSbmsnOpen(open)
+    if (!open) setSbmsnSelected([]) // 닫으면 선택 초기화
+  }
+
+  // 제출하기 / 제출취소 실행 — 확인 모달 [확인] 이후.
+  const runSbmsn = async () => {
+    try {
+      if (hasSentSelected) {
+        // 제출취소 — 비고(취소사유)와 함께 협회로 재전송
+        await prfmncPrdocService.cancelSubmit({
+          prfmncRcptNo: detail.prfmncRcptNo,
+          items: sbmsnItems
+            .filter((it) => sbmsnSelected.includes(it.sbmsnSttsNm))
+            .map((it) => ({ sbmsnSttsNm: it.sbmsnSttsNm, rmrkCn: it.rmrkCn })),
+        })
+      } else {
+        await prfmncPrdocService.submit({
+          prfmncRcptNo: detail.prfmncRcptNo,
+          sbmsnSttsNms: sbmsnSelected,
+        })
+      }
+      closeSbmsn(false)
+    } catch (err) {
+      closeSbmsn(false)
+      setSbmsnError(
+        (err as ApiError | null)?.message ?? '실적증명서 제출에 실패했습니다. 잠시 후 다시 시도해주세요.',
+      )
+    }
+  }
 
   // (+) 액션 3종 — 항상 노출(2026-07-20 수정 요청. 설계서 원문의 상태별 노출 규칙
   //   — 신청및수정='저장'/발급·제출='발급'/삭제='반려·저장·회송' — 은 API 연동 시 재검토).
@@ -143,7 +196,7 @@ export function PrfmncPrdocDtlPage() {
       variant: 'secondary' as const,
       onClick: () => {
         setActionOpen(false)
-        setSbmsnOpen(true) // 실적증명서 제출 풀팝업(MUI-CM-04-P20)
+        setSbmsnOpen(true) // 실적증명서 제출 바텀시트(MUI-CM-04-P20)
       },
     },
     {
@@ -234,8 +287,64 @@ export function PrfmncPrdocDtlPage() {
         }}
       />
 
-      {/* 실적증명서 제출 풀팝업 (MUI-CM-04-P20) — (+)시트 [실적증명서 제출] */}
-      <PrfmncPrdocSbmsnFullPopup open={sbmsnOpen} onOpenChange={setSbmsnOpen} />
+      {/* 실적증명서 제출 (MUI-CM-04-P20) — 컨테이너는 페이지 소유, 콘텐츠만 PrfmncPrdocSbmsn.
+          footer 는 송신완료 선택 시 '제출하기' → '제출취소'(slide335). */}
+      <BottomSheet
+        open={sbmsnOpen}
+        onOpenChange={closeSbmsn}
+        title="실적증명서 제출"
+        footer={
+          <ButtonGroup
+            layout="asymmetric"
+            items={[
+              { label: '닫기', variant: 'secondary', onClick: () => closeSbmsn(false) },
+              {
+                label: hasSentSelected ? '제출취소' : '제출하기',
+                variant: 'primary',
+                onClick: () => {
+                  if (sbmsnSelected.length === 0) return // 미선택 클릭 처리는 설계서 미정의(plan 미결 1)
+                  setSbmsnConfirmOpen(true)
+                },
+              },
+            ]}
+          />
+        }
+      >
+        <PrfmncPrdocSbmsn
+          items={sbmsnItems}
+          selected={sbmsnSelected}
+          onToggle={(name, checked) =>
+            setSbmsnSelected((prev) =>
+              checked ? [...prev, name] : prev.filter((n) => n !== name),
+            )
+          }
+          onRmrkChange={(name, rmrkCn) =>
+            setSbmsnItems((prev) =>
+              prev.map((it) => (it.sbmsnSttsNm === name ? { ...it, rmrkCn } : it)),
+            )
+          }
+        />
+      </BottomSheet>
+
+      {/* 제출 확인 모달 (Figma 10064-16388) */}
+      <AlertModal
+        open={sbmsnConfirmOpen}
+        onOpenChange={setSbmsnConfirmOpen}
+        variant="check"
+        title="실적증명서를 제출하시겠습니까?"
+        secondaryAction={{ label: '취소' }}
+        primaryAction={{ label: '확인', onClick: runSbmsn }}
+      />
+
+      {/* 제출/제출취소 실패 안내 */}
+      <AlertModal
+        open={!!sbmsnError}
+        onOpenChange={(open) => !open && setSbmsnError(null)}
+        variant="error"
+        title="실적증명서 제출"
+        description={sbmsnError ?? ''}
+        primaryAction={{ label: '확인' }}
+      />
     </div>
   )
 }

@@ -312,16 +312,19 @@ export interface PrfmncPrdocAplyInfo {
    * 부대: A접수/P처리중·발급/S신청/R반려/I저장 · 방위사업청: I저장/R접수/G처리중/C처리완료/P발급/Y회송/V보류
    */
   prfmncPrgrsSttsCd: string
-  /** 발급번호 (R, 20) — 실적증명서 제출(MUI-CM-04-P20, slide330 1.1)에서 정의. */
+  /** 발급번호 (R, 20) — 실적증명서 제출(MUI-CM-04-P20, slide336 1.1)에서 정의. */
   issuNo?: string
 }
 
-/** 제출 협회(dl_sbmsnAsctnList) — 실적증명서 제출(MUI-CM-04-P20, slide330 1.3). */
+/** 제출 상태(sttsVl) — slide336 1.3 "전송중, 송신완료, 실패, 제출취소". */
+export type SbmsnSttsVl = '전송중' | '송신완료' | '실패' | '제출취소'
+
+/** 제출 협회(dl_sbmsnAsctnList) — 실적증명서 제출(MUI-CM-04-P20, slide336 1.3). */
 export interface SbmsnAsctnItem {
   /** 제출협회명 (R, 100) */
   sbmsnSttsNm: string
   /** 상태 (R, 2) — 전송중/송신완료/실패/제출취소. 미제출이면 없음(레이블 미표시). */
-  sttsVl?: string
+  sttsVl?: SbmsnSttsVl
   /** 비고 (E, 4000) — 제출취소 시 취소사유. 송신완료 시 입력/버튼 활성화. */
   rmrkCn?: string
 }

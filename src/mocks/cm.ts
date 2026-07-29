@@ -53,6 +53,8 @@ import type {
   NotiItem,
   BzentyUser,
   MyPstItem,
+  // 실적증명서 제출
+  SbmsnAsctnItem,
 } from '@/types/cm'
 
 // ── 통합검색 (IntgSrch·MenuPage) ──
@@ -593,6 +595,20 @@ const MY_PST_LIST: MyPstItem[] = [
   { id: '2', pstTtl: '전자입찰 오류 신고', wrtYmd: '2026-03-08' },
 ]
 
+// ── 실적증명서 제출 (MUI-CM-04-P20, dl_sbmsnAsctnList) ──
+// 온라인 제출 대상 협회 7곳은 slide335 고정 목록. 상태(sttsVl)는 Figma 현행 표시값
+//   (대한건설협회=송신완료 · 건설산업정보원/대한전문건설협회=제출취소 · 나머지 미제출),
+//   비고(rmrkCn)는 slide335 표기값("계약 금액이 다름")을 취소사유로 사용.
+const SBMSN_ASCTN_LIST: SbmsnAsctnItem[] = [
+  { sbmsnSttsNm: '대한건설협회', sttsVl: '송신완료' },
+  { sbmsnSttsNm: '건설산업정보원', sttsVl: '제출취소', rmrkCn: '계약 금액이 다름' },
+  { sbmsnSttsNm: '대한전문건설협회', sttsVl: '제출취소' },
+  { sbmsnSttsNm: '한국전기공사협회' },
+  { sbmsnSttsNm: '한국정보통신공사협회' },
+  { sbmsnSttsNm: '한국건설기술인협회' },
+  { sbmsnSttsNm: '한국소방시설협회' },
+]
+
 export const MOCK_CM = {
   // 통합검색
   searchResults: SEARCH_RESULTS,
@@ -644,4 +660,6 @@ export const MOCK_CM = {
   notifications: NOTIFICATIONS,
   bzentyUserList: BZENTY_USER_LIST,
   myPstList: MY_PST_LIST,
+  // 실적증명서 제출(MUI-CM-04-P20)
+  sbmsnAsctnList: SBMSN_ASCTN_LIST,
 } as const
