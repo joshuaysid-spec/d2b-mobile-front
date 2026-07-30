@@ -185,6 +185,14 @@ export function HomePage() {
       navigate(ROUTES.BD_OPBID)
       return
     }
+    if (label === '실적증명서') {
+      navigate(ROUTES.SUPPORT_DCMNT_ISSU_APLY)
+      return
+    }
+    if (label === '국내/국외 조달원 등록증') {
+      navigate(ROUTES.SUPPORT_OVS_SOS_CNFDOC)
+      return
+    }
     console.log('[Home] 서비스 바로가기', label) // 추후: 각 서비스 화면 이동
   }
 
