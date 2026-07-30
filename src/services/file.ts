@@ -4,16 +4,21 @@
 //    업로드 엔드포인트/요청필드/응답필드는 백엔드(eGovFrame + RaonK)와 협의 후 확정.
 import { apiClient } from '@/lib/apiClient'
 import { USE_MOCK, mockDelay } from '@/lib/env'
+
+// 파일 서비스 전용 목업 플래그 — 기본은 전역 USE_MOCK 을 따르되,
+// 업로드/다운로드 실경로가 먼저 확정(260730)되어 "파일 API 만" 실서버 테스트가 가능하도록
+// .env 에 VITE_FILE_USE_MOCK=false 를 주면 다른 화면은 목업 유지한 채 파일만 실호출한다.
+const FILE_USE_MOCK = import.meta.env.VITE_FILE_USE_MOCK === 'false' ? false : USE_MOCK
 import { MOCK_FILE } from '@/mocks/file'
 import type { UploadedFile } from '@/types/file'
 
 const EP = {
-  /** 업로드(multipart) — 횡단 파일 저장소. (구 추정 '/v1/bds/files' → 횡단이라 '/v1/files' 로 이동) */
-  UPLOAD: '/v1/files',
-  /** 삭제 — guid 로 첨부 제거. */
+  /** 업로드(multipart) — RaonK 핸들러 래핑 실경로(260730 백엔드 확정). */
+  UPLOAD: '/tss/fb/rfq/uploadUserFile.do',
+  /** 다운로드 — 실경로(260730 확정). .do 체계라 경로 고정 + 식별자는 body 로 전달. */
+  DOWNLOAD: '/tss/fb/rfq/downloadUserFile.do',
+  /** 삭제 — ⚠️ 경로 미확정(추정 유지). 백엔드 확정 시 '/tss/fb/rfq/...' 로 교체. */
   FILE: (guid: string) => `/v1/files/${guid}`,
-  /** 다운로드 — guid 로 원본 바이너리(Blob) 조회. */
-  DOWNLOAD: (guid: string) => `/v1/files/${guid}/download`,
   /** 디지털 캐비닛 선택 — 보관함에서 첨부 선택. (캐비닛 조회 API 미확정 — 잠정) */
   CABINET: '/v1/files/cabinet',
 } as const
@@ -38,7 +43,7 @@ export const fileService = {
    * 목업은 실제 GUID 형식 값을 생성(File 인자에서 계산).
    */
   async upload(file: File): Promise<UploadedFile> {
-    if (USE_MOCK) {
+    if (FILE_USE_MOCK) {
       // 업로드중 UX 확인용 지연(목업) + 서버 GUID 형식 값 생성.
       return mockDelay(
         { guid: crypto.randomUUID(), orgnlFileNm: file.name, fileSz: file.size },
@@ -56,19 +61,20 @@ export const fileService = {
 
   /** 업로드 파일 삭제(guid). */
   async remove(guid: string): Promise<void> {
-    if (USE_MOCK) return mockDelay(undefined)
+    if (FILE_USE_MOCK) return mockDelay(undefined)
     return apiClient.post<void, void>(EP.FILE(guid))
   },
 
-  /** 파일 다운로드(guid) — 원본 바이너리(Blob) 반환. 저장/뷰어는 호출측 담당. */
+  /** 파일 다운로드(guid) — 원본 바이너리(Blob) 반환. 저장/뷰어는 호출측 담당(utils/download.saveBlob). */
   async download(guid: string): Promise<Blob> {
-    if (USE_MOCK) return mockDelay(new Blob([`mock file ${guid}`], { type: 'application/octet-stream' }))
-    return apiClient.post<Blob, Blob>(EP.DOWNLOAD(guid), null, { responseType: 'blob' })
+    if (FILE_USE_MOCK) return mockDelay(new Blob([`mock file ${guid}`], { type: 'application/octet-stream' }))
+    // .do 고정 경로 + body 식별자. ⚠️ 요청 필드명(guid)은 임시 — 백엔드 파라미터명 확정 시 교체.
+    return apiClient.post<Blob, Blob>(EP.DOWNLOAD, { guid }, { responseType: 'blob' })
   },
 
   /** 디지털 캐비닛(보관함)에서 첨부 선택 — 선택한 파일 목록 반환. */
   async pickFromCabinet(): Promise<UploadedFile[]> {
-    if (USE_MOCK) return mockDelay(MOCK_FILE.cabinetPicks)
+    if (FILE_USE_MOCK) return mockDelay(MOCK_FILE.cabinetPicks)
     return apiClient.post<UploadedFile[], UploadedFile[]>(EP.CABINET)
   },
 }

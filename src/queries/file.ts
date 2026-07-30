@@ -13,3 +13,14 @@ export function useUploadFile() {
 export function useRemoveFile() {
   return useMutation({ mutationFn: (guid: string) => fileService.remove(guid) })
 }
+
+/**
+ * 첨부 다운로드(guid → Blob) — 이벤트 시점 실행이라 mutation 훅.
+ * 사용 패턴(첨부서류 탭 공통):
+ *   const downloadFile = useDownloadFile()
+ *   saveBlob(await downloadFile.mutateAsync(guid), 파일명)   // 저장은 utils/download.saveBlob
+ * 실패 시 throw — 호출부 try/catch 로 토스트/AlertModal 안내(slide27 4] 성공/실패 안내).
+ */
+export function useDownloadFile() {
+  return useMutation({ mutationFn: (guid: string) => fileService.download(guid) })
+}
