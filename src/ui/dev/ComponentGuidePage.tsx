@@ -42,6 +42,7 @@ import { Header } from '@/ui/common/composites/Header'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
+import { CoachMark } from '@/ui/common/composites/CoachMark'
 import { DateInput } from '@/ui/common/composites/DateInput'
 import { DateRangeInput } from '@/ui/common/composites/DateRangeInput'
 import { RangeSliderInput } from '@/ui/common/composites/RangeSliderInput'
@@ -124,6 +125,7 @@ const NAV = [
       { id: 'bottomsheet', label: 'BottomSheet' },
       { id: 'alertmodal', label: 'AlertModal' },
       { id: 'fullpopup', label: 'FullPopup' },
+      { id: 'coachmark', label: 'CoachMark' },
       { id: 'dateinput', label: 'DateInput' },
       { id: 'daterangeinput', label: 'DateRangeInput' },
       { id: 'rangesliderinput', label: 'RangeSliderInput' },
@@ -174,6 +176,7 @@ export function ComponentGuidePage() {
   const [alertErrorOpen, setAlertErrorOpen] = useState(false)
   const [alertNoIconOpen, setAlertNoIconOpen] = useState(false)
   const [fullPopupBasicOpen, setFullPopupBasicOpen] = useState(false)
+  const [coachMarkStep, setCoachMarkStep] = useState(1) // CoachMark controlled 데모
   const [fullPopupResetOpen, setFullPopupResetOpen] = useState(false)
   const [dateInputValue, setDateInputValue] = useState('2026-05-01')
   const [rangeInputValue, setRangeInputValue] = useState({
@@ -2326,6 +2329,69 @@ export function ComponentGuidePage() {
                       </div>
                     </div>
                   </FullPopup>
+                </div>
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── CoachMark ───────── */}
+          <Section
+            id="coachmark"
+            title="CoachMark"
+            desc="Figma coach mark_컴포넌트(10066-21724) 1:1. 앱 이용안내 단계 안내 말풍선 — 꼬리 삼각형(16×10) + 단계 숫자(n / total) + 본문 + [그만보기 | 이전으로 · 다음으로]. variant 6종 = arrow(center|left|right) × direction(top|bottom). 카드 border 2px primary · radius 8 · padding 16 · 텍스트블록↔버튼 gap 16 · 숫자↔본문 gap 8. 꼬리는 left/right 일 때 가장자리에서 24px. props: total · current(주면 controlled) · defaultCurrent · arrow · direction · onPrev(step) · onNext(step) · onClose · closeLabel/prevLabel/nextLabel · children."
+          >
+            <Row label="기본 (direction=top, arrow=center) — 비제어: 버튼으로 숫자가 바뀜">
+              <Specimen caption="이전으로/다음으로 클릭 → 좌측 상단 숫자 1~5 변경 (1·5에서 clamp)">
+                <div className="w-[328px]">
+                  <CoachMark total={5}>
+                    툴팁에 대한 내용입니다 툴팁에 대한 내용입니다 툴팁에 대한 내용입니다
+                  </CoachMark>
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="arrow — center / left / right (direction=top)">
+              <Specimen caption="꼬리 가로 위치. left·right 는 가장자리에서 24px">
+                <div className="flex flex-col gap-6">
+                  {(['center', 'left', 'right'] as const).map((arrow) => (
+                    <div key={arrow} className="w-[328px]">
+                      <CoachMark total={5} defaultCurrent={2} arrow={arrow}>
+                        arrow=&quot;{arrow}&quot; · 툴팁에 대한 내용입니다 툴팁에 대한 내용입니다
+                      </CoachMark>
+                    </div>
+                  ))}
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="direction=bottom (꼬리가 말풍선 아래)">
+              <Specimen caption="대상 요소가 말풍선 아래에 있을 때">
+                <div className="flex flex-col gap-6">
+                  {(['center', 'left', 'right'] as const).map((arrow) => (
+                    <div key={arrow} className="w-[328px]">
+                      <CoachMark
+                        total={5}
+                        defaultCurrent={4}
+                        arrow={arrow}
+                        direction="bottom"
+                      >
+                        direction=&quot;bottom&quot;, arrow=&quot;{arrow}&quot; · 툴팁에 대한 내용입니다
+                      </CoachMark>
+                    </div>
+                  ))}
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="controlled (current + onPrev/onNext 로 부모가 단계 소유)">
+              <Specimen caption="여러 대상 요소를 순회하는 실제 이용안내 플로우에서 사용">
+                <div className="w-[328px]">
+                  <CoachMark
+                    total={5}
+                    current={coachMarkStep}
+                    onPrev={setCoachMarkStep}
+                    onNext={setCoachMarkStep}
+                    onClose={() => setCoachMarkStep(1)}
+                  >
+                    현재 {coachMarkStep}단계 — 그만보기를 누르면 1단계로 초기화됩니다.
+                  </CoachMark>
                 </div>
               </Specimen>
             </Row>
