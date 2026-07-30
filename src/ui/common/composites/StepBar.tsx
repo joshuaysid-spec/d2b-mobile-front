@@ -207,8 +207,10 @@ function StepBarHorizontal({
         ref={listRef}
         role="list"
         aria-label="진행 단계"
+        // 가로 스크롤 영역 키보드 접근(KWCAG/axe scrollable-region-focusable) — 초점 진입 + 방향키 스크롤.
+        tabIndex={0}
         // 칩 사이 간격은 연결선(8px line)이 담당 → 가로 gap 0. 우측 펼침 버튼 자리만큼 pr 확보.
-        className="flex w-full items-center overflow-x-auto overflow-y-hidden scrollbar-none pr-16 [&::-webkit-scrollbar]:hidden"
+        className="flex w-full items-center overflow-x-auto overflow-y-hidden scrollbar-none pr-16 [&::-webkit-scrollbar]:hidden focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
         style={{ scrollbarWidth: 'none' }}
       >
         {items.map((item, i) => (

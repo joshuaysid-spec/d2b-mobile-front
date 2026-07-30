@@ -41,23 +41,26 @@ const badgeVariants = cva(
         class:
           'bg-krds-bg-blue-pastel border-krds-border-field text-krds-action-primary-active',
       },
+      // red/yellow/green 실측(현행 m_label_badge 10020:6549, 260729): pastel 보더는 연한 톤
+      // (#ffc8d6/#f5e0b2/#c8e4ce), red 텍스트·solid 배경은 #db083e — 구 feedback-danger(#de3412)
+      // 는 pastel 배경 위 대비 4.27:1 미달이라 뱃지 전용 토큰으로 교체(4.78:1 통과).
       {
         type: 'pastel',
         color: 'red',
         class:
-          'bg-krds-bg-danger-subtle border-krds-feedback-danger text-krds-feedback-danger',
+          'bg-krds-bg-danger-subtle border-krds-badge-red-border text-krds-badge-red',
       },
       {
         type: 'pastel',
         color: 'yellow',
         class:
-          'bg-krds-feedback-warning-bg border-krds-color-warning-60 text-krds-color-warning-60',
+          'bg-krds-feedback-warning-bg border-krds-badge-yellow-border text-krds-color-warning-60',
       },
       {
         type: 'pastel',
         color: 'green',
         class:
-          'bg-krds-feedback-success-bg border-krds-color-success-60 text-krds-color-success-60',
+          'bg-krds-feedback-success-bg border-krds-badge-green-border text-krds-color-success-60',
       },
       // solid — bg 만 (텍스트는 항상 white, border 는 type 변형에서 0 처리)
       {
@@ -68,7 +71,7 @@ const badgeVariants = cva(
       {
         type: 'solid',
         color: 'red',
-        class: 'bg-krds-feedback-danger',
+        class: 'bg-krds-badge-red',
       },
       // solid yellow/green 은 Figma 미정의 — 일관성 위해 -60 색으로 채움
       {

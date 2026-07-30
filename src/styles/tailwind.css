@@ -83,6 +83,11 @@
   --color-krds-text-ink: var(--krds-text-ink);
   --color-krds-text-disabled-soft: var(--krds-text-disabled-soft);
   --color-krds-text-disabled-faint: var(--krds-text-disabled-faint);
+  --color-krds-text-unselected: var(--krds-text-unselected);
+  --color-krds-badge-red: var(--krds-badge-red);
+  --color-krds-badge-red-border: var(--krds-badge-red-border);
+  --color-krds-badge-yellow-border: var(--krds-badge-yellow-border);
+  --color-krds-badge-green-border: var(--krds-badge-green-border);
   --color-krds-color-success-60: var(--krds-color-success-60);
   --color-krds-color-warning-60: var(--krds-color-warning-60);
 

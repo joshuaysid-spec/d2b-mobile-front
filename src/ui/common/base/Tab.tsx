@@ -76,7 +76,8 @@ const Tab = React.forwardRef<HTMLButtonElement, TabProps>(
             'text-[19px] font-bold leading-normal whitespace-nowrap',
             selected
               ? 'text-krds-action-primary'
-              : 'text-krds-border-field',
+              : // 비선택 탭 텍스트 — #8395bd(260729 확정, 구 border-field 색 대체)
+                'text-krds-text-unselected',
           )}
         >
           {children}

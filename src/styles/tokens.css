@@ -156,6 +156,11 @@
   --krds-d2b-blue-pastel-bg: #f5f9ff;   /* Badge pastel blue 배경 */
   --krds-d2b-divider: #d1d7e0;          /* SectionTitle / 영역 구분선 (gray-20 #cdd1d5 와 다른 Figma 실측값) */
   --krds-d2b-step-blue: #3271e3;        /* StepBar 전용 파랑 (D2B blue #0054e9 와 다른 Figma 별도 톤) */
+  --krds-d2b-blue-gray: #7e91b9;        /* 탭 비선택 텍스트 (260729 디자인 최종 확정 — 대비 3.16:1, 큰텍스트 3:1 마진 확보. 19px Bold 큰텍스트 전용 — 17px 이하 재사용 금지) */
+  --krds-d2b-red-badge: #db083e;        /* 뱃지 red — pastel 텍스트 & solid 배경 (m_label_badge 10020:6549 실측) */
+  --krds-d2b-red-badge-border: #ffc8d6; /* 뱃지 pastel red 보더 */
+  --krds-d2b-yellow-badge-border: #f5e0b2; /* 뱃지 pastel yellow 보더 */
+  --krds-d2b-green-badge-border: #c8e4ce;  /* 뱃지 pastel green 보더 */
   --krds-radius-d2b: 8px;               /* 컴포넌트 공통 모서리 (KRDS 스케일에 8px 없음) */
 
   /* --- Spacing (KRDS scale, rem@10px → px) -------------------------------- */
@@ -267,6 +272,11 @@
   --krds-text-disabled: var(--krds-d2b-disabled-fg);   /* D2B Figma */
   --krds-text-disabled-soft: var(--krds-d2b-blue-disabled); /* D2B Figma — 캘린더 disabled/otherMonth */
   --krds-text-disabled-faint: var(--krds-d2b-disabled-border); /* D2B Figma — 휠 피커 미선택 항목(#c6c6c6, disabled-border 와 값 동일해 재사용) */
+  --krds-text-unselected: var(--krds-d2b-blue-gray);   /* 탭 비선택 텍스트(#8395bd) — 구 border-field 재사용 대체 */
+  --krds-badge-red: var(--krds-d2b-red-badge);               /* 뱃지 red — pastel 텍스트·solid 배경(#db083e, 대비 4.78:1) */
+  --krds-badge-red-border: var(--krds-d2b-red-badge-border); /* 뱃지 pastel red 보더 */
+  --krds-badge-yellow-border: var(--krds-d2b-yellow-badge-border); /* 뱃지 pastel yellow 보더 */
+  --krds-badge-green-border: var(--krds-d2b-green-badge-border);   /* 뱃지 pastel green 보더 */
   --krds-text-info: var(--krds-d2b-blue-slate);        /* D2B Figma — Infobox 본문 텍스트 */
   --krds-text-on-primary: var(--krds-color-gray-0);
   --krds-text-on-inverse: var(--krds-color-gray-0);

@@ -75,6 +75,11 @@ const KRDS_COLOR_NAMES = [
   'krds-text-ink',
   'krds-text-disabled-soft',
   'krds-text-disabled-faint',
+  'krds-text-unselected',
+  'krds-badge-red',
+  'krds-badge-red-border',
+  'krds-badge-yellow-border',
+  'krds-badge-green-border',
   // border roles
   'krds-border-strong',
   'krds-border-primary',
