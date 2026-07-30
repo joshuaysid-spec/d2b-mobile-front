@@ -3,7 +3,7 @@
 // 탭 2개: 상세정보(T13 _Cn) · 첨부서류(T14 _Adoc). 출력 → 해지해제확정서 출력물(R21, slide140·144).
 // 데이터: useCstrnCncltnRmvDtl — 목업/실연동은 ctService(USE_MOCK)가 전환.
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { useCstrnCncltnRmvDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -37,6 +37,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 
 export function CstrnCtrtCncltnRmvDtlPage() {
   const { id = '' } = useParams()
+  const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputModalOpen, setOutputModalOpen] = useState(false)
@@ -87,7 +88,7 @@ export function CstrnCtrtCncltnRmvDtlPage() {
                 orientation="horizontal"
                 items={steps}
                 sheetItems={buildProgressSheet('계약', (substep, prgrsStg) =>
-                  console.log('[CT-03-M06] 연관 진행 이동(미배선)', substep, prgrsStg),
+                  navigate('/anl-prgrs', { state: { substep, prgrsStg } }),
                 )}
                 className="bg-transparent"
               />

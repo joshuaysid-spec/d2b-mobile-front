@@ -3,7 +3,7 @@
 // 탭 3개: 상세정보(T04 _Cn) · 계약명세서(T05 _Artcl) · 특수조건(T06 _Spcl).
 // 데이터: useCncltnRmvGnrlCtrtDtl(id, 'gramt') — 목업/실연동은 ctService(USE_MOCK)가 전환.
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { useCncltnRmvGnrlCtrtDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -39,6 +39,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 
 export function CncltnRmvGnrlCtrtGramtDtlPage() {
   const { id = '' } = useParams()
+  const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputModalOpen, setOutputModalOpen] = useState(false)
@@ -89,7 +90,7 @@ export function CncltnRmvGnrlCtrtGramtDtlPage() {
                 orientation="horizontal"
                 items={steps}
                 sheetItems={buildProgressSheet('계약', (substep, prgrsStg) =>
-                  console.log('[CT-03-M03] 연관 진행 이동(미배선)', substep, prgrsStg),
+                  navigate('/anl-prgrs', { state: { substep, prgrsStg } }),
                 )}
                 className="bg-transparent"
               />

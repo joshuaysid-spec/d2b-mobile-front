@@ -4,7 +4,7 @@
 // 계약통합목록 카드(물품 계약최종 — 총액/단가 계약서) 클릭 → /ct/gramt/:id · /ct/untprc/:id.
 // 탭: 상세정보(T13/T16 _Cn) · 계약명세서(T14/T17 _Ctrt) · 특수조건(T15/T18 _Spcl, 총액/단가 공용).
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { useCmdtyCtrdocDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -46,6 +46,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 
 export function CmdtyGramtCtrdocDtlPage({ type = 'gramt' }: CmdtyGramtCtrdocDtlPageProps) {
   const { id = '' } = useParams()
+  const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputModalOpen, setOutputModalOpen] = useState(false)
@@ -97,7 +98,7 @@ export function CmdtyGramtCtrdocDtlPage({ type = 'gramt' }: CmdtyGramtCtrdocDtlP
                 orientation="horizontal"
                 items={steps}
                 sheetItems={buildProgressSheet('계약', (substep, prgrsStg) =>
-                  console.log('[CT-01-M07/M08] 연관 진행 이동(미배선)', substep, prgrsStg),
+                  navigate('/anl-prgrs', { state: { substep, prgrsStg } }),
                 )}
                 className="bg-transparent"
               />

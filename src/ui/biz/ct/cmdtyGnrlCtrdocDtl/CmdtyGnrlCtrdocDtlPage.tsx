@@ -4,7 +4,7 @@
 //   아코디언 4개(계약 상세정보 · 계약금액 · 계약대상자 · 담당자 정보) +
 //   FAB '+' 바로가기(계약명세서 조회 → P14 물품일반계약명세서, slide64 1-1]) + 출력.
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { useCmdtyGnrlCtrdocDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -35,6 +35,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 
 export function CmdtyGnrlCtrdocDtlPage() {
   const { id = '' } = useParams()
+  const navigate = useNavigate()
   const { collapsed, rootRef, scrollToTop } = useCollapsibleHeader()
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기
   const [dtstOpen, setDtstOpen] = useState(false) // P14 물품일반계약명세서
@@ -137,7 +138,7 @@ export function CmdtyGnrlCtrdocDtlPage() {
                 orientation="horizontal"
                 items={steps}
                 sheetItems={buildProgressSheet('계약', (substep, prgrsStg) =>
-                  console.log('[CT-01-M05] 연관 진행 이동(미배선)', substep, prgrsStg),
+                  navigate('/anl-prgrs', { state: { substep, prgrsStg } }),
                 )}
                 className="bg-transparent"
               />

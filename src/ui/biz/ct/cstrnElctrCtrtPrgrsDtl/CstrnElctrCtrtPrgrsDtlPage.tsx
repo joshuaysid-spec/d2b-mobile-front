@@ -4,7 +4,7 @@
 // 바로가기·보증서(M73)·인지세(M74) 팝업 재사용(진행단계별 매트릭스 slide47 = slide32 와 동일 구성).
 // 계약명세서(P11)는 물품 전용 → 공사 바로가기에서 제외.
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { useCstrnCtrtPrgrsDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -49,6 +49,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 
 export function CstrnElctrCtrtPrgrsDtlPage() {
   const { id = '' } = useParams()
+  const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기 바텀시트
@@ -132,7 +133,7 @@ export function CstrnElctrCtrtPrgrsDtlPage() {
                 orientation="horizontal"
                 items={steps}
                 sheetItems={buildProgressSheet('계약', (substep, prgrsStg) =>
-                  console.log('[CT-01-M09] 연관 진행 이동(미배선)', substep, prgrsStg),
+                  navigate('/anl-prgrs', { state: { substep, prgrsStg } }),
                 )}
                 className="bg-transparent"
               />

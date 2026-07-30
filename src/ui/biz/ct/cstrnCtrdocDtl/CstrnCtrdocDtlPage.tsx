@@ -2,7 +2,7 @@
 // 계약통합목록 카드(공사 계약확정) 클릭 → /ct/cstrn-doc/:id 진입.
 // 탭 3개: 상세정보(T19 _Cn) · 하자담보책임(T20 _Flw) · 연대보증(T21 _Grnte).
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { useCstrnCtrdocDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -38,6 +38,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 
 export function CstrnCtrdocDtlPage() {
   const { id = '' } = useParams()
+  const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputModalOpen, setOutputModalOpen] = useState(false)
@@ -88,7 +89,7 @@ export function CstrnCtrdocDtlPage() {
                 orientation="horizontal"
                 items={steps}
                 sheetItems={buildProgressSheet('계약', (substep, prgrsStg) =>
-                  console.log('[CT-01-M10] 연관 진행 이동(미배선)', substep, prgrsStg),
+                  navigate('/anl-prgrs', { state: { substep, prgrsStg } }),
                 )}
                 className="bg-transparent"
               />

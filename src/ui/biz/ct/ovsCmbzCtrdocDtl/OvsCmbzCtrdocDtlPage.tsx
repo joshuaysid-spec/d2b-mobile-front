@@ -2,7 +2,7 @@
 // 국외전자계약진행상세(M71) 바로가기 → /ct/ovs/cmbz/:id 진입(흐름도 slide147).
 // 탭 3개: 계약현황(T77 _Stts) · 계약명세서(T78 _Ctrt → P78 팝업) · 계약대상(T79 _Trgt).
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { useOvsCmbzCtrdocDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -41,6 +41,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 
 export function OvsCmbzCtrdocDtlPage() {
   const { id = '' } = useParams()
+  const navigate = useNavigate()
   const [tab, setTab] = useState('stts')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [dtstOpen, setDtstOpen] = useState(false) // P78 상업계약서명세서
@@ -89,7 +90,7 @@ export function OvsCmbzCtrdocDtlPage() {
                 orientation="horizontal"
                 items={steps}
                 sheetItems={buildProgressSheet('계약', (substep, prgrsStg) =>
-                  console.log('[CT-01-M77] 연관 진행 이동(미배선)', substep, prgrsStg),
+                  navigate('/anl-prgrs', { state: { substep, prgrsStg } }),
                 )}
                 className="bg-transparent"
               />

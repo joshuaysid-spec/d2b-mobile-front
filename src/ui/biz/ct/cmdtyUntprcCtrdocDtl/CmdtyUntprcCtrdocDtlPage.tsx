@@ -5,7 +5,7 @@
 //   동일 데이터영역이라 전용 탭 컴포넌트가 총액제 컴포넌트를 단일 소스로 재사용한다(로직 중복 방지).
 // 데이터: useCmdtyCtrdocDtl(id, 'untprc') — 목업/실연동은 ctService(USE_MOCK)가 전환. 목업은 mocks/ct.ts.
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { useCmdtyCtrdocDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -41,6 +41,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 
 export function CmdtyUntprcCtrdocDtlPage() {
   const { id = '' } = useParams()
+  const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputModalOpen, setOutputModalOpen] = useState(false)
@@ -92,7 +93,7 @@ export function CmdtyUntprcCtrdocDtlPage() {
                 orientation="horizontal"
                 items={steps}
                 sheetItems={buildProgressSheet('계약', (substep, prgrsStg) =>
-                  console.log('[CT-01-M08] 연관 진행 이동(미배선)', substep, prgrsStg),
+                  navigate('/anl-prgrs', { state: { substep, prgrsStg } }),
                 )}
                 className="bg-transparent"
               />

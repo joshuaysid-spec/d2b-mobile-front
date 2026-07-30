@@ -3,7 +3,7 @@
 // 탭 3개: 상세정보(T22 _Cn) · 수정계약명세서(T23 _MdfcnCtrt) · 특수조건(T24 _Spcl).
 // FAB '+' 바로가기 → 계약명세서 조회(P13 물품수정계약명세서) + 출력.
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { useCmdtyMdfcnCtrdocDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -43,6 +43,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 
 export function CmdtyMdfcnCtrdocDtlPage() {
   const { id = '' } = useParams()
+  const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기
@@ -106,7 +107,7 @@ export function CmdtyMdfcnCtrdocDtlPage() {
                 orientation="horizontal"
                 items={steps}
                 sheetItems={buildProgressSheet('계약', (substep, prgrsStg) =>
-                  console.log('[CT-01-M06] 연관 진행 이동(미배선)', substep, prgrsStg),
+                  navigate('/anl-prgrs', { state: { substep, prgrsStg } }),
                 )}
                 className="bg-transparent"
               />
