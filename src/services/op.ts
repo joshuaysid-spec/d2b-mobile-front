@@ -2,7 +2,7 @@
 // USE_MOCK=true(기본): 목업 반환 · false: apiClient 실호출.
 // ⚠️ 폐쇄망 반입 후 실백엔드 경로 확정 시 EP 맵만 수정한다(메서드 본문 불변).
 // 응답 인터셉터가 공통 봉투({metadata,data})를 벗겨 data 알맹이를 반환하므로,
-// apiClient.get/post 의 2번째 제네릭(R)에 알맹이 타입을 지정해 반환 타입을 맞춘다.
+// apiClient.post 의 2번째 제네릭(R)에 알맹이 타입을 지정해 반환 타입을 맞춘다.
 import { apiClient } from '@/lib/apiClient'
 import { USE_MOCK, mockDelay } from '@/lib/env'
 import { MOCK_OP } from '@/mocks/op'
@@ -56,25 +56,25 @@ export const opService = {
       const list = MOCK_OP.planList.filter((it) => it.srchType === req.srchType)
       return mockDelay({ list, total: list.length })
     }
-    return apiClient.get<OpListResult, OpListResult>(EP.PLAN_LIST, { params: req })
+    return apiClient.post<OpListResult, OpListResult>(EP.PLAN_LIST, req)
   },
 
   /** 조달계획 상세 조회(헤더/요약). */
   async getDetail(id: string): Promise<OpPlanDetail> {
     if (USE_MOCK) return mockDelay(MOCK_OP.planDetail)
-    return apiClient.get<OpPlanDetail, OpPlanDetail>(EP.PLAN_DTL(id))
+    return apiClient.post<OpPlanDetail, OpPlanDetail>(EP.PLAN_DTL(id))
   },
 
   /** 품목명세서 목록 조회. */
   async getItemSpecs(id: string): Promise<OpItemSpec[]> {
     if (USE_MOCK) return mockDelay(MOCK_OP.itemSpecs)
-    return apiClient.get<OpItemSpec[], OpItemSpec[]>(EP.PLAN_ITEM_SPECS(id))
+    return apiClient.post<OpItemSpec[], OpItemSpec[]>(EP.PLAN_ITEM_SPECS(id))
   },
 
   /** 업체의견 목록 조회(조달계획·사전규격 공용). */
   async getOpinions(id: string): Promise<OpOpinion[]> {
     if (USE_MOCK) return mockDelay(MOCK_OP.opinions)
-    return apiClient.get<OpOpinion[], OpOpinion[]>(EP.PLAN_OPINIONS(id))
+    return apiClient.post<OpOpinion[], OpOpinion[]>(EP.PLAN_OPINIONS(id))
   },
 
   /** 입찰공고 알림신청. */
@@ -88,7 +88,7 @@ export const opService = {
   /** 사전규격 상세 조회(헤더/요약). */
   async getSpecDetail(id: string): Promise<OpPlanDetail> {
     if (USE_MOCK) return mockDelay(MOCK_OP.planDetail)
-    return apiClient.get<OpPlanDetail, OpPlanDetail>(EP.SPEC_DTL(id))
+    return apiClient.post<OpPlanDetail, OpPlanDetail>(EP.SPEC_DTL(id))
   },
 
   // ── 국외 조달계획 상세 ─────────────────────────────────────────────────────
@@ -96,13 +96,13 @@ export const opService = {
   /** 국외 조달계획 상세 조회(헤더/요약). */
   async getOverseasPlanDetail(id: string): Promise<OpPlanDetail> {
     if (USE_MOCK) return mockDelay(MOCK_OP.planDetail)
-    return apiClient.get<OpPlanDetail, OpPlanDetail>(EP.OVS_PLAN_DTL(id))
+    return apiClient.post<OpPlanDetail, OpPlanDetail>(EP.OVS_PLAN_DTL(id))
   },
 
   /** 국외 조달계획 집행결과 목록 조회. */
   async getOverseasPlanResults(id: string): Promise<OpOverseasPlanResult[]> {
     if (USE_MOCK) return mockDelay(MOCK_OP.overseasResults)
-    return apiClient.get<OpOverseasPlanResult[], OpOverseasPlanResult[]>(EP.OVS_PLAN_RESULTS(id))
+    return apiClient.post<OpOverseasPlanResult[], OpOverseasPlanResult[]>(EP.OVS_PLAN_RESULTS(id))
   },
 
   // ── 검색 바텀시트(품목/생산자/발주부서) ────────────────────────────────────
@@ -110,20 +110,18 @@ export const opService = {
   /** 품목별 검색(요구년도 필수 + 품명/재고번호/부품번호 부분일치). */
   async searchItems(req: OpItemSearchRequest): Promise<OpItemSearchResult[]> {
     if (USE_MOCK) return mockDelay(MOCK_OP.itemSearch)
-    return apiClient.get<OpItemSearchResult[], OpItemSearchResult[]>(EP.ITEM_SEARCH, { params: req })
+    return apiClient.post<OpItemSearchResult[], OpItemSearchResult[]>(EP.ITEM_SEARCH, req)
   },
 
   /** 생산자 검색(생산자명 부분일치). */
   async searchProducers(req: OpProducerSearchRequest): Promise<OpProducerSearchResult[]> {
     if (USE_MOCK) return mockDelay(MOCK_OP.producerSearch)
-    return apiClient.get<OpProducerSearchResult[], OpProducerSearchResult[]>(EP.PRODUCER_SEARCH, {
-      params: req,
-    })
+    return apiClient.post<OpProducerSearchResult[], OpProducerSearchResult[]>(EP.PRODUCER_SEARCH, req)
   },
 
   /** 발주부서(기관) 검색(발주기관명 부분일치). */
   async searchDepts(req: OpDeptSearchRequest): Promise<OpDeptSearchResult[]> {
     if (USE_MOCK) return mockDelay(MOCK_OP.deptSearch)
-    return apiClient.get<OpDeptSearchResult[], OpDeptSearchResult[]>(EP.DEPT_SEARCH, { params: req })
+    return apiClient.post<OpDeptSearchResult[], OpDeptSearchResult[]>(EP.DEPT_SEARCH, req)
   },
 }

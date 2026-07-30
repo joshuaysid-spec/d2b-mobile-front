@@ -256,46 +256,44 @@ export const cmService = {
   /** 통합검색 — 키워드로 결과 조회. */
   async searchAll(keyword: string): Promise<SearchResult[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.searchResults)
-    return apiClient.get<SearchResult[], SearchResult[]>(EP.SEARCH_ALL, { params: { keyword } })
+    return apiClient.post<SearchResult[], SearchResult[]>(EP.SEARCH_ALL, { keyword })
   },
   /** 자동완성 — 키워드 부분일치 메뉴명. */
   async getAutocomplete(keyword: string): Promise<string[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.autocomplete)
-    return apiClient.get<string[], string[]>(EP.SEARCH_AUTOCOMPLETE, { params: { keyword } })
+    return apiClient.post<string[], string[]>(EP.SEARCH_AUTOCOMPLETE, { keyword })
   },
   /** 최근 검색어 목록. */
   async getRecentSearches(): Promise<RecentSearch[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.recentSearches)
-    return apiClient.get<RecentSearch[], RecentSearch[]>(EP.RECENT_SEARCHES)
+    return apiClient.post<RecentSearch[], RecentSearch[]>(EP.RECENT_SEARCHES)
   },
   /** 최근 검색어 1건 삭제. */
   async removeRecentSearch(id: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    await apiClient.delete<void, void>(EP.RECENT_SEARCH(id))
+    await apiClient.post<void, void>(EP.RECENT_SEARCH(id))
   },
   /** 최근 검색어 전체 삭제. */
   async clearRecentSearches(): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    await apiClient.delete<void, void>(EP.RECENT_SEARCHES)
+    await apiClient.post<void, void>(EP.RECENT_SEARCHES)
   },
   /** 자주 찾는 서비스 목록. */
   async getFrequentServices(): Promise<SearchServiceLink[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.frequentServices)
-    return apiClient.get<SearchServiceLink[], SearchServiceLink[]>(EP.FREQUENT_SERVICES)
+    return apiClient.post<SearchServiceLink[], SearchServiceLink[]>(EP.FREQUENT_SERVICES)
   },
   /** 연관 서비스 목록. */
   async getRelatedServices(keyword: string): Promise<SearchServiceLink[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.relatedServices)
-    return apiClient.get<SearchServiceLink[], SearchServiceLink[]>(EP.RELATED_SERVICES, {
-      params: { keyword },
-    })
+    return apiClient.post<SearchServiceLink[], SearchServiceLink[]>(EP.RELATED_SERVICES, { keyword })
   },
 
   // ── FAQ / 게시판 (faqList·board·noticeList·rpstrList) ──
   /** 자주묻는질문 목록 — MUI-CM-04-M03. */
   async getFaqList(params: FaqListRequest): Promise<FaqListItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.faqList)
-    return apiClient.get<FaqListItem[], FaqListItem[]>(EP.FAQ_LIST, { params })
+    return apiClient.post<FaqListItem[], FaqListItem[]>(EP.FAQ_LIST, params)
   },
   /** 게시판(공지/자료실/시스템개선) 목록 — 종류별. */
   async getBoardList(kind: BoardKind, params: BoardListRequest): Promise<BoardListItem[]> {
@@ -307,24 +305,24 @@ export const cmService = {
       }
       return mockDelay(byKind[kind])
     }
-    return apiClient.get<BoardListItem[], BoardListItem[]>(EP.BOARD_LIST(kind), { params })
+    return apiClient.post<BoardListItem[], BoardListItem[]>(EP.BOARD_LIST(kind), params)
   },
   /** 공지사항 상세 — MUI-CM-04-M02. */
   async getNoticeDetail(contsNo: string): Promise<NoticeDetail> {
     if (USE_MOCK) return mockDelay(MOCK_CM.noticeDetail)
-    return apiClient.get<NoticeDetail, NoticeDetail>(EP.NOTICE_DETAIL(contsNo))
+    return apiClient.post<NoticeDetail, NoticeDetail>(EP.NOTICE_DETAIL(contsNo))
   },
   /** 자료실 상세 — MUI-CM-04-M26. */
   async getRpstrDetail(contsNo: string): Promise<RpstrDetail> {
     if (USE_MOCK) return mockDelay(MOCK_CM.rpstrDetail)
-    return apiClient.get<RpstrDetail, RpstrDetail>(EP.RPSTR_DETAIL(contsNo))
+    return apiClient.post<RpstrDetail, RpstrDetail>(EP.RPSTR_DETAIL(contsNo))
   },
 
   // ── 업체정보 추가등록 (dmstLctnColInfoAddReg) ──
   /** 등록품목명세 목록 — M05. */
   async getRegItemList(): Promise<AddRegItemRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.regItemList)
-    return apiClient.get<AddRegItemRow[], AddRegItemRow[]>(EP.REG_ITEM_LIST)
+    return apiClient.post<AddRegItemRow[], AddRegItemRow[]>(EP.REG_ITEM_LIST)
   },
   /** 물품(내자) 추가등록 신청 — M05. */
   async applyAddReg(payload: AddRegPayload): Promise<void> {
@@ -339,59 +337,51 @@ export const cmService = {
   /** 담당자정보 저장 — M22. */
   async savePicInfo(payload: PicInfo): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    await apiClient.put<void, void>(EP.PIC_INFO, payload)
+    await apiClient.post<void, void>(EP.PIC_INFO, payload)
   },
   /** 조합/단체 검색 — P07. */
   async getAsctGrpList(keyword: string): Promise<AsctGrpChcItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.asctGrpList)
-    return apiClient.get<AsctGrpChcItem[], AsctGrpChcItem[]>(EP.ASCT_GRP_LIST, {
-      params: { keyword },
-    })
+    return apiClient.post<AsctGrpChcItem[], AsctGrpChcItem[]>(EP.ASCT_GRP_LIST, { keyword })
   },
   /** 주거래은행 검색 — P12. */
   async getBankList(keyword: string): Promise<BankChcItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.bankList)
-    return apiClient.get<BankChcItem[], BankChcItem[]>(EP.BANK_LIST, { params: { keyword } })
+    return apiClient.post<BankChcItem[], BankChcItem[]>(EP.BANK_LIST, { keyword })
   },
   /** FSC 코드 검색. */
   async getFscList(keyword: string): Promise<DmsAgtFscCode[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.fscList)
-    return apiClient.get<DmsAgtFscCode[], DmsAgtFscCode[]>(EP.FSC_LIST, { params: { keyword } })
+    return apiClient.post<DmsAgtFscCode[], DmsAgtFscCode[]>(EP.FSC_LIST, { keyword })
   },
   /** 품류 검색/목록 — P06(keyword 생략 시 전체). */
   async getKnditmList(keyword?: string): Promise<KnditmChcItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.knditmList)
-    return apiClient.get<KnditmChcItem[], KnditmChcItem[]>(EP.KNDITM_LIST, { params: { keyword } })
+    return apiClient.post<KnditmChcItem[], KnditmChcItem[]>(EP.KNDITM_LIST, { keyword })
   },
   /** 등록대상 품목 검색 — P08. */
   async searchRegTrgtItems(params: RegTrgtItemSearch): Promise<RegTrgtItemChcItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.regTrgtItems)
-    return apiClient.get<RegTrgtItemChcItem[], RegTrgtItemChcItem[]>(EP.REG_TRGT_ITEM_SEARCH, {
-      params,
-    })
+    return apiClient.post<RegTrgtItemChcItem[], RegTrgtItemChcItem[]>(EP.REG_TRGT_ITEM_SEARCH, params)
   },
 
   // ── 추가정보 신청 (addRegInfoAply, MUI-CM-01-M03) ──
   /** 추가정보 신청 목록. */
   async getAddRegInfoAplyList(params: AddRegInfoAplySearch): Promise<AddRegInfoAplyItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.addRegInfoAplyList)
-    return apiClient.get<AddRegInfoAplyItem[], AddRegInfoAplyItem[]>(EP.ADD_REG_INFO_APLY_LIST, {
-      params,
-    })
+    return apiClient.post<AddRegInfoAplyItem[], AddRegInfoAplyItem[]>(EP.ADD_REG_INFO_APLY_LIST, params)
   },
   /** 추가정보 신청 상세 — T05 물품(내자)/T06 국내소재상사. */
   async getAddRegInfoAplyDtl(rcptNo: string): Promise<AddRegInfoAplyDetail> {
     if (USE_MOCK) return mockDelay(MOCK_CM.addRegInfoAplyDetail)
-    return apiClient.get<AddRegInfoAplyDetail, AddRegInfoAplyDetail>(
-      EP.ADD_REG_INFO_APLY_DETAIL(rcptNo),
-    )
+    return apiClient.post<AddRegInfoAplyDetail, AddRegInfoAplyDetail>(EP.ADD_REG_INFO_APLY_DETAIL(rcptNo))
   },
 
   // ── 조달원확인서 (dmstSosCnfdoc, MUI-CM-01-M19) ──
   /** 조달원확인서 신청 목록. */
   async getDmstSosCnfdocList(params: DmstSosCnfdocSearch): Promise<DmstSosCnfdocItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.dmstSosCnfdocList)
-    return apiClient.get<DmstSosCnfdocItem[], DmstSosCnfdocItem[]>(EP.DMST_SOS_CNFDOC, { params })
+    return apiClient.post<DmstSosCnfdocItem[], DmstSosCnfdocItem[]>(EP.DMST_SOS_CNFDOC, params)
   },
   /** 조달원확인서 신청. */
   async applyDmstSosCnfdoc(payload: DmstSosCnfdocAplyInfo): Promise<void> {
@@ -401,16 +391,14 @@ export const cmService = {
   /** 국외조달원확인서 서식 다운로드(.hwp). */
   async downloadOvsSosForm(): Promise<Blob> {
     if (USE_MOCK) return mockDelay(new Blob(['mock']))
-    return apiClient.get<Blob, Blob>(EP.OVS_SOS_FORM, { responseType: 'blob' })
+    return apiClient.post<Blob, Blob>(EP.OVS_SOS_FORM, null, { responseType: 'blob' })
   },
 
   // ── 군수품무역대리업 (dfEqpmntTradeAgnc, MUI-CM-01-M15~M18) ──
   /** 무역대리업 신청 목록 — M15. */
   async getDfEqpmntTradeAgncAplyList(): Promise<DfEqpmntTradeAgncAplyItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.dfEqpmntTradeAgncAplyList)
-    return apiClient.get<DfEqpmntTradeAgncAplyItem[], DfEqpmntTradeAgncAplyItem[]>(
-      EP.DF_EQPMNT_TRADE_AGNC_LIST,
-    )
+    return apiClient.post<DfEqpmntTradeAgncAplyItem[], DfEqpmntTradeAgncAplyItem[]>(EP.DF_EQPMNT_TRADE_AGNC_LIST)
   },
   /** 무역대리업 신규/갱신 신청 저장 — M17. */
   async saveDfEqpmntTradeAgncAply(payload: DfEqpmntTradeAgncAplyPayload): Promise<void> {
@@ -437,14 +425,12 @@ export const cmService = {
   /** 연관진행현황(연관 건) 조회. */
   async getAnlPrgrsList(rfrncNo: string, substep: string): Promise<AnlPrgrsItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.anlPrgrsList)
-    return apiClient.get<AnlPrgrsItem[], AnlPrgrsItem[]>(EP.ANL_PRGRS_LIST, {
-      params: { rfrncNo, substep },
-    })
+    return apiClient.post<AnlPrgrsItem[], AnlPrgrsItem[]>(EP.ANL_PRGRS_LIST, { rfrncNo, substep })
   },
   /** 푸시 알림 on/off 설정. */
   async setPushNoti(on: boolean): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    await apiClient.put<void, void>(EP.PUSH_NOTI, { on })
+    await apiClient.post<void, void>(EP.PUSH_NOTI, { on })
   },
   /** 개인 비밀번호 검증 — 성공 시 true. */
   async verifyIndvPswd(pswd: string): Promise<boolean> {
@@ -459,12 +445,12 @@ export const cmService = {
   /** 알림 수신수단 설정(id 단위 on/off). */
   async setNotiMeans(id: string, on: boolean): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    await apiClient.put<void, void>(EP.NOTI_MEANS(id), { on })
+    await apiClient.post<void, void>(EP.NOTI_MEANS(id), { on })
   },
   /** 알림 수신항목 설정(id 단위 on/off). */
   async setNotiItem(id: string, on: boolean): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    await apiClient.put<void, void>(EP.NOTI_ITEM(id), { on })
+    await apiClient.post<void, void>(EP.NOTI_ITEM(id), { on })
   },
   /** PC QR 로그인 — 스캔한 토큰 전송. */
   async scanPcQr(qrToken: string): Promise<void> {
@@ -480,17 +466,17 @@ export const bzentyService = {
   /** 업체일반(T01) — 일반+상태+수배+대표자+입찰대리인. */
   async getGnrlInfo(bzentyCd: string): Promise<BzentyGnrlDetail> {
     if (USE_MOCK) return mockDelay(MOCK_CM.bzentyGnrlDetail)
-    return apiClient.get<BzentyGnrlDetail, BzentyGnrlDetail>(EP.BZENTY_GNRL(bzentyCd))
+    return apiClient.post<BzentyGnrlDetail, BzentyGnrlDetail>(EP.BZENTY_GNRL(bzentyCd))
   },
   /** 물품(내자)(T02) — 등록품목+담당자+대표품류/조합. */
   async getCmdtyInfo(bzentyCd: string): Promise<BzentyCmdtyInfo> {
     if (USE_MOCK) return mockDelay(MOCK_CM.bzentyCmdtyInfo)
-    return apiClient.get<BzentyCmdtyInfo, BzentyCmdtyInfo>(EP.BZENTY_CMDTY(bzentyCd))
+    return apiClient.post<BzentyCmdtyInfo, BzentyCmdtyInfo>(EP.BZENTY_CMDTY(bzentyCd))
   },
   /** 시설(T03) — 시설정보+면허+주력분야. */
   async getFcltInfo(bzentyCd: string): Promise<BzentyFcltDetail> {
     if (USE_MOCK) return mockDelay(MOCK_CM.bzentyFcltDetail)
-    return apiClient.get<BzentyFcltDetail, BzentyFcltDetail>(EP.BZENTY_FCLT(bzentyCd))
+    return apiClient.post<BzentyFcltDetail, BzentyFcltDetail>(EP.BZENTY_FCLT(bzentyCd))
   },
   /** 수의계약배제 — 조회기간('3m'|'all') 분기. */
   async getRlsVltrnsRstric(
@@ -498,10 +484,7 @@ export const bzentyService = {
     period: '3m' | 'all',
   ): Promise<BzentyRlsVltrnsRstric[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.rlsVltrnsRstric)
-    return apiClient.get<BzentyRlsVltrnsRstric[], BzentyRlsVltrnsRstric[]>(
-      EP.BZENTY_RLS_VLTRNS(bzentyCd),
-      { params: { period } },
-    )
+    return apiClient.post<BzentyRlsVltrnsRstric[], BzentyRlsVltrnsRstric[]>(EP.BZENTY_RLS_VLTRNS(bzentyCd), { period })
   },
   /** 나라장터(G2B) 조달업체정보 갱신(1일 1회 제한은 UI 측). */
   async refreshG2b(): Promise<void> {
@@ -517,25 +500,22 @@ export const docBoxService = {
   /** 문서함 목록 — 문서구분(탭)별. */
   async getDocBoxList(params: DocBoxListRequest): Promise<DocBoxItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.docBoxList)
-    return apiClient.get<DocBoxItem[], DocBoxItem[]>(EP.DOC_BOX_LIST, { params })
+    return apiClient.post<DocBoxItem[], DocBoxItem[]>(EP.DOC_BOX_LIST, params)
   },
   /** 문서함 상세 — M11(문서내용+첨부). */
   async getDocDetail(id: string): Promise<DocBoxDetail> {
     if (USE_MOCK) return mockDelay(MOCK_CM.docBoxDetail)
-    return apiClient.get<DocBoxDetail, DocBoxDetail>(EP.DOC_BOX_DETAIL(id))
+    return apiClient.post<DocBoxDetail, DocBoxDetail>(EP.DOC_BOX_DETAIL(id))
   },
   /** 첨부 다운로드 — T03. */
   async downloadAtch(edmsDocId: string, fileNm: string): Promise<Blob> {
     if (USE_MOCK) return mockDelay(new Blob(['mock']))
-    return apiClient.get<Blob, Blob>(EP.DOC_BOX_ATCH(edmsDocId), {
-      params: { fileNm },
-      responseType: 'blob',
-    })
+    return apiClient.post<Blob, Blob>(EP.DOC_BOX_ATCH(edmsDocId), { fileNm }, { responseType: 'blob' })
   },
   /** 개인별수신처 목록 — MUI-CM-06-M12. */
   async getIndvRcofcList(): Promise<IndvRcofcItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.indvRcofcList)
-    return apiClient.get<IndvRcofcItem[], IndvRcofcItem[]>(EP.INDV_RCOFC_LIST)
+    return apiClient.post<IndvRcofcItem[], IndvRcofcItem[]>(EP.INDV_RCOFC_LIST)
   },
 }
 
@@ -546,7 +526,7 @@ export const taskCldrService = {
   /** 업무캘린더 목록(관심 입찰공고 + 개인 일정). */
   async getList(): Promise<TaskCldrItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.taskCldrList)
-    return apiClient.get<TaskCldrItem[], TaskCldrItem[]>(EP.TASK_CLDR_LIST)
+    return apiClient.post<TaskCldrItem[], TaskCldrItem[]>(EP.TASK_CLDR_LIST)
   },
   /** 일정 등록 — P08. */
   async createSchdl(values: TaskCldrRegValues): Promise<TaskCldrItem> {
@@ -574,12 +554,12 @@ export const taskCldrService = {
         wrtYmd: values.schdlDt,
       })
     }
-    return apiClient.put<TaskCldrItem, TaskCldrItem>(EP.TASK_CLDR_ITEM(id), values)
+    return apiClient.post<TaskCldrItem, TaskCldrItem>(EP.TASK_CLDR_ITEM(id), values)
   },
   /** 일정 삭제 — P09. */
   async deleteSchdl(id: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    await apiClient.delete<void, void>(EP.TASK_CLDR_ITEM(id))
+    await apiClient.post<void, void>(EP.TASK_CLDR_ITEM(id))
   },
 }
 
@@ -590,17 +570,17 @@ export const itrstBidService = {
   /** 관심입찰공고 목록. */
   async getList(params?: ItrstBidListRequest): Promise<ItrstBidPbancItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.itrstBidList)
-    return apiClient.get<ItrstBidPbancItem[], ItrstBidPbancItem[]>(EP.ITRST_BID_LIST, { params })
+    return apiClient.post<ItrstBidPbancItem[], ItrstBidPbancItem[]>(EP.ITRST_BID_LIST, params)
   },
   /** 관심공고 등록(찜). */
   async addFavorite(id: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    await apiClient.put<void, void>(EP.ITRST_BID_ITEM(id))
+    await apiClient.post<void, void>(EP.ITRST_BID_ITEM(id))
   },
   /** 관심공고 해제. */
   async removeFavorite(id: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    await apiClient.delete<void, void>(EP.ITRST_BID_ITEM(id))
+    await apiClient.post<void, void>(EP.ITRST_BID_ITEM(id))
   },
 }
 
@@ -611,12 +591,12 @@ export const itrstSttService = {
   /** 관심법령 목록. */
   async getList(): Promise<ItrstSttItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.itrstSttList)
-    return apiClient.get<ItrstSttItem[], ItrstSttItem[]>(EP.ITRST_STT_LIST)
+    return apiClient.post<ItrstSttItem[], ItrstSttItem[]>(EP.ITRST_STT_LIST)
   },
   /** 관심법령 토글(등록/해제). */
   async toggleFavorite(id: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    await apiClient.put<void, void>(EP.ITRST_STT_ITEM(id))
+    await apiClient.post<void, void>(EP.ITRST_STT_ITEM(id))
   },
 }
 
@@ -627,12 +607,12 @@ export const myTaskService = {
   /** 나의진행업무현황(진행중) 목록. */
   async getPrgrsList(): Promise<MyPrgrsHstryItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.myPrgrsList)
-    return apiClient.get<MyPrgrsHstryItem[], MyPrgrsHstryItem[]>(EP.MY_PRGRS_LIST)
+    return apiClient.post<MyPrgrsHstryItem[], MyPrgrsHstryItem[]>(EP.MY_PRGRS_LIST)
   },
   /** 나의업무이력현황(종료) 목록 — 현황 구분(stts)별. */
   async getTaskHstryList(params: { stts: string }): Promise<MyTaskHstryItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.myTaskHstryList)
-    return apiClient.get<MyTaskHstryItem[], MyTaskHstryItem[]>(EP.MY_TASK_HSTRY_LIST, { params })
+    return apiClient.post<MyTaskHstryItem[], MyTaskHstryItem[]>(EP.MY_TASK_HSTRY_LIST, params)
   },
 }
 
@@ -643,12 +623,12 @@ export const notificationService = {
   /** 알림 목록. */
   async getList(): Promise<NotiItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.notifications)
-    return apiClient.get<NotiItem[], NotiItem[]>(EP.NOTIFICATION_LIST)
+    return apiClient.post<NotiItem[], NotiItem[]>(EP.NOTIFICATION_LIST)
   },
   /** 알림 전체 읽음 처리. */
   async markAllRead(): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    await apiClient.put<void, void>(EP.NOTIFICATION_READ_ALL)
+    await apiClient.post<void, void>(EP.NOTIFICATION_READ_ALL)
   },
 }
 
@@ -659,12 +639,12 @@ export const userService = {
   /** 조달업체 소속 사용자 목록. */
   async getBzentyUserList(params: BzentyUserSearch): Promise<BzentyUser[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.bzentyUserList)
-    return apiClient.get<BzentyUser[], BzentyUser[]>(EP.BZENTY_USER_LIST, { params })
+    return apiClient.post<BzentyUser[], BzentyUser[]>(EP.BZENTY_USER_LIST, params)
   },
   /** 사용자 상태 변경. */
   async changeStatus(userId: string, code: UserSttsCd): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    await apiClient.put<void, void>(EP.BZENTY_USER_STATUS(userId), { code })
+    await apiClient.post<void, void>(EP.BZENTY_USER_STATUS(userId), { code })
   },
 }
 
@@ -678,7 +658,7 @@ export const digitalCabinetService = {
     authrtDraft: Record<string, DigitalCabinetAuthrtSe>,
   ): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    await apiClient.put<void, void>(EP.CABINET_AUTHRT(fldrSn), { authrtDraft })
+    await apiClient.post<void, void>(EP.CABINET_AUTHRT(fldrSn), { authrtDraft })
   },
 }
 
@@ -689,7 +669,7 @@ export const myPstService = {
   /** 나의 게시물 목록. */
   async getList(): Promise<MyPstItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.myPstList)
-    return apiClient.get<MyPstItem[], MyPstItem[]>(EP.MY_POST_LIST)
+    return apiClient.post<MyPstItem[], MyPstItem[]>(EP.MY_POST_LIST)
   },
 }
 
@@ -702,9 +682,7 @@ export const prfmncPrdocService = {
   /** On-Load(scwin.onpageload) — 제출 협회 목록(dl_sbmsnAsctnList) 조회. */
   async getSbmsnAsctnList(prfmncRcptNo: string): Promise<SbmsnAsctnItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.sbmsnAsctnList)
-    return apiClient.get<SbmsnAsctnItem[], SbmsnAsctnItem[]>(
-      EP.PRFMNC_PRDOC_SBMSN_ASCTNS(prfmncRcptNo),
-    )
+    return apiClient.post<SbmsnAsctnItem[], SbmsnAsctnItem[]>(EP.PRFMNC_PRDOC_SBMSN_ASCTNS(prfmncRcptNo))
   },
   /** 제출하기(scwin.btn_sbmsn_onclick) — 발급된 실적증명서를 선택 협회로 제출(멀티). */
   async submit(params: { prfmncRcptNo: string; sbmsnSttsNms: string[] }): Promise<void> {

@@ -2,7 +2,7 @@
 // USE_MOCK=true(기본): 목업 반환 · false: apiClient 실호출.
 // ⚠️ 폐쇄망 반입 후 실백엔드 경로 확정 시 EP 맵만 수정한다(메서드 본문 불변).
 // 응답 인터셉터가 공통 봉투({metadata,data})를 벗겨 data 알맹이를 반환하므로,
-// apiClient.get/post 의 2번째 제네릭(R)에 알맹이 타입을 지정해 반환 타입을 맞춘다.
+// apiClient.post 의 2번째 제네릭(R)에 알맹이 타입을 지정해 반환 타입을 맞춘다.
 import { apiClient } from '@/lib/apiClient'
 import { USE_MOCK, mockDelay } from '@/lib/env'
 import { MOCK_BD, getBdopnById } from '@/mocks/bd'
@@ -299,31 +299,31 @@ export const bdService = {
   /** 입찰공고 통합목록 조회 — 목업은 전체 반환(키워드/페이징은 페이지 클라이언트 로직 소관). */
   async getList(params?: BidListSearchRequest): Promise<BidPbancItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.pbancList)
-    return apiClient.get<BidPbancItem[], BidPbancItem[]>(EP.PBANC_LIST, { params })
+    return apiClient.post<BidPbancItem[], BidPbancItem[]>(EP.PBANC_LIST, params)
   },
 
   /** 입찰공고 상세 조회(탭 콘텐츠 데이터). */
   async getDetail(id: string): Promise<BidPbancDetail> {
     if (USE_MOCK) return mockDelay(MOCK_BD.pbancDetail)
-    return apiClient.get<BidPbancDetail, BidPbancDetail>(EP.PBANC_DTL(id))
+    return apiClient.post<BidPbancDetail, BidPbancDetail>(EP.PBANC_DTL(id))
   },
 
   /** 입찰공고 상세 보완 필드(연락처·계약/입찰방법·진행 플래그) 조회. */
   async getBidPbancDtl(id: string): Promise<BidPrgrsItem> {
     if (USE_MOCK) return mockDelay(MOCK_BD.prgrsDetail)
-    return apiClient.get<BidPrgrsItem, BidPrgrsItem>(EP.PBANC_PRGRS_DTL(id))
+    return apiClient.post<BidPrgrsItem, BidPrgrsItem>(EP.PBANC_PRGRS_DTL(id))
   },
 
   /** 입찰진행 현황 조회(입찰진행 탭). */
   async getBidProgress(id: string): Promise<BidProgressRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.progressList)
-    return apiClient.get<BidProgressRow[], BidProgressRow[]>(EP.PBANC_PROGRESS(id))
+    return apiClient.post<BidProgressRow[], BidProgressRow[]>(EP.PBANC_PROGRESS(id))
   },
 
   /** 관심공고 등록/제외 토글(입찰공고·입찰결과·국외 공고 공용). */
   async toggleFavorite(id: string, favorite: boolean): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    return apiClient.put<void, void>(EP.FAVORITE(id), { favorite })
+    return apiClient.post<void, void>(EP.FAVORITE(id), { favorite })
   },
 
   // ── 개찰목록 · 입찰결과 (MUI-BD-08 · MUI-BD-09) ────────────────────────────
@@ -331,33 +331,31 @@ export const bdService = {
   /** 개찰목록 조회 — 목업은 전체 반환(페이지 클라이언트 필터/페이징). */
   async getBdopnList(params?: BidListSearchRequest): Promise<BdopnItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.bdopnList)
-    return apiClient.get<BdopnItem[], BdopnItem[]>(EP.BDOPN_LIST, { params })
+    return apiClient.post<BdopnItem[], BdopnItem[]>(EP.BDOPN_LIST, params)
   },
 
   /** 개찰(입찰결과) 상세 조회(요약 헤더) — 목업은 id 로 개찰목록 1건 lookup(직접진입/새로고침 대응). */
   async getBidRsltDetail(id: string): Promise<BdopnItem> {
     if (USE_MOCK) return mockDelay(getBdopnById(id) ?? MOCK_BD.bdopnList[0])
-    return apiClient.get<BdopnItem, BdopnItem>(EP.BDOPN_DTL(id))
+    return apiClient.post<BdopnItem, BdopnItem>(EP.BDOPN_DTL(id))
   },
 
   /** 입찰결과(내 업체) 페이지 조회. */
   async getBidRslt(id: string, page: number): Promise<BidRsltRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.bidRsltList)
-    return apiClient.get<BidRsltRow[], BidRsltRow[]>(EP.BID_RSLT(id), { params: { page } })
+    return apiClient.post<BidRsltRow[], BidRsltRow[]>(EP.BID_RSLT(id), { page })
   },
 
   /** 협상결과 페이지 조회. */
   async getNegoRslt(id: string, page: number): Promise<NegoRsltRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.negoList)
-    return apiClient.get<NegoRsltRow[], NegoRsltRow[]>(EP.NEGO_RSLT(id), { params: { page } })
+    return apiClient.post<NegoRsltRow[], NegoRsltRow[]>(EP.NEGO_RSLT(id), { page })
   },
 
   /** 입찰결과 품목정보 페이지 조회. */
   async getBidRsltItems(id: string, page: number): Promise<BidRsltProductItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.bidRsltItems)
-    return apiClient.get<BidRsltProductItem[], BidRsltProductItem[]>(EP.BID_RSLT_ITEMS(id), {
-      params: { page },
-    })
+    return apiClient.post<BidRsltProductItem[], BidRsltProductItem[]>(EP.BID_RSLT_ITEMS(id), { page })
   },
 
   /** 이행/적격심사 신청. */
@@ -377,7 +375,7 @@ export const bdService = {
   /** 사전심사 결과조회. */
   async getPqResult(pbancNo: string): Promise<PqResultResponse> {
     if (USE_MOCK) return mockDelay(MOCK_BD.pqResult)
-    return apiClient.get<PqResultResponse, PqResultResponse>(EP.PQ_RESULT(pbancNo))
+    return apiClient.post<PqResultResponse, PqResultResponse>(EP.PQ_RESULT(pbancNo))
   },
 
   /** 생산능력서류 제출 — 첨부파일 guid 목록 제출. */
@@ -391,7 +389,7 @@ export const bdService = {
   /** 입찰진행 목록 조회 — 목업은 전체 반환(페이지 클라이언트 필터/페이징). */
   async getBidProgressList(params?: BidListSearchRequest): Promise<BidPrgrsItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.prgrsList)
-    return apiClient.get<BidPrgrsItem[], BidPrgrsItem[]>(EP.PROGRESS_LIST, { params })
+    return apiClient.post<BidPrgrsItem[], BidPrgrsItem[]>(EP.PROGRESS_LIST, params)
   },
 
   /** 입찰포기 신청. */
@@ -410,7 +408,7 @@ export const bdService = {
   /** 입찰등록결과 조회. */
   async getBidRegResult(pbancNo: string): Promise<BidRegResultResponse> {
     if (USE_MOCK) return mockDelay(MOCK_BD.bidRegResult)
-    return apiClient.get<BidRegResultResponse, BidRegResultResponse>(EP.BID_REG_RESULT(pbancNo))
+    return apiClient.post<BidRegResultResponse, BidRegResultResponse>(EP.BID_REG_RESULT(pbancNo))
   },
 
   /** 입찰참가등록반려 신청. */
@@ -424,17 +422,13 @@ export const bdService = {
   /** 입찰 품목목록 페이지 조회. */
   async getBidItemList(pbancNo: string, page: number): Promise<BidItemListRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.itemList)
-    return apiClient.get<BidItemListRow[], BidItemListRow[]>(EP.BID_ITEM_LIST(pbancNo), {
-      params: { page },
-    })
+    return apiClient.post<BidItemListRow[], BidItemListRow[]>(EP.BID_ITEM_LIST(pbancNo), { page })
   },
 
   /** 공사실적/면허 목록 페이지 조회. */
   async getCnstwkLcnsList(pbancNo: string, page: number): Promise<CnstwkLcnsRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.cnstwkList)
-    return apiClient.get<CnstwkLcnsRow[], CnstwkLcnsRow[]>(EP.CNSTWK_LCNS_LIST(pbancNo), {
-      params: { page },
-    })
+    return apiClient.post<CnstwkLcnsRow[], CnstwkLcnsRow[]>(EP.CNSTWK_LCNS_LIST(pbancNo), { page })
   },
 
   /** 입찰보증금(납부방법 등) 저장. */
@@ -455,31 +449,31 @@ export const bdService = {
   /** 등록업체 상세 조회(선택 업체로 공동수급 행 채움). */
   async getRegBzentyDetail(bizRegNo: string): Promise<RegBzentyRow> {
     if (USE_MOCK) return mockDelay(MOCK_BD.regBzentyList[0])
-    return apiClient.get<RegBzentyRow, RegBzentyRow>(EP.REG_BZENTY_DTL(bizRegNo))
+    return apiClient.post<RegBzentyRow, RegBzentyRow>(EP.REG_BZENTY_DTL(bizRegNo))
   },
 
   /** 등록업체 검색(업체명/사업자번호). */
   async getRegBzentyList(req: RegBzentySrchRequest): Promise<RegBzentyRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.regBzentyList)
-    return apiClient.get<RegBzentyRow[], RegBzentyRow[]>(EP.REG_BZENTY_LIST, { params: req })
+    return apiClient.post<RegBzentyRow[], RegBzentyRow[]>(EP.REG_BZENTY_LIST, req)
   },
 
   /** 캐비닛(디지털 문서함) 파일 목록 조회. */
   async linkCabinet(): Promise<CabinetFile[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.cabinetFiles)
-    return apiClient.get<CabinetFile[], CabinetFile[]>(EP.CABINET_LINK)
+    return apiClient.post<CabinetFile[], CabinetFile[]>(EP.CABINET_LINK)
   },
 
   /** 동의서 조회(입찰참가신청 M14 · 입찰서 M07 공용). */
   async getAgreement(agreementId: string): Promise<AgreementDoc> {
     if (USE_MOCK) return mockDelay(MOCK_BD.agreement)
-    return apiClient.get<AgreementDoc, AgreementDoc>(EP.AGREEMENT(agreementId))
+    return apiClient.post<AgreementDoc, AgreementDoc>(EP.AGREEMENT(agreementId))
   },
 
   /** 동의서 선택 저장(라디오 변경 즉시). */
   async setAgreementChoice(agreementId: string, choice: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    return apiClient.put<void, void>(EP.AGREEMENT_CHOICE(agreementId), { choice })
+    return apiClient.post<void, void>(EP.AGREEMENT_CHOICE(agreementId), { choice })
   },
 
   /** 동의서 저장(확인). */
@@ -493,7 +487,7 @@ export const bdService = {
   /** 전자서명 인증서 목록 조회. */
   async getElsgnCertList(): Promise<ElsgnCert[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.elsgnCerts)
-    return apiClient.get<ElsgnCert[], ElsgnCert[]>(EP.ELSGN_CERTS)
+    return apiClient.post<ElsgnCert[], ElsgnCert[]>(EP.ELSGN_CERTS)
   },
 
   /** 전자서명 실행 — 성공 시 접수번호/일시 반환. */
@@ -507,9 +501,7 @@ export const bdService = {
   /** 입찰서 품목목록 페이지 조회. */
   async getBidTndrItemList(pbancNo: string, page: number): Promise<BidItemListRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.itemList)
-    return apiClient.get<BidItemListRow[], BidItemListRow[]>(EP.TNDR_ITEM_LIST(pbancNo), {
-      params: { page },
-    })
+    return apiClient.post<BidItemListRow[], BidItemListRow[]>(EP.TNDR_ITEM_LIST(pbancNo), { page })
   },
 
   /** 입찰서 저장(스탭별 부분 저장 → 제출 시 전체). */
@@ -529,7 +521,7 @@ export const bdService = {
   /** 입찰서 첨부 삭제. */
   async removeTndrFile(id: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    return apiClient.delete<void, void>(EP.TNDR_FILE_ITEM(id))
+    return apiClient.post<void, void>(EP.TNDR_FILE_ITEM(id))
   },
 
   // ── 서약서 (MUI-BD-04-M01) ─────────────────────────────────────────────────
@@ -537,13 +529,13 @@ export const bdService = {
   /** 서약서 조회. */
   async getWrot(wrotId: string): Promise<WrotDoc> {
     if (USE_MOCK) return mockDelay(MOCK_BD.wrot)
-    return apiClient.get<WrotDoc, WrotDoc>(EP.WROT(wrotId))
+    return apiClient.post<WrotDoc, WrotDoc>(EP.WROT(wrotId))
   },
 
   /** 서약서 동의 선택(라디오 변경 즉시). */
   async setWrotChoice(wrotId: string, choice: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    return apiClient.put<void, void>(EP.WROT_CHOICE(wrotId), { choice })
+    return apiClient.post<void, void>(EP.WROT_CHOICE(wrotId), { choice })
   },
 
   /** 서약서 저장. */
@@ -557,13 +549,13 @@ export const bdService = {
   /** 면허정보 검색(면허명/코드 부분일치). */
   async searchLicenses(keyword: string): Promise<LicenseResult[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.licenses)
-    return apiClient.get<LicenseResult[], LicenseResult[]>(EP.LICENSE_SEARCH, { params: { keyword } })
+    return apiClient.post<LicenseResult[], LicenseResult[]>(EP.LICENSE_SEARCH, { keyword })
   },
 
   /** 지역 검색(시도/시군구 부분일치). */
   async searchRegions(keyword: string): Promise<RegionResult[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.regions)
-    return apiClient.get<RegionResult[], RegionResult[]>(EP.REGION_SEARCH, { params: { keyword } })
+    return apiClient.post<RegionResult[], RegionResult[]>(EP.REGION_SEARCH, { keyword })
   },
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -575,25 +567,25 @@ export const bdService = {
   /** 국외 입찰공고 상세(공고일반) 조회. */
   async getOvsBidPbancDetail(id: string): Promise<OvsBidPbancDetail> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsBidPbancDetail)
-    return apiClient.get<OvsBidPbancDetail, OvsBidPbancDetail>(EP.OVS_PBANC_DTL(id))
+    return apiClient.post<OvsBidPbancDetail, OvsBidPbancDetail>(EP.OVS_PBANC_DTL(id))
   },
 
   /** 국외 품목 목록 조회. */
   async getOvsBidItemList(id: string): Promise<OvsBidItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsBidItemList)
-    return apiClient.get<OvsBidItem[], OvsBidItem[]>(EP.OVS_BID_ITEMS(id))
+    return apiClient.post<OvsBidItem[], OvsBidItem[]>(EP.OVS_BID_ITEMS(id))
   },
 
   /** 국외 품목 첨부문서 목록 조회. */
   async getOvsItemAtchFileList(frcptlArtclNo: string): Promise<OvsAtchDoc[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsAtchDocList)
-    return apiClient.get<OvsAtchDoc[], OvsAtchDoc[]>(EP.OVS_ITEM_ATCH(frcptlArtclNo))
+    return apiClient.post<OvsAtchDoc[], OvsAtchDoc[]>(EP.OVS_ITEM_ATCH(frcptlArtclNo))
   },
 
   /** 국외 품목 첨부파일 다운로드. */
   async downloadOvsItemAtchFile(no: number): Promise<Blob> {
     if (USE_MOCK) return mockBlob(`ovs-item-atch-${no}`)
-    return apiClient.get<Blob, Blob>(EP.OVS_ITEM_ATCH_FILE(no), { responseType: 'blob' })
+    return apiClient.post<Blob, Blob>(EP.OVS_ITEM_ATCH_FILE(no), null, { responseType: 'blob' })
   },
 
   /** 국외 보관함 품목 추가(상세 화면). */
@@ -605,19 +597,19 @@ export const bdService = {
   /** 국외 보관함 품목 삭제(상세 화면). */
   async deleteOvsLockerItem(frcptlArtclNo: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    return apiClient.delete<void, void>(EP.OVS_LOCKER_ITEM(frcptlArtclNo))
+    return apiClient.post<void, void>(EP.OVS_LOCKER_ITEM(frcptlArtclNo))
   },
 
   /** 국외 공고 첨부서류 목록 조회. */
   async getOvsBidAtchDocList(id: string): Promise<OvsAtchDoc[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsAtchDocList)
-    return apiClient.get<OvsAtchDoc[], OvsAtchDoc[]>(EP.OVS_BID_ATCH_DOCS(id))
+    return apiClient.post<OvsAtchDoc[], OvsAtchDoc[]>(EP.OVS_BID_ATCH_DOCS(id))
   },
 
   /** 국외 공고 첨부서류 다운로드. */
   async downloadOvsBidAtchDoc(no: number): Promise<Blob> {
     if (USE_MOCK) return mockBlob(`ovs-atch-doc-${no}`)
-    return apiClient.get<Blob, Blob>(EP.OVS_BID_ATCH_DOC_FILE(no), { responseType: 'blob' })
+    return apiClient.post<Blob, Blob>(EP.OVS_BID_ATCH_DOC_FILE(no), null, { responseType: 'blob' })
   },
 
   // ── 국외 입찰참가신청서 (MUI-BD-04) ────────────────────────────────────────
@@ -625,7 +617,7 @@ export const bdService = {
   /** 국외 입찰참가신청 등록결과(사업별) 조회. */
   async getOvsBidRegRsltByBiz(): Promise<OvsBidRegRsltItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsBidRegRsltList)
-    return apiClient.get<OvsBidRegRsltItem[], OvsBidRegRsltItem[]>(EP.OVS_BID_REG_RSLT)
+    return apiClient.post<OvsBidRegRsltItem[], OvsBidRegRsltItem[]>(EP.OVS_BID_REG_RSLT)
   },
 
   /** 국외 입찰참가신청서 취소 신청. */
@@ -646,22 +638,19 @@ export const bdService = {
     if (USE_MOCK) {
       return mockDelay(grnteExmptnSe === 'Y' ? MOCK_BD.ovsBidBizExmptnList : MOCK_BD.ovsBidBizList)
     }
-    return apiClient.get<OvsBidBizItem[] | OvsBidBizExmptnItem[], OvsBidBizItem[] | OvsBidBizExmptnItem[]>(
-      EP.OVS_BID_GRNTE_LIST,
-      { params: { grnteExmptnSe } },
-    )
+    return apiClient.post<OvsBidBizItem[] | OvsBidBizExmptnItem[], OvsBidBizItem[] | OvsBidBizExmptnItem[]>(EP.OVS_BID_GRNTE_LIST, { grnteExmptnSe })
   },
 
   /** 국외 보증서류 다운로드(연대보증서/지급각서/납부서). */
   async downloadGrnteDoc(docNo: string): Promise<Blob> {
     if (USE_MOCK) return mockBlob(`ovs-grnte-doc-${docNo}`)
-    return apiClient.get<Blob, Blob>(EP.OVS_GRNTE_DOC(docNo), { responseType: 'blob' })
+    return apiClient.post<Blob, Blob>(EP.OVS_GRNTE_DOC(docNo), null, { responseType: 'blob' })
   },
 
   /** 국외 첨부파일 다운로드(등록결과 첨부). */
   async downloadAtchFile(atchFileNm: string): Promise<Blob> {
     if (USE_MOCK) return mockBlob(atchFileNm)
-    return apiClient.get<Blob, Blob>(EP.OVS_ATCH_FILE(atchFileNm), { responseType: 'blob' })
+    return apiClient.post<Blob, Blob>(EP.OVS_ATCH_FILE(atchFileNm), null, { responseType: 'blob' })
   },
 
   /** 국외 입찰참가 첨부서류 업로드 — 서버 발급 UploadedFile 반환. */
@@ -677,15 +666,13 @@ export const bdService = {
   /** 국외 입찰참가 첨부서류 삭제. */
   async removeOvsBidPrtcpAtchDoc(id: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    return apiClient.delete<void, void>(EP.OVS_BID_PRTCP_ATCH_ITEM(id))
+    return apiClient.post<void, void>(EP.OVS_BID_PRTCP_ATCH_ITEM(id))
   },
 
   /** 국외 서약서(청렴서약) 조회. */
   async getOvsProbWrotAgre(wrotId: string): Promise<OvsProbWrotAgreResultInfo> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsProbWrotAgre)
-    return apiClient.get<OvsProbWrotAgreResultInfo, OvsProbWrotAgreResultInfo>(
-      EP.OVS_PROB_WROT(wrotId),
-    )
+    return apiClient.post<OvsProbWrotAgreResultInfo, OvsProbWrotAgreResultInfo>(EP.OVS_PROB_WROT(wrotId))
   },
 
   /** 국외 서약서 저장(동의). */
@@ -697,7 +684,7 @@ export const bdService = {
   /** 국외 서약서 동의 선택(라디오 변경 즉시). */
   async setOvsWrotChoice(wrotId: string, choice: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    return apiClient.put<void, void>(EP.OVS_PROB_WROT_CHOICE(wrotId), { choice })
+    return apiClient.post<void, void>(EP.OVS_PROB_WROT_CHOICE(wrotId), { choice })
   },
 
   /** 국외 입찰참가신청서 등록 — 성공 시 접수번호/일시 반환. */
@@ -709,19 +696,19 @@ export const bdService = {
   /** 국외 입찰보증서 상세 조회. */
   async getOvsBidWtgrDtl(wtgrNo: string): Promise<OvsBidWtgrInfo> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsBidWtgrInfo)
-    return apiClient.get<OvsBidWtgrInfo, OvsBidWtgrInfo>(EP.OVS_WTGR_DTL(wtgrNo))
+    return apiClient.post<OvsBidWtgrInfo, OvsBidWtgrInfo>(EP.OVS_WTGR_DTL(wtgrNo))
   },
 
   /** 국외 입찰보증서 목록 조회. */
   async getOvsBidWtgrList(): Promise<OvsBidWtgrItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsBidWtgrList)
-    return apiClient.get<OvsBidWtgrItem[], OvsBidWtgrItem[]>(EP.OVS_WTGR_LIST)
+    return apiClient.post<OvsBidWtgrItem[], OvsBidWtgrItem[]>(EP.OVS_WTGR_LIST)
   },
 
   /** 국외 입찰업체 정보 조회(업체코드). */
   async getOvsSplyInfo(splyBzentyCd: string): Promise<OvsSplyInfo> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsSplyInfo)
-    return apiClient.get<OvsSplyInfo, OvsSplyInfo>(EP.OVS_SPLY_INFO(splyBzentyCd))
+    return apiClient.post<OvsSplyInfo, OvsSplyInfo>(EP.OVS_SPLY_INFO(splyBzentyCd))
   },
 
   /** 국외 연대보증서 업로드. */
@@ -767,9 +754,7 @@ export const bdService = {
   /** 국외 입찰보증금 사업목록(면제구분) 조회. */
   async getOvsBidGrnteBizList(pbancNo: string, depositType: string): Promise<OvsBidPrtcpBizItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsBidPrtcpBizList)
-    return apiClient.get<OvsBidPrtcpBizItem[], OvsBidPrtcpBizItem[]>(EP.OVS_GRNTE_BIZ_LIST, {
-      params: { pbancNo, depositType },
-    })
+    return apiClient.post<OvsBidPrtcpBizItem[], OvsBidPrtcpBizItem[]>(EP.OVS_GRNTE_BIZ_LIST, { pbancNo, depositType })
   },
 
   /** 국외 입찰보증서 적용(사업에 증권 연결). */
@@ -783,10 +768,10 @@ export const bdService = {
   /** 국외 입찰결과 페이지 조회(단가제/총액제는 응답 형태로 분기). */
   async getOvsBidRslt(page: number): Promise<OvsBidRsltUnitPriceItem[] | OvsBidRsltTotalItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsBidRsltUnitPriceItems)
-    return apiClient.get<
+    return apiClient.post<
       OvsBidRsltUnitPriceItem[] | OvsBidRsltTotalItem[],
       OvsBidRsltUnitPriceItem[] | OvsBidRsltTotalItem[]
-    >(EP.OVS_BID_RSLT, { params: { page } })
+    >(EP.OVS_BID_RSLT, { page })
   },
 
   // ── 국외 환율/목표가/보관함 (MUI-BD-01 · MUI-CM-01) ─────────────────────────
@@ -794,15 +779,13 @@ export const bdService = {
   /** 국외 환율정보 조회(기준일자). */
   async getExchangeRates(crtrYmd: string): Promise<OvsExchrtItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.exchrtList)
-    return apiClient.get<OvsExchrtItem[], OvsExchrtItem[]>(EP.OVS_EXCHANGE_RATES, {
-      params: { crtrYmd },
-    })
+    return apiClient.post<OvsExchrtItem[], OvsExchrtItem[]>(EP.OVS_EXCHANGE_RATES, { crtrYmd })
   },
 
   /** 국외 목표가공개품목 목록 조회 — 목업은 전체 반환(페이지 더보기). */
   async getOvsGoalPrcRlsItemList(params?: BidListSearchRequest): Promise<OvsGoalPrcRlsItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsGoalPrcRlsList)
-    return apiClient.get<OvsGoalPrcRlsItem[], OvsGoalPrcRlsItem[]>(EP.OVS_GOAL_PRC_ITEMS, { params })
+    return apiClient.post<OvsGoalPrcRlsItem[], OvsGoalPrcRlsItem[]>(EP.OVS_GOAL_PRC_ITEMS, params)
   },
 
   /** 국외 보관함 입찰품목 목록 조회 — 목업은 전체 반환(페이지 클라이언트 필터/페이징). */
@@ -811,9 +794,7 @@ export const bdService = {
     params?: BidListSearchRequest,
   ): Promise<OvsLockerBidItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsLockerBidItemList)
-    return apiClient.get<OvsLockerBidItem[], OvsLockerBidItem[]>(EP.OVS_LOCKER_BID_ITEMS(pbancNo), {
-      params,
-    })
+    return apiClient.post<OvsLockerBidItem[], OvsLockerBidItem[]>(EP.OVS_LOCKER_BID_ITEMS(pbancNo), params)
   },
 
   /** 국외 보관함 품목 추가(보관함 관리 화면). */
@@ -825,21 +806,19 @@ export const bdService = {
   /** 국외 보관함 품목 삭제(보관함 관리 화면). */
   async deleteLockerItem(id: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    return apiClient.delete<void, void>(EP.OVS_LOCKER_BID_ITEM(id))
+    return apiClient.post<void, void>(EP.OVS_LOCKER_BID_ITEM(id))
   },
 
   /** 국외 보관함 공고 상세(담당자 영역) 조회. */
   async getOvsLockerPbanDtl(id: string): Promise<OvsLockerPbanItem> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsLockerPbanList[0])
-    return apiClient.get<OvsLockerPbanItem, OvsLockerPbanItem>(EP.OVS_LOCKER_PBAN_DTL(id))
+    return apiClient.post<OvsLockerPbanItem, OvsLockerPbanItem>(EP.OVS_LOCKER_PBAN_DTL(id))
   },
 
   /** 국외 보관함 공고 목록 조회 — 목업은 전체 반환(페이지 클라이언트 필터/페이징). */
   async getOvsLockerPbanList(params?: BidListSearchRequest): Promise<OvsLockerPbanItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsLockerPbanList)
-    return apiClient.get<OvsLockerPbanItem[], OvsLockerPbanItem[]>(EP.OVS_LOCKER_PBAN_LIST, {
-      params,
-    })
+    return apiClient.post<OvsLockerPbanItem[], OvsLockerPbanItem[]>(EP.OVS_LOCKER_PBAN_LIST, params)
   },
 
   // ── 국외 공개수의협상 (MUI-BD-12) ──────────────────────────────────────────
@@ -847,7 +826,7 @@ export const bdService = {
   /** 국외 공개수의협상 첨부파일 다운로드. */
   async downloadEtdcFile(id: string): Promise<Blob> {
     if (USE_MOCK) return mockBlob(`ovs-etdc-${id}`)
-    return apiClient.get<Blob, Blob>(EP.OVS_ETDC_FILE(id), { responseType: 'blob' })
+    return apiClient.post<Blob, Blob>(EP.OVS_ETDC_FILE(id), null, { responseType: 'blob' })
   },
 
   /** 국외 공개수의협상 견적서 취소 신청. */
@@ -859,7 +838,7 @@ export const bdService = {
   /** 국외 공개수의협상 견적서 품목 조회. */
   async getOvsRlsVltrnsEtdcItems(): Promise<OvsRlsVltrnsEtdcItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsRlsVltrnsEtdcItems)
-    return apiClient.get<OvsRlsVltrnsEtdcItem[], OvsRlsVltrnsEtdcItem[]>(EP.OVS_RLS_VLTRNS_ETDC_ITEMS)
+    return apiClient.post<OvsRlsVltrnsEtdcItem[], OvsRlsVltrnsEtdcItem[]>(EP.OVS_RLS_VLTRNS_ETDC_ITEMS)
   },
 
   /** 국외 공개수의협상 견적서 제출. */
@@ -871,21 +850,19 @@ export const bdService = {
   /** 국외 공개수의협상 품목정보 조회. */
   async getOvsRlsVltrnsItems(): Promise<OvsRlsVltrnsItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsRlsVltrnsItems)
-    return apiClient.get<OvsRlsVltrnsItem[], OvsRlsVltrnsItem[]>(EP.OVS_RLS_VLTRNS_ITEMS)
+    return apiClient.post<OvsRlsVltrnsItem[], OvsRlsVltrnsItem[]>(EP.OVS_RLS_VLTRNS_ITEMS)
   },
 
   /** 국외 공개수의협상 첨부서류 조회. */
   async getOvsRlsVltrnsAtchDocs(): Promise<OvsRlsVltrnsAtchDoc[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsRlsVltrnsAtchDocs)
-    return apiClient.get<OvsRlsVltrnsAtchDoc[], OvsRlsVltrnsAtchDoc[]>(EP.OVS_RLS_VLTRNS_ATCH_DOCS)
+    return apiClient.post<OvsRlsVltrnsAtchDoc[], OvsRlsVltrnsAtchDoc[]>(EP.OVS_RLS_VLTRNS_ATCH_DOCS)
   },
 
   /** 국외 공개수의협상 심사결과 조회. */
   async getOvsRlsVltrnsSrngRslt(): Promise<OvsRlsVltrnsSrngRsltItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsRlsVltrnsSrngRslt)
-    return apiClient.get<OvsRlsVltrnsSrngRsltItem[], OvsRlsVltrnsSrngRsltItem[]>(
-      EP.OVS_RLS_VLTRNS_SRNG_RSLT,
-    )
+    return apiClient.post<OvsRlsVltrnsSrngRsltItem[], OvsRlsVltrnsSrngRsltItem[]>(EP.OVS_RLS_VLTRNS_SRNG_RSLT)
   },
 
   // ── 국외 임시입찰내역/이전공고 (MUI-BD-01-M76 · T75·T76 · P79(구 M76~M79 — v1.83 재편)) ─────────────────────────
@@ -907,13 +884,13 @@ export const bdService = {
   /** 국외 통화 목록 조회(달러환산율 포함). */
   async getCrncList(): Promise<CrncOption[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.crncOptions)
-    return apiClient.get<CrncOption[], CrncOption[]>(EP.OVS_CRNC_LIST)
+    return apiClient.post<CrncOption[], CrncOption[]>(EP.OVS_CRNC_LIST)
   },
 
   /** 국외 입찰업체 목록 조회(셀렉트 옵션). */
   async getOvsBidBzentyList(): Promise<BidSelectOption[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsBidBzentyOptions)
-    return apiClient.get<BidSelectOption[], BidSelectOption[]>(EP.OVS_BID_BZENTY_LIST)
+    return apiClient.post<BidSelectOption[], BidSelectOption[]>(EP.OVS_BID_BZENTY_LIST)
   },
 
   /** 국외 임시입찰내역 저장(단가제=행 배열 · 총액제=단건). */
@@ -928,29 +905,25 @@ export const bdService = {
   /** 국외 임시입찰내역 삭제(단가제=선택 항목번호 · 총액제=전체). */
   async deleteOvsTmprBidCn(intgRfrncNo: string, checkedNos?: string[]): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    return apiClient.delete<void, void>(EP.OVS_TMPR_BID_CN(intgRfrncNo), {
-      params: { checkedNos },
-    })
+    return apiClient.post<void, void>(EP.OVS_TMPR_BID_CN(intgRfrncNo), { checkedNos })
   },
 
   /** 국외 이전공고 입찰내역 불러오기(통합참조번호). */
   async getOvsBfrPbancBidCnList(intgRfrncNo: string): Promise<BfrPbancBidCnItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.bfrPbancBidCnList)
-    return apiClient.get<BfrPbancBidCnItem[], BfrPbancBidCnItem[]>(EP.OVS_BFR_PBANC_BID_CN(intgRfrncNo))
+    return apiClient.post<BfrPbancBidCnItem[], BfrPbancBidCnItem[]>(EP.OVS_BFR_PBANC_BID_CN(intgRfrncNo))
   },
 
   /** 국외 이전공고 보관함목록 조회(보관함 ID). */
   async getBfrPbancLockerList(lockerId: string): Promise<BfrPbancInfoItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.bfrPbancLockerList)
-    return apiClient.get<BfrPbancInfoItem[], BfrPbancInfoItem[]>(EP.BFR_PBANC_LOCKER_LIST(lockerId))
+    return apiClient.post<BfrPbancInfoItem[], BfrPbancInfoItem[]>(EP.BFR_PBANC_LOCKER_LIST(lockerId))
   },
 
   /** 국외 이전공고 입찰내역목록 조회(공고번호·차수). */
   async getBfrPbancBidCnList(pbancNo: string, pbancOd: string): Promise<BfrPbancBidCnItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.bfrPbancBidCnList)
-    return apiClient.get<BfrPbancBidCnItem[], BfrPbancBidCnItem[]>(EP.BFR_PBANC_BID_CN(pbancNo), {
-      params: { pbancOd },
-    })
+    return apiClient.post<BfrPbancBidCnItem[], BfrPbancBidCnItem[]>(EP.BFR_PBANC_BID_CN(pbancNo), { pbancOd })
   },
 
   /** 국외 이전공고 입찰내역 불러오기(선택 항목 적재). */
@@ -974,7 +947,7 @@ export const bdService = {
   /** 국외 입찰서 상세 조회. */
   async getOvsTndrDtl(id: string): Promise<OvsTndrDtlItem> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsTndrDetail)
-    return apiClient.get<OvsTndrDtlItem, OvsTndrDtlItem>(EP.OVS_TNDR_DTL(id))
+    return apiClient.post<OvsTndrDtlItem, OvsTndrDtlItem>(EP.OVS_TNDR_DTL(id))
   },
 
   /** 국외 입찰서 입찰참여품목 페이지 조회. */
@@ -984,21 +957,19 @@ export const bdService = {
     pbancOd?: string,
   ): Promise<OvsTndrItitbItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsTndrItitbItems)
-    return apiClient.get<OvsTndrItitbItem[], OvsTndrItitbItem[]>(EP.OVS_TNDR_ITEMS, {
-      params: { page, pbancNo, pbancOd },
-    })
+    return apiClient.post<OvsTndrItitbItem[], OvsTndrItitbItem[]>(EP.OVS_TNDR_ITEMS, { page, pbancNo, pbancOd })
   },
 
   /** 국외 입찰서 첨부문서 목록 조회. */
   async getOvsTndrDocList(): Promise<OvsTndrDoc[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsTndrDocList)
-    return apiClient.get<OvsTndrDoc[], OvsTndrDoc[]>(EP.OVS_TNDR_DOCS)
+    return apiClient.post<OvsTndrDoc[], OvsTndrDoc[]>(EP.OVS_TNDR_DOCS)
   },
 
   /** 국외 입찰서 첨부문서 다운로드. */
   async downloadOvsTndrDoc(atchFileNm: string): Promise<Blob> {
     if (USE_MOCK) return mockBlob(atchFileNm)
-    return apiClient.get<Blob, Blob>(EP.OVS_TNDR_DOC_FILE(atchFileNm), { responseType: 'blob' })
+    return apiClient.post<Blob, Blob>(EP.OVS_TNDR_DOC_FILE(atchFileNm), null, { responseType: 'blob' })
   },
 
   /** 국외 입찰서 제출(투찰) — 성공 시 접수번호/일시 반환. */
@@ -1010,9 +981,7 @@ export const bdService = {
   /** 국외 입찰서 첨부문서 조회(품목대체/MOQ 팝업). */
   async getOvsAtchDoc(frcptlArtclNo: string, invtNo: string): Promise<OvsAtchDoc[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsAtchDocList)
-    return apiClient.get<OvsAtchDoc[], OvsAtchDoc[]>(EP.OVS_ATCH_DOC, {
-      params: { frcptlArtclNo, invtNo },
-    })
+    return apiClient.post<OvsAtchDoc[], OvsAtchDoc[]>(EP.OVS_ATCH_DOC, { frcptlArtclNo, invtNo })
   },
 
   /** 국외 입찰서 파일 업로드 — 서버 발급 UploadedFile 반환. */
@@ -1028,6 +997,6 @@ export const bdService = {
   /** 국외 입찰서 파일 삭제. */
   async removeOvsTndrFile(id: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    return apiClient.delete<void, void>(EP.OVS_TNDR_FILE_ITEM(id))
+    return apiClient.post<void, void>(EP.OVS_TNDR_FILE_ITEM(id))
   },
 }

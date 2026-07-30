@@ -2,7 +2,7 @@
 // USE_MOCK=true(기본): 목업 반환(어떤 자격증명이든 성공) · false: apiClient 실호출.
 // ⚠️ 폐쇄망 반입 후 실백엔드 경로 확정 시 EP 맵만 수정한다(메서드 본문 불변).
 // 백엔드 로그인 응답 형태는 미확정 — 서비스가 LoginResult(안정 형태)로 매핑해 페이지/스토어를 격리한다.
-// 응답 인터셉터가 봉투를 벗기므로 apiClient.get/post 의 2번째 제네릭(R)에 알맹이 타입을 지정한다.
+// 응답 인터셉터가 봉투를 벗기므로 apiClient.post 의 2번째 제네릭(R)에 알맹이 타입을 지정한다.
 import { apiClient } from '@/lib/apiClient'
 import { USE_MOCK, mockDelay } from '@/lib/env'
 import { MOCK_AUTH } from '@/mocks/auth'
@@ -113,7 +113,7 @@ export const authService = {
   /** 소속 업체 목록 조회 — 로그인업체선택(BzentyChc). */
   async getMyBzentyList(): Promise<BzentyChcItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_AUTH.bzentyList)
-    return apiClient.get<BzentyChcItem[], BzentyChcItem[]>(EP.MY_BZENTY_LIST)
+    return apiClient.post<BzentyChcItem[], BzentyChcItem[]>(EP.MY_BZENTY_LIST)
   },
 
   /** 앱 접근권한 동의 — 필수 접근권한 동의 처리. */
@@ -127,15 +127,13 @@ export const authService = {
   /** 통합계정 등록 대상 조회 — 본인인증(CI 획득) 후 성명·기존 사용자 아이디 목록 반환. */
   async getIntgAcntTarget(): Promise<IntgAcntTarget> {
     if (USE_MOCK) return mockDelay(MOCK_AUTH.intgAcntTarget)
-    return apiClient.get<IntgAcntTarget, IntgAcntTarget>(EP.INTG_ACNT_TARGET)
+    return apiClient.post<IntgAcntTarget, IntgAcntTarget>(EP.INTG_ACNT_TARGET)
   },
 
   /** 통합계정 아이디 중복확인 — 등록하려는 아이디의 사용 가능 여부 반환. */
   async checkIntgAcntId(userId: string): Promise<IntgAcntIdCheckResult> {
     if (USE_MOCK) return mockDelay(MOCK_AUTH.intgAcntIdCheck)
-    return apiClient.get<IntgAcntIdCheckResult, IntgAcntIdCheckResult>(EP.INTG_ACNT_ID_CHECK, {
-      params: { userId },
-    })
+    return apiClient.post<IntgAcntIdCheckResult, IntgAcntIdCheckResult>(EP.INTG_ACNT_ID_CHECK, { userId })
   },
 
   /** 통합계정 등록 — 통합 로그인 계정(아이디·비밀번호)을 생성한다. */

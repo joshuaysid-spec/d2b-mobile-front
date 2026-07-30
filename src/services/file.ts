@@ -57,18 +57,18 @@ export const fileService = {
   /** 업로드 파일 삭제(guid). */
   async remove(guid: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    return apiClient.delete<void, void>(EP.FILE(guid))
+    return apiClient.post<void, void>(EP.FILE(guid))
   },
 
   /** 파일 다운로드(guid) — 원본 바이너리(Blob) 반환. 저장/뷰어는 호출측 담당. */
   async download(guid: string): Promise<Blob> {
     if (USE_MOCK) return mockDelay(new Blob([`mock file ${guid}`], { type: 'application/octet-stream' }))
-    return apiClient.get<Blob, Blob>(EP.DOWNLOAD(guid), { responseType: 'blob' })
+    return apiClient.post<Blob, Blob>(EP.DOWNLOAD(guid), null, { responseType: 'blob' })
   },
 
   /** 디지털 캐비닛(보관함)에서 첨부 선택 — 선택한 파일 목록 반환. */
   async pickFromCabinet(): Promise<UploadedFile[]> {
     if (USE_MOCK) return mockDelay(MOCK_FILE.cabinetPicks)
-    return apiClient.get<UploadedFile[], UploadedFile[]>(EP.CABINET)
+    return apiClient.post<UploadedFile[], UploadedFile[]>(EP.CABINET)
   },
 }
