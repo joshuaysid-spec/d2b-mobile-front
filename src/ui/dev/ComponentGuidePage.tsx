@@ -45,6 +45,7 @@ import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { CoachMark } from '@/ui/common/composites/CoachMark'
 import { DateInput } from '@/ui/common/composites/DateInput'
 import { DateRangeInput } from '@/ui/common/composites/DateRangeInput'
+import { MonthRangeInput } from '@/ui/common/composites/MonthRangeInput'
 import { RangeSliderInput } from '@/ui/common/composites/RangeSliderInput'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
@@ -128,6 +129,7 @@ const NAV = [
       { id: 'coachmark', label: 'CoachMark' },
       { id: 'dateinput', label: 'DateInput' },
       { id: 'daterangeinput', label: 'DateRangeInput' },
+      { id: 'monthrangeinput', label: 'MonthRangeInput' },
       { id: 'rangesliderinput', label: 'RangeSliderInput' },
       { id: 'floatingactionbutton', label: 'FloatingActionButton' },
       { id: 'taglist', label: 'TagList' },
@@ -183,6 +185,7 @@ export function ComponentGuidePage() {
     start: '2026-05-01',
     end: '2026-05-30',
   })
+  const [monthRangeValue, setMonthRangeValue] = useState({ start: '2026-05', end: '2026-07' })
   const [sfFilled, setSfFilled] = useState('발주기관명')
   const [sfError, setSfError] = useState('발주기관명')
   const [fabPlusCount, setFabPlusCount] = useState(0)
@@ -2571,6 +2574,41 @@ export function ComponentGuidePage() {
                   <DateRangeInput
                     label="기간"
                     value={{ start: '2026-05-01', end: '2026-05-30' }}
+                    disabled
+                  />
+                </div>
+              </Specimen>
+            </Row>
+          </Section>
+
+          {/* ───────── MonthRangeInput ───────── */}
+          <Section
+            id="monthrangeinput"
+            title="MonthRangeInput"
+            desc="월 범위(YYYY-MM ~ YYYY-MM) 선택 — 일 단위가 필요 없는 기간(조달계획 발주예정월 등). 프리셋 칩(최근 1/3/6개월, 값 파생 활성) + 트리거 + 시트(시작월/종료월 세그먼트 + 년·월 휠). 검색필터 monthRange 필드가 이걸 사용."
+          >
+            <Row label="기본">
+              <Specimen caption="레이블 + value (2026.05 ~ 2026.07)">
+                <div className="w-[320px]">
+                  <MonthRangeInput
+                    label="발주예정월"
+                    value={monthRangeValue}
+                    onChange={setMonthRangeValue}
+                  />
+                </div>
+              </Specimen>
+            </Row>
+            <Row label="state">
+              <Specimen caption="empty">
+                <div className="w-[320px]">
+                  <MonthRangeInput label="발주예정월" />
+                </div>
+              </Specimen>
+              <Specimen caption="disabled">
+                <div className="w-[320px]">
+                  <MonthRangeInput
+                    label="발주예정월"
+                    value={{ start: '2026-05', end: '2026-07' }}
                     disabled
                   />
                 </div>

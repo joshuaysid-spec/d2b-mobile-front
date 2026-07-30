@@ -11,6 +11,7 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { CheckboxGroup } from '@/ui/common/composites/CheckboxGroup'
 import { DateInput } from '@/ui/common/composites/DateInput'
 import { DateRangeInput } from '@/ui/common/composites/DateRangeInput'
+import { MonthRangeInput, type MonthRange } from '@/ui/common/composites/MonthRangeInput'
 import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { RangeSliderInput } from '@/ui/common/composites/RangeSliderInput'
@@ -156,12 +157,25 @@ const SearchFilterField = ({
         </Field>
       )
 
-    // 일자 설정 — 기간(빠른설정 칩 내장). TODO: 월 단위(YYYY-MM) 피커 — date-input 개선 시
+    // 일자 설정 — 기간(빠른설정 칩 내장).
     case 'dateRange':
       return (
         <Field label={field.label} required={field.required}>
           <DateRangeInput
             value={(value as DateRangeValue) ?? EMPTY_RANGE}
+            onChange={(r) => onChange(r)}
+            showPresets={field.showPresets}
+            presets={field.presets}
+          />
+        </Field>
+      )
+
+    // 월 범위 — MonthRangeInput(YYYY-MM, 트리거 → 바텀시트 년·월 휠). 조달계획 발주예정월 등.
+    case 'monthRange':
+      return (
+        <Field label={field.label} required={field.required}>
+          <MonthRangeInput
+            value={(value as MonthRange | undefined) ?? undefined}
             onChange={(r) => onChange(r)}
             showPresets={field.showPresets}
             presets={field.presets}

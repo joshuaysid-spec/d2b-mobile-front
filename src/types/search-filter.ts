@@ -87,6 +87,13 @@ export interface DateRangeFieldDef extends BaseField {
   /** 프리셋 칩 목록 커스텀. 미지정 시 DateRangeInput 기본(1주일/1개월/3개월). */
   presets?: DateRangePresetDef[]
 }
+export interface MonthRangeFieldDef extends BaseField {
+  type: 'monthRange' // 월 범위(MonthRangeInput, 휠) — value: DateRangeValue('YYYY-MM'). 조달계획 발주예정월 등 월 단위 기간.
+  /** 빠른선택 프리셋 칩(최근 1/3/6개월 등) 표시 여부. 기본 true. */
+  showPresets?: boolean
+  /** 프리셋 칩 목록 커스텀. 미지정 시 MonthRangeInput 기본(최근 1/3/6개월). */
+  presets?: { label: string; months: number }[]
+}
 export interface YearFieldDef extends BaseField {
   type: 'year' // 연도 선택 피커(YearInput, 휠) — value: string 'YYYY'
   placeholder?: string
@@ -142,6 +149,7 @@ export type SearchFilterField =
   | RadioFieldDef
   | CheckboxFieldDef
   | DateRangeFieldDef
+  | MonthRangeFieldDef
   | DateFieldDef
   | YearFieldDef
   | TextFieldDef

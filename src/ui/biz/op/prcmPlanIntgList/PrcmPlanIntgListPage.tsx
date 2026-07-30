@@ -118,7 +118,7 @@ function dateSections(type: OpSrchType): SearchFilterSection[] {
       },
     ]
   }
-  // 조달계획: 월 설정(발주예정월). TODO: 월 단위(YYYY-MM) 피커로 교체 — date-input 개선 시
+  // 조달계획: 월 설정(발주예정월) — 월 단위(YYYY-MM) 피커(260730 확정, 구 dateRange 임시 구현 대체).
   return [
     {
       key: 'date',
@@ -130,7 +130,7 @@ function dateSections(type: OpSrchType): SearchFilterSection[] {
           key: 'dateType',
           options: [{ value: 'orderPrnmntYm', label: '발주예정월' }],
         },
-        { type: 'dateRange', key: 'orderPrnmntYm', required: true, presets: DATE_PRESETS },
+        { type: 'monthRange', key: 'orderPrnmntYm', required: true },
       ],
     },
   ]
@@ -309,8 +309,8 @@ const RECENT_1M = () => ({
 function buildDefaultValue(type: OpSrchType): OpSearchFilter {
   return {
     taskSeNm: TASK_DEFAULT_BY_TYPE[type],
-    // 조달계획 — 월 설정(최근 1개월)
-    orderPrnmntYm: RECENT_1M(),
+    // 조달계획 — 월 설정(최근 1개월 = 이번 달, YYYY-MM 월 단위)
+    orderPrnmntYm: { start: dayjs().format('YYYY-MM'), end: dayjs().format('YYYY-MM') },
     prcmPlanNm: '',
     prcmNo: '',
     rprsItemNm: '',
