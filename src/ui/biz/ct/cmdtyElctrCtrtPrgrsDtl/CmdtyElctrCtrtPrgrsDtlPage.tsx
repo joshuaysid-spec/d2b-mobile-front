@@ -9,7 +9,7 @@
 // 데이터: useCtrtPrgrsDtl — 목록 state 는 요약 즉시표시에 안 쓰고 조회로 확정(필드 구성이 목록과 달라
 //   placeholder 부적합) → 조회 완료까지 PageLoading. 목업/실연동은 ctService(USE_MOCK)가 전환.
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { useCtrtPrgrsDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -55,8 +55,42 @@ function stepsByStg(prgrsStg: string): StepItem[] {
   }))
 }
 
+// ── slide32 계약진행상태별 버튼 매트릭스 — 상태코드(30~81)×업체구분(대표/구성) 노출 분기 ──
+// 목업 상태값이 표시명 문자열이라 코드로 정규화(TODO: 공통코드 UA22 확정 시 코드값 직결).
+const PRGRS_STCD_BY_NM: Record<string, string> = {
+  서류요청: '30', 서류등록: '31', 서류반송: '32', 서류반려: '32', 서류확정: '33',
+  서류확정취소: '34', 체결의뢰: '40', 계약체결의뢰: '40', 조달업체서명: '50',
+  조달업체반송: '51', 계약취소: '60', 계약서반송: '70', 계약확정요청: '80',
+  계약확정요청취소: '81',
+}
+// 매트릭스 버튼 키 — grnte 보증서확인 · stmtxPrch 전자수입인지[구매/확인] · stmtx 인지세확인
+//   · dtst 계약명세서 · scsbdUntprc 낙찰단가처리 · ctrdocCvr 계약서표지(요약 출력 버튼).
+// 제출서류등록·계약서류제출/전송·계약서반송·계약체결[전자서명]·계좌정보등록 열은 slide32 에서
+// 전 상태 미노출(모바일은 조회 전용 — 상단 'PC 버전에서 가능' Notice)이라 키 자체를 두지 않는다.
+type MtrxBtnKey = 'grnte' | 'stmtxPrch' | 'stmtx' | 'dtst' | 'scsbdUntprc' | 'ctrdocCvr'
+const BTN_MTRX: Record<string, { rprs: MtrxBtnKey[]; cnst: MtrxBtnKey[] }> = {
+  '30': { rprs: ['grnte', 'stmtx', 'scsbdUntprc'], cnst: ['grnte'] },
+  '31': { rprs: ['grnte', 'stmtx'], cnst: ['grnte'] },
+  '32': { rprs: ['grnte', 'stmtx', 'scsbdUntprc'], cnst: ['grnte'] },
+  '33': { rprs: ['grnte', 'stmtx'], cnst: ['grnte', 'stmtx'] },
+  '34': { rprs: ['grnte', 'stmtx'], cnst: ['grnte', 'stmtx'] },
+  '40': { rprs: ['grnte', 'stmtx', 'scsbdUntprc'], cnst: ['grnte', 'stmtx', 'ctrdocCvr'] },
+  '50': { rprs: ['grnte', 'stmtx', 'ctrdocCvr'], cnst: ['grnte', 'stmtx', 'ctrdocCvr'] },
+  '51': { rprs: ['grnte', 'stmtx'], cnst: ['grnte', 'stmtx'] },
+  '60': { rprs: ['grnte', 'stmtx', 'dtst'], cnst: ['grnte', 'stmtx', 'dtst'] },
+  '70': { rprs: ['grnte', 'stmtx', 'dtst'], cnst: ['grnte', 'stmtx', 'dtst'] },
+  '80': { rprs: ['ctrdocCvr'], cnst: ['ctrdocCvr'] },
+  '81': { rprs: ['ctrdocCvr'], cnst: ['ctrdocCvr'] },
+}
+// 공통/Default 행 — 상태코드 미매칭 시 기본(대표: 보증서·인지세 + 전자수입인지 조건부, 구성: 없음).
+const BTN_MTRX_DEFAULT: { rprs: MtrxBtnKey[]; cnst: MtrxBtnKey[] } = {
+  rprs: ['grnte', 'stmtxPrch', 'stmtx'],
+  cnst: [],
+}
+
 export function CmdtyElctrCtrtPrgrsDtlPage() {
   const { id = '' } = useParams()
+  const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기 바텀시트(155209)
@@ -78,32 +112,58 @@ export function CmdtyElctrCtrtPrgrsDtlPage() {
     setShortcutOpen(false)
     open(true)
   }
-  // 바로가기(이벤트) 목록 — 진행단계별 버튼 매트릭스(slide32)의 목업 단계(40-계약체결의뢰 대표업체) 구성.
-  // ⚠️ 단계·업체구분별 노출 분기(slide32 전체 매트릭스)는 백엔드 상태코드 확정 시 데이터 구동으로 확장.
+  // ── slide32 매트릭스 노출 판정 — 상태코드×업체구분 → 조건부 버튼(전자수입인지·낙찰단가) 필터 ──
+  const stcd = PRGRS_STCD_BY_NM[detail.ctrtPrgrsStcd] ?? detail.ctrtPrgrsStcd
+  const mtrxRow = BTN_MTRX[stcd] ?? BTN_MTRX_DEFAULT
+  const visibleBtns = new Set(mtrxRow[detail.rprsBzentyYn === 'N' ? 'cnst' : 'rprs'])
+  // 전자수입인지[구매/확인] — 인지세 납부대상이고 구매건수가 없을 때만(slide32 공통행 조건).
+  if (!(detail.stmtxPayTrgtYn === 'Y' && !detail.stmtxPrchCnt)) visibleBtns.delete('stmtxPrch')
+  // 낙찰단가처리 — (입찰방법: 총액제 or 리스입찰) AND 낙찰단가처리여부 Y.
+  // 40-계약체결의뢰는 업체제출서류 존재까지 요구(slide32 r14).
+  const untprcOk =
+    (detail.bidMthdCd.includes('총액') || detail.bidMthdCd.includes('리스')) &&
+    detail.scsbdUntprcPrcsYn === 'Y' &&
+    (stcd !== '40' || detail.sbmsnDocExistYn === 'Y')
+  if (!untprcOk) visibleBtns.delete('scsbdUntprc')
+  // M04 확정상세 겸용 보정 — 확정 상태는 계약명세서(P12 최종) 진입 필요(slide33 동일 화면).
+  if (detail.ctrtStatNm === '계약확정') visibleBtns.add('dtst')
+
+  // 바로가기(이벤트) 목록 — visibleBtns(slide32 매트릭스)로 노출 분기.
+  // 계약서류 제출/전송·계약체결[전자서명]은 매트릭스 전 상태 미노출(PC 전용)이라 목록에서 제거함.
   const shortcuts = [
-    { id: 'grnte', label: '보증서 확인', onClick: () => openFromSheet(setGrnteOpen) },
-    { id: 'stmtx', label: '인지세 확인', onClick: () => openFromSheet(setStmtxOpen) },
-    {
-      id: 'dtst',
-      label: '계약명세서',
-      // 계약확정(M04 겸용) → P12 물품최종계약명세서 · 진행 → P11 물품계약명세서(slide31 유형별 호출)
-      onClick: () =>
-        openFromSheet(detail.ctrtStatNm === '계약확정' ? setLastDtstOpen : setDtstOpen),
-    },
-    // 계약진행상태(P17) — 진행상태 클릭 이벤트(slide22 그리드-진행상태)의 모바일 진입점.
+    ...(visibleBtns.has('grnte')
+      ? [{ id: 'grnte', label: '보증서 확인', onClick: () => openFromSheet(setGrnteOpen) }]
+      : []),
+    ...(visibleBtns.has('stmtxPrch')
+      ? [{
+          id: 'stmtxPrch',
+          label: '전자수입인지 [구매/확인]',
+          // 추후: 전자수입인지 구매/확인 연계(미구현 — slide32 공통행)
+          onClick: () => console.log('[CT-01-M03] 전자수입인지 구매/확인(미구현)'),
+        }]
+      : []),
+    ...(visibleBtns.has('stmtx')
+      ? [{ id: 'stmtx', label: '인지세 확인', onClick: () => openFromSheet(setStmtxOpen) }]
+      : []),
+    ...(visibleBtns.has('dtst')
+      ? [{
+          id: 'dtst',
+          label: '계약명세서',
+          // 계약확정(M04 겸용) → P12 물품최종계약명세서 · 진행 → P11 물품계약명세서(slide31 유형별 호출)
+          onClick: () =>
+            openFromSheet(detail.ctrtStatNm === '계약확정' ? setLastDtstOpen : setDtstOpen),
+        }]
+      : []),
+    ...(visibleBtns.has('scsbdUntprc')
+      ? [{
+          id: 'scsbdUntprc',
+          label: '낙찰단가 처리 (낙찰단가조회)',
+          // 추후: 낙찰단가조회 화면 연계(미구현 — slide32 매트릭스)
+          onClick: () => console.log('[CT-01-M03] 낙찰단가 처리(미구현)'),
+        }]
+      : []),
+    // 계약진행상태(P17) — 매트릭스 밖(slide22 그리드-진행상태 이벤트)이라 항상 노출.
     { id: 'prgrsStts', label: '계약진행상태', onClick: () => openFromSheet(setPrgrsSttsOpen) },
-    {
-      id: 'docSbmsn',
-      label: '계약서류 제출/전송',
-      // 추후: 계약서류 제출 화면 연계(미구현 — slide32 매트릭스)
-      onClick: () => console.log('[CT-01-M03] 계약서류 제출/전송(미구현)'),
-    },
-    {
-      id: 'elsgn',
-      label: '계약체결 [전자서명]',
-      // 추후: 전자서명 프로세스 연계(미구현 — slide32 매트릭스)
-      onClick: () => console.log('[CT-01-M03] 계약체결 전자서명(미구현)'),
-    },
   ]
 
   return (
@@ -127,8 +187,11 @@ export function CmdtyElctrCtrtPrgrsDtlPage() {
           subtitle={`판단번호 ${detail.prcmNo} / 계약번호 ${detail.ctrtNo} - ${detail.ctrtCycl}`}
           title={detail.ctrtNm}
           actions={
-            // 출력(print) — 출력이 있는 계약: 계약서표지 출력물(R37~R46, slide23) OZ 리포트 연계
-            <SummaryUtilButton icon="Print" label="출력" onClick={() => setOutputModalOpen(true)} />
+            // 출력(print) — 계약서표지 출력물(R37~R46, slide23) OZ 리포트 연계.
+            // 노출 = slide32 매트릭스 계약서표지 열(40-구성·50·80·81)만.
+            visibleBtns.has('ctrdocCvr') ? (
+              <SummaryUtilButton icon="Print" label="출력" onClick={() => setOutputModalOpen(true)} />
+            ) : undefined
           }
           rows={[
             { label: '계약일자', value: detail.ctrtYmd },
@@ -150,7 +213,7 @@ export function CmdtyElctrCtrtPrgrsDtlPage() {
                 orientation="horizontal"
                 items={steps}
                 sheetItems={buildProgressSheet('계약', (substep, prgrsStg) =>
-                  console.log('[CT-01-M03] 연관 진행 이동(미배선)', substep, prgrsStg),
+                  navigate('/anl-prgrs', { state: { substep, prgrsStg } }),
                 )}
                 className="bg-transparent"
               />

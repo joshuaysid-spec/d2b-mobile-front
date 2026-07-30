@@ -97,6 +97,17 @@ export interface CmdtyElctrCtrtPrgrsDtl {
   pvctRncd?: string
   /** 계약진행상태 (상위코드: UA22) — 진행단계별 바로가기 버튼 매트릭스(slide32) 구동. */
   ctrtPrgrsStcd: string
+  // ── slide32 버튼 매트릭스 분기용 임시 키(설계서 항목표 미정의 — BD 상태필드 선례. 백엔드 확정 시 교체) ──
+  /** 대표업체 여부(임시) — slide32 구분(대표업체/구성업체). 'N'=구성업체, 생략=대표업체. */
+  rprsBzentyYn?: 'Y' | 'N'
+  /** 인지세 납부대상 여부(임시) — 전자수입인지[구매/확인] 노출 조건(slide32 공통행). */
+  stmtxPayTrgtYn?: 'Y' | 'N'
+  /** 전자수입인지 구매건수(임시) — 0(없음)일 때만 구매 버튼 노출(slide32 공통행). */
+  stmtxPrchCnt?: number
+  /** 낙찰단가처리여부(임시) — 낙찰단가처리 버튼 조건(slide32: 총액제/리스 AND 처리여부 Y). */
+  scsbdUntprcPrcsYn?: 'Y' | 'N'
+  /** 업체제출서류 존재 여부(임시) — 40-계약체결의뢰 낙찰단가처리 추가 조건(slide32). */
+  sbmsnDocExistYn?: 'Y' | 'N'
   /** 물가변동계약금액조정방법 (상위코드: PARA). */
   pfrAplcnMthdCd?: string
   /** 계약일자 (yyyy-mm-dd). */

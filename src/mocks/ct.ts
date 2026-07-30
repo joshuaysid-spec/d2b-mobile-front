@@ -239,6 +239,12 @@ const CTRT_PRGRS_DTL: CmdtyElctrCtrtPrgrsDtl = {
   ctrtMthdCd: '제한경쟁',
   pvctRncd: undefined, // 수의계약 아님 → '-' 표시
   ctrtPrgrsStcd: '체결의뢰', // 40-계약체결의뢰(slide32) — 바로가기 버튼 매트릭스 구동
+  // slide32 매트릭스 분기 임시 키 — 40-대표업체 케이스(보증서·인지세·낙찰단가 조건부).
+  rprsBzentyYn: 'Y',
+  stmtxPayTrgtYn: 'N', // 납부대상 아님 → 전자수입인지[구매/확인] 미노출
+  stmtxPrchCnt: 0,
+  scsbdUntprcPrcsYn: 'Y',
+  sbmsnDocExistYn: 'Y',
   pfrAplcnMthdCd: '국계령 제XX조 ...',
   ctrtYmd: '2026-02-10',
   ctrtBgngYmd: '2026-01-01',
