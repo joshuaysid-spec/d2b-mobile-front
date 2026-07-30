@@ -27,7 +27,7 @@ export function ErrorPage() {
     : '네트워크 연결을 확인하시거나 다시 시도해주세요.'
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-[480px] flex-col items-center justify-center gap-krds-8 bg-background p-krds-10 text-center">
+    <main className="flex min-h-screen w-full flex-col items-center justify-center gap-krds-8 bg-background p-krds-10 text-center">
       <Icon
         name={is404 ? 'Search' : 'Warning'}
         size={40}

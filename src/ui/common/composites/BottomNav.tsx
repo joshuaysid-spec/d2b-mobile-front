@@ -169,7 +169,8 @@ function BottomNav({
   return (
     <nav
       className={cn(
-        'fixed bottom-0 left-1/2 z-10 flex w-full max-w-[480px] -translate-x-1/2',
+        // 폭 정책(260729 확정): 셸(AppLayout)과 동일하게 캡 없이 뷰포트 전체 폭.
+        'fixed inset-x-0 bottom-0 z-10 flex w-full',
         'border-t border-krds-border-divider bg-white pb-[env(safe-area-inset-bottom)]',
         'shadow-[0px_-5px_10px_rgba(23,43,77,0.1)]',
       )}

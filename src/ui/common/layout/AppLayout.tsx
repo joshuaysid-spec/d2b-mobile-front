@@ -109,7 +109,8 @@ export function AppLayout() {
   }, [location.key, navType, scrollReset])
   return (
     <BottomNavVisibleContext.Provider value={showBottomNav}>
-    <div className="mx-auto flex h-dvh w-full max-w-[480px] flex-col overflow-hidden bg-background">
+    {/* 폭 정책(260729 확정): max-width 캡 없이 뷰포트 가로를 꽉 채운다(폴드 펼침·태블릿 포함). */}
+    <div className="flex h-dvh w-full flex-col overflow-hidden bg-background">
       {/* 2단 헤더(2026-07-06 카톡 기획 이미지): 메인바(로고+로그인/로그아웃+알림+전체메뉴)는 모든 화면
           최상단 고정, sub 화면은 그 아래 타이틀바(뒤로+타이틀) 추가. handle.header.util 은 deprecated(무시). */}
       <Header
