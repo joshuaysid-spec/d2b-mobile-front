@@ -50,7 +50,6 @@ const DATE_PRESETS: DateRangePresetDef[] = [
   { label: '최근 1개월', months: 1 },
   { label: '최근 3개월', months: 3 },
   { label: '최근 6개월', months: 6 },
-  { label: '기간검색', custom: true },
 ]
 // 처리상태(prgrsSttsNm) — 전체('A')/접수('U')/반송('R')/승인('F'). 개별 값은 카드 표시명과 일치시켜 목업 필터에 그대로 사용.
 //   '전체'는 Radix Select.Item 이 빈 문자열 value 를 금지하므로 sentinel 'ALL'(=코드 'A')로 둔다(빈 값 대신 무필터 표식).

@@ -16,12 +16,11 @@ import type { NoticeListItem, NoticeSearchFilter } from '@/types/cm'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
-// 빠른설정 프리셋 — 설계서(최근 1/3/6개월) + 기간검색(직접 지정).
+// 빠른설정 프리셋 — 설계서(최근 1/3/6개월).
 const NOTICE_DATE_PRESETS: DateRangePresetDef[] = [
   { label: '1개월', months: 1 },
   { label: '3개월', months: 3 },
   { label: '6개월', months: 6 },
-  { label: '기간검색', custom: true },
 ]
 
 // 상태(emrg) 옵션 — 긴급/일반(설계서 데이터영역 emrg). 'all'=전체(기본).

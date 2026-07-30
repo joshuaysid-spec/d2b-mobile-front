@@ -1,7 +1,9 @@
 // Figma m_date_range_input 1:1 — 기간(시작~종료) 입력 컴포지트.
 // 페이지 입장: <DateRangeInput value={{start, end}} onChange={setRange} /> 한 줄.
-// 내부: Label + 프리셋 칩(1주일/1개월/3개월/기간검색) + DateRangeInputBox(트리거) + helper + BottomSheet { 시트 내 DateRangeInputBox(편집) + Calendar(range) + 확인 }.
+// 내부: Label + 프리셋 칩(1주일/1개월/3개월 등) + DateRangeInputBox(트리거) + helper + BottomSheet { 시트 내 DateRangeInputBox(편집) + Calendar(range) + 확인 }.
 // 동기화 정책: 시트 내부는 tempRange 격리 → 확인 클릭 시에만 onChange.
+// 칩 활성 = 현재 value 가 프리셋 범위(오늘 기준)와 정확히 일치할 때만(값 파생, 저장 상태 없음) — 260729 확정.
+//   직접 선택한 기간이 프리셋과 같으면 그 칩이 켜지고, 다르면 아무 칩도 안 켜진다. '기간검색' custom 칩은 폐기(트리거 박스가 직접 선택 담당).
 import * as React from 'react'
 import dayjs from 'dayjs'
 
@@ -20,8 +22,7 @@ export interface DateRange {
 
 export type DateRangePreset =
   | { label: string; days: number } // end = today, start = today - days
-  | { label: string; months: number } // end = today, start = today - months
-  | { label: string; custom: true } // 사용자가 직접 캘린더에서 선택
+  | { label: string; months: number } // end = today, start = today - months (달력 기준 — 전월 동일 일자, 없으면 말일 클램프)
 
 export interface DateRangeInputProps {
   value?: DateRange
@@ -31,7 +32,7 @@ export interface DateRangeInputProps {
   helperText?: React.ReactNode
   error?: boolean
   disabled?: boolean
-  /** 프리셋 칩 — 기본: 1주일 / 1개월 / 3개월 / 기간검색 */
+  /** 프리셋 칩 — 기본: 1주일 / 1개월 / 3개월 */
   presets?: DateRangePreset[]
   /** 프리셋 칩(빠른 선택 버튼) UI 표시 여부. 기본 true. false 면 트리거 박스만 노출. */
   showPresets?: boolean
@@ -53,7 +54,6 @@ const DEFAULT_PRESETS: DateRangePreset[] = [
   { label: '1주일', days: 7 },
   { label: '1개월', months: 1 },
   { label: '3개월', months: 3 },
-  { label: '기간검색', custom: true },
 ]
 
 function isValidDate(s: string): boolean {
@@ -62,7 +62,6 @@ function isValidDate(s: string): boolean {
 }
 
 function computePresetRange(preset: DateRangePreset): DateRange {
-  if ('custom' in preset) return { start: '', end: '' }
   const today = dayjs()
   if ('days' in preset) {
     return {
@@ -101,13 +100,20 @@ const DateRangeInput = ({
   const [open, setOpen] = React.useState(false)
   const [temp, setTemp] = React.useState<DateRange>(value ?? EMPTY_RANGE)
   const [tempError, setTempError] = React.useState(false)
-  const [activePresetIdx, setActivePresetIdx] = React.useState<number | null>(null)
+
+  // 활성 칩 — 현재 value 가 프리셋 범위(오늘 기준)와 정확히 일치하는 칩만 켜진다(값 파생).
+  const activeLabel =
+    value?.start && value?.end
+      ? (presets.find((p) => {
+          const r = computePresetRange(p)
+          return r.start === value.start && r.end === value.end
+        })?.label ?? '')
+      : ''
 
   React.useEffect(() => {
     if (open) {
       setTemp(value ?? EMPTY_RANGE)
       setTempError(false)
-      // activePresetIdx 는 여기서 초기화하지 않는다 — 시트 취소 시 이전 선택 칩이 풀리지 않도록.
     }
   }, [open, value])
 
@@ -118,31 +124,22 @@ const DateRangeInput = ({
 
   const handleSheetInputChange = (next: DateRange) => {
     setTemp(next)
-    setActivePresetIdx(null)
     setTempError(false)
   }
 
   const handleClearSide = (side: 'start' | 'end') => {
     setTemp((cur) => ({ ...cur, [side]: '' }))
-    setActivePresetIdx(null)
   }
 
   // 페이지 트리거 옆 프리셋 칩 클릭 — 시트 안 열고 즉시 onChange (UX 가속용)
   const handlePagePresetClick = (idx: number) => {
     if (disabled) return
-    const preset = presets[idx]
-    if ('custom' in preset) {
-      openSheet()
-      return
-    }
-    onChange?.(computePresetRange(preset))
-    setActivePresetIdx(idx)
+    onChange?.(computePresetRange(presets[idx]))
   }
 
   const handleCalendarChange = (v: string | DateRangeValue) => {
     if (typeof v === 'string') return
     setTemp({ start: v.start ?? '', end: v.end ?? '' })
-    setActivePresetIdx(null)
     setTempError(false)
   }
 
@@ -155,9 +152,6 @@ const DateRangeInput = ({
       return
     }
     onChange?.(temp)
-    // 시트에서 직접 기간을 고른 것 = 'custom'(기간검색) 선택 → 해당 프리셋 칩 활성화.
-    const customIdx = presets.findIndex((p) => 'custom' in p)
-    setActivePresetIdx(customIdx >= 0 ? customIdx : null)
     setOpen(false)
   }
 
@@ -174,7 +168,7 @@ const DateRangeInput = ({
       {showPresets && (
         <RadioButtonGroup
           direction="horizontal"
-          value={activePresetIdx != null ? presets[activePresetIdx].label : ''}
+          value={activeLabel}
           onValueChange={(label) => {
             const idx = presets.findIndex((p) => p.label === label)
             if (idx >= 0) handlePagePresetClick(idx)

@@ -38,12 +38,11 @@ const SEARCH_TARGETS = [
 
 // ── 상세필터(개찰목록 MUI-BD-08-P01(구 M02 — v1.83 재편)) schema — 입찰공고 필터(MUI-BD-01-M02)와 동일 ──
 // BidPbancIntgListPage 의 BID_FILTER_SCHEMA 와 항목·라벨·placeholder·옵션 일치. 개찰 차이는 일자 토글뿐.
-// 일자설정 빠른칩 — 설계서 레이아웃(slide145): 최근 1/3/6개월 + 기간검색(직접 입력).
+// 일자설정 빠른칩 — 설계서 레이아웃(slide145): 최근 1/3/6개월.
 const DATE_PRESETS: DateRangePresetDef[] = [
   { label: '1개월', months: 1 },
   { label: '3개월', months: 3 },
   { label: '6개월', months: 6 },
-  { label: '기간검색', custom: true },
 ]
 // 구분설정 드롭다운 옵션 — 입찰공고 필터와 동일. 코드값은 추후 백엔드 공통코드 매핑.
 const ALL = { value: 'all', label: '전체' }

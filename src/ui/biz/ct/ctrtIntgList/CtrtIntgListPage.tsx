@@ -52,13 +52,12 @@ const CTRT_MTHD_OPTIONS = [
   { value: 'reverseAuction', label: '역경매' },
 ]
 
-// 일자 프리셋 칩 — 최근 1/3/6개월 + 기간검색(직접 입력). 당일 포함 과거(미래 불가, 최대 1년) 는
+// 일자 프리셋 칩 — 최근 1/3/6개월. 당일 포함 과거(미래 불가, 최대 1년) 는
 // DateRangeInput 공통 동작(slide19 3-1~3-3).
 const DATE_PRESETS = [
   { label: '1개월', months: 1 },
   { label: '3개월', months: 3 },
   { label: '6개월', months: 6 },
-  { label: '기간검색', custom: true as const },
 ]
 
 const CT_SEARCH_SCHEMA: SearchFilterSchema = {

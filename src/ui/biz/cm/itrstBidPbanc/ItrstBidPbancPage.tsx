@@ -31,7 +31,6 @@ const DATE_PRESETS: DateRangePresetDef[] = [
   { label: '1개월', months: 1 },
   { label: '3개월', months: 3 },
   { label: '6개월', months: 6 },
-  { label: '기간검색', custom: true },
 ]
 const SEARCH_SCHEMA: SearchFilterSchema = {
   title: '검색필터',

@@ -55,6 +55,27 @@ export interface SearchFilterProps {
   onSelectionClick?: (key: string, current: string, commit: (value: string) => void) => void
 }
 
+// ── 검색 버튼 활성화 판정(260729 확정): draft 가 기본값(defaultValue)과 다를 때만 검색 가능. ──
+// 빈값 동치(undefined·''·빈 배열·모든 값이 빈 객체)로 비교해, 미입력 필드가 ''/undefined 로
+// 표기만 다른 경우는 "같다"로 본다(예: 입력했다 지운 텍스트 필드).
+const isEmptyLike = (v: unknown): boolean =>
+  v == null ||
+  v === '' ||
+  (Array.isArray(v) && v.length === 0) ||
+  (typeof v === 'object' && Object.values(v as object).every(isEmptyLike))
+
+const isSameValue = (a: unknown, b: unknown): boolean => {
+  if (isEmptyLike(a) || isEmptyLike(b)) return isEmptyLike(a) && isEmptyLike(b)
+  if (Object.is(a, b)) return true
+  if (Array.isArray(a) && Array.isArray(b))
+    return a.length === b.length && a.every((x, i) => isSameValue(x, b[i]))
+  if (typeof a === 'object' && typeof b === 'object' && a !== null && b !== null)
+    return [...new Set([...Object.keys(a), ...Object.keys(b)])].every((k) =>
+      isSameValue((a as Record<string, unknown>)[k], (b as Record<string, unknown>)[k]),
+    )
+  return false
+}
+
 const SearchFilter = ({
   open,
   onOpenChange,
@@ -148,6 +169,15 @@ const SearchFilter = ({
     onOpenChange(false)
   }
 
+  // 검색 버튼 — draft 가 기본값 그대로면 비활성(바꾼 게 있어야 검색 가능).
+  const isDefaultDraft = React.useMemo(
+    () =>
+      [...new Set([...Object.keys(draft), ...Object.keys(defaultValue)])].every((k) =>
+        isSameValue(draft[k], defaultValue[k]),
+      ),
+    [draft, defaultValue],
+  )
+
   // 초기 열림 섹션(defaultOpen !== false) → Radix multiple defaultValue
   const openKeys = resolved.sections.filter((s) => s.defaultOpen !== false).map((s) => s.key)
   // 섹션 구성이 바뀌면(검색유형 전환) Accordion 을 remount 해 새 섹션의 기본 열림 상태를 재적용한다.
@@ -170,7 +200,7 @@ const SearchFilter = ({
             layout="asymmetric"
             items={[
               { label: '닫기', variant: 'secondary', onClick: () => onOpenChange(false) },
-              { label: '검색', variant: 'primary', onClick: handleSearch },
+              { label: '검색', variant: 'primary', onClick: handleSearch, disabled: isDefaultDraft },
             ]}
           />
         }

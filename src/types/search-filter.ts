@@ -80,12 +80,11 @@ export interface CheckboxFieldDef extends BaseField {
 export type DateRangePresetDef =
   | { label: string; days: number }
   | { label: string; months: number }
-  | { label: string; custom: true }
 export interface DateRangeFieldDef extends BaseField {
   type: 'dateRange' // 기간(DateRangeInput) — value: DateRangeValue
   /** 빠른선택 프리셋 칩(1주일/1개월/…) 표시 여부. 기본 true. */
   showPresets?: boolean
-  /** 프리셋 칩 목록 커스텀. 미지정 시 DateRangeInput 기본(1주일/1개월/3개월/기간검색). */
+  /** 프리셋 칩 목록 커스텀. 미지정 시 DateRangeInput 기본(1주일/1개월/3개월). */
   presets?: DateRangePresetDef[]
 }
 export interface YearFieldDef extends BaseField {

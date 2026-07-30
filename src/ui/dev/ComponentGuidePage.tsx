@@ -2470,7 +2470,7 @@ export function ComponentGuidePage() {
           <Section
             id="daterangeinput"
             title="DateRangeInput"
-            desc="Figma m_date_range_input 1:1 — 기간. 프리셋 칩(1주일/1개월/3개월/기간검색) + 시작~종료 트리거 + 시트(범위 캘린더 + 확인)."
+            desc="Figma m_date_range_input 1:1 — 기간. 프리셋 칩(1주일/1개월/3개월) + 시작~종료 트리거 + 시트(범위 캘린더 + 확인). 칩 활성 = 현재 값이 프리셋 범위와 일치할 때(값 파생)."
           >
             <Row label="기본">
               <Specimen caption="레이블 + value + helper">

@@ -36,7 +36,7 @@ const SEARCH_TARGETS = [
 
 // ── 상세필터(MUI-BD-01-M02) schema — 공통 SearchFilter 셸이 받아 렌더. 설계서 slide14(와이어프레임)·
 //    slide19(검색조건 항목설명 dml_bidPbancSrchCnd)·slide21(On-Load 기본값) 기준. ──
-// 일자설정 빠른칩 — 설계서 slide14: 최근 1개월/최근 3개월/최근 6개월 (직접 입력·데이트피커는 DateRangeInput 자체 제공).
+// 일자설정 빠른칩 — 설계서 slide14 최근 1/3/6개월.
 const DATE_PRESETS: DateRangePresetDef[] = [
   { label: '최근 1개월', months: 1 },
   { label: '최근 3개월', months: 3 },

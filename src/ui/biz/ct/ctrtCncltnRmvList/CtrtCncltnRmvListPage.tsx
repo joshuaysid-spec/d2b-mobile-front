@@ -37,12 +37,11 @@ const CNCLTN_RMV_SECD_OPTIONS = [
   { value: 'rmv', label: '해제' },
 ]
 
-// 일자 프리셋 칩 — 최근 1/3/6개월 + 기간검색(직접 입력, slide105).
+// 일자 프리셋 칩 — 최근 1/3/6개월.
 const DATE_PRESETS = [
   { label: '1개월', months: 1 },
   { label: '3개월', months: 3 },
   { label: '6개월', months: 6 },
-  { label: '기간검색', custom: true as const },
 ]
 
 // MUI-CT-03-P07 검색필터 schema — 검색조건 항목명(slide106 1.1) 그대로. 업무구분 국외 제외(slide105).

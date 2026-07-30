@@ -79,7 +79,6 @@ const DATE_PRESETS: DateRangePresetDef[] = [
   { label: '최근 1개월', months: 1 },
   { label: '최근 3개월', months: 3 },
   { label: '최근 6개월', months: 6 },
-  { label: '기간검색', custom: true },
 ]
 const ITEM_FILTER_SCHEMA: SearchFilterSchema = {
   title: '검색필터',

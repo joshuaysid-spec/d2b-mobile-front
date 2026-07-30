@@ -18,7 +18,6 @@ const RPSTR_DATE_PRESETS: DateRangePresetDef[] = [
   { label: '1개월', months: 1 },
   { label: '3개월', months: 3 },
   { label: '6개월', months: 6 },
-  { label: '기간검색', custom: true },
 ]
 
 // 검색필터 schema — 기간설정(작성일자, 필수) + 검색어(제목 rpstrTtl/내용 contsCn/작성자 wrtrNm).

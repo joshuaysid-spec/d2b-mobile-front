@@ -73,12 +73,11 @@ function taskSection(type: OpSrchType): SearchFilterSection {
   }
 }
 
-// 일자 설정 프리셋 칩 — 1개월/3개월/6개월/기간검색 (설계서 일자설정). 기본 프리셋(1주일~) 대신 사용.
+// 일자 설정 프리셋 칩 — 1개월/3개월/6개월 (설계서 일자설정). 기본 프리셋(1주일~) 대신 사용.
 const DATE_PRESETS: DateRangePresetDef[] = [
   { label: '1개월', months: 1 },
   { label: '3개월', months: 3 },
   { label: '6개월', months: 6 },
-  { label: '기간검색', custom: true },
 ]
 
 // 날짜 섹션 — 유형별로 완전히 다름.
