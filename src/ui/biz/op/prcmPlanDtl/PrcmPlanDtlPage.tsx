@@ -9,8 +9,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { useOpPlanDetail } from '@/queries/op'
-import { opService } from '@/services/op'
+import { useApplyNotify, useOpPlanDetail } from '@/queries/op'
 import type { OpPlanItem } from '@/types/op'
 import type { ApiError } from '@/types/api'
 
@@ -100,10 +99,11 @@ export function PrcmPlanDtlPage() {
   })
   // 알림신청 실패 안내(AlertModal) — null 이면 닫힘.
   const [notifyError, setNotifyError] = useState<string | null>(null)
+  const applyNotify = useApplyNotify()
   const handleNotifyApply = notiForm.handleSubmit(
     async (data) => {
       try {
-        await opService.applyNotify({ id, phone: data.phone, agree: data.agree === 'yes' })
+        await applyNotify.mutateAsync({ id, phone: data.phone, agree: data.agree === 'yes' })
         setNotifyOpen(false)
         notiForm.reset()
       } catch (err) {

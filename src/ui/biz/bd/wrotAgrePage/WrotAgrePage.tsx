@@ -6,7 +6,7 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { bdService } from '@/services/bd'
+import { useSaveWrot } from '@/queries/bd'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { AgreementList } from '@/ui/common/composites/AgreementList'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
@@ -75,6 +75,7 @@ export function WrotAgrePage() {
   const [selected, setSelected] = useState<WrotData | null>(null) // 현재 열람 중인 서약서
   const [sheetOpen, setSheetOpen] = useState(false) // 서약서 바텀시트
   const [saveError, setSaveError] = useState<string | null>(null) // 서약서 저장 실패 안내(null=닫힘)
+  const saveWrot = useSaveWrot()
 
   const toggle = (id: string, on: boolean) =>
     setChecked((prev) => (on ? [...new Set([...prev, id])] : prev.filter((v) => v !== id)))
@@ -88,14 +89,14 @@ export function WrotAgrePage() {
     setSheetOpen(true)
   }
 
-  // 저장 후 닫기 → 서비스 직접 await, 성공 시 해당 서약서를 동의 완료 처리. 실패 시 AlertModal 안내.
-  const saveWrot = async () => {
+  // 저장 후 닫기 → mutation 훅 await, 성공 시 해당 서약서를 동의 완료 처리. 실패 시 AlertModal 안내.
+  const handleSaveWrot = async () => {
     if (!selected) {
       setSheetOpen(false)
       return
     }
     try {
-      await bdService.saveWrot(selected.id)
+      await saveWrot.mutateAsync(selected.id)
       setChecked((prev) => [...new Set([...prev, selected.id])])
       setSheetOpen(false)
     } catch (err) {
@@ -183,7 +184,7 @@ export function WrotAgrePage() {
             layout="asymmetric"
             items={[
               { label: '취소', variant: 'secondary', onClick: () => setSheetOpen(false) },
-              { label: '저장 후 닫기', variant: 'primary', onClick: saveWrot },
+              { label: '저장 후 닫기', variant: 'primary', onClick: handleSaveWrot },
             ]}
           />
         }

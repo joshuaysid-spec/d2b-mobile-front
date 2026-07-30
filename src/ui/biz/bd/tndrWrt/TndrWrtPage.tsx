@@ -8,7 +8,7 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { bdService } from '@/services/bd'
+import { useSaveTndr } from '@/queries/bd'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
@@ -68,6 +68,7 @@ export function TndrWrtPage() {
   ]
   const [tab, setTab] = useState('일반정보')
   const [submitError, setSubmitError] = useState<string | null>(null) // 입찰서 저장 실패 안내(null=닫힘)
+  const saveTndr = useSaveTndr()
 
   // 탭 = 하위 스텝. 다음/이전으로 탭 이동, 마지막 탭(약관동의)의 [신청] = 전자서명(M21) → 신청완료(M08).
   const tabOrder = tabs.map((t) => t.value)
@@ -85,7 +86,7 @@ export function TndrWrtPage() {
     }
     // 신청(설계서 slide131 제출 클릭) — 입찰서 저장 후 전자서명(M21). 실패 시 AlertModal 안내.
     try {
-      await bdService.saveTndr({ pbancNo: detail.pbancNo })
+      await saveTndr.mutateAsync({ pbancNo: detail.pbancNo })
       navigate(`/bd/prgrs/${detail.rNum}/elsgn`, { state: { detail, aplyType: 'tndr' } })
     } catch (err) {
       setSubmitError(

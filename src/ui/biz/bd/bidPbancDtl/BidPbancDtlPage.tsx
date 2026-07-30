@@ -7,8 +7,7 @@
 import { useRef, useState } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 
-import { useBidPbancDetail } from '@/queries/bd'
-import { bdService } from '@/services/bd'
+import { useBidPbancDetail, useToggleFavorite } from '@/queries/bd'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
@@ -101,9 +100,10 @@ export function BidPbancDtlPage() {
   const { id = '' } = useParams()
   const stateItem = useLocation().state as BidPbancItem | null
   const { data: detail } = useBidPbancDetail(id, stateItem ?? undefined)
+  const toggleFavorite = useToggleFavorite()
 
   // 즐겨찾기(관심공고) 토글 — 로그인 필요. 등록/제외에 따라 아이콘(라인↔채움) + 토스트(P13).
-  // 낙관적 갱신(즉시 반영) 후 서비스 직접 await, 실패 시 이전 상태로 복원.
+  // 낙관적 갱신(즉시 반영) 후 mutation 훅 await, 실패 시 이전 상태로 복원.
   const handleToggleFavorite = async () => {
     if (!isLoggedIn) {
       setLoginGuideOpen(true)
@@ -116,7 +116,7 @@ export function BidPbancDtlPage() {
       message: next ? '관심공고에 등록 되었습니다.' : '관심공고에서 제외 되었습니다.',
     })
     try {
-      await bdService.toggleFavorite(id, next)
+      await toggleFavorite.mutateAsync({ id, favorite: next })
     } catch {
       setFavorite(!next) // 실패 → 낙관적 갱신 롤백
     }

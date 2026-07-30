@@ -12,14 +12,14 @@
 //     - 중복체크: 사용가능 "사용이 가능합니다." / 중복 "이미 사용중인 계정입니다." / 미입력 "통합 계정 아이디를 입력해주세요."
 //     - 도움말 + 기존 사용자 아이디 목록(업체에서 등록·생성한 기존 아이디) 표시.
 //
-// 데이터 연결: 본인인증 후 대상조회·중복확인·등록은 authService 실호출(USE_MOCK 분기).
+// 데이터 연결: 본인인증 후 대상조회·중복확인·등록은 queries/auth mutation 훅 실호출(USE_MOCK 분기).
 //   성명·기존 아이디 목록은 getIntgAcntTarget() 결과(목업 mocks/auth). 직접 URL 진입 시 성명은 목업 폴백.
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { authService } from '@/services/auth'
+import { useCheckIntgAcntId, useIntgAcntTarget, useRegisterIntgAcnt } from '@/queries/auth'
 import { Button } from '@/ui/common/base/Button'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
@@ -60,6 +60,9 @@ export function NewIdPwReg() {
   const [target, setTarget] = useState<IntgAcntTarget | null>(null)
   // 통합계정 아이디 중복체크 결과.
   const [idCheck, setIdCheck] = useState<IdCheckState>('idle')
+  const intgAcntTarget = useIntgAcntTarget()
+  const checkIntgAcntId = useCheckIntgAcntId()
+  const registerIntgAcnt = useRegisterIntgAcnt()
 
   const {
     control,
@@ -86,7 +89,7 @@ export function NewIdPwReg() {
     if (!ok) return
     console.log('[newIdPwReg] 본인인증(Nice)', { userRrno: getValues('userRrno') })
     // 추후: Nice 본인인증 솔루션 성공 판정(CI 획득). 실패 시 "본인인증에 실패했습니다." 토스트.
-    const t = await authService.getIntgAcntTarget()
+    const t = await intgAcntTarget.mutateAsync()
     setTarget(t)
     setVerified(true)
   }
@@ -98,13 +101,13 @@ export function NewIdPwReg() {
       setIdCheck('idle')
       return
     }
-    const { available } = await authService.checkIntgAcntId(getValues('userId'))
+    const { available } = await checkIntgAcntId.mutateAsync(getValues('userId'))
     setIdCheck(available ? 'available' : 'duplicate')
   }
 
   // [통합 아이디 등록하기] — 전체 검증 통과 시 통합계정 생성 → 등록완료(M23) 이동.
   const onSubmit = async (data: NewIdPwRegForm) => {
-    await authService.registerIntgAcnt({
+    await registerIntgAcnt.mutateAsync({
       userRrno: data.userRrno,
       userId: data.userId,
       userEnpswd: data.userEnpswd,

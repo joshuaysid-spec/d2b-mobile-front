@@ -13,7 +13,7 @@
 //     원 톤은 text-krds-text-primary 로 근사(M15 완료 화면과 동일).
 import { useNavigate } from 'react-router-dom'
 
-import { authService } from '@/services/auth'
+import { useBiometricLogin } from '@/queries/auth'
 import { useAuthStore } from '@/stores/authStore'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
@@ -23,11 +23,12 @@ export function BioInfoCertRsltPage() {
   const navigate = useNavigate()
   const setAccessToken = useAuthStore((s) => s.setAccessToken)
   const setUser = useAuthStore((s) => s.setUser)
+  const biometricLogin = useBiometricLogin()
 
   // [생체인증 로그인] — 디바이스 생체인증 로그인 → 토큰/유저 저장(store) 후 메인 홈 이동.
   const handleBioLogin = async () => {
     // 추후: 디바이스 생체인증(하이브리드 브릿지) 성공 판정 후 세션 확정. 실패 시 이전 화면 복귀+토스트.
-    const result: LoginResult = await authService.biometricLogin()
+    const result: LoginResult = await biometricLogin.mutateAsync()
     setAccessToken(result.accessToken)
     setUser(result.user)
     navigate('/')

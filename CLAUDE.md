@@ -430,10 +430,13 @@ import { Icon } from '@/ui/common/base/Icon'
 > `docs/closed-network-checklist.md` §4 (`.env` 2줄 + EP 맵 대조 + 잔여 페이지 배선).
 
 **핵심 규칙:**
-1. **새 페이지/배선 페이지는 `console.log` 스텁이 아니라 서비스를 실호출**한다 — 조회는 `src/queries/{도메인}.ts` 의 useQuery 훅(소비가 생길 때 추가, `{도메인}Keys` queryKey 중앙관리), 저장/제출은 핸들러에서 서비스 직접 `await` + try/catch(`ApiError.message` → `AlertModal`/`InputMessage`).
+1. **페이지는 서비스를 직접 import 하지 않는다 — 모든 API 호출은 `src/queries/{도메인}.ts` 훅으로만** (2026-07-30 확정. 구 "제출은 서비스 직접 await" 정책 폐기 — 전 페이지 전환 완료).
+   - 조회 = useQuery 훅(소비가 생길 때 추가, `{도메인}Keys` queryKey 중앙관리) · 저장/제출/이벤트성 조회 = **useMutation 훅**. 핸들러에서 `await xxx.mutateAsync(...)` + try/catch(`ApiError.message` → `AlertModal`/`InputMessage`) — mutateAsync 도 실패 시 throw 라 catch 패턴 동일. fire-and-forget 은 `mutate()`(unhandled rejection 방지).
+   - **제출 성공 시 영향받는 조회 캐시 무효화는 mutation 훅 `onSuccess` 에서 중앙 처리** — 전역 `staleTime: 60s` 라 수동 재조회가 안 되기 때문(목업 모드에선 안 드러나는 잠복 버그). prefix 무효화 키(예: `bdKeys.progressListAll`)는 `{도메인}Keys` 에 정의. 적용 예: `useSignElsgn`/`useSaveTndr` → 입찰진행목록 무효화.
+   - 순수 유틸(예: `validateFile`)은 서비스 파일에서 직접 import 해도 된다(API 호출이 아님).
 2. **엔드포인트는 서비스 파일 상단 `EP` 상수 맵에만** 둔다(추정 REST, JSDoc 에 화면 ID+소비 파일). 페이지에 URL 문자열 금지. 반입 후 EP 맵만 수정(메서드 본문 불변).
 3. **목업 데이터 위치**: 배선된 페이지의 목업은 `src/mocks/{도메인}.ts` (단일 소스, 페이지의 `MOCK_*` 상수를 이동). **미배선 페이지는 인라인 목업 유지** — 그 페이지를 배선할 때 이동한다. 서비스의 미배선 메서드 목업은 최소 대표값(1~3건).
-4. **실호출 타이핑**: 응답 인터셉터가 봉투를 벗기므로 `apiClient.get<T, T>(url, { params })` 처럼 axios 2번째 제네릭에 알맹이 타입 지정. 다운로드는 `get<Blob, Blob>(url, { responseType: 'blob' })`. `any` 금지.
+4. **실호출 타이핑 — 전 API POST 통일(2026-07-30 확정)**: 백엔드 규격상 조회/저장/삭제 전부 `apiClient.post<T, T>(url, body?)` 로 호출한다(get/put/delete 금지 — 구 GET 의 `{ params }` 는 POST body 로). 응답 인터셉터가 봉투를 벗기므로 axios 2번째 제네릭에 알맹이 타입 지정. 다운로드는 `post<Blob, Blob>(url, null, { responseType: 'blob' })`. `any` 금지.
 5. **인증**: 토큰 저장은 `authStore.setAccessToken`(localStorage 브리지 내장 — 직접 localStorage 만지지 말 것). 로그인 응답 매핑은 `services/auth.ts` 의 `LoginResult` 로 격리.
 
 **목록 → 상세 데이터 전달 (navigate state = placeholderData):**

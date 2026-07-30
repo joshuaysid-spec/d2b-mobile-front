@@ -10,8 +10,7 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
-import { useSbmsnAsctnList } from '@/queries/cm'
-import { prfmncPrdocService } from '@/services/cm'
+import { usePrfmncCancelSubmit, usePrfmncSubmit, useSbmsnAsctnList } from '@/queries/cm'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { Button } from '@/ui/common/base/Button'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
@@ -136,6 +135,8 @@ export function PrfmncPrdocDtlPage() {
 
   // On-Load(slide336 scwin.onpageload) — 시트가 열릴 때만 조회.
   const { data: sbmsnAsctnList } = useSbmsnAsctnList(detail.prfmncRcptNo, sbmsnOpen)
+  const prfmncSubmit = usePrfmncSubmit()
+  const prfmncCancelSubmit = usePrfmncCancelSubmit()
 
   // 조회 결과를 편집 가능한 로컬 상태로 반영(비고 rmrkCn 는 입력 대상).
   useEffect(() => {
@@ -157,14 +158,14 @@ export function PrfmncPrdocDtlPage() {
     try {
       if (hasSentSelected) {
         // 제출취소 — 비고(취소사유)와 함께 협회로 재전송
-        await prfmncPrdocService.cancelSubmit({
+        await prfmncCancelSubmit.mutateAsync({
           prfmncRcptNo: detail.prfmncRcptNo,
           items: sbmsnItems
             .filter((it) => sbmsnSelected.includes(it.sbmsnSttsNm))
             .map((it) => ({ sbmsnSttsNm: it.sbmsnSttsNm, rmrkCn: it.rmrkCn })),
         })
       } else {
-        await prfmncPrdocService.submit({
+        await prfmncSubmit.mutateAsync({
           prfmncRcptNo: detail.prfmncRcptNo,
           sbmsnSttsNms: sbmsnSelected,
         })

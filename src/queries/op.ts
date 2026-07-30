@@ -1,9 +1,9 @@
 // 조달(OP) 도메인 Query 훅 — frontend-architecture.md §7.2 (services 1:1).
-// 조회는 useQuery 훅, 저장/제출은 페이지 핸들러에서 서비스 직접 await(useMutation 미도입).
+// 조회는 useQuery 훅 · 저장/제출은 useMutation 훅(2026-07-30 확정 — 페이지의 서비스 직접 import 금지).
 // queryKey 는 opKeys 로 중앙 관리 — 무효화/프리페치 시 여기서만 참조.
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { opService } from '@/services/op'
-import type { OpListRequest, OpPlanDetail } from '@/types/op'
+import type { OpListRequest, OpNotifyRequest, OpPlanDetail } from '@/types/op'
 
 export const opKeys = {
   planList: (req: OpListRequest) => ['op', 'planList', req] as const,
@@ -49,4 +49,11 @@ export function useOpOpinions(id: string) {
     queryFn: () => opService.getOpinions(id),
     enabled: Boolean(id),
   })
+}
+
+// ── 제출/액션 mutation 훅 — 페이지는 서비스 직접 import 없이 이 훅만 사용. ──
+
+/** 조달계획 알림신청(MUI-OP-01 P05 NotiAply). */
+export function useApplyNotify() {
+  return useMutation({ mutationFn: (req: OpNotifyRequest) => opService.applyNotify(req) })
 }

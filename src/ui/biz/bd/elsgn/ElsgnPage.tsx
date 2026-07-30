@@ -10,8 +10,7 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { useElsgnCertList } from '@/queries/bd'
-import { bdService } from '@/services/bd'
+import { useElsgnCertList, useSignElsgn } from '@/queries/bd'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
@@ -65,6 +64,7 @@ export function ElsgnPage() {
   // 전자서명 인증서 목록 — 목업/실연동은 bdService.getElsgnCertList 의 USE_MOCK 분기가 전환.
   const { data: certData } = useElsgnCertList()
   const certs = certData ?? []
+  const signElsgn = useSignElsgn()
 
   // 시트 초기화 — 닫거나 다시 열 때 단계/선택/비밀번호 리셋.
   const resetSheet = () => {
@@ -99,7 +99,10 @@ export function ElsgnPage() {
   // 서명 완료 → 신청완료(MUI-BD-06-M08) 로 이동. 접수번호/일시는 signElsgn 응답값.
   const handleSign = async () => {
     try {
-      const receipt = await bdService.signElsgn(selectedCertId ?? '', detail.pbancNo)
+      const receipt = await signElsgn.mutateAsync({
+        certId: selectedCertId ?? '',
+        pbancNo: detail.pbancNo,
+      })
       setSheetOpen(false)
       navigate(`/bd/prgrs/${detail.rNum}/aply-cmptn`, {
         state: {

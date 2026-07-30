@@ -13,7 +13,8 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { CabinetLink, type CabinetLinkKind } from '@/ui/biz/bd/bidPrtcpAperWrt/CabinetLink'
-import { fileService, validateFile } from '@/services/file'
+import { useRemoveFile, useUploadFile } from '@/queries/file'
+import { validateFile } from '@/services/file'
 import { formatFileSize } from '@/utils/format'
 import type { UploadedFile } from '@/types/file'
 import type { BidPrgrsItem } from '@/types/bd'
@@ -39,6 +40,8 @@ export function BidPrtcpAperWrtPage_Stp6({ detail, files, onFilesChange }: Props
   const [addOpen, setAddOpen] = useState(false) // 파일첨부 방식 선택 바텀시트(P13)
   const [uploading, setUploading] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const uploadFile = useUploadFile()
+  const removeFile = useRemoveFile()
 
   // 방식 선택 — '직접 업로드'면 시트 닫고 파일 선택기 열기(사용자 제스처 내 호출).
   const handleSelectMethod = (kind: CabinetLinkKind) => {
@@ -67,8 +70,8 @@ export function BidPrtcpAperWrtPage_Stp6({ detail, files, onFilesChange }: Props
 
     setUploading(true)
     try {
-      // 추후 API: fileService.upload 가 실제 multipart 업로드 → 서버 GUID 반환
-      const uploaded = await Promise.all(valid.map((f) => fileService.upload(f)))
+      // 추후 API: 업로드 훅이 실제 multipart 업로드 → 서버 GUID 반환
+      const uploaded = await Promise.all(valid.map((f) => uploadFile.mutateAsync(f)))
       onFilesChange((prev) => [...prev, ...uploaded])
     } catch {
       alert('파일 업로드에 실패했습니다. 다시 시도해 주세요.')
@@ -77,10 +80,10 @@ export function BidPrtcpAperWrtPage_Stp6({ detail, files, onFilesChange }: Props
     }
   }
 
-  // 삭제(X) → 서비스 호출 + 목록 제거.
+  // 삭제(X) → 삭제 훅 호출 + 목록 제거.
   const handleRemove = (guid: string) => {
-    // 추후 API: fileService.remove 결과 확인 후 제거(목업은 낙관적 제거)
-    void fileService.remove(guid)
+    // 추후 API: 삭제 훅 결과 확인 후 제거(목업은 낙관적 제거)
+    removeFile.mutate(guid)
     onFilesChange((prev) => prev.filter((f) => f.guid !== guid))
     console.log('[M12] 첨부파일 삭제', guid, detail.pbancNo)
   }

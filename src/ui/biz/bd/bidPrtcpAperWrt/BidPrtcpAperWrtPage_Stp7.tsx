@@ -4,7 +4,7 @@
 // 이 탭이 동의서 BottomSheet 컨테이너(선택 동의서 title, footer=저장 후 닫기/취소)와 저장 확인 AlertModal 을 직접 소유.
 import { useState } from 'react'
 
-import { bdService } from '@/services/bd'
+import { useSaveAgreement } from '@/queries/bd'
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { AgreementList } from '@/ui/common/composites/AgreementList'
@@ -40,6 +40,7 @@ export function BidPrtcpAperWrtPage_Stp7({ detail }: { detail: BidPrgrsItem }) {
   const [sheetOpen, setSheetOpen] = useState(false) // 동의서 바텀시트
   const [confirmOpen, setConfirmOpen] = useState(false) // 저장 확인 모달
   const [saveError, setSaveError] = useState<string | null>(null) // 동의서 저장 실패 안내(null=닫힘)
+  const saveAgreement = useSaveAgreement()
 
   const toggle = (id: string, on: boolean) =>
     setChecked((prev) => (on ? [...new Set([...prev, id])] : prev.filter((v) => v !== id)))
@@ -53,14 +54,14 @@ export function BidPrtcpAperWrtPage_Stp7({ detail }: { detail: BidPrgrsItem }) {
     setSheetOpen(true)
   }
 
-  // 저장 후 닫기 → 확인 모달 확정 시 서비스 직접 await, 성공 시 동의 완료 처리. 실패 시 AlertModal 안내.
+  // 저장 후 닫기 → 확인 모달 확정 시 mutation 훅 await, 성공 시 동의 완료 처리. 실패 시 AlertModal 안내.
   const confirmSave = async () => {
     if (!selected) {
       setSheetOpen(false)
       return
     }
     try {
-      await bdService.saveAgreement(selected.id)
+      await saveAgreement.mutateAsync({ agreementId: selected.id })
       setChecked((prev) => [...new Set([...prev, selected.id])])
       setSheetOpen(false)
     } catch (err) {

@@ -20,7 +20,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from 'react-router-dom'
 
-import { authService } from '@/services/auth'
+import { useLogin, useLoginWith } from '@/queries/auth'
 import { useAuthStore } from '@/stores/authStore'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
@@ -96,6 +96,8 @@ export function IdPswdLoginPage() {
   const [loginError, setLoginError] = useState<string | null>(null)
   // 통합 로그인 계정등록안내(P21) 팝업 — 구버전 아이디 로그인 시 노출. null 이면 닫힘.
   const [newIdInfo, setNewIdInfo] = useState<{ userNm: string } | null>(null)
+  const login = useLogin()
+  const loginWith = useLoginWith()
 
   const {
     register,
@@ -122,7 +124,7 @@ export function IdPswdLoginPage() {
 
   const onSubmit = async (data: IdPswdLoginForm) => {
     try {
-      const result = await authService.login({ ...data, loginTarget })
+      const result = await login.mutateAsync({ ...data, loginTarget })
       if (result.intgAcntRegRqrdYn) {
         // 구버전 아이디 로그인 → 통합 로그인 계정등록안내(P21) 팝업으로 통합계정등록(M22) 유도.
         setNewIdInfo({ userNm: result.user.name })
@@ -143,7 +145,7 @@ export function IdPswdLoginPage() {
 
   const handleBzentyLogin = async () => {
     try {
-      finalizeLogin(await authService.loginWith(bzentyCd))
+      finalizeLogin(await loginWith.mutateAsync(bzentyCd))
     } catch (err) {
       setBzentyOpen(false)
       setLoginError(toErrorMessage(err))
