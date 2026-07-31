@@ -3,7 +3,8 @@
 // 기 신청 내역 카드 목록(진행상태 신청/반려/승인). **상세 화면 없음**.
 // 카드 클릭: 신청(P)/승인(A) → 서류 출력 확인 팝업(MUI-BD-01-P14, AlertModal 인라인) → OZ 리포트(스텁).
 //   반려(R) → 카드에 반려사유만 표시, 클릭 무동작(팝업/상세 없음). (2026-07-20 요청)
-// 하단 [신청] 버튼 → 국외조달원등록증신청(MUI-CM-04-M22 OvsSosCnfdocRegPage) 페이지로 이동(2026-07-20 팝업→페이지).
+// (+) FAB → 국외조달원등록증신청(MUI-CM-04-M22 OvsSosCnfdocRegPage) 페이지로 이동
+//   (2026-07-20 팝업→페이지 · 2026-07-31 하단 고정 [신청] 바 → FAB (+) 이동 요청).
 // 검색필터는 공통 SearchFilter 셸 schema 주입(기간*/검색어 발급 업체명/구분 진행상태).
 // mock 상단은 빠른검색 없이 필터 버튼만 — SearchCondition 필터 버튼과 동일 스타일 로컬 버튼.
 import { useMemo, useState } from 'react'
@@ -17,6 +18,8 @@ import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { cn } from '@/utils/cn'
 import { ROUTES } from '@/constants/routes'
@@ -142,6 +145,7 @@ const MOCK_LIST: OvsSosCnfdocItem[] = Array.from({ length: TOTAL }, (_, i) => {
 export function OvsSosCnfdocListPage() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false) // 검색필터 풀팝업
+  const [aplySheetOpen, setAplySheetOpen] = useState(false) // (+) 신청 바텀시트
   const [filter, setFilter] = useState<SearchFilterValue>(() => buildDefaultValue())
   const [filterApplied, setFilterApplied] = useState(false)
   const [pageSize, setPageSize] = useState(10)
@@ -196,8 +200,7 @@ export function OvsSosCnfdocListPage() {
   }))
 
   return (
-    // min-h-full — 콘텐츠가 짧아도 컬럼이 스크롤 셸 높이를 채워 sticky 신청 바가 화면 하단에 붙는다.
-    <div className="flex min-h-full w-full flex-col">
+    <div className="flex w-full flex-col">
       {/* 필터 버튼 행 — mock 은 빠른검색 없이 검색필터 버튼만(SearchCondition 필터 버튼 스타일) */}
       <div className="flex justify-end px-4 py-4">
         <button
@@ -241,31 +244,37 @@ export function OvsSosCnfdocListPage() {
         </div>
       )}
 
-      {/* 콘텐츠가 짧아도 신청 바가 뜨지 않게 나머지 공간 채움 */}
-      <div className="flex-1" />
-
-      {/* 하단 신청 바 — sticky 하단 고정. [신청] → 국외조달원등록증신청(MUI-CM-04-P22) 새 신청(스텁).
-          safe-area: pb 는 max(12px, env(safe-area-inset-bottom)) — Tailwind 가 env() 콤마를 못 다뤄 inline style. */}
-      <div
-        className="sticky bottom-0 z-30 border-t border-krds-border-divider bg-background px-4 pt-3"
-        style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
-      >
-        <Button
-          variant="primary"
-          className="w-full"
-          onClick={() => navigate(ROUTES.SUPPORT_OVS_SOS_CNFDOC_REG)}
-        >
-          신청
-        </Button>
-      </div>
-
-      {/* FAB — 맨위로 */}
+      {/* FAB — 맨위로 + 더하기. (+) → 신청 바텀시트(PrfmncPrdocPage 동일 패턴). */}
       <FloatingActionButton
         className="fixed bottom-0 right-4 z-40"
         onTop={() =>
           document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
         }
+        onPlus={() => setAplySheetOpen(true)}
+        plusLabel="국외 조달원 등록증 신청"
       />
+
+      {/* 신청 바텀시트 — 컨테이너는 페이지 소유(공통 BottomSheet 조립).
+          [신청] → 국외조달원등록증신청(MUI-CM-04-M22 OvsSosCnfdocRegPage) 이동. */}
+      <BottomSheet
+        open={aplySheetOpen}
+        onOpenChange={setAplySheetOpen}
+        title="국외 조달원 등록증 신청"
+      >
+        <ButtonGroup
+          layout="vertical"
+          items={[
+            {
+              label: '국외 조달원 등록증 신청',
+              variant: 'secondary',
+              onClick: () => {
+                setAplySheetOpen(false)
+                navigate(ROUTES.SUPPORT_OVS_SOS_CNFDOC_REG)
+              },
+            },
+          ]}
+        />
+      </BottomSheet>
 
       {/* 검색필터 풀팝업 — 공통 셸 schema 주입 */}
       <SearchFilter

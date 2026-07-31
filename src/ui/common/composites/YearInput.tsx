@@ -5,6 +5,7 @@ import * as React from 'react'
 import dayjs from 'dayjs'
 
 import { Button } from '@/ui/common/base/Button'
+import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { Label } from '@/ui/common/base/Label'
 import { WheelPicker } from '@/ui/common/base/WheelPicker'
@@ -70,25 +71,38 @@ const YearInput = ({
         </Label>
       )}
 
-      {/* 트리거 — 읽기전용 박스, 클릭 시 시트. combobox 패턴(input 에 aria-haspopup/expanded). */}
-      <InputBox
-        id={id}
-        value={value ? `${value}년` : ''}
-        readOnly
-        onClick={openSheet}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            openSheet()
-          }
-        }}
-        placeholder={placeholder}
-        disabled={disabled}
-        role="combobox"
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        className={cn(!disabled && 'cursor-pointer')}
-      />
+      {/* 트리거 — 읽기전용 박스, 클릭 시 시트. combobox 패턴(input 에 aria-haspopup/expanded).
+          우측 화살표(⌄/열림 시 ⌃)는 SelectBox 트리거와 동일 아이콘·회전 규칙으로 오버레이. */}
+      <div className="relative">
+        <InputBox
+          id={id}
+          value={value ? `${value}년` : ''}
+          readOnly
+          onClick={openSheet}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              openSheet()
+            }
+          }}
+          placeholder={placeholder}
+          disabled={disabled}
+          role="combobox"
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          className={cn('pr-10', !disabled && 'cursor-pointer')}
+        />
+        <Icon
+          name="ArrowForwardIos"
+          size={20}
+          className={cn(
+            'pointer-events-none absolute right-krds-6 top-1/2 -translate-y-1/2 transition-transform duration-200',
+            open ? 'rotate-[270deg]' : 'rotate-90',
+            disabled && 'text-krds-text-disabled',
+          )}
+          aria-hidden
+        />
+      </div>
 
       <BottomSheet
         open={open}

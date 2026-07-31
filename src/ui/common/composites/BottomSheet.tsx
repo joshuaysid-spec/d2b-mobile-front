@@ -12,7 +12,7 @@
 //    cn() 으로 오버라이드한다(tailwind-merge 가 충돌 해결).
 //
 // 레이아웃 (Figma):
-//  - 컨테이너: bg-white, 상단 radius 없음(rounded-t-none), 상단 슬라이드인
+//  - 컨테이너: bg-white, 상단 좌우 radius 12px(rounded-t-krds-xl, 2026-07-31 요청), 상단 슬라이드인
 //  - 패딩: pt-[20px] pb-[16px] px-[16px], 영역 간 gap-16
 //  - title: 19 Bold ink, items-start, close icon 24px (살짝 위쪽 정렬 pt-[3px])
 //  - body: flex-1 overflow-y-auto, 17 Regular ink 기본
@@ -130,7 +130,7 @@ const BottomSheet = ({
           }}
           className={cn(
             'fixed inset-x-0 bottom-0 z-50 flex flex-col gap-4 bg-white',
-            'rounded-t-none shadow-krds-3',
+            'rounded-t-krds-xl shadow-krds-3',
             'pt-[20px] px-[16px]',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             // -full(=100%) 필수: bare slide-*-bottom 은 0.25rem(4px)만 이동 → 닫힐 때 4px 만 꿈틀하고 언마운트되어

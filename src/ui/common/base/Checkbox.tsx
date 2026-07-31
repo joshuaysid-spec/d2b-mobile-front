@@ -101,7 +101,6 @@ const Checkbox = React.forwardRef<React.ElementRef<typeof RawCheckbox>, Checkbox
           className,
         )}
       >
-        3333
         {/* 실제 폼 컨트롤 — 시각은 칩이 담당하므로 raw 는 숨김.
         raw 의 h-4 w-4 border 를 확실히 덮어쓰도록 size-px/border-0/opacity-0 명시(sr-only 의 tailwind-merge 충돌 회피). */}
         <RawCheckbox

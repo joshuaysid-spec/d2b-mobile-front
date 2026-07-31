@@ -1,10 +1,12 @@
-// 인증서 내보내기 — MUI-CM-04-M17. Figma 10020-87296(목록)·87316(선택됨) / 설계서 00.공통 v0.83 slide340.
+// 인증서 내보내기 — MUI-CM-04-M17. Figma 10020-87296(목록)·87316(선택됨) / 설계서 00.공통 v0.85 slide354.
 // 스마트폰 → PC 인증서 복사. ① 내보낼 인증서 선택(목록) → 인증서 비밀번호 확인(P18, CrtfPswd 시트)
-// → ② 선택된 인증서 + 인증번호(복사용) 표시. 인증 결과 안내는 토스트(MUI-CM-04-P19, slide355).
-// 비밀번호 실검증은 스마트PKI 솔루션 — 데모는 고정값 비교(추후 교체).
+// → ② 인증번호 풀바텀시트(2026-07-31 요청: 페이지 전환 → 풀바텀시트. 선택된 인증서 +
+//   인증번호 input 3개 + 인증번호 복사하기 + 하단 안내 문구). 인증 결과 안내는 토스트(MUI-CM-04-P19).
+// 비밀번호 실검증은 스마트PKI 솔루션 — 데모는 고정값(12345) 비교(추후 교체).
 import { useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
+import { InputBox } from '@/ui/common/base/InputBox'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Toast } from '@/ui/common/composites/Toast'
@@ -14,8 +16,8 @@ import { MOCK_CERTS } from '@/ui/biz/cm/crtfMng/certMock'
 import { CrtfPswd } from '@/ui/biz/cm/crtfSend/CrtfPswd'
 import type { CertItem } from '@/types/cm'
 
-// 데모용 인증서 비밀번호 — 실제 검증은 스마트PKI 솔루션(IndvIdntIdnty 와 동일 데모값).
-const MOCK_PASSWORD = '1234'
+// 데모용 인증서 비밀번호 — 실제 검증은 스마트PKI 솔루션(2026-07-31 임시값 12345 요청).
+const MOCK_PASSWORD = '12345'
 
 // 복사용 인증번호(12자리, 4×3) — PC 가 입력할 값. 스마트PKI 발급값, 데모 고정.
 const AUTH_BLOCKS = ['1234', '5678', '9012']
@@ -25,7 +27,7 @@ const GUIDE = [
 ]
 
 export function CrtfSendPage() {
-  const [selected, setSelected] = useState<CertItem | null>(null)
+  const [selected, setSelected] = useState<CertItem | null>(null) // 선택 확정 인증서 = 인증번호 풀바텀시트 열림
   const [pendingCert, setPendingCert] = useState<CertItem | null>(null) // P18 열림 = 비밀번호 확인 대기 인증서
   const [password, setPassword] = useState('')
   const [pswdError, setPswdError] = useState<string | null>(null)
@@ -46,7 +48,7 @@ export function CrtfSendPage() {
     setPswdError(null)
   }
 
-  // P18 완료 — 성공 시 ② 표시 + 토스트(P19), 실패 시 시트 유지 + 에러(설계서 slide354 문구).
+  // P18 완료 — 성공 시 인증번호 풀바텀시트 + 토스트(P19), 실패 시 시트 유지 + 에러(설계서 문구).
   const handlePswdConfirm = () => {
     if (!pendingCert) return
     if (password.trim() === '') {
@@ -72,60 +74,70 @@ export function CrtfSendPage() {
     } catch {
       // 클립보드 API 미지원/거부 시에도 안내는 노출(WebView 환경 대응).
     }
-    setToast({ open: true, message: '인증번호가 복사되었습니다.' })
+    setToast({ open: true, message: '인증번호를 복사했습니다.' }) // 설계서 slide354 토스트 문구
     console.log('[CrtfSend] 인증번호 복사', code)
   }
 
   return (
     <div className="flex w-full flex-col">
-      {!selected ? (
-        // ① 인증서 선택(목록)
-        <div className="flex w-full flex-col gap-4 px-4 py-5">
-          <p className="whitespace-pre-line text-[17px] leading-normal text-krds-text-ink">
-            {'스마트폰 → PC 로 내보내기 하려는\n인증서를 선택해주세요.'}
-          </p>
-          {MOCK_CERTS.map((c) => (
-            <CertCard key={c.id} cert={c} onClick={() => openPswd(c)} />
-          ))}
-        </div>
-      ) : (
-        // ② 선택된 인증서 + 인증번호(복사용)
-        <>
-          <div className="flex flex-col gap-4 px-4 py-5">
+      {/* 인증서 선택(목록) — 클릭 시 비밀번호 확인(P18) → 성공 시 인증번호 풀바텀시트 */}
+      <div className="flex w-full flex-col gap-4 px-4 py-5">
+        <p className="whitespace-pre-line text-[17px] leading-normal text-krds-text-ink">
+          {'스마트폰 → PC 로 내보내기 하려는\n인증서를 선택해주세요.'}
+        </p>
+        {MOCK_CERTS.map((c) => (
+          <CertCard key={c.id} cert={c} onClick={() => openPswd(c)} />
+        ))}
+      </div>
+
+      {/* 인증번호 풀바텀시트 — 비밀번호 확인 성공 시(2026-07-31 요청: 페이지 전환 → 풀바텀시트).
+          설계서 slide354 ② 구성 그대로: 선택된 인증서 + 인증번호 input 3개 + 복사하기 + 하단 안내 문구. */}
+      <BottomSheet
+        open={selected !== null}
+        onOpenChange={(o) => {
+          if (!o) setSelected(null)
+        }}
+        title="인증서 내보내기"
+        className="h-[90vh]"
+      >
+        <div className="flex h-full flex-col gap-4">
+          {selected && (
             <div className="flex flex-col gap-krds-5">
               <span className="text-[17px] font-bold leading-normal text-krds-text-ink">
                 선택된 인증서
               </span>
-              {/* 클릭 시 다시 선택(목록으로) */}
-              <CertCard cert={selected} onClick={() => setSelected(null)} />
+              <CertCard cert={selected} />
             </div>
+          )}
 
-            <div className="flex flex-col gap-krds-5">
-              <span className="text-[17px] font-bold leading-normal text-krds-text-ink">
-                인증번호
-              </span>
-              <div className="flex items-center gap-2">
-                {AUTH_BLOCKS.map((blk, i) => (
-                  <div
-                    key={i}
-                    className="flex h-12 min-w-px flex-1 items-center justify-center rounded-krds-8 border border-krds-text-primary-active text-[17px] font-bold leading-normal text-krds-text-primary-active"
-                  >
-                    {blk}
-                  </div>
-                ))}
-              </div>
-              {/* 인증번호 복사하기 — 클립보드 복사 + 토스트 안내 */}
-              <Button variant="primary" className="w-full" onClick={handleCopy}>
-                인증번호 복사하기
-              </Button>
+          <div className="flex flex-col gap-krds-5">
+            <span className="text-[17px] font-bold leading-normal text-krds-text-ink">
+              인증번호
+            </span>
+            <div className="flex items-center gap-2">
+              {AUTH_BLOCKS.map((blk, i) => (
+                <InputBox
+                  key={blk}
+                  readOnly
+                  value={blk}
+                  aria-label={`인증번호 ${i + 1}`}
+                  className="min-w-px flex-1"
+                  // 인증번호는 박스 가운데 정렬(설계서 목업) — InputBox 가 input 정렬 prop 이 없어 inline style.
+                  style={{ textAlign: 'center' }}
+                />
+              ))}
             </div>
+            {/* 인증번호 복사하기 — 클립보드 복사 + 토스트 안내 */}
+            <Button variant="primary" className="w-full" onClick={handleCopy}>
+              인증번호 복사하기
+            </Button>
           </div>
 
           <CertInfoBox items={GUIDE} />
-        </>
-      )}
+        </div>
+      </BottomSheet>
 
-      {/* 인증서 비밀번호 확인 BottomSheet(MUI-CM-04-P18, slide354) — 컨테이너/footer 는 페이지 소유, 콘텐츠는 CrtfPswd. */}
+      {/* 인증서 비밀번호 확인 BottomSheet(MUI-CM-04-P18, slide355) — 컨테이너/footer 는 페이지 소유, 콘텐츠는 CrtfPswd. */}
       <BottomSheet
         open={pendingCert !== null}
         onOpenChange={(o) => {
@@ -152,7 +164,7 @@ export function CrtfSendPage() {
         />
       </BottomSheet>
 
-      {/* 인증 결과/복사 안내 토스트 — MUI-CM-04-P19(설계서 slide355). */}
+      {/* 인증 결과/복사 안내 토스트 — MUI-CM-04-P19(설계서 slide356). */}
       <Toast open={toast.open} onClose={() => setToast((t) => ({ ...t, open: false }))} duration={2000}>
         {toast.message}
       </Toast>

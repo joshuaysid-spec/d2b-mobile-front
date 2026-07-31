@@ -57,7 +57,11 @@ const TABS: TabItem[] = [
 // 신청정보 탭 분기(slide243~271) — 기관/계약구분/제출유형(증명서 종류)으로 결정.
 //   방위사업청 → D2b(T02) · 부대+시설공사 → 제출유형별 unitB~I(T03~T10) · 부대+비시설공사 → AplyInfo(T11).
 // 제출유형 코드(sbmsnTyCd)는 설계서 항목명 미정의(TODO) — 값이 없으면 시설공사 기본 unitB.
+// ⚠️ 2026-07-30 요청: 퍼블 확인용으로 신청정보 탭은 데이터와 무관하게 항상 unitB(MUI-CM-04-T03)
+//   내용 전체를 표시한다. API 연동 시 FORCE_UNITB 를 false 로 되돌려 설계서 분기를 복원할 것.
+const FORCE_UNITB = true
 function resolveAplyBranch(detail: PrfmncPrdocItem) {
+  if (FORCE_UNITB) return 'unitB'
   if (detail.orderInst === '방위사업청') return 'd2b'
   if (detail.ctrtSe !== '공사') return 'aplyInfo' // 부대+비시설공사
   switch (detail.sbmsnTyCd) {
