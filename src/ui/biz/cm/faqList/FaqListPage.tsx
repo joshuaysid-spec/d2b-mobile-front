@@ -91,7 +91,7 @@ export function FaqListPage() {
         )
       })
     }
-    return list
+    return [...list].sort((a, b) => b.no - a.no) // no 내림차순(최신 순)
   }, [category, applied])
 
   const total = filtered.length

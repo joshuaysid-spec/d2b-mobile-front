@@ -35,6 +35,11 @@ import type { PrfmncPrdocCtrtInfo } from '@/types/cm'
 
 const STEP_LABELS = ['계약 정보 선택', '신청정보 입력', '실적정보 입력'] as const
 
+// ⚠️ 2026-07-30 요청: 퍼블 확인용 — 실적정보 입력(step3)은 계약 분기와 무관하게 항상
+//   unitB(MUI-CM-04-T13) 내용을 표시한다. API 연동 시 false 로 되돌려 설계서 분기를 복원할 것.
+//   (상세 신청정보 탭의 FORCE_UNITB — PrfmncPrdocDtlPage — 와 동일한 임시 고정)
+const FORCE_UNITB = true
+
 // 실적정보(step3) 탭 분기 렌더 — 방위사업청(d2b, T12)/시설공사 제출유형별 unitB~I(T13~T20)/비시설(aplyInfo, T21).
 function renderPrfmncTab(branch: string) {
   switch (branch) {
@@ -184,7 +189,7 @@ export function PrfmncPrdocRegPage() {
           usePrpsCd={usePrpsCd}
         />
       )}
-      {step === 3 && renderPrfmncTab(branch)}
+      {step === 3 && renderPrfmncTab(FORCE_UNITB ? 'unitB' : branch)}
 
       {/* 스텝 콘텐츠가 짧아도 footer 가 뜨지 않게 나머지 공간 채움 */}
       <div className="flex-1" />
