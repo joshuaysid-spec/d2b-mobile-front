@@ -17,6 +17,7 @@ export const LINKED_MENU_LABELS = {
   [ROUTES.CT]: '계약 통합 목록',
   [ROUTES.CT_PYMT]: '대금 지불정보 목록',
   [ROUTES.CT_CNCLTN]: '해지/해제 목록',
+  [ROUTES.EX]: '검사 통합 목록',
   [ROUTES.SUPPORT_NOTICE]: '일반 공지사항',
   [ROUTES.SUPPORT_NOTICE_DAPA]: '방위사업청 공지사항',
   [ROUTES.SUPPORT_NOTICE_DMDFRC]: '수요부대별 공지사항',

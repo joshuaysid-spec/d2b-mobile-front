@@ -38,6 +38,8 @@ export const ROUTES = {
   CT_CNCLTN_CSTRN_DETAIL: '/ct/cncltn/cstrn/:id',
   /** 입찰결과상세(개찰상세) (MUI-BD-09-M01 · T01~T04(구 M01~M04 — v1.83 재편), `:id` 파라미터). 이동: `/bd/result/${id}`. */
   BD_RESULT_DETAIL: '/bd/result/:id',
+  /** 검사통합목록 (MUI-EX-01-M01). */
+  EX: '/ex',
   NOTIFICATION: '/notification',
   SUPPORT: '/support',
   /** 일반공지사항(공지사항 목록) (MUI-CM-04-M01). */

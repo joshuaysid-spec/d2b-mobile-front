@@ -146,6 +146,12 @@ const CtrtIntgListPage = lazy(() =>
     default: m.CtrtIntgListPage,
   })),
 )
+// 검사통합목록(MUI-EX-01-M01, /ex) — biz/ex/inspIntgListInq.
+const InspIntgListInqPage = lazy(() =>
+  import('@/ui/biz/ex/inspIntgListInq/InspIntgListInqPage').then((m) => ({
+    default: m.InspIntgListInqPage,
+  })),
+)
 // 물품전자계약진행상세(MUI-CT-01-M03, /ct/:id) — biz/ct/cmdtyElctrCtrtPrgrsDtl.
 const CmdtyElctrCtrtPrgrsDtlPage = lazy(() =>
   import('@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyElctrCtrtPrgrsDtlPage').then((m) => ({
@@ -879,6 +885,15 @@ export const router = createBrowserRouter([
         element: <CtrtIntgListPage />,
         handle: {
           header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.CT] },
+          scrollReset: true,
+          showBottomNav: true,
+        },
+      },
+      {
+        path: 'ex',
+        element: <InspIntgListInqPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.EX] },
           scrollReset: true,
           showBottomNav: true,
         },
