@@ -131,7 +131,7 @@ export function InspIntgListInqPage() {
 
   // 목록 조회 — 목업/실연동은 exService 의 USE_MOCK 분기가 전환.
   // 서버 필터/페이징 전환 시: req 에 filter/page/keyword 를 넣으면 queryKey 가 바뀌어 재조회된다.
-  const { data: listData } = useInspIntgList()
+  const { data: listData, isLoading } = useInspIntgList()
 
   // ── 핸들러 — 확정값 상태만 갱신(조회는 useInspIntgList + 아래 클라이언트 필터가 담당) ──
   const handleFilterSearch = (value: SearchFilterValue) => {
@@ -224,7 +224,7 @@ export function InspIntgListInqPage() {
 
       {/* 카드 목록 */}
       <div className="flex flex-col gap-krds-7 px-4 pb-4 pt-krds-7">
-        <CardList items={cardItems} />
+        <CardList items={cardItems} loading={isLoading} />
       </div>
 
       {/* 더보기 — 표시개수만큼 추가 로드(slide10 더보기 기능). 모두 노출됐으면 숨김. */}

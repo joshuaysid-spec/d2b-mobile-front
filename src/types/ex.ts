@@ -149,5 +149,64 @@ export interface InspDlvdocItem {
   sbsdPrcmYn: 'Y' | 'N'
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-01-M02 검사및납품조서상세(중앙조달) (slide17~20) — inspDlvdocDtl/InspDlvdocDtlPage
+//   탭: T01 상세정보(InspDlvdocDtl) · T02 물품목록(InspDlvdocDtl_CmdtyList)
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 검사및납품조서상세 — 계약정보(dmt_CtrtInfo, slide20 1.1) + 비고(dmt_Rmrk) + 요약 표시항목. */
+export interface InspDlvdocDtl {
+  /** 계약번호 (ctrtNo, 11). */
+  ctrtNo: string
+  /** 계약번호차수 — 문서정보 표기(계약번호 (차수), slide17 1-2). ⚠️ dmt_CtrtInfo 미정의(CT 선례 재사용). */
+  ctrtCycl: string
+  /** 통지번호 (avtsmtNo, 3). */
+  avtsmtNo: string
+  /** 예산구분코드명 (bgtSecdNm, 상위코드 KB). */
+  bgtSecdNm: string
+  /** 납기 (dudtYmd, 8) — ⚠️ 화면 목업(slide17)은 기간(시작~종료) 표기, 항목설명은 단일 일자(상세설계 확정 필요). */
+  dudtYmd: string
+  /** 납지명 (plcdlvNm, 200). */
+  plcdlvNm: string
+  /**
+   * 납품요구일시 — 화면 표시항목(slide17 계약 상세정보, 예: 2026-10-15 08:00).
+   * ⚠️ dmt_CtrtInfo 미정의 — 임시 항목명(dlvgdsDmndDt), 상세설계 확정 시 대조.
+   */
+  dlvgdsDmndDt: string
+  /** 비고 (rmrkCn, 4000, dmt_Rmrk). */
+  rmrkCn: string
+  // ── 요약(SummaryInfo)·뱃지 표시항목 — 목록(M01) 항목명 재사용(slide17 타이틀 영역) ──
+  /** 업무구분 뱃지 (taskSecd). */
+  taskSecd: string
+  /** 진행상태 뱃지 (dlvdocPrgrsStcd, 상위코드 GTSA0003). */
+  dlvdocPrgrsStcd: string
+  /** 계약명 (ctrtNm, 300) — 문서 제목(2줄 말줄임). */
+  ctrtNm: string
+  /** 계약일자 (ctrtYmd, 8). */
+  ctrtYmd: string
+  /** 계약금액 (ctrtAmt, 17,2). */
+  ctrtAmt: number
+}
+
+/** 물품목록 1건 (dlt_CmdtyList, slide20 1.2). */
+export interface InspDlvdocCmdtyItem {
+  /** 목록 key 용 고유 식별자 — `${prcmRqtNo}-${invtNo}` (클라 생성). */
+  id: string
+  /** 조달요구번호 (prcmRqtNo, 15). */
+  prcmRqtNo: string
+  /** 재고번호 (invtNo, 9). */
+  invtNo: string
+  /** 품목명 (itemNm, 200). */
+  itemNm: string
+  /** 단위코드 (unitCd, 2). */
+  unitCd: string
+  /** 계약수량 (ctrtQty, 15,2). */
+  ctrtQty: number
+  /** 기 작성수량 — 누적 작성수량 (acmlWrtQty, 15,2). */
+  acmlWrtQty: number
+  /** 금번 납품수량 (tstmDlvgdsQty, 15,2) — M02 는 조회 화면이라 표시 전용. */
+  tstmDlvgdsQty: number
+}
+
 // ── TODO(백엔드 확정) — 검사및납품조서 검색조건(dml_InspDlvdocSrchCnd, slide15 1.1)은
 //    M05 검사및납품조서현황(그룹 5) 배선 시 요청 타입으로 추가 예정.

@@ -3,7 +3,8 @@
 // 구성: 건수·표시개수 + 통지 카드 목록 + 더보기 + footer 닫기.
 // 통지 카드 클릭 → 검사및납품조서목록(P11) 바텀시트 — 컨테이너(BottomSheet)는 이 풀팝업이 소유,
 // 콘텐츠는 InspDlvdocList(슬롯 조합, *Sheet 래퍼 금지).
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { useDlvgdsAvtsmtList } from '@/queries/ex'
 import { Badge } from '@/ui/common/base/Badge'
@@ -30,6 +31,7 @@ export function DlvgdsAvtsmtListFullPopup({
   ctrtNo,
   ctrtNm,
 }: DlvgdsAvtsmtListFullPopupProps) {
+  const navigate = useNavigate()
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
   // P11 바텀시트 — 선택한 통지번호(null=닫힘)
@@ -37,14 +39,28 @@ export function DlvgdsAvtsmtListFullPopup({
 
   const { data: items = [], isLoading } = useDlvgdsAvtsmtList(ctrtNo, open)
 
+  // 닫힘 시 로컬 상태 초기화 — 이 래퍼는 부모(M01)가 open prop 으로만 토글하고 항상 마운트라
+  // 리셋 없이는 재오픈 때 이전 계약의 P11 시트(stale avtsmtNo)·더보기 진행 상태가 남는다.
+  useEffect(() => {
+    if (!open) {
+      setPage(1)
+      setPageSize(10)
+      setPickedAvtsmtNo(null)
+    }
+  }, [open])
+
   const total = items.length
   const loaded = Math.min(page * pageSize, total)
   const visibleList = items.slice(0, loaded)
 
-  // 조서 카드 클릭(P11) — 중앙조달(M02)/부대조달(M03) 상세 분기(slide16 이벤트).
-  // TODO(그룹 2·3): M02/M03 상세 페이지 구현 후 navigate 배선(sbsdPrcmYn 분기).
+  // 조서 카드 클릭(P11) — 중앙조달(M02)/부대조달(M03) 상세 분기(slide16 이벤트, sbsdPrcmYn 임시 키).
   const handleDlvdocClick = (item: InspDlvdocItem) => {
-    console.log('[P11] 상세 이동(미구현)', item.sbsdPrcmYn === 'Y' ? 'M03 부대' : 'M02 중앙', item.id)
+    if (item.sbsdPrcmYn === 'Y') {
+      // TODO(그룹 3): M03 검사및납품조서상세(부대조달) 구현 후 navigate 배선.
+      console.log('[P11] M03 부대조달 상세 이동(미구현)', item.id)
+      return
+    }
+    navigate(`/ex/dlvdoc/${item.id}`, { state: item })
   }
 
   // 통지 카드 매핑 — slide13 목업: 뱃지(업무구분/예산구분) + 통지번호 + title(계약명) +

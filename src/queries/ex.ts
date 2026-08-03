@@ -9,6 +9,8 @@ export const exKeys = {
   dlvgdsAvtsmtList: (ctrtNo: string) => ['ex', 'dlvgdsAvtsmtList', ctrtNo] as const,
   inspDlvdocList: (ctrtNo: string, avtsmtNo: string) =>
     ['ex', 'inspDlvdocList', ctrtNo, avtsmtNo] as const,
+  inspDlvdocDtl: (id: string) => ['ex', 'inspDlvdocDtl', id] as const,
+  inspDlvdocCmdtys: (id: string) => ['ex', 'inspDlvdocCmdtys', id] as const,
 }
 
 /** 검사통합목록(M01) — 키워드 세부 필터/더보기 페이징은 페이지 클라이언트 로직 유지(서버 전환 시 req 로 이행). */
@@ -34,5 +36,23 @@ export function useInspDlvdocList(ctrtNo: string, avtsmtNo: string, enabled: boo
     queryKey: exKeys.inspDlvdocList(ctrtNo, avtsmtNo),
     queryFn: () => exService.getInspDlvdocList(ctrtNo, avtsmtNo),
     enabled: Boolean(ctrtNo) && Boolean(avtsmtNo) && enabled,
+  })
+}
+
+/** 검사및납품조서상세(M02) — 목록 state 는 placeholder 로 쓰지 않음(필드 구성이 달라 조회로 확정). */
+export function useInspDlvdocDtl(id: string) {
+  return useQuery({
+    queryKey: exKeys.inspDlvdocDtl(id),
+    queryFn: () => exService.getInspDlvdocDtl(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 검사및납품조서상세 물품목록(T02). */
+export function useInspDlvdocCmdtys(id: string) {
+  return useQuery({
+    queryKey: exKeys.inspDlvdocCmdtys(id),
+    queryFn: () => exService.getInspDlvdocCmdtys(id),
+    enabled: Boolean(id),
   })
 }

@@ -1,7 +1,13 @@
 // 이행(EX) 도메인 목업 데이터 — USE_MOCK=true 일 때 exService 가 반환.
 // 설계서(04.이행 v0.83) 항목설명 항목·형식·slide10/13/14 목업값을 반영(임의 더미 금지).
 // ⚠️ 폐쇄망 반입 후 실백엔드 연동 시 이 파일은 사용되지 않는다(서비스가 apiClient 분기).
-import type { DlvgdsAvtsmtItem, InspDlvdocItem, InspIntgListItem } from '@/types/ex'
+import type {
+  DlvgdsAvtsmtItem,
+  InspDlvdocCmdtyItem,
+  InspDlvdocDtl,
+  InspDlvdocItem,
+  InspIntgListItem,
+} from '@/types/ex'
 
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-EX-01-M01 검사통합목록 — slide10 목업(계약번호 2025000000-01 · 계약금액 11,616,000 ·
@@ -218,8 +224,54 @@ const INSP_DLVDOC_LIST: InspDlvdocItem[] = [
   },
 ]
 
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-01-M02 검사및납품조서상세(중앙조달) — slide17 목업(계약번호 2025 0000 00 (01) ·
+// 통지번호 12345 6789 · 예산구분 전년국채 · 납지 제8385부대 · 납품요구일시 2026-10-15 08:00).
+// ────────────────────────────────────────────────────────────────────────────
+const INSP_DLVDOC_DTL: InspDlvdocDtl = {
+  ctrtNo: '20250000001',
+  ctrtCycl: '01',
+  avtsmtNo: '100',
+  bgtSecdNm: '전년국채',
+  dudtYmd: '2026-12-30',
+  plcdlvNm: '제8385부대',
+  dlvgdsDmndDt: '2026-10-15 08:00',
+  rmrkCn: '납품 시 검사관 입회 필요. 부분 납품 가능 여부는 담당자와 협의.',
+  taskSecd: '물품',
+  dlvdocPrgrsStcd: '대금청구',
+  ctrtNm: '관사 비품 구매',
+  ctrtYmd: '2026-02-10',
+  ctrtAmt: 11616000,
+}
+
+// MUI-EX-01-T02 물품목록 — slide19 목업(깍두기(임가공)(3지역)[1412F] · kg · 49,230,000 · 0 · 49,230).
+const INSP_DLVDOC_CMDTY_LIST: InspDlvdocCmdtyItem[] = [
+  {
+    id: '000000000000001-000000001',
+    prcmRqtNo: '000000000000001',
+    invtNo: '000000001',
+    itemNm: '깍두기(임가공)(3지역)[1412F]',
+    unitCd: 'kg',
+    ctrtQty: 49230000,
+    acmlWrtQty: 0,
+    tstmDlvgdsQty: 49230,
+  },
+  {
+    id: '000000000000002-000000002',
+    prcmRqtNo: '000000000000002',
+    invtNo: '000000002',
+    itemNm: '배추김치(임가공)(3지역)[1412F]',
+    unitCd: 'kg',
+    ctrtQty: 12500000,
+    acmlWrtQty: 3200000,
+    tstmDlvgdsQty: 125000,
+  },
+]
+
 export const MOCK_EX = {
   inspIntgList: INSP_INTG_LIST,
   dlvgdsAvtsmtList: DLVGDS_AVTSMT_LIST,
   inspDlvdocList: INSP_DLVDOC_LIST,
+  inspDlvdocDtl: INSP_DLVDOC_DTL,
+  inspDlvdocCmdtyList: INSP_DLVDOC_CMDTY_LIST,
 }
