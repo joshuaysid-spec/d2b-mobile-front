@@ -13,6 +13,7 @@ import { ItemInq } from './ItemInq'
 import { PrdcrInq } from './PrdcrInq'
 import { DeptInq } from './DeptInq'
 import { OvsCtrtNoInq } from './OvsCtrtNoInq'
+import { RecrdPblcnNoInfoInq } from './RecrdPblcnNoInfoInq'
 import { RgnSrch } from './RgnSrch'
 import { LcnsInfoSrch } from './LcnsInfoSrch'
 import type {
@@ -108,6 +109,7 @@ const SearchFilter = ({
   const regionRef = React.useRef<SearchSheetHandle>(null)
   const licenseRef = React.useRef<SearchSheetHandle>(null)
   const ctrtNoRef = React.useRef<SearchSheetHandle>(null)
+  const recrdPblcnNoRef = React.useRef<SearchSheetHandle>(null)
 
   const closeSheet = (nextOpen: boolean) => {
     if (!nextOpen) setSheet(null)
@@ -297,6 +299,28 @@ const SearchFilter = ({
         }
       >
         <OvsCtrtNoInq ref={ctrtNoRef} onSelect={handleSheetSelect} />
+      </BottomSheet>
+      {/* 조서발행번호정보조회(MUI-EX-01-P06) — 확정형 시트: 내부 [검색]은 콘텐츠 소유,
+          footer=[닫기/조서발행번호 선택](설계서 slide34, P79 패턴). */}
+      <BottomSheet
+        open={sheet?.kind === 'recrdPblcnNo'}
+        onOpenChange={closeSheet}
+        title="조서발행번호정보조회"
+        footer={
+          <ButtonGroup
+            layout="asymmetric"
+            items={[
+              { label: '닫기', variant: 'secondary', onClick: () => setSheet(null) },
+              {
+                label: '조서발행번호 선택',
+                variant: 'primary',
+                onClick: () => recrdPblcnNoRef.current?.confirm?.(),
+              },
+            ]}
+          />
+        }
+      >
+        <RecrdPblcnNoInfoInq ref={recrdPblcnNoRef} onSelect={handleSheetSelect} />
       </BottomSheet>
     </>
   )

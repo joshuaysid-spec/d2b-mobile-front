@@ -21,11 +21,19 @@ export type SearchFilterFieldValue = string | string[] | DateRangeValue | PriceR
  * 공통 검색 바텀시트 종류 — selectionField 가 SearchFilter 셸에서 직접 여는 검색 시트.
  * 'item'=품목별조회(MUI-OP-01-P71, ItemInq) · 'producer'=생산자조회(P72, PrdcrInq) ·
  * 'dept'=발주부서(기관)조회(MUI-BD-01-P04, DeptInq) · 'region'=지역검색(MUI-BD-01-P03, RgnSrch) ·
- * 'license'=면허정보검색(MUI-BD-01-P05, LcnsInfoSrch) · 'ctrtNo'=계약번호조회(MUI-EX-02-P79, OvsCtrtNoInq).
+ * 'license'=면허정보검색(MUI-BD-01-P05, LcnsInfoSrch) · 'ctrtNo'=계약번호조회(MUI-EX-02-P79, OvsCtrtNoInq) ·
+ * 'recrdPblcnNo'=조서발행번호정보조회(MUI-EX-01-P06, RecrdPblcnNoInfoInq).
  * 콘텐츠 컴포넌트는 biz/cm/search 에 있으며(BottomSheet 컨테이너는 SearchFilter 셸이 슬롯으로 소유),
  * 종류만 config 로 선언한다(도메인 문자열 하드코딩 회피).
  */
-export type SearchSheetKind = 'item' | 'producer' | 'dept' | 'region' | 'license' | 'ctrtNo'
+export type SearchSheetKind =
+  | 'item'
+  | 'producer'
+  | 'dept'
+  | 'region'
+  | 'license'
+  | 'ctrtNo'
+  | 'recrdPblcnNo'
 
 /**
  * 공통 검색 시트 콘텐츠(ItemInq/PrdcrInq/DeptInq)의 명령형 핸들.

@@ -7,11 +7,15 @@ import { apiClient } from '@/lib/apiClient'
 import { USE_MOCK, mockDelay } from '@/lib/env'
 import { MOCK_EX } from '@/mocks/ex'
 import type {
+  DlvdocRsltCmdtyItem,
+  DlvdocRsltDtl,
   DlvgdsAvtsmtItem,
   InspDlvdocCmdtyItem,
   InspDlvdocDtl,
   InspDlvdocDtlSbsdPrcm,
   InspDlvdocItem,
+  InspDlvdocPrstRequest,
+  InspDlvdocPrstResult,
   InspDlvdocSbsdCmdtyItem,
   InspIntgListRequest,
   InspIntgListResult,
@@ -36,6 +40,12 @@ const EP = {
   INSP_DLVDOC_SBSD_CMDTYS: (id: string) => `/v1/exs/subsidiary-delivery-docs/${id}/commodities`,
   /** 기성및준공검사상세 — MUI-EX-01-M04 (pxcndCmcnInspDtl/PxcndCmcnInspDtlPage) */
   PXCND_CMCN_INSP_DTL: (id: string) => `/v1/exs/completion-inspections/${id}`,
+  /** 검사및납품조서현황목록 — MUI-EX-01-M05 (inspDlvdocPrst/InspDlvdocPrstPage) */
+  INSP_DLVDOC_PRST_LIST: '/v1/exs/delivery-doc-statuses',
+  /** 검사및납품조서결과상세 — MUI-EX-01-M07/T05 (dlvdocRsltDtl/DlvdocRsltDtlPage) */
+  DLVDOC_RSLT_DTL: (id: string) => `/v1/exs/delivery-doc-results/${id}`,
+  /** 결과상세 물품목록 — MUI-EX-01-T06 (dlvdocRsltDtl/DlvdocRsltDtl_CmdtyList) */
+  DLVDOC_RSLT_CMDTYS: (id: string) => `/v1/exs/delivery-doc-results/${id}/commodities`,
 }
 
 export const exService = {
@@ -110,5 +120,35 @@ export const exService = {
   async getPxcndCmcnInspDtl(id: string): Promise<PxcndCmcnInspDtl> {
     if (USE_MOCK) return mockDelay(MOCK_EX.pxcndCmcnInspDtl)
     return apiClient.post<PxcndCmcnInspDtl, PxcndCmcnInspDtl>(EP.PXCND_CMCN_INSP_DTL(id))
+  },
+
+  // ── 검사및납품조서현황목록 (MUI-EX-01-M05) ────────────────────────────────
+
+  /** 현황 목록 조회 — 키워드 필터/더보기 페이징은 페이지 클라이언트 로직(서버 전환 시 req 로 이행). */
+  async getInspDlvdocPrstList(req: InspDlvdocPrstRequest = {}): Promise<InspDlvdocPrstResult> {
+    if (USE_MOCK) {
+      const list = MOCK_EX.inspDlvdocPrstList
+      return mockDelay({ list, total: list.length })
+    }
+    return apiClient.post<InspDlvdocPrstResult, InspDlvdocPrstResult>(
+      EP.INSP_DLVDOC_PRST_LIST,
+      req,
+    )
+  },
+
+  // ── 검사및납품조서결과상세 (MUI-EX-01-M07) ────────────────────────────────
+
+  /** 결과상세(계약정보+업체+정비+이행정보) 조회. */
+  async getDlvdocRsltDtl(id: string): Promise<DlvdocRsltDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_EX.dlvdocRsltDtl)
+    return apiClient.post<DlvdocRsltDtl, DlvdocRsltDtl>(EP.DLVDOC_RSLT_DTL(id))
+  },
+
+  /** 결과상세 물품목록(T06) 조회. */
+  async getDlvdocRsltCmdtys(id: string): Promise<DlvdocRsltCmdtyItem[]> {
+    if (USE_MOCK) return mockDelay(MOCK_EX.dlvdocRsltCmdtyList)
+    return apiClient.post<DlvdocRsltCmdtyItem[], DlvdocRsltCmdtyItem[]>(
+      EP.DLVDOC_RSLT_CMDTYS(id),
+    )
   },
 }

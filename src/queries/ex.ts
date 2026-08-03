@@ -2,7 +2,7 @@
 // 조회는 useQuery 훅. queryKey 는 exKeys 로 중앙 관리 — 무효화/프리페치 시 여기서만 참조.
 import { useQuery } from '@tanstack/react-query'
 import { exService } from '@/services/ex'
-import type { InspIntgListRequest } from '@/types/ex'
+import type { InspDlvdocPrstRequest, InspIntgListRequest } from '@/types/ex'
 
 export const exKeys = {
   inspIntgList: (req: InspIntgListRequest) => ['ex', 'inspIntgList', req] as const,
@@ -14,6 +14,9 @@ export const exKeys = {
   inspDlvdocSbsdDtl: (id: string) => ['ex', 'inspDlvdocSbsdDtl', id] as const,
   inspDlvdocSbsdCmdtys: (id: string) => ['ex', 'inspDlvdocSbsdCmdtys', id] as const,
   pxcndCmcnInspDtl: (id: string) => ['ex', 'pxcndCmcnInspDtl', id] as const,
+  inspDlvdocPrstList: (req: InspDlvdocPrstRequest) => ['ex', 'inspDlvdocPrstList', req] as const,
+  dlvdocRsltDtl: (id: string) => ['ex', 'dlvdocRsltDtl', id] as const,
+  dlvdocRsltCmdtys: (id: string) => ['ex', 'dlvdocRsltCmdtys', id] as const,
 }
 
 /** 검사통합목록(M01) — 키워드 세부 필터/더보기 페이징은 페이지 클라이언트 로직 유지(서버 전환 시 req 로 이행). */
@@ -83,6 +86,32 @@ export function usePxcndCmcnInspDtl(id: string) {
   return useQuery({
     queryKey: exKeys.pxcndCmcnInspDtl(id),
     queryFn: () => exService.getPxcndCmcnInspDtl(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 검사및납품조서현황목록(M05). */
+export function useInspDlvdocPrstList(req: InspDlvdocPrstRequest = {}) {
+  return useQuery({
+    queryKey: exKeys.inspDlvdocPrstList(req),
+    queryFn: () => exService.getInspDlvdocPrstList(req),
+  })
+}
+
+/** 검사및납품조서결과상세(M07). */
+export function useDlvdocRsltDtl(id: string) {
+  return useQuery({
+    queryKey: exKeys.dlvdocRsltDtl(id),
+    queryFn: () => exService.getDlvdocRsltDtl(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 결과상세 물품목록(T06). */
+export function useDlvdocRsltCmdtys(id: string) {
+  return useQuery({
+    queryKey: exKeys.dlvdocRsltCmdtys(id),
+    queryFn: () => exService.getDlvdocRsltCmdtys(id),
     enabled: Boolean(id),
   })
 }

@@ -2,11 +2,14 @@
 // 설계서(04.이행 v0.83) 항목설명 항목·형식·slide10/13/14 목업값을 반영(임의 더미 금지).
 // ⚠️ 폐쇄망 반입 후 실백엔드 연동 시 이 파일은 사용되지 않는다(서비스가 apiClient 분기).
 import type {
+  DlvdocRsltCmdtyItem,
+  DlvdocRsltDtl,
   DlvgdsAvtsmtItem,
   InspDlvdocCmdtyItem,
   InspDlvdocDtl,
   InspDlvdocDtlSbsdPrcm,
   InspDlvdocItem,
+  InspDlvdocPrstItem,
   InspDlvdocSbsdCmdtyItem,
   InspIntgListItem,
   PxcndCmcnInspDtl,
@@ -362,6 +365,125 @@ const PXCND_CMCN_INSP_DTL: PxcndCmcnInspDtl = {
   dlvdocPrgrsStcd: '검사저장',
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-01-M05 검사및납품조서현황목록 — slide30 목업(계약번호 2025000000-01 · 계약금액 11,616,000 ·
+// 합격일자 2026-06-10/'-' · 납품일자 '-'/2026-08-15 · 진행상태 코드표(slide33) 표시명).
+// ────────────────────────────────────────────────────────────────────────────
+const INSP_DLVDOC_PRST_LIST: InspDlvdocPrstItem[] = [
+  {
+    id: '20250000001-100',
+    no: 1,
+    taskSeNm: '물품',
+    ctrtNo: '20250000001',
+    ctrtCycl: '01',
+    ctrtNm: '관사 비품 구매',
+    avtsmtNo: '100',
+    recrdPblcnNo: 'M2025MST000200-0001',
+    passYmd: '2026-06-10',
+    dlvgdsYmd: undefined,
+    dlvgdsAmt: 11616000,
+    plcdlvNm: '001부대',
+    dlvdocPrgrsStcd: '검사완료',
+    ctrtYmd: '2026-02-10',
+    ctrtAmt: 11616000,
+    bgtSecdNm: '전년국채',
+    sbsdPrcmYn: 'N',
+  },
+  {
+    id: '20250000002-101',
+    no: 2,
+    taskSeNm: '용역',
+    ctrtNo: '20250000002',
+    ctrtCycl: '01',
+    ctrtNm: '시설 경비 용역',
+    avtsmtNo: '101',
+    recrdPblcnNo: 'M2025MST000200-0002',
+    passYmd: '2026-04-10',
+    dlvgdsYmd: '2026-08-15',
+    dlvgdsAmt: 52000000,
+    plcdlvNm: '002부대',
+    dlvdocPrgrsStcd: '출납완료',
+    ctrtYmd: '2026-02-10',
+    ctrtAmt: 52000000,
+    bgtSecdNm: '본조',
+    sbsdPrcmYn: 'Y',
+  },
+  {
+    id: '20250000003-102',
+    no: 3,
+    taskSeNm: '공사',
+    ctrtNo: '20250000003',
+    ctrtCycl: '01',
+    ctrtNm: '막사 보수 공사',
+    avtsmtNo: '102',
+    recrdPblcnNo: 'M2025MST000200-0003',
+    passYmd: undefined,
+    dlvgdsYmd: undefined,
+    dlvgdsAmt: 120000000,
+    plcdlvNm: '003부대',
+    dlvdocPrgrsStcd: '검사저장',
+    ctrtYmd: '2026-01-03',
+    ctrtAmt: 385000000,
+    bgtSecdNm: '당년국채',
+    sbsdPrcmYn: 'N',
+  },
+]
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-01-M07 검사및납품조서결과상세 — slide36~37 목업(납품장소 제8385부대 · 정비 20일/10일 ·
+// 입고 2025-01-30/정비지시 2025-02-15/출고 2025-03-10 · 이행 정보는 M03 과 동일 구성).
+// ────────────────────────────────────────────────────────────────────────────
+const DLVDOC_RSLT_DTL: DlvdocRsltDtl = {
+  ctrtNo: '20250000001',
+  ctrtCycl: '01',
+  avtsmtNo: '123456789',
+  bgtSeNm: '전년국채',
+  dlvgdsPlcNm: '제8385부대',
+  dlvtrmYmd: '2026-12-30',
+  recrdPblcnNo: 'M2025MST000200-0001',
+  rmrkCn: '검사 완료. 출납 처리 대기.',
+  ctrtBzentyNm: 'A 업체',
+  ctrtBzentyAddr: '서울특별시 종로구 세종대로 1',
+  rprsvNm: '홍길동',
+  dlvBzentyNm: 'CJ대한통운',
+  ctrtMtncDayCnt: 20,
+  rlmtDayCnt: 10,
+  wrhsYmd: '2025-01-30',
+  mtncDrctnYmd: '2025-02-15',
+  spmtYmd: '2025-03-10',
+  strtYmd: '2025-10-15',
+  igiYmd: '2025-10-15',
+  dlvgdsYmd: '2025-10-15',
+  rcpmNo: '12345678',
+  passYmd: '2025-10-15',
+  techInspInstNm: '00000 기관',
+  techInsptrNm: '홍길동',
+  amtmtrInsptrOgdpNm: '0000000 부대',
+  amtmtrInsptrNm: '김길동',
+  acofOgdpNm: '0000000 부대',
+  acofNm: '박길동',
+  acofTelno: '000-0000-0000',
+  taskSeNm: '물품',
+  dlvdocPrgrsStcd: '대금청구',
+  ctrtNm: '관사 비품 구매',
+  ctrtYmd: '2026-02-10',
+  ctrtAmt: 11616000,
+}
+
+// MUI-EX-01-T06 물품목록 — T04 와 동일 형식(slide38).
+const DLVDOC_RSLT_CMDTY_LIST: DlvdocRsltCmdtyItem[] = [
+  {
+    id: '000000000000005-000000005',
+    prcmRqtNo: '000000000000005',
+    invtNo: '000000005',
+    itemNm: '깍두기(임가공)(3지역)[1412F]',
+    unitCd: 'kg',
+    tctrtQty: 49230000,
+    acmlWrtQty: 0,
+    tstmDlvgdsQty: 49230,
+  },
+]
+
 export const MOCK_EX = {
   inspIntgList: INSP_INTG_LIST,
   dlvgdsAvtsmtList: DLVGDS_AVTSMT_LIST,
@@ -371,4 +493,7 @@ export const MOCK_EX = {
   inspDlvdocSbsdDtl: INSP_DLVDOC_SBSD_DTL,
   inspDlvdocSbsdCmdtyList: INSP_DLVDOC_SBSD_CMDTY_LIST,
   pxcndCmcnInspDtl: PXCND_CMCN_INSP_DTL,
+  inspDlvdocPrstList: INSP_DLVDOC_PRST_LIST,
+  dlvdocRsltDtl: DLVDOC_RSLT_DTL,
+  dlvdocRsltCmdtyList: DLVDOC_RSLT_CMDTY_LIST,
 }

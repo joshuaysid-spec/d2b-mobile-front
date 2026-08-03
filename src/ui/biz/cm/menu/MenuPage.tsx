@@ -71,7 +71,7 @@ const MENU_TREE: MenuNode[] = [
     label: '이행',
     children: [
       { id: 'ex-inspect-list', label: LINKED_MENU_LABELS[ROUTES.EX] },
-      { id: 'ex-inspect-report', label: '검사 및 납품조서 현황 목록' },
+      { id: 'ex-inspect-report', label: LINKED_MENU_LABELS[ROUTES.EX_PRST] },
       { id: 'ex-quote-req', label: '견적 의뢰서 목록' },
       { id: 'ex-quote-noti', label: '견적 통보서 목록' },
       { id: 'ex-order-req', label: '발주 의뢰서 목록' },
@@ -186,6 +186,7 @@ const MENU_ROUTES: Record<string, string> = {
   'ct-payment': ROUTES.CT_PYMT, // 대금지불정보목록(MUI-CT-01-M15)
   'ct-cancel': ROUTES.CT_CNCLTN, // 해지/해제 목록(MUI-CT-03-M01)
   'ex-inspect-list': ROUTES.EX, // 검사통합목록(MUI-EX-01-M01)
+  'ex-inspect-report': ROUTES.EX_PRST, // 검사및납품조서현황목록(MUI-EX-01-M05)
   'support-notice-general': ROUTES.SUPPORT_NOTICE, // 일반공지사항(MUI-CM-04-M01)
   'support-notice-dapa': ROUTES.SUPPORT_NOTICE_DAPA, // 방위사업청공지사항(M21)
   'support-notice-unit': ROUTES.SUPPORT_NOTICE_DMDFRC, // 수요부대별공지사항(M23)

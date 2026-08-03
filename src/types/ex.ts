@@ -374,6 +374,145 @@ export interface PxcndCmcnInspDtl {
   dlvdocPrgrsStcd: string
 }
 
-// ── TODO(백엔드 확정) — 검사및납품조서 검색조건(dml_InspDlvdocSrchCnd, slide15 1.1)과
-//    조서발행번호정보조회(P06, dmt_RecrdPblcnNo·dlt_RecrdPblcnNoItemInfo, slide35)는
-//    M05 검사및납품조서현황(그룹 5, P09 검색필터 시트 배선) 시 추가 예정.
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-01-M05 검사및납품조서현황목록 (slide30~33) — inspDlvdocPrst/InspDlvdocPrstPage
+//   검색필터: MUI-EX-01-P09 (SearchFilter schema — 조서발행번호는 P06 공통시트).
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 검사및납품조서현황 검색조건 (dml_InspDlvdocPrstSrchCnd, slide33 1.1) — 서버 필터 전환 시 사용. */
+export interface InspDlvdocPrstRequest {
+  /** 계약시작일자 (ctrtBgngYmd, 8). */
+  ctrtBgngYmd?: string
+  /** 계약종료일자 (ctrtEndYmd, 8). */
+  ctrtEndYmd?: string
+  /** 계약번호 (ctrtNo, 11) — 계약번호검색 공통팝업(P79). */
+  ctrtNo?: string
+  /** 계약명 (ctrtNm, 300). */
+  ctrtNm?: string
+  /** 업무구분명 (taskSeNm) — 국내조달-물품/용역/공사, 국외조달, 전체. */
+  taskSeNm?: string
+}
+
+/** 검사및납품조서현황 1건 (dlt_InspDlvdocPrst, slide33 1.2). */
+export interface InspDlvdocPrstItem {
+  /** 목록 key/라우팅용 고유 식별자 — `${ctrtNo}-${avtsmtNo}` (클라 생성). */
+  id: string
+  /** 번호 (no, 10). */
+  no: number
+  /** 업무구분명 (taskSeNm) — 물품/용역/공사. 카드 뱃지 + 상세 분기 구동. */
+  taskSeNm: string
+  /** 계약번호 (11) — ⚠️ 설계서 표기는 ctrtNm(오타로 판단, 계약명과 중복)이라 ctrtNo 로 사용. */
+  ctrtNo: string
+  /** 계약번호차수 — 카드 계약번호 표기. ⚠️ dlt 미정의(M01 과 동일 사유). */
+  ctrtCycl: string
+  /** 계약명 — 카드 제목. ⚠️ dlt 미정의(카드 표시항목) — M01 항목명(ctrtNm) 재사용. */
+  ctrtNm: string
+  /** 통지번호 (avtsmtNo, 3). */
+  avtsmtNo: string
+  /** 조서발행번호 (recrdPblcnNo, 20). */
+  recrdPblcnNo: string
+  /** 합격일자 (passYmd, 8) — 미합격 시 빈 값('-') 표시. */
+  passYmd?: string
+  /** 납품일자 (dlvgdsYmd, 8) — 미납품 시 빈 값('-') 표시. */
+  dlvgdsYmd?: string
+  /** 납품금액 (dlvgdsAmt, 17,2). */
+  dlvgdsAmt: number
+  /** 납지명 (plcdlvNm, 200). */
+  plcdlvNm: string
+  /**
+   * 납품조서진행상태코드 (dlvdocPrgrsStcd, 2) — 'E'검사의뢰완료·'IX'검사반려·'N'저장·'EY'대금청구·
+   * 'IN'검사저장·'I'검사완료·'A'출납완료·'R'조달접수·'X'조달반려·'EX'납품조서반려·'EN'청구저장.
+   * 목업은 표시명 문자열 사용(코드 확정 시 코드→명 매핑 전환).
+   */
+  dlvdocPrgrsStcd: string
+  /** 계약일자 — 카드 행 표시항목. ⚠️ dlt 미정의 — M01 항목명(ctrtYmd) 재사용. */
+  ctrtYmd: string
+  /** 계약금액 — 카드 행 표시항목. ⚠️ dlt 미정의 — M01 항목명(ctrtAmt) 재사용. */
+  ctrtAmt: number
+  /** 예산구분 뱃지 — ⚠️ dlt 미정의 — bgtSecdNm 재사용. */
+  bgtSecdNm: string
+  /** 부대조달 여부 — 상세 분기(M03/M07) 임시 키(P11 과 동일). */
+  sbsdPrcmYn: 'Y' | 'N'
+}
+
+export interface InspDlvdocPrstResult {
+  list: InspDlvdocPrstItem[]
+  total: number
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-01-M07 검사및납품조서결과상세 (slide36~40) — dlvdocRsltDtl/DlvdocRsltDtlPage
+//   탭: T05 상세정보(DlvdocRsltDtl) · T06 물품목록(DlvdocRsltDtl_CmdtyList)
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 검사및납품조서결과상세 — 계약정보(dmt_CtrtInfo, slide39 1.1) + 계약자(dmt_CtrtrInfo)
+ *  + 정비조회(dmt_MtncInq) + 납품조서결과(dmt_DlvdocRslt) + 요약 표시항목. */
+export interface DlvdocRsltDtl {
+  /** 계약번호 (ctrtNo, 11). */
+  ctrtNo: string
+  /** 계약번호차수 — 문서정보 표기. ⚠️ 미정의(CT 선례 재사용). */
+  ctrtCycl: string
+  /** 통지번호 (avtsmtNo, 3). */
+  avtsmtNo: string
+  /** 예산구분명 (bgtSeNm, 상위코드: 전년국채/본조/당년국채) — ⚠️ M01 계열의 bgtSecdNm 과 표기 상이(설계서 그대로). */
+  bgtSeNm: string
+  /** 납품장소명 (dlvgdsPlcNm, 100). */
+  dlvgdsPlcNm: string
+  /** 납품기한일자 (dlvtrmYmd, 8). */
+  dlvtrmYmd: string
+  /** 조서발행번호 (recrdPblcnNo, 20). */
+  recrdPblcnNo: string
+  /** 비고 (rmrkCn, dmt_Rmrk). */
+  rmrkCn: string
+  // ── 계약 업체 정보 (dmt_CtrtrInfo, slide39 1.2) ──
+  /** 계약업체명 (ctrtBzentyNm, 100). */
+  ctrtBzentyNm: string
+  /** 계약업체주소 (ctrtBzentyAddr, 200). */
+  ctrtBzentyAddr: string
+  /** 대표자명 (rprsvNm, 100). */
+  rprsvNm: string
+  /** 배송업체 (dlvBzentyNm, 100). */
+  dlvBzentyNm: string
+  // ── 정비 정보 (dmt_MtncInq, slide39 1.3) ──
+  /** 계약정비일수 (ctrtMtncDayCnt, 7). */
+  ctrtMtncDayCnt: number
+  /** 실정비일수 (rlmtDayCnt, 7). */
+  rlmtDayCnt: number
+  /** 입고일 (wrhsYmd, 8). */
+  wrhsYmd: string
+  /** 정비지시일 (mtncDrctnYmd, 8). */
+  mtncDrctnYmd: string
+  /** 출고일자 (spmtYmd, 8). */
+  spmtYmd: string
+  // ── 이행 정보 (dmt_DlvdocRslt, slide40 1.6) ──
+  /** 개시일자 (strtYmd, 8). */
+  strtYmd: string
+  /** 검수일자 (igiYmd, 8). */
+  igiYmd: string
+  /** 납품일자 (dlvgdsYmd, 8). */
+  dlvgdsYmd: string
+  /** 출납번호 (rcpmNo, 20). */
+  rcpmNo: string
+  /** 합격일자 (passYmd, 8). */
+  passYmd: string
+  /**
+   * 기술검사기관~출납관전화번호 — ⚠️ slide40 1.6 의 영문 항목명 표기가 한글명과 어긋나(오타로 판단)
+   * 동일 구성인 M03 이행 정보 항목명을 재사용. 상세설계 확정 시 대조.
+   */
+  techInspInstNm: string
+  techInsptrNm: string
+  amtmtrInsptrOgdpNm: string
+  amtmtrInsptrNm: string
+  acofOgdpNm: string
+  acofNm: string
+  acofTelno: string
+  // ── 요약(SummaryInfo)·뱃지 표시항목 (slide36 타이틀 영역 — M05 카드와 동일 구성) ──
+  taskSeNm: string
+  dlvdocPrgrsStcd: string
+  ctrtNm: string
+  ctrtYmd: string
+  ctrtAmt: number
+}
+
+/** M07 물품목록 1건 (dlt_CmdtyList, slide39 1.4) — 부대조달(T04)과 동일 구성이라 타입 재사용. */
+export type DlvdocRsltCmdtyItem = InspDlvdocSbsdCmdtyItem
