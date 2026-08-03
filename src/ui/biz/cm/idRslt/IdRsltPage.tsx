@@ -8,15 +8,16 @@
 // 디자인/설계서 메모(보고 대상):
 //   - 아이디 값: 설계서 slide43·Figma(10020:81982) 모두 'abcdef1234' 를 마스킹 없이 그대로 노출 →
 //     설계서/Figma 우선하여 미마스킹. (마스킹 정책이 필요하면 아래 maskUserId 스텁 활성화)
-//   - 카드 아이콘(신분증 뱃지): REGISTRY 미등록 'badge' 글리프 → AssignmentInd 로 근사.
-//     (추가 권장 REGISTRY 항목: Badge = 'badge')
-//   - 실패 안내 아이콘: 원형 정보 마크 → Info 로 근사.
+//   - 신분증 배지(80px 흰 배경 + #c1d1ee 1.33px 보더 + 파란 점 데코): Figma 실측 재현(2026-08-03).
+//     assignment_ind 글리프는 Material Symbols 존재(AssignmentInd) — 성공/실패 동일 배지.
+//   - 실패 안내(m_empty data): alert_error 원형 느낌표 → Error 글리프(CardList 빈 목록과 동일 패턴).
 //   - status 는 목업 로컬 상태(기본 success). 실연동 시 아이디찾기 결과로 주입하고 데모 토글 제거.
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
+import alertErrorIcon from '@/assets/images/alertErrorIcon.svg'
 
 type IdRsltStatus = 'success' | 'fail'
 
@@ -64,41 +65,57 @@ export function IdRsltPage() {
         ))}
       </div>
 
-      {/* 본문 — 신분증 아이콘 + 헤딩 + 결과 카드 (세로 중앙) */}
-      <div className="flex flex-1 flex-col items-center pt-krds-14">
-        <div className="flex size-[72px] items-center justify-center rounded-krds-xl bg-krds-bg-primary-faint">
-          {/* TODO(디자인 에셋): badge(신분증 뱃지) — REGISTRY 미등록, AssignmentInd 로 근사 */}
-          <Icon
-            name="AssignmentInd"
-            size={40}
-            fill={isSuccess ? 1 : 0}
-            className="text-krds-text-primary"
-            aria-hidden
-          />
+      {/* 본문 — 신분증 배지 + 헤딩 + 결과 카드 (Figma: 세로 중앙 정렬, 그룹 간 24px) */}
+      <div className="flex flex-1 flex-col items-center justify-center gap-krds-10 py-krds-8">
+        <div className="flex flex-col items-center gap-krds-7">
+          {/* 신분증 배지 — 80px 흰 배경 + border-field(#c1d1ee) 1.33px + radius 27 +
+              파란 점 데코(24px, border-primary-soft=#a7c4f7) 위에 assignment_ind 50px (Figma 10020:81986) */}
+          <div className="relative flex size-20 items-center justify-center rounded-[27px] border-[1.33px] border-krds-border-field bg-background">
+            {/* 점 데코는 글리프 좌상단(15,15) 정렬 — Figma 실측 */}
+            <span
+              aria-hidden
+              className="absolute left-[15px] top-[15px] size-6 rounded-full bg-krds-border-primary-soft"
+            />
+            {/* 글리프 색 = #0f316e(primary-active) — Figma 배지 글리프 실측(2026-08-03) */}
+            <Icon
+              name="AssignmentInd"
+              size={50}
+              className="relative text-krds-text-primary-active"
+              aria-hidden
+            />
+          </div>
+
+          <h1 className="text-center text-[24px] font-bold leading-normal text-krds-text-ink">
+            {isSuccess ? (
+              '사용자 ID를 확인해주세요'
+            ) : (
+              <>
+                사용자 ID를
+                <br />
+                확인할 수 없습니다
+              </>
+            )}
+          </h1>
         </div>
 
-        <h1 className="mt-krds-8 text-center text-krds-heading-sm font-bold leading-normal text-krds-text-ink">
-          {isSuccess ? '사용자 ID를 확인해주세요' : '사용자 ID를 확인할 수 없습니다'}
-        </h1>
-
-        {/* 결과 카드 */}
-        <div className="mt-krds-8 w-full rounded-krds-xl bg-krds-bg-secondary px-krds-8 py-krds-9">
+        {/* 결과 카드 — bg-primary-faint(#ecf1fa) · radius 8 · p 20 (Figma 10020:81991·82008) */}
+        <div className="w-full rounded-krds-8 bg-krds-bg-primary-faint p-krds-9">
           {isSuccess ? (
-            <dl className="flex flex-col gap-krds-6 text-center">
-              <div className="flex flex-col gap-krds-2">
+            <dl className="flex flex-col gap-krds-8 text-center">
+              <div className="flex flex-col gap-krds-3">
                 <dt className="text-krds-body-md font-bold text-krds-text-ink">소속업체명</dt>
                 <dd className="text-krds-body-md text-krds-text-ink">{MOCK_ID_RSLT.blngBzentyNm}</dd>
               </div>
-              <div className="flex flex-col gap-krds-2">
+              <div className="flex flex-col gap-krds-3">
                 <dt className="text-krds-body-md font-bold text-krds-text-ink">아이디</dt>
                 <dd className="text-krds-body-md text-krds-text-ink">{MOCK_ID_RSLT.userId}</dd>
               </div>
             </dl>
           ) : (
-            <div className="flex flex-col items-center gap-krds-3">
-              {/* TODO(디자인 에셋): 원형 정보 마크 — Info 로 근사 */}
-              <Icon name="Info" size={24} fill={1} className="text-krds-text-muted" aria-hidden />
-              <p className="text-krds-body-md leading-normal text-krds-text-muted">
+            // m_empty data — alert_error 원본 SVG(#C1D1EE 채움 원 + 흰 느낌표) + 17 Medium ink
+            <div className="flex flex-col items-center gap-krds-5">
+              <img src={alertErrorIcon} alt="" aria-hidden className="size-[30px]" />
+              <p className="text-center text-krds-body-md font-medium leading-normal text-krds-text-ink">
                 가입된 인증정보가 없습니다.
               </p>
             </div>
@@ -106,19 +123,19 @@ export function IdRsltPage() {
         </div>
       </div>
 
-      {/* 하단 액션바 */}
-      <div className="flex flex-col gap-krds-3 pt-krds-9">
+      {/* 하단 액션바 — 버튼 h-48(default) · 간격 8px (Figma 10020:81998·82010) */}
+      <div className="flex flex-col gap-krds-5 pt-krds-8">
         {isSuccess ? (
           <>
-            <Button size="lg" className="w-full" onClick={handleGoIdPwLogin}>
+            <Button className="w-full" onClick={handleGoIdPwLogin}>
               ID/PW 로그인 바로가기
             </Button>
-            <Button variant="secondary" size="lg" className="w-full" onClick={handleFindPassword}>
+            <Button variant="secondary" className="w-full" onClick={handleFindPassword}>
               비밀번호 찾기
             </Button>
           </>
         ) : (
-          <Button size="lg" className="w-full" onClick={handleUserRegisterGuide}>
+          <Button className="w-full" onClick={handleUserRegisterGuide}>
             사용자 등록 안내 바로가기
           </Button>
         )}

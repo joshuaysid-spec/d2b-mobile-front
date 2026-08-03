@@ -157,6 +157,7 @@
   --krds-d2b-divider: #d1d7e0;          /* SectionTitle / 영역 구분선 (gray-20 #cdd1d5 와 다른 Figma 실측값) */
   --krds-d2b-step-blue: #3271e3;        /* StepBar 전용 파랑 (D2B blue #0054e9 와 다른 Figma 별도 톤) */
   --krds-d2b-blue-gray: #7e91b9;        /* 탭 비선택 텍스트 (260729 디자인 최종 확정 — 대비 3.16:1, 큰텍스트 3:1 마진 확보. 19px Bold 큰텍스트 전용 — 17px 이하 재사용 금지) */
+  --krds-d2b-gray-caption: #717171;     /* 바텀시트 안내 캡션 (모바일 신분증 P13 10020:87449 실측) */
   --krds-d2b-red-badge: #db083e;        /* 뱃지 red — pastel 텍스트 & solid 배경 (m_label_badge 10020:6549 실측) */
   --krds-d2b-red-badge-border: #ffc8d6; /* 뱃지 pastel red 보더 */
   --krds-d2b-yellow-badge-border: #f5e0b2; /* 뱃지 pastel yellow 보더 */
@@ -278,6 +279,7 @@
   --krds-badge-yellow-border: var(--krds-d2b-yellow-badge-border); /* 뱃지 pastel yellow 보더 */
   --krds-badge-green-border: var(--krds-d2b-green-badge-border);   /* 뱃지 pastel green 보더 */
   --krds-text-info: var(--krds-d2b-blue-slate);        /* D2B Figma — Infobox 본문 텍스트 */
+  --krds-text-caption: var(--krds-d2b-gray-caption);   /* D2B Figma — 바텀시트 안내 캡션(#717171) */
   --krds-text-on-primary: var(--krds-color-gray-0);
   --krds-text-on-inverse: var(--krds-color-gray-0);
   --krds-text-primary: var(--krds-d2b-blue);           /* D2B Figma */

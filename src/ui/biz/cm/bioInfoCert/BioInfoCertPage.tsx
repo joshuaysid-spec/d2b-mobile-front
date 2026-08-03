@@ -10,9 +10,11 @@
 //   - [등록하기] → 생체인증 등록 페이지(MUI-CM-03-M15) 이동.
 //   - [취소]   → 이전 로그인 선택 화면(MUI-CM-03-M01 MainLogin) 이동.
 //
-// 디자인 메모(보고 대상):
-//   - 지문 아이콘은 Figma 상 파란 원형 액센트가 겹친 KRDS 커스텀 일러스트(별도제작). 폰트 REGISTRY 엔
-//     플레인 'fingerprint' 글리프만 있어 카드 + Icon 'Fingerprint' 로 근사(액센트 오버레이 미표현).
+// 디자인 메모(2026-08-03 Figma 10020:87175 정합):
+//   - 지문 배지 = 로그인 계열 공통 정형(80px 흰 배경 + #c1d1ee 1.33px 보더 + radius 27 +
+//     파란 점 데코 #a7c4f7, 글리프 좌상단 15,15) + fingerprint 50px #0f316e(text-primary-active).
+//     fingerprint 는 Material Symbols 폰트 존재 — Icon REGISTRY 그대로 사용.
+//   - 버튼: 취소 100px 고정(secondary) + 등록하기 flex-1(primary), h-48 · gap 8 · p-16.
 import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/ui/common/base/Button'
@@ -36,18 +38,23 @@ export function BioInfoCertPage() {
   // min-h-full 로 스크롤 영역을 채워 안내부는 중앙, 도움말/버튼은 하단에 배치.
   return (
     <div className="flex min-h-full flex-col">
-      {/* 중앙 안내 — 지문 아이콘 + 문구 */}
-      <div className="flex flex-1 flex-col items-center justify-center gap-krds-9 px-krds-8">
-        {/* 지문 아이콘 카드 — Figma 커스텀 일러스트 근사(TODO 디자인 에셋) */}
-        <div className="flex size-[88px] items-center justify-center rounded-krds-xl border border-krds-border-divider bg-krds-bg-primary-faint shadow-krds-card">
+      {/* 중앙 안내 — 지문 배지 + 문구 (Figma 10020:87177: 세로 중앙, 배지-타이틀 12px) */}
+      <div className="flex flex-1 flex-col items-center justify-center gap-krds-7 px-krds-8 py-krds-8">
+        {/* 지문 배지 — 80px 흰 배경 + border-field(#c1d1ee) 1.33px + radius 27 +
+            파란 점 데코(글리프 좌상단 15,15) + fingerprint 50px 남색 */}
+        <div className="relative flex size-20 items-center justify-center rounded-[27px] border-[1.33px] border-krds-border-field bg-background">
+          <span
+            aria-hidden
+            className="absolute left-[15px] top-[15px] size-6 rounded-full bg-krds-border-primary-soft"
+          />
           <Icon
             name="Fingerprint"
-            size={48}
-            className="text-krds-text-primary-active"
+            size={50}
+            className="relative text-krds-text-primary-active"
             aria-hidden
           />
         </div>
-        <h1 className="text-center text-krds-heading-sm font-bold leading-normal text-krds-text-ink">
+        <h1 className="text-center text-[24px] font-bold leading-normal text-krds-text-ink">
           편리한 로그인을 위해
           <br />
           생체정보를 등록할 수 있습니다.
@@ -63,12 +70,12 @@ export function BioInfoCertPage() {
           items={['생체인증 로그인은 생체인증이 가능한 디바이스에서 등록 후 이용 가능합니다.']}
         />
 
-        {/* 취소 / 등록하기 (Figma: 취소 좁게 · 등록하기 넓게) */}
+        {/* 취소 / 등록하기 — Figma 실측: 취소 100px 고정 · 등록하기 flex-1 · h-48 · gap 8 */}
         <div className="flex gap-krds-5 px-krds-8 py-krds-8">
-          <Button variant="secondary" size="lg" className="flex-1" onClick={handleCancel}>
+          <Button variant="secondary" className="w-[100px] shrink-0" onClick={handleCancel}>
             취소
           </Button>
-          <Button variant="primary" size="lg" className="flex-[2]" onClick={handleRegister}>
+          <Button variant="primary" className="flex-1" onClick={handleRegister}>
             등록하기
           </Button>
         </div>

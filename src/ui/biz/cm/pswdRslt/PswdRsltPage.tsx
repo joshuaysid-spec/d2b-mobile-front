@@ -18,9 +18,9 @@
 //   - 성공/실패 분기는 실제로는 본인인증 결과(navigate state 등)로 결정됨. 여기서는 백엔드 미연동이라
 //     데모용 로컬 토글(status)로 두 상태를 미리 볼 수 있게 함(기본 success). // 추후: 인증 결과로 결정.
 //   - 성공 화면 아이디 'abcdef99' 는 설계서 예시값 그대로(인증된 사용자 아이디, 실제로는 조회 결과).
-//   - 실패 일러스트(신분증/뱃지 형태)는 KRDS 별도제작 에셋 — 폰트 REGISTRY 미등록 → AssignmentInd 로 근사(TODO).
-//   - Figma 는 하단 CTA 를 화면 최하단 고정(full-bleed)으로 표기하나, 셸(AppLayout)이 스크롤을 소유하고
-//     코드베이스에 sticky 바텀바 선례가 없어 콘텐츠 말미 전폭 버튼으로 렌더(로그인 플로우 컨벤션).
+//   - 실패 화면(10020:87151)은 아이디찾기 결과(IdRsltPage)와 동일 정형으로 재현(2026-08-03):
+//     신분증 배지(80px 흰 배경+#c1d1ee 보더+파란 점) · 타이틀 24px 2줄 · 안내 카드(bg-primary-faint,
+//     Error+ink Medium) 세로 중앙 · [사용자 등록 안내 바로가기] 최하단(min-h-full flex 로 하단 배치).
 //   - 실제 라우팅(사용자 등록 안내)·비밀번호 변경 API 는 미연동 — console.log 경계 스텁.
 //
 // 셸(AppLayout) 안 화면 — 헤더(sub, '비밀번호 찾기')/스크롤/뒤로가기는 AppLayout 소유. 페이지는 콘텐츠만 렌더.
@@ -38,6 +38,7 @@ import { InputMessage } from '@/ui/common/base/InputMessage'
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
 import { pswdRsltSchema, type PswdRsltForm } from '@/ui/biz/cm/pswdRslt/PswdRsltPage.schema'
+import alertErrorIcon from '@/assets/images/alertErrorIcon.svg'
 
 // 인증된 사용자 아이디(설계서 예시값 그대로). 실제로는 본인인증/조회 결과로 주입됨.
 const AUTHED_USER_ID = 'abcdef99'
@@ -82,7 +83,8 @@ export function PswdRsltPage() {
   }
 
   return (
-    <>
+    // min-h-full flex — 실패 화면의 하단 CTA 를 화면 최하단에 붙이기 위한 컬럼 셸(Figma 10020:87151).
+    <div className="flex min-h-full flex-col">
       {/* 데모용 결과 상태 토글 — 실제 화면에는 없음(본인인증 결과로 성공/실패 결정) */}
       <div className="px-4 pt-4">
         <SegmentedControl
@@ -95,7 +97,14 @@ export function PswdRsltPage() {
       {status === 'success' ? (
         /* ── 성공: 비밀번호 변경 폼 ───────────────────────────── */
         <>
-          <PageTitle as="h1">사용자 비밀번호를 새롭게 변경해주세요.</PageTitle>
+          {/* 타이틀 — '사용자 비밀번호를' 뒤 줄바꿈(2026-08-03 요청). span 으로 감싸 flex 분리 방지. */}
+          <PageTitle as="h1">
+            <span>
+              사용자 비밀번호를
+              <br />
+              새롭게 변경해주세요.
+            </span>
+          </PageTitle>
 
           {/* 아이디(읽기전용) */}
           <div className="flex flex-col gap-2 px-4 pt-1">
@@ -104,9 +113,10 @@ export function PswdRsltPage() {
           </div>
 
           {/* 비밀번호 변경 폼 */}
+          {/* pb-4: [비밀번호 변경하기] 하단 여백 = 좌우 여백(16px)과 동일(2026-08-03 요청) */}
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-5 px-4 pt-5"
+            className="flex flex-col gap-5 px-4 pb-4 pt-5"
             noValidate
           >
             {/* 새 비밀번호 */}
@@ -193,38 +203,51 @@ export function PswdRsltPage() {
           </form>
         </>
       ) : (
-        /* ── 실패: 사용자 확인 불가 안내 ──────────────────────── */
-        <div className="flex flex-col items-center px-4 pt-16">
-          {/* 안내 일러스트 — KRDS 별도제작 에셋 근사(AssignmentInd) */}
-          <div className="flex size-20 items-center justify-center rounded-krds-xl bg-krds-bg-primary-faint">
-            {/* TODO(디자인 에셋): 신분증/뱃지 별도제작 일러스트 — REGISTRY 미등록, AssignmentInd 로 근사 */}
-            <Icon name="AssignmentInd" size={40} className="text-krds-text-primary" aria-hidden />
+        /* ── 실패: 사용자 확인 불가 안내 (Figma 10020:87151 — IdRsltPage 실패와 동일 정형) ── */
+        <div className="flex flex-1 flex-col px-4 pb-4">
+          {/* 본문 — 신분증 배지 + 헤딩 + 안내 카드 (세로 중앙, 그룹 간 24px) */}
+          <div className="flex flex-1 flex-col items-center justify-center gap-krds-10 py-krds-8">
+            <div className="flex flex-col items-center gap-krds-7">
+              {/* 신분증 배지 — 80px 흰 배경 + border-field(#c1d1ee) 1.33px + radius 27 +
+                  파란 점 데코(24px, border-primary-soft — 글리프 좌상단 15,15 정렬) 위에 assignment_ind 50px */}
+              <div className="relative flex size-20 items-center justify-center rounded-[27px] border-[1.33px] border-krds-border-field bg-background">
+                <span
+                  aria-hidden
+                  className="absolute left-[15px] top-[15px] size-6 rounded-full bg-krds-border-primary-soft"
+                />
+                {/* 글리프 색 = #0f316e(primary-active) — Figma 배지 글리프 실측(2026-08-03) */}
+                <Icon
+                  name="AssignmentInd"
+                  size={50}
+                  className="relative text-krds-text-primary-active"
+                  aria-hidden
+                />
+              </div>
+
+              <h1 className="text-center text-[24px] font-bold leading-normal text-krds-text-ink">
+                사용자를
+                <br />
+                확인할 수 없습니다
+              </h1>
+            </div>
+
+            {/* 안내 카드 — bg-primary-faint · radius 8 · p 20 + m_empty data
+                (alert_error 원본 SVG 30px + 17 Medium ink) */}
+            <div className="flex w-full flex-col items-center gap-krds-5 rounded-krds-8 bg-krds-bg-primary-faint p-krds-9">
+              <img src={alertErrorIcon} alt="" aria-hidden className="size-[30px]" />
+              <p className="text-center text-krds-body-md font-medium leading-normal text-krds-text-ink wrap-break-word">
+                가입된 회원정보가 없습니다.
+              </p>
+            </div>
           </div>
 
-          <h1 className="mt-6 text-center text-krds-heading-sm font-bold leading-normal text-krds-text-ink wrap-break-word">
-            사용자를 확인할 수 없습니다.
-          </h1>
-
-          {/* 안내 박스 */}
-          <div className="mt-6 flex w-full flex-col items-center gap-2 rounded-krds-xl bg-krds-bg-secondary px-4 py-8">
-            {/* TODO(디자인 에셋): 안내 아이콘(느낌표 원형) — Error 글리프로 근사, 중립색 적용 */}
-            <Icon name="Error" size={24} fill={1} className="text-krds-text-disabled" aria-hidden />
-            <p className="text-center text-krds-body-md leading-normal text-krds-text-ink wrap-break-word">
-              가입된 회원정보가 없습니다.
-            </p>
-          </div>
-
-          {/* 하단 CTA — 사용자 등록 안내 바로가기 */}
-          <Button
-            type="button"
-            className="mt-8 w-full"
-            onClick={handleUserRegisterGuide}
-          >
+          {/* 하단 CTA — 화면 최하단(Figma) */}
+          <Button type="button" className="w-full" onClick={handleUserRegisterGuide}>
             사용자 등록 안내 바로가기
           </Button>
         </div>
       )}
-    </>
+    </div>
   )
 }
 PswdRsltPage.displayName = 'PswdRsltPage'

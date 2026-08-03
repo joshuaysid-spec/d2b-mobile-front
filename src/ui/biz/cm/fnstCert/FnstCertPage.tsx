@@ -31,7 +31,9 @@ function formatBirthInput(value: string): string {
   return parts.join('/')
 }
 
-/** 금융인증서 본인확인 폼 — BottomSheet 콘텐츠(로그인 방식선택에서 열림) + 페이지 공용. */
+/** 금융인증서 본인확인 폼 — FnstCertPage 콘텐츠.
+ *  (구 로그인 방식선택 BottomSheet 공용 — 2026-08-03 페이지 전환으로 시트 사용처 제거,
+ *   plan: cm-fnst-cert-p11-page. onSuccess 는 금융인증 SDK 연동 시 성공 후 이동용으로 유지.) */
 export function FnstCert({ onSuccess }: { onSuccess?: () => void }) {
   const {
     register,
@@ -54,8 +56,15 @@ export function FnstCert({ onSuccess }: { onSuccess?: () => void }) {
 
   return (
     <>
-      {/* 안내 타이틀(설계서/Figma 문구 그대로) */}
-      <PageTitle as="h1">금융인증서를 이용하기 위해 클라우드 저장소에 연결합니다.</PageTitle>
+      {/* 안내 타이틀 — '금융인증서를 이용하기 위해' 뒤 줄바꿈(2026-08-03 요청).
+          PageTitle 루트가 flex 라 span 으로 감싸 인라인 흐름 유지. */}
+      <PageTitle as="h1">
+        <span>
+          금융인증서를 이용하기 위해
+          <br />
+          클라우드 저장소에 연결합니다.
+        </span>
+      </PageTitle>
 
       {/* 본인확인 입력 폼 */}
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 px-4 pt-1" noValidate>
@@ -133,11 +142,13 @@ export function FnstCert({ onSuccess }: { onSuccess?: () => void }) {
 }
 FnstCert.displayName = 'FnstCert'
 
-// 페이지(라우트 /login/finance-cert) — 직접 진입 시 셸 안 콘텐츠로. (기본은 로그인 방식선택의 BottomSheet)
-// 셸(AppLayout) 안 화면 — 헤더/스크롤/뒤로가기는 AppLayout 소유. 페이지는 콘텐츠만 렌더.
+// 페이지(라우트 /login/finance-cert) — 로그인 방식선택의 '금융인증서' 카드가 이 페이지로 이동
+// (2026-08-03 바텀시트 → 페이지 전환). 셸(AppLayout) 안 화면 — 헤더/스크롤/뒤로가기는 AppLayout 소유.
 export function FnstCertPage() {
+  // 래퍼에 px/pt 를 주지 않는다 — 콘텐츠(PageTitle px-4 py-5 · 폼 px-4)가 자체 패딩을 가져
+  // 중복 시 좌우 32px 가 됨(2026-08-03 패딩 이중 적용 수정). 하단 여백만 페이지가 소유.
   return (
-    <section className="flex flex-col gap-krds-9 px-krds-8 pt-krds-9 pb-krds-8">
+    <section className="flex flex-col pb-krds-8">
       <FnstCert />
     </section>
   )
