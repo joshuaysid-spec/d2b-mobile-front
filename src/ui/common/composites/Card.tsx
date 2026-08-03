@@ -8,7 +8,9 @@
 //   title     — 큰 카드 제목 (19px Bold ink, 멀티라인 가능).
 //   rows      — [{ label, value }] 라벨/데이터 행. label 17 Regular muted 좌, value 17 ink.
 //               value 정렬: 기본 우측, type2(trailing 있음)는 좌측. value 가 ReactNode 라 자유.
-//   trailing  — 카드 우측 끝 슬롯 (옆 Badge/화살표 아이콘 등). rows 와 가로 정렬.
+//   trailing  — 카드 우측 끝 슬롯 (옆 Badge/화살표 아이콘 등). 기본은 rows 와 가로 정렬.
+//   trailingAlign — trailing 을 어디에 맞출지. 'rows'(기본, 기존 동작) / 'card'(카드 전체 높이 기준
+//               세로 중앙 — 본문(배지·제목·rows·footer) 전체가 좌측 컬럼이 되고 그 옆에 붙는다).
 //   footer    — 카드 하단 영역 (ButtonGroup, 액션 등).
 //   onClick   — 카드 전체 클릭 핸들러. 주어지면 button 처럼 동작 + hover/focus 스타일.
 //
@@ -34,6 +36,11 @@ export interface CardProps
   rows?: CardRow[]
   /** rows 영역과 가로로 나란히 — 우측 끝 슬롯 (Badge, 아이콘 등). */
   trailing?: React.ReactNode
+  /**
+   * trailing 정렬 기준. 기본 'rows'(rows 행과 가로 정렬 — 기존 동작).
+   * 'card' = 본문 전체를 좌측 컬럼으로 묶고 그 옆에 세로 중앙 배치(제목이 여러 줄이어도 겹치지 않음).
+   */
+  trailingAlign?: 'rows' | 'card'
   footer?: React.ReactNode
   /** 카드 전체 클릭 — 주어지면 button role + 호버/포커스 스타일. */
   onClick?: () => void
@@ -48,6 +55,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       title,
       rows,
       trailing,
+      trailingAlign = 'rows',
       footer,
       onClick,
       ...props
@@ -56,21 +64,12 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ) => {
     const interactive = Boolean(onClick)
     const Container = interactive ? 'button' : 'div'
+    // 'card' 정렬이면 trailing 을 rows 행에서 빼고 본문 컬럼 옆(세로 중앙)에 붙인다.
+    const cardTrailing = trailingAlign === 'card' ? trailing : undefined
+    const rowsTrailing = cardTrailing ? undefined : trailing
 
-    return (
-      <Container
-        // @ts-expect-error — Container 가 button 또는 div 라 ref 타입 분기 생략
-        ref={ref}
-        type={interactive ? 'button' : undefined}
-        onClick={onClick}
-        className={cn(
-          'flex w-full flex-col gap-krds-5 rounded-krds-8 border border-krds-border-field bg-background p-krds-8 text-left',
-          interactive &&
-            'cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
-          className,
-        )}
-        {...props}
-      >
+    const body = (
+      <>
         {badges && (
           <div className="flex flex-wrap items-start gap-krds-5">{badges}</div>
         )}
@@ -90,7 +89,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
           </div>
         )}
 
-        {(rows || trailing) && (
+        {(rows || rowsTrailing) && (
           <div className="flex w-full items-center gap-krds-7">
             {rows && rows.length > 0 && (
               <div className="flex min-w-px flex-1 flex-col gap-1">
@@ -114,15 +113,42 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
                 ))}
               </div>
             )}
-            {trailing && (
+            {rowsTrailing && (
               <div className="flex shrink-0 items-center gap-krds-5">
-                {trailing}
+                {rowsTrailing}
               </div>
             )}
           </div>
         )}
 
         {footer && <div className="w-full">{footer}</div>}
+      </>
+    )
+
+    return (
+      <Container
+        // @ts-expect-error — Container 가 button 또는 div 라 ref 타입 분기 생략
+        ref={ref}
+        type={interactive ? 'button' : undefined}
+        onClick={onClick}
+        className={cn(
+          'flex w-full rounded-krds-8 border border-krds-border-field bg-background p-krds-8 text-left',
+          // 'card' 정렬: 본문 컬럼 + trailing 을 가로로 나란히(세로 중앙). 그 외: 기존 세로 스택.
+          cardTrailing ? 'flex-row items-center gap-krds-7' : 'flex-col gap-krds-5',
+          interactive &&
+            'cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
+          className,
+        )}
+        {...props}
+      >
+        {cardTrailing ? (
+          <>
+            <div className="flex min-w-px flex-1 flex-col gap-krds-5">{body}</div>
+            <div className="flex shrink-0 items-center gap-krds-5">{cardTrailing}</div>
+          </>
+        ) : (
+          body
+        )}
       </Container>
     )
   },

@@ -38,9 +38,12 @@ export interface FileDownloadListProps extends React.HTMLAttributes<HTMLDivEleme
   iconSize?: number
 }
 
-// 행 우측 아이콘 버튼 공통 스타일 (48×48, border-primary) — 다운로드/삭제 동일
+// 행 우측 아이콘 버튼 공통 스타일 (48×48 정사각, border-primary) — 다운로드/삭제 동일.
+// ⚠️ w-12!/min-w-12! 는 Table value 셀의 `[&_button]:w-fit [&_button]:min-w-[74px]`(Figma 보기/선택 버튼 규칙)를
+//    되돌리기 위한 것. 그 규칙은 자손 선택자라 size-12 보다 우선해 첨부파일 행에서 아이콘 버튼이 74px 로 늘어난다
+//    (첨부파일을 Table 안에 넣는 화면이 다수 — 신청내역상세·사전심사·입찰결과 등).
 const ROW_ICON_BUTTON = cn(
-  'flex size-12 shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-primary bg-background text-krds-text-primary',
+  'flex size-12 w-12! min-w-12! shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-primary bg-background text-krds-text-primary',
   'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2 active:bg-krds-action-pressed',
 )
 

@@ -92,8 +92,8 @@ export function BzentyGnrlInfoDtl_Cmdty() {
         </AccordionSection>
       </Accordion>
 
-      {/* 물품[내자] 업체 제출서류 안내 (설계서 slide122) */}
-      <div className="px-4 pt-4">
+      {/* 물품[내자] 업체 제출서류 안내 (설계서 slide122) — 하단 여백도 좌우(16px)와 동일하게. */}
+      <div className="px-4 py-4">
         <Infobox
           title="물품[내자] 업체 제출서류"
           collapsible={false}

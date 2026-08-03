@@ -1,6 +1,10 @@
-// 업체정보 추가등록 — 물품(내자) (MUI-CM-01-M05, DmstLctnColInfoAddRegPage). 설계서 slide150~152(문서 P149~151).
+// 업체정보 추가등록 — 물품(내자) (MUI-CM-01-M05, DmstLctnColInfoAddRegPage).
+//   설계서 00.공통 v0.85 slide156~158(문서 P155~157). ⚠️ 2026-06-19 개정 반영: 담당자 정보는 별도 등록(M22)으로
+//   분리되어 이 화면에서 제거 · 탭 제거(단일 스크롤 폼).
 //   웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 업체정보 추가 등록(물품(내자)).
-//   구성(아코디언): 일반정보 · 대표품류 및 조합/단체 · 등록품목명세 + 유의사항(Infobox) + 조회 동의여부 → [추가 등록 신청][취소].
+//   구성(아코디언): 일반정보 · 대표품류 및 조합/단체 · 등록품목명세
+//     + 유의사항(Infobox, 기본 닫힘) + 내자업체 제출서류 안내(Infobox, 기본 닫힘) + 조회 동의여부
+//     → [취소][추가 등록 신청].
 //   소유 팝업(컨테이너=이 페이지): P06 품류선택(KnditmChc) · P07 조합/단체(AsctGrpChc) · P08 등록대상품목(RegTrgtItemChc)
 //     · P09 품목조회(ItemInq) · P13 행정정보공동이용사전동의서(PbamdsInfoJntUtztnBfhdWtcs) · MUI-CM-01-P14 확인팝업(Confirm — 별도 파일 없이 AlertModal 인라인 처리 확정).
 //   ⚠️ 디자인(Figma) 없음 → 설계서(pptx)로 작업. 데이터=목업(설계서 항목명/형식), 저장=API 경계 스텁(console.log).
@@ -11,7 +15,6 @@ import { useNavigate } from 'react-router-dom'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
-import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
@@ -101,10 +104,11 @@ export function DmstLctnColInfoAddRegPage() {
   const [bzstat, setBzstat] = useState('') // 업태
   const [asctGrp, setAsctGrp] = useState<AsctGrpChcItem | null>(null) // 조합/단체(P07)
 
-  // ── 등록품목명세 (slide151) ──
+  // ── 등록품목명세 (slide157) ──
   const [items, setItems] = useState<AddRegItemRow[]>(INITIAL_ITEMS)
   const [selectedIds, setSelectedIds] = useState<string[]>([])
-  const [itemKeyword, setItemKeyword] = useState('')
+  const [itemKeyword, setItemKeyword] = useState('') // 품목 코드 검색
+  const [rvwRslt, setRvwRslt] = useState('all') // 적격상태(전체/적격/부적격)
 
   // ── 팝업/상태 ──
   const [sheet, setSheet] = useState<SheetKind>(null)
@@ -116,12 +120,15 @@ export function DmstLctnColInfoAddRegPage() {
   const [toastMsg, setToastMsg] = useState<string | null>(null)
   const regTrgtRef = useRef<RegTrgtItemChcHandle>(null)
 
-  // 등록품목 검색(목업 필터) — 품명/품목코드 부분일치.
+  // 등록품목 검색(목업 필터, slide157 '아래 목록에서 검색') — 품명/품목코드 부분일치 + 적격상태.
   const visibleItems = useMemo(() => {
     const kw = itemKeyword.trim()
-    if (!kw) return items
-    return items.filter((it) => it.itemCdNm.includes(kw) || it.itemCd.includes(kw))
-  }, [items, itemKeyword])
+    return items.filter((it) => {
+      const byKw = !kw || it.itemCdNm.includes(kw) || it.itemCd.includes(kw)
+      const byRslt = rvwRslt === 'all' || it.itemRvwRsltCn === rvwRslt
+      return byKw && byRslt
+    })
+  }, [items, itemKeyword, rvwRslt])
 
   const toggleItem = (id: string) =>
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
@@ -206,8 +213,10 @@ export function DmstLctnColInfoAddRegPage() {
     window.setTimeout(() => navigate(-1), 1200)
   }
 
-  function itemRows(d: AddRegItemRow): TableRow[] {
+  // 표 행 — 설계서 slide157 컬럼 순서(순번 → 품목코드 → … → 접수상태). rnum 은 목록 표시 순번.
+  function itemRows(d: AddRegItemRow, rnum: number): TableRow[] {
     return [
+      { label: '순번', value: String(rnum) },
       {
         label: '품목코드',
         // 품목코드 클릭 → 품목 조회(P09). 클릭 요소는 button(전역 cursor·a11y 규칙 커버).
@@ -341,17 +350,38 @@ export function DmstLctnColInfoAddRegPage() {
         {/* ── 등록품목명세 ── */}
         <AccordionSection value="reg" title="등록품목명세" titleInfo={`총 ${items.length}건`}>
           <div className="flex flex-col gap-4">
-            {/* 검색 — 아래 목록에서 검색(slide151) */}
-            <InputBox
-              value={itemKeyword}
-              placeholder="코드를 입력해주세요"
-              onChange={(e) => setItemKeyword(e.target.value)}
-              onClear={() => setItemKeyword('')}
-            />
+            {/* 신청 건수 제한 안내 (slide157) */}
+            <p className="text-[15px] leading-relaxed text-krds-text-muted">
+              1회 등록품목 신청은 30개 이내로 신청해주시기 바랍니다.
+            </p>
+
+            {/* 검색 — 품목 코드 + 적격상태(slide157 '품목 명세 내역 중에서 검색') */}
+            <div className="flex flex-col gap-krds-5">
+              <InputLabel htmlFor="m05-itemKeyword">품목 코드</InputLabel>
+              <InputBox
+                id="m05-itemKeyword"
+                value={itemKeyword}
+                placeholder="검색 코드를 입력해주세요"
+                onChange={(e) => setItemKeyword(e.target.value)}
+                onClear={() => setItemKeyword('')}
+              />
+            </div>
+            <div className="flex flex-col gap-krds-5">
+              <InputLabel>적격상태</InputLabel>
+              <SelectBox
+                placeholder="전체"
+                value={rvwRslt}
+                onValueChange={setRvwRslt}
+                items={[
+                  { value: 'all', label: '전체' },
+                  { value: '적격', label: '적격' },
+                  { value: '부적격', label: '부적격' },
+                ]}
+              />
+            </div>
             {/* 버튼 — 신규 추가(P08)/선택 삭제/선택 갱신/초기화 */}
             <div className="flex flex-wrap gap-krds-4">
               <Button variant="primary" size="sm" onClick={() => setSheet('regtrgt')}>
-                <Icon name="Add" size={18} aria-hidden />
                 신규 추가
               </Button>
               <Button variant="secondary" size="sm" onClick={handleDeleteSelected}>
@@ -365,19 +395,25 @@ export function DmstLctnColInfoAddRegPage() {
               </Button>
             </div>
 
-            {/* 품목 목록 — 선택 토글 + 품목코드 링크(P09). 목업. */}
+            {/* 품목 목록 — [선택] 토글 + [보기](P09) + 품목코드 링크(P09). 목업. */}
             <div className="flex flex-col gap-krds-8">
-              {visibleItems.map((it) => {
+              {visibleItems.map((it, i) => {
                 const on = selectedIds.includes(it.id)
                 return (
                   <div key={it.id} className="flex flex-col gap-krds-5">
-                    <Checkbox
-                      variant="box"
-                      checked={on}
-                      onCheckedChange={() => toggleItem(it.id)}
-                      label={`${it.itemCdNm} 선택`}
-                    />
-                    <Table rows={itemRows(it)} />
+                    <div className="flex items-center justify-between gap-krds-5">
+                      <Checkbox
+                        variant="box"
+                        checked={on}
+                        onCheckedChange={() => toggleItem(it.id)}
+                        label={`${it.itemCdNm} 선택`}
+                      />
+                      {/* [보기] — 품목 조회(P09). 설계서 slide157 행 우측 버튼. */}
+                      <Button variant="secondary" size="sm" onClick={() => openItemInq(it)}>
+                        보기
+                      </Button>
+                    </div>
+                    <Table rows={itemRows(it, i + 1)} />
                   </div>
                 )
               })}
@@ -396,7 +432,7 @@ export function DmstLctnColInfoAddRegPage() {
         </AccordionSection>
       </Accordion>
 
-      {/* 유의사항 (slide152) */}
+      {/* 유의사항 (slide158) — 기본 닫힘(Infobox 기본값). 문구는 설계서 원문 그대로. */}
       <div className="px-4 pt-4">
         <Infobox
           title="유의사항"
@@ -404,8 +440,24 @@ export function DmstLctnColInfoAddRegPage() {
           items={[
             '등록하시려는 품목이 상단에 이미 등록되어진 상태라면 별도로 추가하실 필요가 없습니다.',
             '신규 품목은 우측의 추가 버튼을 이용해 리스트에 추가 후 접수해 주시면 됩니다.',
-            '삭제, 갱신이 필요한 경우에는 선택에 체크 후 해당업무(삭제 혹은 갱신) 버튼을 클릭하신 후 접수해 주시기 바랍니다.',
+            '삭제, 갱신이 필요한 경우에는 선택에 체크 후 우측의 해당업무(삭제 혹은 갱신) 버튼을 꼭 클릭하신 후 접수해 주시기 바랍니다.',
+            '부적격 품목을 재신청하실 경우는 먼저 해당 품목을 삭제하신 후 저장하시고 조달담당자의 승인을 받으신 다음 재신청하셔야 합니다. 좌측메뉴 중 등록품목 신청조회 코너에서 품목삭제 신청서의 진행상태가 [승인]으로 확정된 후에 재신청하셔야 합니다.',
+            '만료된 품목을 재신청하실 경우는 먼저 해당 품목을 삭제하신 후 저장하시고 조달담당자의 승인을 받으신 다음 재신청하셔야 합니다. 좌측메뉴 중 추가정보신청조회 코너에서 품목삭제 신청서의 진행상태가 [승인]으로 확정된 후에 재신청하셔야 합니다.',
+            '2016년 11월 30일까지(유예기간)는 만료일자와 상관없이 갱신신청이 가능합니다.',
             '갱신은 만료전 90일부터 가능하며, 만료된 건은 삭제 후 추가(신규신청)해 주시기 바랍니다.',
+          ]}
+        />
+      </div>
+
+      {/* 내자업체 제출서류 안내 (slide158) — 기본 닫힘. 연락처 + 제출서류 + 조회 가능 업체 안내. */}
+      <div className="px-4 pt-4">
+        <Infobox
+          title="내자업체 제출서류 안내"
+          collapsible
+          items={[
+            '(전화) 02-2079-6915,6925 (팩스번호) 02-773-7587',
+            '인,허가증 사본 - 1부 (해당품목 제출)',
+            '해당 공무원이 행정정보공동이용센터(www.share.go.kr)에서 직접 조회가 가능한 업체는 별도 제출 불필요',
           ]}
         />
       </div>

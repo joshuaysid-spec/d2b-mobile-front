@@ -3143,6 +3143,23 @@ export function ComponentGuidePage() {
                 </div>
               </Specimen>
             </Row>
+            <Row label="trailingAlign='card' (화살표 세로 중앙)">
+              <Specimen caption="제목이 여러 줄이어도 화살표는 카드 전체 높이 기준 중앙 · 본문과 겹치지 않음 (나의 게시물 M17)">
+                <div className="w-[328px]">
+                  <Card
+                    onClick={() => alert('카드 클릭')}
+                    title={
+                      <span className="line-clamp-2">
+                        작성한 제목 표시 영역 두줄이 되는 경우 두줄까지 표시됩니다 세줄부터는 말줄임 처리
+                      </span>
+                    }
+                    rows={[{ label: '작성일', value: '2025-12-01' }]}
+                    trailing={<Icon name="ArrowForwardIos" size={20} aria-hidden />}
+                    trailingAlign="card"
+                  />
+                </div>
+              </Specimen>
+            </Row>
             <Row label="type3 (긴 제목 + 줄바꿈 — 풀 슬롯)">
               <Specimen caption="제목 멀티라인 + 9뱃지 + 4행">
                 <div className="w-[328px]">

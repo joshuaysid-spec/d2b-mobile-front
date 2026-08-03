@@ -46,29 +46,56 @@ const DOC_ITEMS: { key: string; label: string; count?: number }[] = [
 ]
 const DOC_TOTAL = 35
 
-// 5) 업무 캘린더 — 관심(찜) 입찰공고 + 개인 스케줄(합쳐 최대 3건 카드).
+// 5) 업무 캘린더 — 관심(찜) 입찰공고 + 개인 스케줄. 카드 영역은 **선택 일자**의 항목만 최신순 3건까지
+//    (설계서 slide81 "날짜 선택 시 하단 6번항에 3개까지 표시").
 // 날짜는 '오늘' 기준 상대값(목업) — 캘린더 기본 노출 월에 표식이 보이도록. API 연동 시 실제 일자로 교체.
 const schdlDt = (offset: number) => dayjs().add(offset, 'day').format('YYYY-MM-DD')
 const MOCK_SCHEDULES: MyPageSchedule[] = [
+  // 오늘 — 3건 초과(4건) 배치로 '최신순 3건까지' 동작 확인.
   {
     id: 'sc1',
     schdlSeCd: 'goods',
-    schdlDt: schdlDt(0), // 오늘
+    schdlDt: schdlDt(0),
     pbancNo: '공고번호 000 00 0000',
     pbancNm: '즐겨찾기(찜)한 입찰공고 표시',
+    wrtYmd: schdlDt(-1),
   },
   {
     id: 'sc2',
     schdlSeCd: 'construction',
-    schdlDt: schdlDt(3),
+    schdlDt: schdlDt(0),
     pbancNo: '공고번호 000 00 0000',
     pbancNm: '즐겨찾기(찜)한 입찰공고 표시',
+    wrtYmd: schdlDt(-2),
   },
   {
     id: 'sc3',
     schdlSeCd: 'personal',
+    schdlDt: schdlDt(0),
+    schdlCn: '작성한 스케줄이 있는 경우 표시됩니다',
+    wrtYmd: schdlDt(0),
+  },
+  {
+    id: 'sc4',
+    schdlSeCd: 'personal',
+    schdlDt: schdlDt(0),
+    schdlCn: '작성한 스케줄이 있는 경우 표시됩니다',
+    wrtYmd: schdlDt(-5), // 가장 오래된 건 → 3건 초과로 잘림
+  },
+  {
+    id: 'sc5',
+    schdlSeCd: 'construction',
+    schdlDt: schdlDt(3),
+    pbancNo: '공고번호 000 00 0000',
+    pbancNm: '즐겨찾기(찜)한 입찰공고 표시',
+    wrtYmd: schdlDt(-1),
+  },
+  {
+    id: 'sc6',
+    schdlSeCd: 'personal',
     schdlDt: schdlDt(6),
     schdlCn: '작성한 스케줄이 있는 경우 표시됩니다',
+    wrtYmd: schdlDt(-3),
   },
 ]
 
@@ -97,12 +124,15 @@ function CountRow({
   title,
   count,
   variant = 'nav',
+  tinted = false,
   onClick,
   coach,
 }: {
   title: string
   count: number
   variant?: 'section' | 'nav'
+  /** faint 배경(#ecf1fa) — Figma 10020:83891 단독 이동 행(업무이력/관심공고/관심법령)도 섹션 헤더와 동일 톤. */
+  tinted?: boolean
   onClick?: () => void
   /** 앱 이용안내(M16) 코치마크 하이라이트 측정 지점(data-coach). */
   coach?: string
@@ -115,7 +145,7 @@ function CountRow({
       onClick={onClick}
       className={cn(
         ROW,
-        variant === 'section' && 'bg-krds-bg-primary-faint',
+        (variant === 'section' || tinted) && 'bg-krds-bg-primary-faint',
         onClick && 'text-left focus-visible:bg-krds-bg-primary-faint focus-visible:outline-hidden',
       )}
     >
@@ -188,8 +218,9 @@ export function MyPage() {
   const [detail, setDetail] = useState<MyPageSchedule | null>(null)
 
   // ── 동작 스텁 (백엔드/하위 화면 연동 시 교체) ──
+  // ⚙(settings) — 사용자 정보관리 허브(MUI-CM-02-M01)로 이동(2026-08-03 배선).
   const goSettings = () => {
-    console.log('[MyPage] 사용자 정보관리') // 추후: navigate(사용자 정보관리)
+    navigate(ROUTES.INDV_INFO_MNG)
   }
   const goPrgrs = (key: string) => {
     // 입찰참가신청/적격심사/기술평가/사양서평가 → 입찰진행 목록(MUI-BD-03-M01)에 해당 업무 필터로 진입.
@@ -221,8 +252,13 @@ export function MyPage() {
     navigate(ROUTES.ITRST_STT)
   }
   const goCalendarMore = () => {
-    // 업무 캘린더 전체 화면(MUI-CM-06-M06).
+    // 업무 캘린더 전체 화면(MUI-CM-06-M06) — 날짜 미지정(오늘).
     navigate(ROUTES.TASK_CLDR)
+  }
+  // 캘린더 날짜 클릭 — 업무캘린더(MUI-CM-06-M06)로 그 날짜가 선택된 상태로 진입.
+  //   해당 날짜의 일정 전체 목록과 '표시할 일정이 없습니다.' 안내는 M06 이 담당한다.
+  const goCalendarDate = (schdlDt: string) => {
+    navigate(ROUTES.TASK_CLDR, { state: { schdlDt } })
   }
   // 일정 카드 — 입찰공고면 해당 공고 이동, 개인 스케줄이면 바텀시트 상세.
   const onSelectSchedule = (s: MyPageSchedule) => {
@@ -234,10 +270,11 @@ export function MyPage() {
     navigate(`/bd/${s.id}`)
   }
 
-  // 하단 바로가기(9) — 설계서 v0.84 slide82(2026-07-13 수정: 국외보관함 추가·회원탈퇴 제거) 구성.
-  // 회원탈퇴는 사용자 정보관리(MUI-CM-02-M01) 화면에서 진입.
+  // 하단 바로가기 — 설계서 v0.84 slide82(2026-07-13 수정: 국외보관함 추가) + Figma 10020:83891(회원탈퇴 행) 구성.
   const shortcuts = [
     { id: 'myPosts', label: '나의 게시물', onClick: () => navigate(ROUTES.MY_PST) },
+    // 국외 보관함(MUI-CM-01-M71) — 국외 보관함 공고 목록. 설계서 v0.84 slide82(260713 수정) 구성 항목(2026-08-03 복구).
+    { id: 'ovsLocker', label: '국외 보관함', onClick: () => navigate('/bd/ovs/locker') },
     // 업체정보관리 허브(M01) — 여기서 업체정보 상세(M02)·추가정보(M03)·추가등록·무역대리업(M15)·조달원확인서(M19) 등으로 분기.
     { id: 'bzentyInfo', label: '업체 정보관리', onClick: () => navigate(ROUTES.BZENTY_INFO_MNG) },
     // 사용자정보관리 허브(MUI-CM-02-M01) — 개인정보/비번변경/신원확인/소속사용자/알림/회원탈퇴로 분기.
@@ -245,14 +282,15 @@ export function MyPage() {
     { id: 'cabinet', label: '디지털 캐비닛', onClick: () => navigate(ROUTES.DIGITAL_CABINET) },
     // 알림 서비스 신청 및 해지(MUI-CM-02-M09).
     { id: 'noti', label: '알림 서비스 신청 및 해지', onClick: () => navigate(ROUTES.NOTI_SRVC_APLY) },
-    // 국외 보관함(MUI-CM-01-M71) — 국외 보관함 공고 목록.
-    { id: 'ovsLocker', label: '국외 보관함', onClick: () => navigate('/bd/ovs/locker') },
+    // 회원탈퇴(MUI-CM-02-P10) — Figma 10020:83891 하단 링크 순서 맞춤(2026-08-03).
+    { id: 'withdrawal', label: '회원탈퇴', onClick: () => navigate(ROUTES.MB_WITHDRAWAL) },
   ]
 
   return (
     <div className="flex flex-col">
-      {/* 1) 사용자 인사([업체] 홍길동 님) + ⚙ — 22px Bold, min-h 65, px16 py16 */}
-      <div className="flex min-h-[65px] w-full items-center gap-krds-5 px-krds-8 py-krds-8">
+      {/* 1) 사용자 인사([업체] 홍길동 님) + ⚙(settings — Figma 10020:83899 동일 글리프)
+          — 22px Bold, min-h 65, px16 py16, bg #ecf1fa(primary-faint — Figma 10020:83894). */}
+      <div className="flex min-h-[65px] w-full items-center gap-krds-5 bg-krds-bg-primary-faint px-krds-8 py-krds-8">
         <p className="min-w-px flex-1 text-krds-heading-md font-bold leading-normal text-krds-text-ink">
           [{MOCK_BZENTY_NM}] {userNm} 님
         </p>
@@ -286,6 +324,7 @@ export function MyPage() {
         schedules={MOCK_SCHEDULES}
         onMore={goCalendarMore}
         onSelectSchedule={onSelectSchedule}
+        onSelectDate={goCalendarDate}
       />
 
       {/* 8) 문서함(섹션 헤더 → M10) + 하위(받은/보낸/반려/임시저장 → 문서함 목록 해당 탭) */}
@@ -310,9 +349,10 @@ export function MyPage() {
         />
       ))}
 
-      {/* 맨 위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main) */}
+      {/* 맨 위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main).
+          위치는 타 페이지와 동일(bottom-0 — BottomNav 오프셋은 FAB 가 컨텍스트로 처리). */}
       <FloatingActionButton
-        className="fixed bottom-20 right-4 z-40"
+        className="fixed bottom-0 right-4 z-40"
         onTop={() =>
           document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
         }

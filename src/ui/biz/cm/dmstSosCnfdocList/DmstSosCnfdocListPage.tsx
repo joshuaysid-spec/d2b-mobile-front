@@ -1,7 +1,9 @@
 // 국내 조달원 확인서 신청 목록 (MUI-CM-01-M19, Figma 10020:82626 / empty 10020:82677).
-// 설계서 00.공통 v0.84 slide131·132(문서 P130·131). 웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 국내조달원확인서신청목록.
-// 구성(위→아래): 검색영역(신청기간*·신청인·[초기화][조회]) → 목록헤더(총건수·표시개수)
+// 설계서 00.공통 v0.85 slide138(문서 P137). 웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 국내조달원확인서신청목록.
+// 구성(위→아래): 검색필터 버튼 → 목록헤더(총건수·표시개수)
 //   → 카드 리스트(발급 배지 + 접수번호 + 신청인/신청사유/신청일자/연락처) → 더보기 → 하단 [신청하기](→ P20 시트).
+// 검색조건은 인라인 영역이 아니라 **공통 SearchFilter 셸**(schema 주입)로 띄운다 — 설계서 slide138 mock 의
+//   '검색필터'(초기화 / 기간 설정* / 검색어(일부 입력 가능) / 검색·닫기)와 동일 구성, 국외(OvsSosCnfdocListPage)와 같은 패턴.
 // 데이터/페이징/검색은 페이지가 소유. 목록은 목업(dl_resultList), 더보기·표시개수·검색은 API 경계 스텁
 //   (핸들러 실행 + console.log). 신청 팝업(P20, DmstSosCnfdocAply)은 BottomSheet 컨테이너를 페이지가 소유.
 import { useMemo, useState } from 'react'
@@ -12,22 +14,70 @@ import dayjs from 'dayjs'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
-import { InputBox } from '@/ui/common/base/InputBox'
-import { InputLabel } from '@/ui/common/base/InputLabel'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
-import { DateRangeInput, type DateRange } from '@/ui/common/composites/DateRangeInput'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Toast } from '@/ui/common/composites/Toast'
+import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { DmstSosCnfdocAply } from '@/ui/biz/cm/dmstSosCnfdocList/DmstSosCnfdocAply'
 import {
   dmstSosCnfdocAplySchema,
   type DmstSosCnfdocAplyForm,
 } from '@/ui/biz/cm/dmstSosCnfdocList/DmstSosCnfdocAply.schema'
+import { cn } from '@/utils/cn'
 import type { DmstSosCnfdocItem } from '@/types/cm'
+import type {
+  DateRangePresetDef,
+  SearchFilterSchema,
+  SearchFilterValue,
+} from '@/types/search-filter'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
+
+// ── 검색필터 schema (설계서 slide138 mock — 기간 설정* → 검색어(신청인)) ─────────
+const DATE_PRESETS: DateRangePresetDef[] = [
+  { label: '최근 1개월', months: 1 },
+  { label: '최근 3개월', months: 3 },
+  { label: '최근 6개월', months: 6 },
+]
+
+const SEARCH_SCHEMA: SearchFilterSchema = {
+  title: '검색필터',
+  sections: [
+    {
+      key: 'date',
+      title: '기간 설정',
+      fields: [
+        { type: 'segment', key: 'dateType', options: [{ value: 'edpPrcsYmd', label: '검색 기간' }] },
+        { type: 'dateRange', key: 'edpPrcsYmd', required: true, presets: DATE_PRESETS },
+      ],
+    },
+    {
+      key: 'keyword',
+      title: '검색어 (일부 입력 가능)',
+      fields: [
+        {
+          type: 'text',
+          key: 'aplcntNm',
+          label: '신청인',
+          placeholder: '신청인을 입력하세요.',
+        },
+      ],
+    },
+  ],
+}
+
+function buildDefaultValue(): SearchFilterValue {
+  return {
+    dateType: 'edpPrcsYmd',
+    edpPrcsYmd: {
+      start: dayjs().subtract(1, 'month').format(DATE_FORMAT),
+      end: dayjs().format(DATE_FORMAT),
+    },
+    aplcntNm: '',
+  }
+}
 
 // 로그인 사용자(신청인) 자동완성 값 — P20 신청 팝업 read-only 표시(설계서 slide133 '신청인 정보 자동완성').
 //   추후 authStore(로그인 업체 담당자)에서 주입. 현재는 목업.
@@ -94,17 +144,14 @@ const MOCK_LIST: DmstSosCnfdocItem[] = Array.from({ length: TOTAL }, (_, i) => {
   return { ...base, id: String(i + 1), aplyRcptNo: `${base.aplyRcptNo}${String(i + 1).padStart(2, '0')}`.slice(0, 12) }
 })
 
-const RECENT_1M = (): DateRange => ({
-  start: dayjs().subtract(1, 'month').format(DATE_FORMAT),
-  end: dayjs().format(DATE_FORMAT),
-})
-
 export function DmstSosCnfdocListPage() {
-  // 검색조건(dm_searchInfo) — 신청기간(edpPrcsYmdFrom/To)·신청인(aplcntNm). 입력 중 상태.
-  const [period, setPeriod] = useState<DateRange>(RECENT_1M)
-  const [aplcntNm, setAplcntNm] = useState('')
-  // 검색 '적용' — [조회](또는 초기화) 시에만 확정. 입력 중에는 목록이 걸러지지 않는다.
-  const [appliedNm, setAppliedNm] = useState('')
+  // 검색필터(dm_searchInfo) — 셸이 draft 를 갖고, [검색] 시에만 이 확정값이 갱신된다.
+  const [filterOpen, setFilterOpen] = useState(false)
+  const [filter, setFilter] = useState<SearchFilterValue>(() => buildDefaultValue())
+  const [filterApplied, setFilterApplied] = useState(false) // 필터 적용 → 버튼 강조
+  const defaultValue = useMemo(() => buildDefaultValue(), [])
+  // 목록에 실제로 적용된 신청인 검색어.
+  const appliedNm = typeof filter.aplcntNm === 'string' ? filter.aplcntNm.trim() : ''
   // 정렬(목록 헤더 우측, Figma "최신순 ▼") — 신청날짜 기준 최신순/과거순. pageSize(10)는 더보기 슬라이스용 고정.
   const [sort, setSort] = useState<'latest' | 'oldest'>('latest')
   const pageSize = 10
@@ -125,18 +172,13 @@ export function DmstSosCnfdocListPage() {
   })
 
   // ── API 경계 스텁 (백엔드 연동 시 services/cm·queries/cm 로 대체). console 로 동작 확인 ──
-  const handleSearch = () => {
-    setAppliedNm(aplcntNm.trim())
+  // 검색필터 [검색] — 셸이 확정한 값을 받아 목록에 적용(초기화는 셸 내부에서 defaultValue 로 되돌림).
+  const handleFilterSearch = (value: SearchFilterValue) => {
+    setFilter(value)
+    setFilterApplied(true)
     setPage(1)
-    console.log('[DmstSosCnfdoc] 조회', { period, aplcntNm })
-    // cmService.getDmstSosCnfdocList({ edpPrcsYmdFrom: period.start, edpPrcsYmdTo: period.end, aplcntNm })
-  }
-  const handleReset = () => {
-    setPeriod(RECENT_1M())
-    setAplcntNm('')
-    setAppliedNm('')
-    setPage(1)
-    console.log('[DmstSosCnfdoc] 초기화')
+    console.log('[DmstSosCnfdoc] 검색필터 조회', value)
+    // cmService.getDmstSosCnfdocList({ edpPrcsYmdFrom, edpPrcsYmdTo, aplcntNm })
   }
   const handleSort = (value: string) => {
     setSort(value as 'latest' | 'oldest')
@@ -218,60 +260,23 @@ export function DmstSosCnfdocListPage() {
 
   return (
     <div className="flex w-full flex-col">
-      {/* 검색영역 — 신청기간*(기간 트리거) + 신청인 + [초기화][조회] */}
-      <div className="flex flex-col gap-4 px-4 py-4">
-        {/* 신청기간 — 프리셋 칩 없이 트리거 박스만(Figma 1:1). 기간은 시트 캘린더에서 선택.
-            시트(P17 기간선택, Figma 82689/82694): 타이틀 '기간 선택'(기본) + 확정 버튼 '저장'. */}
-        <DateRangeInput
-          label="신청기간"
-          required
-          showPresets={false}
-          value={period}
-          onChange={setPeriod}
-          confirmLabel="저장"
-        />
-
-        {/* 신청인 */}
-        <div className="flex flex-col gap-krds-5">
-          <InputLabel htmlFor="srch-aplcntNm">신청인</InputLabel>
-          <InputBox
-            id="srch-aplcntNm"
-            placeholder="내용을 입력하세요."
-            value={aplcntNm}
-            maxLength={100}
-            onChange={(e) => setAplcntNm(e.target.value)}
-            onClear={() => setAplcntNm('')}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleSearch()
-            }}
-          />
-        </div>
-
-        {/* [초기화](secondary) [조회](primary) — asymmetric(초기화 100px 고정 + 조회 flex) */}
-        <ButtonGroup
-          items={[
-            {
-              label: (
-                <>
-                  <Icon name="Autorenew" size={20} aria-hidden />
-                  초기화
-                </>
-              ),
-              variant: 'secondary',
-              onClick: handleReset,
-            },
-            {
-              label: (
-                <>
-                  <Icon name="Search" size={20} aria-hidden />
-                  조회
-                </>
-              ),
-              variant: 'primary',
-              onClick: handleSearch,
-            },
-          ]}
-        />
+      {/* 검색필터 버튼 행 — 설계서 slide138 상단 '검색필터'. 누르면 공통 SearchFilter 셸이 열린다.
+          (국외 조달원등록증 목록 OvsSosCnfdocListPage 와 동일 스타일 — 빠른검색 없이 필터 버튼만) */}
+      <div className="flex justify-end px-4 py-4">
+        <button
+          type="button"
+          aria-label="검색필터"
+          aria-pressed={filterApplied}
+          onClick={() => setFilterOpen(true)}
+          className={cn(
+            'flex size-12 shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-primary text-krds-text-primary',
+            'bg-background active:bg-krds-bg-primary-subtle',
+            'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
+            filterApplied && 'border-2 bg-krds-bg-primary-subtle',
+          )}
+        >
+          <Icon name="Tune" size={24} aria-hidden />
+        </button>
       </div>
 
       {/* 목록 헤더 — 총건수 + 정렬 셀렉트(Figma 10020:82626 "최신순 ▼"). 신청날짜 기준 최신순/과거순. */}
@@ -311,17 +316,17 @@ export function DmstSosCnfdocListPage() {
         </Button>
       </div>
 
-      {/* P20 신청사유 바텀시트(Figma 10020:82699) — 컨테이너/footer 는 페이지 소유. 콘텐츠는 DmstSosCnfdocAply.
-          타이틀 '신청사유' · footer [취소][등록하기]. */}
+      {/* P20 조달원 확인서 신청서 바텀시트(설계서 slide139 / Figma 10020:82699) — 컨테이너/footer 는 페이지 소유.
+          콘텐츠는 DmstSosCnfdocAply. 타이틀 '조달원 확인서 신청서' · footer [취소][신청하기](설계서 mock 그대로). */}
       <BottomSheet
         open={aplyOpen}
         onOpenChange={setAplyOpen}
-        title="신청사유"
+        title="조달원 확인서 신청서"
         footer={
           <ButtonGroup
             items={[
               { label: '취소', variant: 'secondary', onClick: () => setAplyOpen(false) },
-              { label: '등록하기', variant: 'primary', onClick: handleSubmit(onAplySubmit, onAplyInvalid) },
+              { label: '신청하기', variant: 'primary', onClick: handleSubmit(onAplySubmit, onAplyInvalid) },
             ]}
           />
         }
@@ -333,7 +338,17 @@ export function DmstSosCnfdocListPage() {
         />
       </BottomSheet>
 
-      {/* 신청 완료 토스트(설계서 slide133 '신청 되었습니다.') */}
+      {/* 검색필터 — 공통 셸에 schema 주입(초기화/검색/닫기는 셸이 처리, 설계서 slide138 mock) */}
+      <SearchFilter
+        open={filterOpen}
+        onOpenChange={setFilterOpen}
+        schema={SEARCH_SCHEMA}
+        value={filter}
+        defaultValue={defaultValue}
+        onSearch={handleFilterSearch}
+      />
+
+      {/* 신청 완료 토스트(설계서 slide139 '신청 되었습니다.') */}
       <Toast open={toastOpen} onClose={() => setToastOpen(false)}>
         신청 되었습니다.
       </Toast>

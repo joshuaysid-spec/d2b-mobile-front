@@ -78,18 +78,21 @@ function buildRows(it: BidPrgrsDetail, onView: (key: string) => void): TableRow[
   const rows: TableRow[] = [
     { label: '번호', value: it.rNum },
     { label: '업무구분', value: it.taskSeNm },
-    {
-      label: '공고번호',
-      value: (
-        <div className="flex flex-col items-start gap-krds-3">
-          <span>{it.pbancNo}</span>
-          <Button size="sm" variant="inner" onClick={() => onView('pbanc')}>
-            공고 보기
-          </Button>
-        </div>
-      ),
-      type: 'combination',
-    },
+    // 공고번호 — 없이 진입(업무이력 카드 매핑)한 건은 '-' 표기(보기 버튼 미노출).
+    it.pbancNo
+      ? {
+          label: '공고번호',
+          value: (
+            <div className="flex flex-col items-start gap-krds-3">
+              <span>{it.pbancNo}</span>
+              <Button size="sm" variant="inner" onClick={() => onView('pbanc')}>
+                공고 보기
+              </Button>
+            </div>
+          ),
+          type: 'combination' as const,
+        }
+      : { label: '공고번호', value: '-' },
     { label: '판단번호', value: it.prcmNo },
     { label: '항목번호', value: it.clsfNo ?? '-' },
     { label: '입찰건명', value: it.bidNm },
@@ -146,10 +149,15 @@ function buildRows(it: BidPrgrsDetail, onView: (key: string) => void): TableRow[
   return rows
 }
 
+// 진입 유형별 state — 입찰진행 목록(M01)=BidPrgrsItem 전체 / 나의 업무이력(CM-06-M04)=카드 매핑 값
+//   (+현황명 taskSttsNm — 카드 1번 뱃지 그대로 노출, 공고번호 등 카드에 없는 항목은 ''/'-').
+type BidPrgsDtlState = BidPrgrsDetail & { taskSttsNm?: string }
+
 export function BidPrgsDtlInqPage() {
   const navigate = useNavigate()
   // 목록에서 navigate(state)로 넘어온 항목으로 상단/표/버튼을 그린다. 없으면(직접 URL 진입) 페이지 목업.
-  const detail = (useLocation().state as BidPrgrsItem | null) ?? MOCK_BID_PRGRS_DETAIL
+  const detail: BidPrgsDtlState =
+    (useLocation().state as BidPrgsDtlState | null) ?? MOCK_BID_PRGRS_DETAIL
   const [shortcutOpen, setShortcutOpen] = useState(false) // 바로가기 시트
   const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보 조회(M74)
   const [abandonOpen, setAbandonOpen] = useState(false) // 입찰포기신청서(P03)
@@ -182,8 +190,10 @@ export function BidPrgsDtlInqPage() {
   const rows = buildRows(detail, handleView)
   const status = statusBadge(detail)
 
-  // 요약 헤더 배지 — 진행상태(색) + 업무구분 + 계약방법 + 신청유형.
+  // 요약 헤더 배지 — (업무이력 진입 시 현황명) + 진행상태(색) + 업무구분 + 계약방법 + 신청유형.
   const summaryBadges: SummaryInfoBadge[] = [
+    // 업무이력(CM-06-M04) 카드 진입 — 카드의 현황 뱃지(입찰참가신청/입찰서제출/공개수의협상)를 그대로 노출.
+    ...(detail.taskSttsNm ? [{ key: 'stts', label: detail.taskSttsNm }] : []),
     ...(status ? [{ key: 'status', label: status.label, type: 'solid' as const, color: status.color }] : []),
     { key: 'task', label: detail.taskSeNm },
     { key: 'ctrt', label: detail.ctrtMthdNm },
@@ -251,7 +261,8 @@ export function BidPrgsDtlInqPage() {
       {/* 요약 헤더 — badges(상태/업무구분/계약방법/신청유형) + 공고번호 + 출력 + 입찰건명 */}
       <SummaryInfo
         badges={summaryBadges}
-        subtitle={detail.pbancNo}
+        // 공고번호 없이 진입(업무이력 카드 매핑)한 건은 카드 부제와 동일하게 '판단번호 …'로 표기.
+        subtitle={detail.pbancNo || `판단번호 ${detail.prcmNo}`}
         title={detail.bidNm}
         actions={
           <button

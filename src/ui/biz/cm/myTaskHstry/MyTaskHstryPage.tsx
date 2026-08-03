@@ -15,6 +15,7 @@ import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import type { MyTaskHstryItem } from '@/types/cm'
+import type { BidPrgrsDetail } from '@/types/bd'
 
 // 상단 분기 탭 — 업무 이력 4가지 현황(설계서 slide80). taskSttsNm 으로 목록 필터.
 const STTS_TABS: TabItem[] = [
@@ -52,15 +53,29 @@ const dl_myTaskList: MyTaskHstryItem[] = [
   },
   {
     id: '3',
-    taskSttsNm: '계약',
-    prcmNo: '6000C',
-    bidNm: "'26년 전투화 납품",
-    orderPrnmntYm: '2026-04',
-    orderInstNm: '피복관리팀',
+    taskSttsNm: '공개수의협상',
+    prcmNo: '6000B',
+    bidNm: "'26년 K600 구난전차 정비부속",
+    orderPrnmntYm: '2026-05',
+    orderInstNm: '기동총괄계약팀',
     bidMthd: '총액제',
-    bdgtAmt: 33500000,
+    bdgtAmt: 25300000,
     taskSeNm: '물품',
-    ctrtMthd: '일반경쟁',
+    ctrtMthd: '수의계약',
+  },
+  {
+    // 계약 카드 — 상세(M03 /ct/:id)는 state 가 아니라 id 조회(목업 CTRT_PRGRS_DTL)로 렌더되므로,
+    // 카드 값(건명/판단번호/기관/금액/뱃지)을 그 목업 건과 일치시켜 둔다(API 연동 시 서버가 동일 건 공급).
+    id: '4',
+    taskSttsNm: '계약',
+    prcmNo: '99001',
+    bidNm: '물품 구매',
+    orderPrnmntYm: '2026-02',
+    orderInstNm: '제8385부대',
+    bidMthd: '경쟁입찰',
+    bdgtAmt: 11616000,
+    taskSeNm: '물품',
+    ctrtMthd: '제한경쟁',
   },
 ]
 
@@ -97,13 +112,39 @@ export function MyTaskHstryPage() {
     setPage((p) => p + 1)
     console.log('[MyTaskHstry] loadMore')
   }
+  // 카드 → 입찰진행상세(M02) state 매핑 — 상세 요약(뱃지/입찰건명/판단번호)·표(계약·입찰방법)가 카드와
+  // 같은 값으로 뜨도록 BidPrgrsDetail 항목명으로 변환한다. 카드에 없는 상세 전용 항목은 '-'(API 연동 시
+  // 상세 조회가 공급). taskSttsNm 은 M02 가 현황 뱃지(카드 1번 뱃지)로 그대로 노출.
+  const toBidPrgrsState = (it: MyTaskHstryItem): BidPrgrsDetail & { taskSttsNm: string } => ({
+    taskSttsNm: it.taskSttsNm,
+    rNum: it.id,
+    taskSeNm: it.taskSeNm,
+    pbancNo: '', // 카드에 없음 → M02 요약 부제는 카드와 동일한 '판단번호 …'로 표기
+    prcmNo: it.prcmNo,
+    bidNm: it.bidNm,
+    rfrncNo: '-',
+    orderInstTelno: '-',
+    ctrtMthdNm: it.ctrtMthd,
+    bidMthdNm: it.bidMthd,
+    bidClrsDt: '-',
+    tndrSbmsnDdlnDt: '-',
+    bzentySeNm: '-',
+    // 종료된 이력 — 신청/제출 대상 플래그를 모두 끄면 M02 가 작성·신청 바로가기 없이 조회 전용으로 렌더.
+    bfhdSrng: false,
+    bidPrgrsApfr: false,
+    tndr: false,
+    techEvl: false,
+    prdcpDcmntSbms: false,
+  })
   const handleCardClick = (it: MyTaskHstryItem) => {
-    // 입찰 계열 → 입찰진행상세(MUI-BD-03-M02) · 계약 → 계약상세(조건 분기, slide80). 현재 스텁 라우팅.
+    // 계약 → 물품전자계약진행상세(MUI-CT-01-M03, /ct/:id). 상세는 id 조회(useCtrtPrgrsDtl)로 렌더 —
+    // 목업 카드는 CTRT_PRGRS_DTL 과 같은 건이라 정보 일치. 추후: 계약상태/유형별 M03~M10 분기(계약통합목록 선례).
     if (it.taskSttsNm === '계약') {
-      console.log('[MyTaskHstry] 계약상세 이동(분기)', it.id) // 추후: 계약종류별 MUI-CT-01-M03~M10 분기
+      navigate(`/ct/${it.id}`)
       return
     }
-    navigate(`/bd/prgrs/${it.id}`, { state: it })
+    // 입찰 계열(입찰참가신청/입찰서제출/공개수의협상) → 입찰진행상세(MUI-BD-03-M02).
+    navigate(`/bd/prgrs/${it.id}`, { state: toBidPrgrsState(it) })
   }
 
   const cardItems: CardListItem[] = visible.map((it) => ({
@@ -161,7 +202,7 @@ export function MyTaskHstryPage() {
 
       {/* 맨 위로 FAB */}
       <FloatingActionButton
-        className="fixed bottom-20 right-4 z-40"
+        className="fixed bottom-0 right-4 z-40"
         onTop={() =>
           document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
         }

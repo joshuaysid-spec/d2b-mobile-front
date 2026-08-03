@@ -54,7 +54,8 @@ const AccordionSection = ({
   <RawAccordionItem value={value} className={cn('border-b-0', className)}>
     <RawAccordionTrigger
       className={cn(
-        'group h-[56px] gap-krds-8 px-krds-8 py-0',
+        // 높이는 min-h(56) — 한 줄 제목은 종전과 같은 56px, 긴 제목은 두 줄까지 늘어난다(py 로 여백 확보).
+        'group min-h-[56px] gap-krds-8 px-krds-8 py-krds-5',
         'text-[19px] font-bold text-krds-text-ink hover:no-underline',
         // raw 고정 lucide chevron(svg) 숨김 — 아래 Material Icon 으로 대체
         '[&>svg]:hidden',
@@ -63,7 +64,9 @@ const AccordionSection = ({
         triggerClassName, // 색 오버라이드 등 — text-* 는 base text-ink 보다 뒤라 우선
       )}
     >
-      <span className="min-w-0 flex-1 truncate text-left">{title}</span>
+      {/* 제목 — 넘치면 두 줄까지 표시하고 말줄임(종전 truncate 한 줄은 긴 제목이 읽히지 않았다).
+          예: 업체정보 상세 > 국내소재상사 > 'FSC Codes (Federal Supply Classification Codes)'. */}
+      <span className="min-w-0 flex-1 line-clamp-2 text-left">{title}</span>
       {titleInfo && (
         <span className="shrink-0 text-[17px] font-bold text-krds-text-primary-active">
           {titleInfo}
