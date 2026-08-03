@@ -9,6 +9,7 @@ import type {
   InspDlvdocItem,
   InspDlvdocSbsdCmdtyItem,
   InspIntgListItem,
+  PxcndCmcnInspDtl,
 } from '@/types/ex'
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -331,6 +332,36 @@ const INSP_DLVDOC_SBSD_CMDTY_LIST: InspDlvdocSbsdCmdtyItem[] = [
   },
 ]
 
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-01-M04 기성및준공검사상세 — slide27 목업(기성차수 002 · 착공 2025-02-15 ·
+// 실준공 2025-03-15 · 준공기한 2025-10-15 · 준공계제출 2025-11-01 · 검사관/감독관 계약담당 홍길동 주무관).
+// ────────────────────────────────────────────────────────────────────────────
+const PXCND_CMCN_INSP_DTL: PxcndCmcnInspDtl = {
+  ctrtNo: '20250000003',
+  ctrtCycl: '01',
+  ctrtNm: '막사 보수 공사',
+  ctrtYmd: '2025-01-01',
+  ctrtAmt: 385000000,
+  pxcndCycl: '002',
+  pxcndCmcnSecd: '기성',
+  inspYmd: '2025-01-01',
+  pxcndAmt: 120000000,
+  pxcndRt: 31.2,
+  bgncstYmd: '2025-02-15',
+  rlccYmd: '2025-03-15',
+  cmcnTermYmd: '2025-10-15',
+  cmdocSbmsnYmd: '2025-11-01',
+  cmcnCn: '막사 외벽 보수 및 방수 공사 1차분 완료.',
+  insptrs: [
+    { insptrOgdpNm: '계약담당', insptrEchlnNm: '주무관', insptrNm: '홍길동' },
+    { insptrOgdpNm: '시설담당', insptrEchlnNm: '주무관', insptrNm: '김길동' },
+  ],
+  sprvs: [{ sprvOgdpNm: '계약담당', sprvEchlnNm: '주무관', sprvNm: '홍길동' }],
+  taskSecd: '공사',
+  bgtSecdNm: '당년국채',
+  dlvdocPrgrsStcd: '검사저장',
+}
+
 export const MOCK_EX = {
   inspIntgList: INSP_INTG_LIST,
   dlvgdsAvtsmtList: DLVGDS_AVTSMT_LIST,
@@ -339,4 +370,5 @@ export const MOCK_EX = {
   inspDlvdocCmdtyList: INSP_DLVDOC_CMDTY_LIST,
   inspDlvdocSbsdDtl: INSP_DLVDOC_SBSD_DTL,
   inspDlvdocSbsdCmdtyList: INSP_DLVDOC_SBSD_CMDTY_LIST,
+  pxcndCmcnInspDtl: PXCND_CMCN_INSP_DTL,
 }

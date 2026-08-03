@@ -164,6 +164,12 @@ const InspDlvdocDtlSbsdPrcmPage = lazy(() =>
     default: m.InspDlvdocDtlSbsdPrcmPage,
   })),
 )
+// 기성및준공검사상세(MUI-EX-01-M04, /ex/pxcnd/:id) — biz/ex/pxcndCmcnInspDtl.
+const PxcndCmcnInspDtlPage = lazy(() =>
+  import('@/ui/biz/ex/pxcndCmcnInspDtl/PxcndCmcnInspDtlPage').then((m) => ({
+    default: m.PxcndCmcnInspDtlPage,
+  })),
+)
 // 물품전자계약진행상세(MUI-CT-01-M03, /ct/:id) — biz/ct/cmdtyElctrCtrtPrgrsDtl.
 const CmdtyElctrCtrtPrgrsDtlPage = lazy(() =>
   import('@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyElctrCtrtPrgrsDtlPage').then((m) => ({
@@ -918,6 +924,11 @@ export const router = createBrowserRouter([
       {
         path: 'ex/dlvdoc/sbsd/:id',
         element: <InspDlvdocDtlSbsdPrcmPage />,
+        handle: { header: { variant: 'sub', title: '상세 조회' } },
+      },
+      {
+        path: 'ex/pxcnd/:id',
+        element: <PxcndCmcnInspDtlPage />,
         handle: { header: { variant: 'sub', title: '상세 조회' } },
       },
       {

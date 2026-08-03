@@ -6,6 +6,7 @@
 // 업무도움(slide10 1])은 '내역이 없으면 항목을 표시하지 않음' — 안내 내역 확정 전이라 미표시(CT 동일 판단).
 // 카드 클릭(slide10 3-1): 물품/용역 → P10 납품통지목록 풀팝업 · 공사 → M04 기성및준공검사상세(그룹 4 예정).
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
 import { useInspIntgList } from '@/queries/ex'
@@ -115,6 +116,7 @@ const SEARCH_TARGETS = [
 ]
 
 export function InspIntgListInqPage() {
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false) // 상세필터 풀팝업(MUI-EX-01-P08)
   const [filter, setFilter] = useState<SearchFilterValue>(() => buildDefaultValue())
   const [keyword, setKeyword] = useState('') // 빠른검색어(입력 중)
@@ -154,8 +156,7 @@ export function InspIntgListInqPage() {
   // 카드 클릭(slide12 이벤트) — 물품/용역 → P10 납품통지목록 · 공사 → M04 기성및준공검사상세.
   const handleCardClick = (item: InspIntgListItem) => {
     if (item.taskSecd === '공사') {
-      // TODO(그룹 4): M04 기성및준공검사상세 구현 후 navigate 배선.
-      console.log('[InspIntgList] M04 기성및준공검사상세 이동(미구현)', item.id)
+      navigate(`/ex/pxcnd/${item.id}`, { state: item })
       return
     }
     setPickedCtrt({ ctrtNo: item.ctrtNo, ctrtNm: item.ctrtNm })

@@ -15,6 +15,7 @@ import type {
   InspDlvdocSbsdCmdtyItem,
   InspIntgListRequest,
   InspIntgListResult,
+  PxcndCmcnInspDtl,
 } from '@/types/ex'
 
 const EP = {
@@ -33,6 +34,8 @@ const EP = {
   INSP_DLVDOC_SBSD_DTL: (id: string) => `/v1/exs/subsidiary-delivery-docs/${id}`,
   /** 부대조달 물품목록 — MUI-EX-01-T04 (inspDlvdocDtlSbsdPrcm/InspDlvdocDtlSbsdPrcm_CmdtyList) */
   INSP_DLVDOC_SBSD_CMDTYS: (id: string) => `/v1/exs/subsidiary-delivery-docs/${id}/commodities`,
+  /** 기성및준공검사상세 — MUI-EX-01-M04 (pxcndCmcnInspDtl/PxcndCmcnInspDtlPage) */
+  PXCND_CMCN_INSP_DTL: (id: string) => `/v1/exs/completion-inspections/${id}`,
 }
 
 export const exService = {
@@ -99,5 +102,13 @@ export const exService = {
     return apiClient.post<InspDlvdocSbsdCmdtyItem[], InspDlvdocSbsdCmdtyItem[]>(
       EP.INSP_DLVDOC_SBSD_CMDTYS(id),
     )
+  },
+
+  // ── 기성및준공검사상세 (MUI-EX-01-M04) ────────────────────────────────────
+
+  /** 상세(계약정보+검사관+감독관) 조회 — On-Load(slide29). */
+  async getPxcndCmcnInspDtl(id: string): Promise<PxcndCmcnInspDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_EX.pxcndCmcnInspDtl)
+    return apiClient.post<PxcndCmcnInspDtl, PxcndCmcnInspDtl>(EP.PXCND_CMCN_INSP_DTL(id))
   },
 }

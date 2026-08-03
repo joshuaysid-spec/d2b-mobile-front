@@ -13,6 +13,7 @@ export const exKeys = {
   inspDlvdocCmdtys: (id: string) => ['ex', 'inspDlvdocCmdtys', id] as const,
   inspDlvdocSbsdDtl: (id: string) => ['ex', 'inspDlvdocSbsdDtl', id] as const,
   inspDlvdocSbsdCmdtys: (id: string) => ['ex', 'inspDlvdocSbsdCmdtys', id] as const,
+  pxcndCmcnInspDtl: (id: string) => ['ex', 'pxcndCmcnInspDtl', id] as const,
 }
 
 /** 검사통합목록(M01) — 키워드 세부 필터/더보기 페이징은 페이지 클라이언트 로직 유지(서버 전환 시 req 로 이행). */
@@ -73,6 +74,15 @@ export function useInspDlvdocSbsdCmdtys(id: string) {
   return useQuery({
     queryKey: exKeys.inspDlvdocSbsdCmdtys(id),
     queryFn: () => exService.getInspDlvdocSbsdCmdtys(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 기성및준공검사상세(M04). */
+export function usePxcndCmcnInspDtl(id: string) {
+  return useQuery({
+    queryKey: exKeys.pxcndCmcnInspDtl(id),
+    queryFn: () => exService.getPxcndCmcnInspDtl(id),
     enabled: Boolean(id),
   })
 }

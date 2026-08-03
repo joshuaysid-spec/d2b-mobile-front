@@ -304,6 +304,76 @@ export interface InspDlvdocSbsdCmdtyItem {
   tstmDlvgdsQty: number
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-01-M04 기성및준공검사상세 (slide27~29) — pxcndCmcnInspDtl/PxcndCmcnInspDtlPage
+//   단일 탭(상세정보) — M01 공사 계약 카드 클릭 시 진입.
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 검사관 1명 (dmt_Insptr, slide28 1.2). */
+export interface PxcndCmcnInsptr {
+  /** 검사관소속명 (insptrOgdpNm, 100). */
+  insptrOgdpNm: string
+  /** 검사관계급명 (insptrEchlnNm, 100). */
+  insptrEchlnNm: string
+  /** 검사관명 (insptrNm, 100). */
+  insptrNm: string
+}
+
+/** 감독관 1명 (dmt_Sprv, slide28 1.3). */
+export interface PxcndCmcnSprv {
+  /** 감독관소속 (sprvOgdpNm, 100). */
+  sprvOgdpNm: string
+  /** 감독관계급 (sprvEchlnNm, 100). */
+  sprvEchlnNm: string
+  /** 감독관명 (sprvNm, 100). */
+  sprvNm: string
+}
+
+/** 기성및준공검사상세 — 계약정보(dmt_CtrtInfo, slide28 1.1) + 검사관/감독관 + 요약 표시항목. */
+export interface PxcndCmcnInspDtl {
+  /** 계약번호 (ctrtNo, 11). */
+  ctrtNo: string
+  /** 계약번호차수 — 문서정보 표기. ⚠️ dmt_CtrtInfo 미정의(CT 선례 재사용). */
+  ctrtCycl: string
+  /** 계약명 (ctrtNm, 300). */
+  ctrtNm: string
+  /** 계약일자 (ctrtYmd, 8). */
+  ctrtYmd: string
+  /** 계약금액(원) (ctrtAmt, 17,2). */
+  ctrtAmt: number
+  /** 기성차수 (pxcndCycl, 7). */
+  pxcndCycl: string
+  /** 검사구분 — 화면 표시항목(slide27). ⚠️ dmt_CtrtInfo 미정의 — M01 항목명(pxcndCmcnSecd) 재사용. */
+  pxcndCmcnSecd: string
+  /** 검사일자 (inspYmd, 8). */
+  inspYmd: string
+  /** 기성금액(원) (pxcndAmt, 17,2). */
+  pxcndAmt: number
+  /** 기성비율 (pxcndRt, 9,4) — % 표시. */
+  pxcndRt: number
+  /** 착공일자 (bgncstYmd, 8). */
+  bgncstYmd: string
+  /** 실준공일자 (rlccYmd, 8). */
+  rlccYmd: string
+  /** 준공기한 (cmcnTermYmd, 8). */
+  cmcnTermYmd: string
+  /** 준공계제출일자 (cmdocSbmsnYmd, 8). */
+  cmdocSbmsnYmd: string
+  /** 준공내용 (cmcnCn, 200). */
+  cmcnCn: string
+  /** 검사관 목록 (dmt_Insptr). */
+  insptrs: PxcndCmcnInsptr[]
+  /** 감독관 목록 (dmt_Sprv). */
+  sprvs: PxcndCmcnSprv[]
+  // ── 요약(SummaryInfo)·뱃지 표시항목 — 목록(M01) 항목명 재사용(slide27 타이틀 영역) ──
+  /** 업무구분 뱃지 (taskSecd) — 공사. */
+  taskSecd: string
+  /** 예산구분 뱃지 (bgtSecdNm). */
+  bgtSecdNm: string
+  /** 진행상태 뱃지 (dlvdocPrgrsStcd). */
+  dlvdocPrgrsStcd: string
+}
+
 // ── TODO(백엔드 확정) — 검사및납품조서 검색조건(dml_InspDlvdocSrchCnd, slide15 1.1)과
 //    조서발행번호정보조회(P06, dmt_RecrdPblcnNo·dlt_RecrdPblcnNoItemInfo, slide35)는
 //    M05 검사및납품조서현황(그룹 5, P09 검색필터 시트 배선) 시 추가 예정.
