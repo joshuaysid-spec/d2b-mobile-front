@@ -50,6 +50,8 @@ export const ROUTES = {
   EX_PRST: '/ex/prst',
   /** 검사및납품조서결과상세 (MUI-EX-01-M07, `:id`). 이동: `/ex/dlvdoc/rslt/${id}`. */
   EX_DLVDOC_RSLT_DETAIL: '/ex/dlvdoc/rslt/:id',
+  /** 대금청구통합목록 (MUI-WM-01-M01). */
+  WM: '/wm',
   NOTIFICATION: '/notification',
   SUPPORT: '/support',
   /** 일반공지사항(공지사항 목록) (MUI-CM-04-M01). */

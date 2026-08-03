@@ -19,6 +19,7 @@ export const LINKED_MENU_LABELS = {
   [ROUTES.CT_CNCLTN]: '해지/해제 목록',
   [ROUTES.EX]: '검사 통합 목록',
   [ROUTES.EX_PRST]: '검사 및 납품조서 현황 목록',
+  [ROUTES.WM]: '대금 청구 통합 목록',
   [ROUTES.SUPPORT_NOTICE]: '일반 공지사항',
   [ROUTES.SUPPORT_NOTICE_DAPA]: '방위사업청 공지사항',
   [ROUTES.SUPPORT_NOTICE_DMDFRC]: '수요부대별 공지사항',

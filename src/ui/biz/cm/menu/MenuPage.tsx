@@ -82,7 +82,7 @@ const MENU_TREE: MenuNode[] = [
     id: 'wm',
     label: '대금청구 및 사후',
     children: [
-      { id: 'wm-claim-list', label: '대금 청구 통합 목록' },
+      { id: 'wm-claim-list', label: LINKED_MENU_LABELS[ROUTES.WM] },
       { id: 'wm-payment-return', label: '대금 지불정보 (반납)' },
       { id: 'wm-claim-progress', label: '대금 청구 진행 현황' },
     ],
@@ -187,6 +187,7 @@ const MENU_ROUTES: Record<string, string> = {
   'ct-cancel': ROUTES.CT_CNCLTN, // 해지/해제 목록(MUI-CT-03-M01)
   'ex-inspect-list': ROUTES.EX, // 검사통합목록(MUI-EX-01-M01)
   'ex-inspect-report': ROUTES.EX_PRST, // 검사및납품조서현황목록(MUI-EX-01-M05)
+  'wm-claim-list': ROUTES.WM, // 대금청구통합목록(MUI-WM-01-M01)
   'support-notice-general': ROUTES.SUPPORT_NOTICE, // 일반공지사항(MUI-CM-04-M01)
   'support-notice-dapa': ROUTES.SUPPORT_NOTICE_DAPA, // 방위사업청공지사항(M21)
   'support-notice-unit': ROUTES.SUPPORT_NOTICE_DMDFRC, // 수요부대별공지사항(M23)

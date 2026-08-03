@@ -1,0 +1,131 @@
+// 대금청구/사후(WM) 도메인 목업 데이터 — USE_MOCK=true 일 때 wmService 가 반환.
+// 설계서(05.대금청구및사후 v0.83) 항목설명 항목·형식·slide16/17/19 목업값을 반영(임의 더미 금지).
+// ⚠️ 폐쇄망 반입 후 실백엔드 연동 시 이 파일은 사용되지 않는다(서비스가 apiClient 분기).
+import type { PymtClmAplyItem, PymtClmListItem } from '@/types/wm'
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M01 대금청구통합목록 — slide16 목업(계약번호 2025000000-01 · 물품 구매 ·
+// 계약일자 2026-02-10 · 발주기관 제8385부대 · 계약금액 11,616,000 · 뱃지 물품/수의계약).
+// 업무구분 × 입찰구분(총액제/단가제) × 진행중 청구 유무 대표 조합.
+// ────────────────────────────────────────────────────────────────────────────
+const PYMT_CLM_INTG_LIST: PymtClmListItem[] = [
+  {
+    id: '20250000001-01',
+    no: 1,
+    taskSeCd: '물품',
+    ctrtNo: '20250000001',
+    ctrtCycl: '01',
+    ctrtNm: '물품 구매',
+    bzentyNm: '조달테스트업체',
+    bidMthdNm: '총액제',
+    jntCtrtCdNm: '주계약',
+    ctrtYmd: '2026-02-10',
+    ctrtAmt: 11616000,
+    ctrtMthdCd: '수의계약',
+    orderInstNm: '제8385부대',
+    pymtClmExstYn: 'Y',
+  },
+  {
+    id: '20250000002-01',
+    no: 2,
+    taskSeCd: '용역',
+    ctrtNo: '20250000002',
+    ctrtCycl: '01',
+    ctrtNm: '시설 경비 용역',
+    bzentyNm: '한국시큐리티',
+    bidMthdNm: '단가제',
+    jntCtrtCdNm: '주계약',
+    ctrtYmd: '2026-01-15',
+    ctrtAmt: 52000000,
+    ctrtMthdCd: '일반경쟁',
+    orderInstNm: '제1120부대',
+    pymtClmExstYn: 'N',
+  },
+  {
+    id: '20250000003-01',
+    no: 3,
+    taskSeCd: '공사',
+    ctrtNo: '20250000003',
+    ctrtCycl: '01',
+    ctrtNm: '막사 보수 공사',
+    bzentyNm: '대한건설',
+    bidMthdNm: '총액제',
+    jntCtrtCdNm: '공동계약',
+    ctrtYmd: '2026-01-03',
+    ctrtAmt: 385000000,
+    ctrtMthdCd: '제한경쟁',
+    orderInstNm: '제3651부대',
+    pymtClmExstYn: 'Y',
+  },
+  {
+    id: '20250000004-01',
+    no: 4,
+    taskSeCd: '물품',
+    ctrtNo: '20250000004',
+    ctrtCycl: '01',
+    ctrtNm: '변속기 부품 계약의 건',
+    bzentyNm: '한국정공',
+    bidMthdNm: '단가제',
+    jntCtrtCdNm: '주계약',
+    ctrtYmd: '2025-12-22',
+    ctrtAmt: 8250000,
+    ctrtMthdCd: '지명경쟁',
+    orderInstNm: '제8385부대',
+    pymtClmExstYn: 'Y',
+  },
+]
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-P13 대금청구신청목록 — slide19 목업(청구번호 12315-42 · 대금청구서/선금신청서 ·
+// 작성일자 2025-10-15 · 청구일자 2025-11-20 · 진행중/진행완료).
+// 청구서 종류(선금/착중도금/대금청구/사후정산) 대표 조합 — 상세 분기(M02/M03/M05~/M13) 테스트용.
+// ────────────────────────────────────────────────────────────────────────────
+const PYMT_CLM_APLY_LIST: PymtClmAplyItem[] = [
+  {
+    id: '12315-42',
+    no: 1,
+    clmNo: '12315',
+    clmOdr: '42',
+    clmDocNm: '대금청구서',
+    clmAmt: 120000000,
+    cnfmSeNm: '-',
+    txamt: 12000000,
+    wrtYmd: '2025-10-15',
+    clmYmd: '2025-11-20',
+    prgrsStNm: '진행중',
+    taskSeCd: '물품',
+  },
+  {
+    id: '12315-41',
+    no: 2,
+    clmNo: '12315',
+    clmOdr: '41',
+    clmDocNm: '선금신청서',
+    clmAmt: 55000000,
+    cnfmSeNm: '확정',
+    txamt: 5500000,
+    wrtYmd: '2025-10-15',
+    clmYmd: '2025-11-20',
+    prgrsStNm: '진행완료',
+    taskSeCd: '물품',
+  },
+  {
+    id: '12315-40',
+    no: 3,
+    clmNo: '12315',
+    clmOdr: '40',
+    clmDocNm: '착중도금신청서',
+    clmAmt: 30000000,
+    cnfmSeNm: '확정',
+    txamt: 3000000,
+    wrtYmd: '2025-09-01',
+    clmYmd: '2025-09-20',
+    prgrsStNm: '진행완료',
+    taskSeCd: '물품',
+  },
+]
+
+export const MOCK_WM = {
+  pymtClmIntgList: PYMT_CLM_INTG_LIST,
+  pymtClmAplyList: PYMT_CLM_APLY_LIST,
+}

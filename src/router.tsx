@@ -182,6 +182,12 @@ const DlvdocRsltDtlPage = lazy(() =>
     default: m.DlvdocRsltDtlPage,
   })),
 )
+// 대금청구통합목록(MUI-WM-01-M01, /wm) — biz/wm/pymtClmIntgList.
+const PymtClmIntgListPage = lazy(() =>
+  import('@/ui/biz/wm/pymtClmIntgList/PymtClmIntgListPage').then((m) => ({
+    default: m.PymtClmIntgListPage,
+  })),
+)
 // 물품전자계약진행상세(MUI-CT-01-M03, /ct/:id) — biz/ct/cmdtyElctrCtrtPrgrsDtl.
 const CmdtyElctrCtrtPrgrsDtlPage = lazy(() =>
   import('@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyElctrCtrtPrgrsDtlPage').then((m) => ({
@@ -956,6 +962,15 @@ export const router = createBrowserRouter([
         path: 'ex/dlvdoc/rslt/:id',
         element: <DlvdocRsltDtlPage />,
         handle: { header: { variant: 'sub', title: '상세 조회' } },
+      },
+      {
+        path: 'wm',
+        element: <PymtClmIntgListPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.WM] },
+          scrollReset: true,
+          showBottomNav: true,
+        },
       },
       {
         path: 'ct/cstrn/:id',
