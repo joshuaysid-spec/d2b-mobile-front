@@ -19,6 +19,8 @@ export const LINKED_MENU_LABELS = {
   [ROUTES.CT_CNCLTN]: '해지/해제 목록',
   [ROUTES.EX]: '검사 통합 목록',
   [ROUTES.EX_PRST]: '검사 및 납품조서 현황 목록',
+  [ROUTES.EX_ESTMT_RQDC]: '견적 의뢰서 목록',
+  [ROUTES.EX_ESTMT_NTDC]: '견적 통보서 목록',
   [ROUTES.WM]: '대금 청구 통합 목록',
   [ROUTES.WM_RTN]: '대금 지불정보 (반납)',
   [ROUTES.WM_PRGRS]: '대금 청구 진행 현황',

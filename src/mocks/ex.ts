@@ -5,6 +5,13 @@ import type {
   DlvdocRsltCmdtyItem,
   DlvdocRsltDtl,
   DlvgdsAvtsmtItem,
+  OvsEstmtNtdcDtl,
+  OvsEstmtNtdcItem,
+  OvsEstmtNtdcItemRow,
+  OvsEstmtNtdcCtrtInfo,
+  OvsEstmtRqdcDtl,
+  OvsEstmtRqdcItem,
+  OvsEstmtRqdcItemRow,
   InspDlvdocCmdtyItem,
   InspDlvdocDtl,
   InspDlvdocDtlSbsdPrcm,
@@ -484,6 +491,179 @@ const DLVDOC_RSLT_CMDTY_LIST: DlvdocRsltCmdtyItem[] = [
   },
 ]
 
+// ════════════════════════════════════════════════════════════════════════════
+// EX-02 한도액계약 목업
+// ════════════════════════════════════════════════════════════════════════════
+
+// MUI-EX-02-M71 견적의뢰서목록 — slide46 목업(견적번호 01/02 · F-15 부품구매 · 항목수 3개 ·
+// A 업체 · 납기/작성 2026-02-10 · 통보서상태 작성/미작성/송신).
+const OVS_ESTMT_RQDC_LIST: OvsEstmtRqdcItem[] = [
+  {
+    id: '01',
+    clmSeq: '01',
+    itemSeq: 3,
+    bzentyCd: 'A 업체',
+    bizNm: 'F-15 부품구매',
+    dudtYmd: '2026-02-10',
+    wrtYmd: '2026-02-10',
+    ntdcStts: '작성',
+  },
+  {
+    id: '02',
+    clmSeq: '02',
+    itemSeq: 3,
+    bzentyCd: 'A 업체',
+    bizNm: 'F-15 부품구매',
+    dudtYmd: '2026-02-10',
+    wrtYmd: '2026-02-10',
+    ntdcStts: '미작성',
+  },
+  {
+    id: '03',
+    clmSeq: '03',
+    itemSeq: 5,
+    bzentyCd: '조달테스트업체',
+    bizNm: 'KF-16 정비부품 구매',
+    dudtYmd: '2026-04-01',
+    wrtYmd: '2026-01-15',
+    ntdcStts: '송신',
+  },
+]
+
+// MUI-EX-02-M72 견적의뢰서상세 — slide49 목업(KD111111111 · 견적/유효/계약일자 2025-03-01 ·
+// 공군/A 업체/조달테스트업체/홍길동/미 달러).
+const OVS_ESTMT_RQDC_DTL: OvsEstmtRqdcDtl = {
+  ctrtNo: 'KD111111111',
+  clmSeq: '01',
+  clmYmd: '2025-03-01',
+  vldYmd: '2025-03-01',
+  ctrtYmd: '2025-03-01',
+  bizNm: 'F-15 부품구매',
+  prcmRqtInstCd: '공군',
+  ctrtBzentyCd: 'A 업체',
+  miltPicId: '공군',
+  bzentyCd: '조달테스트업체',
+  picId: '홍길동',
+  crncCd: '미 달러',
+  rmrkCn: '-',
+  itemSeq: 3,
+  dudtYmd: '2026-02-10',
+  wrtYmd: '2026-02-10',
+  ntdcStts: '작성',
+}
+
+// MUI-EX-02-T72 견적의뢰서 품목 — slide50 목업(1111111111111 · 00000-010000-123 · F-15K ·
+// 항공 · 2025-05-01 · 12345 · IRST LRU-1 · EA · 1 · AFLC IM : IG(6급 홍길동)).
+const OVS_ESTMT_RQDC_ITEMS: OvsEstmtRqdcItemRow[] = [
+  {
+    id: '1111111111111-1',
+    no: 1,
+    invtNo: '1111111111111',
+    itemNo: '00000-010000-123',
+    aplcnEqpmntCd: 'F-15K',
+    trnsMthdCd: '항공',
+    dlvgdsRqtYmd: '2025-05-01',
+    rcptNo: '12345',
+    itemNm: 'IRST LRU-1',
+    unitNm: 'EA',
+    clmQty: 1,
+    rmrkCn: 'AFLC IM : IG(6급 홍길동)',
+  },
+  {
+    id: '1111111111112-2',
+    no: 2,
+    invtNo: '1111111111112',
+    itemNo: '00000-010000-124',
+    aplcnEqpmntCd: 'F-15K',
+    trnsMthdCd: '항공',
+    dlvgdsRqtYmd: '2025-05-01',
+    rcptNo: '12346',
+    itemNm: 'IRST LRU-2',
+    unitNm: 'EA',
+    clmQty: 2,
+    rmrkCn: '-',
+  },
+]
+
+// MUI-EX-02-M73 견적통보서목록 — slide55 목업(TESLA · 2025-03-01 · 미 달러 ·
+// 5,000,000.00/100,000.00/2,000.00 · RQ No 1/2 · 작성/송신).
+const OVS_ESTMT_NTDC_CTRT_INFO: OvsEstmtNtdcCtrtInfo = {
+  ctrtBzentyCd: 'TESLA',
+  ctrtYmd: '2025-03-01',
+  crncCd: '미 달러',
+  ctrtAmt: 5000000,
+  clmAmt: 100000,
+  uclmAmt: 2000,
+}
+
+const OVS_ESTMT_NTDC_LIST: OvsEstmtNtdcItem[] = [
+  {
+    id: '1',
+    clmSeq: '1',
+    itemSeq: 3,
+    tradeSbtBzentyNm: 'A 업체',
+    bizNm: 'F-15 부품구매',
+    wrtYmd: '2026-02-10',
+    docSttsCd: '작성',
+    rcvrNm: '김길동',
+  },
+  {
+    id: '2',
+    clmSeq: '2',
+    itemSeq: 3,
+    tradeSbtBzentyNm: 'A 업체',
+    bizNm: 'F-15 부품구매',
+    wrtYmd: '2026-02-10',
+    docSttsCd: '송신',
+    rcvrNm: '김길동',
+  },
+]
+
+// MUI-EX-02-M74 견적통보서상세 — slide58·59 목업(M72 동형 + 품목수 1/변경 0/총액 1,000.00).
+const OVS_ESTMT_NTDC_DTL: OvsEstmtNtdcDtl = {
+  ctrtNo: 'KD111111111',
+  clmSeq: '1',
+  clmYmd: '2025-03-01',
+  vldYmd: '2025-03-01',
+  ctrtYmd: '2025-03-01',
+  bizNm: 'F-15 부품구매',
+  prcmRqtInstCd: '공군',
+  ctrtBzentyCd: 'A 업체',
+  miltPicId: '공군',
+  bzentyCd: '조달테스트업체',
+  picId: '홍길동',
+  crncCd: '미 달러',
+  rmrkCn: '-',
+  titemCnt: 1,
+  chgItemCnt: 0,
+  gramt: 1000,
+  itemSeq: 3,
+  dudtYmd: '2026-02-10',
+  wrtYmd: '2026-02-10',
+  docSttsCd: '작성',
+}
+
+// MUI-EX-02-T74 견적통보서 품목 — slide59 목업(단가/금액 1,000.00 포함).
+const OVS_ESTMT_NTDC_ITEMS: OvsEstmtNtdcItemRow[] = [
+  {
+    id: '1111111111113-1',
+    no: 1,
+    invtNo: '111111111',
+    itemNo: '00000-010000-123',
+    aplcnEqpmntCd: 'F-15K',
+    clmUntprc: 1000,
+    trnsMthdCd: '항공',
+    dlvgdsRqtYmd: '2025-05-01',
+    rcptNo: '12345',
+    itemNm: 'IRST LRU-1',
+    unitNm: 'EA',
+    clmAmt: 1000,
+    clmQty: 1,
+    estmtChgSeCd: '-',
+    rmrkCn: 'AFLC IM : IG(6급 홍길동)',
+  },
+]
+
 export const MOCK_EX = {
   inspIntgList: INSP_INTG_LIST,
   dlvgdsAvtsmtList: DLVGDS_AVTSMT_LIST,
@@ -496,4 +676,11 @@ export const MOCK_EX = {
   inspDlvdocPrstList: INSP_DLVDOC_PRST_LIST,
   dlvdocRsltDtl: DLVDOC_RSLT_DTL,
   dlvdocRsltCmdtyList: DLVDOC_RSLT_CMDTY_LIST,
+  ovsEstmtRqdcList: OVS_ESTMT_RQDC_LIST,
+  ovsEstmtRqdcDtl: OVS_ESTMT_RQDC_DTL,
+  ovsEstmtRqdcItems: OVS_ESTMT_RQDC_ITEMS,
+  ovsEstmtNtdcCtrtInfo: OVS_ESTMT_NTDC_CTRT_INFO,
+  ovsEstmtNtdcList: OVS_ESTMT_NTDC_LIST,
+  ovsEstmtNtdcDtl: OVS_ESTMT_NTDC_DTL,
+  ovsEstmtNtdcItems: OVS_ESTMT_NTDC_ITEMS,
 }

@@ -230,6 +230,30 @@ const EpfcClclnClmDtlPage = lazy(() =>
     default: m.EpfcClclnClmDtlPage,
   })),
 )
+// 견적의뢰서목록(MUI-EX-02-M71, /ex/estmt-rqdc) — biz/ex/ovsEstmtRqdcList.
+const OvsEstmtRqdcListPage = lazy(() =>
+  import('@/ui/biz/ex/ovsEstmtRqdcList/OvsEstmtRqdcListPage').then((m) => ({
+    default: m.OvsEstmtRqdcListPage,
+  })),
+)
+// 견적의뢰서상세(MUI-EX-02-M72, /ex/estmt-rqdc/:id) — biz/ex/ovsEstmtRqdcDtl.
+const OvsEstmtRqdcDtlPage = lazy(() =>
+  import('@/ui/biz/ex/ovsEstmtRqdcDtl/OvsEstmtRqdcDtlPage').then((m) => ({
+    default: m.OvsEstmtRqdcDtlPage,
+  })),
+)
+// 견적통보서목록(MUI-EX-02-M73, /ex/estmt-ntdc) — biz/ex/ovsEstmtNtdcList.
+const OvsEstmtNtdcListPage = lazy(() =>
+  import('@/ui/biz/ex/ovsEstmtNtdcList/OvsEstmtNtdcListPage').then((m) => ({
+    default: m.OvsEstmtNtdcListPage,
+  })),
+)
+// 견적통보서상세(MUI-EX-02-M74, /ex/estmt-ntdc/:id) — biz/ex/ovsEstmtNtdcDtl.
+const OvsEstmtNtdcDtlPage = lazy(() =>
+  import('@/ui/biz/ex/ovsEstmtNtdcDtl/OvsEstmtNtdcDtlPage').then((m) => ({
+    default: m.OvsEstmtNtdcDtlPage,
+  })),
+)
 // 대금지불정보(반납)(MUI-WM-01-M10, /wm/rtn) — biz/wm/rtnPymtDfryInfo.
 const RtnPymtDfryInfoPage = lazy(() =>
   import('@/ui/biz/wm/rtnPymtDfryInfo/RtnPymtDfryInfoPage').then((m) => ({
@@ -1016,6 +1040,34 @@ export const router = createBrowserRouter([
         path: 'ex/dlvdoc/rslt/:id',
         element: <DlvdocRsltDtlPage />,
         handle: { header: { variant: 'sub', title: '상세 조회' } },
+      },
+      {
+        path: 'ex/estmt-rqdc',
+        element: <OvsEstmtRqdcListPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.EX_ESTMT_RQDC] },
+          scrollReset: true,
+          showBottomNav: true,
+        },
+      },
+      {
+        path: 'ex/estmt-rqdc/:id',
+        element: <OvsEstmtRqdcDtlPage />,
+        handle: { header: { variant: 'sub', title: '견적의뢰서 상세' } },
+      },
+      {
+        path: 'ex/estmt-ntdc',
+        element: <OvsEstmtNtdcListPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.EX_ESTMT_NTDC] },
+          scrollReset: true,
+          showBottomNav: true,
+        },
+      },
+      {
+        path: 'ex/estmt-ntdc/:id',
+        element: <OvsEstmtNtdcDtlPage />,
+        handle: { header: { variant: 'sub', title: '견적통보서 상세' } },
       },
       {
         path: 'wm',

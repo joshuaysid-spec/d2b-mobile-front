@@ -516,3 +516,236 @@ export interface DlvdocRsltDtl {
 
 /** M07 물품목록 1건 (dlt_CmdtyList, slide39 1.4) — 부대조달(T04)과 동일 구성이라 타입 재사용. */
 export type DlvdocRsltCmdtyItem = InspDlvdocSbsdCmdtyItem
+
+// ════════════════════════════════════════════════════════════════════════════
+// EX-02 한도액계약 (slide42~86) — 견적/발주 의뢰서·통보서. P79 계약번호조회는 cm/search 공통시트.
+// ════════════════════════════════════════════════════════════════════════════
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-02-M71 견적의뢰서목록 (slide46~48) — ovsEstmtRqdcList/OvsEstmtRqdcListPage
+//   검색필터: MUI-EX-02-P80 (SearchFilter schema).
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 견적의뢰서목록 검색조건 (dm_searchInfo, slide48 1.1) — On-Load: 수신일 5년전~현재. */
+export interface OvsEstmtRqdcListRequest {
+  /** 계약번호 (ctrtNo, 35) — 계약번호조회(P79) 공통팝업. */
+  ctrtNo?: string
+  /** 수신일(FROM) (rcptnBgngYmd, 8). */
+  rcptnBgngYmd?: string
+  /** 수신일(TO) (rcptnEndYmd, 8). */
+  rcptnEndYmd?: string
+}
+
+/** 견적의뢰서목록 1건 (dl_estmtRqdc, slide48 1.2). */
+export interface OvsEstmtRqdcItem {
+  /** 목록 key/상세 라우팅용 고유 식별자 — 견적번호(clmSeq) 사용. */
+  id: string
+  /** 견적번호 (clmSeq, 22) — 카드 표기 '견적번호 {clmSeq}'(+차수, slide46 3-1). */
+  clmSeq: string
+  /** 항목수 (itemSeq, 22). */
+  itemSeq: number
+  /** 무역대리점 (bzentyCd, 5) — 표시명. */
+  bzentyCd: string
+  /** 사업명 (bizNm, 100) — 카드 제목. */
+  bizNm: string
+  /** 납기일 (dudtYmd, 8). */
+  dudtYmd: string
+  /** 작성일 (wrtYmd, 8). */
+  wrtYmd: string
+  /** 통보서상태 (ntdcStts, 100) — 작성/미작성/송신 뱃지(slide46 4-1). */
+  ntdcStts: string
+}
+
+export interface OvsEstmtRqdcListResult {
+  list: OvsEstmtRqdcItem[]
+  total: number
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-02-M72 견적의뢰서상세 (slide49~53) — ovsEstmtRqdcDtl/OvsEstmtRqdcDtlPage
+//   탭: T71 상세정보(OvsEstmtRqdcDtl) · T72 물품목록(OvsEstmtRqdcDtl_CmdtyList).
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 견적의뢰서상세 — 계약정보(dm_ctrtInfo, slide52 1.1) + 요약 표시항목. */
+export interface OvsEstmtRqdcDtl {
+  /** 계약번호 (ctrtNo, 35). */
+  ctrtNo: string
+  /** 견적번호 (clmSeq, 22) — 문서정보(견적번호+회차). */
+  clmSeq: string
+  /** 견적일자 (clmYmd, 8). */
+  clmYmd: string
+  /** 유효일자 (vldYmd, 8). */
+  vldYmd: string
+  /** 계약일자 (ctrtYmd, 8). */
+  ctrtYmd: string
+  /** 사업명 (bizNm, 100) — 문서 제목. */
+  bizNm: string
+  /** 군구분 (prcmRqtInstCd, 2) — 표시명(공군 등). */
+  prcmRqtInstCd: string
+  /** 계약업체 (ctrtBzentyCd, 5) — 표시명. */
+  ctrtBzentyCd: string
+  /** 군담당자 (miltPicId, 16) — 표시명. */
+  miltPicId: string
+  /** 무역대리점 (bzentyCd, 5) — 표시명. */
+  bzentyCd: string
+  /** 담당자 (picId, 16) — 표시명. */
+  picId: string
+  /** 화폐단위 (crncCd, 3) — 표시명(미 달러 등). */
+  crncCd: string
+  /** 비고 (rmrkCn, 4000). */
+  rmrkCn: string
+  // ── 요약(SummaryInfo) 표시항목 — 목록(M71) 항목명 재사용(slide49 타이틀 영역) ──
+  /** 항목수 (itemSeq). */
+  itemSeq: number
+  /** 납기일 (dudtYmd). */
+  dudtYmd: string
+  /** 작성일 (wrtYmd). */
+  wrtYmd: string
+  /** 통보서상태 (ntdcStts) — 뱃지. */
+  ntdcStts: string
+}
+
+/** 견적의뢰서 품목 1건 (dl_estmtRqdcItem, slide52 1.2). */
+export interface OvsEstmtRqdcItemRow {
+  /** 목록 key — `${invtNo}-${no}` (클라 생성). */
+  id: string
+  /** 번호 — 순번(화면 표시). */
+  no: number
+  /** 재고번호 (invtNo, 13). */
+  invtNo: string
+  /** 부품번호 (itemNo, 32). */
+  itemNo: string
+  /** 적용장비 (aplcnEqpmntCd, 8) — 표시명. */
+  aplcnEqpmntCd: string
+  /** 운송구분 (trnsMthdCd, 1) — 표시명(항공 등). */
+  trnsMthdCd: string
+  /** 납품요구일자 (dlvgdsRqtYmd, 8). */
+  dlvgdsRqtYmd: string
+  /** Serial No (rcptNo, 20). */
+  rcptNo: string
+  /** 품명 (itemNm, 200). */
+  itemNm: string
+  /** 단위 (unitNm, 100). */
+  unitNm: string
+  /** 수량 (clmQty, 15,2). */
+  clmQty: number
+  /** 비고 (rmrkCn, 4000) — 없으면 '-'. */
+  rmrkCn: string
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-02-M73 견적통보서목록 (slide55~56) — ovsEstmtNtdcList/OvsEstmtNtdcListPage
+//   상단 계약정보(dm_ctrtInfo) + 연계 견적통보 목록(dl_estmtNtdc).
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 견적통보서목록 상단 계약정보 (dm_ctrtInfo, slide56 1.2). */
+export interface OvsEstmtNtdcCtrtInfo {
+  /** 계약업체 (ctrtBzentyCd, 5) — 표시명. */
+  ctrtBzentyCd: string
+  /** 계약일자 (ctrtYmd, 8). */
+  ctrtYmd: string
+  /** 화폐단위 (crncCd, 3) — 표시명. */
+  crncCd: string
+  /** 계약금액 (ctrtAmt, 25,3). */
+  ctrtAmt: number
+  /** 청구금액 (clmAmt, 25,3). */
+  clmAmt: number
+  /** 미청구금액 (uclmAmt, 25,3). */
+  uclmAmt: number
+}
+
+/** 견적통보서목록 1건 (dl_estmtNtdc, slide56 1.3). */
+export interface OvsEstmtNtdcItem {
+  /** 목록 key/상세 라우팅용 고유 식별자 — RQ No(clmSeq) 사용. */
+  id: string
+  /** RQ No (clmSeq, 22) — 카드 표기 'RQ No {clmSeq}'. */
+  clmSeq: string
+  /** 건수 (itemSeq, 22). */
+  itemSeq: number
+  /** 무역대리점 (tradeSbtBzentyNm, 200). */
+  tradeSbtBzentyNm: string
+  /** 사업명 (bizNm, 100) — 카드 제목. */
+  bizNm: string
+  /** 작성일자 (wrtYmd, 8). */
+  wrtYmd: string
+  /** 진행상태 (docSttsCd, 2) — 작성/송신/반려 뱃지(slide55 4-1), 표시명. */
+  docSttsCd: string
+  /** 수신자 (rcvrNm, 200). */
+  rcvrNm: string
+}
+
+export interface OvsEstmtNtdcListResult {
+  ctrtInfo: OvsEstmtNtdcCtrtInfo
+  list: OvsEstmtNtdcItem[]
+  total: number
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-02-M74 견적통보서상세 (slide58~63) — ovsEstmtNtdcDtl/OvsEstmtNtdcDtlPage
+//   탭: T73 상세정보(OvsEstmtNtdcDtl) · T74 물품목록(OvsEstmtNtdcDtl_CmdtyList).
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 견적통보서상세 — 계약정보(dm_ctrtInfo, slide61 1.1 — M72 와 동일 구성) + 품목수(dm_itemCntInfo)
+ *  + 요약 표시항목. */
+export interface OvsEstmtNtdcDtl {
+  ctrtNo: string
+  clmSeq: string
+  clmYmd: string
+  vldYmd: string
+  ctrtYmd: string
+  bizNm: string
+  prcmRqtInstCd: string
+  ctrtBzentyCd: string
+  miltPicId: string
+  bzentyCd: string
+  picId: string
+  crncCd: string
+  rmrkCn: string
+  // ── 품목수 (dm_itemCntInfo, slide62 1.3 — T74 요약 정보) ──
+  /** 품목수 (titemCnt, 10). */
+  titemCnt: number
+  /** 변경품목수 (chgItemCnt, 10). */
+  chgItemCnt: number
+  /** 총금액 (gramt, 25,3). */
+  gramt: number
+  // ── 요약(SummaryInfo) 표시항목 (slide58 타이틀 영역 — M71 카드와 동일 구성) ──
+  itemSeq: number
+  dudtYmd: string
+  wrtYmd: string
+  /** 진행상태 (docSttsCd) — 뱃지. */
+  docSttsCd: string
+}
+
+/** 견적통보서 품목 1건 (dl_estmtNtdcItem, slide61~62 1.2). */
+export interface OvsEstmtNtdcItemRow {
+  /** 목록 key — `${invtNo}-${no}` (클라 생성). */
+  id: string
+  /** 번호 — 순번. */
+  no: number
+  /** 재고번호 (invtNo, 9). */
+  invtNo: string
+  /** 부품번호 (itemNo, 32). */
+  itemNo: string
+  /** 적용장비 (aplcnEqpmntCd, 8) — 표시명. */
+  aplcnEqpmntCd: string
+  /** 단가 (clmUntprc, 25,3). */
+  clmUntprc: number
+  /** 운송구분 (trnsMthdCd, 1) — 표시명. */
+  trnsMthdCd: string
+  /** 납품가능일자 (dlvgdsRqtYmd, 8). */
+  dlvgdsRqtYmd: string
+  /** Serial No (rcptNo, 20). */
+  rcptNo: string
+  /** 품명 (itemNm, 200). */
+  itemNm: string
+  /** 단위 (unitNm, 100). */
+  unitNm: string
+  /** 금액 (clmAmt, 25,3). */
+  clmAmt: number
+  /** 수량 (clmQty, 18,3). */
+  clmQty: number
+  /** MISSING 구분 (estmtChgSeCd, 3) — 표시명, 없으면 '-'. */
+  estmtChgSeCd: string
+  /** 비고 (rmrkCn, 4000) — 없으면 '-'. */
+  rmrkCn: string
+}

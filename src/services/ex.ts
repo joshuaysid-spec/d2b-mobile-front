@@ -19,6 +19,13 @@ import type {
   InspDlvdocSbsdCmdtyItem,
   InspIntgListRequest,
   InspIntgListResult,
+  OvsEstmtNtdcDtl,
+  OvsEstmtNtdcItemRow,
+  OvsEstmtNtdcListResult,
+  OvsEstmtRqdcDtl,
+  OvsEstmtRqdcItemRow,
+  OvsEstmtRqdcListRequest,
+  OvsEstmtRqdcListResult,
   PxcndCmcnInspDtl,
 } from '@/types/ex'
 
@@ -42,6 +49,18 @@ const EP = {
   PXCND_CMCN_INSP_DTL: (id: string) => `/v1/exs/completion-inspections/${id}`,
   /** 검사및납품조서현황목록 — MUI-EX-01-M05 (inspDlvdocPrst/InspDlvdocPrstPage) */
   INSP_DLVDOC_PRST_LIST: '/v1/exs/delivery-doc-statuses',
+  /** 견적의뢰서목록 — MUI-EX-02-M71 (ovsEstmtRqdcList/OvsEstmtRqdcListPage) */
+  OVS_ESTMT_RQDC_LIST: '/v1/exs/estimate-requests',
+  /** 견적의뢰서상세 — MUI-EX-02-M72/T71 (ovsEstmtRqdcDtl/OvsEstmtRqdcDtlPage) */
+  OVS_ESTMT_RQDC_DTL: (id: string) => `/v1/exs/estimate-requests/${id}`,
+  /** 견적의뢰서 품목목록 — MUI-EX-02-T72 (ovsEstmtRqdcDtl/OvsEstmtRqdcDtl_CmdtyList) */
+  OVS_ESTMT_RQDC_ITEMS: (id: string) => `/v1/exs/estimate-requests/${id}/items`,
+  /** 견적통보서목록 — MUI-EX-02-M73 (ovsEstmtNtdcList/OvsEstmtNtdcListPage) */
+  OVS_ESTMT_NTDC_LIST: '/v1/exs/estimate-notices',
+  /** 견적통보서상세 — MUI-EX-02-M74/T73 (ovsEstmtNtdcDtl/OvsEstmtNtdcDtlPage) */
+  OVS_ESTMT_NTDC_DTL: (id: string) => `/v1/exs/estimate-notices/${id}`,
+  /** 견적통보서 품목목록 — MUI-EX-02-T74 (ovsEstmtNtdcDtl/OvsEstmtNtdcDtl_CmdtyList) */
+  OVS_ESTMT_NTDC_ITEMS: (id: string) => `/v1/exs/estimate-notices/${id}/items`,
   /** 검사및납품조서결과상세 — MUI-EX-01-M07/T05 (dlvdocRsltDtl/DlvdocRsltDtlPage) */
   DLVDOC_RSLT_DTL: (id: string) => `/v1/exs/delivery-doc-results/${id}`,
   /** 결과상세 물품목록 — MUI-EX-01-T06 (dlvdocRsltDtl/DlvdocRsltDtl_CmdtyList) */
@@ -149,6 +168,62 @@ export const exService = {
     if (USE_MOCK) return mockDelay(MOCK_EX.dlvdocRsltCmdtyList)
     return apiClient.post<DlvdocRsltCmdtyItem[], DlvdocRsltCmdtyItem[]>(
       EP.DLVDOC_RSLT_CMDTYS(id),
+    )
+  },
+
+  // ── 견적의뢰서 (MUI-EX-02-M71·M72) ────────────────────────────────────────
+
+  /** 견적의뢰서목록 조회 — On-Load: 수신일 5년전~현재(slide48). */
+  async getOvsEstmtRqdcList(req: OvsEstmtRqdcListRequest = {}): Promise<OvsEstmtRqdcListResult> {
+    if (USE_MOCK) {
+      const list = MOCK_EX.ovsEstmtRqdcList
+      return mockDelay({ list, total: list.length })
+    }
+    return apiClient.post<OvsEstmtRqdcListResult, OvsEstmtRqdcListResult>(
+      EP.OVS_ESTMT_RQDC_LIST,
+      req,
+    )
+  },
+
+  /** 견적의뢰서상세(계약정보) 조회. */
+  async getOvsEstmtRqdcDtl(id: string): Promise<OvsEstmtRqdcDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_EX.ovsEstmtRqdcDtl)
+    return apiClient.post<OvsEstmtRqdcDtl, OvsEstmtRqdcDtl>(EP.OVS_ESTMT_RQDC_DTL(id))
+  },
+
+  /** 견적의뢰서 품목목록(T72) 조회. */
+  async getOvsEstmtRqdcItems(id: string): Promise<OvsEstmtRqdcItemRow[]> {
+    if (USE_MOCK) return mockDelay(MOCK_EX.ovsEstmtRqdcItems)
+    return apiClient.post<OvsEstmtRqdcItemRow[], OvsEstmtRqdcItemRow[]>(
+      EP.OVS_ESTMT_RQDC_ITEMS(id),
+    )
+  },
+
+  // ── 견적통보서 (MUI-EX-02-M73·M74) ────────────────────────────────────────
+
+  /** 견적통보서목록(상단 계약정보 + 연계 견적 목록) 조회. */
+  async getOvsEstmtNtdcList(ctrtNo?: string): Promise<OvsEstmtNtdcListResult> {
+    if (USE_MOCK) {
+      const list = MOCK_EX.ovsEstmtNtdcList
+      return mockDelay({ ctrtInfo: MOCK_EX.ovsEstmtNtdcCtrtInfo, list, total: list.length })
+    }
+    return apiClient.post<OvsEstmtNtdcListResult, OvsEstmtNtdcListResult>(
+      EP.OVS_ESTMT_NTDC_LIST,
+      { ctrtNo },
+    )
+  },
+
+  /** 견적통보서상세(계약정보+품목수) 조회. */
+  async getOvsEstmtNtdcDtl(id: string): Promise<OvsEstmtNtdcDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_EX.ovsEstmtNtdcDtl)
+    return apiClient.post<OvsEstmtNtdcDtl, OvsEstmtNtdcDtl>(EP.OVS_ESTMT_NTDC_DTL(id))
+  },
+
+  /** 견적통보서 품목목록(T74) 조회. */
+  async getOvsEstmtNtdcItems(id: string): Promise<OvsEstmtNtdcItemRow[]> {
+    if (USE_MOCK) return mockDelay(MOCK_EX.ovsEstmtNtdcItems)
+    return apiClient.post<OvsEstmtNtdcItemRow[], OvsEstmtNtdcItemRow[]>(
+      EP.OVS_ESTMT_NTDC_ITEMS(id),
     )
   },
 }
