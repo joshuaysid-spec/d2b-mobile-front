@@ -188,6 +188,18 @@ const PymtClmIntgListPage = lazy(() =>
     default: m.PymtClmIntgListPage,
   })),
 )
+// 선금신청서상세(MUI-WM-01-M02, /wm/prpay/:id) — biz/wm/prpayApfrDtl.
+const PrpayApfrDtlPage = lazy(() =>
+  import('@/ui/biz/wm/prpayApfrDtl/PrpayApfrDtlPage').then((m) => ({
+    default: m.PrpayApfrDtlPage,
+  })),
+)
+// 착·중도금신청서상세(MUI-WM-01-M03, /wm/dpsmn-itrpy/:id) — biz/wm/dpsmnItrpyApfrDtl.
+const DpsmnItrpyApfrDtlPage = lazy(() =>
+  import('@/ui/biz/wm/dpsmnItrpyApfrDtl/DpsmnItrpyApfrDtlPage').then((m) => ({
+    default: m.DpsmnItrpyApfrDtlPage,
+  })),
+)
 // 물품전자계약진행상세(MUI-CT-01-M03, /ct/:id) — biz/ct/cmdtyElctrCtrtPrgrsDtl.
 const CmdtyElctrCtrtPrgrsDtlPage = lazy(() =>
   import('@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyElctrCtrtPrgrsDtlPage').then((m) => ({
@@ -971,6 +983,16 @@ export const router = createBrowserRouter([
           scrollReset: true,
           showBottomNav: true,
         },
+      },
+      {
+        path: 'wm/prpay/:id',
+        element: <PrpayApfrDtlPage />,
+        handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
+      },
+      {
+        path: 'wm/dpsmn-itrpy/:id',
+        element: <DpsmnItrpyApfrDtlPage />,
+        handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
       },
       {
         path: 'ct/cstrn/:id',

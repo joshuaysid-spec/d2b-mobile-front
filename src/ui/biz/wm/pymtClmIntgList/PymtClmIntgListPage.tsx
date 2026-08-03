@@ -8,6 +8,7 @@
 // 안내문(P09 대금청구 안내문)은 그룹 3(중앙조달 상세)에서 구현 후 배선 — 현재 콘솔 스텁.
 // 업무도움(slide16 1])은 '내역이 없으면 항목을 표시하지 않음' — 안내 내역 확정 전이라 미표시(EX·CT 동일).
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
 import { usePymtClmIntgList } from '@/queries/wm'
@@ -120,6 +121,7 @@ const SEARCH_TARGETS = [
 ]
 
 export function PymtClmIntgListPage() {
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false) // 상세필터 풀팝업(MUI-WM-01-P12)
   const [filter, setFilter] = useState<SearchFilterValue>(() => buildDefaultValue())
   const [keyword, setKeyword] = useState('')
@@ -160,9 +162,17 @@ export function PymtClmIntgListPage() {
     }
     setPickedCtrt(item)
   }
-  // 신청 카드 클릭(slide21) — 청구서 종류별 상세 분기.
-  // TODO(WM 그룹 2~5): M02 선금/M03 착중도금/M05~M08 대금청구/M13 사후정산 상세 구현 후 navigate 배선.
+  // 신청 카드 클릭(slide21) — 청구서 종류(clmDocNm, 임시 키)별 상세 분기.
   const handleAplyClick = (item: PymtClmAplyItem) => {
+    if (item.clmDocNm === '선금신청서') {
+      navigate(`/wm/prpay/${item.id}`, { state: item })
+      return
+    }
+    if (item.clmDocNm === '착중도금신청서') {
+      navigate(`/wm/dpsmn-itrpy/${item.id}`, { state: item })
+      return
+    }
+    // TODO(WM 그룹 3~5): 대금청구서(M05~M08 중앙/부대/공사/기성)·사후정산청구서(M13) 구현 후 배선.
     console.log('[P13] 상세 이동(미구현)', item.clmDocNm, item.id)
   }
 

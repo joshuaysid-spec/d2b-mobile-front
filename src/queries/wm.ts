@@ -7,6 +7,11 @@ import type { PymtClmIntgListRequest } from '@/types/wm'
 export const wmKeys = {
   pymtClmIntgList: (req: PymtClmIntgListRequest) => ['wm', 'pymtClmIntgList', req] as const,
   pymtClmAplyList: (ctrtNo: string) => ['wm', 'pymtClmAplyList', ctrtNo] as const,
+  prpayApfrDtl: (id: string) => ['wm', 'prpayApfrDtl', id] as const,
+  prpayAplyDsctns: (id: string) => ['wm', 'prpayAplyDsctns', id] as const,
+  dpsmnItrpyApfrDtl: (id: string) => ['wm', 'dpsmnItrpyApfrDtl', id] as const,
+  dpsmnItrpyAplyDsctns: (id: string) => ['wm', 'dpsmnItrpyAplyDsctns', id] as const,
+  giveSttsList: (id: string) => ['wm', 'giveSttsList', id] as const,
 }
 
 /** 대금청구통합목록(M01) — 키워드 세부 필터/더보기 페이징은 페이지 클라이언트 로직 유지(서버 전환 시 req 로 이행). */
@@ -23,5 +28,50 @@ export function usePymtClmAplyList(ctrtNo: string, enabled: boolean) {
     queryKey: wmKeys.pymtClmAplyList(ctrtNo),
     queryFn: () => wmService.getPymtClmAplyList(ctrtNo),
     enabled: Boolean(ctrtNo) && enabled,
+  })
+}
+
+/** 선금신청서상세(M02) — 목록 state 는 placeholder 로 쓰지 않음(필드 구성 상이). */
+export function usePrpayApfrDtl(id: string) {
+  return useQuery({
+    queryKey: wmKeys.prpayApfrDtl(id),
+    queryFn: () => wmService.getPrpayApfrDtl(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 선금 세부신청내역(T02). */
+export function usePrpayAplyDsctns(id: string) {
+  return useQuery({
+    queryKey: wmKeys.prpayAplyDsctns(id),
+    queryFn: () => wmService.getPrpayAplyDsctns(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 착·중도금신청서상세(M03). */
+export function useDpsmnItrpyApfrDtl(id: string) {
+  return useQuery({
+    queryKey: wmKeys.dpsmnItrpyApfrDtl(id),
+    queryFn: () => wmService.getDpsmnItrpyApfrDtl(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 착·중도금 세부신청내역(T04). */
+export function useDpsmnItrpyAplyDsctns(id: string) {
+  return useQuery({
+    queryKey: wmKeys.dpsmnItrpyAplyDsctns(id),
+    queryFn: () => wmService.getDpsmnItrpyAplyDsctns(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 지급상태(T23, 상세 공용 탭). */
+export function useGiveSttsList(id: string) {
+  return useQuery({
+    queryKey: wmKeys.giveSttsList(id),
+    queryFn: () => wmService.getGiveSttsList(id),
+    enabled: Boolean(id),
   })
 }

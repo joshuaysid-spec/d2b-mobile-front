@@ -1,7 +1,15 @@
 // 대금청구/사후(WM) 도메인 목업 데이터 — USE_MOCK=true 일 때 wmService 가 반환.
 // 설계서(05.대금청구및사후 v0.83) 항목설명 항목·형식·slide16/17/19 목업값을 반영(임의 더미 금지).
 // ⚠️ 폐쇄망 반입 후 실백엔드 연동 시 이 파일은 사용되지 않는다(서비스가 apiClient 분기).
-import type { PymtClmAplyItem, PymtClmListItem } from '@/types/wm'
+import type {
+  DpsmnItrpyAplyDsctnItem,
+  DpsmnItrpyApfrDtl,
+  GiveSttsItem,
+  PrpayAplyDsctnItem,
+  PrpayApfrDtl,
+  PymtClmAplyItem,
+  PymtClmListItem,
+} from '@/types/wm'
 
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-WM-01-M01 대금청구통합목록 — slide16 목업(계약번호 2025000000-01 · 물품 구매 ·
@@ -125,7 +133,128 @@ const PYMT_CLM_APLY_LIST: PymtClmAplyItem[] = [
   },
 ]
 
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M02 선금신청서상세 — slide22 목업(작성자 홍길동 대리 · 010-1234-5678 ·
+// 계약 2025-11-23/20257135021/배추김치/10,000,000원 · 신청 2026-01-30/1,000,000원/일백만 원정).
+// ────────────────────────────────────────────────────────────────────────────
+const PRPAY_APFR_DTL: PrpayApfrDtl = {
+  taskSeCd: '물품',
+  ctrtMthdCd: '수의계약',
+  ctrtNo: '20250000001',
+  ctrtCycl: '01',
+  ctrtNm: '물품구매',
+  ctrtYmd: '2026-02-10',
+  orderInstNm: '제8385부대',
+  ctrtAmt: 11616000,
+  wrtrNm: '홍길동',
+  wrtrJbttlNm: '대리',
+  wrtrEnmtno: '010-1234-5678',
+  dlvgdsYmd: '2026-01-01 ~ 2026-12-31',
+  mainBizCn: '-',
+  aplyCtrtCycl: '20250000001-01',
+  rcptnOgnzCd: '방위사업청 계약관리본부 재무관 귀하',
+  dmndDt: '2026-01-30',
+  aplyAmt: 1000000,
+  aplyAmtHngl: '일백만 원정',
+  expndCauseAmt: 1000000,
+}
+
+// MUI-WM-01-T02 선금 세부신청내역 — slide24~25 구분 목록(재료비 수입/국내/간접 · 노무비 직접/간접 ·
+// 경비 직접/간접 · 일반관리비 · 기타 · 합계).
+const PRPAY_APLY_DSCTNS: PrpayAplyDsctnItem[] = [
+  '재료비 - 수입 재료비',
+  '재료비 - 국내 재료비',
+  '재료비 - 간접 재료비',
+  '노무비 - 직접 노무비',
+  '노무비 - 간접 노무비',
+  '경비 - 직접 경비',
+  '경비 - 간접 경비',
+  '일반 관리비',
+  '기타',
+  '합계',
+].map((se, i) => ({
+  id: se,
+  prpayAplyDsctnAmtSeNm: se,
+  trgtAmt: 100000000 + i * 1000000,
+  arusAplyAmt: 20000000,
+  usePrnmntAplyAmt: 30000000,
+  aplySumAmt: 50000000,
+  aplyAmtRt: 50,
+}))
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M03 착·중도금신청서상세 — slide29 목업(선금과 동형 + 품명/납기(최종)/신청구분 착수금).
+// ────────────────────────────────────────────────────────────────────────────
+const DPSMN_ITRPY_APFR_DTL: DpsmnItrpyApfrDtl = {
+  taskSeCd: '물품',
+  ctrtMthdCd: '수의계약',
+  ctrtNo: '20250000004',
+  ctrtCycl: '01',
+  ctrtNm: '변속기 부품 계약의 건',
+  ctrtYmd: '2026-02-10',
+  orderInstNm: '제8385부대',
+  ctrtAmt: 11616000,
+  wrtrNm: '홍길동',
+  wrtrJbttlNm: '대리',
+  wrtrEnmtno: '010-1234-5678',
+  itemNm: '배추김치',
+  dudtYmd: '2026-01-01 ~ 2026-12-31',
+  mainBizCn: '-',
+  fravItrpySecd: '1',
+  aplyCtrtCycl: '20250000004-01',
+  rcptnOgnzCd: '방위사업청 계약관리본부 재무관 귀하',
+  dmndDt: '2026-01-30',
+  aplyAmt: 1000000,
+  aplyAmtHngl: '일백만 원정',
+}
+
+// MUI-WM-01-T04 착·중도금 세부신청내역 — slide31~33(신청금액·승인된 전 차수 수령금액 합계).
+const DPSMN_ITRPY_APLY_DSCTNS: DpsmnItrpyAplyDsctnItem[] = [
+  '재료비 - 수입 재료비',
+  '재료비 - 국내 재료비',
+  '재료비 - 간접 재료비',
+  '노무비 - 직접 노무비',
+  '노무비 - 간접 노무비',
+  '경비 - 직접 경비',
+  '경비 - 간접 경비',
+  '일반 관리비',
+  '기타',
+  '합계',
+].map((se, i) => ({
+  id: se,
+  dpsmnItrpyAplyDsctnSeNm: se,
+  trgtAmt: 100000000 + i * 1000000,
+  aplyAmt: 30000000,
+  aplyStotAmt: 20000000,
+  aplyAmtRt: 30,
+}))
+
+// MUI-WM-01-T23 지급상태 — slide36 목업(2025 / 20250000 / 01 / 10,000,000원 / 진행중).
+const GIVE_STTS_LIST: GiveSttsItem[] = [
+  {
+    id: '20250000001-01',
+    rqstYr: '2025',
+    ctrtNo: '20250000001',
+    ctrtCycl: '01',
+    giveClmAmt: 10000000,
+    expndStcd: '진행중',
+  },
+  {
+    id: '20250000001-02',
+    rqstYr: '2025',
+    ctrtNo: '20250000001',
+    ctrtCycl: '02',
+    giveClmAmt: 5000000,
+    expndStcd: '지급완료',
+  },
+]
+
 export const MOCK_WM = {
   pymtClmIntgList: PYMT_CLM_INTG_LIST,
   pymtClmAplyList: PYMT_CLM_APLY_LIST,
+  prpayApfrDtl: PRPAY_APFR_DTL,
+  prpayAplyDsctns: PRPAY_APLY_DSCTNS,
+  dpsmnItrpyApfrDtl: DPSMN_ITRPY_APFR_DTL,
+  dpsmnItrpyAplyDsctns: DPSMN_ITRPY_APLY_DSCTNS,
+  giveSttsList: GIVE_STTS_LIST,
 }

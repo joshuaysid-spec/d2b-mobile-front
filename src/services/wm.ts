@@ -7,6 +7,11 @@ import { apiClient } from '@/lib/apiClient'
 import { USE_MOCK, mockDelay } from '@/lib/env'
 import { MOCK_WM } from '@/mocks/wm'
 import type {
+  DpsmnItrpyAplyDsctnItem,
+  DpsmnItrpyApfrDtl,
+  GiveSttsItem,
+  PrpayAplyDsctnItem,
+  PrpayApfrDtl,
   PymtClmAplyItem,
   PymtClmIntgListRequest,
   PymtClmIntgListResult,
@@ -18,6 +23,16 @@ const EP = {
   /** 대금청구신청목록 — MUI-WM-01-P13 (pymtClmIntgList/PymtClmIntgAplyList) */
   PYMT_CLM_APLY_LIST: (ctrtNo: string) =>
     `/v1/wms/contracts/${ctrtNo}/payment-claim-applications`,
+  /** 선금신청서상세 — MUI-WM-01-M02/T01 (prpayApfrDtl/PrpayApfrDtlPage) */
+  PRPAY_APFR_DTL: (id: string) => `/v1/wms/prepayment-applications/${id}`,
+  /** 선금 세부신청내역 — MUI-WM-01-T02 (prpayApfrDtl/PrpayApfrDtl_AplyDtsm) */
+  PRPAY_APLY_DSCTNS: (id: string) => `/v1/wms/prepayment-applications/${id}/details`,
+  /** 착·중도금신청서상세 — MUI-WM-01-M03/T03 (dpsmnItrpyApfrDtl/DpsmnItrpyApfrDtlPage) */
+  DPSMN_ITRPY_APFR_DTL: (id: string) => `/v1/wms/interim-payment-applications/${id}`,
+  /** 착·중도금 세부신청내역 — MUI-WM-01-T04 (dpsmnItrpyApfrDtl/DpsmnItrpyApfrDtl_AplyDtsm) */
+  DPSMN_ITRPY_APLY_DSCTNS: (id: string) => `/v1/wms/interim-payment-applications/${id}/details`,
+  /** 지급상태 — MUI-WM-01-T23 (prpayDpsmnItrpyGiveStts/PrpayDpsmnItrpyGiveStts, 상세 공용 탭) */
+  GIVE_STTS_LIST: (id: string) => `/v1/wms/payment-claims/${id}/payment-statuses`,
 }
 
 export const wmService = {
@@ -41,5 +56,43 @@ export const wmService = {
   async getPymtClmAplyList(ctrtNo: string): Promise<PymtClmAplyItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.pymtClmAplyList)
     return apiClient.post<PymtClmAplyItem[], PymtClmAplyItem[]>(EP.PYMT_CLM_APLY_LIST(ctrtNo))
+  },
+
+  // ── 선금신청서상세 (MUI-WM-01-M02) ────────────────────────────────────────
+
+  /** 상세(차수·계약내용·신청금액·공급자) 조회 — On-Load(slide28). */
+  async getPrpayApfrDtl(id: string): Promise<PrpayApfrDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.prpayApfrDtl)
+    return apiClient.post<PrpayApfrDtl, PrpayApfrDtl>(EP.PRPAY_APFR_DTL(id))
+  },
+
+  /** 세부신청내역(T02) 조회. */
+  async getPrpayAplyDsctns(id: string): Promise<PrpayAplyDsctnItem[]> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.prpayAplyDsctns)
+    return apiClient.post<PrpayAplyDsctnItem[], PrpayAplyDsctnItem[]>(EP.PRPAY_APLY_DSCTNS(id))
+  },
+
+  // ── 착·중도금신청서상세 (MUI-WM-01-M03) ───────────────────────────────────
+
+  /** 상세 조회. */
+  async getDpsmnItrpyApfrDtl(id: string): Promise<DpsmnItrpyApfrDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.dpsmnItrpyApfrDtl)
+    return apiClient.post<DpsmnItrpyApfrDtl, DpsmnItrpyApfrDtl>(EP.DPSMN_ITRPY_APFR_DTL(id))
+  },
+
+  /** 세부신청내역(T04) 조회. */
+  async getDpsmnItrpyAplyDsctns(id: string): Promise<DpsmnItrpyAplyDsctnItem[]> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.dpsmnItrpyAplyDsctns)
+    return apiClient.post<DpsmnItrpyAplyDsctnItem[], DpsmnItrpyAplyDsctnItem[]>(
+      EP.DPSMN_ITRPY_APLY_DSCTNS(id),
+    )
+  },
+
+  // ── 지급상태 (MUI-WM-01-T23, 상세 공용 탭) ────────────────────────────────
+
+  /** 지급상태 목록 조회. */
+  async getGiveSttsList(id: string): Promise<GiveSttsItem[]> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.giveSttsList)
+    return apiClient.post<GiveSttsItem[], GiveSttsItem[]>(EP.GIVE_STTS_LIST(id))
   },
 }

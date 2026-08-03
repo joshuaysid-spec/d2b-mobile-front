@@ -52,6 +52,10 @@ export const ROUTES = {
   EX_DLVDOC_RSLT_DETAIL: '/ex/dlvdoc/rslt/:id',
   /** 대금청구통합목록 (MUI-WM-01-M01). */
   WM: '/wm',
+  /** 선금신청서상세 (MUI-WM-01-M02, `:id`). 이동: `/wm/prpay/${id}`. */
+  WM_PRPAY_DETAIL: '/wm/prpay/:id',
+  /** 착·중도금신청서상세 (MUI-WM-01-M03, `:id`). 이동: `/wm/dpsmn-itrpy/${id}`. */
+  WM_DPSMN_ITRPY_DETAIL: '/wm/dpsmn-itrpy/:id',
   NOTIFICATION: '/notification',
   SUPPORT: '/support',
   /** 일반공지사항(공지사항 목록) (MUI-CM-04-M01). */
