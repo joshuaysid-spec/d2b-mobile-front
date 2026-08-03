@@ -206,6 +206,24 @@ const CenterPrcmPymtClmDtlPage = lazy(() =>
     default: m.CenterPrcmPymtClmDtlPage,
   })),
 )
+// 대금청구상세(부대조달)(MUI-WM-01-M06, /wm/pymt-clm/sbsd/:id) — biz/wm/sbsdPrcmPymtClmDtl.
+const SbsdPrcmPymtClmDtlPage = lazy(() =>
+  import('@/ui/biz/wm/sbsdPrcmPymtClmDtl/SbsdPrcmPymtClmDtlPage').then((m) => ({
+    default: m.SbsdPrcmPymtClmDtlPage,
+  })),
+)
+// 대금청구상세(공사)(MUI-WM-01-M07, /wm/pymt-clm/cstrn/:id) — biz/wm/cstrnPymtClmDtl.
+const CstrnPymtClmDtlPage = lazy(() =>
+  import('@/ui/biz/wm/cstrnPymtClmDtl/CstrnPymtClmDtlPage').then((m) => ({
+    default: m.CstrnPymtClmDtlPage,
+  })),
+)
+// 대금청구상세(기성대가)(MUI-WM-01-M08, /wm/pymt-clm/pxcnd/:id) — biz/wm/pxcndCstPymtClmDtl.
+const PxcndCstPymtClmDtlPage = lazy(() =>
+  import('@/ui/biz/wm/pxcndCstPymtClmDtl/PxcndCstPymtClmDtlPage').then((m) => ({
+    default: m.PxcndCstPymtClmDtlPage,
+  })),
+)
 // 물품전자계약진행상세(MUI-CT-01-M03, /ct/:id) — biz/ct/cmdtyElctrCtrtPrgrsDtl.
 const CmdtyElctrCtrtPrgrsDtlPage = lazy(() =>
   import('@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyElctrCtrtPrgrsDtlPage').then((m) => ({
@@ -1003,6 +1021,21 @@ export const router = createBrowserRouter([
       {
         path: 'wm/pymt-clm/:id',
         element: <CenterPrcmPymtClmDtlPage />,
+        handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
+      },
+      {
+        path: 'wm/pymt-clm/sbsd/:id',
+        element: <SbsdPrcmPymtClmDtlPage />,
+        handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
+      },
+      {
+        path: 'wm/pymt-clm/cstrn/:id',
+        element: <CstrnPymtClmDtlPage />,
+        handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
+      },
+      {
+        path: 'wm/pymt-clm/pxcnd/:id',
+        element: <PxcndCstPymtClmDtlPage />,
         handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
       },
       {

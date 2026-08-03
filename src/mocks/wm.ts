@@ -3,13 +3,17 @@
 // ⚠️ 폐쇄망 반입 후 실백엔드 연동 시 이 파일은 사용되지 않는다(서비스가 apiClient 분기).
 import type {
   CenterPrcmPymtClmDtl,
+  CstrnPymtClmDtl,
   DpsmnItrpyAplyDsctnItem,
   DpsmnItrpyApfrDtl,
   GiveSttsItem,
   PrpayAplyDsctnItem,
   PrpayApfrDtl,
+  PxcndCstPymtClmDtl,
   PymtClmAplyItem,
   PymtClmListItem,
+  SbsdPrcmPymtClmDtl,
+  WmAdocItem,
 } from '@/types/wm'
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -103,6 +107,7 @@ const PYMT_CLM_APLY_LIST: PymtClmAplyItem[] = [
     clmYmd: '2025-11-20',
     prgrsStNm: '진행중',
     taskSeCd: '물품',
+    prcmSeNm: '중앙',
   },
   {
     id: '12315-41',
@@ -117,6 +122,7 @@ const PYMT_CLM_APLY_LIST: PymtClmAplyItem[] = [
     clmYmd: '2025-11-20',
     prgrsStNm: '진행완료',
     taskSeCd: '물품',
+    prcmSeNm: '중앙',
   },
   {
     id: '12315-40',
@@ -131,6 +137,52 @@ const PYMT_CLM_APLY_LIST: PymtClmAplyItem[] = [
     clmYmd: '2025-09-20',
     prgrsStNm: '진행완료',
     taskSeCd: '물품',
+    prcmSeNm: '중앙',
+  },
+  {
+    id: '12315-39',
+    no: 4,
+    clmNo: '12315',
+    clmOdr: '39',
+    clmDocNm: '대금청구서',
+    clmAmt: 80000000,
+    cnfmSeNm: '확정',
+    txamt: 8000000,
+    wrtYmd: '2025-08-01',
+    clmYmd: '2025-08-20',
+    prgrsStNm: '진행완료',
+    taskSeCd: '물품',
+    prcmSeNm: '부대',
+  },
+  {
+    id: '12315-38',
+    no: 5,
+    clmNo: '12315',
+    clmOdr: '38',
+    clmDocNm: '대금청구서',
+    clmAmt: 250000000,
+    cnfmSeNm: '확정',
+    txamt: 25000000,
+    wrtYmd: '2025-07-01',
+    clmYmd: '2025-07-20',
+    prgrsStNm: '진행완료',
+    taskSeCd: '공사',
+    prcmSeNm: '공사',
+  },
+  {
+    id: '12315-37',
+    no: 6,
+    clmNo: '12315',
+    clmOdr: '37',
+    clmDocNm: '대금청구서',
+    clmAmt: 120000000,
+    cnfmSeNm: '확정',
+    txamt: 12000000,
+    wrtYmd: '2025-06-01',
+    clmYmd: '2025-06-20',
+    prgrsStNm: '진행완료',
+    taskSeCd: '공사',
+    prcmSeNm: '기성대가',
   },
 ]
 
@@ -313,6 +365,143 @@ const CENTER_PRCM_PYMT_CLM_DTL: CenterPrcmPymtClmDtl = {
   ],
 }
 
+// 첨부서류 공통 목업 — slide51 목업(물품제조구매계약서/계약명세서, 파일크기 표기).
+const WM_ADOCS: WmAdocItem[] = [
+  { id: '1', docNm: '물품제조구매계약서', fileNm: '첨부파일명.hwp', fileSize: '786KB' },
+  { id: '2', docNm: '계약명세서', fileNm: '첨부파일명이너무길면어떻게노출.hwp', fileSize: '-' },
+]
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M06 대금청구상세(부대조달) — slide47~51 목업.
+// ────────────────────────────────────────────────────────────────────────────
+const SBSD_PRCM_PYMT_CLM_DTL: SbsdPrcmPymtClmDtl = {
+  taskSeCd: '물품',
+  ctrtMthdCd: '수의계약',
+  ctrtNo: '20250000001',
+  ctrtCycl: '01',
+  ctrtNm: '배추김치',
+  ctrtYmd: '2026-02-10',
+  orderInstNm: '제8385부대',
+  ctrtAmt: 11616000,
+  aplyYmd: '2026-01-30',
+  birqNo: '00000000',
+  pymtAplyTrgts: [
+    {
+      id: '100-M2025MST000200',
+      avtsmtNo: '100',
+      recrdPblcnNo: 'M2025MST000200-0001',
+      rcpmDt: '2026-01-01',
+      dlvgdsYmd: undefined,
+      bgtCd: '본조',
+      dlvgdsAmt: 100000000,
+      ctbkAmt: -1000000,
+      lqdmg: 500000,
+    },
+  ],
+  bzentyNm: 'A 업체',
+  rprsvNm: '홍길동',
+  clmtNm: '홍길동',
+  clmtTelno: '010-1234-5678',
+  bzentyAddr: '서울특별시 종로구 세종대로 1',
+  giveSecd: '선금',
+  vatSecd: '과세',
+  dlvgdsAmt: 100000000,
+  splyEqvl: 90909091,
+  vatAmt: 9090909,
+  ddcAmt: 1500000,
+  ddcSplyEqvl: 1363636,
+  txamtDdcAmt: 136364,
+  ddcDsctnNm: '-',
+  giveClmAmt: 98500000,
+  cfmtnYn: '확정',
+  birqRmrkCn: '-',
+  adocs: WM_ADOCS,
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M07 대금청구상세(공사) — slide56~59 목업(공사기간 2026-01-30~2026-12-30 ·
+// 대가지급업체 농협 1100-12345-02).
+// ────────────────────────────────────────────────────────────────────────────
+const CSTRN_PYMT_CLM_DTL: CstrnPymtClmDtl = {
+  taskSeCd: '공사',
+  ctrtMthdCd: '제한경쟁',
+  ctrtNo: '20250000003',
+  ctrtCycl: '01',
+  ctrtNm: '막사 보수 공사',
+  ctrtYmd: '2026-01-03',
+  orderInstNm: '제3651부대',
+  ctrtAmt: 385000000,
+  bgncstYmd: '2026-01-30 ~ 2026-12-30',
+  rprsvNm: 'A 업체',
+  inspYmd: '2026-01-30',
+  giveSecd: '-',
+  pxcndAmt: 120000000,
+  aplyAmt: 120000000,
+  birqRmrkCn: '1. 변경내역 표시',
+  giveBzentys: [
+    {
+      id: 'A업체-1100-12345-02',
+      fbctnSecd: '-',
+      bzentyNm: 'A 업체',
+      aplyAmt: 120000000,
+      dlngFnstNm: '농협',
+      enacno: '1100-12345-02',
+      enacnoRlnm: '11000-11200',
+      dpstrNm: 'A 업체',
+    },
+  ],
+  adocs: WM_ADOCS,
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M08 대금청구상세(기성대가) — slide62~67 목업(총기성율/총기성금/선금·금회정산액).
+// ────────────────────────────────────────────────────────────────────────────
+const PXCND_CST_PYMT_CLM_DTL: PxcndCstPymtClmDtl = {
+  taskSeCd: '공사',
+  ctrtMthdCd: '제한경쟁',
+  ctrtNo: '20250000003',
+  ctrtCycl: '01',
+  ctrtNm: '배추김치',
+  ctrtYmd: '2026-01-03',
+  orderInstNm: '제3651부대',
+  ctrtAmt: 385000000,
+  bzentyNm: 'A 업체',
+  rprsvNm: '홍길동',
+  clmtNm: '홍길동',
+  clmtTelno: '010-1234-5678',
+  giveSecd: '기성대가',
+  vatSecd: '과세',
+  dlvgdsAmt: 120000000,
+  dlvgdsSplyEqvl: 109090909,
+  dlvgdsTxamt: 10909091,
+  ddcAmt: 1500000,
+  ddcSplyEqvl: 1363636,
+  ddcTxamt: 136364,
+  ddcDsctnNm: '-',
+  giveClmAmt: 118500000,
+  cfmtnYn: '확정',
+  prpamt: 50000000,
+  tpxcndRt: 31.2,
+  tpxcndAmt: 120000000,
+  prpayClclnAmt: 15000000,
+  tstmClclnAmt: 10000000,
+  birqRmrkCn: '-',
+  txivChcYn: 'Y',
+  txivNo: '1234-5678-9012',
+  txBlls: [
+    {
+      id: '2026-02-03-1',
+      bllPblcnYmd: '02-03',
+      itemNm: '-',
+      dlvgdsQty: 100,
+      ctrtUntprc: 1090909,
+      splyEqvl: 109090909,
+      txamt: 10909091,
+    },
+  ],
+  adocs: WM_ADOCS,
+}
+
 export const MOCK_WM = {
   pymtClmIntgList: PYMT_CLM_INTG_LIST,
   pymtClmAplyList: PYMT_CLM_APLY_LIST,
@@ -322,4 +511,7 @@ export const MOCK_WM = {
   dpsmnItrpyAplyDsctns: DPSMN_ITRPY_APLY_DSCTNS,
   giveSttsList: GIVE_STTS_LIST,
   centerPrcmPymtClmDtl: CENTER_PRCM_PYMT_CLM_DTL,
+  sbsdPrcmPymtClmDtl: SBSD_PRCM_PYMT_CLM_DTL,
+  cstrnPymtClmDtl: CSTRN_PYMT_CLM_DTL,
+  pxcndCstPymtClmDtl: PXCND_CST_PYMT_CLM_DTL,
 }

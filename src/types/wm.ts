@@ -94,8 +94,13 @@ export interface PymtClmAplyItem {
   clmYmd: string
   /** 진행상태 (prgrsStNm, 임시) — 진행중/진행완료 뱃지. */
   prgrsStNm: string
-  /** 업무구분 (taskSeCd) — 상세 분기 보조(중앙/부대/공사/기성 구분은 상세설계 확정 시). */
+  /** 업무구분 (taskSeCd) — 상세 분기 보조. */
   taskSeCd: string
+  /**
+   * 대금청구서 유형 구분 — 중앙/부대/공사/기성대가 상세(M05~M08) 분기 구동.
+   * ⚠️ 설계서 분기 조건 항목 미정의(BD 선례 임시 키) — 상세설계 확정 시 교체.
+   */
+  prcmSeNm: '중앙' | '부대' | '공사' | '기성대가'
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -345,4 +350,207 @@ export interface CenterPrcmPymtClmDtl extends WmDtlSummary {
   txivNo: string
   /** 세금계산서 품목 목록 (dlt_txBllList). */
   txBlls: TxBllItem[]
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// 첨부파일 탭 공통 (dlt_adocList, slide53 1.5 등) — M06 T12 · M07 T15 · M08 T19 동일 구성.
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 첨부서류 1건 (dlt_adocList). */
+export interface WmAdocItem {
+  /** 목록 key — 등록 순번 등 고유값(클라 생성). */
+  id: string
+  /** 첨부서류명 (docNm, 200). */
+  docNm: string
+  /** 첨부파일명 (fileNm, 300) — 없으면 '-'. */
+  fileNm: string
+  /** 파일크기 (fileSize, 10) — 표시 문자열(예: '786KB'), 없으면 '-'. */
+  fileSize: string
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M06 대금청구상세(부대조달) (slide46~54) — sbsdPrcmPymtClmDtl/SbsdPrcmPymtClmDtlPage
+//   탭: T09 계약정보(_Ctrt) · T10 대금신청업체정보(_PymtBzenty) · T11 대금신청금액(_PymtAply) · T12 첨부파일(_Atch).
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 부대조달 대금신청대상 1건 (dlt_pymtAplyTrgtList, slide52 1.2 — 중앙과 항목명 상이). */
+export interface SbsdPymtAplyTrgtItem {
+  /** 목록 key — `${avtsmtNo}-${recrdPblcnNo}` (클라 생성). */
+  id: string
+  /** 통지번호 (avtsmtNo, 3). */
+  avtsmtNo: string
+  /** 조서발행번호 (recrdPblcnNo, 20). */
+  recrdPblcnNo: string
+  /** 합격일자 (rcpmDt, 8). */
+  rcpmDt: string
+  /** 납품일자 (dlvgdsYmd, 8) — 없으면 '-'. */
+  dlvgdsYmd?: string
+  /** 예산구분 (bgtCd, 상위코드 UZ03 — 전년국채/본조/당년국채) — 표시명. */
+  bgtCd: string
+  /** (납품)금액 (dlvgdsAmt, 17). */
+  dlvgdsAmt: number
+  /** 감액 (ctbkAmt, 17). */
+  ctbkAmt: number
+  /** 지체상금 (lqdmg, 17). */
+  lqdmg: number
+}
+
+/** 대금청구상세(부대조달) — 계약정보(dmt_ctrtInfo) + 신청대상 + 업체정보(dmt_pymtAplyBzentyInfo)
+ *  + 대금신청금액(dmt_pymtAplyAmtInfo) + 첨부(dlt_adocList) + 요약 (slide52~53). */
+export interface SbsdPrcmPymtClmDtl extends WmDtlSummary {
+  // ── 계약정보 (slide52 1.1) ──
+  /** 신청일자 (aplyYmd, 8). */
+  aplyYmd: string
+  /** 대금신청번호 (birqNo, 15). */
+  birqNo: string
+  /** 대금신청대상 목록. */
+  pymtAplyTrgts: SbsdPymtAplyTrgtItem[]
+  // ── 대금신청업체정보 (slide52 1.3) ──
+  /** 상호 (bzentyNm, 100). */
+  bzentyNm: string
+  /** 대표명 (rprsvNm, 100). */
+  rprsvNm: string
+  /** 청구인성명 (clmtNm, 100). */
+  clmtNm: string
+  /** 연락처 (clmtTelno, 20). */
+  clmtTelno: string
+  /** 주소 (bzentyAddr, 120). */
+  bzentyAddr: string
+  // ── 대금신청금액 (slide53 1.4) ──
+  /** 지급구분 (giveSecd, 상위코드 EPNC — 선금 등) — 표시명. */
+  giveSecd: string
+  /** 세액여부 (vatSecd, 상위코드 VATA — 과세/면세/영세) — 표시명. */
+  vatSecd: string
+  /** 납품(선급)금액 (dlvgdsAmt, 17). */
+  dlvgdsAmt: number
+  /** 공급가액 (splyEqvl, 17). */
+  splyEqvl: number
+  /** 세액 (vatAmt, 17). */
+  vatAmt: number
+  /** 공제금액 (ddcAmt, 17). */
+  ddcAmt: number
+  /** 공제 공급가액 — ⚠️ 설계서(slide53)가 ddcAmt 로 중복 표기(오타), M05 항목명(ddcSplyEqvl) 재사용. */
+  ddcSplyEqvl: number
+  /** 공제 세액 (txamtDdcAmt, 17). */
+  txamtDdcAmt: number
+  /** 공제내역 (ddcDsctnNm, 100) — 없으면 '-'. */
+  ddcDsctnNm: string
+  /** 실지급금액 (giveClmAmt, 17). */
+  giveClmAmt: number
+  /** 신고구분 (cfmtnYn — 확정/예정) — 표시명. */
+  cfmtnYn: string
+  /** 비고 (birqRmrkCn, 100). */
+  birqRmrkCn: string
+  /** 첨부서류 목록 (dlt_adocList). */
+  adocs: WmAdocItem[]
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M07 대금청구상세(공사) (slide55~60) — cstrnPymtClmDtl/CstrnPymtClmDtlPage
+//   탭: T13 계약정보(_Ctrt) · T14 대가지급업체(_GiveBzenty) · T15 첨부파일(_Atch).
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 대가지급업체 1건 (dlt_giveBzentyList, slide59 1.2). */
+export interface GiveBzentyItem {
+  /** 목록 key — `${bzentyNm}-${enacno}` (클라 생성). */
+  id: string
+  /** 업체유형 (fbctnSecd, 상위코드 UB54) — 표시명, 없으면 '-'. */
+  fbctnSecd: string
+  /** 업체명 (bzentyNm, 100). */
+  bzentyNm: string
+  /** 신청금액 (aplyAmt, 17). */
+  aplyAmt: number
+  /** 은행명 (dlngFnstNm, 100). */
+  dlngFnstNm: string
+  /** 계좌번호 (enacno, 64, 암호화계좌번호). */
+  enacno: string
+  /** 계좌실명번호 — ⚠️ 설계서(slide59)가 enacno 로 중복 표기(오타), 임시 키(enacnoRlnm). */
+  enacnoRlnm: string
+  /** 예금주 (dpstrNm, 100). */
+  dpstrNm: string
+}
+
+/** 대금청구상세(공사) — 계약정보(dmt_ctrtInfo) + 비고(dmt_birqRmrkCnInfo) + 대가지급업체 + 첨부 + 요약 (slide59). */
+export interface CstrnPymtClmDtl extends WmDtlSummary {
+  /** 공사기간 (bgncstYmd, 8) — 화면은 기간 표기(slide56). */
+  bgncstYmd: string
+  /** 업체명(대표) (rprsvNm, 100). */
+  rprsvNm: string
+  /** 검사일자 (inspYmd). */
+  inspYmd: string
+  /** 지급구분 (giveSecd, 상위코드 UB56) — 표시명, 없으면 '-'. */
+  giveSecd: string
+  /** 기성금액 (pxcndAmt, 17). */
+  pxcndAmt: number
+  /** 신청금액 (aplyAmt, 17). */
+  aplyAmt: number
+  /** 비고 (birqRmrkCn, 100, dmt_birqRmrkCnInfo) — 변경내역 표시(slide56). */
+  birqRmrkCn: string
+  /** 대가지급업체 목록 (dlt_giveBzentyList). */
+  giveBzentys: GiveBzentyItem[]
+  /** 첨부서류 목록 (dlt_adocList). */
+  adocs: WmAdocItem[]
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M08 대금청구상세(기성대가) (slide61~68) — pxcndCstPymtClmDtl/PxcndCstPymtClmDtlPage
+//   탭: T16 계약정보(_Ctrt) · T17 기성대가신청금액(_PxcndPymt) · T18 세금계산서(_Txiv) · T19 첨부파일(_Atch).
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 대금청구상세(기성대가) — 계약정보 + 대금신청업체(dmt_pymtAplyBzentyInfo) + 기성대가 신청금액
+ *  (dmt_PxcndCstAplyAmtInfo) + 세금계산서(dlt_txivList) + 첨부 + 요약 (slide67~68). */
+export interface PxcndCstPymtClmDtl extends WmDtlSummary {
+  // ── 대금신청 업체정보 (slide67 1.2) ──
+  /** 상호 (bzentyNm, 100). */
+  bzentyNm: string
+  /** 대표명 (rprsvNm, 100). */
+  rprsvNm: string
+  /** 청구인성명 (clmtNm, 100). */
+  clmtNm: string
+  /** 연락처 (clmtTelno, 20). */
+  clmtTelno: string
+  // ── 기성대가 신청 금액 (dmt_PxcndCstAplyAmtInfo, slide67 1.3) ──
+  /** 지급구분 (giveSecd, 상위코드 EPNC) — 표시명(기성대가 등). */
+  giveSecd: string
+  /** 세액여부 (vatSecd) — 표시명(과세/면세/영세, slide63 1-2). */
+  vatSecd: string
+  /** 기성금액 (dlvgdsAmt, 17). */
+  dlvgdsAmt: number
+  /** 공급가액 (dlvgdsSplyEqvl, 17). */
+  dlvgdsSplyEqvl: number
+  /** 세액 (dlvgdsTxamt, 17). */
+  dlvgdsTxamt: number
+  /** 공제금액 (ddcAmt, 17). */
+  ddcAmt: number
+  /** 공제 공급가액 (ddcSplyEqvl, 17). */
+  ddcSplyEqvl: number
+  /** 공제 세액 (ddcTxamt, 17). */
+  ddcTxamt: number
+  /** 공제내역 (ddcDsctnNm, 100) — 없으면 '-'. */
+  ddcDsctnNm: string
+  /** 실지급금액 (giveClmAmt, 17). */
+  giveClmAmt: number
+  /** 신고구분 (cfmtnYn — 확정/예정) — 표시명. */
+  cfmtnYn: string
+  /** 선급금 (prpamt, 17). */
+  prpamt: number
+  /** 총기성율 (tpxcndRt, 9) — %. */
+  tpxcndRt: number
+  /** 총기성금 (tpxcndAmt, 17). */
+  tpxcndAmt: number
+  /** 선금정산액 (prpayClclnAmt, 17). */
+  prpayClclnAmt: number
+  /** 금회정산액 (tstmClclnAmt, 17). */
+  tstmClclnAmt: number
+  /** 비고 (birqRmrkCn, 100). */
+  birqRmrkCn: string
+  // ── 세금계산서 (dlt_txivList, slide68 1.5 — 중앙(M05)과 동일 구성) ──
+  /** 세금계산서 선택여부 (txivChcYn). */
+  txivChcYn: 'Y' | 'N'
+  /** 세금계산서번호 — ⚠️ M05 와 동일 사유 임시 키(txivNo). */
+  txivNo: string
+  /** 세금계산서 품목 목록. */
+  txBlls: TxBllItem[]
+  /** 첨부서류 목록 (dlt_adocList). */
+  adocs: WmAdocItem[]
 }

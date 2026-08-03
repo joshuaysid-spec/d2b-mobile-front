@@ -8,9 +8,12 @@ import { USE_MOCK, mockDelay } from '@/lib/env'
 import { MOCK_WM } from '@/mocks/wm'
 import type {
   CenterPrcmPymtClmDtl,
+  CstrnPymtClmDtl,
   DpsmnItrpyAplyDsctnItem,
   DpsmnItrpyApfrDtl,
   GiveSttsItem,
+  PxcndCstPymtClmDtl,
+  SbsdPrcmPymtClmDtl,
   PrpayAplyDsctnItem,
   PrpayApfrDtl,
   PymtClmAplyItem,
@@ -36,6 +39,12 @@ const EP = {
   GIVE_STTS_LIST: (id: string) => `/v1/wms/payment-claims/${id}/payment-statuses`,
   /** 대금청구 상세(중앙조달) — MUI-WM-01-M05/T05~T08 (centerPrcmPymtClmDtl/CenterPrcmPymtClmDtlPage) */
   CENTER_PRCM_PYMT_CLM_DTL: (id: string) => `/v1/wms/central-payment-claims/${id}`,
+  /** 대금청구상세(부대조달) — MUI-WM-01-M06/T09~T12 (sbsdPrcmPymtClmDtl/SbsdPrcmPymtClmDtlPage) */
+  SBSD_PRCM_PYMT_CLM_DTL: (id: string) => `/v1/wms/subsidiary-payment-claims/${id}`,
+  /** 대금청구상세(공사) — MUI-WM-01-M07/T13~T15 (cstrnPymtClmDtl/CstrnPymtClmDtlPage) */
+  CSTRN_PYMT_CLM_DTL: (id: string) => `/v1/wms/construction-payment-claims/${id}`,
+  /** 대금청구상세(기성대가) — MUI-WM-01-M08/T16~T19 (pxcndCstPymtClmDtl/PxcndCstPymtClmDtlPage) */
+  PXCND_CST_PYMT_CLM_DTL: (id: string) => `/v1/wms/progress-payment-claims/${id}`,
 }
 
 export const wmService = {
@@ -106,6 +115,34 @@ export const wmService = {
     if (USE_MOCK) return mockDelay(MOCK_WM.centerPrcmPymtClmDtl)
     return apiClient.post<CenterPrcmPymtClmDtl, CenterPrcmPymtClmDtl>(
       EP.CENTER_PRCM_PYMT_CLM_DTL(id),
+    )
+  },
+
+  // ── 대금청구상세(부대조달) (MUI-WM-01-M06) ────────────────────────────────
+
+  /** 상세(계약정보+신청대상+업체+신청금액+첨부) 조회. */
+  async getSbsdPrcmPymtClmDtl(id: string): Promise<SbsdPrcmPymtClmDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.sbsdPrcmPymtClmDtl)
+    return apiClient.post<SbsdPrcmPymtClmDtl, SbsdPrcmPymtClmDtl>(
+      EP.SBSD_PRCM_PYMT_CLM_DTL(id),
+    )
+  },
+
+  // ── 대금청구상세(공사) (MUI-WM-01-M07) ────────────────────────────────────
+
+  /** 상세(계약정보+비고+대가지급업체+첨부) 조회. */
+  async getCstrnPymtClmDtl(id: string): Promise<CstrnPymtClmDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.cstrnPymtClmDtl)
+    return apiClient.post<CstrnPymtClmDtl, CstrnPymtClmDtl>(EP.CSTRN_PYMT_CLM_DTL(id))
+  },
+
+  // ── 대금청구상세(기성대가) (MUI-WM-01-M08) ────────────────────────────────
+
+  /** 상세(계약정보+업체+기성대가 신청금액+세금계산서+첨부) 조회. */
+  async getPxcndCstPymtClmDtl(id: string): Promise<PxcndCstPymtClmDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.pxcndCstPymtClmDtl)
+    return apiClient.post<PxcndCstPymtClmDtl, PxcndCstPymtClmDtl>(
+      EP.PXCND_CST_PYMT_CLM_DTL(id),
     )
   },
 }

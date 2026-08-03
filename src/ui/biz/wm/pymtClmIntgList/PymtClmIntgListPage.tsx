@@ -176,9 +176,16 @@ export function PymtClmIntgListPage() {
       return
     }
     if (item.clmDocNm === '대금청구서') {
-      // 중앙조달(M05) — 부대(M06)/공사(M07)/기성대가(M08) 분기 조건은 설계서 미정의,
-      // TODO(WM 그룹 4): 해당 상세 구현 시 데이터 필드 분기 추가.
-      navigate(`/wm/pymt-clm/${item.id}`, { state: item })
+      // 유형 구분(prcmSeNm, 임시 키)으로 중앙(M05)/부대(M06)/공사(M07)/기성대가(M08) 분기.
+      const route =
+        item.prcmSeNm === '부대'
+          ? 'sbsd/'
+          : item.prcmSeNm === '공사'
+            ? 'cstrn/'
+            : item.prcmSeNm === '기성대가'
+              ? 'pxcnd/'
+              : ''
+      navigate(`/wm/pymt-clm/${route}${item.id}`, { state: item })
       return
     }
     // TODO(WM 그룹 5): 사후정산청구서(M13) 구현 후 배선.

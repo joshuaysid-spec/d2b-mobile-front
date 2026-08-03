@@ -58,6 +58,12 @@ export const ROUTES = {
   WM_DPSMN_ITRPY_DETAIL: '/wm/dpsmn-itrpy/:id',
   /** 대금청구 상세(중앙조달) (MUI-WM-01-M05, `:id`). 이동: `/wm/pymt-clm/${id}`. */
   WM_PYMT_CLM_DETAIL: '/wm/pymt-clm/:id',
+  /** 대금청구상세(부대조달) (MUI-WM-01-M06, `:id`). 이동: `/wm/pymt-clm/sbsd/${id}`. */
+  WM_PYMT_CLM_SBSD_DETAIL: '/wm/pymt-clm/sbsd/:id',
+  /** 대금청구상세(공사) (MUI-WM-01-M07, `:id`). 이동: `/wm/pymt-clm/cstrn/${id}`. */
+  WM_PYMT_CLM_CSTRN_DETAIL: '/wm/pymt-clm/cstrn/:id',
+  /** 대금청구상세(기성대가) (MUI-WM-01-M08, `:id`). 이동: `/wm/pymt-clm/pxcnd/${id}`. */
+  WM_PYMT_CLM_PXCND_DETAIL: '/wm/pymt-clm/pxcnd/:id',
   NOTIFICATION: '/notification',
   SUPPORT: '/support',
   /** 일반공지사항(공지사항 목록) (MUI-CM-04-M01). */
