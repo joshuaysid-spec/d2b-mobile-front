@@ -9,6 +9,8 @@ import { BottomNavVisibleContext } from '@/ui/common/layout/bottomNavContext'
 import { MenuPage } from '@/ui/biz/cm/menu/MenuPage'
 import { IntgSrchPage } from '@/ui/biz/cm/intgSrch/IntgSrchPage'
 import { LgoInfo } from '@/ui/biz/cm/lgoInfo/LgoInfo'
+import { AppSrvcExplnIdx } from '@/ui/biz/cm/appSrvcExpln/AppSrvcExplnIdx'
+import { AppSrvcExplnCoach } from '@/ui/biz/cm/appSrvcExpln/AppSrvcExplnCoach'
 import { useAuthStore } from '@/stores/authStore'
 import { ROUTES } from '@/constants/routes'
 import type { RouteHandle } from '@/types/navigation'
@@ -83,9 +85,10 @@ export function AppLayout() {
   useEffect(() => {
     if ((location.state as { openMenu?: boolean } | null)?.openMenu) {
       setMenuOpen(true)
-      navigate(location.pathname, { replace: true, state: null }) // 재방문/뒤로가기 시 재오픈 방지
+      // 재방문/뒤로가기 시 재오픈 방지. search 보존 — 앱 이용안내(?appGuide=menu) 쿼리가 지워지지 않게.
+      navigate(location.pathname + location.search, { replace: true, state: null })
     }
-  }, [location.state, location.pathname, navigate])
+  }, [location.state, location.pathname, location.search, navigate])
   // 스크롤 처리는 아래 effect #2 한 곳에서 (PUSH/REPLACE→맨위, POP→복원).
   //   ※ pathname 기준으로 무조건 top:0 하던 effect 는 POP 복원을 덮어써서 제거함.
   // 1) 현재 화면의 스크롤을 계속 저장(떠나기 직전 값 보존)
@@ -171,6 +174,9 @@ export function AppLayout() {
       />
       {/* 통합검색 오버레이 — 헤더 통합검색 클릭으로 열림(메인/서브 공통). */}
       <IntgSrchPage open={searchOpen} onOpenChange={setSearchOpen} />
+      {/* 앱 이용안내(MUI-CM-05-M16) — ?appGuide= 쿼리로 구동되는 인덱스 모달 + 코치마크 오버레이. */}
+      <AppSrvcExplnIdx />
+      <AppSrvcExplnCoach />
       {/* 로그아웃 안내(MUI-CM-03-P18) — 확인하면 홈으로 이동 */}
       <LgoInfo
         open={logoutInfoOpen}

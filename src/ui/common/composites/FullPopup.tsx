@@ -151,7 +151,14 @@ const FullPopup = ({
         />
         <DialogPrimitive.Content
           onInteractOutside={(e) => {
-            if (!dismissable) e.preventDefault()
+            if (!dismissable) {
+              e.preventDefault()
+              return
+            }
+            // 앱 이용안내 코치마크 오버레이(z-60, 다이얼로그 밖 — AppSrvcExplnCoach) 위 클릭은
+            // outside-dismiss 로 취급하지 않는다(전체메뉴 위 코치마크 진행 중 메뉴가 닫히는 문제).
+            const target = e.target as HTMLElement | null
+            if (target?.closest?.('[data-app-guide-overlay]')) e.preventDefault()
           }}
           onEscapeKeyDown={(e) => {
             if (!dismissable) e.preventDefault()

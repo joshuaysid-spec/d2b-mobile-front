@@ -163,15 +163,18 @@ const Header = ({
         />
       )}
 
-      {/* 통합검색↔알림현황 위치 스왑 — 이 슬롯은 알림현황 진입(통합검색은 BottomNav 탭). */}
-      <UtilityMenu
-        icon="NotificationsActive"
-        label="알림"
-        dot={hasNotification}
-        onClick={onNotification}
-      />
+      {/* 통합검색↔알림현황 위치 스왑 — 이 슬롯은 알림현황 진입(통합검색은 BottomNav 탭).
+          data-coach = 앱 이용안내(M16) 코치마크 하이라이트 측정 지점(알림+전체메뉴 묶음). */}
+      <div data-coach="header-utils" className="flex items-center">
+        <UtilityMenu
+          icon="NotificationsActive"
+          label="알림"
+          dot={hasNotification}
+          onClick={onNotification}
+        />
 
-      <UtilityMenu icon="Menu" label="전체메뉴" onClick={onMenu} />
+        <UtilityMenu icon="Menu" label="전체메뉴" onClick={onMenu} />
+      </div>
     </>
   )
 

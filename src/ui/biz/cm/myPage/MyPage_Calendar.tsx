@@ -103,8 +103,9 @@ export function MyPageCalendar({
         </button>
       </div>
 
-      {/* 월 캘린더 — 328폭(자동 중앙 정렬) · 상단 16. 업무 있는 날짜 dot 표식. */}
-      <div className="pt-krds-8">
+      {/* 월 캘린더 — 328폭(자동 중앙 정렬) · 상단 16. 업무 있는 날짜 dot 표식.
+          data-coach = 앱 이용안내(M16) 코치마크 하이라이트 측정 지점(월 캘린더만 — 헤더/일정 카드 제외). */}
+      <div data-coach="mypage-calendar" className="pt-krds-8">
         <Calendar
           mode="single"
           value={selected}

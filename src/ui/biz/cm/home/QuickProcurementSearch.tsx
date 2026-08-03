@@ -117,8 +117,11 @@ const QuickProcurementSearch = ({
           </button>
         </div>
 
-        {/* 검색입력 — 3px 파란보더 pill */}
-        <div className="flex w-full items-center rounded-full border-[3px] border-krds-action-primary bg-white py-3 pl-6 pr-3 drop-shadow-[0_10px_5px_rgba(23,43,77,0.1)]">
+        {/* 검색입력 — 3px 파란보더 pill. data-coach = 앱 이용안내(M16) 코치마크 하이라이트 측정 지점. */}
+        <div
+          data-coach="home-search"
+          className="flex w-full items-center rounded-full border-[3px] border-krds-action-primary bg-white py-3 pl-6 pr-3 drop-shadow-[0_10px_5px_rgba(23,43,77,0.1)]"
+        >
           <input
             type="text"
             value={keyword}

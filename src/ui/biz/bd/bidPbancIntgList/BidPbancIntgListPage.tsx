@@ -363,8 +363,8 @@ export function BidPbancIntgListPage() {
         pageSize={pageSize}
         onPageSizeChange={handlePageSize}
       />
-      {/* 카드 (px-4 인셋) */}
-      <div className="flex flex-col gap-krds-7 px-4 pb-4 pt-krds-7">
+      {/* 카드 (px-4 인셋). data-coach = 앱 이용안내(M16) 코치마크 측정 지점(첫 카드/뱃지/정보행). */}
+      <div data-coach="bd-list" className="flex flex-col gap-krds-7 px-4 pb-4 pt-krds-7">
         <CardList items={cardItems} />
       </div>
 
