@@ -20,6 +20,10 @@ import type {
   PymtClmAplyItem,
   PymtClmIntgListRequest,
   PymtClmIntgListResult,
+  PymtClmPrgrsPrstRequest,
+  PymtClmPrgrsPrstResult,
+  RtnPymtDfryInfoRequest,
+  RtnPymtDfryInfoResult,
 } from '@/types/wm'
 
 const EP = {
@@ -48,6 +52,10 @@ const EP = {
   PXCND_CST_PYMT_CLM_DTL: (id: string) => `/v1/wms/progress-payment-claims/${id}`,
   /** 사후정산청구상세 — MUI-WM-01-M13/T20~T22 (epfcClclnClmDtl/EpfcClclnClmDtlPage) */
   EPFC_CLCLN_CLM_DTL: (id: string) => `/v1/wms/post-settlement-claims/${id}`,
+  /** 대금청구진행현황 — MUI-WM-01-M11 (pymtClmPrgrsPrst/PymtClmPrgrsPrstPage) */
+  PYMT_CLM_PRGRS_PRST_LIST: '/v1/wms/payment-claim-progresses',
+  /** 대금지불정보(반납) — MUI-WM-01-M10 (rtnPymtDfryInfo/RtnPymtDfryInfoPage) */
+  RTN_PYMT_DFRY_INFO_LIST: '/v1/wms/return-payment-infos',
 }
 
 export const wmService = {
@@ -155,5 +163,37 @@ export const wmService = {
   async getEpfcClclnClmDtl(id: string): Promise<EpfcClclnClmDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.epfcClclnClmDtl)
     return apiClient.post<EpfcClclnClmDtl, EpfcClclnClmDtl>(EP.EPFC_CLCLN_CLM_DTL(id))
+  },
+
+  // ── 대금청구진행현황 (MUI-WM-01-M11) ──────────────────────────────────────
+
+  /** 진행현황 목록 조회 — 키워드 필터/더보기 페이징은 페이지 클라이언트 로직. */
+  async getPymtClmPrgrsPrstList(
+    req: PymtClmPrgrsPrstRequest = {},
+  ): Promise<PymtClmPrgrsPrstResult> {
+    if (USE_MOCK) {
+      const list = MOCK_WM.pymtClmPrgrsPrstList
+      return mockDelay({ list, total: list.length })
+    }
+    return apiClient.post<PymtClmPrgrsPrstResult, PymtClmPrgrsPrstResult>(
+      EP.PYMT_CLM_PRGRS_PRST_LIST,
+      req,
+    )
+  },
+
+  // ── 대금지불정보(반납) (MUI-WM-01-M10) ────────────────────────────────────
+
+  /** 반납 목록 조회 — 키워드 필터/더보기 페이징은 페이지 클라이언트 로직. */
+  async getRtnPymtDfryInfoList(
+    req: RtnPymtDfryInfoRequest = {},
+  ): Promise<RtnPymtDfryInfoResult> {
+    if (USE_MOCK) {
+      const list = MOCK_WM.rtnPymtDfryInfoList
+      return mockDelay({ list, total: list.length })
+    }
+    return apiClient.post<RtnPymtDfryInfoResult, RtnPymtDfryInfoResult>(
+      EP.RTN_PYMT_DFRY_INFO_LIST,
+      req,
+    )
   },
 }

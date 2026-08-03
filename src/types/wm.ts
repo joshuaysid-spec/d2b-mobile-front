@@ -616,3 +616,110 @@ export interface EpfcClclnClmDtl extends WmDtlSummary {
   /** 세금계산서 품목 목록. */
   txBlls: TxBllItem[]
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M11 대금청구진행현황 (slide80~81) — pymtClmPrgrsPrst/PymtClmPrgrsPrstPage
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 대금청구진행현황 검색조건 (dmt_pymtClmPrgrsPrstSrch, slide81 1.1). */
+export interface PymtClmPrgrsPrstRequest {
+  /** 계약시작일자 (ctrtBngnYmd — 설계서 표기 그대로). */
+  ctrtBngnYmd?: string
+  /** 계약종료일자 (ctrtEndYmd). */
+  ctrtEndYmd?: string
+  /** 계약번호 (ctrtNo) — 계약번호검색 공통팝업(P79). */
+  ctrtNo?: string
+  /** 계약명 (ctrtNm). */
+  ctrtNm?: string
+  /** 업무구분 (taskSeCd) — 물품/공사/용역. */
+  taskSeCd?: string
+  /** 청구시작일자 (clmBngnYmd). */
+  clmBngnYmd?: string
+  /** 청구종료일자 (clmEndYmd). */
+  clmEndYmd?: string
+}
+
+/** 대금청구진행현황 1건 (dlt_pymtClmList, slide81 1.2 — 0706 계약일자/청구일자/수령금액 보완). */
+export interface PymtClmPrgrsPrstItem {
+  /** 목록 key/상세 라우팅용 고유 식별자 — `${birqNo}-${ctrtCycl}` (클라 생성). */
+  id: string
+  /** 번호 (no). */
+  no: number
+  /** 업무구분 (taskSeCd) — 물품/공사/용역. */
+  taskSeCd: string
+  /** 신청번호 (birqNo, 15). */
+  birqNo: string
+  /** 청구일자 (clmYmd, 8). */
+  clmYmd: string
+  /** 계약번호 (ctrtNo, 11). */
+  ctrtNo: string
+  /** 차수 (ctrtCycl, 18). */
+  ctrtCycl: string
+  /** 계약명 (ctrtNm, 300). */
+  ctrtNm: string
+  /** 계약금액 (ctrtAmt, 17). */
+  ctrtAmt: number
+  /** 수령금액 (trgtAmt, 17). */
+  trgtAmt: number
+  /** 청구금액 (clmAmt, 17). */
+  clmAmt: number
+  /** 대금상태 표시레이블(선금신청/착중도금신청/대금청구/대금수정/대금확정/사후정산, slide81 4-1)
+   *  — ⚠️ dlt 미정의 임시 키(pymtStNm). */
+  pymtStNm: string
+  /** 대금청구서 유형 구분 — 상세(M05~M08) 분기 임시 키(P13 과 동일). */
+  prcmSeNm: '중앙' | '부대' | '공사' | '기성대가'
+}
+
+export interface PymtClmPrgrsPrstResult {
+  list: PymtClmPrgrsPrstItem[]
+  total: number
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M10 대금지불정보(반납) (slide82~83) — rtnPymtDfryInfo/RtnPymtDfryInfoPage
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 대금지불정보(반납) 검색조건 (dmt_pymtDfryInfoSrch, slide83 1.1). */
+export interface RtnPymtDfryInfoRequest {
+  /** 계약시작일자 (ctrtBgngYmd). */
+  ctrtBgngYmd?: string
+  /** 계약종료일자 (ctrtEndYmd). */
+  ctrtEndYmd?: string
+  /** 계약번호 (ctrtNo) — 계약번호검색 공통팝업(P79). */
+  ctrtNo?: string
+  /** 계약명 (ctrtNm). */
+  ctrtNm?: string
+  /** 업무구분 (taskSeCd) — 물품/용역/공사. */
+  taskSeCd?: string
+}
+
+/** 대금지불정보(반납) 1건 (dlt_pymtDfryInfoList, slide83 1.2). */
+export interface RtnPymtDfryInfoItem {
+  /** 목록 key — `${birqNo}-${ctrtCycl}` (클라 생성). */
+  id: string
+  /** 번호 (no). */
+  no: number
+  /** 업무구분 (taskSeCd). */
+  taskSeCd: string
+  /** 신청번호 (birqNo, 15). */
+  birqNo: string
+  /** 계약번호 (ctrtNo, 11). */
+  ctrtNo: string
+  /** 차수 (ctrtCycl, 18). */
+  ctrtCycl: string
+  /** 계약명 (ctrtNm, 300). */
+  ctrtNm: string
+  /** 계약금액 (ctrtAmt, 17). */
+  ctrtAmt: number
+  /** 수령금액 (trgtAmt, 17). */
+  trgtAmt: number
+  /** 반납금액 (rtnAmt, 17). */
+  rtnAmt: number
+  /** 입찰구분 표시레이블(총액제/단가제, slide82 4-1) — ⚠️ dlt 미정의, M01 항목명(bidMthdNm) 재사용. */
+  bidMthdNm: string
+}
+
+export interface RtnPymtDfryInfoResult {
+  list: RtnPymtDfryInfoItem[]
+  total: number
+}

@@ -230,6 +230,18 @@ const EpfcClclnClmDtlPage = lazy(() =>
     default: m.EpfcClclnClmDtlPage,
   })),
 )
+// 대금지불정보(반납)(MUI-WM-01-M10, /wm/rtn) — biz/wm/rtnPymtDfryInfo.
+const RtnPymtDfryInfoPage = lazy(() =>
+  import('@/ui/biz/wm/rtnPymtDfryInfo/RtnPymtDfryInfoPage').then((m) => ({
+    default: m.RtnPymtDfryInfoPage,
+  })),
+)
+// 대금청구진행현황(MUI-WM-01-M11, /wm/prgrs) — biz/wm/pymtClmPrgrsPrst.
+const PymtClmPrgrsPrstPage = lazy(() =>
+  import('@/ui/biz/wm/pymtClmPrgrsPrst/PymtClmPrgrsPrstPage').then((m) => ({
+    default: m.PymtClmPrgrsPrstPage,
+  })),
+)
 // 물품전자계약진행상세(MUI-CT-01-M03, /ct/:id) — biz/ct/cmdtyElctrCtrtPrgrsDtl.
 const CmdtyElctrCtrtPrgrsDtlPage = lazy(() =>
   import('@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyElctrCtrtPrgrsDtlPage').then((m) => ({
@@ -1048,6 +1060,24 @@ export const router = createBrowserRouter([
         path: 'wm/epfc-clcln/:id',
         element: <EpfcClclnClmDtlPage />,
         handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
+      },
+      {
+        path: 'wm/rtn',
+        element: <RtnPymtDfryInfoPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.WM_RTN] },
+          scrollReset: true,
+          showBottomNav: true,
+        },
+      },
+      {
+        path: 'wm/prgrs',
+        element: <PymtClmPrgrsPrstPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.WM_PRGRS] },
+          scrollReset: true,
+          showBottomNav: true,
+        },
       },
       {
         path: 'ct/cstrn/:id',

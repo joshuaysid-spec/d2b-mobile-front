@@ -13,6 +13,8 @@ import type {
   PxcndCstPymtClmDtl,
   PymtClmAplyItem,
   PymtClmListItem,
+  PymtClmPrgrsPrstItem,
+  RtnPymtDfryInfoItem,
   SbsdPrcmPymtClmDtl,
   WmAdocItem,
 } from '@/types/wm'
@@ -579,6 +581,90 @@ const EPFC_CLCLN_CLM_DTL: EpfcClclnClmDtl = {
   ],
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M11 대금청구진행현황 — slide81 목업(신청번호 1234-5678 / 계약번호 2025000000-01 ·
+// 계약금액/수령액/청구금액 11,616,000원 · 대금상태 표시레이블).
+// ────────────────────────────────────────────────────────────────────────────
+const PYMT_CLM_PRGRS_PRST_LIST: PymtClmPrgrsPrstItem[] = [
+  {
+    id: '12345678-01',
+    no: 1,
+    taskSeCd: '물품',
+    birqNo: '1234-5678',
+    clmYmd: '2025-11-20',
+    ctrtNo: '20250000001',
+    ctrtCycl: '01',
+    ctrtNm: '물품 구매',
+    ctrtAmt: 11616000,
+    trgtAmt: 11616000,
+    clmAmt: 11616000,
+    pymtStNm: '대금청구',
+    prcmSeNm: '중앙',
+  },
+  {
+    id: '12345679-01',
+    no: 2,
+    taskSeCd: '공사',
+    birqNo: '1234-5679',
+    clmYmd: '2025-10-15',
+    ctrtNo: '20250000003',
+    ctrtCycl: '01',
+    ctrtNm: '막사 보수 공사',
+    ctrtAmt: 385000000,
+    trgtAmt: 120000000,
+    clmAmt: 120000000,
+    pymtStNm: '대금확정',
+    prcmSeNm: '공사',
+  },
+  {
+    id: '12345680-01',
+    no: 3,
+    taskSeCd: '용역',
+    birqNo: '1234-5680',
+    clmYmd: '2025-09-01',
+    ctrtNo: '20250000002',
+    ctrtCycl: '01',
+    ctrtNm: '시설 경비 용역',
+    ctrtAmt: 52000000,
+    trgtAmt: 26000000,
+    clmAmt: 26000000,
+    pymtStNm: '선금신청',
+    prcmSeNm: '중앙',
+  },
+]
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M10 대금지불정보(반납) — slide82 목업(계약금액/수령금액/반납금액 11,616,000원).
+// ────────────────────────────────────────────────────────────────────────────
+const RTN_PYMT_DFRY_INFO_LIST: RtnPymtDfryInfoItem[] = [
+  {
+    id: '12345678-01',
+    no: 1,
+    taskSeCd: '물품',
+    birqNo: '1234-5678',
+    ctrtNo: '20250000001',
+    ctrtCycl: '01',
+    ctrtNm: '물품 구매',
+    ctrtAmt: 11616000,
+    trgtAmt: 11616000,
+    rtnAmt: 11616000,
+    bidMthdNm: '단가제',
+  },
+  {
+    id: '12345679-01',
+    no: 2,
+    taskSeCd: '용역',
+    birqNo: '1234-5679',
+    ctrtNo: '20250000002',
+    ctrtCycl: '01',
+    ctrtNm: '시설 경비 용역',
+    ctrtAmt: 52000000,
+    trgtAmt: 26000000,
+    rtnAmt: 1500000,
+    bidMthdNm: '총액제',
+  },
+]
+
 export const MOCK_WM = {
   pymtClmIntgList: PYMT_CLM_INTG_LIST,
   pymtClmAplyList: PYMT_CLM_APLY_LIST,
@@ -592,4 +678,6 @@ export const MOCK_WM = {
   cstrnPymtClmDtl: CSTRN_PYMT_CLM_DTL,
   pxcndCstPymtClmDtl: PXCND_CST_PYMT_CLM_DTL,
   epfcClclnClmDtl: EPFC_CLCLN_CLM_DTL,
+  pymtClmPrgrsPrstList: PYMT_CLM_PRGRS_PRST_LIST,
+  rtnPymtDfryInfoList: RTN_PYMT_DFRY_INFO_LIST,
 }

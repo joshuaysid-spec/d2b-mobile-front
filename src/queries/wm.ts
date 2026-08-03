@@ -2,7 +2,11 @@
 // 조회는 useQuery 훅. queryKey 는 wmKeys 로 중앙 관리 — 무효화/프리페치 시 여기서만 참조.
 import { useQuery } from '@tanstack/react-query'
 import { wmService } from '@/services/wm'
-import type { PymtClmIntgListRequest } from '@/types/wm'
+import type {
+  PymtClmIntgListRequest,
+  PymtClmPrgrsPrstRequest,
+  RtnPymtDfryInfoRequest,
+} from '@/types/wm'
 
 export const wmKeys = {
   pymtClmIntgList: (req: PymtClmIntgListRequest) => ['wm', 'pymtClmIntgList', req] as const,
@@ -17,6 +21,10 @@ export const wmKeys = {
   cstrnPymtClmDtl: (id: string) => ['wm', 'cstrnPymtClmDtl', id] as const,
   pxcndCstPymtClmDtl: (id: string) => ['wm', 'pxcndCstPymtClmDtl', id] as const,
   epfcClclnClmDtl: (id: string) => ['wm', 'epfcClclnClmDtl', id] as const,
+  pymtClmPrgrsPrstList: (req: PymtClmPrgrsPrstRequest) =>
+    ['wm', 'pymtClmPrgrsPrstList', req] as const,
+  rtnPymtDfryInfoList: (req: RtnPymtDfryInfoRequest) =>
+    ['wm', 'rtnPymtDfryInfoList', req] as const,
 }
 
 /** 대금청구통합목록(M01) — 키워드 세부 필터/더보기 페이징은 페이지 클라이언트 로직 유지(서버 전환 시 req 로 이행). */
@@ -123,5 +131,21 @@ export function useEpfcClclnClmDtl(id: string) {
     queryKey: wmKeys.epfcClclnClmDtl(id),
     queryFn: () => wmService.getEpfcClclnClmDtl(id),
     enabled: Boolean(id),
+  })
+}
+
+/** 대금청구진행현황(M11). */
+export function usePymtClmPrgrsPrstList(req: PymtClmPrgrsPrstRequest = {}) {
+  return useQuery({
+    queryKey: wmKeys.pymtClmPrgrsPrstList(req),
+    queryFn: () => wmService.getPymtClmPrgrsPrstList(req),
+  })
+}
+
+/** 대금지불정보(반납)(M10). */
+export function useRtnPymtDfryInfoList(req: RtnPymtDfryInfoRequest = {}) {
+  return useQuery({
+    queryKey: wmKeys.rtnPymtDfryInfoList(req),
+    queryFn: () => wmService.getRtnPymtDfryInfoList(req),
   })
 }

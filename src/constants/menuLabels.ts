@@ -20,6 +20,8 @@ export const LINKED_MENU_LABELS = {
   [ROUTES.EX]: '검사 통합 목록',
   [ROUTES.EX_PRST]: '검사 및 납품조서 현황 목록',
   [ROUTES.WM]: '대금 청구 통합 목록',
+  [ROUTES.WM_RTN]: '대금 지불정보 (반납)',
+  [ROUTES.WM_PRGRS]: '대금 청구 진행 현황',
   [ROUTES.SUPPORT_NOTICE]: '일반 공지사항',
   [ROUTES.SUPPORT_NOTICE_DAPA]: '방위사업청 공지사항',
   [ROUTES.SUPPORT_NOTICE_DMDFRC]: '수요부대별 공지사항',

@@ -66,6 +66,10 @@ export const ROUTES = {
   WM_PYMT_CLM_PXCND_DETAIL: '/wm/pymt-clm/pxcnd/:id',
   /** 사후정산청구상세 (MUI-WM-01-M13, `:id`). 이동: `/wm/epfc-clcln/${id}`. */
   WM_EPFC_CLCLN_DETAIL: '/wm/epfc-clcln/:id',
+  /** 대금지불정보(반납) (MUI-WM-01-M10). */
+  WM_RTN: '/wm/rtn',
+  /** 대금청구진행현황 (MUI-WM-01-M11). */
+  WM_PRGRS: '/wm/prgrs',
   NOTIFICATION: '/notification',
   SUPPORT: '/support',
   /** 일반공지사항(공지사항 목록) (MUI-CM-04-M01). */
