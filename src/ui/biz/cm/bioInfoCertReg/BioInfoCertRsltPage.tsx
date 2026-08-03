@@ -8,9 +8,9 @@
 //   - [생체인증 로그인] → 디바이스 생체인증 로그인 진행, 성공 시 메인 화면 이동.
 //     (실패 메시지는 이전 화면으로 복귀하여 토스트 노출 — 하이브리드 인증 브릿지 미연동)
 //
-// 디자인 메모(보고 대상):
-//   - 완료 체크 아이콘은 Figma 상 연한 파란 원 + 흰 체크. REGISTRY 'CheckCircle'(기본 FILL=1)로 근사,
-//     원 톤은 text-krds-text-primary 로 근사(M15 완료 화면과 동일).
+// 디자인 메모(2026-08-03 Figma 10020:87190 정합):
+//   - 완료 체크 = check_circle 60px · 원 색 #8EB7FF(--krds-d2b-blue-check, AlertModal check 와 동일 패턴).
+//   - 타이틀 24px Bold · 안내 박스 bg-primary-faint(#ecf1fa) · radius 8 · p 20 · 텍스트 17 Medium ink.
 import { useNavigate } from 'react-router-dom'
 
 import { useBiometricLogin } from '@/queries/auth'
@@ -37,13 +37,16 @@ export function BioInfoCertRsltPage() {
   // 셸(AppLayout) 안 화면 — 콘텐츠만 렌더. min-h-full 로 중앙 안내 + 하단 버튼 배치.
   return (
     <div className="flex min-h-full flex-col">
-      {/* 중앙 안내 — 체크 아이콘 + 완료 문구 + 안내 박스 */}
-      <div className="flex flex-1 flex-col items-center justify-center gap-krds-8 px-krds-8">
-        <Icon name="CheckCircle" size={64} className="text-krds-text-primary" aria-hidden />
-        <h1 className="text-center text-krds-heading-sm font-bold leading-normal text-krds-text-ink">
-          본인 인증이 완료되었습니다.
-        </h1>
-        <p className="w-full rounded-krds-xl bg-krds-bg-primary-faint px-krds-8 py-krds-7 text-center text-krds-body-md leading-normal text-krds-text-info wrap-break-word">
+      {/* 중앙 안내 — 체크 아이콘 + 완료 문구 + 안내 박스 (그룹 간 24px, 아이콘-타이틀 12px) */}
+      <div className="flex flex-1 flex-col items-center justify-center gap-krds-10 px-krds-8 py-krds-8">
+        <div className="flex flex-col items-center gap-krds-7">
+          {/* 완료 체크 — 60px · 원 #8EB7FF(blue-check) + 흰 체크(FILL 기본 1) */}
+          <Icon name="CheckCircle" size={60} color="var(--krds-d2b-blue-check)" aria-hidden />
+          <h1 className="text-center text-[24px] font-bold leading-normal text-krds-text-ink">
+            본인 인증이 완료되었습니다.
+          </h1>
+        </div>
+        <p className="w-full rounded-krds-8 bg-krds-bg-primary-faint p-krds-9 text-center text-krds-body-md font-medium leading-normal text-krds-text-ink wrap-break-word">
           디바이스에 등록된
           <br />
           모든 얼굴정보, 지문정보를 이용하여
@@ -52,9 +55,9 @@ export function BioInfoCertRsltPage() {
         </p>
       </div>
 
-      {/* 하단 — 생체인증 로그인 */}
+      {/* 하단 — 생체인증 로그인 (h-48) */}
       <div className="px-krds-8 py-krds-8">
-        <Button variant="primary" size="lg" className="w-full" onClick={handleBioLogin}>
+        <Button variant="primary" className="w-full" onClick={handleBioLogin}>
           생체인증 로그인
         </Button>
       </div>

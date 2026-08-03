@@ -29,27 +29,34 @@ import {
   pswdFndngSchema,
   type PswdFndngForm,
 } from '@/ui/biz/cm/pswdFndng/PswdFndngPage.schema'
+import simpleCertIcon from '@/assets/images/simpleCertIcon.svg'
+import mobileIdntyCertIcon from '@/assets/images/mobileIdntyCertIcon.svg'
+import jntCertIcon from '@/assets/images/jntCertIcon.svg'
+import fnstCertIcon from '@/assets/images/fnstCertIcon.svg'
 
 // 인증방식(설계서 slide44 라벨 그대로). 안정적 key = 코드값(value).
 // TODO(설계서 확인): 인증방식 코드(영문 항목값)는 설계서 데이터영역에 미제공 — 임시 코드, API 스펙 확정 시 교체.
-// 아이콘: REGISTRY 미등록 글리프는 근사 매핑(아래 approxIcon)으로 대체 — 보고에 권장 추가 항목 명시.
+// 아이콘: 간편/모바일신분증/공동/금융 4종은 KRDS 별도제작 커스텀 SVG — Figma(10020:87229 계열) 원본
+//   에셋(src/assets/images/*CertIcon.svg) 사용(2026-08-03 근사 글리프 → 원본 교체, 아이디찾기와 동일).
 interface AuthMethod {
   value: string
   label: string
-  /** 근사 아이콘(REGISTRY 등록분). 디자인 원본과 다르면 // TODO(디자인 에셋) 참고. */
-  icon: IconName
+  /** Material Symbols REGISTRY 글리프(폰트 존재 시). */
+  icon?: IconName
+  /** KRDS 별도제작 커스텀 아이콘 에셋(Figma 원본 SVG). */
+  iconSrc?: string
   /** 이동 경로(있으면 검증 통과 후 라우팅). 라벨 아닌 데이터로 분기. */
   path?: string
 }
 const AUTH_METHODS: readonly AuthMethod[] = [
-  { value: 'simpleAuth', label: '간편인증', icon: 'Fingerprint' }, // TODO(디자인 에셋): 이상적 glyph = hub
-  { value: 'mobileId', label: '모바일신분증', icon: 'Person' }, // TODO(디자인 에셋): 이상적 glyph = id_card
-  { value: 'jointCert', label: '공동인증서', icon: 'VerifiedUser' },
-  { value: 'financialCert', label: '금융인증서', icon: 'Description' }, // TODO(디자인 에셋): 이상적 glyph = encrypted
+  { value: 'simpleAuth', label: '간편인증', iconSrc: simpleCertIcon },
+  { value: 'mobileId', label: '모바일신분증', iconSrc: mobileIdntyCertIcon },
+  { value: 'jointCert', label: '공동인증서', iconSrc: jntCertIcon },
+  { value: 'financialCert', label: '금융인증서', iconSrc: fnstCertIcon },
   {
     value: 'registeredInfo',
     label: '등록정보로 찾기',
-    icon: 'AssignmentInd',
+    icon: 'AssignmentInd', // assignment_ind — Material Symbols 폰트 존재, 그대로 사용.
     path: '/login/find-pw/reg-info',
   },
 ] as const
@@ -58,16 +65,21 @@ const AUTH_METHODS: readonly AuthMethod[] = [
 // /guide 공통에 정확히 대응하는 컴포넌트가 없어(NavigationItem=행 / Button=텍스트만) 페이지 로컬 조립(도메인 전용).
 interface AuthMethodCardProps {
   label: string
-  icon: IconName
+  icon?: IconName
+  iconSrc?: string
   onClick?: () => void
 }
-const AuthMethodCard = ({ label, icon, onClick }: AuthMethodCardProps) => (
+const AuthMethodCard = ({ label, icon, iconSrc, onClick }: AuthMethodCardProps) => (
   <button
     type="button"
     onClick={onClick}
     className="flex min-h-[92px] flex-col items-center justify-center gap-2 rounded-krds-xl border border-krds-border-divider bg-background px-2 text-center shadow-krds-card active:bg-krds-bg-primary-faint focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
   >
-    <Icon name={icon} size={28} className="text-krds-text-ink" aria-hidden />
+    {iconSrc ? (
+      <img src={iconSrc} alt="" aria-hidden className="size-7" />
+    ) : (
+      icon && <Icon name={icon} size={28} className="text-krds-text-ink" aria-hidden />
+    )}
     <span className="text-krds-body-md font-bold text-krds-text-ink wrap-break-word">
       {label}
     </span>
@@ -129,6 +141,7 @@ export function PswdFndngPage() {
               key={m.value}
               label={m.label}
               icon={m.icon}
+              iconSrc={m.iconSrc}
               onClick={pickMethod(m)}
             />
           ))}

@@ -8,33 +8,33 @@
 // 설계서 ↔ Figma 메모(보고 대상):
 //   - 설계서(slide53)·Figma 모두 P13 을 "모바일 신분증 선택 팝업"(하단 바텀시트)으로 분류.
 //     본 화면은 코디네이터 결정에 따라 셸 안 sub헤더 페이지로 구현 → 분류 불일치는 리턴에 플래그.
-//   - 발급 앱 로고 6종(카카오뱅크·토스·정부앱·네이버·NH올원뱅크·KB스타뱅크)은 각 사 브랜드
-//     로고(별도 이미지 에셋)라 Material Symbols 폰트 Icon REGISTRY 에 없음 → 중립 플레이스홀더
-//     타일(약칭)로 임시 근사(각 TODO). 실제 브랜드 로고 SVG/이미지로 교체 필요.
-//   - 안내문 앞 아이콘은 Figma 상 확성기/안내 계열 → Campaign 으로 근사(정확 글리프 미확정).
-import { Icon } from '@/ui/common/base/Icon'
+//   - 발급 앱 로고 6종·안내(sub_notice 회색)·사용 가이드 문서 아이콘은 Figma(10020:87422) 원본
+//     에셋으로 추출해 사용(2026-08-03 근사 플레이스홀더 → 원본 교체).
+//   - 안내 캡션 색 #717171 은 신규 토큰 text-krds-text-caption(--krds-d2b-gray-caption) 등록.
+import kakaoBankLogo from '@/assets/images/mobileIdKakaoBank.png'
+import tossLogo from '@/assets/images/mobileIdToss.png'
+import govAppLogo from '@/assets/images/mobileIdGovApp.png'
+import naverLogo from '@/assets/images/mobileIdNaver.png'
+import nhAllOneLogo from '@/assets/images/mobileIdNhAllOne.png'
+import kbStarLogo from '@/assets/images/mobileIdKbStar.png'
+import subNoticeGrayIcon from '@/assets/images/subNoticeGrayIcon.svg'
+import useGuideIcon from '@/assets/images/useGuideIcon.svg'
 
 // 발급 앱 목록(설계서 slide53 순서 그대로). id 는 선택 시 앱 호출 분기 기준(로컬 식별자).
-// logoStub = 브랜드 로고 미확보 상태의 중립 플레이스홀더 약칭.
 interface MobileIdApp {
   id: string
   label: string
-  logoStub: string
+  /** 브랜드 로고 — Figma(10020:87422) 원본 PNG 에셋. */
+  logoSrc: string
 }
 
 const MOBILE_ID_APPS: MobileIdApp[] = [
-  // TODO(디자인 에셋): 카카오뱅크 브랜드 로고 — REGISTRY/이미지 미확보, 약칭 타일로 근사
-  { id: 'kakaobank', label: '카카오뱅크', logoStub: '카카오' },
-  // TODO(디자인 에셋): 토스 브랜드 로고 — 근사
-  { id: 'toss', label: '토스', logoStub: '토스' },
-  // TODO(디자인 에셋): 정부앱(정부24) 브랜드 로고 — 근사
-  { id: 'govApp', label: '정부앱', logoStub: '정부' },
-  // TODO(디자인 에셋): 네이버 브랜드 로고 — 근사
-  { id: 'naver', label: '네이버', logoStub: 'N' },
-  // TODO(디자인 에셋): NH올원뱅크 브랜드 로고 — 근사
-  { id: 'nhAllOne', label: 'NH올원뱅크', logoStub: 'NH' },
-  // TODO(디자인 에셋): KB스타뱅크 브랜드 로고 — 근사
-  { id: 'kbStar', label: 'KB스타뱅크', logoStub: 'KB' },
+  { id: 'kakaobank', label: '카카오뱅크', logoSrc: kakaoBankLogo },
+  { id: 'toss', label: '토스', logoSrc: tossLogo },
+  { id: 'govApp', label: '정부앱', logoSrc: govAppLogo },
+  { id: 'naver', label: '네이버', logoSrc: naverLogo },
+  { id: 'nhAllOne', label: 'NH올원뱅크', logoSrc: nhAllOneLogo },
+  { id: 'kbStar', label: 'KB스타뱅크', logoSrc: kbStarLogo },
 ]
 
 /** 모바일 신분증 발급 앱 그리드 + 안내 — BottomSheet 콘텐츠(로그인 방식선택에서 열림) + 페이지 공용. */
@@ -51,52 +51,57 @@ export function MobileIdntyCert({ onSuccess }: { onSuccess?: () => void }) {
   }
 
   // 바깥 페이지 패딩(px-*/pt-*/pb-*)은 호스트(BottomSheet/래퍼)가 소유 — 콘텐츠는 구조만 렌더.
+  // 레이아웃은 Figma(10020:87422) 실측: 그리드 4열 gap x16/y20 · 타일 54px(r12, divider 보더) ·
+  //   라벨 14 Regular · 안내(sub_notice 20px + 14px caption) · 사용 가이드(상단 구분선 + 우측 정렬).
   return (
-    <>
+    <div className="flex flex-col gap-krds-8">
       {/* 발급 앱 선택 그리드(4열) */}
-      <div className="grid grid-cols-4 gap-x-krds-3 gap-y-krds-8">
+      <div className="grid grid-cols-4 gap-x-krds-8 gap-y-krds-9 py-krds-5">
         {MOBILE_ID_APPS.map((app) => (
           <button
             key={app.id}
             type="button"
             onClick={() => handleSelectApp(app)}
-            className="flex flex-col items-center gap-krds-3"
+            className="flex flex-col items-center gap-krds-5 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring active:opacity-70"
           >
-            {/* 브랜드 로고 자리 — 실제 로고 에셋으로 교체 예정(중립 플레이스홀더) */}
+            {/* 브랜드 로고 타일 — 54px · r12 · divider 보더 (Figma 원본 PNG) */}
             <span
               aria-hidden
-              className="flex size-14 items-center justify-center rounded-krds-xl border border-krds-border-divider bg-krds-bg-secondary text-krds-body-sm font-bold text-krds-text-ink"
+              className="size-[54px] overflow-hidden rounded-krds-xl border border-krds-border-divider bg-background"
             >
-              {app.logoStub}
+              <img src={app.logoSrc} alt="" className="size-full object-cover" />
             </span>
-            <span className="text-center text-krds-body-xs leading-tight text-krds-text-ink">
+            <span className="text-center text-[14px] leading-normal text-krds-text-ink">
               {app.label}
             </span>
           </button>
         ))}
       </div>
 
-      {/* 안내문 + 사용 가이드 */}
-      <div className="flex flex-col gap-krds-5">
-        <p className="flex items-start gap-krds-2 text-krds-body-sm leading-normal text-krds-text-muted">
-          <Icon name="Campaign" size={18} className="mt-0.5 shrink-0" aria-hidden />
-          <span className="min-w-px flex-1 wrap-break-word">
-            모바일 신분증을 발급받을 앱을 선택해주세요.
-          </span>
+      {/* 안내문(m_list) — sub_notice(회색) 20px 박스 + 14px caption(#717171) */}
+      <div className="flex gap-krds-3">
+        <span aria-hidden className="flex size-5 shrink-0 items-center justify-center">
+          <img src={subNoticeGrayIcon} alt="" className="size-[14px]" />
+        </span>
+        <p className="min-w-px flex-1 text-[14px] leading-normal text-krds-text-caption wrap-break-word">
+          모바일 신분증을 발급받을 앱을 선택해주세요.
         </p>
-
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={handleUsageGuide}
-            className="flex items-center gap-krds-2 text-krds-body-md font-bold text-krds-text-primary"
-          >
-            <Icon name="DeveloperGuide" size={20} aria-hidden />
-            사용 가이드
-          </button>
-        </div>
       </div>
-    </>
+
+      {/* 사용 가이드 — 상단 구분선 + pt8, 우측 정렬 · 문서 아이콘(원본 SVG) + 17 Regular 파랑 밑줄 */}
+      <div className="flex flex-col items-end border-t border-krds-border-divider pt-krds-5">
+        <button
+          type="button"
+          onClick={handleUsageGuide}
+          className="flex items-center gap-krds-3 text-krds-body-md leading-normal text-krds-text-primary underline"
+        >
+          <span aria-hidden className="flex size-5 shrink-0 items-center justify-center">
+            <img src={useGuideIcon} alt="" className="h-[17px] w-auto" />
+          </span>
+          사용 가이드
+        </button>
+      </div>
+    </div>
   )
 }
 MobileIdntyCert.displayName = 'MobileIdntyCert'

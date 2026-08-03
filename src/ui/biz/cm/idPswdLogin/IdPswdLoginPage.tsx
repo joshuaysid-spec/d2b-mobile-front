@@ -164,9 +164,12 @@ export function IdPswdLoginPage() {
         />
       </div>
 
-      {/* 페이지 타이틀 + 설명 */}
+      {/* 페이지 타이틀 + 설명 — PageTitle 루트가 flex 라 span·텍스트가 flex 아이템으로 갈라지면
+          사이 공백이 사라짐 → 한 span 으로 감싸 인라인 흐름 유지("아이디/비밀번호 로그인"). */}
       <PageTitle as="h1">
-        <span className="text-krds-text-primary">아이디/비밀번호</span> 로그인
+        <span>
+          <span className="text-krds-text-primary">아이디/비밀번호</span> 로그인
+        </span>
       </PageTitle>
       <p className="px-4 pb-4 text-krds-body-md leading-normal text-krds-text-ink wrap-break-word">
         회원가입시 등록한 아이디와 비밀번호를 이용하여 로그인합니다.

@@ -15,11 +15,13 @@ import { useNavigate } from 'react-router-dom'
 
 import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { InputLabel } from '@/ui/common/base/InputLabel'
+import simpleCertIcon from '@/assets/images/simpleCertIcon.svg'
+import mobileIdntyCertIcon from '@/assets/images/mobileIdntyCertIcon.svg'
+import jntCertIcon from '@/assets/images/jntCertIcon.svg'
+import fnstCertIcon from '@/assets/images/fnstCertIcon.svg'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { SimpleCert } from '@/ui/biz/cm/simpleCert/SimpleCertPage'
-import { FnstCert } from '@/ui/biz/cm/fnstCert/FnstCertPage'
-import { JntCert } from '@/ui/biz/cm/jntCert/JntCertPage'
 import { MobileIdntyCert } from '@/ui/biz/cm/mobileIdntyCert/MobileIdntyCertPage'
 
 interface LoginMethod {
@@ -27,25 +29,25 @@ interface LoginMethod {
   id: string
   /** 카드 라벨(설계서 문구 그대로). */
   label: string
-  /** 카드 아이콘. 별도제작 5종은 근사 매핑(TODO), 생체인증만 정확 매핑. */
-  iconName: IconName
+  /** 카드 아이콘 — Material Symbols REGISTRY 글리프(폰트 존재 시). */
+  iconName?: IconName
+  /** KRDS 별도제작 커스텀 아이콘 에셋(Figma 원본 SVG — 2026-08-03 근사 글리프 교체). */
+  iconSrc?: string
   /** 선택 시 이동할 인증화면 경로(라벨 아닌 데이터로 분기). */
   path: string
   /** true = 바텀시트 모달로 열림(P10~P13). 미지정 = path 로 페이지 이동(생체·ID/PW). */
   sheet?: boolean
 }
 
-// 설계서 인증방식 목록(순서 그대로). iconName 은 Figma 별도제작 아이콘의 임시 근사.
-// P10~P13(간편/모바일신분증/공동/금융)은 Figma상 바텀시트 → sheet:true.
+// 설계서 인증방식 목록(순서 그대로). 간편/모바일신분증/공동/금융 4종은 Figma 커스텀 SVG 에셋
+// (아이디찾기 10020:87229 계열과 동일 아이콘). P10~P13 은 Figma상 바텀시트 → sheet:true.
 const LOGIN_METHODS: LoginMethod[] = [
-  // TODO(디자인 에셋): certification_simple(KRDS 별도제작) — REGISTRY 미등록, Login 으로 임시 근사
-  { id: 'simpleAuth', label: '간편인증', iconName: 'Login', path: '/login/simple-cert', sheet: true },
-  // TODO(디자인 에셋): certification_mobile(KRDS 별도제작) — REGISTRY 미등록, AssignmentInd 로 임시 근사
-  { id: 'mobileId', label: '모바일신분증', iconName: 'AssignmentInd', path: '/login/mobile-id', sheet: true },
-  // TODO(디자인 에셋): 공동인증서(KRDS 별도제작) — REGISTRY 미등록, VerifiedUser 로 임시 근사
-  { id: 'jointCert', label: '공동인증서', iconName: 'VerifiedUser', path: '/login/joint-cert', sheet: true },
-  // TODO(디자인 에셋): 금융인증서(KRDS 별도제작) — REGISTRY 미등록, Description 으로 임시 근사
-  { id: 'financeCert', label: '금융인증서', iconName: 'Description', path: '/login/finance-cert', sheet: true },
+  { id: 'simpleAuth', label: '간편인증', iconSrc: simpleCertIcon, path: '/login/simple-cert', sheet: true },
+  { id: 'mobileId', label: '모바일신분증', iconSrc: mobileIdntyCertIcon, path: '/login/mobile-id', sheet: true },
+  // 공동인증서(P12)·금융인증서(P11) — 바텀시트 → 페이지 전환(2026-08-03 요청,
+  // plan: cm-jnt-cert-p12-page / cm-fnst-cert-p11-page)
+  { id: 'jointCert', label: '공동인증서', iconSrc: jntCertIcon, path: '/login/joint-cert' },
+  { id: 'financeCert', label: '금융인증서', iconSrc: fnstCertIcon, path: '/login/finance-cert' },
   // fingerprint — Material Symbols 정확 매핑
   { id: 'biometric', label: '생체인증', iconName: 'Fingerprint', path: '/login/biometric' },
   // TODO(디자인 에셋): id_password(KRDS 별도제작) — REGISTRY 미등록, Person 으로 임시 근사
@@ -91,7 +93,11 @@ export function MainLoginPage() {
               onClick={() => handleSelectMethod(method)}
               className="flex h-[86px] flex-col items-center justify-center gap-krds-3 rounded-krds-xl border border-krds-border-divider bg-background shadow-krds-card"
             >
-              <Icon name={method.iconName} size={24} aria-hidden />
+              {method.iconSrc ? (
+                <img src={method.iconSrc} alt="" aria-hidden className="size-6" />
+              ) : (
+                method.iconName && <Icon name={method.iconName} size={24} aria-hidden />
+              )}
               <span className="text-krds-body-lg font-bold text-krds-text-ink">{method.label}</span>
             </button>
           ))}
@@ -136,15 +142,10 @@ export function MainLoginPage() {
         </div>
       </section>
 
-      {/* 인증수단 바텀시트(P10~P13) — 카드 클릭 시 해당 시트 오픈 */}
+      {/* 인증수단 바텀시트(P10·P13) — 카드 클릭 시 해당 시트 오픈.
+          금융인증서(P11)·공동인증서(P12)는 페이지로 전환되어 시트 없음(2026-08-03). */}
       <BottomSheet open={openSheet === 'simpleAuth'} onOpenChange={closeSheet} title="간편인증">
         <SimpleCert onSuccess={handleAuthSuccess} />
-      </BottomSheet>
-      <BottomSheet open={openSheet === 'financeCert'} onOpenChange={closeSheet} title="금융인증서">
-        <FnstCert onSuccess={handleAuthSuccess} />
-      </BottomSheet>
-      <BottomSheet open={openSheet === 'jointCert'} onOpenChange={closeSheet} title="공동인증서">
-        <JntCert onSuccess={handleAuthSuccess} />
       </BottomSheet>
       <BottomSheet open={openSheet === 'mobileId'} onOpenChange={closeSheet} title="모바일 신분증">
         <MobileIdntyCert onSuccess={handleAuthSuccess} />
