@@ -56,6 +56,8 @@ export const ROUTES = {
   WM_PRPAY_DETAIL: '/wm/prpay/:id',
   /** 착·중도금신청서상세 (MUI-WM-01-M03, `:id`). 이동: `/wm/dpsmn-itrpy/${id}`. */
   WM_DPSMN_ITRPY_DETAIL: '/wm/dpsmn-itrpy/:id',
+  /** 대금청구 상세(중앙조달) (MUI-WM-01-M05, `:id`). 이동: `/wm/pymt-clm/${id}`. */
+  WM_PYMT_CLM_DETAIL: '/wm/pymt-clm/:id',
   NOTIFICATION: '/notification',
   SUPPORT: '/support',
   /** 일반공지사항(공지사항 목록) (MUI-CM-04-M01). */

@@ -2,6 +2,7 @@
 // 설계서(05.대금청구및사후 v0.83) 항목설명 항목·형식·slide16/17/19 목업값을 반영(임의 더미 금지).
 // ⚠️ 폐쇄망 반입 후 실백엔드 연동 시 이 파일은 사용되지 않는다(서비스가 apiClient 분기).
 import type {
+  CenterPrcmPymtClmDtl,
   DpsmnItrpyAplyDsctnItem,
   DpsmnItrpyApfrDtl,
   GiveSttsItem,
@@ -249,6 +250,69 @@ const GIVE_STTS_LIST: GiveSttsItem[] = [
   },
 ]
 
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M05 대금청구 상세(중앙조달) — slide38~42 목업(청구번호 00000000 · 배추김치 ·
+// 대금신청대상 통지 20257135021 · 공급자 A 업체/홍길동 · 세금계산서 1234-5678-9012).
+// ────────────────────────────────────────────────────────────────────────────
+const CENTER_PRCM_PYMT_CLM_DTL: CenterPrcmPymtClmDtl = {
+  taskSeCd: '물품',
+  ctrtMthdCd: '수의계약',
+  ctrtNo: '20250000001',
+  ctrtCycl: '01',
+  ctrtNm: '물품구매',
+  ctrtYmd: '2026-02-10',
+  orderInstNm: '제8385부대',
+  ctrtAmt: 11616000,
+  regDt: '2026-01-30',
+  birqNo: '00000000',
+  pymtAplyTrgts: [
+    {
+      id: '100-M2025MST000200',
+      avtsmtNo: '100',
+      dlvdocNo: 'M2025MST000200',
+      srngYmd: '2026-01-01',
+      dlvgdsYmd: undefined,
+      bgtSecd: '본조',
+      dlvgdsAmt: 100000000,
+      ctbkAmt: -1000000,
+      lqdmg: 500000,
+    },
+  ],
+  bzentyNm: 'A 업체',
+  rprsvNm: '홍길동',
+  clmtNm: '홍길동',
+  clmtTelno: '010-1234-5678',
+  enmtno: '010-1234-5678',
+  bzentyAddr: '서울특별시 종로구 세종대로 1',
+  ymdSeCd: 'I',
+  aplyYmd: '2026-01-30',
+  vatSecd: 'A',
+  dlvgdsAmt: 100000000,
+  dlvgdsSplyEqvl: 90909091,
+  dlvgdsTxamt: 9090909,
+  ddcAmt: 1500000,
+  ddcSplyEqvl: 1363636,
+  ddcTxamt: 136364,
+  ddcDsctnNm: '-',
+  clmAmt: 98500000,
+  exmptnSbmsnYn: '-',
+  grnteInsrncScrtSbmsnYn: '-',
+  rmrkCn: '-',
+  txivChcYn: 'Y',
+  txivNo: '1234-5678-9012',
+  txBlls: [
+    {
+      id: '2026-02-03-1',
+      bllPblcnYmd: '02-03',
+      itemNm: '-',
+      dlvgdsQty: 100,
+      ctrtUntprc: 909091,
+      splyEqvl: 90909091,
+      txamt: 9090909,
+    },
+  ],
+}
+
 export const MOCK_WM = {
   pymtClmIntgList: PYMT_CLM_INTG_LIST,
   pymtClmAplyList: PYMT_CLM_APLY_LIST,
@@ -257,4 +321,5 @@ export const MOCK_WM = {
   dpsmnItrpyApfrDtl: DPSMN_ITRPY_APFR_DTL,
   dpsmnItrpyAplyDsctns: DPSMN_ITRPY_APLY_DSCTNS,
   giveSttsList: GIVE_STTS_LIST,
+  centerPrcmPymtClmDtl: CENTER_PRCM_PYMT_CLM_DTL,
 }

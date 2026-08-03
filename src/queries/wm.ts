@@ -12,6 +12,7 @@ export const wmKeys = {
   dpsmnItrpyApfrDtl: (id: string) => ['wm', 'dpsmnItrpyApfrDtl', id] as const,
   dpsmnItrpyAplyDsctns: (id: string) => ['wm', 'dpsmnItrpyAplyDsctns', id] as const,
   giveSttsList: (id: string) => ['wm', 'giveSttsList', id] as const,
+  centerPrcmPymtClmDtl: (id: string) => ['wm', 'centerPrcmPymtClmDtl', id] as const,
 }
 
 /** 대금청구통합목록(M01) — 키워드 세부 필터/더보기 페이징은 페이지 클라이언트 로직 유지(서버 전환 시 req 로 이행). */
@@ -72,6 +73,15 @@ export function useGiveSttsList(id: string) {
   return useQuery({
     queryKey: wmKeys.giveSttsList(id),
     queryFn: () => wmService.getGiveSttsList(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 대금청구 상세(중앙조달, M05). */
+export function useCenterPrcmPymtClmDtl(id: string) {
+  return useQuery({
+    queryKey: wmKeys.centerPrcmPymtClmDtl(id),
+    queryFn: () => wmService.getCenterPrcmPymtClmDtl(id),
     enabled: Boolean(id),
   })
 }

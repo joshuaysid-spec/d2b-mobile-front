@@ -7,6 +7,7 @@ import { apiClient } from '@/lib/apiClient'
 import { USE_MOCK, mockDelay } from '@/lib/env'
 import { MOCK_WM } from '@/mocks/wm'
 import type {
+  CenterPrcmPymtClmDtl,
   DpsmnItrpyAplyDsctnItem,
   DpsmnItrpyApfrDtl,
   GiveSttsItem,
@@ -33,6 +34,8 @@ const EP = {
   DPSMN_ITRPY_APLY_DSCTNS: (id: string) => `/v1/wms/interim-payment-applications/${id}/details`,
   /** 지급상태 — MUI-WM-01-T23 (prpayDpsmnItrpyGiveStts/PrpayDpsmnItrpyGiveStts, 상세 공용 탭) */
   GIVE_STTS_LIST: (id: string) => `/v1/wms/payment-claims/${id}/payment-statuses`,
+  /** 대금청구 상세(중앙조달) — MUI-WM-01-M05/T05~T08 (centerPrcmPymtClmDtl/CenterPrcmPymtClmDtlPage) */
+  CENTER_PRCM_PYMT_CLM_DTL: (id: string) => `/v1/wms/central-payment-claims/${id}`,
 }
 
 export const wmService = {
@@ -94,5 +97,15 @@ export const wmService = {
   async getGiveSttsList(id: string): Promise<GiveSttsItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.giveSttsList)
     return apiClient.post<GiveSttsItem[], GiveSttsItem[]>(EP.GIVE_STTS_LIST(id))
+  },
+
+  // ── 대금청구 상세(중앙조달) (MUI-WM-01-M05) ───────────────────────────────
+
+  /** 상세(계약정보+신청대상+공급자+신청금액+세금계산서) 조회 — On-Load(slide45). */
+  async getCenterPrcmPymtClmDtl(id: string): Promise<CenterPrcmPymtClmDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.centerPrcmPymtClmDtl)
+    return apiClient.post<CenterPrcmPymtClmDtl, CenterPrcmPymtClmDtl>(
+      EP.CENTER_PRCM_PYMT_CLM_DTL(id),
+    )
   },
 }

@@ -239,3 +239,110 @@ export interface GiveSttsItem {
   /** 진행상태 (expndStcd, 상위코드 EPDS) — 표시명. */
   expndStcd: string
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M05 대금청구 상세(중앙조달) (slide38~45) — centerPrcmPymtClmDtl/CenterPrcmPymtClmDtlPage
+//   탭: T05 계약정보(_Ctrt) · T06 공급자정보(_Splr) · T07 대금신청금액(_Pymt) · T08 세금계산서(_Txiv)
+//   · 진행상태(T23 공용).
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 대금신청대상 1건 (dlt_pymtAplyTrgtList, slide43 1.2). */
+export interface PymtAplyTrgtItem {
+  /** 목록 key — `${avtsmtNo}-${dlvdocNo}` (클라 생성). */
+  id: string
+  /** 통지번호 (avtsmtNo, 3). */
+  avtsmtNo: string
+  /** 조서발행번호 (dlvdocNo, 17). */
+  dlvdocNo: string
+  /** 합격일자 (srngYmd, 8). */
+  srngYmd: string
+  /** 납품일자 (dlvgdsYmd, 8) — 없으면 '-'. */
+  dlvgdsYmd?: string
+  /** 예산구분 (bgtSecd, 상위코드 KB) — 표시명. */
+  bgtSecd: string
+  /** 금액 (dlvgdsAmt, 17). */
+  dlvgdsAmt: number
+  /** 감액 (ctbkAmt, 17). */
+  ctbkAmt: number
+  /** 지체상금 (lqdmg, 17). */
+  lqdmg: number
+}
+
+/** 세금계산서 품목 1건 (dlt_txBllList, slide44 1.5). */
+export interface TxBllItem {
+  /** 목록 key — `${bllPblcnYmd}-${itemNm}` (클라 생성). */
+  id: string
+  /** 월일 (bllPblcnYmd, 8). */
+  bllPblcnYmd: string
+  /** 품목 (itemNm, 200) — 없으면 '-'. */
+  itemNm: string
+  /** 수량 (dlvgdsQty, 15). */
+  dlvgdsQty: number
+  /** 단가 (ctrtUntprc, 17). */
+  ctrtUntprc: number
+  /** 공급가액 (splyEqvl, 17). */
+  splyEqvl: number
+  /** 세액 (txamt, 17). */
+  txamt: number
+}
+
+/** 대금청구 상세(중앙조달) — 계약정보(dmt_ctrtInfo) + 대금신청대상 + 공급자(dmt_splrInfo)
+ *  + 대금신청금액(dmt_pymtAplyAmtInfo) + 세금계산서 + 요약 (slide43~44). */
+export interface CenterPrcmPymtClmDtl extends WmDtlSummary {
+  // ── 계약정보 (dmt_ctrtInfo, slide43 1.1) ──
+  /** 일자구분(계약일자 표시, regDt, 8). */
+  regDt: string
+  /** 청구번호 (birqNo, 15). */
+  birqNo: string
+  /** 대금신청대상 목록 (dlt_pymtAplyTrgtList). */
+  pymtAplyTrgts: PymtAplyTrgtItem[]
+  // ── 공급자정보 (dmt_splrInfo, slide43 1.3) ──
+  /** 상호(업체명) (bzentyNm, 100). */
+  bzentyNm: string
+  /** 대표명 (rprsvNm, 100). */
+  rprsvNm: string
+  /** 청구인성명 (clmtNm, 100). */
+  clmtNm: string
+  /** 연락처 (clmtTelno, 20). */
+  clmtTelno: string
+  /** SMS수신번호 (enmtno, 64, 암호화휴대전화번호). */
+  enmtno: string
+  /** 주소 (bzentyAddr, 200). */
+  bzentyAddr: string
+  // ── 대금신청금액 (dmt_pymtAplyAmtInfo, slide44 1.4) ──
+  /** 일자구분 (ymdSeCd, 'I':합격월 · 'D':납품월) — 첫 행 라벨(합격일자/납품일자) 구동. */
+  ymdSeCd: 'I' | 'D'
+  /** 일자구분 값 — 화면 표시일자(slide41). ⚠️ 항목명 미정의 임시(aplyYmd). */
+  aplyYmd: string
+  /** 세액여부 (vatSecd, 'A':있음 · 'B':없음) — 없음이면 세액 '-' 표기(slide41 4-1). */
+  vatSecd: 'A' | 'B'
+  /** 납품금액 (dlvgdsAmt, 17). */
+  dlvgdsAmt: number
+  /** 납품 공급가액 (dlvgdsSplyEqvl, 17). */
+  dlvgdsSplyEqvl: number
+  /** 납품 세액 (dlvgdsTxamt, 17). */
+  dlvgdsTxamt: number
+  /** 공제금액 (ddcAmt, 17). */
+  ddcAmt: number
+  /** 공제 공급가액 (ddcSplyEqvl, 17). */
+  ddcSplyEqvl: number
+  /** 공제 세액 (ddcTxamt, 17). */
+  ddcTxamt: number
+  /** 공제내역 (ddcDsctnNm, 100) — 없으면 '-'. */
+  ddcDsctnNm: string
+  /** 청구금액 (clmAmt, 17). */
+  clmAmt: number
+  /** 면제원제출 (exmptnSbmsnYn, 'Y' 제출) — 미제출 '-'. */
+  exmptnSbmsnYn: string
+  /** 보증보험증권제출 (grnteInsrncScrtSbmsnYn, 'Y' 제출) — 미제출 '-'. */
+  grnteInsrncScrtSbmsnYn: string
+  /** 비고 (rmrkCn, 4000). */
+  rmrkCn: string
+  // ── 세금계산서 (slide44 1.5) ──
+  /** 세금계산서 선택여부 (txivChcYn, 'Y':선택) — 선택 시에만 세금계산서 탭 내용 노출(slide38). */
+  txivChcYn: 'Y' | 'N'
+  /** 세금계산서번호 — 화면 표시항목(slide42). ⚠️ 항목설명은 txivChcYn 과 병기(오기로 판단), 임시(txivNo). */
+  txivNo: string
+  /** 세금계산서 품목 목록 (dlt_txBllList). */
+  txBlls: TxBllItem[]
+}

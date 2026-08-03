@@ -200,6 +200,12 @@ const DpsmnItrpyApfrDtlPage = lazy(() =>
     default: m.DpsmnItrpyApfrDtlPage,
   })),
 )
+// 대금청구 상세(중앙조달)(MUI-WM-01-M05, /wm/pymt-clm/:id) — biz/wm/centerPrcmPymtClmDtl.
+const CenterPrcmPymtClmDtlPage = lazy(() =>
+  import('@/ui/biz/wm/centerPrcmPymtClmDtl/CenterPrcmPymtClmDtlPage').then((m) => ({
+    default: m.CenterPrcmPymtClmDtlPage,
+  })),
+)
 // 물품전자계약진행상세(MUI-CT-01-M03, /ct/:id) — biz/ct/cmdtyElctrCtrtPrgrsDtl.
 const CmdtyElctrCtrtPrgrsDtlPage = lazy(() =>
   import('@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyElctrCtrtPrgrsDtlPage').then((m) => ({
@@ -992,6 +998,11 @@ export const router = createBrowserRouter([
       {
         path: 'wm/dpsmn-itrpy/:id',
         element: <DpsmnItrpyApfrDtlPage />,
+        handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
+      },
+      {
+        path: 'wm/pymt-clm/:id',
+        element: <CenterPrcmPymtClmDtlPage />,
         handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
       },
       {

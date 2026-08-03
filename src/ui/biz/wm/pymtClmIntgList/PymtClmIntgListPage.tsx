@@ -22,6 +22,7 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Toast } from '@/ui/common/composites/Toast'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { PymtClmIntgAplyList } from '@/ui/biz/wm/pymtClmIntgList/PymtClmIntgAplyList'
+import { PymtClmGdntcFullPopup } from '@/ui/biz/wm/centerPrcmPymtClmDtl/PymtClmGdntcFullPopup'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
 import type { PymtClmAplyItem, PymtClmListItem } from '@/types/wm'
 
@@ -136,6 +137,8 @@ export function PymtClmIntgListPage() {
   const [pickedCtrt, setPickedCtrt] = useState<PymtClmListItem | null>(null)
   // 진행중 청구 없음 토스트(slide17)
   const [toastOpen, setToastOpen] = useState(false)
+  // 대금청구 안내문(MUI-WM-01-P09) 풀팝업
+  const [gdntcOpen, setGdntcOpen] = useState(false)
 
   const { data: listData, isLoading } = usePymtClmIntgList()
 
@@ -172,7 +175,13 @@ export function PymtClmIntgListPage() {
       navigate(`/wm/dpsmn-itrpy/${item.id}`, { state: item })
       return
     }
-    // TODO(WM 그룹 3~5): 대금청구서(M05~M08 중앙/부대/공사/기성)·사후정산청구서(M13) 구현 후 배선.
+    if (item.clmDocNm === '대금청구서') {
+      // 중앙조달(M05) — 부대(M06)/공사(M07)/기성대가(M08) 분기 조건은 설계서 미정의,
+      // TODO(WM 그룹 4): 해당 상세 구현 시 데이터 필드 분기 추가.
+      navigate(`/wm/pymt-clm/${item.id}`, { state: item })
+      return
+    }
+    // TODO(WM 그룹 5): 사후정산청구서(M13) 구현 후 배선.
     console.log('[P13] 상세 이동(미구현)', item.clmDocNm, item.id)
   }
 
@@ -227,13 +236,8 @@ export function PymtClmIntgListPage() {
           filterActive={filterApplied}
           onSearch={handleQuickSearch}
         />
-        {/* 안내문(MUI-WM-01-P09 대금청구 안내문, slide16 6]) — TODO(WM 그룹 3): P09 구현 후 배선. */}
-        <Button
-          variant="secondary"
-          size="sm"
-          className="self-end"
-          onClick={() => console.log('[M01] 대금청구 안내문(P09) 열기(미구현)')}
-        >
+        {/* 안내문(MUI-WM-01-P09 대금청구 안내문, slide16 6]) */}
+        <Button variant="secondary" size="sm" className="self-end" onClick={() => setGdntcOpen(true)}>
           안내문
         </Button>
       </div>
@@ -304,6 +308,9 @@ export function PymtClmIntgListPage() {
           onItemClick={handleAplyClick}
         />
       </BottomSheet>
+
+      {/* 대금청구 안내문(MUI-WM-01-P09) 풀팝업 */}
+      <PymtClmGdntcFullPopup open={gdntcOpen} onOpenChange={setGdntcOpen} />
 
       {/* 진행중 청구 없음 토스트(slide17) */}
       <Toast open={toastOpen} onClose={() => setToastOpen(false)} duration={2000}>
