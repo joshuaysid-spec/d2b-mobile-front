@@ -42,6 +42,8 @@ export const ROUTES = {
   EX: '/ex',
   /** 검사및납품조서상세(중앙조달) (MUI-EX-01-M02, `:id`). 이동: `/ex/dlvdoc/${id}`. */
   EX_DLVDOC_DETAIL: '/ex/dlvdoc/:id',
+  /** 검사및납품조서상세(부대조달) (MUI-EX-01-M03, `:id`). 이동: `/ex/dlvdoc/sbsd/${id}`. */
+  EX_DLVDOC_SBSD_DETAIL: '/ex/dlvdoc/sbsd/:id',
   NOTIFICATION: '/notification',
   SUPPORT: '/support',
   /** 일반공지사항(공지사항 목록) (MUI-CM-04-M01). */

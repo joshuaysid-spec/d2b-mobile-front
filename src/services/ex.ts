@@ -10,7 +10,9 @@ import type {
   DlvgdsAvtsmtItem,
   InspDlvdocCmdtyItem,
   InspDlvdocDtl,
+  InspDlvdocDtlSbsdPrcm,
   InspDlvdocItem,
+  InspDlvdocSbsdCmdtyItem,
   InspIntgListRequest,
   InspIntgListResult,
 } from '@/types/ex'
@@ -27,6 +29,10 @@ const EP = {
   INSP_DLVDOC_DTL: (id: string) => `/v1/exs/delivery-docs/${id}`,
   /** 검사및납품조서상세 물품목록 — MUI-EX-01-T02 (inspDlvdocDtl/InspDlvdocDtl_CmdtyList) */
   INSP_DLVDOC_CMDTYS: (id: string) => `/v1/exs/delivery-docs/${id}/commodities`,
+  /** 검사및납품조서상세(부대조달) — MUI-EX-01-M03/T03 (inspDlvdocDtlSbsdPrcm/InspDlvdocDtlSbsdPrcmPage) */
+  INSP_DLVDOC_SBSD_DTL: (id: string) => `/v1/exs/subsidiary-delivery-docs/${id}`,
+  /** 부대조달 물품목록 — MUI-EX-01-T04 (inspDlvdocDtlSbsdPrcm/InspDlvdocDtlSbsdPrcm_CmdtyList) */
+  INSP_DLVDOC_SBSD_CMDTYS: (id: string) => `/v1/exs/subsidiary-delivery-docs/${id}/commodities`,
 }
 
 export const exService = {
@@ -74,6 +80,24 @@ export const exService = {
     if (USE_MOCK) return mockDelay(MOCK_EX.inspDlvdocCmdtyList)
     return apiClient.post<InspDlvdocCmdtyItem[], InspDlvdocCmdtyItem[]>(
       EP.INSP_DLVDOC_CMDTYS(id),
+    )
+  },
+
+  // ── 검사및납품조서상세(부대조달) (MUI-EX-01-M03) ──────────────────────────
+
+  /** 부대조달 상세(계약정보+업체정보+이행정보) 조회. */
+  async getInspDlvdocSbsdDtl(id: string): Promise<InspDlvdocDtlSbsdPrcm> {
+    if (USE_MOCK) return mockDelay(MOCK_EX.inspDlvdocSbsdDtl)
+    return apiClient.post<InspDlvdocDtlSbsdPrcm, InspDlvdocDtlSbsdPrcm>(
+      EP.INSP_DLVDOC_SBSD_DTL(id),
+    )
+  },
+
+  /** 부대조달 물품목록(T04) 조회. */
+  async getInspDlvdocSbsdCmdtys(id: string): Promise<InspDlvdocSbsdCmdtyItem[]> {
+    if (USE_MOCK) return mockDelay(MOCK_EX.inspDlvdocSbsdCmdtyList)
+    return apiClient.post<InspDlvdocSbsdCmdtyItem[], InspDlvdocSbsdCmdtyItem[]>(
+      EP.INSP_DLVDOC_SBSD_CMDTYS(id),
     )
   },
 }

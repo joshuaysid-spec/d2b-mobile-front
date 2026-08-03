@@ -208,5 +208,102 @@ export interface InspDlvdocCmdtyItem {
   tstmDlvgdsQty: number
 }
 
-// ── TODO(백엔드 확정) — 검사및납품조서 검색조건(dml_InspDlvdocSrchCnd, slide15 1.1)은
-//    M05 검사및납품조서현황(그룹 5) 배선 시 요청 타입으로 추가 예정.
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-01-M03 검사및납품조서상세(부대조달) (slide21~26) — inspDlvdocDtlSbsdPrcm/InspDlvdocDtlSbsdPrcmPage
+//   탭: T03 상세정보(InspDlvdocDtlSbsdPrcm) · T04 물품목록(InspDlvdocDtlSbsdPrcm_CmdtyList)
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 검사및납품조서상세(부대조달) — 계약정보(dmt_CtrtInfo, slide24 1.1 + slide25 1.4)
+ *  + 계약자 정보(dmt_CtrtrInfo, slide24 1.2) + 요약 표시항목. */
+export interface InspDlvdocDtlSbsdPrcm {
+  /** 계약번호 (ctrtNo, 11). */
+  ctrtNo: string
+  /** 계약번호차수 — 문서정보 표기. ⚠️ dmt_CtrtInfo 미정의(CT 선례 재사용). */
+  ctrtCycl: string
+  /** 통지번호 (avtsmtNo, 3). */
+  avtsmtNo: string
+  /** 예산구분 (bgtSecdNm, 상위코드 KB). */
+  bgtSecdNm: string
+  /** 납품조서번호 (dlvdocNo, 17). */
+  dlvdocNo: string
+  /** 납기일자 (dudtYmd, 8). */
+  dudtYmd: string
+  /** 납지명 (plcdlvNm, 200). */
+  plcdlvNm: string
+  /**
+   * 검사희망일 — 화면 표시항목(slide22 계약 상세정보).
+   * ⚠️ dmt_CtrtInfo 미정의 — 임시 항목명(inspHopeYmd), 상세설계 확정 시 대조.
+   */
+  inspHopeYmd: string
+  /** 비고 (rmrkCn, 4000). */
+  rmrkCn: string
+  // ── 계약 업체 정보 (dmt_CtrtrInfo, slide24 1.2) ──
+  /** 계약업체명 (ctrtBzentyNm, 100). */
+  ctrtBzentyNm: string
+  /** 계약업체주소 (ctrtBzentyAddr, 200). */
+  ctrtBzentyAddr: string
+  /** 대표자 (rprsvNm, 100). */
+  rprsvNm: string
+  /** 배송업체 (dlvBzentyNm, 100). */
+  dlvBzentyNm: string
+  // ── 이행 정보 (dmt_CtrtInfo, slide25 1.4) ──
+  /** 개시일자 (strtYmd, 8). */
+  strtYmd: string
+  /** 검수일자 (igiYmd, 8). */
+  igiYmd: string
+  /** 납품일자 (dlvgdsYmd, 8). */
+  dlvgdsYmd: string
+  /** 출납번호 (rcpmNo, 20). */
+  rcpmNo: string
+  /** 합격일자 (passYmd, 8). */
+  passYmd: string
+  /** 기술검사기관명 (techInspInstNm, 200). */
+  techInspInstNm: string
+  /** 기술검사관명 (techInsptrNm, 100). */
+  techInsptrNm: string
+  /** 물량검사관소속명 (amtmtrInsptrOgdpNm, 100). */
+  amtmtrInsptrOgdpNm: string
+  /** 물량검사관명 (amtmtrInsptrNm, 100). */
+  amtmtrInsptrNm: string
+  /** 출납관소속명 (acofOgdpNm, 100). */
+  acofOgdpNm: string
+  /** 출납관명 (acofNm, 100). */
+  acofNm: string
+  /** 출납관전화번호 (acofTelno, 20). */
+  acofTelno: string
+  // ── 요약(SummaryInfo)·뱃지 표시항목 — 목록(M01) 항목명 재사용(slide21 타이틀 영역) ──
+  /** 업무구분 뱃지 (taskSecd). */
+  taskSecd: string
+  /** 진행상태 뱃지 (dlvdocPrgrsStcd). */
+  dlvdocPrgrsStcd: string
+  /** 계약명 (ctrtNm, 300). */
+  ctrtNm: string
+  /** 계약일자 (ctrtYmd, 8). */
+  ctrtYmd: string
+  /** 계약금액 (ctrtAmt, 17,2). */
+  ctrtAmt: number
+}
+
+/** 부대조달 물품목록 1건 (dlt_CmdtyList, slide24 1.3) — 중앙(T02)과 달리 총계약수량(tctrtQty). */
+export interface InspDlvdocSbsdCmdtyItem {
+  /** 목록 key 용 고유 식별자 — `${prcmRqtNo}-${invtNo}` (클라 생성). */
+  id: string
+  /** 조달요구번호 (prcmRqtNo, 15). */
+  prcmRqtNo: string
+  /** 재고번호 (invtNo, 9). */
+  invtNo: string
+  /** 품목명 (itemNm, 200). */
+  itemNm: string
+  /** 단위코드 (unitCd, 2). */
+  unitCd: string
+  /** 총계약수량 (tctrtQty, 15,2). */
+  tctrtQty: number
+  /** 기 작성수량 (acmlWrtQty, 15,2). */
+  acmlWrtQty: number
+  /** 금번 납품수량 (tstmDlvgdsQty, 15,2). */
+  tstmDlvgdsQty: number
+}
+
+// ── TODO(백엔드 확정) — 검사및납품조서 검색조건(dml_InspDlvdocSrchCnd, slide15 1.1)과
+//    조서발행번호정보조회(P06, dmt_RecrdPblcnNo·dlt_RecrdPblcnNoItemInfo, slide35)는
+//    M05 검사및납품조서현황(그룹 5, P09 검색필터 시트 배선) 시 추가 예정.

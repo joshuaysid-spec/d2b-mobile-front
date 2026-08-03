@@ -5,7 +5,9 @@ import type {
   DlvgdsAvtsmtItem,
   InspDlvdocCmdtyItem,
   InspDlvdocDtl,
+  InspDlvdocDtlSbsdPrcm,
   InspDlvdocItem,
+  InspDlvdocSbsdCmdtyItem,
   InspIntgListItem,
 } from '@/types/ex'
 
@@ -268,10 +270,73 @@ const INSP_DLVDOC_CMDTY_LIST: InspDlvdocCmdtyItem[] = [
   },
 ]
 
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-01-M03 검사및납품조서상세(부대조달) — slide21~22 목업(A 업체 · 서울특별시 종로구 ·
+// 홍길동 · CJ대한통운 · 개시/검수/납품/합격일자 2025-10-15 · 출납번호 1234 5678 등).
+// ────────────────────────────────────────────────────────────────────────────
+const INSP_DLVDOC_SBSD_DTL: InspDlvdocDtlSbsdPrcm = {
+  ctrtNo: '20250000004',
+  ctrtCycl: '01',
+  avtsmtNo: '123456789',
+  bgtSecdNm: '전년국채',
+  dlvdocNo: 'M2025MST000200-0001',
+  dudtYmd: '2026-12-30',
+  plcdlvNm: '제8385부대',
+  inspHopeYmd: '2026-10-15 08:00',
+  rmrkCn: '부분 납품 완료분 우선 검사 요청.',
+  ctrtBzentyNm: 'A 업체',
+  ctrtBzentyAddr: '서울특별시 종로구 세종대로 1',
+  rprsvNm: '홍길동',
+  dlvBzentyNm: 'CJ대한통운',
+  strtYmd: '2025-10-15',
+  igiYmd: '2025-10-15',
+  dlvgdsYmd: '2025-10-15',
+  rcpmNo: '12345678',
+  passYmd: '2025-10-15',
+  techInspInstNm: '00000 기관',
+  techInsptrNm: '홍길동',
+  amtmtrInsptrOgdpNm: '0000000 부대',
+  amtmtrInsptrNm: '김길동',
+  acofOgdpNm: '0000000 부대',
+  acofNm: '박길동',
+  acofTelno: '000-0000-0000',
+  taskSecd: '물품',
+  dlvdocPrgrsStcd: '조달접수',
+  ctrtNm: '전산 소모품 구매',
+  ctrtYmd: '2025-12-22',
+  ctrtAmt: 8250000,
+}
+
+// MUI-EX-01-T04 부대조달 물품목록 — slide23 목업(중앙 T02 와 동일 형식, 총계약수량).
+const INSP_DLVDOC_SBSD_CMDTY_LIST: InspDlvdocSbsdCmdtyItem[] = [
+  {
+    id: '000000000000003-000000003',
+    prcmRqtNo: '000000000000003',
+    invtNo: '000000003',
+    itemNm: '깍두기(임가공)(3지역)[1412F]',
+    unitCd: 'kg',
+    tctrtQty: 49230000,
+    acmlWrtQty: 0,
+    tstmDlvgdsQty: 49230,
+  },
+  {
+    id: '000000000000004-000000004',
+    prcmRqtNo: '000000000000004',
+    invtNo: '000000004',
+    itemNm: '총각김치(임가공)(3지역)[1412F]',
+    unitCd: 'kg',
+    tctrtQty: 8500000,
+    acmlWrtQty: 1200000,
+    tstmDlvgdsQty: 85000,
+  },
+]
+
 export const MOCK_EX = {
   inspIntgList: INSP_INTG_LIST,
   dlvgdsAvtsmtList: DLVGDS_AVTSMT_LIST,
   inspDlvdocList: INSP_DLVDOC_LIST,
   inspDlvdocDtl: INSP_DLVDOC_DTL,
   inspDlvdocCmdtyList: INSP_DLVDOC_CMDTY_LIST,
+  inspDlvdocSbsdDtl: INSP_DLVDOC_SBSD_DTL,
+  inspDlvdocSbsdCmdtyList: INSP_DLVDOC_SBSD_CMDTY_LIST,
 }

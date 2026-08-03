@@ -56,8 +56,7 @@ export function DlvgdsAvtsmtListFullPopup({
   // 조서 카드 클릭(P11) — 중앙조달(M02)/부대조달(M03) 상세 분기(slide16 이벤트, sbsdPrcmYn 임시 키).
   const handleDlvdocClick = (item: InspDlvdocItem) => {
     if (item.sbsdPrcmYn === 'Y') {
-      // TODO(그룹 3): M03 검사및납품조서상세(부대조달) 구현 후 navigate 배선.
-      console.log('[P11] M03 부대조달 상세 이동(미구현)', item.id)
+      navigate(`/ex/dlvdoc/sbsd/${item.id}`, { state: item })
       return
     }
     navigate(`/ex/dlvdoc/${item.id}`, { state: item })

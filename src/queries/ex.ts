@@ -11,6 +11,8 @@ export const exKeys = {
     ['ex', 'inspDlvdocList', ctrtNo, avtsmtNo] as const,
   inspDlvdocDtl: (id: string) => ['ex', 'inspDlvdocDtl', id] as const,
   inspDlvdocCmdtys: (id: string) => ['ex', 'inspDlvdocCmdtys', id] as const,
+  inspDlvdocSbsdDtl: (id: string) => ['ex', 'inspDlvdocSbsdDtl', id] as const,
+  inspDlvdocSbsdCmdtys: (id: string) => ['ex', 'inspDlvdocSbsdCmdtys', id] as const,
 }
 
 /** 검사통합목록(M01) — 키워드 세부 필터/더보기 페이징은 페이지 클라이언트 로직 유지(서버 전환 시 req 로 이행). */
@@ -53,6 +55,24 @@ export function useInspDlvdocCmdtys(id: string) {
   return useQuery({
     queryKey: exKeys.inspDlvdocCmdtys(id),
     queryFn: () => exService.getInspDlvdocCmdtys(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 검사및납품조서상세(부대조달, M03). */
+export function useInspDlvdocSbsdDtl(id: string) {
+  return useQuery({
+    queryKey: exKeys.inspDlvdocSbsdDtl(id),
+    queryFn: () => exService.getInspDlvdocSbsdDtl(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 부대조달 물품목록(T04). */
+export function useInspDlvdocSbsdCmdtys(id: string) {
+  return useQuery({
+    queryKey: exKeys.inspDlvdocSbsdCmdtys(id),
+    queryFn: () => exService.getInspDlvdocSbsdCmdtys(id),
     enabled: Boolean(id),
   })
 }
