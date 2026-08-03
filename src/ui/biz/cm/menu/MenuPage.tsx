@@ -74,8 +74,8 @@ const MENU_TREE: MenuNode[] = [
       { id: 'ex-inspect-report', label: LINKED_MENU_LABELS[ROUTES.EX_PRST] },
       { id: 'ex-quote-req', label: LINKED_MENU_LABELS[ROUTES.EX_ESTMT_RQDC] },
       { id: 'ex-quote-noti', label: LINKED_MENU_LABELS[ROUTES.EX_ESTMT_NTDC] },
-      { id: 'ex-order-req', label: '발주 의뢰서 목록' },
-      { id: 'ex-order-noti', label: '발주 통보서 목록' },
+      { id: 'ex-order-req', label: LINKED_MENU_LABELS[ROUTES.EX_ORDER_RQDC] },
+      { id: 'ex-order-noti', label: LINKED_MENU_LABELS[ROUTES.EX_ORDER_NTDC] },
     ],
   },
   {
@@ -189,6 +189,8 @@ const MENU_ROUTES: Record<string, string> = {
   'ex-inspect-report': ROUTES.EX_PRST, // 검사및납품조서현황목록(MUI-EX-01-M05)
   'ex-quote-req': ROUTES.EX_ESTMT_RQDC, // 견적의뢰서목록(MUI-EX-02-M71)
   'ex-quote-noti': ROUTES.EX_ESTMT_NTDC, // 견적통보서목록(MUI-EX-02-M73)
+  'ex-order-req': ROUTES.EX_ORDER_RQDC, // 발주의뢰서목록(MUI-EX-02-M75)
+  'ex-order-noti': ROUTES.EX_ORDER_NTDC, // 발주통보서목록(MUI-EX-02-M77)
   'wm-claim-list': ROUTES.WM, // 대금청구통합목록(MUI-WM-01-M01)
   'wm-payment-return': ROUTES.WM_RTN, // 대금지불정보(반납)(MUI-WM-01-M10)
   'wm-claim-progress': ROUTES.WM_PRGRS, // 대금청구진행현황(MUI-WM-01-M11)

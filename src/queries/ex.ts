@@ -6,6 +6,7 @@ import type {
   InspDlvdocPrstRequest,
   InspIntgListRequest,
   OvsEstmtRqdcListRequest,
+  OvsOrderRqdcListRequest,
 } from '@/types/ex'
 
 export const exKeys = {
@@ -27,6 +28,12 @@ export const exKeys = {
   ovsEstmtNtdcList: (ctrtNo?: string) => ['ex', 'ovsEstmtNtdcList', ctrtNo ?? ''] as const,
   ovsEstmtNtdcDtl: (id: string) => ['ex', 'ovsEstmtNtdcDtl', id] as const,
   ovsEstmtNtdcItems: (id: string) => ['ex', 'ovsEstmtNtdcItems', id] as const,
+  ovsOrderRqdcList: (req: OvsOrderRqdcListRequest) => ['ex', 'ovsOrderRqdcList', req] as const,
+  ovsOrderRqdcDtl: (id: string) => ['ex', 'ovsOrderRqdcDtl', id] as const,
+  ovsOrderRqdcItems: (id: string) => ['ex', 'ovsOrderRqdcItems', id] as const,
+  ovsOrderNtdcList: (ctrtNo?: string) => ['ex', 'ovsOrderNtdcList', ctrtNo ?? ''] as const,
+  ovsOrderNtdcDtl: (id: string) => ['ex', 'ovsOrderNtdcDtl', id] as const,
+  ovsOrderNtdcItems: (id: string) => ['ex', 'ovsOrderNtdcItems', id] as const,
 }
 
 /** 검사통합목록(M01) — 키워드 세부 필터/더보기 페이징은 페이지 클라이언트 로직 유지(서버 전환 시 req 로 이행). */
@@ -174,6 +181,58 @@ export function useOvsEstmtNtdcItems(id: string) {
   return useQuery({
     queryKey: exKeys.ovsEstmtNtdcItems(id),
     queryFn: () => exService.getOvsEstmtNtdcItems(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 발주의뢰서목록(M75). */
+export function useOvsOrderRqdcList(req: OvsOrderRqdcListRequest = {}) {
+  return useQuery({
+    queryKey: exKeys.ovsOrderRqdcList(req),
+    queryFn: () => exService.getOvsOrderRqdcList(req),
+  })
+}
+
+/** 발주의뢰서상세(M76). */
+export function useOvsOrderRqdcDtl(id: string) {
+  return useQuery({
+    queryKey: exKeys.ovsOrderRqdcDtl(id),
+    queryFn: () => exService.getOvsOrderRqdcDtl(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 발주의뢰서 품목목록(T76). */
+export function useOvsOrderRqdcItems(id: string) {
+  return useQuery({
+    queryKey: exKeys.ovsOrderRqdcItems(id),
+    queryFn: () => exService.getOvsOrderRqdcItems(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 발주통보서목록(M77) — 상단 계약정보 + 목록. */
+export function useOvsOrderNtdcList(ctrtNo?: string) {
+  return useQuery({
+    queryKey: exKeys.ovsOrderNtdcList(ctrtNo),
+    queryFn: () => exService.getOvsOrderNtdcList(ctrtNo),
+  })
+}
+
+/** 발주통보서상세(M78). */
+export function useOvsOrderNtdcDtl(id: string) {
+  return useQuery({
+    queryKey: exKeys.ovsOrderNtdcDtl(id),
+    queryFn: () => exService.getOvsOrderNtdcDtl(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 발주통보서 품목목록(T78). */
+export function useOvsOrderNtdcItems(id: string) {
+  return useQuery({
+    queryKey: exKeys.ovsOrderNtdcItems(id),
+    queryFn: () => exService.getOvsOrderNtdcItems(id),
     enabled: Boolean(id),
   })
 }

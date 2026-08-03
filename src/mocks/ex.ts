@@ -12,6 +12,12 @@ import type {
   OvsEstmtRqdcDtl,
   OvsEstmtRqdcItem,
   OvsEstmtRqdcItemRow,
+  OvsOrderNtdcDtl,
+  OvsOrderNtdcItem,
+  OvsOrderNtdcItemRow,
+  OvsOrderRqdcDtl,
+  OvsOrderRqdcItem,
+  OvsOrderRqdcItemRow,
   InspDlvdocCmdtyItem,
   InspDlvdocDtl,
   InspDlvdocDtlSbsdPrcm,
@@ -664,6 +670,151 @@ const OVS_ESTMT_NTDC_ITEMS: OvsEstmtNtdcItemRow[] = [
   },
 ]
 
+// MUI-EX-02-M75 발주의뢰서목록 — slide64 계열 목업(발주번호/항목수/화폐단위/계약금액/납기일/통보서상태).
+const OVS_ORDER_RQDC_LIST: OvsOrderRqdcItem[] = [
+  {
+    id: '01',
+    orderSeq: '01',
+    itemSeq: 3,
+    bizNm: 'F-15 부품구매',
+    crncCd: '미 달러',
+    ctrtAmt: 5000000,
+    dudtYmd: '2026-02-10',
+    ntdcStts: '작성',
+  },
+  {
+    id: '02',
+    orderSeq: '02',
+    itemSeq: 5,
+    bizNm: 'KF-16 정비부품 구매',
+    crncCd: '미 달러',
+    ctrtAmt: 1200000,
+    dudtYmd: '2026-04-01',
+    ntdcStts: '미작성',
+  },
+]
+
+// MUI-EX-02-M76 발주의뢰서상세 — slide68·70 목업(M72 동형 + 발주일자·신용장번호 MD1111111111).
+const OVS_ORDER_RQDC_DTL: OvsOrderRqdcDtl = {
+  ctrtNo: 'KD111111111',
+  orderSeq: '01',
+  orderYmd: '2025-03-01',
+  vldYmd: '2025-03-01',
+  ctrtYmd: '2025-03-01',
+  bizNm: 'F-15 부품구매',
+  prcmRqtInstCd: '공군',
+  ctrtBzentyCd: 'A 업체',
+  miltPicId: '공군',
+  bzentyCd: '조달테스트업체',
+  picId: '홍길동',
+  lcNo: 'MD1111111111',
+  crncCd: '미 달러',
+  rmrkCn: '-',
+  itemSeq: 3,
+  ctrtAmt: 5000000,
+  dudtYmd: '2026-02-10',
+  ntdcStts: '작성',
+}
+
+// MUI-EX-02-T76 발주의뢰서 품목 — slide70~72(청구번호/단가/금액/우선순위/하자보증/PriceList 적용년도).
+const OVS_ORDER_RQDC_ITEMS: OvsOrderRqdcItemRow[] = [
+  {
+    id: '1111111111111-1',
+    no: 1,
+    orderClmNo: '01',
+    invtNo: '1111111111111',
+    rcptNo: '12345',
+    itemNo: '00000-010000-123',
+    itemNm: 'IRST LRU-1',
+    aplcnEqpmntCd: 'F-15K',
+    orderQty: 1,
+    unitNm: 'EA',
+    orderUntprc: 1000,
+    orderAmt: 1000,
+    trnsMthdCd: '항공',
+    orderSeCd: '1',
+    flwGrnteEn: '유',
+    prcAplcnYr: '2025',
+    dlvgdsRqtYmd: '2025-05-01',
+    rmrkCn: 'AFLC IM : IG(6급 홍길동)',
+  },
+]
+
+// MUI-EX-02-M77 발주통보서목록 — slide74 목업(상단 계약정보는 견적통보서와 동일 구성 재사용).
+const OVS_ORDER_NTDC_LIST: OvsOrderNtdcItem[] = [
+  {
+    id: '1',
+    orderSeq: '1',
+    itemSeq: 3,
+    vldYmd: '2026-02-10',
+    bzentyCd: 'A 업체',
+    bizNm: 'F-15 부품구매',
+    wrtYmd: '2026-02-10',
+    docSttsCd: '작성',
+    rcvrNm: '김길동',
+  },
+  {
+    id: '2',
+    orderSeq: '2',
+    itemSeq: 3,
+    vldYmd: '2026-02-10',
+    bzentyCd: 'A 업체',
+    bizNm: 'F-15 부품구매',
+    wrtYmd: '2026-02-10',
+    docSttsCd: '송신',
+    rcvrNm: '김길동',
+  },
+]
+
+// MUI-EX-02-M78 발주통보서상세 — slide78·80~82(품목수: 발주/수락/거부 + 발주/수락금액).
+const OVS_ORDER_NTDC_DTL: OvsOrderNtdcDtl = {
+  ctrtNo: 'KD111111111',
+  orderSeq: '1',
+  orderYmd: '2025-03-01',
+  vldYmd: '2025-03-01',
+  ctrtYmd: '2025-03-01',
+  bizNm: 'F-15 부품구매',
+  prcmRqtInstCd: '공군',
+  ctrtBzentyCd: 'A 업체',
+  miltPicId: '공군',
+  bzentyCd: '조달테스트업체',
+  picId: '홍길동',
+  crncCd: '미 달러',
+  rmrkCn: '-',
+  orderItemCnt: 1,
+  acptItemCnt: 1,
+  rjtItemCnt: 0,
+  orderAmt: 1000,
+  acptAmt: 1000,
+  itemSeq: 3,
+  wrtYmd: '2026-02-10',
+  rcvrNm: '김길동',
+  docSttsCd: '작성',
+}
+
+// MUI-EX-02-T78 발주통보서 품목 — slide80~82(납품가능일자·수락여부 포함).
+const OVS_ORDER_NTDC_ITEMS: OvsOrderNtdcItemRow[] = [
+  {
+    id: '1111111111111-1',
+    no: 1,
+    invtNo: '1111111111111',
+    rcptNo: '12345',
+    itemNo: '00000-010000-123',
+    itemNm: 'IRST LRU-1',
+    aplcnEqpmntCd: 'F-15K',
+    orderQty: 1,
+    unitNm: 'EA',
+    orderUntprc: 1000,
+    orderAmt: 1000,
+    trnsMthdCd: '항공',
+    orderSeCd: '1',
+    flwGrnteEn: '유',
+    prcAplcnYr: '2025',
+    dlvgdsRqtYmd: '2025-05-01',
+    acptYn: '수락',
+  },
+]
+
 export const MOCK_EX = {
   inspIntgList: INSP_INTG_LIST,
   dlvgdsAvtsmtList: DLVGDS_AVTSMT_LIST,
@@ -683,4 +834,10 @@ export const MOCK_EX = {
   ovsEstmtNtdcList: OVS_ESTMT_NTDC_LIST,
   ovsEstmtNtdcDtl: OVS_ESTMT_NTDC_DTL,
   ovsEstmtNtdcItems: OVS_ESTMT_NTDC_ITEMS,
+  ovsOrderRqdcList: OVS_ORDER_RQDC_LIST,
+  ovsOrderRqdcDtl: OVS_ORDER_RQDC_DTL,
+  ovsOrderRqdcItems: OVS_ORDER_RQDC_ITEMS,
+  ovsOrderNtdcList: OVS_ORDER_NTDC_LIST,
+  ovsOrderNtdcDtl: OVS_ORDER_NTDC_DTL,
+  ovsOrderNtdcItems: OVS_ORDER_NTDC_ITEMS,
 }

@@ -254,6 +254,30 @@ const OvsEstmtNtdcDtlPage = lazy(() =>
     default: m.OvsEstmtNtdcDtlPage,
   })),
 )
+// 발주의뢰서목록(MUI-EX-02-M75, /ex/order-rqdc) — biz/ex/ovsOrderRqdcList.
+const OvsOrderRqdcListPage = lazy(() =>
+  import('@/ui/biz/ex/ovsOrderRqdcList/OvsOrderRqdcListPage').then((m) => ({
+    default: m.OvsOrderRqdcListPage,
+  })),
+)
+// 발주의뢰서상세(MUI-EX-02-M76, /ex/order-rqdc/:id) — biz/ex/ovsOrderRqdcDtl.
+const OvsOrderRqdcDtlPage = lazy(() =>
+  import('@/ui/biz/ex/ovsOrderRqdcDtl/OvsOrderRqdcDtlPage').then((m) => ({
+    default: m.OvsOrderRqdcDtlPage,
+  })),
+)
+// 발주통보서목록(MUI-EX-02-M77, /ex/order-ntdc) — biz/ex/ovsOrderNtdcList.
+const OvsOrderNtdcListPage = lazy(() =>
+  import('@/ui/biz/ex/ovsOrderNtdcList/OvsOrderNtdcListPage').then((m) => ({
+    default: m.OvsOrderNtdcListPage,
+  })),
+)
+// 발주통보서상세(MUI-EX-02-M78, /ex/order-ntdc/:id) — biz/ex/ovsOrderNtdcDtl.
+const OvsOrderNtdcDtlPage = lazy(() =>
+  import('@/ui/biz/ex/ovsOrderNtdcDtl/OvsOrderNtdcDtlPage').then((m) => ({
+    default: m.OvsOrderNtdcDtlPage,
+  })),
+)
 // 대금지불정보(반납)(MUI-WM-01-M10, /wm/rtn) — biz/wm/rtnPymtDfryInfo.
 const RtnPymtDfryInfoPage = lazy(() =>
   import('@/ui/biz/wm/rtnPymtDfryInfo/RtnPymtDfryInfoPage').then((m) => ({
@@ -1068,6 +1092,34 @@ export const router = createBrowserRouter([
         path: 'ex/estmt-ntdc/:id',
         element: <OvsEstmtNtdcDtlPage />,
         handle: { header: { variant: 'sub', title: '견적통보서 상세' } },
+      },
+      {
+        path: 'ex/order-rqdc',
+        element: <OvsOrderRqdcListPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.EX_ORDER_RQDC] },
+          scrollReset: true,
+          showBottomNav: true,
+        },
+      },
+      {
+        path: 'ex/order-rqdc/:id',
+        element: <OvsOrderRqdcDtlPage />,
+        handle: { header: { variant: 'sub', title: '발주의뢰서 상세' } },
+      },
+      {
+        path: 'ex/order-ntdc',
+        element: <OvsOrderNtdcListPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.EX_ORDER_NTDC] },
+          scrollReset: true,
+          showBottomNav: true,
+        },
+      },
+      {
+        path: 'ex/order-ntdc/:id',
+        element: <OvsOrderNtdcDtlPage />,
+        handle: { header: { variant: 'sub', title: '발주통보서 상세' } },
       },
       {
         path: 'wm',

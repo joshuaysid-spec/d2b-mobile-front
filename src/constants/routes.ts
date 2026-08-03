@@ -58,6 +58,14 @@ export const ROUTES = {
   EX_ESTMT_NTDC: '/ex/estmt-ntdc',
   /** 견적통보서상세 (MUI-EX-02-M74, `:id`). 이동: `/ex/estmt-ntdc/${id}`. */
   EX_ESTMT_NTDC_DETAIL: '/ex/estmt-ntdc/:id',
+  /** 발주의뢰서목록 (MUI-EX-02-M75). */
+  EX_ORDER_RQDC: '/ex/order-rqdc',
+  /** 발주의뢰서상세 (MUI-EX-02-M76, `:id`). 이동: `/ex/order-rqdc/${id}`. */
+  EX_ORDER_RQDC_DETAIL: '/ex/order-rqdc/:id',
+  /** 발주통보서목록 (MUI-EX-02-M77). */
+  EX_ORDER_NTDC: '/ex/order-ntdc',
+  /** 발주통보서상세 (MUI-EX-02-M78, `:id`). 이동: `/ex/order-ntdc/${id}`. */
+  EX_ORDER_NTDC_DETAIL: '/ex/order-ntdc/:id',
   /** 대금청구통합목록 (MUI-WM-01-M01). */
   WM: '/wm',
   /** 선금신청서상세 (MUI-WM-01-M02, `:id`). 이동: `/wm/prpay/${id}`. */

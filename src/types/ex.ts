@@ -716,6 +716,227 @@ export interface OvsEstmtNtdcDtl {
   docSttsCd: string
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-02-M75 발주의뢰서목록 (slide64~67) — ovsOrderRqdcList/OvsOrderRqdcListPage
+//   검색필터: MUI-EX-02-P81 (수신일·계약번호 — P80 과 동일 구성).
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 발주의뢰서목록 검색조건 (dm_searchInfo, slide67 1.1) — On-Load: 수신일 5년전~현재. */
+export interface OvsOrderRqdcListRequest {
+  /** 계약번호 (ctrtNo, 35) — 계약번호조회(P79) 공통팝업. */
+  ctrtNo?: string
+  /** 수신일(FROM) (rcptnBgngYmd, 8). */
+  rcptnBgngYmd?: string
+  /** 수신일(TO) (rcptnEndYmd, 8). */
+  rcptnEndYmd?: string
+}
+
+/** 발주의뢰서목록 1건 (dl_orderRqdc, slide67 1.2). */
+export interface OvsOrderRqdcItem {
+  /** 목록 key/상세 라우팅용 고유 식별자 — 발주번호(orderSeq) 사용. */
+  id: string
+  /** 발주번호 (orderSeq, 22). */
+  orderSeq: string
+  /** 항목수 (itemSeq, 22). */
+  itemSeq: number
+  /** 사업명 (bizNm, 100) — 카드 제목. */
+  bizNm: string
+  /** 화폐단위 (crncCd, 3) — 표시명. */
+  crncCd: string
+  /** 계약금액 (ctrtAmt, 25,3). */
+  ctrtAmt: number
+  /** 납기일 (dudtYmd, 8). */
+  dudtYmd: string
+  /** 통보서상태 (ntdcStts, 100) — 작성/미작성/송신 뱃지. */
+  ntdcStts: string
+}
+
+export interface OvsOrderRqdcListResult {
+  list: OvsOrderRqdcItem[]
+  total: number
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-02-M76 발주의뢰서상세 (slide68~73) — ovsOrderRqdcDtl/OvsOrderRqdcDtlPage
+//   탭: T75 상세정보(OvsOrderRqdcDtl) · T76 물품목록(OvsOrderRqdcDtl_CmdtyList).
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 발주의뢰서상세 — 계약정보(dm_ctrtInfo, slide71 1.1 — 신용장번호 포함) + 요약 표시항목. */
+export interface OvsOrderRqdcDtl {
+  ctrtNo: string
+  /** 발주번호 (orderSeq, 22). */
+  orderSeq: string
+  /** 발주일자 (orderYmd, 8) — 0630 개정 항목. */
+  orderYmd: string
+  vldYmd: string
+  ctrtYmd: string
+  bizNm: string
+  prcmRqtInstCd: string
+  ctrtBzentyCd: string
+  miltPicId: string
+  bzentyCd: string
+  picId: string
+  /** 신용장번호 (lcNo, 20). */
+  lcNo: string
+  crncCd: string
+  rmrkCn: string
+  // ── 요약(SummaryInfo) 표시항목 — 목록(M75) 항목명 재사용 ──
+  itemSeq: number
+  ctrtAmt: number
+  dudtYmd: string
+  ntdcStts: string
+}
+
+/** 발주의뢰서 품목 1건 (dl_orderRqdcItem, slide71~72 1.2). */
+export interface OvsOrderRqdcItemRow {
+  /** 목록 key — `${invtNo}-${no}` (클라 생성). */
+  id: string
+  /** 번호 — 순번. */
+  no: number
+  /** 청구번호 (orderClmNo, 22). */
+  orderClmNo: string
+  /** 재고번호 (invtNo, 13). */
+  invtNo: string
+  /** Serial No (rcptNo, 20). */
+  rcptNo: string
+  /** 부품번호 (itemNo, 32). */
+  itemNo: string
+  /** 품명 (itemNm, 200). */
+  itemNm: string
+  /** 적용장비 (aplcnEqpmntCd, 8) — 표시명. */
+  aplcnEqpmntCd: string
+  /** 수량 (orderQty, 15,2). */
+  orderQty: number
+  /** 단위 (unitNm, 100). */
+  unitNm: string
+  /** 단가 (orderUntprc, 25,3). */
+  orderUntprc: number
+  /** 금액 (orderAmt, 25,3). */
+  orderAmt: number
+  /** 운송구분 (trnsMthdCd, 1) — 표시명. */
+  trnsMthdCd: string
+  /** 우선순위 (orderSeCd, 3) — 표시명. */
+  orderSeCd: string
+  /** 하자보증유무 (flwGrnteEn, 1) — 표시명(유/무). */
+  flwGrnteEn: string
+  /** PriceList 적용년도 (prcAplcnYr, 4). */
+  prcAplcnYr: string
+  /** 납품요구일자 (dlvgdsRqtYmd, 8). */
+  dlvgdsRqtYmd: string
+  /** 비고 (rmrkCn, 4000) — 없으면 '-'. */
+  rmrkCn: string
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-02-M77 발주통보서목록 (slide74~77) — ovsOrderNtdcList/OvsOrderNtdcListPage
+//   상단 계약정보(견적통보서와 동일 구성 — OvsEstmtNtdcCtrtInfo 재사용) + 목록.
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 발주통보서목록 1건 (slide76 1.3). */
+export interface OvsOrderNtdcItem {
+  /** 목록 key/상세 라우팅용 고유 식별자 — RQ No(orderSeq) 사용. */
+  id: string
+  /** RQ No — 발주번호 (orderSeq, 22). */
+  orderSeq: string
+  /** 건수 (itemSeq, 22). */
+  itemSeq: number
+  /** 유효일자 (vldYmd, 8). */
+  vldYmd: string
+  /** 무역대리점 (bzentyCd, 5) — 표시명. */
+  bzentyCd: string
+  /** 사업명 (bizNm, 100) — 카드 제목. */
+  bizNm: string
+  /** 작성일자 (wrtYmd, 8). */
+  wrtYmd: string
+  /** 진행상태 (docSttsCd, 2) — 작성/송신/반려 뱃지, 표시명. */
+  docSttsCd: string
+  /** 수신자 (rcvrNm, 200). */
+  rcvrNm: string
+}
+
+export interface OvsOrderNtdcListResult {
+  ctrtInfo: OvsEstmtNtdcCtrtInfo
+  list: OvsOrderNtdcItem[]
+  total: number
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-EX-02-M78 발주통보서상세 (slide78~83) — ovsOrderNtdcDtl/OvsOrderNtdcDtlPage
+//   탭: T77 상세정보(OvsOrderNtdcDtl) · T78 물품목록(OvsOrderNtdcDtl_CmdtyList).
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 발주통보서상세 — 계약정보(dm_ctrtInfo, slide81 1.1) + 품목수(dm_itemCntInfo, slide82 1.3)
+ *  + 요약 표시항목. */
+export interface OvsOrderNtdcDtl {
+  ctrtNo: string
+  orderSeq: string
+  orderYmd: string
+  vldYmd: string
+  ctrtYmd: string
+  bizNm: string
+  prcmRqtInstCd: string
+  ctrtBzentyCd: string
+  miltPicId: string
+  bzentyCd: string
+  picId: string
+  crncCd: string
+  rmrkCn: string
+  // ── 품목수 (dm_itemCntInfo, slide82 1.3 — T78 요약 정보) ──
+  /** 발주품목수 (orderItemCnt, 10). */
+  orderItemCnt: number
+  /** 수락품목수 (acptItemCnt, 10). */
+  acptItemCnt: number
+  /** 거부품목수 (rjtItemCnt, 10). */
+  rjtItemCnt: number
+  /** 발주금액 (orderAmt, 25,3). */
+  orderAmt: number
+  /** 수락금액 (acptAmt, 25,3). */
+  acptAmt: number
+  // ── 요약(SummaryInfo) 표시항목 — 목록(M77) 항목명 재사용 ──
+  itemSeq: number
+  wrtYmd: string
+  rcvrNm: string
+  docSttsCd: string
+}
+
+/** 발주통보서 품목 1건 (dl_orderNtdcItem, slide81~82 1.2). */
+export interface OvsOrderNtdcItemRow {
+  /** 목록 key — `${invtNo}-${no}` (클라 생성). */
+  id: string
+  /** 번호 — 순번. */
+  no: number
+  /** 재고번호 (invtNo, 13). */
+  invtNo: string
+  /** Serial No (rcptNo, 20). */
+  rcptNo: string
+  /** 부품번호 (itemNo, 32). */
+  itemNo: string
+  /** 품명 (itemNm, 200). */
+  itemNm: string
+  /** 적용장비 (aplcnEqpmntCd, 8) — 표시명. */
+  aplcnEqpmntCd: string
+  /** 수량 (orderQty, 15,2). */
+  orderQty: number
+  /** 단위 (unitNm, 100). */
+  unitNm: string
+  /** 단가 (orderUntprc, 25,3). */
+  orderUntprc: number
+  /** 금액 (orderAmt, 25,3). */
+  orderAmt: number
+  /** 운송구분 (trnsMthdCd, 1) — 표시명. */
+  trnsMthdCd: string
+  /** 우선순위 (orderSeCd, 3) — 표시명. */
+  orderSeCd: string
+  /** 하자보증유무 (flwGrnteEn, 1) — 표시명(유/무). */
+  flwGrnteEn: string
+  /** PriceList 적용년도 (prcAplcnYr, 4). */
+  prcAplcnYr: string
+  /** 납품가능일자 (dlvgdsRqtYmd, 8). */
+  dlvgdsRqtYmd: string
+  /** 수락여부 (acptYn, 1) — 표시명(수락/거부). */
+  acptYn: string
+}
+
 /** 견적통보서 품목 1건 (dl_estmtNtdcItem, slide61~62 1.2). */
 export interface OvsEstmtNtdcItemRow {
   /** 목록 key — `${invtNo}-${no}` (클라 생성). */
