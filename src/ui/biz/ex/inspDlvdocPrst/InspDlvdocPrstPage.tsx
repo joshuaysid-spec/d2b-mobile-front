@@ -107,6 +107,20 @@ const EX_PRST_SEARCH_SCHEMA: SearchFilterSchema = {
       key: 'category',
       title: '구분 설정',
       fields: [
+        // 예산구분(필수값, default 전체예산 — slide32) — ⚠️ 검색조건(dml) 항목명 미정의,
+        // 대금신청대상(bgtSecd, 상위코드 KB) 항목명 재사용. 코드값 확정 시 교체.
+        {
+          type: 'select',
+          key: 'bgtSecd',
+          label: '예산구분',
+          placeholder: '전체 예산',
+          options: [
+            { value: 'all', label: '전체 예산' },
+            { value: 'prevGovbnd', label: '전년국채' },
+            { value: 'main', label: '본조' },
+            { value: 'currGovbnd', label: '당년국채' },
+          ],
+        },
         {
           type: 'select',
           key: 'dlvdocPrgrsStcd',
@@ -146,6 +160,7 @@ function buildDefaultValue(): SearchFilterValue {
     aplyNo: '',
     avtsmtNo: '',
     plcdlvNm: '',
+    bgtSecd: 'all',
     dlvdocPrgrsStcd: 'all',
     pxcndCmcnSecd: 'all',
   }
