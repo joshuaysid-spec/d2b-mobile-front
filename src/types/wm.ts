@@ -554,3 +554,65 @@ export interface PxcndCstPymtClmDtl extends WmDtlSummary {
   /** 첨부서류 목록 (dlt_adocList). */
   adocs: WmAdocItem[]
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M13 사후정산청구상세 (slide72~79) — epfcClclnClmDtl/EpfcClclnClmDtlPage
+//   탭: T20 계약정보(_CN) · T21 신청금액(_AplyAmt) · T22 세금계산서(_Txiv) · 진행상태(T23 공용).
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 사후정산 신청내역 1건 (dmt_aplyDsctnInfo, slide77 1.4 — 선금(T02)과 동형, 구분 키만 aplySeCd). */
+export interface EpfcAplyDsctnItem {
+  /** 목록 key — 구분명(고유). */
+  id: string
+  /** 구분 (aplySeCd) — 금액구분명. */
+  aplySeCd: string
+  /** 대상금액 (trgtAmt, 17). */
+  trgtAmt: number
+  /** 신청금액 기사용 (arusAplyAmt, 17). */
+  arusAplyAmt: number
+  /** 신청금액 사용예정 (usePrnmntAplyAmt, 17). */
+  usePrnmntAplyAmt: number
+  /** 신청금액 계 (aplySumAmt, 17). */
+  aplySumAmt: number
+  /** 신청금액의 비율 (aplyAmtRt) — 신청금액계/대상금액*100. */
+  aplyAmtRt: number
+}
+
+/** 사후정산청구상세 — 차수(dmt_epfcClclnClmDocCyclInfo) + 계약내용(dmt_ctrtCnInfo) + 신청금액
+ *  (dmt_aplyAmtInfo) + 신청내역 + 공급자 + 세금계산서(dlt_txivList) + 요약 (slide77~78). */
+export interface EpfcClclnClmDtl extends WmDtlSummary {
+  // ── 공급자 정보 — ⚠️ dmt_splrInfo(slide78 1.5) 항목설명이 차수정보로 복사돼 있어(오타)
+  //    화면(slide73: 상호/작성자 성명/직책/연락처/주소) 기준 M02·M05 항목명 재사용.
+  bzentyNm: string
+  wrtrNm: string
+  wrtrJbttlNm: string
+  wrtrEnmtno: string
+  bzentyAddr: string
+  // ── 계약내용 (dmt_ctrtCnInfo, slide77 1.2) ──
+  /** 납기 (dudtPrdCn, 50) — 기간(From-To) 문자열. */
+  dudtPrdCn: string
+  /** 비고 (rmrkCn, 4000). */
+  rmrkCn: string
+  // ── 신청정보 (dmt_epfcClclnClmDocCyclInfo + dmt_aplyAmtInfo, slide77 1.1·1.3) ──
+  /** 차수 (설계서 항목명 ctrtCycl, 7) — 계약번호-신청차수. */
+  aplyCtrtCycl: string
+  /** 수신자 (rcptnOgnzCd, 상위코드 RIC). */
+  rcptnOgnzCd: string
+  /** 신청일자 (aplyYmd, 8). */
+  aplyYmd: string
+  /** 일금(신청금액) (aplyAmt, 17). */
+  aplyAmt: number
+  /** 일금 한글 표기 — 화면 표시항목(slide74). ⚠️ 항목명 미정의 임시(aplyAmtHngl). */
+  aplyAmtHngl: string
+  /** 지출원인금액 (expndCsAmt, 17). */
+  expndCsAmt: number
+  /** 신청내역 목록 (dmt_aplyDsctnInfo). */
+  aplyDsctns: EpfcAplyDsctnItem[]
+  // ── 세금계산서 (dlt_txivList, slide78 1.6 — M05/M08 과 동일 구성) ──
+  /** 세금계산서 선택여부 (txivChcYn). */
+  txivChcYn: 'Y' | 'N'
+  /** 세금계산서번호 — ⚠️ M05 와 동일 사유 임시 키(txivNo). */
+  txivNo: string
+  /** 세금계산서 품목 목록. */
+  txBlls: TxBllItem[]
+}

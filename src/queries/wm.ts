@@ -16,6 +16,7 @@ export const wmKeys = {
   sbsdPrcmPymtClmDtl: (id: string) => ['wm', 'sbsdPrcmPymtClmDtl', id] as const,
   cstrnPymtClmDtl: (id: string) => ['wm', 'cstrnPymtClmDtl', id] as const,
   pxcndCstPymtClmDtl: (id: string) => ['wm', 'pxcndCstPymtClmDtl', id] as const,
+  epfcClclnClmDtl: (id: string) => ['wm', 'epfcClclnClmDtl', id] as const,
 }
 
 /** 대금청구통합목록(M01) — 키워드 세부 필터/더보기 페이징은 페이지 클라이언트 로직 유지(서버 전환 시 req 로 이행). */
@@ -112,6 +113,15 @@ export function usePxcndCstPymtClmDtl(id: string) {
   return useQuery({
     queryKey: wmKeys.pxcndCstPymtClmDtl(id),
     queryFn: () => wmService.getPxcndCstPymtClmDtl(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 사후정산청구상세(M13). */
+export function useEpfcClclnClmDtl(id: string) {
+  return useQuery({
+    queryKey: wmKeys.epfcClclnClmDtl(id),
+    queryFn: () => wmService.getEpfcClclnClmDtl(id),
     enabled: Boolean(id),
   })
 }

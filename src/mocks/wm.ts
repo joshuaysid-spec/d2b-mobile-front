@@ -6,6 +6,7 @@ import type {
   CstrnPymtClmDtl,
   DpsmnItrpyAplyDsctnItem,
   DpsmnItrpyApfrDtl,
+  EpfcClclnClmDtl,
   GiveSttsItem,
   PrpayAplyDsctnItem,
   PrpayApfrDtl,
@@ -183,6 +184,21 @@ const PYMT_CLM_APLY_LIST: PymtClmAplyItem[] = [
     prgrsStNm: '진행완료',
     taskSeCd: '공사',
     prcmSeNm: '기성대가',
+  },
+  {
+    id: '12315-36',
+    no: 7,
+    clmNo: '12315',
+    clmOdr: '36',
+    clmDocNm: '사후정산청구서',
+    clmAmt: 10000000,
+    cnfmSeNm: '확정',
+    txamt: 1000000,
+    wrtYmd: '2025-05-01',
+    clmYmd: '2025-05-20',
+    prgrsStNm: '진행완료',
+    taskSeCd: '물품',
+    prcmSeNm: '중앙',
   },
 ]
 
@@ -502,6 +518,67 @@ const PXCND_CST_PYMT_CLM_DTL: PxcndCstPymtClmDtl = {
   adocs: WM_ADOCS,
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M13 사후정산청구상세 — slide73~74 목업(배추김치 · 납기 2026-01-01~2026-12-31 ·
+// 일금 10,000,000원/일천만 원정 · 신청내역 구분 목록은 선금(T02)과 동형).
+// ────────────────────────────────────────────────────────────────────────────
+const EPFC_CLCLN_CLM_DTL: EpfcClclnClmDtl = {
+  taskSeCd: '물품',
+  ctrtMthdCd: '수의계약',
+  ctrtNo: '20250000001',
+  ctrtCycl: '01',
+  ctrtNm: '배추김치',
+  ctrtYmd: '2026-01-30',
+  orderInstNm: '제8385부대',
+  ctrtAmt: 10000000,
+  bzentyNm: 'A 업체',
+  wrtrNm: '홍길동',
+  wrtrJbttlNm: '대리',
+  wrtrEnmtno: '010-1234-5678',
+  bzentyAddr: '서울특별시 종로구 세종대로 1',
+  dudtPrdCn: '2026-01-01 ~ 2026-12-31',
+  rmrkCn: '-',
+  aplyCtrtCycl: '20250000001-01',
+  rcptnOgnzCd: '방위사업청 계약관리본부 재무관 귀하',
+  aplyYmd: '2026-01-30',
+  aplyAmt: 10000000,
+  aplyAmtHngl: '일천만 원정',
+  expndCsAmt: 10000000,
+  aplyDsctns: [
+    '재료비 - 수입 재료비',
+    '재료비 - 국내 재료비',
+    '재료비 - 간접 재료비',
+    '노무비 - 직접 노무비',
+    '노무비 - 간접 노무비',
+    '경비 - 직접 경비',
+    '경비 - 간접 경비',
+    '일반 관리비',
+    '기타',
+    '합계',
+  ].map((se, i) => ({
+    id: se,
+    aplySeCd: se,
+    trgtAmt: 100000000 + i * 1000000,
+    arusAplyAmt: 20000000,
+    usePrnmntAplyAmt: 30000000,
+    aplySumAmt: 50000000,
+    aplyAmtRt: 50,
+  })),
+  txivChcYn: 'Y',
+  txivNo: '1234-5678-9012',
+  txBlls: [
+    {
+      id: '2026-02-03-1',
+      bllPblcnYmd: '02-03',
+      itemNm: '-',
+      dlvgdsQty: 100,
+      ctrtUntprc: 100000,
+      splyEqvl: 10000000,
+      txamt: 1000000,
+    },
+  ],
+}
+
 export const MOCK_WM = {
   pymtClmIntgList: PYMT_CLM_INTG_LIST,
   pymtClmAplyList: PYMT_CLM_APLY_LIST,
@@ -514,4 +591,5 @@ export const MOCK_WM = {
   sbsdPrcmPymtClmDtl: SBSD_PRCM_PYMT_CLM_DTL,
   cstrnPymtClmDtl: CSTRN_PYMT_CLM_DTL,
   pxcndCstPymtClmDtl: PXCND_CST_PYMT_CLM_DTL,
+  epfcClclnClmDtl: EPFC_CLCLN_CLM_DTL,
 }

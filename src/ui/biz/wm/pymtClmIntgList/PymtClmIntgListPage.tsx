@@ -188,8 +188,11 @@ export function PymtClmIntgListPage() {
       navigate(`/wm/pymt-clm/${route}${item.id}`, { state: item })
       return
     }
-    // TODO(WM 그룹 5): 사후정산청구서(M13) 구현 후 배선.
-    console.log('[P13] 상세 이동(미구현)', item.clmDocNm, item.id)
+    if (item.clmDocNm === '사후정산청구서') {
+      navigate(`/wm/epfc-clcln/${item.id}`, { state: item })
+      return
+    }
+    console.log('[P13] 상세 이동 — 미확인 청구서 종류', item.clmDocNm, item.id)
   }
 
   // ── 키워드 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 삭제) ──

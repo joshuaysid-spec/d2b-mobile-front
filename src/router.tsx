@@ -224,6 +224,12 @@ const PxcndCstPymtClmDtlPage = lazy(() =>
     default: m.PxcndCstPymtClmDtlPage,
   })),
 )
+// 사후정산청구상세(MUI-WM-01-M13, /wm/epfc-clcln/:id) — biz/wm/epfcClclnClmDtl.
+const EpfcClclnClmDtlPage = lazy(() =>
+  import('@/ui/biz/wm/epfcClclnClmDtl/EpfcClclnClmDtlPage').then((m) => ({
+    default: m.EpfcClclnClmDtlPage,
+  })),
+)
 // 물품전자계약진행상세(MUI-CT-01-M03, /ct/:id) — biz/ct/cmdtyElctrCtrtPrgrsDtl.
 const CmdtyElctrCtrtPrgrsDtlPage = lazy(() =>
   import('@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyElctrCtrtPrgrsDtlPage').then((m) => ({
@@ -1036,6 +1042,11 @@ export const router = createBrowserRouter([
       {
         path: 'wm/pymt-clm/pxcnd/:id',
         element: <PxcndCstPymtClmDtlPage />,
+        handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
+      },
+      {
+        path: 'wm/epfc-clcln/:id',
+        element: <EpfcClclnClmDtlPage />,
         handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
       },
       {

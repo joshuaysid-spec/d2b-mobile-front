@@ -11,6 +11,7 @@ import type {
   CstrnPymtClmDtl,
   DpsmnItrpyAplyDsctnItem,
   DpsmnItrpyApfrDtl,
+  EpfcClclnClmDtl,
   GiveSttsItem,
   PxcndCstPymtClmDtl,
   SbsdPrcmPymtClmDtl,
@@ -45,6 +46,8 @@ const EP = {
   CSTRN_PYMT_CLM_DTL: (id: string) => `/v1/wms/construction-payment-claims/${id}`,
   /** 대금청구상세(기성대가) — MUI-WM-01-M08/T16~T19 (pxcndCstPymtClmDtl/PxcndCstPymtClmDtlPage) */
   PXCND_CST_PYMT_CLM_DTL: (id: string) => `/v1/wms/progress-payment-claims/${id}`,
+  /** 사후정산청구상세 — MUI-WM-01-M13/T20~T22 (epfcClclnClmDtl/EpfcClclnClmDtlPage) */
+  EPFC_CLCLN_CLM_DTL: (id: string) => `/v1/wms/post-settlement-claims/${id}`,
 }
 
 export const wmService = {
@@ -144,5 +147,13 @@ export const wmService = {
     return apiClient.post<PxcndCstPymtClmDtl, PxcndCstPymtClmDtl>(
       EP.PXCND_CST_PYMT_CLM_DTL(id),
     )
+  },
+
+  // ── 사후정산청구상세 (MUI-WM-01-M13) ──────────────────────────────────────
+
+  /** 상세(차수+계약내용+신청금액+신청내역+공급자+세금계산서) 조회. */
+  async getEpfcClclnClmDtl(id: string): Promise<EpfcClclnClmDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.epfcClclnClmDtl)
+    return apiClient.post<EpfcClclnClmDtl, EpfcClclnClmDtl>(EP.EPFC_CLCLN_CLM_DTL(id))
   },
 }
