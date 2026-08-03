@@ -1,4 +1,5 @@
-// 계약번호조회 (MUI-EX-02-P79, 이행 설계서 04. v0.83 slide84~86 / Figma 개인용-2607427 10020-159870·159679).
+// 계약번호조회 (MUI-EX-02-P79, 이행 설계서 04. v0.83 slide84~86 / Figma 개인용-2607427 10020-159870·159679·159883).
+// 159883(검색 후 스크롤 펼침)은 별개 화면이 아니라 시트 높이/스크롤 상태 변형 — BottomSheet 컨테이너가 처리.
 // 계약연도(필수)+계약번호로 계약정보 목록을 조회해 라디오카드로 선택 → footer '계약번호 선택' 시 계약번호 반환.
 // 검색필터의 '계약번호' selectionField(searchSheet:'ctrtNo')에서 호출 — 이행 상세조회 계열·계약 목록 공용.
 // 콘텐츠 전용 — BottomSheet 컨테이너/타이틀/footer([닫기/계약번호 선택])는 SearchFilter 셸이 슬롯으로 소유한다.
@@ -123,7 +124,7 @@ const OvsCtrtNoInq = forwardRef<SearchSheetHandle, OvsCtrtNoInqProps>(({ onSelec
       {/* 검색 결과 (dl_resultList) — 라디오카드, 선택 시 하이라이트(slide85) */}
       {results !== null && (
         <div className="flex flex-col gap-krds-5">
-          <p className="text-[17px] font-bold leading-normal text-krds-text-primary">
+          <p className="text-[17px] font-bold leading-normal text-krds-text-primary-active">
             총 {results.length}건
           </p>
           {results.length === 0 ? (
@@ -134,7 +135,7 @@ const OvsCtrtNoInq = forwardRef<SearchSheetHandle, OvsCtrtNoInqProps>(({ onSelec
             <>
               {/* 컬럼 라벨 (Figma top label group, 13px) */}
               <div className="flex gap-krds-8 px-4 text-[13px] leading-normal text-krds-text-muted">
-                <span className="w-[26px] shrink-0">번호</span>
+                <span className="w-[26px] shrink-0 text-center">번호</span>
                 <span className="min-w-px flex-1">계약번호/업체</span>
                 <span className="shrink-0">화폐구분/계약일</span>
               </div>
@@ -148,24 +149,24 @@ const OvsCtrtNoInq = forwardRef<SearchSheetHandle, OvsCtrtNoInqProps>(({ onSelec
                         type="button"
                         onClick={() => setPicked(r.ctrtNo)}
                         aria-pressed={selected}
-                        className={`flex w-full items-start gap-4 rounded-[12px] border bg-background p-4 text-left shadow-krds-card ${
+                        className={`flex w-full items-start gap-4 rounded-[12px] bg-background p-4 text-left shadow-krds-card ${
                           selected
-                            ? 'border-krds-action-primary-active bg-krds-bg-primary-faint'
-                            : 'border-krds-border-divider'
+                            ? 'border-2 border-krds-action-primary bg-krds-bg-primary-faint'
+                            : 'border border-krds-border-divider'
                         }`}
                       >
                         {/* 번호 열(26px) — 라디오 + 순번 */}
                         <span className="flex w-[26px] shrink-0 flex-col items-center gap-2.5">
                           <span
                             aria-hidden
-                            className={`mt-1 flex size-5 items-center justify-center rounded-full border-2 ${
+                            className={`mt-1 flex size-5 items-center justify-center rounded-full border ${
                               selected
-                                ? 'border-krds-action-primary-active'
+                                ? 'border-krds-action-primary'
                                 : 'border-krds-border-field'
                             }`}
                           >
                             {selected && (
-                              <span className="size-2.5 rounded-full bg-krds-action-primary-active" />
+                              <span className="size-3 rounded-full bg-krds-action-primary" />
                             )}
                           </span>
                           <span className="text-[15px] leading-normal text-krds-text-muted">
@@ -173,7 +174,7 @@ const OvsCtrtNoInq = forwardRef<SearchSheetHandle, OvsCtrtNoInqProps>(({ onSelec
                           </span>
                         </span>
                         {/* 좌: 계약번호/업체/조달담당자 */}
-                        <span className="flex min-w-px flex-1 flex-col">
+                        <span className="flex min-w-px flex-1 flex-col gap-1">
                           <span className="text-[17px] leading-normal text-krds-text-ink">
                             {r.ctrtNo}
                           </span>
