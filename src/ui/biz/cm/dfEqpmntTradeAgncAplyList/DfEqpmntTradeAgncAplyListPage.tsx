@@ -169,7 +169,10 @@ export function DfEqpmntTradeAgncAplyListPage() {
         </div>
       )}
 
-      {/* 맨 위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main). 하단 신청 바 위로 띄운다. */}
+      {/* 맨 위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main).
+          ⚠️ 앵커 예외: 표준은 `bottom-0`(FAB 가 BottomNav 유무를 컨텍스트로 보정)이지만, 이 화면은
+          아래 sticky 신청 바를 페이지가 직접 갖고 있어 그 높이(≈72px)만큼 더 띄운다. 신청 바가 없는
+          화면에 이 값을 복사하지 말 것. */}
       <FloatingActionButton
         className="fixed bottom-24 right-4 z-40"
         onTop={() => document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })}

@@ -95,8 +95,8 @@ export function BzentyGnrlInfoDtl_Fclt() {
         </AccordionSection>
       </Accordion>
 
-      {/* 시공능력평가액 안내 (설계서 slide124) */}
-      <div className="px-4 pt-4">
+      {/* 시공능력평가액 안내 (설계서 slide124) — 하단 여백도 좌우(16px)와 동일하게. */}
+      <div className="px-4 py-4">
         <Infobox title="안내사항" collapsible={false}>
           시공능력평가액은 해당협회에 등록된 금액과 동일하지 않을 수 있습니다.
         </Infobox>

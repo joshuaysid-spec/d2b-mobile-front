@@ -10,7 +10,7 @@
 // 바텀시트(M07 상세·M08 등록/수정)는 컨테이너(BottomSheet)를 페이지가 소유, 콘텐츠만 분리(TaskCldrDtl/TaskCldrReg).
 // 삭제(M09)는 AlertModal + 완료 토스트. 데이터=목업(설계서 항목명/형식), 동작=API 경계 스텁(console.log + '// 추후 …').
 import { useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
 import { Badge } from '@/ui/common/base/Badge'
@@ -114,11 +114,17 @@ function ScheduleCard({ item, onClick }: { item: TaskCldrItem; onClick: () => vo
 
 export function TaskCldrPage() {
   const navigate = useNavigate()
+  // 마이페이지(M01) 캘린더에서 날짜를 눌러 진입하면 그 날짜(schdlDt)가 선택된 상태로 연다.
+  //   Calendar 는 value 로 표시 월(cursor)을 잡으므로 다른 달 날짜여도 그 달이 열린다.
+  //   [더보기] 로 진입하면 state 없음 → 오늘.
+  const navState = useLocation().state as { schdlDt?: string } | null
 
   // 일정 목록(목업) — 등록/수정/삭제 시 로컬 반영(API 연동 시 서버 재조회로 교체).
   const [items, setItems] = useState<TaskCldrItem[]>(MOCK_TASK_CLDR)
-  // 선택 날짜 — 기본 오늘.
-  const [selected, setSelected] = useState<string>(() => dayjs().format('YYYY-MM-DD'))
+  // 선택 날짜 — 진입 시 전달된 날짜, 없으면 오늘.
+  const [selected, setSelected] = useState<string>(
+    () => navState?.schdlDt ?? dayjs().format('YYYY-MM-DD'),
+  )
 
   // 바텀시트/모달/토스트 상태.
   const [detailItem, setDetailItem] = useState<TaskCldrItem | null>(null) // M07 상세

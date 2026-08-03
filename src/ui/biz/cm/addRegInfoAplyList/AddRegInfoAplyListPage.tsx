@@ -258,7 +258,7 @@ export function AddRegInfoAplyListPage() {
 
       {/* 맨 위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main). */}
       <FloatingActionButton
-        className="fixed bottom-20 right-4 z-40"
+        className="fixed bottom-0 right-4 z-40"
         onTop={() => document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })}
       />
 

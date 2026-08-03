@@ -124,8 +124,9 @@ export function BzentyGnrlInfoDtlPage() {
         </div>
       </div>
 
-      {/* 탭 콘텐츠 — 짧은 탭도 헤더 접힘을 지탱할 스크롤 높이 확보(진동 방지). */}
-      <div className="min-h-[100dvh]">{renderTabContent(tab)}</div>
+      {/* 탭 콘텐츠 — 짧은 탭도 헤더 접힘을 지탱할 스크롤 높이 확보(진동 방지).
+          pb-4 = 좌우(16px)와 같은 하단 여백. 아코디언으로 끝나는 탭(업체일반)도 바닥에 붙지 않는다. */}
+      <div className="min-h-[100dvh] pb-4">{renderTabContent(tab)}</div>
 
       {/* 맨위로 FAB */}
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />

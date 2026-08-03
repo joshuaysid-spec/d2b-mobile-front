@@ -5,7 +5,6 @@
 //   헤더(뒤로/타이틀)는 전역 Header(AppLayout). 백엔드 미연동(폐쇄망) — service 스텁 없이 페이지 fallback 목업.
 import { useLocation } from 'react-router-dom'
 
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Badge } from '@/ui/common/base/Badge'
 import { AddRegInfoAplyDtl_Cmdty } from '@/ui/biz/cm/addRegInfoAplyDtl/AddRegInfoAplyDtl_Cmdty'
@@ -52,10 +51,8 @@ export function AddRegInfoAplyDtlPage() {
         />
       </div>
 
-      {/* 신청 내역 상세 — 추가정보구분에 따라 T05/T06 콘텐츠. */}
-      <div className="flex flex-col gap-4 px-4 pt-4">
-        <PageTitle>신청 내역 상세</PageTitle>
-      </div>
+      {/* 신청 내역 상세 — 추가정보구분에 따라 T05/T06 콘텐츠.
+          (제목은 헤더 타이틀('신청 내역 상세')과 중복이라 화면에 별도로 두지 않는다.) */}
       {isDmsAgt ? <AddRegInfoAplyDtl_DmsAgt /> : <AddRegInfoAplyDtl_Cmdty />}
     </div>
   )
