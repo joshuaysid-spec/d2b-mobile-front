@@ -23,7 +23,11 @@ const ServiceShortcutGrid = ({ items }: ServiceShortcutGridProps) => {
         주요 서비스 바로가기
       </h2>
 
-      <ul className="grid grid-cols-3 gap-x-2 gap-y-6 rounded-krds-xl bg-krds-bg-primary-faint px-5 py-[30px]">
+      {/* data-coach = 앱 이용안내(M16) 코치마크 하이라이트 측정 지점(파스텔 그리드 박스). */}
+      <ul
+        data-coach="home-services"
+        className="grid grid-cols-3 gap-x-2 gap-y-6 rounded-krds-xl bg-krds-bg-primary-faint px-5 py-[30px]"
+      >
         {items.map((item) => (
           <li key={item.id} className="flex justify-center">
             <button

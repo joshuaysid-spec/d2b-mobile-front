@@ -492,15 +492,17 @@ export function PrcmPlanIntgListPage() {
     // 조달계획관리 공통 셸(PageTitle + full-bleed 플러시 스택). 과거 OpPageLayout 래퍼를 인라인.
     <div className="flex w-full flex-col">
       {/* <PageTitle>조달계획관리</PageTitle> */}
-      {/* 업무도움 — full-bleed 블루 바 (셸이 무패딩이라 -mx 불필요) */}
-      <Infobox
-        className="rounded-none"
-        title="업무도움"
-        items={[
-          '비밀번호 자동완성기능(ex. 알패스 등)은 사용할 수 없습니다.',
-          '1577-1118 대표전화로 전화주세요. 서비스에 로그인할 수 있도록 도와드리겠습니다.',
-        ]}
-      />
+      {/* 업무도움 — full-bleed 블루 바 (셸이 무패딩이라 -mx 불필요). data-coach = 코치마크 측정 지점. */}
+      <div data-coach="op-help">
+        <Infobox
+          className="rounded-none"
+          title="업무도움"
+          items={[
+            '비밀번호 자동완성기능(ex. 알패스 등)은 사용할 수 없습니다.',
+            '1577-1118 대표전화로 전화주세요. 서비스에 로그인할 수 있도록 도와드리겠습니다.',
+          ]}
+        />
+      </div>
 
       {/* 업무도움 ↔ 탭 사이 1px 구분선 (Figma 9973-122615 m_section divider) */}
       <SectionDivider />
@@ -508,18 +510,21 @@ export function PrcmPlanIntgListPage() {
       {/* 검색유형 탭 — 업무도움 바로 아래(Figma 9973-122615, 2026-07-07 버튼 타입 전환).
           '유형' 레이블 + 라운드 칩 탭(조달계획/사전규격/연간조달계획). 컨테이너 p-16 + 하단 divider 는
           TabList(variant=button) 내장. 전환 시 목록 유형 + filter/빠른검색/page 리셋(handleTabChange). */}
-      {/* fitted — 칩 탭들이 레이블 오른쪽 남은 폭을 균등 분할해 100% 채움 */}
-      <TabList
-        variant="button"
-        label="유형"
-        value={tab}
-        onChange={handleTabChange}
-        items={SRCH_TYPE_TABS}
-        fitted
-      />
+      {/* fitted — 칩 탭들이 레이블 오른쪽 남은 폭을 균등 분할해 100% 채움. data-coach = 코치마크 측정 지점. */}
+      <div data-coach="op-tabs">
+        <TabList
+          variant="button"
+          label="유형"
+          value={tab}
+          onChange={handleTabChange}
+          items={SRCH_TYPE_TABS}
+          fitted
+        />
+      </div>
 
-      {/* 검색영역 — 탭 바로 아래(설계 개정으로 '검색조건' 타이틀 바 삭제, Figma 9973-122615) */}
-      <div className="px-4 py-4">
+      {/* 검색영역 — 탭 바로 아래(설계 개정으로 '검색조건' 타이틀 바 삭제, Figma 9973-122615).
+          data-coach = 코치마크 측정 지점(필터 버튼은 내부 aria-label 로 탐색). */}
+      <div data-coach="op-search" className="px-4 py-4">
         <SearchCondition
           targets={searchTargets}
           selectedTargets={targets}
@@ -539,14 +544,15 @@ export function PrcmPlanIntgListPage() {
         pageSize={pageSize}
         onPageSizeChange={handlePageSize}
       />
-      {/* 카드 (px-4 인셋) */}
-      <div className="flex flex-col gap-krds-7 px-4 pb-4 pt-krds-7">
+      {/* 카드 (px-4 인셋). data-coach = 코치마크 측정 지점(첫 카드). */}
+      <div data-coach="op-list" className="flex flex-col gap-krds-7 px-4 pb-4 pt-krds-7">
         <CardList items={cardItems} />
       </div>
 
-      {/* 더보기 (loaded/total — 스텁). 검색 중이면 걸러진 건수 기준. 모두 노출됐으면 숨김. */}
+      {/* 더보기 (loaded/total — 스텁). 검색 중이면 걸러진 건수 기준. 모두 노출됐으면 숨김.
+          data-coach = 코치마크 측정 지점. */}
       {loaded < total && (
-        <div className="px-4 pb-6">
+        <div data-coach="op-more" className="px-4 pb-6">
           <Button variant="secondary" className="w-full" onClick={handleLoadMore}>
             더보기 ({loaded}/{total}건)
           </Button>

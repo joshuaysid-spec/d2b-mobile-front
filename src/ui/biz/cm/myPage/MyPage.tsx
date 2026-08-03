@@ -98,16 +98,20 @@ function CountRow({
   count,
   variant = 'nav',
   onClick,
+  coach,
 }: {
   title: string
   count: number
   variant?: 'section' | 'nav'
   onClick?: () => void
+  /** 앱 이용안내(M16) 코치마크 하이라이트 측정 지점(data-coach). */
+  coach?: string
 }) {
   const Comp = onClick ? 'button' : 'div'
   return (
     <Comp
       type={onClick ? 'button' : undefined}
+      data-coach={coach}
       onClick={onClick}
       className={cn(
         ROW,
@@ -268,14 +272,16 @@ export function MyPage() {
         count={PRGRS_TOTAL}
         variant="section"
         onClick={goPrgrsHstry}
+        coach="mypage-prgrs"
       />
       <SubMenuGroup items={PRGRS_ITEMS} onSelect={goPrgrs} />
 
       {/* 3) 나의 업무이력현황  4) 관심입찰공고 */}
-      <CountRow title="나의 업무이력현황" count={5} onClick={goWorkHstry} />
-      <CountRow title="관심입찰공고" count={5} onClick={goStaredBid} />
+      <CountRow title="나의 업무이력현황" count={5} onClick={goWorkHstry} coach="mypage-hstry" />
+      <CountRow title="관심입찰공고" count={5} onClick={goStaredBid} coach="mypage-intrst" />
 
-      {/* 5~7) 업무 캘린더(섹션 헤더 bg-faint) + 캘린더 + 일정 카드 */}
+      {/* 5~7) 업무 캘린더(섹션 헤더 bg-faint) + 캘린더 + 일정 카드.
+          코치마크 측정 지점(data-coach)은 MyPage_Calendar 내부 월 캘린더에 부착(디자인 하이라이트 범위). */}
       <MyPageCalendar
         schedules={MOCK_SCHEDULES}
         onMore={goCalendarMore}

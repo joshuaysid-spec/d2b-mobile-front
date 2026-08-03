@@ -15,7 +15,8 @@
 //   className 으로 오버라이드한다(공통 Button API 불변, 2026-07-29 사용자 확정).
 //
 // 단계 이동: current 를 주면 controlled, 안 주면 내부 상태(defaultCurrent 시작)로 동작한다.
-//   이전/다음은 1~total 로 clamp — Figma 에 비활성 상태가 없어 버튼은 항상 활성으로 둔다.
+//   이전/다음은 1~total 로 clamp. 첫 단계(1)에선 [이전으로] 를 숨긴다 — 앱 이용안내 적용 프레임
+//   (10066:21420 등, 2026-07-31) 기준. 마지막 단계 라벨은 사용처가 nextLabel 로 교체(예: '마치기').
 import * as React from 'react'
 
 import { Button } from '@/ui/common/base/Button'
@@ -128,9 +129,12 @@ const CoachMark = React.forwardRef<HTMLDivElement, CoachMarkProps>(
               {closeLabel}
             </Button>
             <div className="flex items-center gap-krds-5">
-              <Button variant="secondary" onClick={() => move(step - 1, onPrev)}>
-                {prevLabel}
-              </Button>
+              {/* 첫 단계는 [이전으로] 미노출 (Figma 적용 프레임 10066:21420) */}
+              {step > 1 && (
+                <Button variant="secondary" onClick={() => move(step - 1, onPrev)}>
+                  {prevLabel}
+                </Button>
+              )}
               <Button variant="primary" onClick={() => move(step + 1, onNext)}>
                 {nextLabel}
               </Button>

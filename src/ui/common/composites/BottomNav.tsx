@@ -168,6 +168,8 @@ function BottomNav({
 }: BottomNavProps) {
   return (
     <nav
+      // data-coach = 앱 이용안내(M16) 코치마크 하이라이트 측정 지점.
+      data-coach="bottom-nav"
       className={cn(
         // 폭 정책(260729 확정): 셸(AppLayout)과 동일하게 캡 없이 뷰포트 전체 폭.
         'fixed inset-x-0 bottom-0 z-10 flex w-full',

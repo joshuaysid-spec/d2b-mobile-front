@@ -208,7 +208,9 @@ const MENU_ROUTES: Record<string, string> = {
   'guide-domestic': ROUTES.GUIDE_DOMESTIC, // 국내조달안내 > 국방조달참여절차(MUI-CM-05-M09)
   'guide-foreign': ROUTES.GUIDE_FOREIGN, // 국외조달안내 > 국외조달원 등록절차(MUI-CM-05-M12)
   'guide-related-site': ROUTES.GUIDE_SITE, // 관련사이트(MUI-CM-05-M15)
-  'guide-app': ROUTES.APP_GUIDE, // 앱 이용안내(MUI-MS-01-M06)
+  // 앱 이용안내(MUI-CM-05-M16) — 홈 위 인덱스 모달(AppSrvcExplnIdx, ?appGuide=index)로 진입.
+  // (구 M06 스플래시 /app-guide 직행에서 교체 — M06 은 홈 첫 진입 오버레이로 유지.)
+  'guide-app': `${ROUTES.HOME}?appGuide=index`,
 }
 
 function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: MenuPageProps) {
@@ -348,8 +350,8 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
           )}
         </div>
 
-        {/* ② 퀵 아이콘 4열 */}
-        <ul className="grid grid-cols-4">
+        {/* ② 퀵 아이콘 4열. data-coach = 앱 이용안내(M16) 코치마크 하이라이트 측정 지점. */}
+        <ul data-coach="menu-quick" className="grid grid-cols-4">
           {quickIcons.map((item) => (
             <li key={item.id} className="flex justify-center">
               <button
@@ -368,8 +370,9 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
           ))}
         </ul>
 
-        {/* ③ 검색 행 — InputBox + 검색 아이콘 버튼(Figma 9623:17683: secondary=흰 배경+파란 테두리+파란 아이콘 20). */}
-        <div className="flex items-center gap-krds-5">
+        {/* ③ 검색 행 — InputBox + 검색 아이콘 버튼(Figma 9623:17683: secondary=흰 배경+파란 테두리+파란 아이콘 20).
+            data-coach = 앱 이용안내(M16) 코치마크 하이라이트 측정 지점. */}
+        <div data-coach="menu-search" className="flex items-center gap-krds-5">
           <InputBox
             className="flex-1"
             value={keyword}
@@ -394,8 +397,8 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
       </div>
 
       {/* ④ 메뉴 트리 — 공통 MenuAccordion(1/2/3depth 재귀). 각 1depth 는 독립 카드(rounded-12 + shadow).
-          디폴트로 모든 그룹(1/2/3depth) 펼침. */}
-      <div className="px-krds-8 py-krds-8">
+          디폴트로 모든 그룹(1/2/3depth) 펼침. data-coach = 코치마크(첫 1depth 행) 측정 지점. */}
+      <div data-coach="menu-accordion" className="px-krds-8 py-krds-8">
         <MenuAccordion items={menuItems} defaultOpenIds={ALL_OPEN_IDS} />
       </div>
 
