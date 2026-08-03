@@ -202,7 +202,12 @@ const SearchFilter = ({
             layout="asymmetric"
             items={[
               { label: '닫기', variant: 'secondary', onClick: () => onOpenChange(false) },
-              { label: '검색', variant: 'primary', onClick: handleSearch, disabled: isDefaultDraft },
+              {
+                label: '검색',
+                variant: 'primary',
+                onClick: handleSearch,
+                disabled: isDefaultDraft,
+              },
             ]}
           />
         }

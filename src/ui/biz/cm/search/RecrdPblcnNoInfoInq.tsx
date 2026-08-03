@@ -103,7 +103,7 @@ const RecrdPblcnNoInfoInq = forwardRef<SearchSheetHandle, RecrdPblcnNoInfoInqPro
         {/* 검색 조건 (dmt_RecrdPblcnNo) */}
         <div className="flex flex-col gap-krds-7">
           <div className="flex items-center gap-krds-5">
-            <InputLabel required className="w-[92px] shrink-0">
+            <InputLabel required className="w-[110px] shrink-0">
               조서발행번호
             </InputLabel>
             <InputBox
@@ -127,9 +127,7 @@ const RecrdPblcnNoInfoInq = forwardRef<SearchSheetHandle, RecrdPblcnNoInfoInqPro
         {/* 검색 결과 (dlt_RecrdPblcnNoItemInfo) — 품목 정보 표 반복(slide34) */}
         {results !== null && (
           <div className="flex flex-col gap-krds-5">
-            <p className="text-krds-body-sm text-krds-text-primary-active">
-              총 {results.length}건
-            </p>
+            <p className="text-krds-body-sm text-krds-text-primary-active">총 {results.length}건</p>
             {results.length === 0 ? (
               <p className="py-6 text-center text-krds-body-md text-krds-text-subtle">
                 검색 결과가 없습니다.
