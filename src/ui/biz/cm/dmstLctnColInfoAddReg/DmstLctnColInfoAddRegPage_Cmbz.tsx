@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
-import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
@@ -269,7 +268,6 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-krds-4">
               <Button variant="primary" size="sm" onClick={() => setSheet('scrt')}>
-                <Icon name="Add" size={18} aria-hidden />
                 신규 추가
               </Button>
               <Button variant="secondary" size="sm" onClick={handleDeletePersons}>
@@ -298,7 +296,6 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-krds-4">
               <Button variant="primary" size="sm" onClick={() => setSheet('fsc')}>
-                <Icon name="Add" size={18} aria-hidden />
                 FSC 추가
               </Button>
               <Button variant="secondary" size="sm" onClick={handleDeleteFsc}>

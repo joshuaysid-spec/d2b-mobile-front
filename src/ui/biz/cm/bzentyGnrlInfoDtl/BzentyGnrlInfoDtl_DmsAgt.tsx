@@ -124,8 +124,8 @@ export function BzentyGnrlInfoDtl_DmsAgt() {
         </AccordionSection>
       </Accordion>
 
-      {/* 국내소재상사 제출서류 안내 (설계서 slide128) */}
-      <div className="px-4 pt-4">
+      {/* 국내소재상사 제출서류 안내 (설계서 slide128) — 하단 여백도 좌우(16px)와 동일하게. */}
+      <div className="px-4 py-4">
         <Infobox title="국내소재상사 제출서류" collapsible={false} items={['보안측정결과서 - 1부']} />
       </div>
     </>

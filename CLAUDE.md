@@ -364,6 +364,15 @@ import { Icon } from '@/ui/common/base/Icon'
 
 **import 방법:** `import type { Account } from '@/types/domain'`
 
+## 플로팅 버튼(FloatingActionButton) 위치 — 전 페이지 동일 앵커
+
+**모든 페이지에서 `className="fixed bottom-0 right-4 z-40"` 하나로 통일한다.** 하단 여백은 페이지가 아니라 **FAB 가 스스로 계산**한다(`src/ui/common/composites/FloatingActionButton.tsx`).
+
+- BottomNav **있음**(홈/알림/고객센터/마이페이지) → nav 높이(78px) + 10px + safe-area 만큼 자동으로 띄움.
+- BottomNav **없음**(3뎁스 상세·목록 등) → 10px + safe-area.
+- 판정은 `useBottomNavVisible()`(bottomNavContext)가 하므로 **페이지가 `bottom-20`/`bottom-24` 같은 값을 직접 넣으면 이중 오프셋**이 되어 버튼이 붕 뜬다. (2026-08-03 cm 13개 화면에서 실제로 발생 → 일괄 `bottom-0` 로 통일)
+- **예외는 페이지가 자체 sticky 하단 바를 가진 경우뿐** — 현재 `DfEqpmntTradeAgncAplyListPage`(sticky 신청 바) 1건만 `bottom-24`. 그 화면 파일에 사유 주석이 있다. 하단 바가 없는 화면에 이 값을 복사하지 말 것.
+
 ## 스크롤 시 축소되는 sticky 헤더 — 훅 재사용
 
 스크롤하면 상단 요약/헤더가 축소(collapse)되며 sticky 로 고정되는 동작은 **`src/hooks/useCollapsibleHeader.ts`** 에 있다. **페이지에서 직접 다시 구현하지 말고 이 훅에서 가져다 쓴다.**

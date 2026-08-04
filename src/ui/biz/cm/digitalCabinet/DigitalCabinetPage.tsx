@@ -76,7 +76,7 @@ export function DigitalCabinetPage() {
 
   // ── 동작 스텁 ──
   const handleOpenFolder = (folder: DigitalCabinetFldr) => {
-    // 폴더 클릭 → 폴더 내 파일 목록(M16). 폴더 정보를 state 로 전달(상단 폴더명 즉시표시).
+    // 폴더 클릭 → 폴더 내 파일 목록(M16). 폴더 정보를 state 로 전달(추후 파일목록 조회 키).
     navigate(`/mypage/digital-cabinet/${folder.fldrSn}`, { state: folder })
   }
   const handleOpenPerm = (folder: DigitalCabinetFldr) => {
@@ -158,7 +158,7 @@ export function DigitalCabinetPage() {
 
       {/* 맨 위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main). */}
       <FloatingActionButton
-        className="fixed bottom-20 right-4 z-40"
+        className="fixed bottom-0 right-4 z-40"
         onTop={() =>
           document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
         }
