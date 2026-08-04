@@ -72,6 +72,12 @@ export const ROUTES = {
   TS_LOI: '/ts/loi',
   /** 사전의향서상세 (MUI-TS-01-M02, `:id`). 이동: `/ts/loi/${id}`. */
   TS_LOI_DETAIL: '/ts/loi/:id',
+  /** 세금계산서계약목록 (MUI-TS-04-M01). */
+  TS_TXIV: '/ts/txiv',
+  /** 세금계산서상세 (MUI-TS-04-M03, `:id`). 이동: `/ts/txiv/dtl/${id}`. */
+  TS_TXIV_DETAIL: '/ts/txiv/dtl/:id',
+  /** 세금계산서진행현황 (MUI-TS-04-M04). */
+  TS_TXIV_PRGRS: '/ts/txiv/prgrs',
   /** 선금신청서상세 (MUI-WM-01-M02, `:id`). 이동: `/wm/prpay/${id}`. */
   WM_PRPAY_DETAIL: '/wm/prpay/:id',
   /** 착·중도금신청서상세 (MUI-WM-01-M03, `:id`). 이동: `/wm/dpsmn-itrpy/${id}`. */

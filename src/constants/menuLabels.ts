@@ -25,6 +25,7 @@ export const LINKED_MENU_LABELS = {
   [ROUTES.EX_ORDER_NTDC]: '발주 통보서 목록',
   [ROUTES.WM]: '대금 청구 통합 목록',
   [ROUTES.TS_LOI]: '사전의향서',
+  [ROUTES.TS_TXIV]: '세금계산서',
   [ROUTES.WM_RTN]: '대금 지불정보 (반납)',
   [ROUTES.WM_PRGRS]: '대금 청구 진행 현황',
   [ROUTES.SUPPORT_NOTICE]: '일반 공지사항',

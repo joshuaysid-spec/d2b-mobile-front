@@ -12,6 +12,12 @@ import type {
   BfhdLoiListResult,
   BfhdLoiOpnnRequest,
   BfhdLoiSpcfctItem,
+  TxivCtrtListRequest,
+  TxivCtrtListResult,
+  TxivDtl,
+  TxivItem,
+  TxivPrgrsPrstRequest,
+  TxivPrgrsPrstResult,
 } from '@/types/ts'
 
 const EP = {
@@ -23,6 +29,14 @@ const EP = {
   BFHD_LOI_SPCFCTS: (id: string) => `/v1/tss/letters-of-intent/${id}/item-specs`,
   /** 의견작성 임시저장/제출 — MUI-TS-01-P03 (bfhdLoiDtl/BfhdLoiWrt) */
   BFHD_LOI_OPNN: (id: string) => `/v1/tss/letters-of-intent/${id}/opinions`,
+  /** 세금계산서계약목록 — MUI-TS-04-M01 (txivList_CtrtList/TxivList_CtrtListPage) */
+  TXIV_CTRT_LIST: '/v1/tss/tax-invoice-contracts',
+  /** 세금계산서목록 — MUI-TS-04-P02 (txivList_CtrtList/TxivList) */
+  TXIV_LIST: (ctrtNo: string) => `/v1/tss/tax-invoice-contracts/${ctrtNo}/tax-invoices`,
+  /** 세금계산서상세 — MUI-TS-04-M03 (txivDtl/TxivDtlPage) */
+  TXIV_DTL: (id: string) => `/v1/tss/tax-invoices/${id}`,
+  /** 세금계산서진행현황 — MUI-TS-04-M04 (txivPrgrsPrst/TxivPrgrsPrstPage) */
+  TXIV_PRGRS_PRST_LIST: '/v1/tss/tax-invoice-progresses',
 }
 
 export const tsService = {
@@ -60,5 +74,46 @@ export const tsService = {
       return mockDelay(undefined)
     }
     return apiClient.post<void, void>(EP.BFHD_LOI_OPNN(req.bfhdLoiNo), req)
+  },
+
+  // ── 세금계산서계약목록 (MUI-TS-04-M01) ────────────────────────────────────
+
+  /** 계약목록 조회 — 계약연도 기본 현재 연도(slide24). */
+  async getTxivCtrtList(req: TxivCtrtListRequest = {}): Promise<TxivCtrtListResult> {
+    if (USE_MOCK) {
+      const list = MOCK_TS.txivCtrtList
+      return mockDelay({ list, total: list.length })
+    }
+    return apiClient.post<TxivCtrtListResult, TxivCtrtListResult>(EP.TXIV_CTRT_LIST, req)
+  },
+
+  // ── 세금계산서목록 (MUI-TS-04-P02) ────────────────────────────────────────
+
+  /** 선택 계약의 세금계산서 목록 조회(카드 클릭 → 바텀시트, slide22). */
+  async getTxivList(ctrtNo: string): Promise<TxivItem[]> {
+    if (USE_MOCK) return mockDelay(MOCK_TS.txivList)
+    return apiClient.post<TxivItem[], TxivItem[]>(EP.TXIV_LIST(ctrtNo))
+  },
+
+  // ── 세금계산서상세 (MUI-TS-04-M03) ────────────────────────────────────────
+
+  /** 상세(계약정보+공급자/공급받는자+계약서 일반정보) 조회. */
+  async getTxivDtl(id: string): Promise<TxivDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_TS.txivDtl)
+    return apiClient.post<TxivDtl, TxivDtl>(EP.TXIV_DTL(id))
+  },
+
+  // ── 세금계산서진행현황 (MUI-TS-04-M04) ────────────────────────────────────
+
+  /** 진행현황 목록 조회. */
+  async getTxivPrgrsPrstList(req: TxivPrgrsPrstRequest = {}): Promise<TxivPrgrsPrstResult> {
+    if (USE_MOCK) {
+      const list = MOCK_TS.txivPrgrsPrstList
+      return mockDelay({ list, total: list.length })
+    }
+    return apiClient.post<TxivPrgrsPrstResult, TxivPrgrsPrstResult>(
+      EP.TXIV_PRGRS_PRST_LIST,
+      req,
+    )
   },
 }

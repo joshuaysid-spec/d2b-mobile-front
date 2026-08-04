@@ -290,6 +290,24 @@ const BfhdLoiDtlPage = lazy(() =>
     default: m.BfhdLoiDtlPage,
   })),
 )
+// 세금계산서계약목록(MUI-TS-04-M01, /ts/txiv) — biz/ts/txivList_CtrtList.
+const TxivList_CtrtListPage = lazy(() =>
+  import('@/ui/biz/ts/txivList_CtrtList/TxivList_CtrtListPage').then((m) => ({
+    default: m.TxivList_CtrtListPage,
+  })),
+)
+// 세금계산서상세(MUI-TS-04-M03, /ts/txiv/dtl/:id) — biz/ts/txivDtl.
+const TxivDtlPage = lazy(() =>
+  import('@/ui/biz/ts/txivDtl/TxivDtlPage').then((m) => ({
+    default: m.TxivDtlPage,
+  })),
+)
+// 세금계산서진행현황(MUI-TS-04-M04, /ts/txiv/prgrs) — biz/ts/txivPrgrsPrst.
+const TxivPrgrsPrstPage = lazy(() =>
+  import('@/ui/biz/ts/txivPrgrsPrst/TxivPrgrsPrstPage').then((m) => ({
+    default: m.TxivPrgrsPrstPage,
+  })),
+)
 // 대금지불정보(반납)(MUI-WM-01-M10, /wm/rtn) — biz/wm/rtnPymtDfryInfo.
 const RtnPymtDfryInfoPage = lazy(() =>
   import('@/ui/biz/wm/rtnPymtDfryInfo/RtnPymtDfryInfoPage').then((m) => ({
@@ -1190,6 +1208,29 @@ export const router = createBrowserRouter([
         path: 'ts/loi/:id',
         element: <BfhdLoiDtlPage />,
         handle: { header: { variant: 'sub', title: '사전의향서 상세' } },
+      },
+      {
+        path: 'ts/txiv',
+        element: <TxivList_CtrtListPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.TS_TXIV] },
+          scrollReset: true,
+          showBottomNav: true,
+        },
+      },
+      {
+        path: 'ts/txiv/dtl/:id',
+        element: <TxivDtlPage />,
+        handle: { header: { variant: 'sub', title: '세금계산서 상세' } },
+      },
+      {
+        path: 'ts/txiv/prgrs',
+        element: <TxivPrgrsPrstPage />,
+        handle: {
+          header: { variant: 'sub', title: '세금계산서 진행현황' },
+          scrollReset: true,
+          showBottomNav: true,
+        },
       },
       {
         path: 'wm/rtn',

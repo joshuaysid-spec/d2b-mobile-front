@@ -3,7 +3,12 @@
 // 제출 성공 시 영향받는 조회 캐시 무효화는 mutation onSuccess 에서 중앙 처리(전역 staleTime 대응).
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { tsService } from '@/services/ts'
-import type { BfhdLoiListRequest, BfhdLoiOpnnRequest } from '@/types/ts'
+import type {
+  BfhdLoiListRequest,
+  BfhdLoiOpnnRequest,
+  TxivCtrtListRequest,
+  TxivPrgrsPrstRequest,
+} from '@/types/ts'
 
 export const tsKeys = {
   bfhdLoiList: (req: BfhdLoiListRequest) => ['ts', 'bfhdLoiList', req] as const,
@@ -11,6 +16,10 @@ export const tsKeys = {
   bfhdLoiListAll: ['ts', 'bfhdLoiList'] as const,
   bfhdLoiDtl: (id: string) => ['ts', 'bfhdLoiDtl', id] as const,
   bfhdLoiSpcfcts: (id: string) => ['ts', 'bfhdLoiSpcfcts', id] as const,
+  txivCtrtList: (req: TxivCtrtListRequest) => ['ts', 'txivCtrtList', req] as const,
+  txivList: (ctrtNo: string) => ['ts', 'txivList', ctrtNo] as const,
+  txivDtl: (id: string) => ['ts', 'txivDtl', id] as const,
+  txivPrgrsPrstList: (req: TxivPrgrsPrstRequest) => ['ts', 'txivPrgrsPrstList', req] as const,
 }
 
 /** 사전의향서목록(M01). */
@@ -36,6 +45,40 @@ export function useBfhdLoiSpcfcts(id: string) {
     queryKey: tsKeys.bfhdLoiSpcfcts(id),
     queryFn: () => tsService.getBfhdLoiSpcfcts(id),
     enabled: Boolean(id),
+  })
+}
+
+/** 세금계산서계약목록(TS-04 M01). */
+export function useTxivCtrtList(req: TxivCtrtListRequest = {}) {
+  return useQuery({
+    queryKey: tsKeys.txivCtrtList(req),
+    queryFn: () => tsService.getTxivCtrtList(req),
+  })
+}
+
+/** 세금계산서목록(TS-04 P02) — 바텀시트 열릴 때만 조회. */
+export function useTxivList(ctrtNo: string, enabled: boolean) {
+  return useQuery({
+    queryKey: tsKeys.txivList(ctrtNo),
+    queryFn: () => tsService.getTxivList(ctrtNo),
+    enabled: Boolean(ctrtNo) && enabled,
+  })
+}
+
+/** 세금계산서상세(TS-04 M03). */
+export function useTxivDtl(id: string) {
+  return useQuery({
+    queryKey: tsKeys.txivDtl(id),
+    queryFn: () => tsService.getTxivDtl(id),
+    enabled: Boolean(id),
+  })
+}
+
+/** 세금계산서진행현황(TS-04 M04). */
+export function useTxivPrgrsPrstList(req: TxivPrgrsPrstRequest = {}) {
+  return useQuery({
+    queryKey: tsKeys.txivPrgrsPrstList(req),
+    queryFn: () => tsService.getTxivPrgrsPrstList(req),
   })
 }
 

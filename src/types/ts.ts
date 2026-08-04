@@ -141,3 +141,193 @@ export interface BfhdLoiOpnnRequest {
   /** 임시저장/제출 구분. */
   mode: 'save' | 'submit'
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-TS-04-M01 세금계산서계약목록 (slide22, 24~25) — txivList_CtrtList/TxivList_CtrtListPage
+//   검색필터: MUI-TS-04-P05 (계약연도·계약번호). 카드 클릭 → P02 세금계산서목록 바텀시트.
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 계약목록 검색조건 (dml_SrchCtrtList, slide25 1.1) — 계약년도 like 'yyyy%'. */
+export interface TxivCtrtListRequest {
+  /** 계약년도 (ctrtYmd, like 'yyyy%') — 기본 현재 연도. */
+  ctrtYmd?: string
+  /** 계약번호 (ctrtNo, 11). */
+  ctrtNo?: string
+}
+
+/** 계약목록 1건 (dlt_CtrtList, slide25 1.2). */
+export interface TxivCtrtItem {
+  /** 목록 key — 계약번호(ctrtNo) 사용. */
+  id: string
+  /** 계약번호 (ctrtNo, 11). */
+  ctrtNo: string
+  /** 계약일자 (ctrtYmd, 8). */
+  ctrtYmd: string
+  /** 계약종류 (bidxMtnm, 상위코드 BDTC alias — 표시값 개발 시 확인 주기). */
+  bidxMtnm: string
+  /** 계약건명 (rpstItnm — 물품/용역/공사 테이블 alias). */
+  rpstItnm: string
+  /** 업체코드 (bzentyCd, 5). */
+  bzentyCd: string
+  /** 업체명 (bzentyNm, 100). */
+  bzentyNm: string
+  /** 계약담당자명 (userNm, 100). */
+  userNm: string
+}
+
+export interface TxivCtrtListResult {
+  list: TxivCtrtItem[]
+  total: number
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-TS-04-P02 세금계산서목록 (slide23, 26) — txivList_CtrtList/TxivList (바텀시트 콘텐츠)
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 세금계산서목록 1건 (dlt_TxivList, slide26 1.3). */
+export interface TxivItem {
+  /** 목록 key/상세 라우팅용 고유 식별자 — 계산서발행번호(pblcnNo) 사용. */
+  id: string
+  /** 구분 (reqDivsNm) — 일반/수정 (reqDivs 'R'·'U':일반 / 'UR':수정 alias). */
+  reqDivsNm: string
+  /** 진행상태 (txivPrgrsStcd) — A작성/C폐기/F서명실패/S전자서명/Y승인/R반려/T국세청SEND. 표시명. */
+  txivPrgrsStcd: string
+  /** 수정사유 (txivMdfcnRncd) — 01 착오정정/02 공급가액 변동/03 환입/04 계약해제. 없으면 미노출. */
+  txivMdfcnRncd?: string
+  /** 계산서발행번호 (pblcnNo, 15). */
+  pblcnNo: string
+  /** 계약번호 (ctrtNo, 11). */
+  ctrtNo: string
+  /** 발행일자 (bllPblcnYmd, 8). */
+  bllPblcnYmd: string
+  /** 계약건명 (rpstItnm). */
+  rpstItnm: string
+  /** 계약금액 (contAmnt, 17,2). */
+  contAmnt: number
+  /** 공급가액 (splyEqvl, 17,2). */
+  splyEqvl: number
+  /** 계약담당자 — 카드 행 표시항목(slide23). ⚠️ dlt_TxivList 미정의 — 계약목록 항목명(userNm) 재사용. */
+  userNm: string
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-TS-04-M03 세금계산서상세 (slide28~30) — txivDtl/TxivDtlPage
+//   세금계산서작성 데이터 영역(dmt_TxivWrtInfo) — 조회/작성 동일 화면(모바일은 조회 전용).
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 세금계산서상세 (dmt_TxivWrtInfo, slide29~30 1.1). */
+export interface TxivDtl {
+  /**
+   * 계약번호 (ctrtNo, 11) — ⚠️ 항목명(한글)은 조달구분(sOption)에 따라
+   * 계약번호(부대/중앙)·재무관증빙번호(FMS)·청구번호(상업조달)로 변경(slide29) — 라벨 분기는 상세설계 확정 시.
+   */
+  ctrtNo: string
+  /** 발행번호 (pblcnNo, 15). */
+  pblcnNo: string
+  /** 책번호 (bookNo, 3). */
+  bookNo: string
+  /** 일련번호 (regSn, 10). */
+  regSn: string
+  // ── 공급자 정보 ──
+  /** 사업자번호(공급자) (splrBrno, 10). */
+  splrBrno: string
+  /** 대표명(공급자) (splrRprsvNm, 100). */
+  splrRprsvNm: string
+  /** 상호(공급자) (splrBzentyNm, 100). */
+  splrBzentyNm: string
+  /** 업태(공급자) (splrBzstatCd, 상위코드 MBTC) — 표시명. */
+  splrBzstatCd: string
+  /** 주소(공급자) (splrAddr, 150). */
+  splrAddr: string
+  /** 업종(공급자) (splrTpbizNm, 100). */
+  splrTpbizNm: string
+  /** 청구인성명(공급자) (splrPicNm, 100). */
+  splrPicNm: string
+  /** 연락처(공급자) (splrEntlno, 88, 암호화). */
+  splrEntlno: string
+  /** 부서명(공급자) (splrTkcgDeptNm, 200). */
+  splrTkcgDeptNm: string
+  /** E-Mail(공급자) (splrEmlAddr, 50). */
+  splrEmlAddr: string
+  // ── 공급받는자 정보 ──
+  /** 사업자번호(공급받는자) (splrcpBrno, 10). */
+  splrcpBrno: string
+  /** 대표명(공급받는자) (splrcpRprsvNm, 100). */
+  splrcpRprsvNm: string
+  /** 상호(공급받는자) (splrcpBzentyNm, 100). */
+  splrcpBzentyNm: string
+  /** 업태(공급받는자) (splrcpBzstatCd, 상위코드 MBTC) — 표시명. */
+  splrcpBzstatCd: string
+  /** 주소(공급받는자) (splrcpAddr, 150). */
+  splrcpAddr: string
+  /** 업종(공급받는자) (splrcpTpbizNm, 100). */
+  splrcpTpbizNm: string
+  // ── 계약서 일반정보 ──
+  /** 세액구분 (vatSecd, 상위코드 VATA) — 과세/면세/영세 표시명. */
+  vatSecd: string
+  /** 신고구분 (cfmtnYn, 1:확정 2:예정) — 표시명. */
+  cfmtnYn: string
+  /** 계산서일자 (splyYmd, 8). */
+  splyYmd: string
+  /** 품목(계약건명) (itemNm, 200). */
+  itemNm: string
+  /** 수량 (dlvgdsQty, 15,2). */
+  dlvgdsQty: number
+  /** 단가 (ctrtUntprc, 17,2). */
+  ctrtUntprc: number
+  /** 공급가액 (splyEqvl, 17,2). */
+  splyEqvl: number
+  /** 세액 (vatAmt, 17,2). */
+  vatAmt: number
+  /** 비고 (rmrkCn, 4000). */
+  rmrkCn: string
+  // ── 요약(SummaryInfo)·뱃지 표시항목 — P02 목록 항목명 재사용(slide28 요약 정보) ──
+  reqDivsNm: string
+  txivPrgrsStcd: string
+  txivMdfcnRncd?: string
+  rpstItnm: string
+  contAmnt: number
+  bllPblcnYmd: string
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-TS-04-M04 세금계산서진행현황 (slide31~33) — txivPrgrsPrst/TxivPrgrsPrstPage
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 진행현황 검색조건 (dmt_SrchTxivPrgrsPrst, slide33 1.1). */
+export interface TxivPrgrsPrstRequest {
+  /** 발행일자 시작일 (bllPblcnYmd). */
+  bllPblcnYmdFr?: string
+  /** 발행일자 종료일 (bllPblcnYmd). */
+  bllPblcnYmdTo?: string
+  /** 계약번호 (ctrtNo, 11). */
+  ctrtNo?: string
+  /** 진행상태 (txivPrgrsStcd). */
+  txivPrgrsStcd?: string
+}
+
+/** 진행현황 1건 (dlt_TxivPrgrsPrst, slide33 1.2) — 세금계산서목록 + 제출일시/국세청결과. */
+export interface TxivPrgrsPrstItem {
+  /** 목록 key/상세 라우팅용 고유 식별자 — 계산서발행번호(pblcnNo) 사용. */
+  id: string
+  reqDivsNm: string
+  txivPrgrsStcd: string
+  txivMdfcnRncd?: string
+  pblcnNo: string
+  ctrtNo: string
+  bllPblcnYmd: string
+  rpstItnm: string
+  contAmnt: number
+  splyEqvl: number
+  /** 비고 (rmrkCn, 4000). */
+  rmrkCn: string
+  /** 제출일시 (splrWrtDt) — 공급자 서명일시. */
+  splrWrtDt: string
+  /** 국세청결과 (elsgnRsltCd, 10) — 없으면 '-'. */
+  elsgnRsltCd: string
+}
+
+export interface TxivPrgrsPrstResult {
+  list: TxivPrgrsPrstItem[]
+  total: number
+}
