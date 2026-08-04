@@ -91,7 +91,7 @@ const MENU_TREE: MenuNode[] = [
     id: 'ts',
     label: '업무지원',
     children: [
-      { id: 'ts-intent', label: '사전의향서' },
+      { id: 'ts-intent', label: LINKED_MENU_LABELS[ROUTES.TS_LOI] },
       { id: 'ts-tax-invoice', label: '세금계산서' },
     ],
   },
@@ -194,6 +194,7 @@ const MENU_ROUTES: Record<string, string> = {
   'wm-claim-list': ROUTES.WM, // 대금청구통합목록(MUI-WM-01-M01)
   'wm-payment-return': ROUTES.WM_RTN, // 대금지불정보(반납)(MUI-WM-01-M10)
   'wm-claim-progress': ROUTES.WM_PRGRS, // 대금청구진행현황(MUI-WM-01-M11)
+  'ts-intent': ROUTES.TS_LOI, // 사전의향서목록(MUI-TS-01-M01)
   'support-notice-general': ROUTES.SUPPORT_NOTICE, // 일반공지사항(MUI-CM-04-M01)
   'support-notice-dapa': ROUTES.SUPPORT_NOTICE_DAPA, // 방위사업청공지사항(M21)
   'support-notice-unit': ROUTES.SUPPORT_NOTICE_DMDFRC, // 수요부대별공지사항(M23)

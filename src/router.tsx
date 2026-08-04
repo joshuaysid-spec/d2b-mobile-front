@@ -278,6 +278,18 @@ const OvsOrderNtdcDtlPage = lazy(() =>
     default: m.OvsOrderNtdcDtlPage,
   })),
 )
+// 사전의향서목록(MUI-TS-01-M01, /ts/loi) — biz/ts/bfhdLoiList.
+const BfhdLoiListPage = lazy(() =>
+  import('@/ui/biz/ts/bfhdLoiList/BfhdLoiListPage').then((m) => ({
+    default: m.BfhdLoiListPage,
+  })),
+)
+// 사전의향서상세(MUI-TS-01-M02, /ts/loi/:id) — biz/ts/bfhdLoiDtl.
+const BfhdLoiDtlPage = lazy(() =>
+  import('@/ui/biz/ts/bfhdLoiDtl/BfhdLoiDtlPage').then((m) => ({
+    default: m.BfhdLoiDtlPage,
+  })),
+)
 // 대금지불정보(반납)(MUI-WM-01-M10, /wm/rtn) — biz/wm/rtnPymtDfryInfo.
 const RtnPymtDfryInfoPage = lazy(() =>
   import('@/ui/biz/wm/rtnPymtDfryInfo/RtnPymtDfryInfoPage').then((m) => ({
@@ -1164,6 +1176,20 @@ export const router = createBrowserRouter([
         path: 'wm/epfc-clcln/:id',
         element: <EpfcClclnClmDtlPage />,
         handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
+      },
+      {
+        path: 'ts/loi',
+        element: <BfhdLoiListPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.TS_LOI] },
+          scrollReset: true,
+          showBottomNav: true,
+        },
+      },
+      {
+        path: 'ts/loi/:id',
+        element: <BfhdLoiDtlPage />,
+        handle: { header: { variant: 'sub', title: '사전의향서 상세' } },
       },
       {
         path: 'wm/rtn',

@@ -68,6 +68,10 @@ export const ROUTES = {
   EX_ORDER_NTDC_DETAIL: '/ex/order-ntdc/:id',
   /** 대금청구통합목록 (MUI-WM-01-M01). */
   WM: '/wm',
+  /** 사전의향서목록 (MUI-TS-01-M01). */
+  TS_LOI: '/ts/loi',
+  /** 사전의향서상세 (MUI-TS-01-M02, `:id`). 이동: `/ts/loi/${id}`. */
+  TS_LOI_DETAIL: '/ts/loi/:id',
   /** 선금신청서상세 (MUI-WM-01-M02, `:id`). 이동: `/wm/prpay/${id}`. */
   WM_PRPAY_DETAIL: '/wm/prpay/:id',
   /** 착·중도금신청서상세 (MUI-WM-01-M03, `:id`). 이동: `/wm/dpsmn-itrpy/${id}`. */
