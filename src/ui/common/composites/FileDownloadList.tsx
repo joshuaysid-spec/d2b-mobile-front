@@ -2,6 +2,8 @@
 // 파일 행(파일명 + 용량 박스 + 다운로드 아이콘 버튼) N개 + 구분선 + '일괄 다운로드' 버튼.
 // 업로드 변형: 항목에 onRemove 를 주면 다운로드 버튼 옆에 X(삭제) 아이콘 버튼이 추가된다
 //   (onDownload 없이 onRemove 만 주면 삭제 버튼만 — 업로드 목록 용도).
+//   업로드 진행 표시: status('waiting'|'uploading'|'error')로 행 우측에 상태 라벨,
+//   실패 행은 onRetry 로 재업로드 아이콘 버튼 노출 — 순차(1건씩) 업로드 화면 공통.
 //   하단 버튼은 onDownloadAll(다운로드 변형) 또는 onAddFile(업로드 변형) 로 — 구분선 + 풀폭 버튼.
 // 데이터 무소유 — 사용처가 files / onDownloadAll / onAddFile 주입.
 import * as React from 'react'
@@ -22,7 +24,13 @@ export interface FileDownloadItem {
   onDownload?: () => void
   /** 개별 삭제(X) 클릭 — 주어지면 다운로드 버튼 옆에 X 아이콘 버튼 노출(업로드 목록 용도). */
   onRemove?: () => void
+  /** 업로드 진행 상태 — 지정 시 행 우측에 상태 라벨 표시(순차 업로드 목록 용도). */
+  status?: 'waiting' | 'uploading' | 'error'
+  /** 재업로드 클릭 — 실패(status='error') 행에서 재시도 아이콘 버튼 노출. */
+  onRetry?: () => void
 }
+
+const STATUS_LABEL = { waiting: '대기', uploading: '업로드 중…', error: '실패' } as const
 
 export interface FileDownloadListProps extends React.HTMLAttributes<HTMLDivElement> {
   files: FileDownloadItem[]
@@ -52,6 +60,8 @@ function FileRow({
   size,
   onDownload,
   onRemove,
+  status,
+  onRetry,
   iconSize = 23,
 }: FileDownloadItem & { iconSize?: number }) {
   return (
@@ -64,7 +74,29 @@ function FileRow({
             [{size}]
           </span>
         )}
+        {status && (
+          <span
+            role="status"
+            className={cn(
+              'ml-auto shrink-0 text-[15px] leading-normal',
+              status === 'error' ? 'text-krds-feedback-danger' : 'text-krds-text-muted',
+            )}
+          >
+            {STATUS_LABEL[status]}
+          </span>
+        )}
       </div>
+      {/* 재업로드 아이콘 버튼 — 실패 행만 */}
+      {status === 'error' && onRetry && (
+        <button
+          type="button"
+          aria-label={`${name} 재업로드`}
+          onClick={onRetry}
+          className={ROW_ICON_BUTTON}
+        >
+          <Icon name="Refresh" size={iconSize} aria-hidden />
+        </button>
+      )}
       {/* 다운로드 아이콘 버튼 */}
       {onDownload && (
         <button

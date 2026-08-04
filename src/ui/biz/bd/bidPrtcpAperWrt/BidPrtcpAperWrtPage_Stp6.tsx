@@ -3,6 +3,8 @@
 // 안내사항 Infobox + SectionTitle(총 N건) + FileDownloadList(업로드 변형, onAddFile/onRemove).
 //   onAddFile → 이 탭이 소유한 BottomSheet(파일첨부 방식 선택) + 콘텐츠 CabinetLink(P13).
 //   '직접 업로드' → 숨은 <input type=file multiple> 트리거 → fileService.upload → GUID 상태 보관.
+//   다건 선택 시에도 요청은 파일당 1건씩 순차 진행(모바일 망 품질 협의사항) — 대기/업로드중/실패
+//   건별 상태를 같은 FileDownloadList 행에 표시하고, 실패 건만 재업로드.
 // Design Ref: file-upload.design.md §2(Option C) — 업로드/검증은 fileService.
 //   ⚠️ files 상태는 호스트(BidPrtcpAperWrtPage)가 소유(제출 시 fileGuids 필요) → 이 탭은 controlled.
 import { useRef, useState, type ChangeEvent, type Dispatch, type SetStateAction } from 'react'
@@ -36,12 +38,40 @@ interface Props {
   onFilesChange: Dispatch<SetStateAction<UploadedFile[]>>
 }
 
+/** 업로드 진행 중(미완료) 파일 1건 — 완료되면 UploadedFile 로 승격되어 호스트 files 로 이동. */
+interface PendingFile {
+  id: string
+  file: File
+  status: 'waiting' | 'uploading' | 'error'
+}
+
 export function BidPrtcpAperWrtPage_Stp6({ detail, files, onFilesChange }: Props) {
   const [addOpen, setAddOpen] = useState(false) // 파일첨부 방식 선택 바텀시트(P13)
-  const [uploading, setUploading] = useState(false)
+  const [pending, setPending] = useState<PendingFile[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
+  // 순차 업로드 큐 — 프라미스 체인으로 항상 1건씩만 전송(추가 선택·재시도도 뒤에 이어붙음).
+  const queueRef = useRef(Promise.resolve())
   const uploadFile = useUploadFile()
   const removeFile = useRemoveFile()
+
+  const setStatus = (id: string, status: PendingFile['status']) =>
+    setPending((prev) => prev.map((p) => (p.id === id ? { ...p, status } : p)))
+
+  // 1건 업로드 — 성공 시 pending 에서 제거하고 호스트 files 로 승격, 실패 시 '실패' 표시(재시도 대기).
+  const uploadOne = async ({ id, file }: PendingFile) => {
+    setStatus(id, 'uploading')
+    try {
+      const uploaded = await uploadFile.mutateAsync(file)
+      setPending((prev) => prev.filter((p) => p.id !== id))
+      onFilesChange((prev) => [...prev, uploaded])
+    } catch {
+      setStatus(id, 'error')
+    }
+  }
+
+  const enqueue = (item: PendingFile) => {
+    queueRef.current = queueRef.current.then(() => uploadOne(item))
+  }
 
   // 방식 선택 — '직접 업로드'면 시트 닫고 파일 선택기 열기(사용자 제스처 내 호출).
   const handleSelectMethod = (kind: CabinetLinkKind) => {
@@ -54,8 +84,8 @@ export function BidPrtcpAperWrtPage_Stp6({ detail, files, onFilesChange }: Props
     }
   }
 
-  // 파일 선택 완료 → 건당 10MB 검증(초과분 제외) → 업로드 → 목록 추가.
-  const handleFilesPicked = async (e: ChangeEvent<HTMLInputElement>) => {
+  // 파일 선택 완료 → 건당 10MB 검증(초과분 제외) → 순차 업로드 큐에 추가.
+  const handleFilesPicked = (e: ChangeEvent<HTMLInputElement>) => {
     const picked = Array.from(e.target.files ?? [])
     e.target.value = '' // 같은 파일 재선택 허용
     if (picked.length === 0) return
@@ -68,16 +98,19 @@ export function BidPrtcpAperWrtPage_Stp6({ detail, files, onFilesChange }: Props
     }
     if (valid.length === 0) return
 
-    setUploading(true)
-    try {
-      // 추후 API: 업로드 훅이 실제 multipart 업로드 → 서버 GUID 반환
-      const uploaded = await Promise.all(valid.map((f) => uploadFile.mutateAsync(f)))
-      onFilesChange((prev) => [...prev, ...uploaded])
-    } catch {
-      alert('파일 업로드에 실패했습니다. 다시 시도해 주세요.')
-    } finally {
-      setUploading(false)
-    }
+    const items: PendingFile[] = valid.map((file) => ({
+      id: crypto.randomUUID(),
+      file,
+      status: 'waiting',
+    }))
+    setPending((prev) => [...prev, ...items])
+    items.forEach(enqueue)
+  }
+
+  // 실패 건 재업로드 — 큐 뒤에 이어붙여 순차 유지.
+  const handleRetry = (item: PendingFile) => {
+    setStatus(item.id, 'waiting')
+    enqueue(item)
   }
 
   // 삭제(X) → 삭제 훅 호출 + 목록 제거.
@@ -103,17 +136,29 @@ export function BidPrtcpAperWrtPage_Stp6({ detail, files, onFilesChange }: Props
       </SectionTitle>
       <div className="px-4 py-4">
         <FileDownloadList
-          files={files.map((f) => ({
-            id: f.guid,
-            name: f.orgnlFileNm,
-            size: formatFileSize(f.fileSz),
-            onRemove: () => handleRemove(f.guid),
-          }))}
+          files={[
+            ...files.map((f) => ({
+              id: f.guid,
+              name: f.orgnlFileNm,
+              size: formatFileSize(f.fileSz),
+              onRemove: () => handleRemove(f.guid),
+            })),
+            // 진행 중(대기/업로드중/실패) 건 — 같은 리스트 아래에 이어서 표시.
+            ...pending.map((p) => ({
+              id: p.id,
+              name: p.file.name,
+              size: formatFileSize(p.file.size),
+              status: p.status,
+              onRetry: () => handleRetry(p),
+              // 실패 건만 삭제(취소) 허용 — 서버 미등록이라 로컬 제거만.
+              onRemove:
+                p.status === 'error'
+                  ? () => setPending((prev) => prev.filter((x) => x.id !== p.id))
+                  : undefined,
+            })),
+          ]}
           onAddFile={() => setAddOpen(true)}
         />
-        {uploading && (
-          <p className="pt-2 text-[15px] leading-normal text-krds-text-muted">업로드 중…</p>
-        )}
       </div>
 
       {/* 숨은 파일 선택기 — '직접 업로드'로 트리거(다중 선택) */}
