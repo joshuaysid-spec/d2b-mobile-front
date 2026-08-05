@@ -71,15 +71,7 @@ export function BzentyGnrlInfoDtl_Cmdty() {
   return (
     <>
       <Accordion type="multiple" defaultValue={['reg', 'pic', 'asct']} className="w-full">
-        <AccordionSection value="reg" title="등록품목명세" borderTop={false}>
-          <div className="flex flex-col gap-krds-8">
-            {REG_ITEMS.map((item) => (
-              <Table key={item.itemCd} rows={regItemRows(item)} />
-            ))}
-          </div>
-        </AccordionSection>
-
-        <AccordionSection value="pic" title="담당자정보">
+        <AccordionSection value="pic" title="담당자정보" borderTop={false}>
           <Table rows={picRows(PIC_INFO)} />
         </AccordionSection>
 
@@ -87,6 +79,14 @@ export function BzentyGnrlInfoDtl_Cmdty() {
           <div className="flex flex-col gap-krds-8">
             {ASCT_GRP_LIST.map((a) => (
               <Table key={a.knditmCd} rows={asctRows(a)} />
+            ))}
+          </div>
+        </AccordionSection>
+
+        <AccordionSection value="reg" title="등록품목명세">
+          <div className="flex flex-col gap-krds-8">
+            {REG_ITEMS.map((item) => (
+              <Table key={item.itemCd} rows={regItemRows(item)} />
             ))}
           </div>
         </AccordionSection>

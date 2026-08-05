@@ -136,10 +136,10 @@ export function PrcmBzentyUserMngPage() {
     navigate(ROUTES.INDV_INFO_DTL, { state: { ...user, from: 'userList' } })
     console.log('[PrcmBzentyUserMng] 사용자 상세 이동', user.userId) // 추후 API/라우트: 메인 배선
   }
-  // 상태변경 시트 오픈 — 대상 사용자 전달. 현재가 미승인(M)이면 선택 없음으로 시작(M 은 선택지 제외).
+  // 상태변경 시트 오픈 — 대상 사용자 전달. 현재 상태 코드를 초기 선택값으로(M 포함 — 2026-08-05 대표자 미승인 라디오 추가).
   const openSttsChg = (user: BzentyUser) => {
     setSttsTarget(user)
-    setSttsValue(user.userSttsCd === 'M' ? '' : user.userSttsCd)
+    setSttsValue(user.userSttsCd)
   }
   const closeSttsChg = () => setSttsTarget(null)
   const handleSaveStts = () => {
@@ -156,8 +156,8 @@ export function PrcmBzentyUserMngPage() {
 
   return (
     <div className="flex w-full flex-col">
-      {/* 업무도움 — 퇴사자 계정 즉시 삭제 안내(기본 펼침). */}
-      <HelpDisclosure title="소속 사용자 관리 안내" items={HELP_ITEMS} defaultOpen />
+      {/* 업무도움 — 퇴사자 계정 즉시 삭제 안내(기본 접힘, 2026-08-05 요청). */}
+      <HelpDisclosure title="소속 사용자 관리 안내" items={HELP_ITEMS} />
 
       {/* 검색바 — 검색기준 셀렉트(기본 사용자명) + 입력(placeholder, X 초기화 → 즉시 목록 초기화). */}
       <div className="flex items-center gap-krds-5 px-4 pt-4">

@@ -1,6 +1,6 @@
 // 추가정보 신청내역상세 — 국내소재상사 신청정보 탭 (MUI-CM-01-T06, addRegInfoAplyDtl_DmsAgt). 설계서 slide144·145(문서 P143·144).
 //   웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 추가정보 신청 목록 > 상세.
-//   접수한 신청 데이터를 읽기전용으로 표시(아코디언 + Table). 구성: 보안측정인원 · 법인/개인 구분 · FSC · 영업정보 · 일반정보.
+//   접수한 신청 데이터를 읽기전용으로 표시(아코디언 + Table). 구성: 일반정보 · 법인/개인 구분 · 보안측정인원 · FSC · 영업정보.
 //   ⚠️ 국내소재상사(T06)는 설계서에 데이터영역(항목명 영문) 표가 없어 화면 표기 기준 잠정 영문키(types/cm 참고).
 //   데이터=목업(설계서 slide144·145 예시값) — 추후 API: cmService.getAddRegInfoAplyDtl. (2026-07-01 개정: 주민등록번호 삭제)
 import type { ScrtyMsrmtPrsn, DmsAgtFscCode } from '@/types/cm'
@@ -66,12 +66,16 @@ function personRows(d: ScrtyMsrmtPrsn): TableRow[] {
 export function AddRegInfoAplyDtl_DmsAgt() {
   return (
     <Accordion type="multiple" defaultValue={['scrt', 'corp', 'fsc', 'sale', 'gnrl']} className="w-full">
-      <AccordionSection value="scrt" title="보안측정인원" borderTop={false}>
-        <div className="flex flex-col gap-krds-8">
-          {PERSONS.map((p) => (
-            <Table key={p.id} rows={personRows(p)} />
-          ))}
-        </div>
+      <AccordionSection value="gnrl" title="일반정보" borderTop={false}>
+        <Table
+          rows={[
+            { label: '본/지사', value: GNRL.bplcSecd },
+            { label: '사업자번호', value: GNRL.brno },
+            { label: 'ISO 인증여부', value: GNRL.isoYn },
+            { label: '대표자명(영문)', value: GNRL.rprsvEngNm },
+            { label: '주소(영문)', value: GNRL.addrEng },
+          ]}
+        />
       </AccordionSection>
 
       <AccordionSection value="corp" title="법인/개인 구분">
@@ -89,6 +93,14 @@ export function AddRegInfoAplyDtl_DmsAgt() {
             { label: '보안측정결과', value: CORP.scrtMsrRslt },
           ]}
         />
+      </AccordionSection>
+
+      <AccordionSection value="scrt" title="보안측정인원">
+        <div className="flex flex-col gap-krds-8">
+          {PERSONS.map((p) => (
+            <Table key={p.id} rows={personRows(p)} />
+          ))}
+        </div>
       </AccordionSection>
 
       <AccordionSection value="fsc" title="FSC">
@@ -115,18 +127,6 @@ export function AddRegInfoAplyDtl_DmsAgt() {
             { label: '군납최초참여일', value: SALE.mlsplyFrstPtcpYmd },
             { label: '거래기간', value: SALE.trnsPrd },
             { label: "Dun's Number", value: SALE.dunsNo },
-          ]}
-        />
-      </AccordionSection>
-
-      <AccordionSection value="gnrl" title="일반정보">
-        <Table
-          rows={[
-            { label: '본/지사', value: GNRL.bplcSecd },
-            { label: '사업자번호', value: GNRL.brno },
-            { label: 'ISO 인증여부', value: GNRL.isoYn },
-            { label: '대표자명(영문)', value: GNRL.rprsvEngNm },
-            { label: '주소(영문)', value: GNRL.addrEng },
           ]}
         />
       </AccordionSection>

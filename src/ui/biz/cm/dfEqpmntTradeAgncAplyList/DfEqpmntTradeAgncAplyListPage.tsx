@@ -184,7 +184,6 @@ export function DfEqpmntTradeAgncAplyListPage() {
         style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
       >
         <Button variant="primary" className="w-full" onClick={() => setAplyOpen(true)}>
-          <Icon name="Add" size={20} aria-hidden />
           신청
         </Button>
       </div>

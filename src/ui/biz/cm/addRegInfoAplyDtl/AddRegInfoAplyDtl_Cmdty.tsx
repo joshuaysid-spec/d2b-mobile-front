@@ -1,6 +1,6 @@
 // 추가정보 신청내역상세 — 물품(내자) 신청정보 탭 (MUI-CM-01-T05, addRegInfoAplyDtl_Cmdty). 설계서 slide140(문서 P139).
 //   웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 추가정보 신청 목록 > 상세.
-//   접수한 신청 데이터를 읽기전용으로 표시(아코디언 + Table). 구성: 등록품목명세 · 담당자정보 · 대표품류및조합/단체 · 일반정보.
+//   접수한 신청 데이터를 읽기전용으로 표시(아코디언 + Table). 구성: 일반정보 · 담당자정보 · 대표품류및조합/단체 · 등록품목명세.
 //   데이터=목업(설계서 slide140 예시값, 항목명 영문 준수) — 추후 API: cmService.getAddRegInfoAplyDtl.
 import type { RegTrgtItem, PicInfo, KnditmAsctGrp } from '@/types/cm'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
@@ -56,12 +56,16 @@ function regItemRows(d: RegTrgtItem): TableRow[] {
 export function AddRegInfoAplyDtl_Cmdty() {
   return (
     <Accordion type="multiple" defaultValue={['reg', 'pic', 'asct', 'gnrl']} className="w-full">
-      <AccordionSection value="reg" title="등록품목명세" borderTop={false}>
-        <div className="flex flex-col gap-krds-8">
-          {REG_ITEMS.map((item) => (
-            <Table key={item.itemCd} rows={regItemRows(item)} />
-          ))}
-        </div>
+      <AccordionSection value="gnrl" title="일반정보" borderTop={false}>
+        <Table
+          rows={[
+            { label: '본/지사', value: GNRL.bplcSecd },
+            { label: '사업자번호', value: GNRL.brno },
+            { label: 'ISO 인증여부', value: GNRL.isoYn },
+            { label: '대표자명(영문)', value: GNRL.rprsvEngNm },
+            { label: '주소(영문)', value: GNRL.addrEng },
+          ]}
+        />
       </AccordionSection>
 
       <AccordionSection value="pic" title="담당자정보">
@@ -85,16 +89,12 @@ export function AddRegInfoAplyDtl_Cmdty() {
         />
       </AccordionSection>
 
-      <AccordionSection value="gnrl" title="일반정보">
-        <Table
-          rows={[
-            { label: '본/지사', value: GNRL.bplcSecd },
-            { label: '사업자번호', value: GNRL.brno },
-            { label: 'ISO 인증여부', value: GNRL.isoYn },
-            { label: '대표자명(영문)', value: GNRL.rprsvEngNm },
-            { label: '주소(영문)', value: GNRL.addrEng },
-          ]}
-        />
+      <AccordionSection value="reg" title="등록품목명세">
+        <div className="flex flex-col gap-krds-8">
+          {REG_ITEMS.map((item) => (
+            <Table key={item.itemCd} rows={regItemRows(item)} />
+          ))}
+        </div>
       </AccordionSection>
     </Accordion>
   )

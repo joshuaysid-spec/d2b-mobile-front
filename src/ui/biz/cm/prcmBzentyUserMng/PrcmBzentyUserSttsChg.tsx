@@ -3,14 +3,15 @@
 //   여기는 "콘텐츠"(대상 사용자 현재 상태 표시 + 상태 선택 RadioButtonGroup)만 담는다. (*Sheet 래퍼 금지)
 //
 // 상태 코드(설계서 P08): 사용=Y · 탈퇴=T · 사용중지=N · 미승인=M.
-//   미승인(M)은 변경 불가라 선택지에서 제외(수정 가능 = 사용/탈퇴/사용중지 3개만).
+//   2026-08-05 요청: '대표자 미승인'(M) 라디오 추가 — 구 "미승인 선택 제외" 정책 폐기.
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 
-// 변경 가능한 상태 선택지(미승인 M 제외) — 설계서 P08.
+// 상태 선택지 — 설계서 P08 코드 + 대표자 미승인(M, 2026-08-05 추가).
 const STTS_OPTIONS = [
   { value: 'Y', label: '사용' },
   { value: 'T', label: '탈퇴' },
   { value: 'N', label: '사용중지' },
+  { value: 'M', label: '대표자 미승인' },
 ]
 
 export interface PrcmBzentyUserSttsChgProps {
@@ -18,7 +19,7 @@ export interface PrcmBzentyUserSttsChgProps {
   userNm: string
   /** 대상 사용자의 현재 상태명(사용/탈퇴/사용중지/미승인). */
   currentSttsNm: string
-  /** 선택된 상태 코드(Y/T/N) — 부모가 소유(controlled). */
+  /** 선택된 상태 코드(Y/T/N/M) — 부모가 소유(controlled). */
   value: string
   onValueChange: (value: string) => void
 }
@@ -41,7 +42,7 @@ export function PrcmBzentyUserSttsChg({
         </span>
       </div>
 
-      {/* 변경할 상태 선택(미승인 제외) */}
+      {/* 변경할 상태 선택 */}
       <div className="flex flex-col gap-krds-5">
         <span className="text-[17px] font-bold leading-normal text-krds-text-ink">
           변경할 상태
