@@ -43,14 +43,6 @@ export function OvsdmstSosCnfdoc() {
 
   return (
     <div className="flex w-full flex-col">
-      {/* 처리절차 */}
-      <section className="flex flex-col gap-1 px-4 py-4">
-        <SectionHead icon="Description" title="처리절차" />
-        <p className="text-[17px] leading-normal text-krds-text-ink">
-          국외조달원 등록증 발급 신청서 양식을 출력하여 수기로 작성 후 팩스 또는 직접 방문 접수합니다.
-        </p>
-      </section>
-
       {/* 양식 다운로드 — 첨부파일명 라벨 + 파일 행(다운로드) */}
       <section className="flex flex-col gap-krds-5 px-4 py-4">
         <SectionHead icon="Download" title="양식 다운로드" />
@@ -58,6 +50,14 @@ export function OvsdmstSosCnfdoc() {
         <FileDownloadList
           files={[{ id: 'form', name: '첨부파일명.hwp', size: '786KB', onDownload: handleDownload }]}
         />
+      </section>
+
+      {/* 처리절차 */}
+      <section className="flex flex-col gap-1 px-4 py-4">
+        <SectionHead icon="Description" title="처리절차" />
+        <p className="text-[17px] leading-normal text-krds-text-ink">
+          국외조달원 등록증 발급 신청서 양식을 출력하여 수기로 작성 후 팩스 또는 직접 방문 접수합니다.
+        </p>
       </section>
 
       {/* 신청서 확인사항 — 번호 목록 */}

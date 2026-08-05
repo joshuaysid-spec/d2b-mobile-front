@@ -45,7 +45,8 @@ const BZENTY = {
 }
 
 // ── 검색필터 schema (P24, 설계서 slide138 검색조건 dm_searchInfo) ─────────────
-// 기간설정*(dateRange, 빠른설정 최근 1/3/6개월, 기본 1개월) + 구분설정(구분 select + 처리상태 select) + 검색어(품명).
+// 기간설정*(dateRange, 빠른설정 최근 1/3/6개월, 기본 1개월) + 검색어(품명) + 구분설정(처리상태 select).
+//   ('구분' select 는 요청으로 삭제 — 2026-08-05)
 const DATE_PRESETS: DateRangePresetDef[] = [
   { label: '최근 1개월', months: 1 },
   { label: '최근 3개월', months: 3 },
@@ -60,15 +61,6 @@ const PRGRS_STTS_OPTIONS = [
   { value: '반송', label: '반송' },
   { value: '승인', label: '승인' },
 ]
-// 구분(업무구분, bizCdNm) — ⚠️ slide138 '구분 설정'의 '전체' select. dm_searchInfo 미정의(잠정 검색키). 개별 값은 카드 업무구분 값과 일치.
-const BIZ_CD_OPTIONS = [
-  { value: ALL, label: '전체' },
-  { value: '물품(내자)', label: '물품(내자)' },
-  { value: '공사', label: '공사' },
-  { value: '용역', label: '용역' },
-  { value: '일반용역', label: '일반용역' },
-  { value: '외자', label: '외자' },
-]
 const SEARCH_SCHEMA: SearchFilterSchema = {
   title: '검색필터',
   sections: [
@@ -78,29 +70,24 @@ const SEARCH_SCHEMA: SearchFilterSchema = {
       fields: [{ type: 'dateRange', key: 'aplyYmd', label: '검색 기간', required: true, presets: DATE_PRESETS }],
     },
     {
-      key: 'divide',
-      title: '구분 설정',
-      fields: [
-        // ⚠️ '구분'(bizCdNm)은 slide138 화면 표기 기준 잠정 검색키(dm_searchInfo 미정의).
-        { type: 'select', key: 'bizCdNm', label: '구분', options: BIZ_CD_OPTIONS },
-        { type: 'select', key: 'prgrsSttsNm', label: '처리상태', options: PRGRS_STTS_OPTIONS },
-      ],
-    },
-    {
       key: 'keyword',
       title: '검색어',
       fields: [{ type: 'text', key: 'itemNm', label: '품명', placeholder: '품명을 입력하세요.' }],
     },
+    {
+      key: 'divide',
+      title: '구분 설정',
+      fields: [{ type: 'select', key: 'prgrsSttsNm', label: '처리상태', options: PRGRS_STTS_OPTIONS }],
+    },
   ],
 }
-// 기본값 — 기간 최근 1개월(slide138 '기본값 1개월'), 구분/처리상태 전체, 품명 공백.
+// 기본값 — 기간 최근 1개월(slide138 '기본값 1개월'), 처리상태 전체, 품명 공백.
 const RECENT_1M = (): DateRangeValue => ({
   start: dayjs().subtract(1, 'month').format(DATE_FORMAT),
   end: dayjs().format(DATE_FORMAT),
 })
 const SEARCH_DEFAULT: SearchFilterValue = {
   aplyYmd: RECENT_1M(),
-  bizCdNm: ALL,
   prgrsSttsNm: ALL,
   itemNm: '',
 }
@@ -176,14 +163,11 @@ export function AddRegInfoAplyListPage() {
   }
 
   // ── ⚠️ 임시 목업 필터/페이징 (API 연동 시 이 블록 통째로 삭제 후 재작성) ⚠️ ──────────
-  //   구분(bizCdNm)·처리상태(prgrsSttsNm)는 카드 필드라 로컬 필터. 기간(aplyYmd)·품명(itemNm)은 목업 단계 미필터
+  //   처리상태(prgrsSttsNm)는 카드 필드라 로컬 필터. 기간(aplyYmd)·품명(itemNm)은 목업 단계 미필터
   //   (API 연동 시 기간 FROM~TO 범위·품명 부분일치 서버 조회). 검색 미실행이면 전체.
   const filteredList = useMemo(() => {
-    const biz = filter.bizCdNm as string
     const stts = filter.prgrsSttsNm as string
-    return MOCK_LIST.filter(
-      (it) => (biz === ALL || it.bizCdNm === biz) && (stts === ALL || it.prgrsSttsNm === stts),
-    )
+    return MOCK_LIST.filter((it) => stts === ALL || it.prgrsSttsNm === stts)
   }, [filter])
 
   const total = filteredList.length

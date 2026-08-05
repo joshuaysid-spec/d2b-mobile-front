@@ -2021,19 +2021,19 @@ export const router = createBrowserRouter([
         path: 'mypage/bzenty-add-reg/cmdty',
         element: <DmstLctnColInfoAddRegPage />,
         errorElement: <ErrorPage />,
-        handle: { header: { variant: 'sub', title: '업체정보 추가 등록' } },
+        handle: { header: { variant: 'sub', title: '물품(내자) 정보 추가등록' } },
       },
       {
         path: 'mypage/bzenty-add-reg/pic',
         element: <DmstLctnColInfoAddRegPagePic />,
         errorElement: <ErrorPage />,
-        handle: { header: { variant: 'sub', title: '업체정보 추가 등록' } },
+        handle: { header: { variant: 'sub', title: '담당자 정보 추가등록' } },
       },
       {
         path: 'mypage/bzenty-add-reg/dms-agt',
         element: <DmstLctnColInfoAddRegPageCmbz />,
         errorElement: <ErrorPage />,
-        handle: { header: { variant: 'sub', title: '업체정보 추가 등록' } },
+        handle: { header: { variant: 'sub', title: '국내소재상사 정보 추가등록' } },
       },
       // 국외조달원등록증신청안내(MUI-CM-01-P21) — 마이페이지 > 업체정보관리 진입 안내(M01 미구현이라 라우트만 등록).
       //   3뎁스라 BottomNav 숨김(opt-in 생략).
@@ -2159,7 +2159,7 @@ export const router = createBrowserRouter([
         path: 'mypage/noti-srvc-aply',
         element: <NotiSrvcAplyPage />,
         errorElement: <ErrorPage />,
-        handle: { header: { variant: 'sub', title: '알림서비스 신청' }, scrollReset: true },
+        handle: { header: { variant: 'sub', title: '알림서비스 신청 및 해지' }, scrollReset: true },
       },
       // 사용자정보관리 허브(MUI-CM-02-M01) — 마이페이지 > 사용자 정보관리. 3뎁스라 BottomNav 숨김.
       {

@@ -4,7 +4,9 @@
 //        + 알림 항목 선택(12개 항목별 토글). 값은 목업 초기상태(Figma), 토글은 로컬 상태 + API 경계 주석.
 import type { ReactNode } from 'react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import { ROUTES } from '@/constants/routes'
 import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { Switch } from '@/ui/common/base/Switch'
 import { Notice } from '@/ui/common/composites/Notice'
@@ -184,9 +186,10 @@ export function NotiSrvcAplyPage() {
     setItems((prev) => ({ ...prev, [id]: v }))
     console.log('[NotiSrvcAply] 알림 항목', id, v) // 추후 API: cmService.setNotiItem(id, v)
   }
+  const navigate = useNavigate()
+  // 회원정보 수정 → 사용자정보관리의 '개인정보 조회 및 수정'(M02 인증 게이트 → M03 상세 → M04 수정).
   const goEditMember = () => {
-    // 추후: 회원정보 수정 화면 이동.
-    console.log('[NotiSrvcAply] 회원정보 수정')
+    navigate(ROUTES.INDV_CERT)
   }
 
   return (

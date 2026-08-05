@@ -282,8 +282,7 @@ export function MyPage() {
     { id: 'cabinet', label: '디지털 캐비닛', onClick: () => navigate(ROUTES.DIGITAL_CABINET) },
     // 알림 서비스 신청 및 해지(MUI-CM-02-M09).
     { id: 'noti', label: '알림 서비스 신청 및 해지', onClick: () => navigate(ROUTES.NOTI_SRVC_APLY) },
-    // 회원탈퇴(MUI-CM-02-P10) — Figma 10020:83891 하단 링크 순서 맞춤(2026-08-03).
-    { id: 'withdrawal', label: '회원탈퇴', onClick: () => navigate(ROUTES.MB_WITHDRAWAL) },
+    // 회원탈퇴(MUI-CM-02-P10) 행은 2026-08-05 요청으로 제거 — 사용자정보관리(MUI-CM-02-M01) 경유로만 진입.
   ]
 
   return (

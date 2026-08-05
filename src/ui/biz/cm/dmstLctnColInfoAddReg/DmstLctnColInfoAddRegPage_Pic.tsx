@@ -156,7 +156,7 @@ export function DmstLctnColInfoAddRegPage_Pic() {
         />
       </div>
 
-      {/* 하단 액션 바 — [취소][저장]. sticky 하단 고정. */}
+      {/* 하단 액션 바 — [취소][추가등록]. sticky 하단 고정. (버튼명 저장→추가등록, 2026-08-05 요청) */}
       <div
         className="sticky bottom-0 z-30 border-t border-krds-border-divider bg-background px-4 pt-3"
         style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
@@ -164,7 +164,7 @@ export function DmstLctnColInfoAddRegPage_Pic() {
         <ButtonGroup
           items={[
             { label: '취소', variant: 'secondary', onClick: () => navigate(-1) },
-            { label: '저장', variant: 'primary', onClick: handleSubmit(onSubmit, onInvalid) },
+            { label: '추가등록', variant: 'primary', onClick: handleSubmit(onSubmit, onInvalid) },
           ]}
         />
       </div>

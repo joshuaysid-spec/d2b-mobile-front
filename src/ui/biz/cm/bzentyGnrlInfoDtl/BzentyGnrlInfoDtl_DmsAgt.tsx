@@ -99,8 +99,8 @@ export function BzentyGnrlInfoDtl_DmsAgt() {
   return (
     <>
       <Accordion type="multiple" defaultValue={['sale', 'fsc', 'corp', 'ovs']} className="w-full">
-        <AccordionSection value="sale" title="영업정보" borderTop={false}>
-          <Table rows={saleRows(SALE_INFO)} />
+        <AccordionSection value="corp" title="법인/개인 구분" borderTop={false}>
+          <Table rows={corpRows(CORP_INFO)} />
         </AccordionSection>
 
         <AccordionSection value="fsc" title="FSC Codes (Federal Supply Classification Codes)">
@@ -111,8 +111,8 @@ export function BzentyGnrlInfoDtl_DmsAgt() {
           </div>
         </AccordionSection>
 
-        <AccordionSection value="corp" title="법인/개인 구분">
-          <Table rows={corpRows(CORP_INFO)} />
+        <AccordionSection value="sale" title="영업정보">
+          <Table rows={saleRows(SALE_INFO)} />
         </AccordionSection>
 
         <AccordionSection value="ovs" title="해외관련 업체정보">

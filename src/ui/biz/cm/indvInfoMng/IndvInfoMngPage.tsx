@@ -7,6 +7,7 @@
 import { useNavigate } from 'react-router-dom'
 
 import { Icon } from '@/ui/common/base/Icon'
+import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { ROUTES } from '@/constants/routes'
 
 // ⚠️ 현재 로그인 사용자 요약(설계서 slide194 예시) — 추후: 회원정보 API 로 교체.
@@ -28,7 +29,7 @@ const MENU: { label: string; to: string }[] = [
   { label: '개인정보 조회 및 수정', to: ROUTES.INDV_CERT }, // M02 인증 → M03 상세 → M04 수정
   { label: '비밀번호 변경', to: ROUTES.PSWD_CHG }, // M05
   { label: '개인 신원 확인', to: ROUTES.INDV_IDNT_IDNTY }, // M06
-  { label: '업체 소속 사용자 목록', to: ROUTES.PRCM_BZENTY_USER_MNG }, // M07
+  { label: '소속 사용자 목록', to: ROUTES.PRCM_BZENTY_USER_MNG }, // M07
   { label: '알림 서비스 신청 및 해지', to: ROUTES.NOTI_SRVC_APLY }, // M09
   { label: '회원탈퇴', to: ROUTES.MB_WITHDRAWAL }, // P10
 ]
@@ -69,6 +70,14 @@ export function IndvInfoMngPage() {
           </li>
         ))}
       </ul>
+
+      {/* 하단 도움말 — 설계서 v0.85 slide196(M01) 문구 그대로. */}
+      <div className="pt-4 pb-4">
+        <HelpDisclosure
+          title="도움말"
+          items={['퇴사자 원복은 PC 버전에서 확인하고, 신청이 가능합니다.']}
+        />
+      </div>
     </div>
   )
 }
