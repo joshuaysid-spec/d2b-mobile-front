@@ -20,7 +20,7 @@
 - 기능별 plan/design: `docs/01-plan/features/`, `docs/02-design/features/`.
 
 **⚠️ 미작업(미구현) 화면 ID 체크·진척 카운트 기준 — 설계서 pptx 원본이 유일 기준.**
-- `docs/spec/화면ID-목록.md` 는 **과거 추출 스냅샷**이라 설계서 개정(신규 화면·M↔P 전환·T 탭 재편)이 반영 안 돼 있다 — **이 md 로 카운트하지 말 것.** (예: 공통 v0.84 는 169개인데 md 는 122개)
+- 추출 스냅샷 md 를 만들어 카운트 근거로 삼지 말 것 — 설계서 개정(신규 화면·M↔P 전환·T 탭 재편)을 못 따라가 오도한다(구 `화면ID-목록.md` 가 그래서 삭제됨. 예: 공통 v0.84 는 169개인데 스냅샷은 122개).
 - 절차: 해당 도메인 pptx 를 zip 으로 풀어 전 슬라이드 `<a:t>` 텍스트 추출 → 텍스트 런이 쪼개져 있으므로 **공백/구분자 제거 후** `MUI-XX-##-[MPT]##` 정규식으로 **"화면 목록 (N/M)" 표 슬라이드들**에서 ID 집합을 만든다(목차·흐름도 슬라이드 제외, 중복 제거). 화면 목록 표가 여러 섹션에 흩어져 있으니(공통은 7~9·67~71·217~220·346·356·365·378) 전 슬라이드를 스캔해 찾는다.
 - 구현 여부 대조: `src/ui/biz/**` 파일 내 화면 ID 주석 grep 을 1차 근거로 하되, **ID 미스매치**(설계서 개정으로 구 ID 태깅된 파일, 예: 업무캘린더 M07/M08/M09 ↔ 코드 P07/P08/P09)가 있으니 미구현 판정 전에 **영문 화면명으로 파일 존재를 재확인**한다. `router.tsx`/`routes.ts`/서비스의 ID 참조만으로는 구현으로 치지 않는다.
 
@@ -442,6 +442,8 @@ import { Icon } from '@/ui/common/base/Icon'
 1. **페이지는 서비스를 직접 import 하지 않는다 — 모든 API 호출은 `src/queries/{도메인}.ts` 훅으로만** (2026-07-30 확정. 구 "제출은 서비스 직접 await" 정책 폐기 — 전 페이지 전환 완료).
    - 조회 = useQuery 훅(소비가 생길 때 추가, `{도메인}Keys` queryKey 중앙관리) · 저장/제출/이벤트성 조회 = **useMutation 훅**. 핸들러에서 `await xxx.mutateAsync(...)` + try/catch(`ApiError.message` → `AlertModal`/`InputMessage`) — mutateAsync 도 실패 시 throw 라 catch 패턴 동일. fire-and-forget 은 `mutate()`(unhandled rejection 방지).
    - **제출 성공 시 영향받는 조회 캐시 무효화는 mutation 훅 `onSuccess` 에서 중앙 처리** — 전역 `staleTime: 60s` 라 수동 재조회가 안 되기 때문(목업 모드에선 안 드러나는 잠복 버그). prefix 무효화 키(예: `bdKeys.progressListAll`)는 `{도메인}Keys` 에 정의. 적용 예: `useSignElsgn`/`useSaveTndr` → 입찰진행목록 무효화.
+     - 무효화를 mutation `onSuccess` 에 두는 건 라이브러리 제약이 아니라 **팀 규율** — 데이터가 낡는 원인은 대부분 "방금 한 변경"이므로 변경 지점에 중앙화한다(화면 곳곳에서 invalidate 하면 추적 불가). 기본은 `invalidateQueries`(캐시를 지우지 않고 stale 딱지 → 옛 데이터 보여주며 백그라운드 교체) — `removeQueries` 는 로그아웃 등 "더 보이면 안 되는" 캐시 폐기 전용(일반 갱신에 쓰면 빈 로딩 UX).
+   - **staleTime 은 데이터 성격별로 개별 useQuery 에서 오버라이드**: 전역 기본 60초. 사실상 불변(공통코드·부서목록)은 `staleTime: Infinity`(세션 내 1회 호출 — 요청 파람이 같으면 queryKey 가 같아 캐시 즉시 반환), 실시간성(개찰 진행 등)은 짧게.
    - 순수 유틸(예: `validateFile`)은 서비스 파일에서 직접 import 해도 된다(API 호출이 아님).
 2. **엔드포인트는 서비스 파일 상단 `EP` 상수 맵에만** 둔다(추정 REST, JSDoc 에 화면 ID+소비 파일). 페이지에 URL 문자열 금지. 반입 후 EP 맵만 수정(메서드 본문 불변).
 3. **목업 데이터 위치**: 배선된 페이지의 목업은 `src/mocks/{도메인}.ts` (단일 소스, 페이지의 `MOCK_*` 상수를 이동). **미배선 페이지는 인라인 목업 유지** — 그 페이지를 배선할 때 이동한다. 서비스의 미배선 메서드 목업은 최소 대표값(1~3건).
