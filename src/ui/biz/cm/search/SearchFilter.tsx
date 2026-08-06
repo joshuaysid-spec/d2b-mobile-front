@@ -1,10 +1,12 @@
 // Design Ref: search-filter.design.md §2.1 / §5 (v2) — schema 구동 범용 검색필터 셸.
-// 책임: FullPopup 래핑 + 아코디언 섹션 렌더 + draft 상태 + 초기화/검색/닫기.
+// 책임: FullPopup 래핑 + 아코디언 섹션 렌더 + draft 상태 + 초기화/검색/닫기
+//       + required 필드 강제(비면 검색 차단 + 필드 아래 에러 + 첫 에러로 스크롤 — 페이지 관여 X).
 // 필드 렌더는 SearchFilterField 에 위임(도메인·필드 무관). value(확정) ↔ draft(작업중) 분리.
 // common/(base·composites)만 사용 — raw 직접 import 금지.
 import * as React from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
+import { InputMessage } from '@/ui/common/base/InputMessage'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
@@ -89,6 +91,8 @@ const SearchFilter = ({
   onSelectionClick,
 }: SearchFilterProps) => {
   const [draft, setDraft] = React.useState<SearchFilterValue>(value ?? defaultValue)
+  // required 미입력으로 검색이 차단된 필드 key — 해당 필드 아래 에러 메시지 표시.
+  const [missingKeys, setMissingKeys] = React.useState<string[]>([])
 
   // 정적 schema 면 그대로, resolver 면 현재 draft 로 매 렌더 재계산 → 검색유형 변경 시 섹션/필드가 바뀜.
   const resolved: SearchFilterSchema = typeof schema === 'function' ? schema(draft) : schema
@@ -151,22 +155,42 @@ const SearchFilter = ({
 
   // open 시 확정값으로 동기화 — 미확정 편집 폐기, 재진입 시 직전 검색값 복원.
   React.useEffect(() => {
-    if (open) setDraft(value ?? defaultValue)
+    if (open) {
+      setDraft(value ?? defaultValue)
+      setMissingKeys([])
+    }
   }, [open, value, defaultValue])
 
-  const setField = (key: string, v: SearchFilterFieldValue) =>
+  const setField = (key: string, v: SearchFilterFieldValue) => {
     setDraft((cur) => {
       const next = { ...cur, [key]: v }
       // normalize 가 있으면 종속 필드 보정(예: 검색유형 변경 → 업무구분 기본값 교체).
       return normalize ? normalize(next, cur) : next
     })
+    // 입력이 생기면 그 필드의 required 에러 해제.
+    setMissingKeys((cur) => (cur.includes(key) ? cur.filter((k) => k !== key) : cur))
+  }
 
   const handleReset = () => {
     setDraft(defaultValue)
+    setMissingKeys([])
     onReset?.()
   }
 
+  // 검색 — required 필드가 비어 있으면 차단(에러 표시 + 첫 에러 필드로 스크롤), 채워졌으면 확정.
   const handleSearch = () => {
+    const missing = resolved.sections.flatMap((s) =>
+      s.fields.filter((f) => f.required && isEmptyLike(draft[f.key])).map((f) => f.key),
+    )
+    if (missing.length > 0) {
+      setMissingKeys(missing)
+      // FullPopup 내부 스크롤 컨테이너 기준 — window.scrollTo 금지(레포 규칙), scrollIntoView 사용.
+      document
+        .getElementById(`sf-field-${missing[0]}`)
+        ?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+      return
+    }
+    setMissingKeys([])
     onSearch(draft)
     onOpenChange(false)
   }
@@ -228,13 +252,18 @@ const SearchFilter = ({
                 <p className="text-krds-body-sm text-krds-text-subtle">준비 중입니다.</p>
               ) : (
                 section.fields.map((field) => (
-                  <SearchFilterField
-                    key={field.key}
-                    field={field}
-                    value={draft[field.key]}
-                    onChange={(v) => setField(field.key, v)}
-                    onSelectionClick={handleSelectionClick}
-                  />
+                  // id = required 에러 스크롤 앵커. 항상 감싸서(조건부 X) 에러 토글 시 필드 remount 방지.
+                  <div key={field.key} id={`sf-field-${field.key}`} className="flex flex-col gap-krds-3">
+                    <SearchFilterField
+                      field={field}
+                      value={draft[field.key]}
+                      onChange={(v) => setField(field.key, v)}
+                      onSelectionClick={handleSelectionClick}
+                    />
+                    {missingKeys.includes(field.key) && (
+                      <InputMessage type="error">필수 입력 항목입니다.</InputMessage>
+                    )}
+                  </div>
                 ))
               )}
             </AccordionSection>
