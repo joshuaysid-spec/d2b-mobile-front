@@ -4,8 +4,8 @@
 // 본문 텍스트는 설계서(서약서 P02~P04 · slide91) 원문 그대로.
 // ※ v1.83 목록표(slide59)의 P04 설명 '행정정보공동이용동의서'는 오기 — P04 디자인(slide99)은
 //   '하도급대금의 지급관련 확인 및 확약서'로 코드(w_p04)와 일치. 디자인 슬라이드가 정본.
-import { useState } from 'react'
-
+// '동의 선택' 라디오는 부모 제어(controlled) — 필수 서약서의 '저장 후 닫기' 검증(동의함 체크 강제)을
+// footer 소유자(부모 페이지)가 해야 하므로 선택값을 부모가 소유한다.
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 
 export interface WrotData {
@@ -84,10 +84,23 @@ const SELECT_OPTIONS = [
   { value: '선택2', label: '선택2' },
 ]
 
-export function WrotAgreForm({ wrot }: { wrot: WrotData }) {
+/** agree 변형의 '동의함' 값 — 부모의 필수 서약서 저장 검증에 사용. */
+export const WROT_AGREE_VALUE = AGREE_OPTIONS[1].value
+
+/** 서약서 열람 시작 시 기본 선택값 — agree=동의안함 / select=선택1 (각 옵션의 첫 항목). */
+export function getWrotDefaultChoice(wrot: WrotData) {
+  return (wrot.variant === 'select' ? SELECT_OPTIONS : AGREE_OPTIONS)[0].value
+}
+
+export interface WrotAgreFormProps {
+  wrot: WrotData
+  /** '동의 선택' 라디오 값(부모 소유). */
+  choice: string
+  onChoiceChange: (value: string) => void
+}
+
+export function WrotAgreForm({ wrot, choice, onChoiceChange }: WrotAgreFormProps) {
   const options = wrot.variant === 'select' ? SELECT_OPTIONS : AGREE_OPTIONS
-  // 기본값: agree=동의안함 / select=선택1 (각 옵션의 첫 항목)
-  const [choice, setChoice] = useState(options[0].value)
 
   return (
     <div className="flex flex-col gap-krds-7 py-2">
@@ -114,14 +127,7 @@ export function WrotAgreForm({ wrot }: { wrot: WrotData }) {
       {/* 동의 선택 */}
       <div className="flex flex-col gap-krds-5">
         <p className="text-[17px] font-bold leading-normal text-krds-text-ink">동의 선택</p>
-        <RadioButtonGroup
-          items={options}
-          value={choice}
-          onValueChange={(v) => {
-            setChoice(v)
-            console.log('[M01] 서약서 동의 선택', wrot.id, v) // 추후 API: bdService.setWrotChoice
-          }}
-        />
+        <RadioButtonGroup items={options} value={choice} onValueChange={onChoiceChange} />
       </div>
     </div>
   )

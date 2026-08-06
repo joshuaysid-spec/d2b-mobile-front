@@ -16,7 +16,13 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
-import { WrotAgreForm, WROTS, type WrotData } from '@/ui/biz/bd/wrotAgrePage/WrotAgreForm'
+import {
+  getWrotDefaultChoice,
+  WROT_AGREE_VALUE,
+  WrotAgreForm,
+  WROTS,
+  type WrotData,
+} from '@/ui/biz/bd/wrotAgrePage/WrotAgreForm'
 import type { ApiError } from '@/types/api'
 import type { BidPrgrsItem } from '@/types/bd'
 
@@ -74,6 +80,8 @@ export function WrotAgrePage() {
   const [checked, setChecked] = useState<string[]>([]) // 동의 완료된 서약서 id
   const [selected, setSelected] = useState<WrotData | null>(null) // 현재 열람 중인 서약서
   const [sheetOpen, setSheetOpen] = useState(false) // 서약서 바텀시트
+  const [choice, setChoice] = useState('') // 바텀시트 '동의 선택' 라디오 값(열람 시작 시 기본값 리셋)
+  const [agreeWarnOpen, setAgreeWarnOpen] = useState(false) // 필수 서약서 '동의함' 미체크 경고
   const [saveError, setSaveError] = useState<string | null>(null) // 서약서 저장 실패 안내(null=닫힘)
   const saveWrot = useSaveWrot()
 
@@ -86,13 +94,21 @@ export function WrotAgrePage() {
   // 서약서 열람 — 본문은 설계서 원문(WROTS 로컬 상수)으로 렌더(getWrot 목업은 단건 제네릭이라 다건 콘텐츠 미대체).
   const openWrot = (w: WrotData) => {
     setSelected(w)
+    setChoice(getWrotDefaultChoice(w)) // 열람마다 기본값(동의안함/선택1)으로 리셋
     setSheetOpen(true)
   }
 
-  // 저장 후 닫기 → mutation 훅 await, 성공 시 해당 서약서를 동의 완료 처리. 실패 시 AlertModal 안내.
+  // 저장 후 닫기 → 필수 서약서는 '동의함' 체크 검증 후 mutation 훅 await,
+  // 성공 시 해당 서약서를 동의 완료 처리. 실패 시 AlertModal 안내.
   const handleSaveWrot = async () => {
     if (!selected) {
       setSheetOpen(false)
+      return
+    }
+    // 필수 서약서(agree 변형)를 '동의안함' 상태로 저장 시도 → 경고 후 차단(시트 유지)
+    const required = WROT_ITEMS.find((i) => i.id === selected.id)?.required
+    if (required && selected.variant === 'agree' && choice !== WROT_AGREE_VALUE) {
+      setAgreeWarnOpen(true)
       return
     }
     try {
@@ -129,9 +145,6 @@ export function WrotAgrePage() {
         <StepBar orientation="horizontal" items={STEPS} className="bg-transparent" />
       </div>
 
-      {/* 입찰안내(사후심사대상) */}
-      <Infobox title="입찰안내" items={NOTICE_ITEMS} />
-
       {/* 서약서 동의 섹션 헤더 — Figma m_section title(9300-40694, borderTop, 19px Bold, 카운트 없음) */}
       <SectionTitle as="h2" topDivider>
         서약서 동의
@@ -154,6 +167,9 @@ export function WrotAgrePage() {
           if (wrot) openWrot(wrot)
         }}
       />
+
+      {/* 사후심사대상 입찰안내 — 설계서 안내사항 원문 */}
+      <Infobox title="사후심사대상 입찰안내" items={NOTICE_ITEMS} />
 
       {/* 하단 액션바 — 취소/다음으로 */}
       <div className="border-t border-krds-border-divider bg-krds-bg-primary-faint px-4 py-4">
@@ -189,8 +205,25 @@ export function WrotAgrePage() {
           />
         }
       >
-        {selected && <WrotAgreForm key={selected.id} wrot={selected} />}
+        {selected && (
+          <WrotAgreForm
+            key={selected.id}
+            wrot={selected}
+            choice={choice}
+            onChoiceChange={setChoice}
+          />
+        )}
       </BottomSheet>
+
+      {/* 필수 서약서 '동의함' 미체크 경고 — 저장 차단, 확인 시 시트로 복귀 */}
+      <AlertModal
+        open={agreeWarnOpen}
+        onOpenChange={setAgreeWarnOpen}
+        variant="info"
+        title="서약서 동의 안내"
+        description="필수 서약서입니다. '동의함'에 체크해야 저장할 수 있습니다."
+        primaryAction={{ label: '확인', onClick: () => setAgreeWarnOpen(false) }}
+      />
 
       {/* 서약서 저장 실패 안내 */}
       <AlertModal

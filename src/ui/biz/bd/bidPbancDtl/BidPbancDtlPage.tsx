@@ -135,7 +135,7 @@ export function BidPbancDtlPage() {
     { id: 'apply', label: '입찰참가신청서 작성하기', variant: 'primary' },
     { id: 'giveup', label: '입찰포기 신청서 작성하기', variant: 'secondary' },
     { id: 'cancel', label: '입찰취소 신청서 작성하기', variant: 'secondary' },
-    { id: 'fx', label: '환율정보 바로가기', variant: 'tertiary' },
+    { id: 'fx', label: '환율정보 조회', variant: 'tertiary' },
   ]
 
   // 신청서 화면들(사전심사/입찰서/참가신청서/포기·취소)은 입찰진행 아이템(BidPrgrsItem) 형태를 기대 —
