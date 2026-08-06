@@ -1,13 +1,4 @@
 import axios, { type AxiosError, type AxiosResponse } from 'axios'
-
-// 요청 봉투에 metadata 를 실어야 하는 API 용 — 호출 시 config 3번째 인자로 지정.
-// 예: apiClient.post<T, T>(url, body, { metadata: { pageNo: 1, pageSize: 10 } })
-declare module 'axios' {
-  export interface AxiosRequestConfig {
-    /** 요청 봉투 metadata(옵션) — 지정 시 body 가 { metadata, data } 로 감싸진다. */
-    metadata?: Record<string, unknown>
-  }
-}
 import { STORAGE_KEYS } from '@/constants/storage'
 import { USE_MOCK } from '@/lib/env'
 import { useAuthStore } from '@/stores/authStore'
@@ -30,17 +21,16 @@ const isWrappableBody = (body: unknown): boolean =>
   !(body instanceof URLSearchParams) &&
   !(body instanceof ArrayBuffer)
 
-// 요청 인터셉터 — ① 인증 토큰 자동 첨부 ② body 를 { data } 봉투로 래핑(백엔드 요청 규격,
-// 응답 봉투 { metadata, data } 와 대칭). 서비스는 봉투 없이 알맹이만 보낸다(응답 언래핑과 동일 원칙).
-// metadata 가 필요한 API 는 config.metadata 로 지정 → { metadata, data } 로 전송.
+// 요청 인터셉터 — ① 인증 토큰 자동 첨부 ② body 를 { data } 봉투로 래핑(개발계 실규격 확인:
+// 요청은 { data } 만, metadata 는 응답 전용(requestId/timestamp/status — 서버가 채움).
+// 페이징 등 부가정보도 data 안의 명명 맵(dll_*_paging)으로 들어간다).
+// 서비스는 봉투 없이 알맹이만 보낸다(응답 언래핑과 동일 원칙).
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
-  if (config.metadata) {
-    config.data = { metadata: config.metadata, data: config.data ?? {} }
-  } else if (isWrappableBody(config.data)) {
+  if (isWrappableBody(config.data)) {
     config.data = { data: config.data }
   }
   return config
