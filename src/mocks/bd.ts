@@ -72,6 +72,7 @@ const pbancListBase: BidPbancItem[] = [
     tndrSbmsnDdlnDt: '2026-03-17 15:00',
     brprc: 184_500_000,
     taskSeNm: '물품',
+    bidSeNm: '경쟁입찰',
   },
   {
     id: '2',
@@ -88,6 +89,7 @@ const pbancListBase: BidPbancItem[] = [
     tndrSbmsnDdlnDt: '2026-03-11 15:00',
     brprc: 96_000_000,
     taskSeNm: '용역',
+    bidSeNm: '공개수의',
   },
   {
     id: '3',
@@ -104,6 +106,7 @@ const pbancListBase: BidPbancItem[] = [
     tndrSbmsnDdlnDt: '2026-03-06 15:00',
     brprc: 1_250_000_000,
     taskSeNm: '공사',
+    bidSeNm: '경쟁입찰',
   },
   {
     id: '4',
@@ -120,6 +123,7 @@ const pbancListBase: BidPbancItem[] = [
     tndrSbmsnDdlnDt: '2026-03-03 15:00',
     brprc: 532_800_000,
     taskSeNm: '국외',
+    bidSeNm: '공개수의',
   },
 ]
 

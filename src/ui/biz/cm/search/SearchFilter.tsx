@@ -260,11 +260,11 @@ const SearchFilter = ({
       >
         <PrdcrInq ref={prdcrRef} onSelect={handleSheetSelect} />
       </BottomSheet>
+      {/* 발주부서(기관) 검색(P04) — Figma 10020:129198·129208: footer 없음(검색 버튼은 콘텐츠가 소유, 닫기는 타이틀 X). */}
       <BottomSheet
         open={sheet?.kind === 'dept'}
         onOpenChange={closeSheet}
         title="발주부서(기관) 검색"
-        footer={sheetFooter(deptRef)}
       >
         <DeptInq ref={deptRef} onSelect={handleSheetSelect} />
       </BottomSheet>
@@ -279,9 +279,9 @@ const SearchFilter = ({
       <BottomSheet
         open={sheet?.kind === 'license'}
         onOpenChange={closeSheet}
-        title="면허정보검색"
-        footer={sheetFooter(licenseRef)}
+        title="면허정보 검색"
       >
+        {/* 면허정보 검색(P05) — P04 와 동일하게 footer 없음(검색 버튼은 콘텐츠 소유, 닫기는 타이틀 X). */}
         <LcnsInfoSrch ref={licenseRef} onSelect={handleSheetSelect} />
       </BottomSheet>
       {/* 계약번호조회(MUI-EX-02-P79) — 확정형 시트: 내부 [검색]은 콘텐츠 소유, footer=[닫기/계약번호 선택](Figma·설계서 slide84). */}

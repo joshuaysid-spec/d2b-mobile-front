@@ -1,102 +1,154 @@
-// 면허정보검색 (MUI-BD-01-P05). 검색필터의 '면허정보' selectionField 에서 호출.
-// 면허명/면허코드를 Like 검색 → 결과 클릭 시 면허명을 호출 필드로 반환.
-// 콘텐츠 전용 — BottomSheet 컨테이너/타이틀/footer(초기화·검색)는 SearchFilter 셸이 슬롯으로 소유한다.
-//   폼 상태는 캡슐화하고 footer 동작만 SearchSheetHandle(ref)로 노출. 닫힘 시 언마운트로 상태 자동 초기화.
-// 목록은 목업(추후 API: bdService.searchLicenses). DeptInq 와 동일 패턴.
+// 면허정보 검색 (MUI-BD-01-P05, 입찰 설계서 v1.83 slide15). 검색필터의 '면허정보' selectionField 에서 호출.
+// 디자인: Figma 10020:129198·10020:129208 패턴(P04 발주부서 검색과 동일) — 라벨 인라인 입력행 + 콘텐츠 내
+//   검색 버튼(footer 없음), 결과 = 총 N건(navy Bold) + 컬럼 라벨(13px subtle) + 행(코드 Regular / 명 Bold, divider).
+// 내용(설계서 slide15): 검색조건 = 구분(select: 면허코드/면허정보명, 기본 면허코드) + 입력 · Like 검색 · Enter 검색
+//   · 입력 2글자 미만이면 검색 버튼 비활성 · 특수문자 불가(IME 가드 이슈로 입력 거르기 대신 검색 시 제거)
+//   · 정렬 = 면허코드 오름차순 → 면허정보명 가나다 오름차순 · 면허정보명이 길면 말줄임(…).
+// 콘텐츠 전용 — BottomSheet 컨테이너/타이틀/닫기(X)는 SearchFilter 셸이 소유(이 시트는 footer 미사용).
+//   SearchSheetHandle(ref)은 셸 인터페이스 호환용으로 유지. 닫힘 시 언마운트로 상태 자동 초기화.
+// 목록은 목업(추후 API: bdService.searchLicenses). 항목명은 검색조건 데이터영역(slide17) cnstpCd/cnstpCdNm 준수.
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react'
 
+import { Button } from '@/ui/common/base/Button'
+import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
+import { SelectBox } from '@/ui/common/base/SelectBox'
 import type { SearchSheetHandle } from '@/types/search-filter'
 
-// 검색결과 1건 (dl_resultList) — 면허코드 + 면허명
+// 검색결과 1건 (dl_resultList) — 면허코드(cnstpCd, 상위코드 GU9) + 면허정보명(cnstpCdNm). slide17 항목명 준수.
 interface LicenseResult {
-  lcnsCd: string // 면허코드
-  lcnsNm: string // 면허명
+  cnstpCd: string // 면허코드
+  cnstpCdNm: string // 면허정보명
 }
 
-// 목업 결과 (설계서 P05 예시값 기반) — 추후 API 로 대체
-const MOCK_LICENSES: LicenseResult[] = [
-  { lcnsCd: '0101', lcnsNm: '토목공사업' },
-  { lcnsCd: '0102', lcnsNm: '건축공사업' },
-  { lcnsCd: '0103', lcnsNm: '토목건축공사업' },
-  { lcnsCd: '0201', lcnsNm: '전기공사업' },
-  { lcnsCd: '0202', lcnsNm: '정보통신공사업' },
-  { lcnsCd: '0203', lcnsNm: '소방시설공사업' },
-  { lcnsCd: '0301', lcnsNm: '조경공사업' },
-  { lcnsCd: '0302', lcnsNm: '산업·환경설비공사업' },
+// 구분(검색 기준) select — 설계서 slide15 검색 전 화면(기본값 면허코드).
+const SRCH_SE_OPTIONS = [
+  { value: 'cnstpCd', label: '면허코드' },
+  { value: 'cnstpCdNm', label: '면허정보명' },
 ]
 
+// 목업 결과 (설계서 slide15 검색 후 예시값 — '식품' 검색) — 추후 API 로 대체
+const MOCK_LICENSES: LicenseResult[] = [
+  { cnstpCd: '1399', cnstpCdNm: '식품제조 가공업' },
+  { cnstpCd: '8203', cnstpCdNm: '식품 등 시험검사기관 (식품안전관리인증검사)' },
+  { cnstpCd: '3975', cnstpCdNm: '우수식품인증기관 (전통식품품질인증)' },
+  { cnstpCd: '1450', cnstpCdNm: '식품접객업 (위탁급식업)' },
+  { cnstpCd: '3934', cnstpCdNm: '유기식품등 인증기관' },
+  { cnstpCd: '3972', cnstpCdNm: '식품산업전문인력양성기관' },
+  { cnstpCd: '3973', cnstpCdNm: '식품성분 조사 연구기관' },
+  { cnstpCd: '3974', cnstpCdNm: '우수식품인증기관(식품산업표준인증)' },
+  { cnstpCd: '3976', cnstpCdNm: '우수식품인증기관(유기가공식품인증)' },
+  { cnstpCd: '5201', cnstpCdNm: '식품 즉석판매제조 가공업' },
+]
+
+// 특수문자 제거 — 설계서 '특수문자 입력 불가'(한글/영문/숫자/공백만 허용).
+const stripSpecial = (v: string) => v.replace(/[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9\s]/g, '')
+
 export interface LcnsInfoSrchProps {
-  /** 결과 선택 시 호출 — 선택한 면허명을 호출 필드로 반환(셸이 시트를 닫는다). */
-  onSelect: (lcnsNm: string) => void
+  /** 결과 선택 시 호출 — 선택한 면허정보명을 호출 필드로 반환(셸이 시트를 닫는다). */
+  onSelect: (cnstpCdNm: string) => void
 }
 
 const LcnsInfoSrch = forwardRef<SearchSheetHandle, LcnsInfoSrchProps>(({ onSelect }, ref) => {
+  const [srchSe, setSrchSe] = useState('cnstpCd') // 구분(기본 면허코드)
   const [keyword, setKeyword] = useState('')
   const [results, setResults] = useState<LicenseResult[] | null>(null) // null = 검색 전
 
+  // 최소 2글자 이상 입력 시 검색 가능(설계서) — 특수문자 제거 후 기준.
+  const canSearch = stripSpecial(keyword).trim().length >= 2
+
   const reset = useCallback(() => {
+    setSrchSe('cnstpCd')
     setKeyword('')
     setResults(null)
   }, [])
 
-  // Like 검색(목업) — 추후 bdService.searchLicenses 로 대체.
+  // Like 검색(목업) — 구분(면허코드/면허정보명)에 따라 해당 필드 부분일치.
+  //   정렬: 면허코드 오름차순 → 면허정보명 가나다(설계서). 무한 스크롤은 API 연동 시 페이징과 함께 반영.
   const handleSearch = useCallback(() => {
-    const kw = keyword.trim()
-    const filtered = MOCK_LICENSES.filter(
-      (l) => !kw || l.lcnsNm.includes(kw) || l.lcnsCd.includes(kw),
+    if (!canSearch) return
+    const kw = stripSpecial(keyword).trim().toLowerCase()
+    const filtered = MOCK_LICENSES.filter((l) =>
+      (srchSe === 'cnstpCd' ? l.cnstpCd : l.cnstpCdNm).toLowerCase().includes(kw),
+    ).sort(
+      (a, b) =>
+        a.cnstpCd.localeCompare(b.cnstpCd) || a.cnstpCdNm.localeCompare(b.cnstpCdNm, 'ko'),
     )
     setResults(filtered)
-    console.log('[P05] 면허정보검색', { keyword, hit: filtered.length })
-  }, [keyword])
+    console.log('[P05] 면허정보 검색', { srchSe, keyword: kw, hit: filtered.length })
+  }, [canSearch, srchSe, keyword])
 
-  // footer(초기화/검색)는 셸이 소유 → 동작만 ref 로 노출.
+  // 셸 인터페이스 호환(SearchSheetHandle) — 이 시트는 footer 미사용이나 ref 계약은 유지.
   useImperativeHandle(ref, () => ({ reset, search: handleSearch }), [reset, handleSearch])
 
-  const handlePick = (l: LicenseResult) => onSelect(l.lcnsNm)
-
   return (
-    <div className="flex flex-col gap-krds-7">
-      {/* 검색 조건 (dm_searchInfo) */}
-      <div className="flex flex-col gap-krds-5">
-        <InputLabel>면허정보</InputLabel>
-        <InputBox
-          value={keyword}
-          placeholder="면허명 또는 면허코드를 입력해주세요."
-          onChange={(e) => setKeyword(e.target.value)}
-          onClear={() => setKeyword('')}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') handleSearch()
-          }}
-        />
+    <div className="flex flex-col gap-krds-8">
+      {/* 검색 조건 (dm_searchInfo) — 라벨 인라인(Figma m_input_label + 컨트롤 flex-1, gap 8) */}
+      <div className="flex flex-col gap-krds-8">
+        <div className="flex items-center gap-krds-5">
+          <InputLabel className="w-[64px] shrink-0">구분</InputLabel>
+          <div className="min-w-px flex-1">
+            <SelectBox items={SRCH_SE_OPTIONS} value={srchSe} onValueChange={setSrchSe} />
+          </div>
+        </div>
+        <div className="flex items-center gap-krds-5">
+          <InputLabel className="w-[64px] shrink-0">입력</InputLabel>
+          <InputBox
+            className="min-w-px flex-1"
+            value={keyword}
+            placeholder="정보를 입력해주세요."
+            onChange={(e) => setKeyword(e.target.value)}
+            onClear={() => setKeyword('')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSearch()
+            }}
+          />
+        </div>
+
+        {/* 검색 — 콘텐츠 내 full-width primary(Search 아이콘, Figma). 입력 2글자 미만 비활성(설계서). */}
+        <Button variant="primary" className="w-full" disabled={!canSearch} onClick={handleSearch}>
+          <Icon name="Search" size={20} aria-hidden />
+          검색
+        </Button>
       </div>
 
-      {/* 검색 결과 (dl_resultList) — 행 클릭 시 면허명 반환 */}
+      {/* 검색 결과 (dl_resultList) — 총 N건 + 컬럼 라벨 + 행 클릭 시 면허정보명 반환 */}
       {results !== null && (
-        <div className="flex flex-col gap-krds-5">
-          <p className="text-krds-body-sm text-krds-text-primary-active">총 {results.length}건</p>
+        <div className="flex flex-col">
+          <p className="py-krds-5 text-[17px] font-bold leading-normal text-krds-text-primary-active">
+            총 {results.length}건
+          </p>
           {results.length === 0 ? (
             <p className="py-6 text-center text-krds-body-md text-krds-text-subtle">
               검색 결과가 없습니다.
             </p>
           ) : (
-            <ul className="flex flex-col">
-              {results.map((l) => (
-                <li key={l.lcnsCd}>
-                  <button
-                    type="button"
-                    onClick={() => handlePick(l)}
-                    className="flex w-full flex-col gap-1 border-b border-krds-border-divider py-krds-6 text-left active:bg-krds-bg-primary-faint"
-                  >
-                    <span className="text-[17px] font-bold text-krds-text-ink">{l.lcnsNm}</span>
-                    <span className="text-krds-body-sm text-krds-text-muted">
-                      면허코드 {l.lcnsCd}
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <>
+              {/* 컬럼 라벨(top label group) — 13px subtle */}
+              <div className="flex items-center gap-krds-8 pb-krds-3 text-[13px] leading-normal text-krds-text-subtle">
+                <span className="w-[64px] shrink-0 text-center">면허코드</span>
+                <span className="min-w-px flex-1">면허정보명</span>
+              </div>
+              <ul className="flex flex-col">
+                {results.map((l) => (
+                  <li key={l.cnstpCd}>
+                    <button
+                      type="button"
+                      onClick={() => onSelect(l.cnstpCdNm)}
+                      className="flex w-full items-center gap-krds-8 border-t border-krds-border-divider py-krds-8 text-left active:bg-krds-bg-primary-faint"
+                    >
+                      <span className="w-[64px] shrink-0 text-center text-[17px] leading-normal text-krds-text-ink">
+                        {l.cnstpCd}
+                      </span>
+                      <span className="min-w-px flex-1 truncate text-[17px] font-bold leading-normal text-krds-text-ink">
+                        {l.cnstpCdNm}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
         </div>
       )}
