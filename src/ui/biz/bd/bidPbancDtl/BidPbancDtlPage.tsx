@@ -194,10 +194,16 @@ export function BidPbancDtlPage() {
           collapsed ? 'border-krds-border-divider' : 'border-transparent'
         }`}
       >
+        {/* 요약 — 목록 카드(MUI-BD-01-M01)와 동일 구성(2026-08-06 요청): 뱃지 3종(업무구분·입찰구분·공고구분),
+            공고번호-차수, 발주기관→기초예가금액→생산능력/입찰참가등록/입찰서제출 마감일시(년-월-일) 순. */}
         <SummaryInfo
           collapsed={collapsed}
-          badges={[{ label: detail?.pbancTpcd ?? '' }]}
-          subtitle={`공고번호 ${detail?.g2BBidPbancNo ?? ''}`}
+          badges={[
+            ...(detail?.taskSeNm ? [{ key: 'taskSeNm', label: detail.taskSeNm }] : []),
+            ...(detail?.bidSeNm ? [{ key: 'bidSeNm', label: detail.bidSeNm }] : []),
+            { key: 'pbancTpcd', label: detail?.pbancTpcd ?? '' },
+          ]}
+          subtitle={`공고번호 ${detail?.g2BBidPbancNo ?? ''}${detail?.g2BBidPbancCycl ? `-${detail.g2BBidPbancCycl}` : ''}`}
           title={detail?.rprsItemNm ?? ''}
           actions={
             <SummaryUtilButton
@@ -209,9 +215,10 @@ export function BidPbancDtlPage() {
           }
           rows={[
             { label: '발주기관', value: detail?.orderInstNm ?? '-' },
-            { label: '입찰참가등록 마감일시', value: detail?.bidClrsDt ?? '-' },
-            { label: '입찰서제출 마감일시', value: detail?.tndrSbmsnDdlnDt ?? '-' },
             { label: '기초예가금액', value: detail ? `${detail.brprc.toLocaleString()} 원` : '-' },
+            { label: '생산능력 제출 마감일시', value: detail?.prdcpIdntySmdocDdlnDt?.slice(0, 10) ?? '-' },
+            { label: '입찰참가등록 마감일시', value: detail?.bidClrsDt?.slice(0, 10) ?? '-' },
+            { label: '입찰서제출 마감일시', value: detail?.tndrSbmsnDdlnDt?.slice(0, 10) ?? '-' },
           ]}
         />
 

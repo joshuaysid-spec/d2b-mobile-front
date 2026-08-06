@@ -63,9 +63,9 @@ export function AplyCmptnPage() {
     { label: '신청 완료 일시', value: rcptDt },
   ]
 
+  // 작성 내용 확인 → 입찰공고 통합목록(MUI-BD-01-M01, 2026-08-06 요청: 진행 상세 대신 공고 목록으로).
   const handleConfirmContent = () => {
-    console.log('[M08] 작성 내용 확인', { pbancNo: detail.pbancNo, aplyType })
-    // 추후 API/라우팅: 입찰참가신청서/입찰서 상세 조회
+    navigate('/bd')
   }
   const handleList = () => {
     navigate('/bd/prgrs') // 입찰진행 목록으로
@@ -113,13 +113,13 @@ export function AplyCmptnPage() {
         </div>
       </div>
 
-      {/* 하단 액션바 — 작성 내용 확인 / 목록 */}
+      {/* 하단 액션바 — 목록 / 작성 내용 확인 (2026-08-06 요청: 위치 교체) */}
       <div className="border-t border-krds-border-divider bg-krds-bg-primary-faint px-4 py-4">
         <ButtonGroup
           layout="split"
           items={[
-            { label: '작성 내용 확인', variant: 'secondary', onClick: handleConfirmContent },
-            { label: '목록', variant: 'primary', onClick: handleList },
+            { label: '목록', variant: 'secondary', onClick: handleList },
+            { label: '작성 내용 확인', variant: 'primary', onClick: handleConfirmContent },
           ]}
         />
       </div>
