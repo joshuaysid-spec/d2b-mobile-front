@@ -64,12 +64,13 @@ const Checkbox = React.forwardRef<React.ElementRef<typeof RawCheckbox>, Checkbox
               aria-hidden
               className="pointer-events-none text-white opacity-0 peer-data-[state=checked]:opacity-100"
             />
-            {/* 부분선택(전체동의 일부 체크) — 대시 표시. absolute 로 겹쳐 중앙 정렬(체크 아이콘과 자리 공유). */}
+            {/* 부분선택(전체동의 일부 체크) — 대시 표시. absolute 로 겹쳐 자리 공유(체크 아이콘과).
+                Icon 은 인라인 width/height(18px)를 고정하므로 inset-0 스트레치가 안 먹음 → m-auto 로 중앙 정렬. */}
             <Icon
               name="Remove"
               size={18}
               aria-hidden
-              className="pointer-events-none absolute inset-0 grid place-content-center text-white opacity-0 peer-data-[state=indeterminate]:opacity-100"
+              className="pointer-events-none absolute inset-0 m-auto text-white opacity-0 peer-data-[state=indeterminate]:opacity-100"
             />
           </span>
           {content != null && <span className="min-w-0">{content}</span>}
