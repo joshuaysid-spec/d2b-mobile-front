@@ -78,9 +78,6 @@ const CTRT_MTHD_OPTIONS = [ALL, // 계약방법(ctrtMthdCd, 상위코드 CTMC) �
   { value: 'nego_elec', label: '협상에의한계약(전자)' }, { value: 'two_step_sync', label: '2단계경쟁(동시)' },
   { value: 'two_step_split', label: '2단계경쟁(분리)' }, { value: 'total_award', label: '종합낙찰제' },
   { value: 'reverse', label: '역경매' }]
-// 입찰구분 — 설계서 항목설명 표(slide19) 미정의(임시 키 bidSe). 옵션은 목록 표시레이블(slide13) 기준(사용자 확정).
-const BID_SE_OPTIONS = [ALL,
-  { value: 'compete', label: '경쟁입찰' }, { value: 'openPrivate', label: '공개수의' }]
 // 낙찰방법(scsbdMthdCd, 상위코드 CCMT) — 설계서에 속성값 미기재, 대표값 임시(추후 백엔드 코드 보완).
 const SCSBD_MTHD_OPTIONS = [ALL,
   { value: 'lowest', label: '최저가' }, { value: 'qualify', label: '적격심사' }, { value: 'nego', label: '협상' }]
@@ -136,7 +133,9 @@ function buildBidFilterSchema(value: SearchFilterValue): SearchFilterSchema {
           { type: 'dateRange', key: 'date', presets: DATE_PRESETS },
         ],
       },
-      // 검색어 — 일부 입력 가능. 번호검색은 공고번호/통합참조 토글 + 입력. 발주기관/면허정보/지역은 검색시트.
+      // 검색어 — 일부 입력 가능. 번호검색은 공고번호/통합참조 토글 + 입력. 발주기관/면허정보는 검색시트.
+      //   지역명(rgnNm)은 직접 입력(v1.83 2026-07-09 개정: "지역명이 검색에서 직접 입력으로 변경됨" — 구 지역검색(P03) 시트 미사용).
+      //   지역명 위치는 품명 위(2026-08-06 요청).
       {
         key: 'keyword',
         title: '검색어 (일부 입력 가능)',
@@ -152,33 +151,38 @@ function buildBidFilterSchema(value: SearchFilterValue): SearchFilterSchema {
             ],
           },
           { type: 'text', key: 'bidNo', placeholder: '번호를 입력하세요.' },
+          { type: 'text', key: 'rgnNm', label: '지역명', placeholder: '지역명을 입력하세요.' },
           { type: 'text', key: 'itemNm', label: '품명', placeholder: '품명을 입력하세요.' },
           // 발주기관(orderInstNm) → 발주부서(기관)검색(MUI-BD-01-P04, DeptInq)
           { type: 'selectionField', key: 'orderInstNm', label: '발주기관', placeholder: '발주기관을 입력하세요.', searchSheet: 'dept' },
           // 면허정보(cnstpCdNm) → 면허정보검색(MUI-BD-01-P05, LcnsInfoSrch)
           { type: 'selectionField', key: 'cnstpCdNm', label: '면허정보', placeholder: '면허정보를 입력하세요.', searchSheet: 'license' },
-          // 지역(rgnNm) → 지역검색(MUI-BD-01-P03, RgnSrch)
-          { type: 'selectionField', key: 'rgnNm', label: '지역', placeholder: '지역을 입력하세요.', searchSheet: 'region' },
         ],
       },
-      // 구분 설정 — 드롭다운(업무구분에 따라 기능·군구분·입찰매체 노출)
+      // 구분 설정 — 드롭다운 8종(v1.83 slide12·17 dml_bidPbancSrchCnd 재편: 구 입찰구분(bidSe) 제거,
+      //   와이어프레임 순서 진행상태명→공고구분→기능→입찰매체→입찰형태→계약방법→낙찰방법→군구분.
+      //   와이어프레임의 3번째 '진행상태' 행은 데이터영역에 bidStatNm 하나뿐이라 중복으로 보고 미구현 — 사용자 확정 2026-08-06.
+      //   기능·입찰매체·군구분은 업무구분 전체/국외 선택 시 노출 — 비고 유지).
       {
         key: 'category',
         title: '구분 설정',
         fields: [
-          { type: 'select', key: 'bidSe', label: '입찰구분', options: BID_SE_OPTIONS, placeholder: '전체' },
+          { type: 'select', key: 'bidStatNm', label: '진행상태명', options: BID_STAT_OPTIONS, placeholder: '전체' },
           { type: 'select', key: 'pbancTpcd', label: '공고구분', options: PBANC_TPCD_OPTIONS, placeholder: '전체' },
-          { type: 'select', key: 'bidStatNm', label: '진행상태', options: BID_STAT_OPTIONS, placeholder: '전체' },
           ...(showOvsFields
             ? ([
                 { type: 'select', key: 'spfCode', label: '기능', options: SPF_OPTIONS, placeholder: '전체' },
-                { type: 'select', key: 'prcmRqtInstCd', label: '군구분', options: PRCM_RQT_INST_OPTIONS, placeholder: '전체' },
                 { type: 'select', key: 'bidMediaCd', label: '입찰매체', options: BID_MEDIA_OPTIONS, placeholder: '전체' },
               ] satisfies SearchFilterField[])
             : []),
           { type: 'select', key: 'elctrNgtnYn', label: '입찰형태', options: ELCTR_NGTN_OPTIONS, placeholder: '전체' },
           { type: 'select', key: 'ctrtMthdCd', label: '계약방법', options: CTRT_MTHD_OPTIONS, placeholder: '전체' },
           { type: 'select', key: 'scsbdMthdCd', label: '낙찰방법', options: SCSBD_MTHD_OPTIONS, placeholder: '전체' },
+          ...(showOvsFields
+            ? ([
+                { type: 'select', key: 'prcmRqtInstCd', label: '군구분', options: PRCM_RQT_INST_OPTIONS, placeholder: '전체' },
+              ] satisfies SearchFilterField[])
+            : []),
         ],
       },
       // 가격 설정 — 추정가격(prsmpPrc, min/max + 듀얼 슬라이더). 최소 스텝 100만(설계서).
@@ -231,7 +235,6 @@ const DEFAULT_FILTER: SearchFilterValue = {
   orderInstNm: '',
   cnstpCdNm: '',
   rgnNm: '',
-  bidSe: 'all',
   pbancTpcd: 'all',
   bidStatNm: 'all',
   spfCode: 'all',
@@ -314,16 +317,23 @@ export function BidPbancIntgListPage() {
   const visibleList = filteredList.slice(0, loaded)
 
   // 목업 → Card props 매핑
+  //   뱃지 최대 3개: 업무구분·입찰구분·공고구분(2026-08-06 요청). 마감일시류는 년-월-일까지만 표시.
+  const toYmd = (dt: string) => dt.slice(0, 10)
   const cardItems: CardListItem[] = visibleList.map((it) => ({
     id: it.id,
-    badges: [<Badge key="pbancTpcd">{it.pbancTpcd}</Badge>],
+    badges: [
+      it.taskSeNm && <Badge key="taskSeNm">{it.taskSeNm}</Badge>,
+      it.bidSeNm && <Badge key="bidSeNm">{it.bidSeNm}</Badge>,
+      <Badge key="pbancTpcd">{it.pbancTpcd}</Badge>,
+    ].filter(Boolean),
     subtitle: `공고번호 ${it.g2BBidPbancNo}-${it.g2BBidPbancCycl}`,
     title: it.rprsItemNm,
     rows: [
       { label: '발주기관', value: it.orderInstNm },
-      { label: '입찰참가등록 마감일시', value: it.bidClrsDt },
-      { label: '입찰서제출 마감일시', value: it.tndrSbmsnDdlnDt },
       { label: '기초예가금액', value: `${it.brprc.toLocaleString()} 원` },
+      { label: '생산능력 제출 마감일시', value: toYmd(it.prdcpIdntySmdocDdlnDt) },
+      { label: '입찰참가등록 마감일시', value: toYmd(it.bidClrsDt) },
+      { label: '입찰서제출 마감일시', value: toYmd(it.tndrSbmsnDdlnDt) },
     ],
     onClick: () => handleCardClick(it),
   }))

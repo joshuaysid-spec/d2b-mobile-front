@@ -45,6 +45,11 @@ export interface BidPbancItem {
    *   입찰진행 목록(BidPrgrsItem.taskSeNm) 항목명 재사용(BD 임시키 관례).
    */
   taskSeNm?: string
+  /**
+   * 입찰구분명 — 경쟁입찰/공개수의. 카드 뱃지(업무구분·입찰구분·공고구분, 2026-08-06 추가) 표시용.
+   * ⚠️ 설계서 항목설명 표 미정의 — 검색필터 임시 키 bidSe(slide13 표시레이블 기준, 사용자 확정)의 표시명 짝(임시 키).
+   */
+  bidSeNm?: string
 }
 
 /**

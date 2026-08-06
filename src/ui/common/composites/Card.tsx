@@ -5,7 +5,7 @@
 // 슬롯 prop:
 //   badges    — <Badge> 들 묶음(ReactNode). 상단 row(wrap, gap 8).
 //   subtitle  — "주요 정보" 같은 작은 윗줄 (17px Regular muted).
-//   title     — 큰 카드 제목 (19px Bold ink, 멀티라인 가능).
+//   title     — 큰 카드 제목 (19px Bold ink, 2줄 초과 시 … 말줄임 — 전문은 상세 화면이 표시).
 //   rows      — [{ label, value }] 라벨/데이터 행. label 17 Regular muted 좌, value 17 ink.
 //               value 정렬: 기본 우측, type2(trailing 있음)는 좌측. value 가 ReactNode 라 자유.
 //   trailing  — 카드 우측 끝 슬롯 (옆 Badge/화살표 아이콘 등). 기본은 rows 와 가로 정렬.
@@ -82,7 +82,8 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
               </span>
             )}
             {title && (
-              <span className="text-[19px] font-bold leading-normal text-krds-text-ink wrap-break-word">
+              // 2줄 초과 시 … 말줄임(2026-08-06 요청 — 설계서 '카드 title 2줄 말줄임'). 전문은 상세 화면이 표시.
+              <span className="line-clamp-2 text-[19px] font-bold leading-normal text-krds-text-ink wrap-break-word">
                 {title}
               </span>
             )}
