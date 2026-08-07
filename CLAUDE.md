@@ -469,15 +469,16 @@ if (!detail) return <PageLoading />
 
 폼 입력 검증은 **react-hook-form(RHF) + zod**로 표준화한다. 직접 `useState`로 검증 로직 짜지 말 것. (상세: `docs/02-design/features/form-validation.design.md`)
 
-**⚠️ 검증 레인은 딱 2개 — 제3의 방식을 만들지 말 것.** "어느 레인인지"는 화면 종류가 정한다:
+**⚠️ 검증 엔진은 전부 RHF+zod 로 통일(2026-08-07), 레인은 딱 2개 — 제3의 방식을 만들지 말 것.**
 
 | 화면 종류 | 검증 방식 | 규칙 수정 위치 |
 |---|---|---|
-| **입력 폼**(신청서·의견등록 등 제출 화면) | zod + RHF (이 절) | 해당 `*.schema.ts` |
-| **검색필터**(SearchFilter 셸 쓰는 목록 화면) | 셸 자체 검증 — 페이지는 schema 필드에 `required: true` 선언만 | 필수 지정=페이지 schema · 검증 동작=`cm/search/SearchFilter.tsx` |
+| **입력 폼**(신청서·의견등록 등 제출 화면) | zod 스키마를 **직접 작성** + RHF (이 절) | 해당 `*.schema.ts` |
+| **검색필터**(SearchFilter 셸 쓰는 목록 화면) | 셸 내부 RHF+zod — **zod 스키마는 필드 정의에서 자동 생성**(`buildZodSchema`), 페이지는 schema 필드에 `required: true` 선언만 | 필수 지정=페이지 schema · 검증 동작/규칙 확장=`cm/search/SearchFilter.tsx` `buildZodSchema` |
 
-- 검색필터에 RHF/zod 를 붙이지 말 것(규칙이 "비었나" 뿐이라 과잉). 검색필터에 required 이상의 규칙(기간 제한 등)이 처음 생기면 페이지에서 처리하지 말고 **셸의 필드 정의 확장(`validate` 옵션 등)으로 셸에 추가**한다 — required 쓰는 14개 화면이 무수정으로 유지되는 구조를 지킬 것.
-- 반대로 입력 폼을 useState 수동 검증이나 검색필터 방식으로 짜지 말 것.
+- **검색필터 페이지에서 zod 스키마를 직접 만들지 말 것** — required 쓰는 14개 화면이 무수정으로 유지되는 구조(셸이 자동 생성)를 지킨다. required 이상의 규칙(기간 제한 등)이 생기면 필드 정의 옵션 → `buildZodSchema` 매핑으로 셸에 추가.
+- 페이지→셸 명령형 제어가 필요하면 `SearchFilterHandle`(ref — `submit`/`reset`) 사용.
+- 반대로 입력 폼을 useState 수동 검증이나 검색필터 방식(자동 생성)으로 짜지 말 것.
 
 - **설치됨**: `react-hook-form`·`zod`·`@hookform/resolvers` (vite `vendor-form` chunk). import: `import { useForm, Controller } from 'react-hook-form'` · `import { zodResolver } from '@hookform/resolvers/zod'`(서브패스 없음) · `import { z } from 'zod'`.
 - **스키마 = 진실원천**: zod 스키마로 규칙 + 타입(`z.infer`)을 한 곳에서. 위치: 단일 폼은 옆에 `XxxForm.schema.ts`(co-locate) · 2개+ 공유는 `src/types/` · 재사용 필드 규칙은 `src/utils/validators.ts`.

@@ -1,9 +1,16 @@
 // Design Ref: search-filter.design.md §2.1 / §5 (v2) — schema 구동 범용 검색필터 셸.
-// 책임: FullPopup 래핑 + 아코디언 섹션 렌더 + draft 상태 + 초기화/검색/닫기
-//       + required 필드 강제(비면 검색 차단 + 필드 아래 에러 + 첫 에러로 스크롤 — 페이지 관여 X).
-// 필드 렌더는 SearchFilterField 에 위임(도메인·필드 무관). value(확정) ↔ draft(작업중) 분리.
+// 책임: FullPopup 래핑 + 아코디언 섹션 렌더 + 값/검증 상태 + 초기화/검색/닫기.
+// 검증 = react-hook-form + zod (2026-08-07 전환 — 폼 검증 레인과 엔진 통일):
+//   필드 정의(required)에서 zod 스키마를 자동 생성(buildZodSchema)하고 각 필드를 Controller 로
+//   RHF에 등록. 검증 실패 시 검색 차단 + 필드 아래 에러 + 첫 에러 필드로 스크롤.
+//   페이지는 여전히 schema 에 required: true 선언만 하면 됨(무수정) — 규칙 확장은 buildZodSchema.
+// 페이지→셸 명령형 제어는 ref(SearchFilterHandle — submit/reset)로도 가능.
+// 필드 렌더는 SearchFilterField 에 위임(도메인·필드 무관). value(확정) ↔ RHF 폼값(작업중 draft) 분리.
 // common/(base·composites)만 사용 — raw 직접 import 금지.
 import * as React from 'react'
+import { Controller, useForm, type FieldPath, type Resolver } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { InputMessage } from '@/ui/common/base/InputMessage'
@@ -79,23 +86,70 @@ const isSameValue = (a: unknown, b: unknown): boolean => {
   return false
 }
 
-const SearchFilter = ({
-  open,
-  onOpenChange,
-  schema,
-  value,
-  defaultValue,
-  onSearch,
-  normalize,
-  onReset,
-  onSelectionClick,
-}: SearchFilterProps) => {
-  const [draft, setDraft] = React.useState<SearchFilterValue>(value ?? defaultValue)
-  // required 미입력으로 검색이 차단된 필드 key — 해당 필드 아래 에러 메시지 표시.
-  const [missingKeys, setMissingKeys] = React.useState<string[]>([])
+// ── 필드 정의 → zod 스키마 자동 생성 ──────────────────────────────────────
+// required 필드는 빈값(isEmptyLike) 거부. 페이지는 required: true 선언만 유지(무수정 원칙).
+// 향후 필드별 규칙(기간 제한 등)이 생기면 필드 정의 옵션 → zod 규칙 매핑을 여기에 추가한다.
+// looseObject: 다른 탭/유형의 키가 값에 남아 있어도 통과.
+const buildZodSchema = (s: SearchFilterSchema) => {
+  const shape: Record<string, z.ZodType> = {}
+  s.sections.forEach((sec) =>
+    sec.fields.forEach((f) => {
+      shape[f.key] = f.required
+        ? z.custom((v) => !isEmptyLike(v), { error: '필수 입력 항목입니다.' })
+        : z.any()
+    }),
+  )
+  return z.looseObject(shape)
+}
+
+/** 페이지→셸 명령형 핸들 — footer 버튼과 동일 동작을 밖에서 트리거할 때. */
+export interface SearchFilterHandle {
+  /** [검색]과 동일 — RHF+zod 검증 후 통과 시 onSearch 호출. */
+  submit: () => void
+  /** [초기화]와 동일 — defaultValue 로 리셋. */
+  reset: () => void
+}
+
+const SearchFilter = React.forwardRef<SearchFilterHandle, SearchFilterProps>(function SearchFilter(
+  {
+    open,
+    onOpenChange,
+    schema,
+    value,
+    defaultValue,
+    onSearch,
+    normalize,
+    onReset,
+    onSelectionClick,
+  },
+  handleRef,
+) {
+  // 값/검증 상태는 RHF 소유. zod 스키마는 "현재 resolved schema" 기준으로 검증 시점에 생성
+  // (동적 schema — resolver 로 섹션이 바뀌면 required 집합도 바뀌므로 ref 로 최신 참조).
+  const schemaRef = React.useRef<SearchFilterSchema | null>(null)
+  const formResolver = React.useMemo<Resolver<SearchFilterValue>>(
+    () => (values, ctx, opts) => {
+      // zodResolver 의 값 제네릭(looseObject 추론)과 SearchFilterValue 를 맞추기 위한 단언
+      // (키/값 형태는 동일 — zod 스키마가 필드 정의에서 생성되므로 런타임 불일치 없음).
+      const resolve = zodResolver(
+        buildZodSchema(schemaRef.current!),
+      ) as unknown as Resolver<SearchFilterValue>
+      return resolve(values, ctx, opts)
+    },
+    [],
+  )
+  const form = useForm<SearchFilterValue>({
+    resolver: formResolver,
+    mode: 'onSubmit',
+    reValidateMode: 'onChange', // 검증 실패 필드는 값이 채워지는 즉시 에러 해제(기존 동작 유지)
+    defaultValues: value ?? defaultValue,
+  })
+  // draft = RHF 폼의 현재 값(편집 중) — watch 로 구독해 resolver/버튼 활성 판정에 사용.
+  const draft: SearchFilterValue = { ...form.watch() }
 
   // 정적 schema 면 그대로, resolver 면 현재 draft 로 매 렌더 재계산 → 검색유형 변경 시 섹션/필드가 바뀜.
   const resolved: SearchFilterSchema = typeof schema === 'function' ? schema(draft) : schema
+  schemaRef.current = resolved
 
   // 공통 검색시트(품목별/생산자) — selectionField.searchSheet 가 셸에서 직접 연다.
   // sheet 가 set 되면 해당 시트가 열리고, 선택 결과는 sheet.commit 으로 해당 필드에 주입된다.
@@ -153,55 +207,56 @@ const SearchFilter = ({
     onSelectionClick?.(key, current, commit)
   }
 
-  // open 시 확정값으로 동기화 — 미확정 편집 폐기, 재진입 시 직전 검색값 복원.
+  // open 시 확정값으로 동기화 — 미확정 편집 폐기(에러 포함), 재진입 시 직전 검색값 복원.
   React.useEffect(() => {
-    if (open) {
-      setDraft(value ?? defaultValue)
-      setMissingKeys([])
-    }
-  }, [open, value, defaultValue])
+    if (open) form.reset(value ?? defaultValue)
+  }, [open, value, defaultValue, form])
 
-  const setField = (key: string, v: SearchFilterFieldValue) => {
-    setDraft((cur) => {
-      const next = { ...cur, [key]: v }
-      // normalize 가 있으면 종속 필드 보정(예: 검색유형 변경 → 업무구분 기본값 교체).
-      return normalize ? normalize(next, cur) : next
+  // 필드 변경 후처리 — normalize 가 있으면 종속 필드 보정(예: 검색유형 변경 → 업무구분 기본값 교체).
+  // Controller 의 rf.onChange 가 해당 필드를 반영한 뒤, 보정으로 달라진 다른 키만 setValue.
+  const applyNormalize = (key: string, v: SearchFilterFieldValue, prev: SearchFilterValue) => {
+    if (!normalize) return
+    const next = { ...prev, [key]: v }
+    const fixed = normalize(next, prev)
+    Object.keys(fixed).forEach((k) => {
+      if (!Object.is(fixed[k], next[k]))
+        form.setValue(k as FieldPath<SearchFilterValue>, fixed[k])
     })
-    // 입력이 생기면 그 필드의 required 에러 해제.
-    setMissingKeys((cur) => (cur.includes(key) ? cur.filter((k) => k !== key) : cur))
   }
 
   const handleReset = () => {
-    setDraft(defaultValue)
-    setMissingKeys([])
+    form.reset(defaultValue)
     onReset?.()
   }
 
-  // 검색 — required 필드가 비어 있으면 차단(에러 표시 + 첫 에러 필드로 스크롤), 채워졌으면 확정.
-  const handleSearch = () => {
-    const missing = resolved.sections.flatMap((s) =>
-      s.fields.filter((f) => f.required && isEmptyLike(draft[f.key])).map((f) => f.key),
-    )
-    if (missing.length > 0) {
-      setMissingKeys(missing)
+  // 검색 — RHF handleSubmit: zod 검증 통과 시에만 onSearch, 실패 시 첫 에러 필드로 스크롤.
+  const handleSearch = form.handleSubmit(
+    (data) => {
+      onSearch(data)
+      onOpenChange(false)
+    },
+    (errors) => {
+      const first = resolved.sections
+        .flatMap((s) => s.fields.map((f) => f.key))
+        .find((k) => errors[k])
       // FullPopup 내부 스크롤 컨테이너 기준 — window.scrollTo 금지(레포 규칙), scrollIntoView 사용.
-      document
-        .getElementById(`sf-field-${missing[0]}`)
-        ?.scrollIntoView({ block: 'center', behavior: 'smooth' })
-      return
-    }
-    setMissingKeys([])
-    onSearch(draft)
-    onOpenChange(false)
-  }
+      if (first)
+        document
+          .getElementById(`sf-field-${first}`)
+          ?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    },
+  )
+
+  // 페이지→셸 명령형 핸들 — footer 버튼과 동일 동작.
+  React.useImperativeHandle(handleRef, () => ({
+    submit: () => void handleSearch(),
+    reset: handleReset,
+  }))
 
   // 검색 버튼 — draft 가 기본값 그대로면 비활성(바꾼 게 있어야 검색 가능).
-  const isDefaultDraft = React.useMemo(
-    () =>
-      [...new Set([...Object.keys(draft), ...Object.keys(defaultValue)])].every((k) =>
-        isSameValue(draft[k], defaultValue[k]),
-      ),
-    [draft, defaultValue],
+  // draft 는 watch 스프레드라 매 렌더 새 객체 → useMemo 무의미, 직접 계산(키 수가 적어 비용 무시).
+  const isDefaultDraft = [...new Set([...Object.keys(draft), ...Object.keys(defaultValue)])].every(
+    (k) => isSameValue(draft[k], defaultValue[k]),
   )
 
   // 초기 열림 섹션(defaultOpen !== false) → Radix multiple defaultValue
@@ -252,18 +307,35 @@ const SearchFilter = ({
                 <p className="text-krds-body-sm text-krds-text-subtle">준비 중입니다.</p>
               ) : (
                 section.fields.map((field) => (
-                  // id = required 에러 스크롤 앵커. 항상 감싸서(조건부 X) 에러 토글 시 필드 remount 방지.
-                  <div key={field.key} id={`sf-field-${field.key}`} className="flex flex-col gap-krds-3">
-                    <SearchFilterField
-                      field={field}
-                      value={draft[field.key]}
-                      onChange={(v) => setField(field.key, v)}
-                      onSelectionClick={handleSelectionClick}
-                    />
-                    {missingKeys.includes(field.key) && (
-                      <InputMessage type="error">필수 입력 항목입니다.</InputMessage>
+                  // Controller = RHF에 필드 등록(값·검증 연결). SearchFilterField 디스패처는 그대로
+                  // value/onChange 만 받음. div id = 에러 스크롤 앵커(항상 감싸 remount 방지).
+                  <Controller
+                    key={field.key}
+                    control={form.control}
+                    name={field.key as FieldPath<SearchFilterValue>}
+                    render={({ field: rf, fieldState }) => (
+                      <div
+                        id={`sf-field-${field.key}`}
+                        className="flex flex-col gap-krds-3"
+                      >
+                        <SearchFilterField
+                          field={field}
+                          value={rf.value as SearchFilterFieldValue | undefined}
+                          onChange={(v) => {
+                            const prev = form.getValues()
+                            rf.onChange(v)
+                            applyNormalize(field.key, v, prev)
+                          }}
+                          onSelectionClick={handleSelectionClick}
+                        />
+                        {fieldState.error && (
+                          <InputMessage type="error">
+                            {fieldState.error.message ?? '필수 입력 항목입니다.'}
+                          </InputMessage>
+                        )}
+                      </div>
                     )}
-                  </div>
+                  />
                 ))
               )}
             </AccordionSection>
@@ -358,7 +430,7 @@ const SearchFilter = ({
       </BottomSheet>
     </>
   )
-}
+})
 SearchFilter.displayName = 'SearchFilter'
 
 export { SearchFilter }
