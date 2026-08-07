@@ -90,15 +90,20 @@ ui/biz/cm/search/SearchFilterField.tsx        (디스패처 — switch field.typ
 ui/common/base/Accordion.tsx (신규, raw/accordion 래핑) · common/base·composites
 ```
 
-### 2.2 Data Flow
+### 2.2 Data Flow (v0.6 — RHF+zod)
 
 ```
-[열기] → open=true → draft = value ?? defaultValue
-[필드 편집] SearchFilterField onChange → setDraft(key, fieldValue)
-[초기화] → draft = defaultValue
-[검색] → onSearch(draft) → 부모 setFilter + 닫힘 → // TODO(API) refetch
-[닫기/Esc/외부클릭] → draft 폐기, value 유지 → 재진입 복원
+[열기] → open=true → form.reset(value ?? defaultValue)   ← 값/검증 상태는 RHF(useForm)가 소유
+[필드 편집] Controller(rf.onChange) → RHF 폼값 갱신 (+ normalize 로 종속 필드 보정 setValue)
+[초기화] → form.reset(defaultValue)
+[검색] → form.handleSubmit:
+          zod 검증(buildZodSchema — required 필드 빈값 거부)
+          ├ 실패 → 검색 차단·필드 아래 에러 표시·첫 에러 필드로 scrollIntoView (팝업 유지)
+          └ 통과 → onSearch(data) → 부모 setFilter + 닫힘
+[값 입력] reValidateMode:'onChange' → 실패했던 필드는 채워지는 즉시 에러 해제
+[닫기/Esc/외부클릭] → 편집분 폐기(reset), value 유지 → 재진입 복원
 [아코디언] 각 섹션 독립 접기/펴기 (Radix multiple, defaultValue=초기 열림)
+[명령형] SearchFilterHandle(ref) — submit()/reset() 을 페이지에서 직접 트리거 가능
 ```
 
 ### 2.3 Dependencies
@@ -274,14 +279,30 @@ OpListPage [검색필터] → 아코디언 팝업(초기 전 섹션 열림)
 
 ---
 
-## 6. Error Handling
+## 6. Error Handling / Validation (v0.6 — RHF+zod)
+
+**검증 엔진 = react-hook-form + zod (입력 폼 레인과 엔진 통일, 2026-08-07).** 단, 페이지가 zod 스키마를 직접 작성하지 않는다 — **셸이 필드 정의에서 자동 생성**한다.
+
+- **사용법(페이지)**: schema 필드에 `required: true` 선언만. 그러면 [검색] 시 빈값이면 차단 + 해당 필드 아래 "필수 입력 항목입니다."(`InputMessage type="error"`) + 첫 에러 필드로 스크롤. 값이 채워지면 에러 즉시 해제.
+- **동작(셸)**: `buildZodSchema(resolved)` 가 required 필드 → `z.custom(빈값 거부)` 매핑으로 zod 스키마 생성(비 required 는 `z.any()`, `looseObject` 라 타 유형 키 통과). 각 필드는 `Controller` 로 RHF 등록. 동적 schema(resolver)여도 검증 시점의 resolved 기준(ref 참조).
+- **규칙 확장**: required 이상(기간 제한 등)이 생기면 **필드 정의 옵션 → `buildZodSchema` 매핑 추가**(셸 한 곳) — required 사용 화면들은 무수정 유지. 페이지별 zod 스키마 작성 금지(CLAUDE.md 검증 레인 규칙).
+- **명령형 핸들**: `SearchFilterHandle`(ref) — `submit()`(검증 포함 검색)/`reset()`. footer 버튼과 동일 동작을 페이지에서 트리거할 때만 사용.
+
+```tsx
+// 페이지 사용 예 — required 선언(검증은 셸이 수행)
+{ type: 'checkbox', key: 'taskSeNm', required: true, ... }
+
+// 명령형 제어가 필요할 때(옵션)
+const filterRef = useRef<SearchFilterHandle>(null)
+<SearchFilter ref={filterRef} ... />
+filterRef.current?.submit()   // footer [검색]과 동일
+```
 
 | 상황 | 처리 |
 |------|------|
-| 필수 필드 미설정 | defaultValue 가 유효값 보유 → 빈 상태 미발생 |
+| required 필드 빈값 검색 | zod 검증 실패 → 차단 + 필드 에러 + 첫 에러 스크롤(위 참조) |
 | dateRange 형식 오류 | DateRangeInput 내부 검증(error state) |
 | 알 수 없는 field.type | 디스패처 default: DEV 콘솔 경고 + null |
-| 공통팝업 미구현 | selectionField(품명/발주기관)는 트리거 자리만 + `// TODO`(업무구분 checkbox 는 구현 완료) |
 
 ---
 
@@ -347,7 +368,7 @@ base/Accordion → raw/accordion (래핑)
 |------|-----------|
 | 컴포넌트 출처 | `common/`(base·composites)만 — `raw/*` 직접 import 금지(Accordion 은 raw 래핑 base) |
 | 도메인 격리 | `cm/search` 도메인 무관(config 주입) |
-| 상태 | native useState(draft) + controlled value + onSearch |
+| 상태 | RHF `useForm`(편집 draft = 폼값) + controlled value + onSearch. 검증 = zod 자동 생성(`buildZodSchema`) |
 | API | 주석 스텁(`// TODO(API)`) |
 | 스타일 | KRDS 토큰 유틸, 하드코딩 0 (chevron 20=`[&>svg]:size-5`) |
 
@@ -397,3 +418,5 @@ src/
 | 0.2 | 2026-06-01 | **v2 재설계** — Figma MUI-OP-01-M02(9300-37302) 아코디언 레이아웃. 신규 base `Accordion`(9300-28556), 필드 타입 radio/checkbox/dateRange/date/text/selectionField/select, biz/op/OpListPage(p.8). chevron 20px | joshuaysid-spec |
 | 0.3 | 2026-06-08 | **공통 검색시트 구현 + 셸 내장.** 품목별조회(P71 `ItemInqSheet`)·생산자조회(P72 `PrdcrInqSheet`) BottomSheet 를 `biz/cm/search/` 에 두고, `SelectionFieldDef.searchSheet:'item'|'producer'` 식별자로 **SearchFilter 셸이 직접 open/commit**(페이지 위임 `onSelectionClick` 제거 — 소비자는 SearchFilter 하나만 import). 위 §본문의 "팝업 TODO/공통팝업 미구현"(v0.2 시점 스텁)은 본 버전에서 해소됨. op 폴더 설계서 화면ID 재편(PrcmPlanIntgListPage/PrcmPlanDtl*) 반영 | joshuaysid-spec |
 | 0.4 | 2026-06-09 | **검색유형별 동적 schema(MUI-OP-01-M02 p11~13).** `schema` 가 `SearchFilterSchema \| SearchFilterSchemaResolver`(함수)도 받도록 확장 + `normalize?(next,prev)` 콜백 추가. 검색유형(조달계획/사전규격/연간조달)에 따라 날짜·검색어·구분설정 섹션이 달라짐(§3.1.1 표). 페이지에 `buildOpSearchSchema` resolver + `normalizeOpSearch`(유형 전환 시 업무구분 보정). 섹션 key 변경 시 Accordion remount. 기존 정적 schema 사용처 하위호환 | joshuaysid-spec |
+| 0.5 | 2026-08-06 | **required 강제(셸 자체 검증).** 필드 `required: true` 가 표시(별표)뿐 아니라 검색 차단까지 — 빈값이면 onSearch 미호출·필드 아래 에러·첫 에러 스크롤·입력 시 해제. 페이지는 선언만(무수정 원칙 확립) | joshuaysid-spec |
+| 0.6 | 2026-08-07 | **검증 엔진 RHF+zod 전환(폼 레인과 통일).** draft useState → `useForm`(RHF 소유), 검증 → 필드 정의에서 zod 스키마 자동 생성(`buildZodSchema`) + `handleSubmit` 흐름, 전 필드 `Controller` 등록. 페이지 계약(schema/value/onSearch·required 선언) 불변 — required 사용 14화면 무수정. `SearchFilterHandle`(ref: submit/reset) 신설. §2.2·§6·§10 갱신 | joshuaysid-spec |
