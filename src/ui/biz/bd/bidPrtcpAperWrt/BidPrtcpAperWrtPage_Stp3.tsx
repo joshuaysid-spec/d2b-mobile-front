@@ -1,8 +1,7 @@
 // 입찰참가신청서작성 - 공종 및 면허 (MUI-BD-04-M07, 설계서 slide100~).
 // 신청서 마법사의 '공종 및 면허' 스텝 탭 콘텐츠(업무구분=공사 + 공종정보 보유 시 노출. 여기선 목업 표시).
-// 요약/스텝/탭/하단 액션바는 페이지 소유 — 이 컴포넌트는 PageTitle + 섹션(공종 카드 반복)만 렌더.
+// 요약/스텝/탭/하단 액션바는 페이지 소유 — 이 컴포넌트는 섹션(공종 카드 반복)만 렌더(탭명 반복 타이틀 없음).
 // 라벨/안내문구는 설계서 텍스트 그대로, 시공능력평가액 형식도 설계서대로.
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Button } from '@/ui/common/base/Button'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -59,10 +58,6 @@ function cnstwkRows(row: CnstwkRow): TableRow[] {
 export function BidPrtcpAperWrtPage_Stp3({ detail }: { detail: BidPrgrsItem }) {
   return (
     <>
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        공종 및 면허
-      </PageTitle>
-
       <SectionTitle as="h3" topDivider info={`총 ${MOCK_CNSTWKS.length}건`} className="bg-white">
         공종 및 면허정보
       </SectionTitle>
@@ -83,7 +78,7 @@ export function BidPrtcpAperWrtPage_Stp3({ detail }: { detail: BidPrgrsItem }) {
         </Button>
       </div>
 
-      {/* 안내사항 — 설계서 문구 그대로 */}
+      {/* 안내사항 — 설계서 문구 그대로. 탭 최하단 고정(전 탭 공통) */}
       <Infobox
         title="안내사항"
         items={[
@@ -93,6 +88,7 @@ export function BidPrtcpAperWrtPage_Stp3({ detail }: { detail: BidPrgrsItem }) {
         ]}
       />
 
+      {/* 나라장터 바로가기 — 안내사항 아래 배치(안내문의 G2B 확인 동선과 이어짐) */}
       <div className="px-4 py-4">
         <Button
           variant="secondary"

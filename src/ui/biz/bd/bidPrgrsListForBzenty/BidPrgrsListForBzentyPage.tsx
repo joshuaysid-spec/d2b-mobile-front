@@ -1,10 +1,14 @@
-// 입찰진행 목록 (MUI-BD-03-M01, 설계서 slide66·68). "조달업체가 신청한 입찰 내역" 목록.
+// 입찰진행 목록 (MUI-BD-03-M01, 설계서 02입찰 v1.83 slide69 화면 · slide71 데이터영역). "조달업체가 신청한 입찰 내역" 목록.
 // 레퍼런스: 입찰공고 통합목록 BidPbancIntgListPage (구성·상태·페이징 동일 패턴).
 // 구성: 업무도움(Infobox) + 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더 + 카드 리스트 + 더보기 + FAB.
 // 데이터는 useBidProgressList(queries/bd) — 목업/실연동은 bdService(USE_MOCK)가 전환. 목업 데이터는 mocks/bd.ts.
 // 키워드 검색·더보기(페이징)는 페이지 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행).
+// ⚠️ 2026-06-18 개정('공고 목록 설명 변경', slide69 주석 ②): 목록은 공고 전체를 보여주되 상세 진입을 제한한다.
+//    - 입찰 진행 일시 미도래 → 토스트 '입찰 진행 일이 아닙니다.'
+//    - 입찰(신청) 이력 없음 → 토스트 '입찰 진행 이력이 없습니다.'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import dayjs from 'dayjs'
 
 import { useBidProgressList } from '@/queries/bd'
 import { Badge } from '@/ui/common/base/Badge'
@@ -15,6 +19,7 @@ import { SearchCondition } from '@/ui/common/composites/SearchCondition'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { Toast } from '@/ui/common/composites/Toast'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import type {
   DateRangePresetDef,
@@ -84,13 +89,24 @@ const DEFAULT_FILTER: SearchFilterValue = {
 // (구 인라인 dlt_bidPrgrsList 7건 + 확장은 mocks/bd.ts 로 이관 — 단일 소스. 각 아이템 = 업무구분/진행상태/실데이터
 //  를 담은 완결 객체라 그대로 상세 navigate state 로 넘기면 상세가 상태값으로 버튼을 분기해 굴러간다.)
 
-// 신청유형 배지(설계서 slide66: 사전심사/입찰참가/견적서) — 해당 플래그가 true 인 것만.
+// 신청유형 배지(설계서 slide69: 사전심사/입찰참가/견적서) — 해당 플래그가 true 인 것만.
 function aplyBadges(it: BidPrgrsItem): string[] {
   const out: string[] = []
   if (it.bfhdSrng) out.push('사전심사')
   if (it.bidPrgrsApfr) out.push('입찰참가')
   if (it.tndr) out.push('견적서')
   return out
+}
+
+// 상세 진입 제한(설계서 slide69 주석 ②) — 막을 사유가 있으면 토스트 문구, 없으면 null.
+//   ① 입찰 진행 일시 미도래 = 공고일자(pbancYmd)가 아직 오지 않음(사용자 확정 판정 기준).
+//   ② 입찰 진행 이력 없음 = 신청유형 플래그(입찰참가/입찰서/사전심사/기술평가/생산능력서류)가 모두 false.
+function entryBlockMessage(it: BidPrgrsItem): string | null {
+  if (it.pbancYmd && dayjs(it.pbancYmd).isAfter(dayjs(), 'day')) return '입찰 진행 일이 아닙니다.'
+  const hasHistory =
+    it.bidPrgrsApfr || it.tndr || it.bfhdSrng || it.techEvl || it.prdcpDcmntSbms
+  if (!hasHistory) return '입찰 진행 이력이 없습니다.'
+  return null
 }
 
 // 진행상태 배지(타이틀 영역에서 상태를 알 수 있게) — 색으로 상태 강조.
@@ -115,6 +131,7 @@ export function BidPrgrsListForBzentyPage() {
   const [appliedSearch, setAppliedSearch] = useState<{ keyword: string; target: string } | null>(
     null,
   )
+  const [toastMsg, setToastMsg] = useState<string | null>(null) // 진입 제한 안내(null=닫힘)
 
   // 목록 조회 — 전체 목록(목업/실연동은 bdService.getBidProgressList 의 USE_MOCK 분기가 전환).
   const { data } = useBidProgressList()
@@ -138,8 +155,14 @@ export function BidPrgrsListForBzentyPage() {
   const handleLoadMore = () => {
     setPage(page + 1)
   }
+  // 카드 클릭 → 진입 제한 검사 후 입찰진행 상세(MUI-BD-03-M02). 결과/작성 화면은 상세의 보기 버튼에서 연계.
   const handleCardClick = (it: BidPrgrsItem) => {
-    navigate(`/bd/prgrs/${it.rNum}`, { state: it }) // 입찰진행 상세(MUI-BD-03-M02). 결과/작성 화면은 상세의 보기 버튼에서 연계.
+    const blocked = entryBlockMessage(it)
+    if (blocked) {
+      setToastMsg(blocked)
+      return
+    }
+    navigate(`/bd/prgrs/${it.rNum}`, { state: it })
   }
 
   // ── 키워드 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 이 블록 삭제) ──
@@ -176,13 +199,15 @@ export function BidPrgrsListForBzentyPage() {
         ))}
       </>
     ),
-    subtitle: `공고번호 ${it.pbancNo}`,
+    subtitle: `공고번호 ${it.pbancNo}`, // 입찰공고 통합목록(BidPbancIntgListPage)과 동일 표기 유지
     title: it.bidNm,
+    // 정보행 — 설계서 slide69 카드 4행 그대로(라벨 '일참서제출마감일시'는 설계서 오타로 보고
+    // 데이터영역 항목설명(tndrSbmsnDdlnDt='입찰서제출마감일시') 표기를 따른다).
     rows: [
-      { label: '계약방법', value: it.ctrtMthdNm },
-      { label: '입찰참가등록 마감일시', value: it.bidClrsDt },
-      { label: '입찰서접수 마감일시', value: it.tndrSbmsnDdlnDt },
-      { label: '발주기관연락처', value: it.orderInstTelno },
+      { label: '공고일자', value: it.pbancYmd ?? '-' },
+      { label: '입찰참가신청 마감일시', value: it.bidClrsDt },
+      { label: '입찰서제출마감일시', value: it.tndrSbmsnDdlnDt },
+      { label: '개찰일시', value: it.bdopnDt ?? '-' },
     ],
     onClick: () => handleCardClick(it),
     }
@@ -247,6 +272,11 @@ export function BidPrgrsListForBzentyPage() {
         defaultValue={DEFAULT_FILTER}
         onSearch={handleFilterSearch}
       />
+
+      {/* 상세 진입 제한 안내(설계서 slide69 주석 ②) */}
+      <Toast open={toastMsg !== null} onClose={() => setToastMsg(null)} duration={2000}>
+        {toastMsg}
+      </Toast>
     </div>
   )
 }

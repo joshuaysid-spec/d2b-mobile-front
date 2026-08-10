@@ -452,7 +452,8 @@ const BidRegRsltInqPage = lazy(() =>
     default: m.BidRegRsltInqPage,
   })),
 )
-// 사전심사(PQ) 결과조회(MUI-BD-02-M02, /bd/srng-rslt) — biz/bd/bfhdSrngRsltInq.
+// 사전심사(PQ) 신청조회(MUI-BD-02-M03, /bd/srng-aply-inq) · 결과조회(MUI-BD-02-M02, /bd/srng-rslt)
+// — biz/bd/bfhdSrngRsltInq. 구성이 동일해 1 페이지 + mode 파라미터(설계서 v1.86 slide174·179).
 const BfhdSrngRsltInqPage = lazy(() =>
   import('@/ui/biz/bd/bfhdSrngRsltInq/BfhdSrngRsltInqPage').then((m) => ({
     default: m.BfhdSrngRsltInqPage,
@@ -1407,6 +1408,11 @@ export const router = createBrowserRouter([
         path: 'bd/reg-rslt',
         element: <BidRegRsltInqPage />,
         handle: { header: { variant: 'sub', title: '입찰등록심사 결과조회' } },
+      },
+      {
+        path: 'bd/srng-aply-inq',
+        element: <BfhdSrngRsltInqPage mode="aply" />,
+        handle: { header: { variant: 'sub', title: '사전심사(PQ) 신청조회' } },
       },
       {
         path: 'bd/srng-rslt',

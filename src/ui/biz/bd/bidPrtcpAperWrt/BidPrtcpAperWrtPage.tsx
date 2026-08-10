@@ -1,7 +1,8 @@
 // 입찰참가신청서작성 - 일반정보 (MUI-BD-04-M05, Figma 9300-37788 · 설계서 slide96~119).
 // 접속: 홈 > 입찰진행 > 상세 > 입찰참가신청서 작성. 입찰진행 상세(M02) 바로가기 '입찰참가신청서 작성하기' → 이 화면.
-// 레이아웃(Figma M05): 요약 → 진행단계(StepBar) → 업무도움(Infobox) → 신청서 탭(TabList) → 페이지타이틀
+// 레이아웃(Figma M05): 요약 → 진행단계(StepBar) → 업무도움(Infobox) → 신청서 탭(TabList)
 //   → 일반정보(SectionTitle+Table) → 업체내역(SectionTitle+Table) → 입찰공고 첨부서류(SectionTitle+FileDownloadList 다운로드)
+// ⚠️ 탭 하단에 탭명을 반복하는 페이지타이틀은 두지 않는다(전 탭 공통 — 사용자 지시 2026-08-10).
 //   → 하단 액션바(이전/다음으로) + 맨위로 FAB.
 // ⚠️ 설계서상 본 화면은 서약서동의→일반정보→품목내역→…→전자서명 7스텝 마법사다(탭=하위 스텝).
 //    이번 범위는 (1) M05 '일반정보' 스텝 레이아웃 (2) 플로팅 [등록반려]/[반려신청조회] → 반려 팝업(P07) 연결.
@@ -11,7 +12,6 @@
 import { useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
@@ -132,7 +132,7 @@ export function BidPrtcpAperWrtPage() {
   const rjctMode = detail.regRjctYn ? 'view' : 'apply'
   const rjctLabel = detail.regRjctYn ? '반려신청조회' : '등록반려'
 
-  // 탭 = 신청서 하위 스텝. 다음/이전 으로 탭 이동(설계서: 다음→다음 스텝). 마지막 탭(문의및동의)의 다음=전자서명.
+  // 탭 = 신청서 하위 스텝. 다음/이전 으로 탭 이동(설계서: 다음→다음 스텝). 마지막 탭(문의및동의)의 다음='신청하기'=전자서명.
   const tabOrder = TABS.map((t) => t.value)
   const tabIdx = tabOrder.indexOf(tab)
   const isLastTab = tabIdx === tabOrder.length - 1
@@ -166,7 +166,7 @@ export function BidPrtcpAperWrtPage() {
       case '공종및면허':
         return <BidPrtcpAperWrtPage_Stp3 detail={detail} />
       case '입찰보증금':
-        return <BidPrtcpAperWrtPage_Stp4 detail={detail} />
+        return <BidPrtcpAperWrtPage_Stp4 />
       case '공동수급업체':
         return <BidPrtcpAperWrtPage_Stp5 detail={detail} />
       case '파일첨부':
@@ -182,11 +182,6 @@ export function BidPrtcpAperWrtPage() {
       default:
         return (
           <>
-            {/* 페이지 타이틀 */}
-            <PageTitle as="h2" className="px-4 pb-2 pt-4">
-              일반정보
-            </PageTitle>
-
             {/* 일반정보 섹션 */}
             <SectionTitle as="h3" topDivider>
               일반정보
@@ -208,12 +203,12 @@ export function BidPrtcpAperWrtPage() {
               입찰공고 첨부서류
             </SectionTitle>
             <div className="px-4 py-4">
+              {/* 일괄 다운로드 버튼 미노출 — onDownloadAll 미주입(개별 다운로드만) */}
               <FileDownloadList
                 files={PBANC_FILES.map((f) => ({
                   ...f,
                   onDownload: () => console.log('[M05] 다운로드', f.name),
                 }))}
-                onDownloadAll={() => console.log('[M05] 일괄 다운로드')}
               />
             </div>
           </>
@@ -250,14 +245,14 @@ export function BidPrtcpAperWrtPage() {
       {/* 탭별 콘텐츠(일반정보 M05 / 품목내역 M06 / … / 문의및동의 M14) */}
       {renderTab()}
 
-      {/* 하단 액션바 — 이전/다음으로(마지막 탭=전자서명하기) */}
+      {/* 하단 액션바 — 이전/다음으로(마지막 탭=신청하기, 설계서 2026-07-02 '전자서명하기→신청하기' 변경) */}
       <div className="border-t border-krds-border-divider bg-krds-bg-primary-faint px-4 py-4">
         <ButtonGroup
-          layout="split"
+          layout="asymmetric"
           items={[
             { label: '이전', variant: 'secondary', onClick: handlePrev },
             {
-              label: isLastTab ? '전자서명하기' : '다음으로',
+              label: isLastTab ? '신청하기' : '다음으로',
               variant: 'primary',
               onClick: handleNext,
             },

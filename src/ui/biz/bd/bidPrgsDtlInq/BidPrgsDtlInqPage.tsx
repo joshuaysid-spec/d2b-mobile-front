@@ -182,7 +182,10 @@ export function BidPrgsDtlInqPage() {
       // 국외 입찰서 상세(MUI-BD-06-M75, /bd/ovs/prgrs/:id/tndr) — state 미전달(페이지가 OvsTndrDtlItem 전체를
       // 기대하므로 BidPrgrsItem 을 넘기면 상단이 깨짐 → fallback 목업으로 렌더. API 연동 시 조회로 대체).
       navigate(`/bd/ovs/prgrs/${detail.rNum}/tndr`)
-    } else if (key === 'pq') navigate('/bd/srng-rslt', { state: detail })
+    } else if (key === 'pq') {
+      // 사전심사(PQ) — 결과 있으면 결과조회(M02), 심사 전이면 신청조회(M03, v1.86 신규).
+      navigate(detail.bfhdSrngRsltYn ? '/bd/srng-rslt' : '/bd/srng-aply-inq', { state: detail })
+    }
     else if (key === 'techEvl') setTechEvlOpen(true)
     else if (key === 'prdcp') setPrdcpOpen(true)
     else console.log('[M02] 보기', key) // 공고/국내 입찰서 등 — 추후 연계

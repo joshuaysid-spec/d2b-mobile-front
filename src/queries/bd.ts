@@ -122,6 +122,15 @@ export function useSaveAgreement() {
   })
 }
 
+/** 사전심사(PQ) 신청(MUI-BD-02-M01) — 성공 시 진행목록 캐시 무효화(신청 상태 변경). */
+export function useApplyBfhdSrng() {
+  return useMutation({
+    mutationFn: ({ pbancNo, fileGuids }: { pbancNo: string; fileGuids: string[] }) =>
+      bdService.applyBfhdSrng(pbancNo, fileGuids),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: bdKeys.progressListAll }),
+  })
+}
+
 /** 입찰서 저장(MUI-BD-05 TndrWrt) — 성공 시 진행목록 캐시 무효화. */
 export function useSaveTndr() {
   return useMutation({

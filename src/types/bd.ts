@@ -83,7 +83,7 @@ export interface BdopnItem {
   srngTyCd?: ImpltElgbSrngTyCd
 }
 /**
- * 입찰진행 목록 카드 1건 (MUI-BD-03-M01, 설계서 slide68 데이터영역 dlt_bidPrgrsList).
+ * 입찰진행 목록 카드 1건 (MUI-BD-03-M01, 설계서 02입찰 v1.83 slide69 화면 · slide71 데이터영역 dlt_bidPrgrsList).
  * "조달업체가 신청한 입찰 내역" — 항목명/코드값 설계서 그대로(추후 bdService.getBidProgressList 매핑).
  */
 export interface BidPrgrsItem {
@@ -105,12 +105,23 @@ export interface BidPrgrsItem {
   ctrtMthdNm: string
   /** 입찰방법 (bidMthdNm) */
   bidMthdNm: string
-  /** 입찰참가등록마감일시 (bidClrsDt) */
+  /** 입찰참가등록마감일시 (bidClrsDt) — 카드 '입찰참가신청 마감일시' 행 */
   bidClrsDt: string
-  /** 입찰서접수마감일시 (tndrSbmsnDdlnDt) */
+  /** 입찰서접수마감일시 (tndrSbmsnDdlnDt) — 카드 '입찰서제출마감일시' 행 */
   tndrSbmsnDdlnDt: string
   /** 업체구분 (bzentySeNm) — 대표/구성 */
   bzentySeNm: string
+  /**
+   * 공고일자 (pbancYmd, 8자리 yyyy-MM-dd) — 카드 1행. 진행일 도래 판정 기준(미도래 시 상세 진입 차단).
+   * ⚠️ 목록 데이터영역(dlt_bidPrgrsList, slide71)엔 미정의 — 카드 표시가 요구하는 항목이라
+   *   설계서 타 데이터영역의 확정 항목명(slide150·151 공고일자 pbancYmd)을 그대로 재사용(BD 임시키 관례).
+   */
+  pbancYmd?: string
+  /**
+   * 개찰일시 (bdopnDt, yyyy-MM-dd HH:mm) — 카드 4행.
+   * ⚠️ dlt_bidPrgrsList 미정의 — 설계서 확정 항목명(slide119·132 개찰일시 bdopnDt) 재사용.
+   */
+  bdopnDt?: string
   /** 사전심사(PQ) 공고 여부 (bfhdSrng) — 사전심사 공고인 경우 버튼 보이기. 신청유형 배지 */
   bfhdSrng: boolean
   /** 입찰참가신청서 대상 여부 (bidPrgrsApfr) — 신청유형 배지 */
@@ -1532,6 +1543,33 @@ export interface JsdBzenty {
   invstRt: string
 }
 
+/**
+ * 입찰참가신청 공동수급업체 1건 (MUI-BD-04-M10, 설계서 slide121 데이터영역 dlt_jsdBzentyList).
+ * 편집(E) 항목은 bzentyNm·invstRt 둘뿐이고 나머지는 조회결과 표시(R).
+ * (MUI-BD-03-M05 입찰등록결과의 JsdBzenty 와는 다른 데이터영역 — 항목 구성이 다르다.)
+ */
+export interface JsdBzentyAply {
+  id: string
+  /** 구분 (jsdBzentyNm, 100) — 대표/구성 */
+  jsdBzentyNm: string
+  /** 공동수급업체 (bzentyNm, 100) — 업체명 검색하여 입력 */
+  bzentyNm: string
+  /** 이행방식 (jsdShNm, 상위코드 UB13) — A(분담)/B(공동)/C(분담·공동)/D(주계약자관리)/N(단독) */
+  jsdShNm: string
+  /** 공동분담업종 (cnstpNm, 상위코드 GU9) — 공사만 표시(물품은 숨김) */
+  cnstpNm: string
+  /** 출자비율(%) (invstRt, 9,2) — 물품 B=출자비율 / A=분담비율 */
+  invstRt: string
+  /** 입찰보증금 (bidGrnteAmt, 17,2) */
+  bidGrnteAmt: string
+  /** 납부방법 (depsPayMthdCd, 상위코드 GMCB) */
+  depsPayMthdCd: string
+  /** 시공능력평가액 (cnstAbltEvlAmt, 17) — 공사만 표시(물품은 숨김) */
+  cnstAbltEvlAmt: string
+  /** 동의여부 (argeYn, 1) — 'Y'|'N'. 속성 R(조회 결과 표시만, 동의 처리 액션 없음) */
+  argeYn?: 'Y' | 'N'
+}
+
 /** 입찰등록결과 (MUI-BD-03-M05). */
 export interface BidRegResultResponse {
   pbancInfo: BidLabeledRow[]
@@ -1587,6 +1625,27 @@ export interface CnstwkLcnsRow {
   cnstrcAbltEvlAmt: string
   /** 기준연도 */
   stdYr: string
+}
+
+/**
+ * 입찰보증금 조회결과 (MUI-BD-04-M08, 설계서 slide121 데이터영역 dmt_bidGrnte 의 R 항목).
+ * 편집(E) 항목(depsPayMthdCd·depsExmptnRncd·bidGrnteAmt)은 화면 입력 상태로 관리하고,
+ * 투찰가능금액(bdngPsbltyAmt)은 입찰보증금 입력 시 계산된다.
+ */
+export interface BidGrnteInfo {
+  /**
+   * 증권번호 조회결과 (scrtNo, 30) — 1개면 자동입력 · 2개 이상이면 셀렉트박스 선택 · 없으면 직접입력.
+   * 1개 이상인 경우에만 개찰일자/보증금액/계약자/발행자를 노출한다.
+   */
+  scrtNoList: string[]
+  /** 개찰일자/입찰일자 (bidYmd, 8) — 같은 컬럼, 업무구분별 표기 다름 */
+  bidYmd: string
+  /** 보증금액 (grnteAmt, 17,2) */
+  grnteAmt: string
+  /** 계약자 (ctrtrBzentyNm, 100) */
+  ctrtrBzentyNm: string
+  /** 발행자 (isrBzentyNm, 100) */
+  isrBzentyNm: string
 }
 
 /** 등록업체 검색결과 1건 (MUI-BD-04-P11) — getRegBzentyDetail 반환에도 사용. */
