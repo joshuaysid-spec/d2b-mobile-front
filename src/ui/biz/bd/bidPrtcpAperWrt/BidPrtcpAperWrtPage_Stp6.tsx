@@ -1,6 +1,6 @@
 // 입찰참가신청서작성 - 파일첨부 탭(MUI-BD-04-M12 · 설계서 slide ~ 첨부서류).
 // 호스트 페이지(BidPrtcpAperWrtPage)의 '파일첨부' 탭 본문만 담당 — 요약/스텝/탭/하단 액션바는 페이지 소유.
-// 안내사항 Infobox + SectionTitle(총 N건) + FileDownloadList(업로드 변형, onAddFile/onRemove).
+// SectionTitle(총 N건) + FileDownloadList(업로드 변형, onAddFile/onRemove) + 안내사항 Infobox(탭 최하단).
 //   onAddFile → 이 탭이 소유한 BottomSheet(파일첨부 방식 선택) + 콘텐츠 CabinetLink(P13).
 //   '직접 업로드' → 숨은 <input type=file multiple> 트리거 → fileService.upload → GUID 상태 보관.
 //   다건 선택 시에도 요청은 파일당 1건씩 순차 진행(모바일 망 품질 협의사항) — 대기/업로드중/실패
@@ -9,7 +9,6 @@
 //   ⚠️ files 상태는 호스트(BidPrtcpAperWrtPage)가 소유(제출 시 fileGuids 필요) → 이 탭은 controlled.
 import { useRef, useState, type ChangeEvent, type Dispatch, type SetStateAction } from 'react'
 
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
@@ -123,13 +122,6 @@ export function BidPrtcpAperWrtPage_Stp6({ detail, files, onFilesChange }: Props
 
   return (
     <>
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        파일첨부
-      </PageTitle>
-
-      {/* 안내사항 */}
-      <Infobox title="안내사항" items={NOTICES} />
-
       {/* 입찰서 첨부파일 — 업로드(첨부/삭제) */}
       <SectionTitle as="h3" topDivider info={`총 ${files.length}건`} className="bg-white">
         입찰서 첨부파일
@@ -160,6 +152,9 @@ export function BidPrtcpAperWrtPage_Stp6({ detail, files, onFilesChange }: Props
           onAddFile={() => setAddOpen(true)}
         />
       </div>
+
+      {/* 안내사항 — 탭 최하단 고정(전 탭 공통) */}
+      <Infobox title="안내사항" items={NOTICES} />
 
       {/* 숨은 파일 선택기 — '직접 업로드'로 트리거(다중 선택) */}
       <input ref={inputRef} type="file" multiple className="hidden" onChange={handleFilesPicked} />

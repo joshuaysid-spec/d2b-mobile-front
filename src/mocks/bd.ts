@@ -304,7 +304,9 @@ const pqResult: PqResultResponse = {
 }
 
 // ── 입찰진행 (MUI-BD-03) ───────────────────────────────────────────────────
-// 입찰진행 목록(MUI-BD-03-M01) 데이터영역(설계서 slide67) — 구 BidPrgrsListForBzentyPage 인라인 이관.
+// 입찰진행 목록(MUI-BD-03-M01) 데이터영역(설계서 v1.83 slide71 dlt_bidPrgrsList) — 구 BidPrgrsListForBzentyPage 인라인 이관.
+// ⚠️ pbancYmd(공고일자)·bdopnDt(개찰일시)는 카드 표시 항목(slide69) — 7건 모두 공고일자가 과거 + 신청유형
+//    플래그 보유라 목업에서는 상세 진입 제한(토스트)이 걸리지 않는다(상세 버튼분기 데모 유지 목적).
 // 각 아이템 = (업무구분 + 진행상태 + 실데이터)를 담은 완결 객체 → 그대로 상세(navigate state)로 넘겨 버튼 분기 구동.
 const prgrsListBase: BidPrgrsItem[] = [
   // 1) 사전심사 대상·결과 없음 + 입찰참가 신청전 → [사전심사 신청하기]·[입찰참가신청서 작성하기]·[등록반려]
@@ -320,6 +322,8 @@ const prgrsListBase: BidPrgrsItem[] = [
     bidMthdNm: '전자입찰',
     bidClrsDt: '2026-03-16 15:00',
     tndrSbmsnDdlnDt: '2026-03-17 15:00',
+    pbancYmd: '2026-02-12',
+    bdopnDt: '2026-03-26 11:00',
     bzentySeNm: '대표',
     bfhdSrng: true,
     bidPrgrsApfr: true,
@@ -344,6 +348,8 @@ const prgrsListBase: BidPrgrsItem[] = [
     bidMthdNm: '전자입찰',
     bidClrsDt: '2026-03-10 15:00',
     tndrSbmsnDdlnDt: '2026-03-11 15:00',
+    pbancYmd: '2026-02-06',
+    bdopnDt: '2026-03-20 11:00',
     bzentySeNm: '대표',
     bfhdSrng: false,
     bidPrgrsApfr: true,
@@ -368,6 +374,8 @@ const prgrsListBase: BidPrgrsItem[] = [
     bidMthdNm: '전자입찰',
     bidClrsDt: '2026-03-08 15:00',
     tndrSbmsnDdlnDt: '2026-03-09 15:00',
+    pbancYmd: '2026-02-04',
+    bdopnDt: '2026-03-18 11:00',
     bzentySeNm: '대표',
     bfhdSrng: false,
     bidPrgrsApfr: true,
@@ -392,6 +400,8 @@ const prgrsListBase: BidPrgrsItem[] = [
     bidMthdNm: '전자입찰',
     bidClrsDt: '2026-03-20 15:00',
     tndrSbmsnDdlnDt: '2026-03-21 15:00',
+    pbancYmd: '2026-02-16',
+    bdopnDt: '2026-03-30 11:00',
     bzentySeNm: '구성',
     bfhdSrng: true,
     bidPrgrsApfr: true,
@@ -418,6 +428,8 @@ const prgrsListBase: BidPrgrsItem[] = [
     bidMthdNm: '전자입찰',
     bidClrsDt: '2026-03-18 15:00',
     tndrSbmsnDdlnDt: '2026-03-19 15:00',
+    pbancYmd: '2026-02-14',
+    bdopnDt: '2026-03-28 11:00',
     bzentySeNm: '대표',
     bfhdSrng: false,
     bidPrgrsApfr: true,
@@ -442,6 +454,8 @@ const prgrsListBase: BidPrgrsItem[] = [
     bidMthdNm: '전자입찰',
     bidClrsDt: '2026-03-14 15:00',
     tndrSbmsnDdlnDt: '2026-03-15 15:00',
+    pbancYmd: '2026-02-10',
+    bdopnDt: '2026-03-24 11:00',
     bzentySeNm: '대표',
     bfhdSrng: false,
     bidPrgrsApfr: true,
@@ -465,6 +479,8 @@ const prgrsListBase: BidPrgrsItem[] = [
     bidMthdNm: '총액제',
     bidClrsDt: '2025-12-23 15:00',
     tndrSbmsnDdlnDt: '2025-12-24 10:00',
+    pbancYmd: '2025-11-20',
+    bdopnDt: '2025-12-24 10:30',
     bzentySeNm: '대표',
     bfhdSrng: false,
     bidPrgrsApfr: true,

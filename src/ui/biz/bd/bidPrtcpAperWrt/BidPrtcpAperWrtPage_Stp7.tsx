@@ -1,11 +1,10 @@
 // 입찰참가신청서작성 - 문의 및 동의(MUI-BD-04-M14) 탭 콘텐츠.
-// 호스트 페이지(BidPrtcpAperWrtPage)의 '문의 및 동의' 탭 본문만 담당 — 요약/스텝/탭/하단 액션바·전자서명하기는 페이지 소유.
-// 구성: PageTitle → 문의처/담당자 Table → 약관 동의 체크리스트(6항목, 각 행 '보기' Button → 동의서 바텀시트) → 입찰안내 Infobox.
+// 호스트 페이지(BidPrtcpAperWrtPage)의 '문의 및 동의' 탭 본문만 담당 — 요약/스텝/탭/하단 액션바·신청하기는 페이지 소유.
+// 구성: 문의처 Table → 약관 동의 체크리스트(6항목, 각 행 '보기' Button → 동의서 바텀시트) → 사후심사대상 입찰안내 Infobox.
 // 이 탭이 동의서 BottomSheet 컨테이너(선택 동의서 title, footer=저장 후 닫기/취소)와 저장 확인 AlertModal 을 직접 소유.
 import { useState } from 'react'
 
 import { useSaveAgreement } from '@/queries/bd'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { AgreementList } from '@/ui/common/composites/AgreementList'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
@@ -17,20 +16,47 @@ import { AgreementForm, AGREEMENTS, type AgreementData } from '@/ui/biz/bd/bidPr
 import type { ApiError } from '@/types/api'
 import type { BidPrgrsItem } from '@/types/bd'
 
-// 문의처 / 담당자 — 설계서 '문의처 담당자 연락처 정보 표시'.
-const CONTACT_ROWS: TableRow[] = [
-  { label: '문의처', value: '1577-1118(①) 전자입찰서비스 데스크' },
-  { label: '담당자', value: '홍길동' },
-  { label: '연락처', value: '031-940-0000' },
+// 문의처 — 설계서 '문의처 담당자 연락처 정보 표시'(slide112). 담당자 1건 = 기관/성명·직급 + 전화/이메일.
+// 설계서는 담당자·연락처 2열 카드가 담당자 수만큼 반복되는 형태 → 담당자 1건당 Table 1개로 반복 렌더.
+// 항목명은 설계서 데이터영역(slide122) 그대로 — 담당자 ofcctrNm(계약관명) · 연락처 ofcctrTelno(계약관전화번호).
+// ⚠️ 기관명(instNm)·이메일(email)은 데이터영역 미정의 — 목업(slide112)에 표시된 값이라 임시 키로 둔다.
+const CONTACTS = [
+  { id: 'ofcctr1', instNm: '방위사업청', ofcctrNm: '홍길동 주무관', ofcctrTelno: '02-1234-5678', email: 'kukbang@g2b.go.kr' },
+  { id: 'ofcctr2', instNm: '방위사업청', ofcctrNm: '홍길순 사무관', ofcctrTelno: '02-5678-4321', email: 'kukbang@g2b.go.kr' },
 ]
 
-// 입찰안내(사후심사대상) — 설계서 안내사항 원문.
+// 사후심사대상 입찰안내 — 설계서 안내사항 원문(6개 불릿).
 const NOTICE_ITEMS = [
+  '입찰전 꼭 확인 하시기 바랍니다.',
   '해당입찰 건은 [입찰서제출 마감] 후 [등록심사]를 진행하는 입찰건으로 참가신청서 작성 후 등록심사 없이 입찰서를 제출합니다.',
   '[공동이행방식]의 입찰은 [협정서제출] 시 입찰서를 제출할 수 있습니다.',
   '주의) 입찰서를 제출 후에는 참가신청서, 공동수급협정서, 입찰서를 변경 할 수 없습니다.',
   '입찰서제출이 마감 후에 등록심사에서 탈락 시 개찰대상에서 제외됩니다.',
-  '문의 :1577-1118(①)(전자입찰서비스 데스크)',
+  '- 문의 :1577-1118(①)(전자입찰서비스 데스크)',
+]
+
+// 담당자 1건 → Table rows(담당자/연락처). 각 셀 2줄이라 combination.
+const contactRows = (c: (typeof CONTACTS)[number]): TableRow[] => [
+  {
+    label: '담당자',
+    type: 'combination',
+    value: (
+      <>
+        <span>{c.instNm}</span>
+        <span>{c.ofcctrNm}</span>
+      </>
+    ),
+  },
+  {
+    label: '연락처',
+    type: 'combination',
+    value: (
+      <>
+        <span>{c.ofcctrTelno}</span>
+        <span>{c.email}</span>
+      </>
+    ),
+  },
 ]
 
 export function BidPrtcpAperWrtPage_Stp7({ detail }: { detail: BidPrgrsItem }) {
@@ -73,16 +99,14 @@ export function BidPrtcpAperWrtPage_Stp7({ detail }: { detail: BidPrgrsItem }) {
 
   return (
     <>
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        문의 및 동의
-      </PageTitle>
-
-      {/* 문의처 / 담당자 */}
+      {/* 문의처 — 담당자 건별 Table 반복 */}
       <SectionTitle as="h3" topDivider>
-        문의처 / 담당자
+        문의처
       </SectionTitle>
-      <div className="px-4 py-4">
-        <Table rows={CONTACT_ROWS} />
+      <div className="flex flex-col gap-4 px-4 py-4">
+        {CONTACTS.map((c) => (
+          <Table key={c.id} rows={contactRows(c)} />
+        ))}
       </div>
 
       {/* 약관 동의 — 공통 AgreementList(Figma m_agreemen). [필수]/[선택]은 variant 로 도출(select=하도급→선택).
@@ -106,8 +130,8 @@ export function BidPrtcpAperWrtPage_Stp7({ detail }: { detail: BidPrgrsItem }) {
         }}
       />
 
-      {/* 입찰안내(사후심사대상) */}
-      <Infobox title="입찰안내" items={NOTICE_ITEMS} />
+      {/* 사후심사대상 입찰안내 */}
+      <Infobox title="사후심사대상 입찰안내" items={NOTICE_ITEMS} />
 
       {/* 동의서 바텀시트 — 컨테이너/footer 는 이 탭이 소유, 콘텐츠만 AgreementForm */}
       <BottomSheet
