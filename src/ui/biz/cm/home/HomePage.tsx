@@ -125,6 +125,13 @@ const NOTICE_TABS: NoticeTab[] = [
   { value: 'general', label: '일반', items: NOTICE_SAMPLE },
 ]
 
+// 공지 탭 → 더보기(공지 목록) 라우트. 라벨 문자열 분기 금지 — 탭 value 로 분기.
+const NOTICE_MORE_ROUTE: Record<string, string> = {
+  dapa: ROUTES.SUPPORT_NOTICE_DAPA, // 방위사업청공지사항 (MUI-CM-04-M21)
+  unit: ROUTES.SUPPORT_NOTICE_DMDFRC, // 수요부대별공지사항 (MUI-CM-04-M23)
+  general: ROUTES.SUPPORT_NOTICE, // 일반공지사항 (MUI-CM-04-M01)
+}
+
 // 배너 — 통이미지 여러 장(목업, 에셋 미제공 → placeholder). 스와이프/화살표로 전환.
 const BANNERS: BannerSlide[] = [
   { id: 'b1', src: mainBanner1, alt: '방위사업청 익명신고센터 안내 배너' },
@@ -201,13 +208,10 @@ export function HomePage() {
   }
 
   const handleNoticeMore = () => {
-    console.log('[Home] 공지 더보기', noticeTab) // 추후: 공지 목록 화면 이동
+    navigate(NOTICE_MORE_ROUTE[noticeTab] ?? ROUTES.SUPPORT_NOTICE)
   }
   const handleNoticeItem = (item: NoticeItem) => {
     console.log('[Home] 공지 상세', item.id) // 추후: 공지 상세 화면 이동
-  }
-  const handleGuideDetail = (id: string) => {
-    console.log('[Home] 이용안내', id) // 추후: 사전준비/국내·국외 조달안내 화면 이동
   }
 
   const serviceItems: ServiceShortcut[] = SERVICE_LABELS.map((label, i) => ({
@@ -217,27 +221,31 @@ export function HomePage() {
     onClick: () => handleService(label),
   }))
 
+  // 처음 방문 안내 — 전체메뉴 이용안내 하위 첫 화면으로 이동(MenuPage 의 guide-prep/domestic/foreign 과 동일 대상).
   const guideItems: GuideItem[] = [
     {
       id: 'g-ready',
       iconName: 'DeveloperGuide',
       title: '사전준비안내',
       desc: '인증서 신청/발급, 업체 등록, 사용자 등록 안내',
-      onDetail: () => handleGuideDetail('ready'),
+      // 이용안내 > 조달 사전준비 안내 > 사전준비사항(MUI-CM-05-M07)
+      onDetail: () => navigate(ROUTES.GUIDE_PREPARATION),
     },
     {
       id: 'g-domestic',
       iconName: 'AssignmentInd',
       title: '국내조달안내',
       desc: '국방조달참여, 전자입찰, 대금청구에 대한 절차 안내',
-      onDetail: () => handleGuideDetail('domestic'),
+      // 이용안내 > 국내 조달 안내 > 국방조달참여절차(MUI-CM-05-M09)
+      onDetail: () => navigate(ROUTES.GUIDE_DOMESTIC),
     },
     {
       id: 'g-foreign',
       iconName: 'AssignmentGlobe',
       title: '국외조달안내',
       desc: '국외조달원등록 및 변경, 전자입찰에 대한 절차 안내',
-      onDetail: () => handleGuideDetail('foreign'),
+      // 이용안내 > 국외 조달 안내 > 국외조달원 등록절차(MUI-CM-05-M12)
+      onDetail: () => navigate(ROUTES.GUIDE_FOREIGN),
     },
   ]
 

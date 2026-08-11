@@ -158,6 +158,8 @@ export const ROUTES = {
   INTRO_FEATURE: '/intro/feature',
   /** 연혁 (MUI-CM-05-M03). 국방전자조달 소개 > 연혁. */
   INTRO_HISTORY: '/intro/history',
+  /** 인포그래픽스 (MUI-CM-05-M04). 국방전자조달 소개 > 인포그래픽스. */
+  INTRO_GRAPHIC: '/intro/graphic',
   /** 관련시스템 (MUI-CM-05-M05). 국방전자조달 소개 > 관련시스템. */
   INTRO_RELATED: '/intro/related',
   /** 이용문의 (MUI-CM-05-M06). 국방전자조달 소개 > 이용문의. */
