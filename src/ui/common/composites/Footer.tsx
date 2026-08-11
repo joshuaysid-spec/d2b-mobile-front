@@ -21,7 +21,7 @@
 //   |----------------------|-------------------------------|---------------------------------|
 //   | relatedSites         | FooterLink[]                  | 5개(전자조달/방사청/국방/조달/인증) |
 //   | snsLinks             | { type; href }[]              | [] (없으면 SNS 영역 미표시)      |
-//   | policyLinks          | FooterLink[]                  | 5개(고객지원~모바일앱서비스)      |
+//   | policyLinks          | FooterLink[]                  | 3개(고객지원~저작권 이용정책)     |
 //   | defaultAccordionOpen | boolean                       | true                            |
 //   | className            | string                        | -                               |
 //
@@ -57,7 +57,7 @@ export interface FooterProps {
   relatedSites?: FooterLink[]
   /** SNS 버튼 목록. 비어 있으면 SNS 영역 미표시. */
   snsLinks?: FooterSnsLink[]
-  /** 정책 링크. 기본 5개(고객지원/개인정보처리방침/저작권 및 공공데이터 이용정책/보안프로그램/모바일앱서비스). */
+  /** 정책 링크. 기본 3개(고객지원/개인정보처리방침/저작권 및 공공데이터 이용정책). */
   policyLinks?: FooterLink[]
   /** 아코디언 초기 펼침 여부. 기본 true. */
   defaultAccordionOpen?: boolean
@@ -73,12 +73,11 @@ const DEFAULT_RELATED_SITES: FooterLink[] = [
   { label: '인증센터' },
 ]
 
+// 모바일에서는 '보안프로그램'·'모바일앱서비스' 를 노출하지 않는다(2026-08-11 요청 — 웹 전용 항목).
 const DEFAULT_POLICY_LINKS: FooterLink[] = [
   { label: '고객지원' },
   { label: '개인정보처리방침' },
   { label: '저작권 및 공공데이터 이용정책' },
-  { label: '보안프로그램' },
-  { label: '모바일앱서비스' },
 ]
 
 // 개인정보처리방침은 Figma 상 Bold 강조.

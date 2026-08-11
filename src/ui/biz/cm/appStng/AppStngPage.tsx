@@ -6,7 +6,9 @@
 // 참고: 설계서 경로는 ms/appStng 이나, 레포 컨벤션(MS 화면은 cm/ 하위)에 맞춰 cm/appStng 에 둔다(영문 ID 유지).
 import type { ReactNode } from 'react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import { ROUTES } from '@/constants/routes'
 import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { Switch } from '@/ui/common/base/Switch'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
@@ -107,6 +109,7 @@ function AppVersionAccordion() {
 }
 
 export function AppStngPage() {
+  const navigate = useNavigate()
   // 앱 푸시 알림 — 마이페이지 알림설정 값과 동일(추후 API 로 초기화). 현재 mock ON.
   const [pushOn, setPushOn] = useState(true)
   // 앱 캐시 삭제 확인 팝업(MUI-MS-02-P02).
@@ -132,10 +135,11 @@ export function AppStngPage() {
           <p className="text-[17px] leading-normal text-krds-text-muted">모바일 앱으로 알림</p>
         </div>
         <SettingCard>
+          {/* 마이페이지 하단의 '알림 서비스 신청 및 해지'(MUI-CM-02-M09 NotiSrvcAplyPage)와 동일 화면. */}
           <SettingRow
             icon="NotificationsActive"
             label="알림 서비스 신청 및 해지"
-            onClick={() => console.log('[AppStng] 알림 서비스 신청 및 해지')} // 추후: 알림설정 페이지 이동
+            onClick={() => navigate(ROUTES.NOTI_SRVC_APLY)}
           />
         </SettingCard>
       </div>
