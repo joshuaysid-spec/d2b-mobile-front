@@ -10,6 +10,10 @@ import type {
   OpPlanDetail,
   OpPlanItem,
   OpProducerSearchResult,
+  WarSplBzEnty,
+  WarSplCnfg,
+  WarSplIdntf,
+  WarSplRef,
 } from '@/types/op'
 
 // 통합목록 카드(설계서 dlt_prcmPlanList) — 검색유형별 대표 샘플.
@@ -189,6 +193,178 @@ const DEPT_SEARCH: OpDeptSearchResult[] = [
   { instNm: '육군3사관학교', instSe: '학교' },
 ]
 
+// ── 목록정보조회(군수품 목록) — P76 3탭 + P77. 설계서 slide77~81 목업값 그대로. ──
+
+// 형상자료(T73) — 식별정보(dm_itemInfo) + 참조번호(dl_refList).
+const WAR_SPL_CNFG: WarSplCnfg = {
+  itemInfo: {
+    invtNo: '1523-12-1251232',
+    itemNmEng: 'BELSCDFE ASSEMVGBY',
+    itemNmKor: '밸크랭크 조립체',
+    fsc: '1612',
+  },
+  refList: [
+    {
+      id: '1',
+      rfrncNo: '70400-01230-023',
+      type: '도면번호',
+      prdctnCd: '78245',
+      prdctnNm: 'SIBSK ERKAS EKCORPO',
+    },
+    {
+      id: '2',
+      rfrncNo: '70400-01230-024',
+      type: '기타',
+      prdctnCd: '23129',
+      prdctnNm: 'US ARPY ACLHGET ASLTM',
+    },
+  ],
+}
+
+// 식별자료(T74) — dm_idntfInfo. 설계서 목업에서 식별 가능한 값(INC 111 · 대체재고 A12000 ·
+// CS 11112 · 군급분류 1000 · MODEL-Y/모델Y · 1980-01-05 · 2026-03-06)은 그대로,
+// 나머지 코드성 항목은 설계서 자리수/형식(1자리 코드)에 맞춘 값.
+const WAR_SPL_IDNTF: WarSplIdntf = {
+  fsc: '1000',
+  itemNmEng: 'MODEL-Y',
+  itemNmKor: '모델Y',
+  fcc: 'M',
+  drc: '9',
+  fiigNo: 'A231',
+  inc: '111',
+  adpec: 'A',
+  pmic: 'B',
+  rpdmrc: '0',
+  sbstInvtNo: 'A12000',
+  tiic: 'A',
+  cs: '11112',
+  ntl: '1',
+  ls: '0',
+  demil: 'A',
+  esdc: '0',
+  nsc: '0',
+  hmic: 'A',
+  hcc: '0',
+  picNm: '홍길동',
+  niinYmd: '1980-01-05',
+  chgYmd: '2026-03-06',
+}
+
+// 참고자료(T75) — dl_refList. 설계서 목업이 동일 값 3건 반복.
+const WAR_SPL_REF: WarSplRef[] = [
+  {
+    id: '1',
+    refNo: '10000-012345-123',
+    nscm: '12345',
+    rnfc: '4',
+    rncc: '3',
+    rnvc: '2',
+    dac: '1',
+    rnaa: 'KE',
+    rnsc: '0',
+    rnjc: '0',
+    sadc: 'A',
+  },
+  {
+    id: '2',
+    refNo: '10000-012345-124',
+    nscm: '12345',
+    rnfc: '4',
+    rncc: '3',
+    rnvc: '2',
+    dac: '1',
+    rnaa: 'KE',
+    rnsc: '0',
+    rnjc: '0',
+    sadc: 'A',
+  },
+  {
+    id: '3',
+    refNo: '10000-012345-125',
+    nscm: '12345',
+    rnfc: '4',
+    rncc: '3',
+    rnvc: '2',
+    dac: '1',
+    rnaa: 'KE',
+    rnsc: '0',
+    rnjc: '0',
+    sadc: 'A',
+  },
+]
+
+// ── NIIN 검색 결과 — 디폴트 값 아래에 이어붙는 블록. 디폴트와 구분되는 다른 품목 값. ──
+
+const WAR_SPL_CNFG_SRCH: WarSplCnfg = {
+  itemInfo: {
+    invtNo: '1612-12-3387451',
+    itemNmEng: 'ROTOR HEAD ASSEMBLY',
+    itemNmKor: '회전익 두부 조립체',
+    fsc: '1615',
+  },
+  refList: [
+    {
+      id: 's1',
+      rfrncNo: '70400-01230-118',
+      type: '도면번호',
+      prdctnCd: '55129',
+      prdctnNm: 'HANWHA AEROSPACE CO LTD',
+    },
+  ],
+}
+
+const WAR_SPL_IDNTF_SRCH: WarSplIdntf = {
+  fsc: '1615',
+  itemNmEng: 'ROTOR HEAD ASSEMBLY',
+  itemNmKor: '회전익 두부 조립체',
+  fcc: 'K',
+  drc: '2',
+  fiigNo: 'A118',
+  inc: '204',
+  adpec: 'N',
+  pmic: 'A',
+  rpdmrc: '1',
+  sbstInvtNo: 'B33874',
+  tiic: 'B',
+  cs: '22140',
+  ntl: '2',
+  ls: '1',
+  demil: 'B',
+  esdc: '1',
+  nsc: '0',
+  hmic: 'N',
+  hcc: '1',
+  picNm: '김목록',
+  niinYmd: '1992-11-20',
+  chgYmd: '2026-05-14',
+}
+
+const WAR_SPL_REF_SRCH: WarSplRef[] = [
+  {
+    id: 's1',
+    refNo: '20000-033874-511',
+    nscm: '55129',
+    rnfc: '2',
+    rncc: '1',
+    rnvc: '3',
+    dac: '2',
+    rnaa: 'KD',
+    rnsc: '1',
+    rnjc: '1',
+    sadc: 'B',
+  },
+]
+
+// 업체정보(P77) — dm_bzentyInfo. 생산자부호(prdctnCd)별 조회 결과.
+const WAR_SPL_BZ_ENTY: WarSplBzEnty = {
+  bzentyNm: 'A 업체',
+  rprsvNm: '홍길동',
+  addr: '서울특별시 종로구 세종대로 209',
+  bzmnNo: '123-45-67890',
+  tlno: '02-1234-5678',
+  fxno: '02-1234-6789',
+}
+
 export const MOCK_OP = {
   planList: PLAN_LIST,
   planDetail: PLAN_DETAIL,
@@ -198,4 +374,11 @@ export const MOCK_OP = {
   itemSearch: ITEM_SEARCH,
   producerSearch: PRODUCER_SEARCH,
   deptSearch: DEPT_SEARCH,
+  warSplCnfg: WAR_SPL_CNFG,
+  warSplIdntf: WAR_SPL_IDNTF,
+  warSplRef: WAR_SPL_REF,
+  warSplCnfgSrch: WAR_SPL_CNFG_SRCH,
+  warSplIdntfSrch: WAR_SPL_IDNTF_SRCH,
+  warSplRefSrch: WAR_SPL_REF_SRCH,
+  warSplBzEnty: WAR_SPL_BZ_ENTY,
 } as const

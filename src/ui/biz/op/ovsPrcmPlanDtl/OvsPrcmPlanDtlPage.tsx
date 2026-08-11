@@ -1,9 +1,12 @@
-// 국외 조달계획 상세 (MUI-OP-01-M73, ovsPrcmPlanDtl). 통합목록에서 국외(taskSeNm='국외') 카드 진입.
-// 국내 조달계획상세(M03)와 셸은 동일(요약+스텝+탭+useCollapsibleHeader)하나 탭이 다름:
-//   2탭(집행계획상세 M73 / 결과목록 M74). 업무구분·품목명세서·계약특수조건·업체의견·첨부서류·알림신청 없음.
-// 국외 전용 팝업(품목별가격자료 P75 / 목록정보조회 P76·P77)은 추후. 데이터는 목업.
+// 연간조달계획 상세 (경로 /op/ovs/:id) — 통합목록의 검색유형 '연간조달계획'(annual) 카드 진입.
+// 탭 = 목록정보조회(군수품 목록) 3탭: 형상자료(MUI-OP-01-T73) / 식별자료(T74) / 참고자료(T75).
+//   설계서 p75 는 이 진입을 P76 목록정보조회 '풀페이지 팝업' 으로 규정하나,
+//   사용자 확정(2026-08-11)에 따라 이 페이지가 P76 컨테이너 역할을 겸한다(별도 WarSplList_Inq 없음).
+// 셸(요약 SummaryInfo + 스텝 StepBar + 탭 + useCollapsibleHeader)은 조달계획 상세 컨벤션 그대로.
+//   ⚠️ 구 탭 콘텐츠 OvsPrcmPlanDtl(T71 집행계획상세)·OvsPrcmPlanDtl_RsltList(T72 결과목록)는
+//      이 경로에서 제거됐다. 설계서 정의 화면이라 파일은 보존 — 국외 조달계획 동선 확정 시 재연결.
 import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import type { OpPlanItem } from '@/types/op'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -14,25 +17,16 @@ import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
-import { OvsPrcmPlanDtl } from '@/ui/biz/op/ovsPrcmPlanDtl/OvsPrcmPlanDtl'
-import { OvsPrcmPlanDtl_RsltList } from '@/ui/biz/op/ovsPrcmPlanDtl/OvsPrcmPlanDtl_RsltList'
+import { WarSplList_Cnfg } from '@/ui/biz/op/ovsPrcmPlanDtl/WarSplList_Cnfg'
+import { WarSplList_Idntf } from '@/ui/biz/op/ovsPrcmPlanDtl/WarSplList_Idntf'
+import { WarSplList_Ref } from '@/ui/biz/op/ovsPrcmPlanDtl/WarSplList_Ref'
 
-// ── 탭 (국외 — 집행계획상세 M73 / 결과목록 M74) ──────────────────────────────
+// ── 탭 (목록정보조회 — 형상자료 T73 / 식별자료 T74 / 참고자료 T75) ────────────
 const TABS: TabItem[] = [
-  { value: 'detail', label: '집행계획상세' },
-  { value: 'result', label: '결과목록' },
+  { value: 'cnfg', label: '형상자료' },
+  { value: 'idntf', label: '식별자료' },
+  { value: 'ref', label: '참고자료' },
 ]
-
-function renderTabContent(tab: string) {
-  switch (tab) {
-    case 'detail':
-      return <OvsPrcmPlanDtl />
-    case 'result':
-      return <OvsPrcmPlanDtl_RsltList />
-    default:
-      return null
-  }
-}
 
 // ── 진행 단계 ──────────────────────────────────────────────────────────────
 const STEPS: StepItem[] = [
@@ -53,8 +47,39 @@ const SUMMARY_ROWS: SummaryInfoRow[] = [
 
 export function OvsPrcmPlanDtlPage() {
   const navigate = useNavigate()
-  const [tab, setTab] = useState('detail')
+  const [tab, setTab] = useState('cnfg')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
+
+  // 연간조달계획 식별자 — 3탭의 디폴트 값 조회 기준(경로 /op/ovs/:id).
+  const { id = '' } = useParams<{ id: string }>()
+
+  // NIIN — 설계서 slide78 "다른 탭 페이지에서 NIIN 설정 시 탭에 모두 NIIN 유지" 규칙 때문에
+  // 페이지가 소유하고 3탭에 그대로 내려준다. 검색 실행 시에만 appliedNiin 이 확정되고,
+  // 각 탭은 디폴트 조회 결과 아래에 이 NIIN 의 검색 결과를 이어붙인다.
+  const [niin, setNiin] = useState('')
+  const [appliedNiin, setAppliedNiin] = useState('')
+  const handleNiinSearch = () => setAppliedNiin(niin.trim())
+
+  const renderTabContent = (current: string) => {
+    // 3탭 공통 — 계획 id + NIIN 입력값/확정값과 핸들러를 동일하게 전달(탭 전환해도 값 유지).
+    const tabProps = {
+      planId: id,
+      niin,
+      onNiinChange: setNiin,
+      onSearch: handleNiinSearch,
+      appliedNiin,
+    }
+    switch (current) {
+      case 'cnfg':
+        return <WarSplList_Cnfg {...tabProps} />
+      case 'idntf':
+        return <WarSplList_Idntf {...tabProps} />
+      case 'ref':
+        return <WarSplList_Ref {...tabProps} />
+      default:
+        return null
+    }
+  }
 
   // 출력 버튼 — 서류 출력 확인 모달(MUI-BD-01-P14).
   const [outputModalOpen, setOutputModalOpen] = useState(false)
@@ -86,7 +111,9 @@ export function OvsPrcmPlanDtlPage() {
           rows={SUMMARY_ROWS}
         />
 
-        {/* 진행 단계 — 스크롤 축소(collapsed) 시 StepBar 도 함께 접힘(grid-rows 0fr 전환, SummaryInfo 와 동일 방식). */}
+        {/* 진행 단계 — 스크롤 축소(collapsed) 시 StepBar 도 함께 접힘(grid-rows 0fr 전환, SummaryInfo 와 동일 방식).
+            배경 #ECF1FA 밴드(패딩 포함). StepBar 루트는 흰 bg 라 bg-transparent 로 덮어 밴드가 비치게.
+            (조달계획 상세 PrcmPlanDtlPage 와 동일 — 2026-08-11 통일) */}
         <div
           aria-hidden={collapsed}
           className={`grid transition-all duration-200 ease-out motion-reduce:transition-none ${
@@ -94,8 +121,13 @@ export function OvsPrcmPlanDtlPage() {
           }`}
         >
           <div className="overflow-hidden">
-            <div className="px-4 py-4">
-              <StepBar orientation="horizontal" items={STEPS} sheetItems={buildProgressSheet('조달', (substep, prgrsStg) => navigate('/anl-prgrs', { state: { substep, prgrsStg } }))} />
+            <div className="bg-krds-bg-primary-faint px-4 py-4">
+              <StepBar
+                orientation="horizontal"
+                items={STEPS}
+                sheetItems={buildProgressSheet('조달', (substep, prgrsStg) => navigate('/anl-prgrs', { state: { substep, prgrsStg } }))}
+                className="bg-transparent"
+              />
             </div>
           </div>
         </div>

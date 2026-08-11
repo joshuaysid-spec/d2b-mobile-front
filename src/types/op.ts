@@ -190,3 +190,145 @@ export interface OpDeptSearchResult {
   /** 기관구분(instSe) — 육군/군수사/교육사/학교/경리단 등. */
   instSe: string
 }
+
+// ── 목록정보조회(군수품 목록) — MUI-OP-01-P76 ~ P77 ────────────────────────
+// 설계서 01.조달계획 v0.82 slide77~84. 연간조달계획 상세(/op/ovs/:id)의 3탭 + 업체정보 시트.
+// 항목명(영문)은 설계서 "항목 설명" 표 그대로 — 임의 작명 금지.
+
+/**
+ * 목록정보조회 3탭 공통 조회 요청.
+ * - `niin` 없음 = 해당 연간조달계획이 보유한 **디폴트 값** 조회(진입 시 표시)
+ * - `niin` 있음 = NIIN 검색 결과 조회(디폴트 값 아래에 이어서 표시)
+ * TODO(백엔드 확정): 설계서 검색조건(dm_searchInfo)에는 재고번호(invtNo)만 정의돼 있어
+ *   계획 식별자 파라미터명이 미정이다. 반입 시 planId 키를 실제 규격에 맞춘다.
+ */
+export interface WarSplInqRequest {
+  /** 연간조달계획 식별자 — 디폴트 값 조회 기준. */
+  planId: string
+  /** 검색 NIIN(국가품목 식별번호). 비면 디폴트 조회. */
+  niin?: string
+}
+
+/** 식별정보 데이터 영역(dm_itemInfo) — 형상자료(T73) 상단. */
+export interface WarSplItemInfo {
+  /** 재고번호(invtNo). */
+  invtNo: string
+  /** 영문품명(itemNmEng). */
+  itemNmEng: string
+  /** 한글품명(itemNmKor). */
+  itemNmKor: string
+  /** 군급(fsc). */
+  fsc: string
+}
+
+/** 참조번호 데이터 영역(dl_refList) 1건 — 형상자료(T73) 하단. */
+export interface WarSplRefNo {
+  /** 목록 key 용 식별자 — 설계서 미정의(참조번호 중복 가능). */
+  id: string
+  /** 참조번호(rfrncNo). */
+  rfrncNo: string
+  /** 구분(type) — 도면번호/기타 등. */
+  type: string
+  /** 생산자부호(prdctnCd) — 업체정보(P77) 조회 키. */
+  prdctnCd: string
+  /** 생산자명(prdctnNm). */
+  prdctnNm: string
+}
+
+/** 형상자료(MUI-OP-01-T73 WarSplList_Cnfg) 조회 결과. */
+export interface WarSplCnfg {
+  itemInfo: WarSplItemInfo
+  refList: WarSplRefNo[]
+}
+
+/** 식별자료 데이터 영역(dm_idntfInfo) — 식별자료(MUI-OP-01-T74 WarSplList_Idntf). */
+export interface WarSplIdntf {
+  /** 군급분류(fsc). */
+  fsc: string
+  /** 영문품명(itemNmEng). */
+  itemNmEng: string
+  /** 한글품명(itemNmKor). */
+  itemNmKor: string
+  /** FIIG 긴요도부호(FCC) — 장비의 안전을 관리하는 코드. */
+  fcc: string
+  /** 취소이유 부호(DRC) — 물리적 파괴나 변형이 필요한 정도를 구분하는 코드. */
+  drc: string
+  /** 품목식별 지침서번호(FIIG 순번). */
+  fiigNo: string
+  /** 품명부호(INC) — 표준화된 이름으로 식별하기 위해 부여된 식별번호. */
+  inc: string
+  /** 자동자료처리 장비부호(ADPEC). */
+  adpec: string
+  /** 귀금속 지시부호(PMIC). */
+  pmic: string
+  /** 참조/부분 서술형 원인부호(RPDMRC). */
+  rpdmrc: string
+  /** 대체재고 번호(sbstInvtNo). */
+  sbstInvtNo: string
+  /** 품목식별 형태부호(TIIC). */
+  tiic: string
+  /** 품종 구분번호(CS). */
+  cs: string
+  /** 제조국부호(NTL). */
+  ntl: string
+  /** 재고번호 식별부호(IS) — ⚠️ 설계서 항목명이 `ls`(소문자 L)로 표기됨. 설계서 그대로 유지. */
+  ls: string
+  /** 비군사화 부호(DEMIL). */
+  demil: string
+  /** 정전기 방전부호(ESDC). */
+  esdc: string
+  /** 품목식별번호 상태부호(NSC). */
+  nsc: string
+  /** 위험물자부호(HMIC). */
+  hmic: string
+  /** 위험특성부호(HCC). */
+  hcc: string
+  /** 목록화담당자(picNm). */
+  picNm: string
+  /** 국가품목 식별번호(NIIN) 부여일자(niinYmd). */
+  niinYmd: string
+  /** 자료변경일자(chgYmd). */
+  chgYmd: string
+}
+
+/** 참고자료 데이터 영역(dl_refList) 1건 — 참고자료(MUI-OP-01-T75 WarSplList_Ref). */
+export interface WarSplRef {
+  /** 목록 key 용 식별자 — 설계서 미정의(참고번호 중복 가능). */
+  id: string
+  /** 참고번호 R/N(refNo). */
+  refNo: string
+  /** 생산자 NSCM(nscm) — 제조업체에 부여된 5자리 고유 식별부호. */
+  nscm: string
+  /** 형태 RNFC(rnfc). */
+  rnfc: string
+  /** 범주 RNCC(rncc). */
+  rncc: string
+  /** 분류 RNVC(rnvc). */
+  rnvc: string
+  /** 가용성 DAC(dac). */
+  dac: string
+  /** 조치 RNAA(rnaa). */
+  rnaa: string
+  /** 상태 RNSC(rnsc). */
+  rnsc: string
+  /** 교정 RNJC(rnjc) — ⚠️ 화면 목업은 'RNIC' 표기, 항목설명 1.7 은 RNJC/rnjc. 항목설명을 따름. */
+  rnjc: string
+  /** 설계 SADC(sadc) — 민군공용부호. 항목설명 1.7 에만 존재(화면 목업 컬럼 없음). */
+  sadc: string
+}
+
+/** 업체정보 데이터 영역(dm_bzentyInfo) — 업체정보(MUI-OP-01-P77 WarSplList_BzEnty). */
+export interface WarSplBzEnty {
+  /** 업체명(bzentyNm). */
+  bzentyNm: string
+  /** 대표자(rprsvNm). */
+  rprsvNm: string
+  /** 본사주소(addr). */
+  addr: string
+  /** 사업자번호(bzmnNo). */
+  bzmnNo: string
+  /** 전화번호(tlno). */
+  tlno: string
+  /** FAX(fxno). */
+  fxno: string
+}

@@ -51,10 +51,11 @@ export function PrcmPlan_NotiAply({ control }: PrcmPlan_NotiAplyProps) {
       ))}
 
       {/* 입력 폼 (Figma form section 9419-29933 — primary-faint 배경).
-          Figma: 배경은 시트 풀폭(360w)으로 깔리고, 내부 필드는 시트 공통 거터(16px)에 정렬.
-          BottomSheet 가 이미 px-[16px] 를 주므로 -mx-4 로 거터를 상쇄해 배경을 가장자리까지 늘리고,
-          p-4 로 내부 콘텐츠를 다시 16px 안쪽으로 맞춰 위 안내문과 좌우 정렬을 일치시킴. */}
-      <div className="-mx-4 flex flex-col gap-4 bg-krds-bg-primary-faint p-4">
+          배경 블록이 시트 가장자리·footer 에 붙어 보여 여백 + radius 4px 를 준다(2026-08-11 요청).
+          ⚠️ 좌우는 음수 마진(-mx-*)으로 넓히지 않는다 — 시트 Body(overflow-y-auto)의 폭을 넘겨
+             가로 스크롤이 생긴다. 좌우 여백은 시트 공통 거터(16px)를 그대로 쓰고(다른 시트의 flushX 관례와 동일),
+             하단만 mb-krds-6(10px)으로 footer(신청하기)와 띄운다. p-4 는 배경 안쪽 콘텐츠 패딩. */}
+      <div className="mb-krds-6 flex flex-col gap-4 rounded-krds-sm bg-krds-bg-primary-faint p-4">
         {/* 휴대번호 — inputType='tel' 로 숫자만+키패드+IME 가드는 InputBox 가 처리, 하이픈은 format. field-* id 는 제출 실패 시 스크롤 타깃. */}
         <Controller
           control={control}

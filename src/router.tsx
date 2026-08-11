@@ -1546,9 +1546,10 @@ export const router = createBrowserRouter([
         handle: { header: { variant: 'sub', title: '사전규격 상세' } },
       },
       {
+        // 진입 경로는 조달계획 통합목록의 검색유형 '연간조달계획'(annual) 카드뿐 → 헤더 타이틀도 '연간조달계획 상세'.
         path: 'op/ovs/:id',
         element: <OvsPrcmPlanDtlPage />,
-        handle: { header: { variant: 'sub', title: '국외 조달계획 상세' } },
+        handle: { header: { variant: 'sub', title: '연간조달계획 상세' } },
       },
       {
         path: 'notification',

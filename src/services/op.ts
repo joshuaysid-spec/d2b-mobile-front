@@ -20,6 +20,11 @@ import type {
   OpPlanDetail,
   OpProducerSearchRequest,
   OpProducerSearchResult,
+  WarSplBzEnty,
+  WarSplCnfg,
+  WarSplIdntf,
+  WarSplInqRequest,
+  WarSplRef,
 } from '@/types/op'
 
 const EP = {
@@ -45,6 +50,14 @@ const EP = {
   PRODUCER_SEARCH: '/v1/ops/producers',
   /** 발주부서(기관) 검색 — MUI-BD-01-P04 (cm/search/DeptInq) */
   DEPT_SEARCH: '/v1/ops/depts',
+  /** 목록정보조회 - 형상자료 — MUI-OP-01-T73 (ovsPrcmPlanDtl/WarSplList_Cnfg) */
+  WAR_SPL_CNFG: '/v1/ops/war-supplies/configurations',
+  /** 목록정보조회 - 식별자료 — MUI-OP-01-T74 (ovsPrcmPlanDtl/WarSplList_Idntf) */
+  WAR_SPL_IDNTF: '/v1/ops/war-supplies/identifications',
+  /** 목록정보조회 - 참고자료 — MUI-OP-01-T75 (ovsPrcmPlanDtl/WarSplList_Ref) */
+  WAR_SPL_REF: '/v1/ops/war-supplies/references',
+  /** 목록정보조회 - 업체정보 — MUI-OP-01-P77 (ovsPrcmPlanDtl/WarSplList_BzEnty) */
+  WAR_SPL_BZ_ENTY: '/v1/ops/war-supplies/business-entities',
 } as const
 
 export const opService = {
@@ -123,5 +136,33 @@ export const opService = {
   async searchDepts(req: OpDeptSearchRequest): Promise<OpDeptSearchResult[]> {
     if (USE_MOCK) return mockDelay(MOCK_OP.deptSearch)
     return apiClient.post<OpDeptSearchResult[], OpDeptSearchResult[]>(EP.DEPT_SEARCH, req)
+  },
+
+  // ── 목록정보조회(군수품 목록) — P76 3탭 + P77 ──────────────────────────────
+  // req.niin 없음 = 해당 연간조달계획의 디폴트 값, 있음 = NIIN 검색 결과(화면에서 디폴트 아래에 이어붙음).
+  // 목업은 두 경우를 다른 품목 값으로 반환해 "디폴트 + 검색 추가" 동작이 화면에서 드러나게 한다.
+
+  /** 형상자료 조회 — 식별정보(dm_itemInfo) + 참조번호(dl_refList). */
+  async getWarSplCnfg(req: WarSplInqRequest): Promise<WarSplCnfg> {
+    if (USE_MOCK) return mockDelay(req.niin ? MOCK_OP.warSplCnfgSrch : MOCK_OP.warSplCnfg)
+    return apiClient.post<WarSplCnfg, WarSplCnfg>(EP.WAR_SPL_CNFG, req)
+  },
+
+  /** 식별자료 조회(dm_idntfInfo). */
+  async getWarSplIdntf(req: WarSplInqRequest): Promise<WarSplIdntf> {
+    if (USE_MOCK) return mockDelay(req.niin ? MOCK_OP.warSplIdntfSrch : MOCK_OP.warSplIdntf)
+    return apiClient.post<WarSplIdntf, WarSplIdntf>(EP.WAR_SPL_IDNTF, req)
+  },
+
+  /** 참고자료 목록 조회(dl_refList). */
+  async getWarSplRef(req: WarSplInqRequest): Promise<WarSplRef[]> {
+    if (USE_MOCK) return mockDelay(req.niin ? MOCK_OP.warSplRefSrch : MOCK_OP.warSplRef)
+    return apiClient.post<WarSplRef[], WarSplRef[]>(EP.WAR_SPL_REF, req)
+  },
+
+  /** 업체정보 조회(dm_bzentyInfo) — 형상자료 참조번호의 생산자부호(prdctnCd) 기준. */
+  async getWarSplBzEnty(prdctnCd: string): Promise<WarSplBzEnty> {
+    if (USE_MOCK) return mockDelay(MOCK_OP.warSplBzEnty)
+    return apiClient.post<WarSplBzEnty, WarSplBzEnty>(EP.WAR_SPL_BZ_ENTY, { prdctnCd })
   },
 }
