@@ -744,6 +744,10 @@ const FeaturePage = lazy(() =>
 const HistoryPage = lazy(() =>
   import('@/ui/biz/cm/history/HistoryPage').then((m) => ({ default: m.HistoryPage })),
 )
+// 인포그래픽스(MUI-CM-05-M04, /intro/graphic) — biz/cm/graphic.
+const GraphicPage = lazy(() =>
+  import('@/ui/biz/cm/graphic/GraphicPage').then((m) => ({ default: m.GraphicPage })),
+)
 // 관련시스템(MUI-CM-05-M05, /intro/related) — biz/cm/system.
 const SystemPage = lazy(() =>
   import('@/ui/biz/cm/system/SystemPage').then((m) => ({ default: m.SystemPage })),
@@ -1801,6 +1805,16 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: '연혁' },
+          scrollReset: true,
+        },
+      },
+      {
+        // 인포그래픽스 (MUI-CM-05-M04) — 전체메뉴 국방전자조달소개 > 인포그래픽스
+        path: 'intro/graphic',
+        element: <GraphicPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '인포그래픽스' },
           scrollReset: true,
         },
       },

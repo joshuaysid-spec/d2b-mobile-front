@@ -213,6 +213,7 @@ const MENU_ROUTES: Record<string, string> = {
   'intro-system': ROUTES.INTRO_SYSTEM, // 시스템소개(MUI-CM-05-M01)
   'intro-feature': ROUTES.INTRO_FEATURE, // 주요특징(MUI-CM-05-M02)
   'intro-history': ROUTES.INTRO_HISTORY, // 연혁(MUI-CM-05-M03)
+  'intro-infographics': ROUTES.INTRO_GRAPHIC, // 인포그래픽스(MUI-CM-05-M04)
   'intro-related-system': ROUTES.INTRO_RELATED, // 관련시스템(MUI-CM-05-M05)
   'intro-contact': ROUTES.INTRO_INQUIRY, // 이용문의(MUI-CM-05-M06)
   'guide-prep': ROUTES.GUIDE_PREPARATION, // 조달사전준비안내 > 사전준비사항(MUI-CM-05-M07)
