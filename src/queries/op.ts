@@ -3,7 +3,12 @@
 // queryKey 는 opKeys 로 중앙 관리 — 무효화/프리페치 시 여기서만 참조.
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { opService } from '@/services/op'
-import type { OpListRequest, OpNotifyRequest, OpPlanDetail } from '@/types/op'
+import type {
+  OpListRequest,
+  OpNotifyRequest,
+  OpPlanDetail,
+  WarSplInqRequest,
+} from '@/types/op'
 
 export const opKeys = {
   planList: (req: OpListRequest) => ['op', 'planList', req] as const,
@@ -13,6 +18,10 @@ export const opKeys = {
   specDtl: (id: string) => ['op', 'specDtl', id] as const,
   ovsPlanDtl: (id: string) => ['op', 'ovsPlanDtl', id] as const,
   ovsPlanResults: (id: string) => ['op', 'ovsPlanResults', id] as const,
+  warSplCnfg: (req: WarSplInqRequest) => ['op', 'warSplCnfg', req] as const,
+  warSplIdntf: (req: WarSplInqRequest) => ['op', 'warSplIdntf', req] as const,
+  warSplRef: (req: WarSplInqRequest) => ['op', 'warSplRef', req] as const,
+  warSplBzEnty: (prdctnCd: string) => ['op', 'warSplBzEnty', prdctnCd] as const,
 }
 
 /** 조달계획 통합목록 — 검색 확정값(appliedSearch)별 캐시. 키워드 세부 필터/페이징은 페이지 클라이언트 로직 유지. */
@@ -48,6 +57,48 @@ export function useOpOpinions(id: string) {
     queryKey: opKeys.opinions(id),
     queryFn: () => opService.getOpinions(id),
     enabled: Boolean(id),
+  })
+}
+
+// ── 목록정보조회(군수품 목록) — MUI-OP-01-T73/T74/T75/P77 ──────────────────
+// 탭마다 두 번 호출한다:
+//   ① 디폴트 — req.niin 없음. 해당 연간조달계획이 보유한 값(진입 시 표시).
+//   ② 검색   — req.niin 있음. 화면에서 디폴트 아래에 이어붙는다. NIIN 이 비면 enabled=false 로 미호출.
+// enabled 는 호출부가 Boolean(niin) 으로 넘긴다(같은 훅을 두 용도로 쓰기 위함).
+
+/** 형상자료(T73) — 식별정보 + 참조번호. */
+export function useWarSplCnfg(req: WarSplInqRequest, enabled = true) {
+  return useQuery({
+    queryKey: opKeys.warSplCnfg(req),
+    queryFn: () => opService.getWarSplCnfg(req),
+    enabled,
+  })
+}
+
+/** 식별자료(T74). */
+export function useWarSplIdntf(req: WarSplInqRequest, enabled = true) {
+  return useQuery({
+    queryKey: opKeys.warSplIdntf(req),
+    queryFn: () => opService.getWarSplIdntf(req),
+    enabled,
+  })
+}
+
+/** 참고자료(T75). */
+export function useWarSplRef(req: WarSplInqRequest, enabled = true) {
+  return useQuery({
+    queryKey: opKeys.warSplRef(req),
+    queryFn: () => opService.getWarSplRef(req),
+    enabled,
+  })
+}
+
+/** 업체정보(P77) — 참조번호의 생산자부호로 조회. 시트가 열릴 때만(prdctnCd 존재) 호출. */
+export function useWarSplBzEnty(prdctnCd: string) {
+  return useQuery({
+    queryKey: opKeys.warSplBzEnty(prdctnCd),
+    queryFn: () => opService.getWarSplBzEnty(prdctnCd),
+    enabled: Boolean(prdctnCd),
   })
 }
 

@@ -87,7 +87,9 @@ export function BfhdSpcfctDtlPage() {
           rows={SUMMARY_ROWS}
         />
 
-        {/* 진행 단계 — 스크롤 축소(collapsed) 시 StepBar 도 함께 접힘(grid-rows 0fr 전환, SummaryInfo 와 동일 방식). */}
+        {/* 진행 단계 — 스크롤 축소(collapsed) 시 StepBar 도 함께 접힘(grid-rows 0fr 전환, SummaryInfo 와 동일 방식).
+            배경 #ECF1FA 밴드(패딩 포함). StepBar 루트는 흰 bg 라 bg-transparent 로 덮어 밴드가 비치게.
+            (조달계획 상세 PrcmPlanDtlPage 와 동일 — 2026-08-11 통일) */}
         <div
           aria-hidden={collapsed}
           className={`grid transition-all duration-200 ease-out motion-reduce:transition-none ${
@@ -95,8 +97,13 @@ export function BfhdSpcfctDtlPage() {
           }`}
         >
           <div className="overflow-hidden">
-            <div className="px-4 py-4">
-              <StepBar orientation="horizontal" items={STEPS} sheetItems={buildProgressSheet('조달', (substep, prgrsStg) => navigate('/anl-prgrs', { state: { substep, prgrsStg } }))} />
+            <div className="bg-krds-bg-primary-faint px-4 py-4">
+              <StepBar
+                orientation="horizontal"
+                items={STEPS}
+                sheetItems={buildProgressSheet('조달', (substep, prgrsStg) => navigate('/anl-prgrs', { state: { substep, prgrsStg } }))}
+                className="bg-transparent"
+              />
             </div>
           </div>
         </div>
