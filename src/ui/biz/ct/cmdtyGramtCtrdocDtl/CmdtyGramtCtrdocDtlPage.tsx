@@ -1,10 +1,11 @@
 // 물품총액계약서상세 (MUI-CT-01-M07) · 물품단가계약서상세 (MUI-CT-01-M08) — 1페이지 + type.
 // 설계서 03.계약 v0.83 slide48~62. 두 화면은 같은 3탭 구조에 "부서명·조달판단번호만 상이"(slide57)
 // + 계약명세서 항목 세트 차이 → CLAUDE.md '같은 구조 = 1페이지 + type 파라미터' 원칙 적용.
-// 계약통합목록 카드(물품 계약최종 — 총액/단가 계약서) 클릭 → /ct/gramt/:id · /ct/untprc/:id.
+// 계약통합목록 카드(물품 계약최종 — 총액/단가 계약서) 클릭 →
+//   /ct/cmdtyGramtCtrdocDtl · /ct/cmdtyUntprcCtrdocDtl (식별자는 navigate state).
 // 탭: 상세정보(T13/T16 _Cn) · 계약명세서(T14/T17 _Ctrt) · 특수조건(T15/T18 _Spcl, 총액/단가 공용).
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useCmdtyCtrdocDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -20,7 +21,7 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { CmdtyGramtCtrdocDtl_Cn } from '@/ui/biz/ct/cmdtyGramtCtrdocDtl/CmdtyGramtCtrdocDtl_Cn'
 import { CmdtyGramtCtrdocDtl_Ctrt } from '@/ui/biz/ct/cmdtyGramtCtrdocDtl/CmdtyGramtCtrdocDtl_Ctrt'
 import { CmdtyGramtCtrdocDtl_Spcl } from '@/ui/biz/ct/cmdtyGramtCtrdocDtl/CmdtyGramtCtrdocDtl_Spcl'
-import type { CtCtrdocType } from '@/types/ct'
+import type { CtCtrdocType, CtrtIntgListItem } from '@/types/ct'
 
 export interface CmdtyGramtCtrdocDtlPageProps {
   /** 총액제(gramt, M07 — 기본) / 단가제(untprc, M08). 라우트가 주입. */
@@ -45,7 +46,8 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CmdtyGramtCtrdocDtlPage({ type = 'gramt' }: CmdtyGramtCtrdocDtlPageProps) {
-  const { id = '' } = useParams()
+  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -54,6 +56,8 @@ export function CmdtyGramtCtrdocDtlPage({ type = 'gramt' }: CmdtyGramtCtrdocDtlP
   const { data: detail } = useCmdtyCtrdocDtl(id, type)
   const steps = stepsByStg('계약')
 
+  // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.
+  if (!stateItem) return <Navigate to="/ct" replace />
   if (!detail) return <PageLoading />
 
   return (
@@ -122,8 +126,8 @@ export function CmdtyGramtCtrdocDtlPage({ type = 'gramt' }: CmdtyGramtCtrdocDtlP
       {/* 탭 콘텐츠 — 특수조건은 총액제(T15)/단가제(T18) 공용(동일 spclCnd 데이터영역) */}
       <div className="min-h-[100dvh]">
         {tab === 'detail' && <CmdtyGramtCtrdocDtl_Cn detail={detail} />}
-        {tab === 'ctrt' && <CmdtyGramtCtrdocDtl_Ctrt type={type} />}
-        {tab === 'spcl' && <CmdtyGramtCtrdocDtl_Spcl />}
+        {tab === 'ctrt' && <CmdtyGramtCtrdocDtl_Ctrt id={id} type={type} />}
+        {tab === 'spcl' && <CmdtyGramtCtrdocDtl_Spcl id={id} />}
       </div>
 
       {/* FAB — 맨위로 */}

@@ -1,10 +1,10 @@
 // 대금청구 상세(중앙조달) — MUI-WM-01-M05 CenterPrcmPymtClmDtl. 설계서 05.대금청구및사후 v0.83 slide38~45.
-// P13 대금청구신청목록에서 대금청구서 카드 클릭 → /wm/pymt-clm/:id 진입.
+// P13 대금청구신청목록에서 대금청구서 카드 클릭 → /wm/centerPrcmPymtClmDtl 진입(식별자는 navigate state).
 // 구성: 중요 안내 + sticky(요약 + 스텝 + 탭) + 탭(T05 계약정보 · T06 공급자정보 · T07 대금신청금액
 //   · T08 세금계산서 · 진행상태(T23 공용)) — M02/M03 셸 준용. 안내문 버튼 → P09 풀팝업.
 // 데이터: useCenterPrcmPymtClmDtl — 조회 완료까지 PageLoading.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useCenterPrcmPymtClmDtl } from '@/queries/wm'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -45,7 +45,9 @@ function buildSteps(): StepItem[] {
 
 export function CenterPrcmPymtClmDtlPage() {
   const navigate = useNavigate()
-  const { id = '' } = useParams()
+  // 식별자는 목록에서 navigate state 로 전달(URL 노출 금지).
+  const stateItem = useLocation().state as { id: string } | null
+  const id = stateItem?.id ?? ''
   const [tab, setTab] = useState('ctrt')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [gdntcOpen, setGdntcOpen] = useState(false) // P09 대금청구 안내문
@@ -53,6 +55,7 @@ export function CenterPrcmPymtClmDtlPage() {
   const { data: detail } = useCenterPrcmPymtClmDtl(id)
   const steps = buildSteps()
 
+  if (!stateItem) return <Navigate to="/wm" replace />
   if (!detail) return <PageLoading />
 
   return (

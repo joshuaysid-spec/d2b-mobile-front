@@ -40,7 +40,7 @@ const WM_PRGRS_SEARCH_SCHEMA: SearchFilterSchema = {
           type: 'checkbox',
           key: 'taskSeCd',
           required: true,
-          selectAll: true,
+          selectAll: { value: '0' }, // '0' = '전체' 코드값 — 전체 선택 시 값 배열에 포함
           options: [
             { value: 'goods', label: '물품' },
             { value: 'service', label: '용역' },
@@ -80,7 +80,7 @@ function buildDefaultValue(): SearchFilterValue {
     end: dayjs().format(DATE_FORMAT),
   }
   return {
-    taskSeCd: ['goods', 'service', 'construction'],
+    taskSeCd: ['0', 'goods', 'service', 'construction'], // 전체('0' = 전체 코드값)
     ctrtYmd: recent1m,
     clmYmd: recent1m,
     ctrtNm: '',
@@ -123,15 +123,15 @@ export function PymtClmPrgrsPrstPage() {
   }
   // 카드 클릭(slide81) — 대금청구상세 유형 분기(M05~M08).
   const handleCardClick = (item: PymtClmPrgrsPrstItem) => {
-    const route =
+    const path =
       item.prcmSeNm === '부대'
-        ? 'sbsd/'
+        ? '/wm/sbsdPrcmPymtClmDtl'
         : item.prcmSeNm === '공사'
-          ? 'cstrn/'
+          ? '/wm/cstrnPymtClmDtl'
           : item.prcmSeNm === '기성대가'
-            ? 'pxcnd/'
-            : ''
-    navigate(`/wm/pymt-clm/${route}${item.id}`, { state: item })
+            ? '/wm/pxcndCstPymtClmDtl'
+            : '/wm/centerPrcmPymtClmDtl'
+    navigate(path, { state: item })
   }
 
   const filteredList = useMemo(() => {

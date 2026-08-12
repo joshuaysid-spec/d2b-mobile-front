@@ -60,7 +60,8 @@ function taskSection(type: OpSrchType): SearchFilterSection {
         key: 'taskSeNm',
         required: true,
         // '전체' 칩 — 비활성 제외 항목과 자동 동기화. 연간조달은 국외만 선택 가능하므로 '전체'도 비활성.
-        selectAll: type === 'annual' ? { disabled: true } : true,
+        // value '0' = '전체' 공통코드값 — 전체 선택 시 값 배열에 포함(PC 전송 규격 "0 1 2 3 4").
+        selectAll: type === 'annual' ? { disabled: true } : { value: '0' },
         options: [
           // 연간조달: 국외만 활성(타 항목 비활성) · 사전규격: 국외 없음(비활성)
           { value: 'goods', label: '물품', disabled: type === 'annual' },
@@ -293,9 +294,9 @@ function buildOpSearchSchema(type: OpSrchType): SearchFilterSchema {
 
 // 검색유형별 업무구분 기본값 — 탭 전환 시 filter 를 이 유형 기본값으로 리셋한다.
 const TASK_DEFAULT_BY_TYPE: Record<OpSrchType, string[]> = {
-  plan: ['goods', 'service', 'construction', 'foreign'], // 전체
-  spec: ['goods', 'service', 'construction'], // 국외 없음
-  annual: ['foreign'], // 국외만
+  plan: ['0', 'goods', 'service', 'construction', 'foreign'], // 전체('0' = 전체 코드값)
+  spec: ['0', 'goods', 'service', 'construction'], // 국외 없음(비활성 제외 전체 = '0' 포함)
+  annual: ['foreign'], // 국외만('전체' 비활성 — '0' 없음)
 }
 
 const RECENT_1M = () => ({
@@ -309,8 +310,11 @@ const RECENT_1M = () => ({
 function buildDefaultValue(type: OpSrchType): OpSearchFilter {
   return {
     taskSeNm: TASK_DEFAULT_BY_TYPE[type],
-    // 조달계획 — 월 설정(최근 1개월 = 이번 달, YYYY-MM 월 단위)
-    orderPrnmntYm: { start: dayjs().format('YYYY-MM'), end: dayjs().format('YYYY-MM') },
+    // 조달계획 — 월 설정(이전 월 ~ 현재 월, YYYY-MM 월 단위)
+    orderPrnmntYm: {
+      start: dayjs().subtract(1, 'month').format('YYYY-MM'),
+      end: dayjs().format('YYYY-MM'),
+    },
     prcmPlanNm: '',
     prcmNo: '',
     rprsItemNm: '',
@@ -358,7 +362,7 @@ const ANNUAL_SEARCH_TARGETS = [
 
 // 목록 데이터는 useOpPlanList(검색유형별 조회)가 공급 — 목업 데이터는 mocks/op.ts(구 인라인 목업 이관).
 // 검색유형별 업무구분: plan=물품/용역/공사/국외 · spec=물품/용역/공사(국외 없음) · annual=국외만.
-// 카드 클릭 라우팅은 srchType 으로만 분기(handleCardClick): plan→/op/:id, spec→/op/spec/:id, annual→/op/ovs/:id.
+// 카드 클릭 라우팅은 srchType 으로만 분기(handleCardClick): plan→/op/prcmPlanDtl, spec→/op/bfhdSpcfctDtl, annual→/op/ovsPrcmPlanDtl.
 
 export function PrcmPlanIntgListPage() {
   const navigate = useNavigate()
@@ -431,20 +435,18 @@ export function PrcmPlanIntgListPage() {
     setPage(page + 1)
   }
   // 카드 클릭 라우팅 — 검색유형(srchType)으로만 분기(taskSeNm 하드코딩 분기 제거).
-  //   조달계획(plan)  → 조달계획상세 (/op/:id)      ※ 국외 업무구분이어도 항상 조달계획상세
-  //   사전규격(spec)  → 사전규격상세 (/op/spec/:id)
-  //   연간조달(annual) → 국외 상세   (/op/ovs/:id)   ※ 연간조달 = 국외 → 항상 국외 상세
-  const ROUTE_BY_SRCH_TYPE: Record<OpSrchType, (id: string) => string> = {
-    plan: (id) => `/op/${id}`,
-    spec: (id) => `/op/spec/${id}`,
-    annual: (id) => `/op/ovs/${id}`,
+  //   조달계획(plan)  → 조달계획상세 (/op/prcmPlanDtl)   ※ 국외 업무구분이어도 항상 조달계획상세
+  //   사전규격(spec)  → 사전규격상세 (/op/bfhdSpcfctDtl)
+  //   연간조달(annual) → 국외 상세   (/op/ovsPrcmPlanDtl) ※ 연간조달 = 국외 → 항상 국외 상세
+  const ROUTE_BY_SRCH_TYPE: Record<OpSrchType, string> = {
+    plan: '/op/prcmPlanDtl',
+    spec: '/op/bfhdSpcfctDtl',
+    annual: '/op/ovsPrcmPlanDtl',
   }
   const handleCardClick = (item: OpPlanItem) => {
-    // 클릭 항목을 state 로 함께 전달 — 상세에서 즉시표시 초기값(재조회 없이 헤더/요약 렌더).
-    // (CLAUDE.md "목록 → 상세 데이터 전달")
-    navigate((ROUTE_BY_SRCH_TYPE[item.srchType] ?? ROUTE_BY_SRCH_TYPE.plan)(item.id), {
-      state: item,
-    })
+    // 클릭 항목을 state 로 전달 — 식별자는 URL 에 노출하지 않고 state 로만 넘긴다.
+    // 상세는 이 값을 즉시표시 초기값 겸 조회 키로 쓴다. (CLAUDE.md "목록 → 상세 데이터 전달")
+    navigate(ROUTE_BY_SRCH_TYPE[item.srchType] ?? ROUTE_BY_SRCH_TYPE.plan, { state: item })
   }
 
   // ── 키워드 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 이 블록 삭제) ──

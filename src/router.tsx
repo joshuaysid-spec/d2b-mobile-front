@@ -1072,17 +1072,17 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'ex/dlvdoc/:id',
+        path: 'ex/inspDlvdocDtl',
         element: <InspDlvdocDtlPage />,
         handle: { header: { variant: 'sub', title: '상세 조회' } },
       },
       {
-        path: 'ex/dlvdoc/sbsd/:id',
+        path: 'ex/inspDlvdocDtlSbsdPrcm',
         element: <InspDlvdocDtlSbsdPrcmPage />,
         handle: { header: { variant: 'sub', title: '상세 조회' } },
       },
       {
-        path: 'ex/pxcnd/:id',
+        path: 'ex/pxcndCmcnInspDtl',
         element: <PxcndCmcnInspDtlPage />,
         handle: { header: { variant: 'sub', title: '상세 조회' } },
       },
@@ -1096,7 +1096,7 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'ex/dlvdoc/rslt/:id',
+        path: 'ex/dlvdocRsltDtl',
         element: <DlvdocRsltDtlPage />,
         handle: { header: { variant: 'sub', title: '상세 조회' } },
       },
@@ -1110,7 +1110,7 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'ex/estmt-rqdc/:id',
+        path: 'ex/ovsEstmtRqdcDtl',
         element: <OvsEstmtRqdcDtlPage />,
         handle: { header: { variant: 'sub', title: '견적의뢰서 상세' } },
       },
@@ -1124,7 +1124,7 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'ex/estmt-ntdc/:id',
+        path: 'ex/ovsEstmtNtdcDtl',
         element: <OvsEstmtNtdcDtlPage />,
         handle: { header: { variant: 'sub', title: '견적통보서 상세' } },
       },
@@ -1138,7 +1138,7 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'ex/order-rqdc/:id',
+        path: 'ex/ovsOrderRqdcDtl',
         element: <OvsOrderRqdcDtlPage />,
         handle: { header: { variant: 'sub', title: '발주의뢰서 상세' } },
       },
@@ -1152,7 +1152,7 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'ex/order-ntdc/:id',
+        path: 'ex/ovsOrderNtdcDtl',
         element: <OvsOrderNtdcDtlPage />,
         handle: { header: { variant: 'sub', title: '발주통보서 상세' } },
       },
@@ -1166,37 +1166,37 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'wm/prpay/:id',
+        path: 'wm/prpayApfrDtl',
         element: <PrpayApfrDtlPage />,
         handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
       },
       {
-        path: 'wm/dpsmn-itrpy/:id',
+        path: 'wm/dpsmnItrpyApfrDtl',
         element: <DpsmnItrpyApfrDtlPage />,
         handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
       },
       {
-        path: 'wm/pymt-clm/:id',
+        path: 'wm/centerPrcmPymtClmDtl',
         element: <CenterPrcmPymtClmDtlPage />,
         handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
       },
       {
-        path: 'wm/pymt-clm/sbsd/:id',
+        path: 'wm/sbsdPrcmPymtClmDtl',
         element: <SbsdPrcmPymtClmDtlPage />,
         handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
       },
       {
-        path: 'wm/pymt-clm/cstrn/:id',
+        path: 'wm/cstrnPymtClmDtl',
         element: <CstrnPymtClmDtlPage />,
         handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
       },
       {
-        path: 'wm/pymt-clm/pxcnd/:id',
+        path: 'wm/pxcndCstPymtClmDtl',
         element: <PxcndCstPymtClmDtlPage />,
         handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
       },
       {
-        path: 'wm/epfc-clcln/:id',
+        path: 'wm/epfcClclnClmDtl',
         element: <EpfcClclnClmDtlPage />,
         handle: { header: { variant: 'sub', title: '대금청구 상세조회' } },
       },
@@ -1210,7 +1210,7 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'ts/loi/:id',
+        path: 'ts/bfhdLoiDtl',
         element: <BfhdLoiDtlPage />,
         handle: { header: { variant: 'sub', title: '사전의향서 상세' } },
       },
@@ -1224,7 +1224,7 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'ts/txiv/dtl/:id',
+        path: 'ts/txivDtl',
         element: <TxivDtlPage />,
         handle: { header: { variant: 'sub', title: '세금계산서 상세' } },
       },
@@ -1256,46 +1256,46 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'ct/cstrn/:id',
+        path: 'ct/cstrnElctrCtrtPrgrsDtl',
         element: <CstrnElctrCtrtPrgrsDtlPage />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
       {
-        path: 'ct/gnrl/:id',
+        path: 'ct/cmdtyGnrlCtrdocDtl',
         element: <CmdtyGnrlCtrdocDtlPage />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
       {
-        path: 'ct/mdfcn/:id',
+        path: 'ct/cmdtyMdfcnCtrdocDtl',
         element: <CmdtyMdfcnCtrdocDtlPage />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
       {
-        path: 'ct/gramt/:id',
+        path: 'ct/cmdtyGramtCtrdocDtl',
         element: <CmdtyGramtCtrdocDtlPage type="gramt" />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
       {
-        path: 'ct/untprc/:id',
+        path: 'ct/cmdtyUntprcCtrdocDtl',
         element: <CmdtyUntprcCtrdocDtlPage />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
       {
         // 물품전자계약확정상세 (MUI-CT-01-M04) — 목록 물품 '계약확정' 카드 진입.
-        path: 'ct/cfmtn/:id',
+        path: 'ct/cmdtyElctrCtrtCfmtnDtl',
         element: <CmdtyElctrCtrtCfmtnDtlPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '전자계약상세' } },
       },
       {
         // 국외전자계약확정상세 (MUI-CT-01-M72) — 목록 국외 '계약확정' 카드 진입.
-        path: 'ct/ovs/cfmtn/:id',
+        path: 'ct/ovsElctrCtrtCfmtn',
         element: <OvsElctrCtrtCfmtnPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
       {
-        path: 'ct/cstrn-doc/:id',
+        path: 'ct/cstrnCtrdocDtl',
         element: <CstrnCtrdocDtlPage />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
@@ -1309,12 +1309,12 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'ct/ovs/cmbz/:id',
+        path: 'ct/ovsCmbzCtrdocDtl',
         element: <OvsCmbzCtrdocDtlPage />,
         handle: { header: { variant: 'sub', title: '상업계약서 상세' } },
       },
       {
-        path: 'ct/ovs/:id',
+        path: 'ct/ovsElctrCtrtPrgrsDtl',
         element: <OvsElctrCtrtPrgrsDtlPage />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
@@ -1328,32 +1328,32 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'ct/cncltn/gramt/:id',
+        path: 'ct/cncltnRmvGnrlCtrtGramtDtl',
         element: <CncltnRmvGnrlCtrtGramtDtlPage />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
       {
-        path: 'ct/cncltn/untprc/:id',
+        path: 'ct/cncltnRmvGnrlCtrtUntprcDtl',
         element: <CncltnRmvGnrlCtrtUntprcDtlPage />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
       {
-        path: 'ct/cncltn/mdfcn/:id',
+        path: 'ct/cncltnRmvMdfcnCtrtDtl',
         element: <CncltnRmvMdfcnCtrtDtlPage />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
       {
-        path: 'ct/cncltn/cstrn/:id',
+        path: 'ct/cstrnCtrtCncltnRmvDtl',
         element: <CstrnCtrtCncltnRmvDtlPage />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
       {
-        path: 'ct/cncltn/:id',
+        path: 'ct/cmdtyCtrtCncltnRmvDtl',
         element: <CmdtyCtrtCncltnRmvDtlPage />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
       {
-        path: 'ct/:id',
+        path: 'ct/cmdtyElctrCtrtPrgrsDtl',
         element: <CmdtyElctrCtrtPrgrsDtlPage />,
         handle: { header: { variant: 'sub', title: '계약 상세조회' } },
       },
@@ -1374,32 +1374,32 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'bd/prgrs/:id',
+        path: 'bd/bidPrgsDtlInq',
         element: <BidPrgsDtlInqPage />,
         handle: { header: { variant: 'sub', title: '입찰진행 상세' } },
       },
       {
-        path: 'bd/prgrs/:id/apfr',
+        path: 'bd/wrotAgre',
         element: <WrotAgrePage />,
         handle: { header: { variant: 'sub', title: '입찰참가신청서' } },
       },
       {
-        path: 'bd/prgrs/:id/apfr/form',
+        path: 'bd/bidPrtcpAperWrt',
         element: <BidPrtcpAperWrtPage />,
         handle: { header: { variant: 'sub', title: '입찰참가신청서' } },
       },
       {
-        path: 'bd/prgrs/:id/tndr-wrt',
+        path: 'bd/tndrWrt',
         element: <TndrWrtPage />,
         handle: { header: { variant: 'sub', title: '입찰서 작성' } },
       },
       {
-        path: 'bd/prgrs/:id/elsgn',
+        path: 'bd/elsgn',
         element: <ElsgnPage />,
         handle: { header: { variant: 'sub', title: '전자서명' } },
       },
       {
-        path: 'bd/prgrs/:id/aply-cmptn',
+        path: 'bd/aplyCmptn',
         element: <AplyCmptnPage />,
         handle: { header: { variant: 'sub', title: '신청완료' } },
       },
@@ -1424,47 +1424,47 @@ export const router = createBrowserRouter([
         handle: { header: { variant: 'sub', title: '사전심사(PQ) 결과조회' } },
       },
       {
-        path: 'bd/result/:id',
+        path: 'bd/bidRsltDtl',
         element: <BidRsltDtlPage />,
         handle: { header: { variant: 'sub', title: '입찰결과 상세' } },
       },
       {
-        path: 'bd/implt/:id',
+        path: 'bd/implt',
         element: <ImpltPage />,
         handle: { header: { variant: 'sub', title: '이행/적격심사' } },
       },
       {
         // 국외 입찰결과조회 상세(단가제) — 정적 'ovs/result' 세그먼트가 bd/:id·bd/ovs/:id 보다 먼저 매칭.
-        path: 'bd/ovs/result/:id',
+        path: 'bd/ovsBidRsltDtl',
         element: <OvsBidRsltDtlPage />,
         handle: { header: { variant: 'sub', title: '입찰결과 조회' } },
       },
       {
         // 국외 공개수의협상계획상세 — 정적 'ovs/rls-ngtn' 세그먼트가 bd/:id·bd/ovs/:id 보다 먼저 매칭.
-        path: 'bd/ovs/rls-ngtn/:id',
+        path: 'bd/ovsRlsVltrnsNgtnPlanDtl',
         element: <OvsRlsVltrnsNgtnPlanDtlPage />,
         handle: { header: { variant: 'sub', title: '공개수의협상 계획상세' } },
       },
       {
         // 공개수의협상 견적서 작성(4스텝) — 정적 'etdc' 세그먼트가 :id 보다 먼저 매칭. 헤더 타이틀 '견적서 작성'.
-        path: 'bd/ovs/rls-ngtn/:id/etdc',
+        path: 'bd/ovsRlsVltrnsNgtnEtdcSbmsn',
         element: <OvsRlsVltrnsNgtnEtdcSbmsnPage />,
         handle: { header: { variant: 'sub', title: '견적서 작성' } },
       },
       {
         // 공개수의협상 견적서 조회(상세 읽기, 4탭) — 정적 'etdc-dtl' 세그먼트. 헤더 타이틀 '견적서 조회'.
-        path: 'bd/ovs/rls-ngtn/:id/etdc-dtl',
+        path: 'bd/ovsRlsVltrnsNgtnEtdcDtl',
         element: <OvsRlsVltrnsNgtnEtdcDtlPage />,
         handle: { header: { variant: 'sub', title: '견적서 조회' } },
       },
       {
         // 공개수의협상 결과조회 — 정적 'rslt' 세그먼트. 헤더 타이틀 '공개수의협상 결과조회'.
-        path: 'bd/ovs/rls-ngtn/:id/rslt',
+        path: 'bd/ovsRlsVltrnsNgtnSrngRsltInq',
         element: <OvsRlsVltrnsNgtnSrngRsltInqPage />,
         handle: { header: { variant: 'sub', title: '공개수의협상 결과조회' } },
       },
       {
-        path: 'bd/:id',
+        path: 'bd/bidPbancDtl',
         element: <BidPbancDtlPage />,
         handle: { header: { variant: 'sub', title: '입찰공고 상세' } },
       },
@@ -1486,12 +1486,12 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'bd/ovs/locker/:id',
+        path: 'bd/ovsLockerPbanDtl',
         element: <OvsLockerPbanDtlPage />,
         handle: { header: { variant: 'sub', title: '국외 보관함 상세' } },
       },
       {
-        path: 'bd/ovs/locker/:id/items',
+        path: 'bd/ovsLockerItemReg',
         element: <OvsLockerItemRegPage />,
         handle: {
           header: { variant: 'sub', title: '보관함 품목 관리' },
@@ -1499,55 +1499,55 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'bd/ovs/locker/:id/bid-cn',
+        path: 'bd/ovsTmprBidCnReg',
         element: <OvsTmprBidCnRegPage />,
         handle: { header: { variant: 'sub', title: '입찰내역 작성' } },
       },
       {
-        path: 'bd/ovs/locker/:id/bfr-bid-cn',
+        path: 'bd/ovsBfrTmprBidBidCnReg',
         element: <OvsBfrTmprBidBidCnRegPage />,
         handle: { header: { variant: 'sub', title: '이전공고입찰내역등록' } },
       },
       {
-        path: 'bd/ovs/prgrs/:id/aply',
+        path: 'bd/ovsBidPrtcpAply',
         element: <OvsBidPrtcpAplyPage />,
         handle: { header: { variant: 'sub', title: '입찰참가신청서' } },
       },
       {
-        path: 'bd/ovs/prgrs/:id/apfr',
+        path: 'bd/ovsBidPrtcpApfrDtl',
         element: <OvsBidPrtcpApfrDtlPage />,
         handle: { header: { variant: 'sub', title: '입찰참가신청서 상세' } },
       },
       {
-        path: 'bd/ovs/prgrs/:id/tndr-sbmsn',
+        path: 'bd/ovsTndrSbmsn',
         element: <OvsTndrSbmsnPage />,
         handle: { header: { variant: 'sub', title: '입찰서제출' } },
       },
       {
-        path: 'bd/ovs/prgrs/:id/tndr',
+        path: 'bd/ovsTndrDtl',
         element: <OvsTndrDtlPage />,
         handle: { header: { variant: 'sub', title: '입찰서 상세' } },
       },
       {
-        path: 'bd/ovs/:id',
+        path: 'bd/ovsBidPbancDtl',
         element: <OvsBidPbancDtlPage />,
         handle: { header: { variant: 'sub', title: '국외 입찰공고 상세' } },
       },
       {
-        path: 'op/:id',
+        path: 'op/prcmPlanDtl',
         element: <PrcmPlanDtlPage />,
         handle: {
           header: { variant: 'sub', title: '조달계획 상세' },
         },
       },
       {
-        path: 'op/spec/:id',
+        path: 'op/bfhdSpcfctDtl',
         element: <BfhdSpcfctDtlPage />,
         handle: { header: { variant: 'sub', title: '사전규격 상세' } },
       },
       {
         // 진입 경로는 조달계획 통합목록의 검색유형 '연간조달계획'(annual) 카드뿐 → 헤더 타이틀도 '연간조달계획 상세'.
-        path: 'op/ovs/:id',
+        path: 'op/ovsPrcmPlanDtl',
         element: <OvsPrcmPlanDtlPage />,
         handle: { header: { variant: 'sub', title: '연간조달계획 상세' } },
       },
@@ -1579,7 +1579,7 @@ export const router = createBrowserRouter([
       },
       {
         // 일반공지사항 상세 — 목록 카드 클릭 진입(MUI-CM-04-M02). 정적 dapa/dmdfrc 목록이 우선 매칭됨.
-        path: 'support/notice/:contsNo',
+        path: 'support/noticeDtl',
         element: <NoticeDtlPage />,
         errorElement: <ErrorPage />,
         handle: {
@@ -1700,7 +1700,7 @@ export const router = createBrowserRouter([
       },
       {
         // 실적증명서 확인(상세) (MUI-CM-04-M07) — 실적증명서 신청 목록 카드 클릭 진입
-        path: 'support/dcmnt-issu-aply/prfmnc-prdoc/:prfmncRcptNo',
+        path: 'support/prfmncPrdocDtl',
         element: <PrfmncPrdocDtlPage />,
         errorElement: <ErrorPage />,
         handle: {
@@ -1951,42 +1951,42 @@ export const router = createBrowserRouter([
       // 게시판 상세 — 목록 카드 클릭 진입. 정적 목록경로(dapa/dmdfrc/ctrt 등)가 RRv6 랭킹으로 우선 매칭됨.
       {
         // 방위사업청공지사항 상세 (MUI-CM-04-M22)
-        path: 'support/notice/dapa/:contsNo',
+        path: 'support/d2bNoticeDtl',
         element: <D2bNoticeDtlPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '방위사업청 공지사항 상세' }, scrollReset: true },
       },
       {
         // 수요부대별공지사항 상세 (MUI-CM-04-M24)
-        path: 'support/notice/dmdfrc/:contsNo',
+        path: 'support/dmdfrcNoticeDtl',
         element: <DmdfrcNoticeDtlPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '수요부대별 공지사항 상세' }, scrollReset: true },
       },
       {
         // 일반자료실 상세 (MUI-CM-04-M26)
-        path: 'support/archive/:contsNo',
+        path: 'support/rpstrDtl',
         element: <RpstrDtlPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '자료실 상세' }, scrollReset: true },
       },
       {
         // 수요부대별자료실 상세 (MUI-CM-04-M28)
-        path: 'support/archive/dmdfrc/:contsNo',
+        path: 'support/dmdfrcRpstrDtl',
         element: <DmdfrcRpstrDtlPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '자료실 상세' }, scrollReset: true },
       },
       {
         // 계약관련서식자료실 상세 (MUI-CM-04-M30)
-        path: 'support/archive/ctrt/:contsNo',
+        path: 'support/ctrtRpstrDtl',
         element: <CtrtRpstrDtlPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '자료실 상세' }, scrollReset: true },
       },
       {
         // 시스템개선안내 상세 (MUI-CM-04-M32)
-        path: 'support/sys-impv/:contsNo',
+        path: 'support/sysImpvRpstrDtl',
         element: <SysImpvRpstrDtlPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '시스템개선안내 상세' }, scrollReset: true },
@@ -2031,7 +2031,7 @@ export const router = createBrowserRouter([
       },
       // 추가정보 신청내역상세(MUI-CM-01-M03 상세, T05/T06) — 목록에서 navigate state(항목)로 진입. 3뎁스라 BottomNav 숨김.
       {
-        path: 'mypage/add-reg-info-aply/:id',
+        path: 'mypage/addRegInfoAplyDtl',
         element: <AddRegInfoAplyDtlPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '신청 내역 상세' }, scrollReset: true },
@@ -2149,7 +2149,7 @@ export const router = createBrowserRouter([
       },
       // 폴더 내 파일 목록(MUI-CM-06-M16) — 마이페이지 > 디지털캐비닛 > 폴더. 정적 목록이 먼저 매칭.
       {
-        path: 'mypage/digital-cabinet/:fldrSn',
+        path: 'mypage/digitalCabinetFileList',
         element: <DigitalCabinetFileListPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '폴더 내 파일 목록' }, scrollReset: true },
@@ -2163,7 +2163,7 @@ export const router = createBrowserRouter([
       },
       // 문서함 상세(MUI-CM-06-M11) — 마이페이지 > 문서함 > 문서함 상세. 정적 'doc-box' 목록이 먼저 매칭.
       {
-        path: 'mypage/doc-box/:id',
+        path: 'mypage/docBoxDtl',
         element: <DocBoxDtlPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '문서함 상세' }, scrollReset: true },

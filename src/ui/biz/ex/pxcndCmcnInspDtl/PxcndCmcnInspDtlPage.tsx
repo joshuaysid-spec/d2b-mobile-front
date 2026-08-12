@@ -1,11 +1,11 @@
 // 기성및준공검사상세 — MUI-EX-01-M04 PxcndCmcnInspDtl. 설계서 04.이행 v0.83 slide27~29.
-// 검사통합목록(M01)에서 공사 계약 카드 클릭 → /ex/pxcnd/:id 진입.
+// 검사통합목록(M01)에서 공사 계약 카드 클릭 → /ex/pxcndCmcnInspDtl 진입.
 // 구성: 중요 안내(Notice urgent) + sticky(요약 SummaryInfo + 스텝 StepBar + 탭 TabList)
 //   + 상세정보 탭(단일 탭 — slide27 탭 내용: 상세정보만) — M02/M03 셸 준용.
 // 데이터: usePxcndCmcnInspDtl — 조회 완료까지 PageLoading.
 // 업무도움은 '내역이 있는 경우만 표시' — 안내 내역 확정 전이라 미표시(형제 화면 동일 판단).
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { usePxcndCmcnInspDtl } from '@/queries/ex'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -34,13 +34,16 @@ function buildSteps(): StepItem[] {
 
 export function PxcndCmcnInspDtlPage() {
   const navigate = useNavigate()
-  const { id = '' } = useParams()
+  // 목록 → 상세: 식별자는 URL 이 아니라 navigate state(클릭 항목)로 받는다.
+  const id = (useLocation().state as { id: string } | null)?.id ?? ''
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
   const { data: detail } = usePxcndCmcnInspDtl(id)
   const steps = buildSteps()
 
+  // state 없이 직접 진입 = 식별자를 알 수 없음 → 검사통합목록으로.
+  if (!id) return <Navigate to="/ex" replace />
   if (!detail) return <PageLoading />
 
   return (

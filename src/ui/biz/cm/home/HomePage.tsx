@@ -50,7 +50,7 @@ const HOME_FILTER: SearchFilterSchema = {
         {
           type: 'checkbox',
           key: 'taskSe',
-          selectAll: true, // 상단 '전체' 칩(전체↔개별 자동 동기화) — options 에 별도 '전체' 없음
+          selectAll: { value: '0' }, // 상단 '전체' 칩(전체↔개별 자동 동기화) — '0' = 전체 코드값, options 에 별도 '전체' 없음
           options: [
             { value: 'goods', label: '물품' },
             { value: 'service', label: '용역' },

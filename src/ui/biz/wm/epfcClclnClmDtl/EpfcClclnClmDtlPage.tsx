@@ -1,9 +1,9 @@
 // 사후정산청구상세 — MUI-WM-01-M13 EpfcClclnClm. 설계서 05.대금청구및사후 v0.83 slide72~79.
-// P13 대금청구신청목록에서 사후정산청구서 카드 클릭 → /wm/epfc-clcln/:id 진입.
+// P13 대금청구신청목록에서 사후정산청구서 카드 클릭 → /wm/epfcClclnClmDtl 진입(식별자는 navigate state).
 // 구성: 중요 안내 + sticky(요약 + 스텝 + 탭) + 탭(T20 계약정보 · T21 신청내역 · T22 세금계산서
 //   · 진행상태(T23 공용)) — M02/M05 셸 준용.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useEpfcClclnClmDtl } from '@/queries/wm'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -39,13 +39,16 @@ function buildSteps(): StepItem[] {
 
 export function EpfcClclnClmDtlPage() {
   const navigate = useNavigate()
-  const { id = '' } = useParams()
+  // 식별자는 목록에서 navigate state 로 전달(URL 노출 금지).
+  const stateItem = useLocation().state as { id: string } | null
+  const id = stateItem?.id ?? ''
   const [tab, setTab] = useState('ctrt')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
   const { data: detail } = useEpfcClclnClmDtl(id)
   const steps = buildSteps()
 
+  if (!stateItem) return <Navigate to="/wm" replace />
   if (!detail) return <PageLoading />
 
   return (

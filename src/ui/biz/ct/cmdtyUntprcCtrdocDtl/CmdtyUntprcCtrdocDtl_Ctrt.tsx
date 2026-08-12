@@ -3,7 +3,7 @@
 // 총액제 _Ctrt 를 type='untprc' 로 재사용한다(itemRows 단가제 분기 = 단일 소스).
 import { CmdtyGramtCtrdocDtl_Ctrt } from '@/ui/biz/ct/cmdtyGramtCtrdocDtl/CmdtyGramtCtrdocDtl_Ctrt'
 
-export function CmdtyUntprcCtrdocDtl_Ctrt() {
-  return <CmdtyGramtCtrdocDtl_Ctrt type="untprc" />
+export function CmdtyUntprcCtrdocDtl_Ctrt({ id }: { id: string }) {
+  return <CmdtyGramtCtrdocDtl_Ctrt id={id} type="untprc" />
 }
 CmdtyUntprcCtrdocDtl_Ctrt.displayName = 'CmdtyUntprcCtrdocDtl_Ctrt'

@@ -1,4 +1,4 @@
-// 국외 입찰공고 상세 (MUI-BD-01-M71(컨테이너) · 탭 T71~T73(구 M71~M73 — v1.83 재편), 설계서 slide289~296). 목록 국외 카드 클릭 → /bd/ovs/:id 진입.
+// 국외 입찰공고 상세 (MUI-BD-01-M71(컨테이너) · 탭 T71~T73(구 M71~M73 — v1.83 재편), 설계서 slide289~296). 목록 국외 카드 클릭 → /bd/ovsBidPbancDtl 진입.
 // 레퍼런스: 국내 입찰공고 상세 BidPbancDtlPage (요약정보+스텝바+탭+탭콘텐츠 동일 패턴).
 // 구성: 요약정보(SummaryInfo) + 스텝바(StepBar) + 탭 3개(일반정보 M71 / 품목 목록 M72 / 첨부서류 M73)
 //   + 플로팅 버튼(맨위로 / + → 바로가기 바텀시트: 보관함·이전공고입찰내역·목표가공개품목·환율정보·입찰결과).
@@ -6,7 +6,7 @@
 // 데이터는 목업(상단=목록에서 넘어온 항목, 없으면 페이지 fallback 목업). 백엔드 미연동.
 // 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당.
 import { useState } from 'react'
-import { useParams, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
@@ -236,8 +236,8 @@ export function OvsBidPbancDtlPage() {
 
   // 목록 → 상세 데이터 전달: 통합목록 국외 카드에서 navigate(state)로 넘어온 항목(BidPbancItem)으로 상단을 그린다.
   //   직접 URL 진입(state 없음)이면 페이지 목업(MOCK_OVS_LIST_ITEM)으로 대체. (백엔드 미연동)
-  const { id } = useParams()
   const passed = (useLocation().state as BidPbancItem | null) ?? MOCK_OVS_LIST_ITEM
+  const id = passed.id
   // 국외 전용 상세 필드(총금액 USD·환율적용일자·담당자 등)는 목록 아이템에 없어 페이지 목업으로 보완.
   const ovsDetail = MOCK_OVS_BID_PBANC_DETAIL
   // 진행단계(prgrsStg) — detail 기반. 미정 시 입찰공고이므로 '입찰' 기본.
@@ -285,7 +285,7 @@ export function OvsBidPbancDtlPage() {
         navigate('/bd/ovs/locker') // 국외 보관함 목록(MUI-CM-01-M71)
         break
       case 'prevBid':
-        navigate(`/bd/ovs/locker/${id}/bfr-bid-cn`, { state: passed }) // 이전공고입찰내역등록(UI-BD-01-P78)
+        navigate('/bd/ovsBfrTmprBidBidCnReg', { state: passed }) // 이전공고입찰내역등록(UI-BD-01-P78)
         break
       case 'goalPrc':
         navigate('/bd/ovs/goal-prc-items') // 목표가공개품목조회(MUI-BD-01-M75)

@@ -1,10 +1,10 @@
 // 해지/해제 물품일반계약 상세 (MUI-CT-03-M02). 설계서 03.계약 v0.83 slide108~114.
-// 해지/해제 목록 카드(dtlRouteCd='gnrl') 클릭 → /ct/cncltn/:id 진입.
+// 해지/해제 목록 카드(dtlRouteCd='gnrl') 클릭 → /ct/cmdtyCtrtCncltnRmvDtl 진입(식별자는 navigate state).
 // 탭 3개(화면목록 slide10 = 상세정보/세부항목/특수조건, 레이아웃 slide108 기준으로 콘텐츠 구성):
 //   상세정보(T01 _Cn) · 계약업체(T02 _Artcl) · 해지해제 정보(T03 _SpclCnd — 통보내용+참조서류).
 // 데이터: useCmdtyCncltnRmvDtl — 목업/실연동은 ctService(USE_MOCK)가 전환. 조회 완료까지 PageLoading.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useCmdtyCncltnRmvDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -20,6 +20,7 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { CmdtyCtrtCncltnRmvDtl_Cn } from '@/ui/biz/ct/cmdtyCtrtCncltnRmvDtl/CmdtyCtrtCncltnRmvDtl_Cn'
 import { CmdtyCtrtCncltnRmvDtl_Artcl } from '@/ui/biz/ct/cmdtyCtrtCncltnRmvDtl/CmdtyCtrtCncltnRmvDtl_Artcl'
 import { CmdtyCtrtCncltnRmvDtl_SpclCnd } from '@/ui/biz/ct/cmdtyCtrtCncltnRmvDtl/CmdtyCtrtCncltnRmvDtl_SpclCnd'
+import type { CncltnRmvListItem } from '@/types/ct'
 
 // ── 탭 (slide108 레이아웃: 상세정보/계약업체/해지해제 정보) ────────────────────
 const TABS: TabItem[] = [
@@ -39,7 +40,8 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CmdtyCtrtCncltnRmvDtlPage() {
-  const { id = '' } = useParams()
+  const stateItem = useLocation().state as CncltnRmvListItem | null
+  const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -48,6 +50,8 @@ export function CmdtyCtrtCncltnRmvDtlPage() {
   const { data: detail } = useCmdtyCncltnRmvDtl(id)
   const steps = stepsByStg('계약')
 
+  // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.
+  if (!stateItem) return <Navigate to="/ct/cncltn" replace />
   if (!detail) return <PageLoading />
 
   return (
@@ -115,8 +119,8 @@ export function CmdtyCtrtCncltnRmvDtlPage() {
       {/* 탭 콘텐츠 */}
       <div className="min-h-[100dvh]">
         {tab === 'detail' && <CmdtyCtrtCncltnRmvDtl_Cn detail={detail} />}
-        {tab === 'bzenty' && <CmdtyCtrtCncltnRmvDtl_Artcl />}
-        {tab === 'cncltnRmv' && <CmdtyCtrtCncltnRmvDtl_SpclCnd />}
+        {tab === 'bzenty' && <CmdtyCtrtCncltnRmvDtl_Artcl id={id} />}
+        {tab === 'cncltnRmv' && <CmdtyCtrtCncltnRmvDtl_SpclCnd id={id} />}
       </div>
 
       {/* FAB — 맨위로 */}

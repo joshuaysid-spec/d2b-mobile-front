@@ -13,7 +13,7 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 
 // slide51 1.1. 입찰진행현황 데이터 영역 (dlt_BidPrgrsPrst)
 interface BidPrgrsPrstItem {
-  id: string // 목록 key + 입찰결과상세(:id) 이동용(설계서 외 — 라우팅 식별자)
+  id: string // 목록 key + 입찰결과상세 이동 시 state 로 넘기는 식별자(설계서 외)
   pbancNo: string // 공고번호 (7)
   rebidCycl: string // 재입찰차수 — slide50 목업 라벨은 '재입찰자수·50 명'(불일치), 영문 항목명은 slide51 기준 rebidCycl
   clsfNo: string // 항목번호 (3)
@@ -75,7 +75,7 @@ export function BidPbancDtl_Tacpg07() {
                 variant="secondary"
                 className="w-full"
                 disabled={!RSLT_LINK_ENABLED_STATUSES.includes(p.bidStatNm)}
-                onClick={() => navigate(`/bd/result/${p.id}`)}
+                onClick={() => navigate('/bd/bidRsltDtl', { state: { id: p.id } })}
               >
                 입찰결과 바로가기
               </Button>

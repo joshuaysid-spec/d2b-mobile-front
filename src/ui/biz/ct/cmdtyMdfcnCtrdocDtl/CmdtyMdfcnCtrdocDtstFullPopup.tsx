@@ -1,8 +1,6 @@
 // 물품수정계약명세서 풀팝업 — MUI-CT-01-P13 CmdtyMdfcnCtrdocDtst. 설계서 slide93~97.
 // 수정계약 상세(M06)의 바로가기 '계약명세서 조회'에서 진입.
 // 구성: 계약정보 + 수정항목 + 계약품목정보(총 N건, 반복) + 계약품목 합계 + footer 닫기.
-import { useParams } from 'react-router-dom'
-
 import { useCmdtyMdfcnCtrdocDtst } from '@/queries/ct'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
@@ -11,6 +9,8 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { CtrtMdfcnDtstItem } from '@/types/ct'
 
 export interface CmdtyMdfcnCtrdocDtstFullPopupProps {
+  /** 계약 식별자 — 부모 상세 페이지가 navigate state 에서 받아 전달. */
+  id: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -70,10 +70,10 @@ function itemRows(it: CtrtMdfcnDtstItem): TableRow[] {
 }
 
 export function CmdtyMdfcnCtrdocDtstFullPopup({
+  id,
   open,
   onOpenChange,
 }: CmdtyMdfcnCtrdocDtstFullPopupProps) {
-  const { id = '' } = useParams()
   const { data } = useCmdtyMdfcnCtrdocDtst(id, open)
   const items = data?.items ?? []
 

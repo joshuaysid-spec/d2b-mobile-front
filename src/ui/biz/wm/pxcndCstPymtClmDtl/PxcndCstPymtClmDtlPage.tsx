@@ -1,9 +1,9 @@
 // 대금청구상세(기성대가) — MUI-WM-01-M08 PxcndCstPymtClmDtl. 설계서 05.대금청구및사후 v0.83 slide61~68.
-// P13 대금청구신청목록에서 대금청구서(기성대가) 카드 클릭 → /wm/pymt-clm/pxcnd/:id 진입.
+// P13 대금청구신청목록에서 대금청구서(기성대가) 카드 클릭 → /wm/pxcndCstPymtClmDtl 진입(식별자는 navigate state).
 // 구성: 중요 안내 + sticky(요약 + 스텝 + 탭) + 탭(T16 계약정보 · T17 기성대가신청금액 ·
 //   T18 세금계산서 · T19 첨부파일) — M05/M06 셸 준용.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { usePxcndCstPymtClmDtl } from '@/queries/wm'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -39,13 +39,16 @@ function buildSteps(): StepItem[] {
 
 export function PxcndCstPymtClmDtlPage() {
   const navigate = useNavigate()
-  const { id = '' } = useParams()
+  // 식별자는 목록에서 navigate state 로 전달(URL 노출 금지).
+  const stateItem = useLocation().state as { id: string } | null
+  const id = stateItem?.id ?? ''
   const [tab, setTab] = useState('ctrt')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
   const { data: detail } = usePxcndCstPymtClmDtl(id)
   const steps = buildSteps()
 
+  if (!stateItem) return <Navigate to="/wm" replace />
   if (!detail) return <PageLoading />
 
   return (

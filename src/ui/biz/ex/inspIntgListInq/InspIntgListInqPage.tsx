@@ -43,7 +43,7 @@ const EX_SEARCH_SCHEMA: SearchFilterSchema = {
           type: 'checkbox',
           key: 'taskSecd',
           required: true, // 필수값(slide11) — default 전체
-          selectAll: true, // '전체' 칩 — 개별↔전체 자동 동기화
+          selectAll: { value: '0' }, // '전체' 칩(개별↔전체 자동 동기화) — '0' = 전체 코드값
           options: [
             { value: 'goods', label: '물품' },
             { value: 'service', label: '용역' },
@@ -98,7 +98,7 @@ const EX_SEARCH_SCHEMA: SearchFilterSchema = {
 // On-Load 기본값(slide12): 계약일자 = 현재일-1개월 ~ 현재일, 업무구분 = 전체.
 function buildDefaultValue(): SearchFilterValue {
   return {
-    taskSecd: ['goods', 'service', 'construction'],
+    taskSecd: ['0', 'goods', 'service', 'construction'], // 전체('0' = 전체 코드값, 국외 비활성 제외)
     ctrtYmd: {
       start: dayjs().subtract(1, 'month').format(DATE_FORMAT),
       end: dayjs().format(DATE_FORMAT),
@@ -156,7 +156,8 @@ export function InspIntgListInqPage() {
   // 카드 클릭(slide12 이벤트) — 물품/용역 → P10 납품통지목록 · 공사 → M04 기성및준공검사상세.
   const handleCardClick = (item: InspIntgListItem) => {
     if (item.taskSecd === '공사') {
-      navigate(`/ex/pxcnd/${item.id}`, { state: item })
+      // 식별자는 URL 이 아니라 state 로만 전달(상세가 item.id 로 조회).
+      navigate('/ex/pxcndCmcnInspDtl', { state: item })
       return
     }
     setPickedCtrt({ ctrtNo: item.ctrtNo, ctrtNm: item.ctrtNm })

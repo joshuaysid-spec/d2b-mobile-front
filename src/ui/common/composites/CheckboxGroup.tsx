@@ -44,13 +44,16 @@ disabled?: boolean
   /** 각 Checkbox 칩에 적용할 className */
   itemClassName?: string
   /**
-   * 상단 '전체' 선택 체크박스 노출. true 또는 { label, disabled } 객체.
+   * 상단 '전체' 선택 체크박스 노출. true 또는 { label, disabled, value } 객체.
    * - 체크 → 모든(비활성 제외) 항목 선택 / 해제 → 모두 해제
    * - 개별 항목이 모두 선택되면 '전체'가 자동 체크, 하나라도 빠지면 자동 해제(파생 상태)
    * - disabled: '전체' 칩만 비활성(개별 항목 disabled 와 별개). 선택 가능 항목이 하나뿐이라
    *   '전체' 조작이 무의미할 때 등.
+   * - value: '전체' 자체의 코드값(예: 공통코드 '0'). 지정 시 전체 선택 상태면 onValueChange 배열에
+   *   이 값도 포함된다(개별 조작으로 전부 채워져도 자동 포함, 하나라도 빠지면 자동 제거).
+   *   items 에 이 값을 넣지 말 것 — '전체' 칩이 그 항목이다.
    */
-  selectAll?: boolean | { label?: React.ReactNode; disabled?: boolean }
+  selectAll?: boolean | { label?: React.ReactNode; disabled?: boolean; value?: string }
 }
 
 /** Figma m_button_arrow_swiper — 40px 원형 화살표 + 그라데이션 페이드 */
@@ -135,18 +138,6 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
       [isControlled, onValueChange],
     )
 
-    const toggle = React.useCallback(
-      (itemValue: string, checked: boolean) => {
-        if (single) {
-          // 라디오 동작: 체크 → 그 항목만 / 현재 항목 해제 → 선택 없음
-          commit(checked ? [itemValue] : [])
-          return
-        }
-        commit(checked ? [...selected, itemValue] : selected.filter((v) => v !== itemValue))
-      },
-      [single, selected, commit],
-    )
-
     // ── '전체' 선택 ──────────────────────────────────────────────
     // 토글 대상 = 비활성 제외 항목 값. '전체' 체크 여부는 별도 상태 없이 selected 에서 파생한다
     // (모두 선택 → 체크 / 하나라도 빠지면 해제). 개별 변경에도 자동으로 일관 유지.
@@ -157,16 +148,51 @@ const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps>(
     const allChecked =
       allValues.length > 0 && allValues.every((v) => selected.includes(v))
 
+    // '전체' 코드값(selectAll.value) — 지정 시 전체 선택 여부에 따라 배열에 자동 포함/제거해
+    // PC 웹 전송 규격("0 1 2 3 4")과 일치시킨다. 개별 조작으로 전부 채워져도 동일 적용.
+    // '전체' 칩이 비활성(disabled)이거나 single(전체 무의미) 모드면 값 주입도 하지 않는다.
+    const masterValue =
+      typeof selectAll === 'object' && !selectAll.disabled && !single
+        ? selectAll.value
+        : undefined
+    const syncMasterValue = React.useCallback(
+      (next: string[]) => {
+        if (!masterValue) return next
+        const all = allValues.length > 0 && allValues.every((v) => next.includes(v))
+        if (all) return next.includes(masterValue) ? next : [masterValue, ...next]
+        return next.filter((v) => v !== masterValue)
+      },
+      [masterValue, allValues],
+    )
+
+    const toggle = React.useCallback(
+      (itemValue: string, checked: boolean) => {
+        if (single) {
+          // 라디오 동작: 체크 → 그 항목만 / 현재 항목 해제 → 선택 없음
+          commit(checked ? [itemValue] : [])
+          return
+        }
+        commit(
+          syncMasterValue(
+            checked ? [...selected, itemValue] : selected.filter((v) => v !== itemValue),
+          ),
+        )
+      },
+      [single, selected, commit, syncMasterValue],
+    )
+
     const toggleAll = React.useCallback(
       (checked: boolean) => {
         // 비활성 외 값만 일괄 추가/제거. (비활성 항목의 기존 선택은 건드리지 않음)
         commit(
-          checked
-            ? Array.from(new Set([...selected, ...allValues]))
-            : selected.filter((v) => !allValues.includes(v)),
+          syncMasterValue(
+            checked
+              ? Array.from(new Set([...selected, ...allValues]))
+              : selected.filter((v) => !allValues.includes(v)),
+          ),
         )
       },
-      [selected, allValues, commit],
+      [selected, allValues, commit, syncMasterValue],
     )
 
     // single(라디오 동작)에서는 '전체' 선택이 모순이므로 무시한다.

@@ -125,7 +125,7 @@ export function BfhdLoiListPage() {
       { label: '발주부서', value: it.deptCd },
       { label: '담당자', value: it.userNm },
     ],
-    onClick: () => navigate(`/ts/loi/${it.id}`, { state: it }),
+    onClick: () => navigate('/ts/bfhdLoiDtl', { state: it }),
   }))
 
   return (

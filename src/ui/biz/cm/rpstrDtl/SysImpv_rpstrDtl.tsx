@@ -1,6 +1,7 @@
 // 시스템개선안내상세 — MUI-CM-04-M32(slide231). 자료실 그룹이나 항목명은 공지형 + 게시기간 있음(긴급 없음).
 // 공유 BoardDetailView 직접 조립(자료실 뷰와 필드가 달라 별도). 이전글/다음글은 SYSIMPV_MOCK에서 계산.
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+// URL 에 식별자를 두지 않는다(보안 정책) — 대상 글은 목록이 넘긴 navigate state 로만 받는다.
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
 import { Badge } from '@/ui/common/base/Badge'
@@ -11,14 +12,12 @@ import type { SysImpvListItem } from '@/types/cm'
 
 export function SysImpv_rpstrDtl() {
   const navigate = useNavigate()
-  const { contsNo } = useParams<{ contsNo: string }>()
-  const stateItem = useLocation().state as SysImpvListItem | null
-  const item = stateItem ?? SYSIMPV_MOCK.find((x) => x.contsNo === contsNo) ?? SYSIMPV_MOCK[0]
+  const item = useLocation().state as SysImpvListItem | null
+  if (!item) return <Navigate to={ROUTES.SUPPORT_SYS_IMPV} replace />
   const detail = toSysImpvDetail(item)
 
   const idx = SYSIMPV_MOCK.findIndex((x) => x.contsNo === item.contsNo)
-  const goDetail = (target: SysImpvListItem) =>
-    navigate(`${ROUTES.SUPPORT_SYS_IMPV}/${target.contsNo}`, { state: target })
+  const goDetail = (target: SysImpvListItem) => navigate('.', { state: target })
   const prevItem = idx > 0 ? SYSIMPV_MOCK[idx - 1] : null
   const nextItem = idx >= 0 && idx < SYSIMPV_MOCK.length - 1 ? SYSIMPV_MOCK[idx + 1] : null
 

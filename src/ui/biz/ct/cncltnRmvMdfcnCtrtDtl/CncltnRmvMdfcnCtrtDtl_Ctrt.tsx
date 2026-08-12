@@ -1,8 +1,6 @@
 // 해지/해제 수정계약 상세 - '수정계약명세서' 탭 콘텐츠 (MUI-CT-03-T11). 설계서 slide133·135~137.
 // 수정항목(mdfcnArtclNm) + 품목 수정내역 블록(구분 -을(수정 전)/-으로(수정 후), 반복).
 // 데이터: useCncltnRmvMdfcnCtrtDtst — CmdtyMdfcnCtrdocDtstResult 재사용.
-import { useParams } from 'react-router-dom'
-
 import { useCncltnRmvMdfcnCtrtDtst } from '@/queries/ct'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -23,8 +21,7 @@ function itemRows(it: CtrtMdfcnDtstItem): TableRow[] {
   ]
 }
 
-export function CncltnRmvMdfcnCtrtDtl_Ctrt() {
-  const { id = '' } = useParams()
+export function CncltnRmvMdfcnCtrtDtl_Ctrt({ id }: { id: string }) {
   const { data } = useCncltnRmvMdfcnCtrtDtst(id)
   const items = data?.items ?? []
 

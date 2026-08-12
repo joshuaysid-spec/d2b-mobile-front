@@ -1,11 +1,11 @@
 // 검사및납품조서결과상세 — MUI-EX-01-M07 DlvdocRsltDtl. 설계서 04.이행 v0.83 slide36~40.
-// 검사및납품조서현황목록(M05)에서 중앙조달(비공사) 카드 클릭 → /ex/dlvdoc/rslt/:id 진입.
+// 검사및납품조서현황목록(M05)에서 중앙조달(비공사) 카드 클릭 → /ex/dlvdocRsltDtl 진입.
 // 구성: 중요 안내(Notice urgent) + sticky(요약 SummaryInfo + 스텝 StepBar + 탭 TabList)
 //   + 탭 콘텐츠(T05 상세정보 DlvdocRsltDtl · T06 물품목록 DlvdocRsltDtl_CmdtyList) — M02/M03 셸 준용.
 // 요약 행은 M05 카드와 동일 구성(계약일자/계약금액/합격일자/납품일자, slide36).
 // 데이터: useDlvdocRsltDtl — 조회 완료까지 PageLoading.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useDlvdocRsltDtl } from '@/queries/ex'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -38,13 +38,16 @@ function buildSteps(): StepItem[] {
 
 export function DlvdocRsltDtlPage() {
   const navigate = useNavigate()
-  const { id = '' } = useParams()
+  // 목록 → 상세: 식별자는 URL 이 아니라 navigate state(클릭 항목)로 받는다.
+  const id = (useLocation().state as { id: string } | null)?.id ?? ''
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
   const { data: detail } = useDlvdocRsltDtl(id)
   const steps = buildSteps()
 
+  // state 없이 직접 진입 = 식별자를 알 수 없음 → 조서현황목록으로.
+  if (!id) return <Navigate to="/ex/prst" replace />
   if (!detail) return <PageLoading />
 
   return (

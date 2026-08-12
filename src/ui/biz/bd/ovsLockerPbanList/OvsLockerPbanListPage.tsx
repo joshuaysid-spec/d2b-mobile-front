@@ -285,22 +285,22 @@ export function OvsLockerPbanListPage() {
   // 입찰내역 작성수정 (설계서 이벤트 btn_moveBidDetail_onclick → MUI-BD-01-M76)
   const goBidCn = (it: OvsLockerPbanItem) => {
     console.log('[OvsLockerList] 입찰내역 작성수정 이동', it.intgRfrncNo)
-    navigate(`/bd/ovs/locker/${it.id}/bid-cn`, { state: it })
+    navigate('/bd/ovsTmprBidCnReg', { state: it })
   }
   // 입찰참가신청 작성수정 (국외 입찰참가신청서 작성 MUI-BD-04-M71)
   const goPrtcpAply = (it: OvsLockerPbanItem) => {
     console.log('[OvsLockerList] 입찰참가신청 작성수정 이동', it.intgRfrncNo)
-    navigate(`/bd/ovs/prgrs/${it.id}/aply`, { state: toPrgrsItem(it) })
+    navigate('/bd/ovsBidPrtcpAply', { state: toPrgrsItem(it) })
   }
-  // 입찰진행 바로가기 — 해당 공고 입찰진행 상세(/bd/prgrs/:id) 직행(260709 확정).
+  // 입찰진행 바로가기 — 해당 공고 입찰진행 상세(/bd/bidPrgsDtlInq) 직행(260709 확정).
   const goBidPrgrs = (it: OvsLockerPbanItem) => {
     console.log('[OvsLockerList] 입찰진행 바로가기', it.intgRfrncNo)
-    navigate(`/bd/prgrs/${it.id}`, { state: toPrgrsItem(it) })
+    navigate('/bd/bidPrgsDtlInq', { state: toPrgrsItem(it) })
   }
   // 보관함 품목 관리 (MUI-CM-01-M74) — 항시 노출.
   const goItemMng = (it: OvsLockerPbanItem) => {
     console.log('[OvsLockerList] 보관함 품목 관리 이동', it.intgRfrncNo)
-    navigate(`/bd/ovs/locker/${it.id}/items`, { state: it })
+    navigate('/bd/ovsLockerItemReg', { state: it })
   }
 
   // ── 임시 목업 검색/페이징 (API 연동 시 이 블록 통째로 교체) ──

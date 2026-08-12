@@ -125,7 +125,7 @@ export function WrotAgrePage() {
   const handleNext = () => {
     console.log('[M01] 다음으로(신청서 작성)', { pbancNo: detail.pbancNo, agreed: checked })
     // 추후: 필수 서약서 동의 검증 후 이동
-    navigate(`/bd/prgrs/${detail.rNum}/apfr/form`, { state: detail })
+    navigate('/bd/bidPrtcpAperWrt', { state: detail })
   }
 
   return (

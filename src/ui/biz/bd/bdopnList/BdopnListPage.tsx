@@ -83,7 +83,7 @@ const BDOPN_FILTER_SCHEMA: SearchFilterSchema = {
         {
           type: 'checkbox',
           key: 'taskSeNm',
-          selectAll: true,
+          selectAll: { value: '0' }, // '0' = '전체' 코드값 — 전체 선택 시 값 배열에 포함
           options: [
             { value: 'goods', label: '물품' },
             { value: 'service', label: '용역' },
@@ -313,9 +313,9 @@ export function BdopnListPage() {
     setPage(page + 1)
   }
   const handleCardClick = (it: BdopnItem) => {
-    // 입찰결과상세(개찰상세, MUI-BD-09-M01) 이동. 상세는 URL 의 :id 로 useBidRsltDetail 재조회해
-    // 상단(뱃지/공고번호/타이틀/공고일자/개찰일시)을 이 카드와 동일하게 채움 → 새로고침에도 유지.
-    navigate(`/bd/result/${it.id}`)
+    // 입찰결과상세(개찰상세, MUI-BD-09-M01) 이동. URL 에 식별자를 두지 않으므로 카드 항목을 state 로 넘겨
+    // 상단(뱃지/공고번호/타이틀/공고일자/개찰일시)을 즉시 그리고, 상세가 그 id 로 재조회해 확정한다.
+    navigate('/bd/bidRsltDtl', { state: it })
   }
 
   // ── 키워드 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 이 블록 삭제) ──
@@ -337,11 +337,11 @@ export function BdopnListPage() {
   // 국외 입찰결과조회 카드(MUI-BD-09-M71)는 최상단 고정 — 국내 목록 앞에 prepend.
   const cardItems: CardListItem[] = [
     // 국외(단가제) 카드 → 국외 입찰결과조회 상세(MUI-BD-09-M71 · T72(구 M72 — v1.83 재편)). 상단 요약을 카드와 동일하게 state 로 전달.
-    { ...OVS_BDOPN_CARD, onClick: () => navigate('/bd/ovs/result/ovs-m71', { state: OVS_BDOPN_SUMMARY }) },
+    { ...OVS_BDOPN_CARD, onClick: () => navigate('/bd/ovsBidRsltDtl', { state: OVS_BDOPN_SUMMARY }) },
     // 국외(총액제) 카드 → 국외 입찰결과조회 상세(총액제, MUI-BD-09-M71 · T73(구 M73 — v1.83 재편)). 배지(총액제)로 결과 탭 분기.
-    { ...OVS_BDOPN_CARD_TOTAL, onClick: () => navigate('/bd/ovs/result/ovs-m73', { state: OVS_BDOPN_SUMMARY_TOTAL }) },
+    { ...OVS_BDOPN_CARD_TOTAL, onClick: () => navigate('/bd/ovsBidRsltDtl', { state: OVS_BDOPN_SUMMARY_TOTAL }) },
     // 국외·수의계약 카드 → 공개수의협상계획상세(MUI-BD-12-M71). 수의계약 배지 조건일 때만 진입.
-    { ...OVS_NGTN_CARD, onClick: () => navigate('/bd/ovs/rls-ngtn/ovs-ngtn-m71', { state: OVS_NGTN_SUMMARY }) },
+    { ...OVS_NGTN_CARD, onClick: () => navigate('/bd/ovsRlsVltrnsNgtnPlanDtl', { state: OVS_NGTN_SUMMARY }) },
     ...visibleList.map((it) => ({
       id: it.id,
       // 최상단 배지(레이블 딱지) — 우선순위 순서(업무구분>공고구분) + 입찰방식은 맨 마지막.

@@ -152,7 +152,7 @@ export function DocBoxPage() {
   }
   const handleCardClick = (it: DocBoxItem) => {
     // 클릭한 항목을 state 로 전달 — 문서함 상세(M11) 상단 즉시표시.
-    navigate(`${ROUTES.DOC_BOX}/${it.id}`, { state: it })
+    navigate(ROUTES.DOC_BOX_DETAIL, { state: it })
   }
 
   const cardItems: CardListItem[] = visible.map((it) => ({

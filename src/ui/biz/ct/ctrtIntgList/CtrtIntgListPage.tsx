@@ -71,7 +71,7 @@ const CT_SEARCH_SCHEMA: SearchFilterSchema = {
           type: 'checkbox',
           key: 'taskSeNm',
           required: true, // 필수값(slide19) — default 전체
-          selectAll: true, // '전체' 칩 — 개별↔전체 자동 동기화
+          selectAll: { value: '0' }, // '전체' 칩(개별↔전체 자동 동기화) — '0' = 전체 코드값
           options: [
             { value: 'goods', label: '물품' },
             { value: 'service', label: '용역' },
@@ -148,7 +148,7 @@ const RECENT_1M = () => ({
 // On-Load 기본값(slide22): 서류요청 수신일자·계약일자 = 현재일-1개월 ~ 현재일, 업무구분 = 전체.
 function buildDefaultValue(): CtSearchFilter {
   return {
-    taskSeNm: ['goods', 'service', 'construction', 'foreign'],
+    taskSeNm: ['0', 'goods', 'service', 'construction', 'foreign'], // 전체('0' = 전체 코드값)
     dcMntDmndRcptnDt: RECENT_1M(),
     ctrtYmd: RECENT_1M(),
     ctrtNm: '',
@@ -204,51 +204,52 @@ export function CtrtIntgListPage() {
   const handleLoadMore = () => {
     setPage(page + 1)
   }
-  // 카드 클릭 — 업무구분·상태별 상세 분기(slide22 이벤트):
-  //   물품(진행) → M03(/ct/:id) · 물품(계약확정) → M04(/ct/cfmtn/:id) · 물품(계약수정) → M06(/ct/mdfcn/:id)
+  // 카드 클릭 — 업무구분·상태별 상세 분기(slide22 이벤트). 식별자는 URL 이 아니라 navigate state 로 전달:
+  //   물품(진행) → M03(cmdtyElctrCtrtPrgrsDtl) · 물품(계약확정) → M04(cmdtyElctrCtrtCfmtnDtl)
+  //   물품(계약수정) → M06(cmdtyMdfcnCtrdocDtl)
   //   물품(계약최종=타 계약서) → 계약서유형(ctrdocTpNm)으로 M05 일반/M07 총액/M08 단가 분기
-  //   공사(진행) → M09(/ct/cstrn/:id) · 공사(확정) → M10(/ct/cstrn-doc/:id)
-  //   국외(진행) → M71(/ct/ovs/:id) · 국외(계약확정) → M72(/ct/ovs/cfmtn/:id).
+  //   공사(진행) → M09(cstrnElctrCtrtPrgrsDtl) · 공사(확정) → M10(cstrnCtrdocDtl)
+  //   국외(진행) → M71(ovsElctrCtrtPrgrsDtl) · 국외(계약확정) → M72(ovsElctrCtrtCfmtn).
   const handleCardClick = (item: CtrtIntgListItem) => {
     if (item.taskSecd === '물품') {
       if (item.ctrtStatNm === '계약수정') {
-        navigate(`/ct/mdfcn/${item.id}`, { state: item })
+        navigate('/ct/cmdtyMdfcnCtrdocDtl', { state: item })
         return
       }
       if (item.ctrtStatNm === '계약최종') {
         // 타 계약서 — 계약서유형(ctrdocTpNm, 임시 키)으로 M05 일반/M07 총액/M08 단가 분기.
         const route = item.ctrdocTpNm?.includes('총액')
-          ? 'gramt'
+          ? '/ct/cmdtyGramtCtrdocDtl'
           : item.ctrdocTpNm?.includes('단가')
-            ? 'untprc'
-            : 'gnrl'
-        navigate(`/ct/${route}/${item.id}`, { state: item })
+            ? '/ct/cmdtyUntprcCtrdocDtl'
+            : '/ct/cmdtyGnrlCtrdocDtl'
+        navigate(route, { state: item })
         return
       }
       if (item.ctrtStatNm === '계약확정') {
         // 물품전자계약확정상세(MUI-CT-01-M04) — 진행상세(M03)와 화면 동일하나 스펙상 별도 화면.
-        navigate(`/ct/cfmtn/${item.id}`, { state: item })
+        navigate('/ct/cmdtyElctrCtrtCfmtnDtl', { state: item })
         return
       }
-      navigate(`/ct/${item.id}`, { state: item })
+      navigate('/ct/cmdtyElctrCtrtPrgrsDtl', { state: item })
       return
     }
     if (item.taskSecd === '공사') {
       // 계약확정 → M10 공사계약서상세 · 그 외(진행) → M09 공사전자계약진행상세(slide22).
       if (item.ctrtStatNm === '계약확정') {
-        navigate(`/ct/cstrn-doc/${item.id}`, { state: item })
+        navigate('/ct/cstrnCtrdocDtl', { state: item })
         return
       }
-      navigate(`/ct/cstrn/${item.id}`, { state: item })
+      navigate('/ct/cstrnElctrCtrtPrgrsDtl', { state: item })
       return
     }
     if (item.taskSecd === '국외') {
       // 국외 '계약확정' → M72 국외전자계약확정상세 · 그 외 → M71 진행상세(slide146).
       if (item.ctrtStatNm === '계약확정') {
-        navigate(`/ct/ovs/cfmtn/${item.id}`, { state: item })
+        navigate('/ct/ovsElctrCtrtCfmtn', { state: item })
         return
       }
-      navigate(`/ct/ovs/${item.id}`, { state: item })
+      navigate('/ct/ovsElctrCtrtPrgrsDtl', { state: item })
       return
     }
     console.log('[CtrtIntgList] 상세 이동(미구현)', item.taskSecd, item.ctrtPrgrsStcd, item.id)

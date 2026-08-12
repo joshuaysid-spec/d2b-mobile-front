@@ -266,8 +266,9 @@ export function MyPage() {
       setDetail(s)
       return
     }
-    // 관심(찜)한 입찰공고 → 해당 입찰공고 상세(MUI-BD-01-M02). 상세는 자체 fallback 목업으로 상단 렌더.
-    navigate(`/bd/${s.id}`)
+    // 관심(찜)한 입찰공고 → 해당 입찰공고 상세(MUI-BD-01-M02). URL 에 식별자를 두지 않아 일정 항목을 state 로 넘긴다
+    // (⚠️ 일정 항목은 공고 상세가 기대하는 아이템 타입이 아니라 상단 요약 일부가 빈다 — API 연동 시 공고 조회로 대체).
+    navigate('/bd/bidPbancDtl', { state: s })
   }
 
   // 하단 바로가기 — 설계서 v0.84 slide82(2026-07-13 수정: 국외보관함 추가) + Figma 10020:83891(회원탈퇴 행) 구성.

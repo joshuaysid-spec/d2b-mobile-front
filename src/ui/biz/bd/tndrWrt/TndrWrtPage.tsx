@@ -87,7 +87,7 @@ export function TndrWrtPage() {
     // 신청(설계서 slide131 제출 클릭) — 입찰서 저장 후 전자서명(M21). 실패 시 AlertModal 안내.
     try {
       await saveTndr.mutateAsync({ pbancNo: detail.pbancNo })
-      navigate(`/bd/prgrs/${detail.rNum}/elsgn`, { state: { detail, aplyType: 'tndr' } })
+      navigate('/bd/elsgn', { state: { detail, aplyType: 'tndr' } })
     } catch (err) {
       setSubmitError(
         (err as ApiError | null)?.message ?? '입찰서 저장에 실패했습니다. 잠시 후 다시 시도해주세요.',

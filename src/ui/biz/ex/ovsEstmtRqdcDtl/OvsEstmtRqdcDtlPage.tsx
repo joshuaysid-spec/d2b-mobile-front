@@ -1,10 +1,10 @@
 // 견적의뢰서상세 — MUI-EX-02-M72 OvsEstmtRqdcDtl. 설계서 04.이행 v0.83 slide49~53.
-// 견적의뢰서목록(M71) 카드 클릭 → /ex/estmt-rqdc/:id 진입.
+// 견적의뢰서목록(M71) 카드 클릭 → /ex/ovsEstmtRqdcDtl 진입.
 // 구성: 중요 안내 + sticky(요약 SummaryInfo + 스텝 StepBar + 탭 TabList)
 //   + 탭(T71 상세정보 · T72 물품목록) — EX-01 상세 셸 준용.
 // 출력 이벤트(slide53, R85 견적의뢰서출력물): SummaryInfo 출력 버튼 → 확인 모달 → OZ 연계 스텁.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useOvsEstmtRqdcDtl } from '@/queries/ex'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -39,7 +39,8 @@ function buildSteps(): StepItem[] {
 
 export function OvsEstmtRqdcDtlPage() {
   const navigate = useNavigate()
-  const { id = '' } = useParams()
+  // 목록 → 상세: 식별자는 URL 이 아니라 navigate state(클릭 항목)로 받는다.
+  const id = (useLocation().state as { id: string } | null)?.id ?? ''
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [printModalOpen, setPrintModalOpen] = useState(false)
@@ -47,6 +48,8 @@ export function OvsEstmtRqdcDtlPage() {
   const { data: detail } = useOvsEstmtRqdcDtl(id)
   const steps = buildSteps()
 
+  // state 없이 직접 진입 = 식별자를 알 수 없음 → 견적의뢰서목록으로.
+  if (!id) return <Navigate to="/ex/estmt-rqdc" replace />
   if (!detail) return <PageLoading />
 
   return (

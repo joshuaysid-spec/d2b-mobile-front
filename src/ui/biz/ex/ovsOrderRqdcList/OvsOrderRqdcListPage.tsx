@@ -112,7 +112,7 @@ export function OvsOrderRqdcListPage() {
       { label: '계약금액', value: it.ctrtAmt.toLocaleString() },
       { label: '납기일', value: it.dudtYmd },
     ],
-    onClick: () => navigate(`/ex/order-rqdc/${it.id}`, { state: it }),
+    onClick: () => navigate('/ex/ovsOrderRqdcDtl', { state: it }),
   }))
 
   return (

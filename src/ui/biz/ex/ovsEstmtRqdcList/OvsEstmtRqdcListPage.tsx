@@ -118,7 +118,7 @@ export function OvsEstmtRqdcListPage() {
       { label: '납기일', value: it.dudtYmd },
       { label: '작성일', value: it.wrtYmd },
     ],
-    onClick: () => navigate(`/ex/estmt-rqdc/${it.id}`, { state: it }),
+    onClick: () => navigate('/ex/ovsEstmtRqdcDtl', { state: it }),
   }))
 
   return (

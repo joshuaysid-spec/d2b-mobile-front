@@ -144,7 +144,7 @@ export function TxivPrgrsPrstPage() {
       { label: '제출일시', value: it.splrWrtDt },
       { label: '국세청결과', value: it.elsgnRsltCd || '-' },
     ],
-    onClick: () => navigate(`/ts/txiv/dtl/${it.id}`, { state: it }),
+    onClick: () => navigate('/ts/txivDtl', { state: it }),
   }))
 
   return (

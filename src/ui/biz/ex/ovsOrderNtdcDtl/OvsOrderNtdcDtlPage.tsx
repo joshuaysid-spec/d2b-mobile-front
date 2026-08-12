@@ -1,8 +1,8 @@
 // 발주통보서상세 — MUI-EX-02-M78 OvsOrderNtdcDtl. 설계서 04.이행 v0.83 slide78~83.
-// 발주통보서목록(M77) 카드 클릭 → /ex/order-ntdc/:id 진입.
+// 발주통보서목록(M77) 카드 클릭 → /ex/ovsOrderNtdcDtl 진입.
 // 구성: 중요 안내 + sticky(요약 + 스텝 + 탭) + 탭(T77 상세정보 · T78 물품목록) — M74 셸 준용.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useOvsOrderNtdcDtl } from '@/queries/ex'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -33,13 +33,16 @@ function buildSteps(): StepItem[] {
 
 export function OvsOrderNtdcDtlPage() {
   const navigate = useNavigate()
-  const { id = '' } = useParams()
+  // 목록 → 상세: 식별자는 URL 이 아니라 navigate state(클릭 항목)로 받는다.
+  const id = (useLocation().state as { id: string } | null)?.id ?? ''
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
   const { data: detail } = useOvsOrderNtdcDtl(id)
   const steps = buildSteps()
 
+  // state 없이 직접 진입 = 식별자를 알 수 없음 → 발주통보서목록으로.
+  if (!id) return <Navigate to="/ex/order-ntdc" replace />
   if (!detail) return <PageLoading />
 
   return (

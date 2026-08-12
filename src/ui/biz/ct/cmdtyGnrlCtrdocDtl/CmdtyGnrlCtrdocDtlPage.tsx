@@ -1,10 +1,10 @@
 // 물품일반계약서상세 (MUI-CT-01-M05). 설계서 03.계약 v0.83 slide63~68.
-// 계약통합목록 카드(물품 '계약최종' — 타 계약서) 클릭 → /ct/gnrl/:id 진입.
+// 계약통합목록 카드(물품 '계약최종' — 타 계약서) 클릭 → /ct/cmdtyGnrlCtrdocDtl 진입(식별자는 navigate state).
 // 탭 없는 단일 콘텐츠: 중요안내 + 요약(SummaryInfo) + 스텝(StepBar) +
 //   아코디언 4개(계약 상세정보 · 계약금액 · 계약대상자 · 담당자 정보) +
 //   FAB '+' 바로가기(계약명세서 조회 → P14 물품일반계약명세서, slide64 1-1]) + 출력.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useCmdtyGnrlCtrdocDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -22,6 +22,7 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { CmdtyCtrtDtstFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyCtrtDtstFullPopup'
+import type { CtrtIntgListItem } from '@/types/ct'
 
 const STEP_LABELS = ['조달', '입찰', '계약', '이행', '대금청구'] as const
 
@@ -34,7 +35,8 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CmdtyGnrlCtrdocDtlPage() {
-  const { id = '' } = useParams()
+  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const { collapsed, rootRef, scrollToTop } = useCollapsibleHeader()
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기
@@ -44,6 +46,8 @@ export function CmdtyGnrlCtrdocDtlPage() {
   const { data: detail } = useCmdtyGnrlCtrdocDtl(id)
   const steps = stepsByStg('계약')
 
+  // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.
+  if (!stateItem) return <Navigate to="/ct" replace />
   if (!detail) return <PageLoading />
 
   // ── 계약 상세정보 (slide65 표 순서) ────────────────────────────────────────
@@ -211,6 +215,7 @@ export function CmdtyGnrlCtrdocDtlPage() {
 
       {/* P14 물품일반계약명세서 — P11 팝업 재사용(데이터영역 동일, title 교체) */}
       <CmdtyCtrtDtstFullPopup
+        id={id}
         open={dtstOpen}
         onOpenChange={setDtstOpen}
         title="물품일반계약명세서"

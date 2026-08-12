@@ -148,7 +148,7 @@ export function ItrstBidPbancPage() {
   }
   const handleOpen = (item: ItrstBidPbancItem) => {
     // 클릭한 항목을 state 로 전달 — 입찰공고 상세(MUI-BD-01-M02) 상단 즉시표시.
-    navigate(`/bd/${item.id}`, { state: item })
+    navigate('/bd/bidPbancDtl', { state: item })
   }
 
   // 별 토글 — 켜기: 즉시 재등록 / 끄기: (다음부터 묻지않기면 즉시) 해제 확인 모달.

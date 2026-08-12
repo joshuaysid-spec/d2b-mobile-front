@@ -7,7 +7,7 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { InspDlvdocCmdtyItem } from '@/types/ex'
 
 export interface InspDlvdocDtl_CmdtyListProps {
-  /** 조회 대상 조서 식별자 — 페이지(useParams id)가 주입. */
+  /** 조회 대상 조서 식별자 — 페이지(navigate state id)가 주입. */
   id: string
 }
 

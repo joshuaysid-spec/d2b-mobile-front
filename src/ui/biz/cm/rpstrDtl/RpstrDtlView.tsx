@@ -1,6 +1,7 @@
 // 자료실 상세 공유 뷰 — 일반/수요부대별/계약관련서식(MUI-CM-04-M26·M28·M30)이 dm_rpstrInfo 동일.
 // 공지 상세와 달리 긴급·게시기간 없음(배지=구분만, 메타=작성자/담당부서/구분). 이전글/다음글은 mock에서 계산.
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+// URL 에 식별자를 두지 않는다(보안 정책) — 대상 글은 목록이 넘긴 navigate state 로만 받는다.
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { Badge } from '@/ui/common/base/Badge'
 import { BoardDetailView } from '@/ui/biz/cm/board/BoardDetailView'
@@ -19,13 +20,13 @@ export function RpstrDtlView({
   deptNm?: string
 }) {
   const navigate = useNavigate()
-  const { contsNo } = useParams<{ contsNo: string }>()
-  const stateItem = useLocation().state as RpstrListItem | null
-  const item = stateItem ?? mock.find((x) => x.contsNo === contsNo) ?? mock[0]
+  const item = useLocation().state as RpstrListItem | null
+  if (!item) return <Navigate to={base} replace />
   const detail = toRpstrDetail(item, deptNm)
 
   const idx = mock.findIndex((x) => x.contsNo === item.contsNo)
-  const goDetail = (target: RpstrListItem) => navigate(`${base}/${target.contsNo}`, { state: target })
+  // 이전글/다음글은 같은 상세 라우트로 state 만 교체('.' = 현재 라우트 — 게시판별 경로를 따로 안 받아도 됨).
+  const goDetail = (target: RpstrListItem) => navigate('.', { state: target })
   const prevItem = idx > 0 ? mock[idx - 1] : null
   const nextItem = idx >= 0 && idx < mock.length - 1 ? mock[idx + 1] : null
 

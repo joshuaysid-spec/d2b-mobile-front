@@ -7,7 +7,7 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { GiveSttsItem } from '@/types/wm'
 
 export interface PrpayDpsmnItrpyGiveSttsProps {
-  /** 조회 대상 신청 식별자 — 상세 페이지(useParams id)가 주입. */
+  /** 조회 대상 신청 식별자 — 상세 페이지(navigate state id)가 주입. */
   id: string
 }
 

@@ -1,4 +1,4 @@
-// 입찰진행 상세조회 (MUI-BD-03-M02, 설계서 slide66·67·68). 입찰진행 목록 카드 → /bd/prgrs/:id 진입.
+// 입찰진행 상세조회 (MUI-BD-03-M02, 설계서 slide66·67·68). 입찰진행 목록 카드 → /bd/bidPrgsDtlInq 진입.
 // 구성: 요약 헤더(badges + 공고번호 + 출력 + 입찰건명) + 구분/내용 표 + 플로팅(맨위로/바로가기).
 //   데이터는 목록에서 넘어온 항목(navigate state)으로 구동. 없으면(직접 URL 진입) 페이지 fallback 목업.
 // 항목명은 설계서 dlt_bidPrgrsList(slide67) 기준. 등록확정여부(bidRegCfmtnYn,slide76)·등록심사시점(tndrSbmsnPntmCd,slide156)은
@@ -175,13 +175,13 @@ export function BidPrgsDtlInqPage() {
   // 보기 버튼 → 결과조회 연계. 기술평가/생산능력서류는 풀팝업(P01/P06), 그 외는 결과 화면 이동.
   const handleView = (key: string) => {
     if (key === 'apfr') {
-      // 국외: 입찰참가신청서 상세(MUI-BD-04-M78, /bd/ovs/prgrs/:id/apfr — state 는 목업 위 병합) / 국내: 입찰등록심사 결과조회
-      if (isOvs) navigate(`/bd/ovs/prgrs/${detail.rNum}/apfr`, { state: detail })
+      // 국외: 입찰참가신청서 상세(MUI-BD-04-M78, /bd/ovsBidPrtcpApfrDtl — state 는 목업 위 병합) / 국내: 입찰등록심사 결과조회
+      if (isOvs) navigate('/bd/ovsBidPrtcpApfrDtl', { state: detail })
       else navigate('/bd/reg-rslt', { state: detail })
     } else if (key === 'tndr' && isOvs) {
-      // 국외 입찰서 상세(MUI-BD-06-M75, /bd/ovs/prgrs/:id/tndr) — state 미전달(페이지가 OvsTndrDtlItem 전체를
+      // 국외 입찰서 상세(MUI-BD-06-M75, /bd/ovsTndrDtl) — state 미전달(페이지가 OvsTndrDtlItem 전체를
       // 기대하므로 BidPrgrsItem 을 넘기면 상단이 깨짐 → fallback 목업으로 렌더. API 연동 시 조회로 대체).
-      navigate(`/bd/ovs/prgrs/${detail.rNum}/tndr`)
+      navigate('/bd/ovsTndrDtl')
     } else if (key === 'pq') {
       // 사전심사(PQ) — 결과 있으면 결과조회(M02), 심사 전이면 신청조회(M03, v1.86 신규).
       navigate(detail.bfhdSrngRsltYn ? '/bd/srng-rslt' : '/bd/srng-aply-inq', { state: detail })
@@ -234,16 +234,16 @@ export function BidPrgsDtlInqPage() {
   const handleShortcut = (id: string) => {
     setShortcutOpen(false)
     switch (id) {
-      case 'apply': // 입찰참가신청서작성 — 국외(MUI-BD-04-M71, /bd/ovs/prgrs/:id/aply) / 국내(M01, 등록반려/반려신청조회 플로팅은 그 화면에 있다).
-        if (isOvs) navigate(`/bd/ovs/prgrs/${detail.rNum}/aply`, { state: detail })
-        else navigate(`/bd/prgrs/${detail.rNum}/apfr`, { state: detail })
+      case 'apply': // 입찰참가신청서작성 — 국외(MUI-BD-04-M71, /bd/ovsBidPrtcpAply) / 국내(M01, 등록반려/반려신청조회 플로팅은 그 화면에 있다).
+        if (isOvs) navigate('/bd/ovsBidPrtcpAply', { state: detail })
+        else navigate('/bd/wrotAgre', { state: detail })
         break
       case 'bfhdAply': // 사전심사(PQ) 신청(M01)
         navigate('/bd/bfhd-srng-aply', { state: detail })
         break
-      case 'bid': // 입찰서 작성 — 국외 입찰서제출(MUI-BD-06-M71, /bd/ovs/prgrs/:id/tndr-sbmsn) / 국내 마법사(MUI-BD-06-M01~M07) → 전자서명 → 신청완료.
-        if (isOvs) navigate(`/bd/ovs/prgrs/${detail.rNum}/tndr-sbmsn`, { state: detail })
-        else navigate(`/bd/prgrs/${detail.rNum}/tndr-wrt`, { state: detail })
+      case 'bid': // 입찰서 작성 — 국외 입찰서제출(MUI-BD-06-M71, /bd/ovsTndrSbmsn) / 국내 마법사(MUI-BD-06-M01~M07) → 전자서명 → 신청완료.
+        if (isOvs) navigate('/bd/ovsTndrSbmsn', { state: detail })
+        else navigate('/bd/tndrWrt', { state: detail })
         break
       case 'fx':
         setExchrtOpen(true)

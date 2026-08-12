@@ -1,8 +1,8 @@
 // 국외 공개수의협상계획상세 — MUI-BD-12-M71(컨테이너) · 탭 T71 일반정보 · T72 품목정보 · T73 첨부서류(구 M71~M73 — v1.83 재편). 설계서 slide411~414.
-// 진입: 개찰목록 국외·수의계약 카드 클릭(수의계약 배지 조건일 때만) → /bd/ovs/rls-ngtn/:id (state = 카드 요약).
+// 진입: 개찰목록 국외·수의계약 카드 클릭(수의계약 배지 조건일 때만) → /bd/ovsRlsVltrnsNgtnPlanDtl (state = 카드 요약).
 // 레퍼런스: OvsBidRsltDtlPage / OvsTndrDtlPage. ⚠️ 설계서 우선 — StepBar·즐겨찾기·출력 없음(사용자 확정).
 import { useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
@@ -101,7 +101,6 @@ function GeneralInfo({ detail }: { detail: OvsRlsVltrnsGeneral }) {
 
 export function OvsRlsVltrnsNgtnPlanDtlPage() {
   const navigate = useNavigate()
-  const { id } = useParams()
   const [tab, setTab] = useState('general')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기 바텀시트
@@ -186,12 +185,12 @@ export function OvsRlsVltrnsNgtnPlanDtlPage() {
               setShortcutOpen(false)
               if (it.id === 'etdcWrt') {
                 // 견적서 작성 → 공개수의협상 견적서제출 마법사(M74). 요약을 state 로 전달.
-                navigate(`/bd/ovs/rls-ngtn/${id ?? 'ovs-ngtn-m71'}/etdc`, { state: summary })
+                navigate('/bd/ovsRlsVltrnsNgtnEtdcSbmsn', { state: summary })
                 return
               }
               if (it.id === 'etdcInq') {
                 // 견적서 조회 → 공개수의협상 견적서상세(M78~M81). 요약을 state 로 전달.
-                navigate(`/bd/ovs/rls-ngtn/${id ?? 'ovs-ngtn-m71'}/etdc-dtl`, { state: summary })
+                navigate('/bd/ovsRlsVltrnsNgtnEtdcDtl', { state: summary })
                 return
               }
               console.log('[M71] 바로가기', it.id)

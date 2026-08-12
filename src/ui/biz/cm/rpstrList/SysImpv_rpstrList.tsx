@@ -41,7 +41,7 @@ export function SysImpv_rpstrList() {
       searchTargets={NOTICE_SEARCH_TARGETS}
       searchSchema={NOTICE_SEARCH_SCHEMA}
       defaultFilter={{ ...NOTICE_DEFAULT }}
-      onCardClick={(it) => navigate(`${ROUTES.SUPPORT_SYS_IMPV}/${it.contsNo}`, { state: it })}
+      onCardClick={(it) => navigate(ROUTES.SUPPORT_SYS_IMPV_DETAIL, { state: it })}
       emptyText="자료가 없습니다."
     />
   )

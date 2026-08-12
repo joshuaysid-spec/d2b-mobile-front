@@ -137,14 +137,15 @@ export function MyTaskHstryPage() {
     prdcpDcmntSbms: false,
   })
   const handleCardClick = (it: MyTaskHstryItem) => {
-    // 계약 → 물품전자계약진행상세(MUI-CT-01-M03, /ct/:id). 상세는 id 조회(useCtrtPrgrsDtl)로 렌더 —
-    // 목업 카드는 CTRT_PRGRS_DTL 과 같은 건이라 정보 일치. 추후: 계약상태/유형별 M03~M10 분기(계약통합목록 선례).
+    // 계약 → 물품전자계약진행상세(MUI-CT-01-M03). URL 에 식별자를 두지 않아 항목을 state 로 넘긴다
+    // (⚠️ 이력 아이템은 계약 상세가 기대하는 아이템 타입이 아님 — API 연동 시 계약 조회로 대체).
+    // 추후: 계약상태/유형별 M03~M10 분기(계약통합목록 선례).
     if (it.taskSttsNm === '계약') {
-      navigate(`/ct/${it.id}`)
+      navigate('/ct/cmdtyElctrCtrtPrgrsDtl', { state: it })
       return
     }
     // 입찰 계열(입찰참가신청/입찰서제출/공개수의협상) → 입찰진행상세(MUI-BD-03-M02).
-    navigate(`/bd/prgrs/${it.id}`, { state: toBidPrgrsState(it) })
+    navigate('/bd/bidPrgsDtlInq', { state: toBidPrgrsState(it) })
   }
 
   const cardItems: CardListItem[] = visible.map((it) => ({

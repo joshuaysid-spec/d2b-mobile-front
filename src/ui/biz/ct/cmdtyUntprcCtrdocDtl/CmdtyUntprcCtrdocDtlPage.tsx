@@ -1,11 +1,12 @@
 // 물품단가계약서상세 (MUI-CT-01-M08). 설계서 03.계약 v0.83 slide56~62.
 // 총액제(M07 CmdtyGramtCtrdocDtlPage)와 3탭 셸이 동일하나, 설계서가 별도 화면ID(M08)·전용 파일로
-// 정의하여 단가제 전용 컨테이너로 분리한다. 계약통합목록 카드(물품 계약최종 — 단가 계약서) → /ct/untprc/:id.
+// 정의하여 단가제 전용 컨테이너로 분리한다. 계약통합목록 카드(물품 계약최종 — 단가 계약서)
+//   → /ct/cmdtyUntprcCtrdocDtl (식별자는 navigate state).
 // 탭: 상세정보(T16 _Cn) · 계약명세서(T17 _Ctrt) · 특수조건(T18 _Spcl). 탭 콘텐츠 로직은 총액제와
 //   동일 데이터영역이라 전용 탭 컴포넌트가 총액제 컴포넌트를 단일 소스로 재사용한다(로직 중복 방지).
 // 데이터: useCmdtyCtrdocDtl(id, 'untprc') — 목업/실연동은 ctService(USE_MOCK)가 전환. 목업은 mocks/ct.ts.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useCmdtyCtrdocDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -21,6 +22,7 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { CmdtyUntprcCtrdocDtl_Cn } from '@/ui/biz/ct/cmdtyUntprcCtrdocDtl/CmdtyUntprcCtrdocDtl_Cn'
 import { CmdtyUntprcCtrdocDtl_Ctrt } from '@/ui/biz/ct/cmdtyUntprcCtrdocDtl/CmdtyUntprcCtrdocDtl_Ctrt'
 import { CmdtyUntprcCtrdocDtl_Spcl } from '@/ui/biz/ct/cmdtyUntprcCtrdocDtl/CmdtyUntprcCtrdocDtl_Spcl'
+import type { CtrtIntgListItem } from '@/types/ct'
 
 // ── 탭 (slide56 탭바: 상세정보/계약명세서/특수조건) ─────────────────────────────
 const TABS: TabItem[] = [
@@ -40,7 +42,8 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CmdtyUntprcCtrdocDtlPage() {
-  const { id = '' } = useParams()
+  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -49,6 +52,8 @@ export function CmdtyUntprcCtrdocDtlPage() {
   const { data: detail } = useCmdtyCtrdocDtl(id, 'untprc')
   const steps = stepsByStg('계약')
 
+  // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.
+  if (!stateItem) return <Navigate to="/ct" replace />
   if (!detail) return <PageLoading />
 
   return (
@@ -117,8 +122,8 @@ export function CmdtyUntprcCtrdocDtlPage() {
       {/* 탭 콘텐츠 */}
       <div className="min-h-[100dvh]">
         {tab === 'detail' && <CmdtyUntprcCtrdocDtl_Cn detail={detail} />}
-        {tab === 'ctrt' && <CmdtyUntprcCtrdocDtl_Ctrt />}
-        {tab === 'spcl' && <CmdtyUntprcCtrdocDtl_Spcl />}
+        {tab === 'ctrt' && <CmdtyUntprcCtrdocDtl_Ctrt id={id} />}
+        {tab === 'spcl' && <CmdtyUntprcCtrdocDtl_Spcl id={id} />}
       </div>
 
       {/* FAB — 맨위로 */}

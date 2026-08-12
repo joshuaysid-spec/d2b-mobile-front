@@ -1,11 +1,11 @@
-// 입찰공고 상세 (MUI-BD-01-M07(컨테이너) · 탭 T01~T06(구 M07~M12 — v1.83 재편), Figma 9300-37570). 목록 카드 클릭 → /bd/:id 진입.
+// 입찰공고 상세 (MUI-BD-01-M07(컨테이너) · 탭 T01~T06(구 M07~M12 — v1.83 재편), Figma 9300-37570). 목록 카드 클릭 → /bd/bidPbancDtl 진입.
 // 레퍼런스: 조달계획 상세 PrcmPlanDtlPage (요약정보+스텝바+탭+탭콘텐츠 동일 패턴).
 // 구성: 요약정보(SummaryInfo) + 스텝바(StepBar, 입찰 진행) + 탭(6개) + 탭 콘텐츠(탭별 컴포넌트 분리)
 //   + 플로팅 버튼(맨위로 / + → 바로가기 바텀시트).
 // 데이터는 목업(상단=목록에서 넘어온 항목, 없으면 페이지 fallback 목업). 백엔드 미연동.
 // 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당.
 import { useRef, useState } from 'react'
-import { useParams, useLocation, useNavigate } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useBidPbancDetail, useToggleFavorite } from '@/queries/bd'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -96,9 +96,9 @@ export function BidPbancDtlPage() {
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
 
   // 목록 → 상세 데이터 전달: navigate state 를 placeholder 로 즉시 렌더 + id 조회로 확정.
-  //   직접 URL 진입(state 없음)이면 조회 완료까지 PageLoading(아래 early return). 목업/실연동은 bdService(USE_MOCK)가 전환.
-  const { id = '' } = useParams()
+  //   URL 에 식별자를 두지 않으므로 state 없이 직접 진입하면 목록으로 되돌린다(아래 early return).
   const stateItem = useLocation().state as BidPbancItem | null
+  const id = stateItem?.id ?? ''
   const { data: detail } = useBidPbancDetail(id, stateItem ?? undefined)
   const toggleFavorite = useToggleFavorite()
 
@@ -122,6 +122,7 @@ export function BidPbancDtlPage() {
     }
   }
 
+  if (!stateItem) return <Navigate to="/bd" replace />
   if (!detail) return <PageLoading />
 
   // 진행단계(prgrsStg) — detail 기반. 미정 시 입찰공고이므로 '입찰' 기본.
@@ -169,10 +170,10 @@ export function BidPbancDtlPage() {
         navigate('/bd/bfhd-srng-aply', { state: prgrsDetail })
         break
       case 'bid': // 입찰서(견적서) 작성 마법사(MUI-BD-06-M01~M07)
-        navigate(`/bd/prgrs/${detail.id}/tndr-wrt`, { state: prgrsDetail })
+        navigate('/bd/tndrWrt', { state: prgrsDetail })
         break
       case 'apply': // 입찰참가신청서 — 서약서(WrotAgrePage) → 작성 폼
-        navigate(`/bd/prgrs/${detail.id}/apfr`, { state: prgrsDetail })
+        navigate('/bd/wrotAgre', { state: prgrsDetail })
         break
       case 'giveup': // 입찰포기신청서(P03) — 바텀시트
         setAbandonOpen(true)

@@ -1,11 +1,11 @@
-// 입찰결과상세 컨테이너(개찰상세, MUI-BD-09-M01(구 M01 — v1.83 재편), 구성 탭 T01~T04). 개찰목록 카드 클릭 → /bd/result/:id 진입.
+// 입찰결과상세 컨테이너(개찰상세, MUI-BD-09-M01(구 M01 — v1.83 재편), 구성 탭 T01~T04). 개찰목록 카드 클릭 → /bd/bidRsltDtl 진입.
 // 레퍼런스: 입찰공고 상세 BidPbancDtlPage (요약정보+스텝바+탭+탭콘텐츠 동일 패턴).
 // 구성: 요약정보(SummaryInfo, 즐겨찾기) + 스텝바(StepBar, 입찰) + 탭4(일반정보/품목정보/입찰결과/협상결과)
 //   + 탭 콘텐츠(일반정보=이 파일 인라인=T01 / 품목정보=BidRsltDtlList T02 / 입찰결과=BidRsltDtl T03 / 협상결과=BidRsltDtl2 T04)
 //   + 맨위로 FAB.
 // 상세화면이라 검색필터 없음. 데이터는 목업(추후 bdService.getBidRsltDetail). 헤더는 전역 Header(AppLayout).
 import { useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useBidRsltDetail } from '@/queries/bd'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -124,12 +124,8 @@ const ATTACH_FILES: FileDownloadItem[] = [
 ]
 
 // 일반정보 탭(M01) — 설계서 순서: 일반정보 → 첨부서류 → 담당자 정보 (slide152 일반정보·첨부서류, slide153 담당자).
-function GeneralInfo() {
+function GeneralInfo({ item }: { item: BdopnItem }) {
   const navigate = useNavigate()
-  const { id } = useParams()
-  // 이행/적격심사 신청 화면(MUI-BD-10)으로 이동 — 상단 요약을 그릴 개찰목록 항목을 state 로 전달.
-  // 호스트(BidRsltDtlPage)와 동일 queryKey 라 캐시 재사용(추가 조회 없음).
-  const { data: item } = useBidRsltDetail(id ?? '')
   // 이행/적격심사 포기신청 풀팝업(MUI-BD-10-P02, 구 P21) 열림 상태.
   const [abndOpen, setAbndOpen] = useState(false)
 
@@ -166,7 +162,7 @@ function GeneralInfo() {
               label: '이행/적격심사 신청하기',
               variant: 'primary',
               itemClassName: 'h-auto min-h-12 whitespace-normal break-keep py-2 text-center leading-tight',
-              onClick: () => navigate(`/bd/implt/${id ?? ''}`, { state: item }),
+              onClick: () => navigate('/bd/implt', { state: item }),
             },
           ]}
         />
@@ -189,10 +185,10 @@ function GeneralInfo() {
   )
 }
 
-function renderTabContent(tab: string) {
+function renderTabContent(tab: string, item: BdopnItem) {
   switch (tab) {
     case 'general':
-      return <GeneralInfo />
+      return <GeneralInfo item={item} />
     case 'item':
       return <BidRsltDtlList />
     case 'bid':
@@ -236,15 +232,16 @@ export function BidRsltDtlPage() {
     console.log('[BidRsltDtl] 관심공고', next ? '등록' : '제외', id) // 추후 API: bdService.toggleFavorite
   }
 
-  const { id } = useParams()
-  // 개찰목록 카드의 id 로 재조회(useBidRsltDetail) — 상단 뱃지·공고번호·타이틀·공고일자·개찰일시 표시.
-  // 목록이 state 없이 이동하므로 placeholder 없음 → 조회 완료까지 PageLoading. 새로고침/직접진입에도 id 로 유지.
-  const stateItem = useLocation().state as BdopnItem | null
-  const { data: item } = useBidRsltDetail(id ?? '', stateItem ?? undefined)
+  // navigate state 가 식별자 원천(URL 미포함). 개찰목록 카드는 항목 전체를 넘겨 placeholder 로 즉시 렌더하고,
+  //   입찰진행현황 탭의 '입찰결과 바로가기' 는 id 만 넘기므로 조회 완료까지 PageLoading.
+  const stateItem = useLocation().state as BdopnItem | { id: string } | null
+  const id = stateItem?.id ?? ''
+  const { data: item } = useBidRsltDetail(id, stateItem && 'bidPbancNo' in stateItem ? stateItem : undefined)
   // 진행단계(prgrsStg) — 입찰결과상세이므로 '입찰'(개찰/낙찰). 추후 bdService 응답으로 대체.
   const [prgrsStg] = useState('입찰')
   const steps = stepsByStg(prgrsStg)
 
+  if (!stateItem) return <Navigate to="/bd/opbid" replace />
   if (!item) return <PageLoading />
 
   // 요약정보 행(공고일자·개찰일시) — 선택 카드와 동일 값.
@@ -316,7 +313,7 @@ export function BidRsltDtlPage() {
 
       {/* 탭 콘텐츠 — 짧은 탭도 헤더 접힘 지탱 위해 최소 높이 확보(진동 방지).
           가로 패딩은 각 콘텐츠(PageTitle px-4 / Accordion p-krds-8)가 자체 처리. */}
-      <div className="min-h-[100dvh]">{renderTabContent(tab)}</div>
+      <div className="min-h-[100dvh]">{renderTabContent(tab, item)}</div>
 
       {/* 플로팅 버튼 — 맨위로(항상) + 바로가기(+). 입찰공고 상세와 동일. 스크롤 주체는 AppLayout 의 #app-scroll(main). */}
       <FloatingActionButton

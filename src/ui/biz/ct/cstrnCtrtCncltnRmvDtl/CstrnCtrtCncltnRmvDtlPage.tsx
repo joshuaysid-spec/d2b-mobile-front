@@ -1,9 +1,9 @@
 // 해지/해제 공사계약 상세 (MUI-CT-03-M06). 설계서 03.계약 v0.83 slide139~144.
-// 해지/해제 목록 카드(dtlRouteCd='cstrn') 클릭 → /ct/cncltn/cstrn/:id 진입.
+// 해지/해제 목록 카드(dtlRouteCd='cstrn') 클릭 → /ct/cstrnCtrtCncltnRmvDtl 진입(식별자는 navigate state).
 // 탭 2개: 상세정보(T13 _Cn) · 첨부서류(T14 _Adoc). 출력 → 해지해제확정서 출력물(R21, slide140·144).
 // 데이터: useCstrnCncltnRmvDtl — 목업/실연동은 ctService(USE_MOCK)가 전환.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useCstrnCncltnRmvDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -18,6 +18,7 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { CstrnCtrtCncltnRmvDtl_Cn } from '@/ui/biz/ct/cstrnCtrtCncltnRmvDtl/CstrnCtrtCncltnRmvDtl_Cn'
 import { CstrnCtrtCncltnRmvDtl_Adoc } from '@/ui/biz/ct/cstrnCtrtCncltnRmvDtl/CstrnCtrtCncltnRmvDtl_Adoc'
+import type { CncltnRmvListItem } from '@/types/ct'
 
 // ── 탭 (slide139 탭바: 상세정보/첨부서류) ────────────────────────────────────
 const TABS: TabItem[] = [
@@ -36,7 +37,8 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CstrnCtrtCncltnRmvDtlPage() {
-  const { id = '' } = useParams()
+  const stateItem = useLocation().state as CncltnRmvListItem | null
+  const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -45,6 +47,8 @@ export function CstrnCtrtCncltnRmvDtlPage() {
   const { data: detail } = useCstrnCncltnRmvDtl(id)
   const steps = stepsByStg('계약')
 
+  // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.
+  if (!stateItem) return <Navigate to="/ct/cncltn" replace />
   if (!detail) return <PageLoading />
 
   return (
@@ -112,7 +116,7 @@ export function CstrnCtrtCncltnRmvDtlPage() {
       {/* 탭 콘텐츠 */}
       <div className="min-h-[100dvh]">
         {tab === 'detail' && <CstrnCtrtCncltnRmvDtl_Cn detail={detail} />}
-        {tab === 'adoc' && <CstrnCtrtCncltnRmvDtl_Adoc />}
+        {tab === 'adoc' && <CstrnCtrtCncltnRmvDtl_Adoc id={id} />}
       </div>
 
       {/* FAB — 맨위로 */}

@@ -58,7 +58,7 @@ const EX_PRST_SEARCH_SCHEMA: SearchFilterSchema = {
           type: 'checkbox',
           key: 'taskSeNm',
           required: true, // 필수값 — default 전체(slide32)
-          selectAll: true,
+          selectAll: { value: '0' }, // '0' = '전체' 코드값 — 전체 선택 시 값 배열에 포함
           options: [
             { value: 'goods', label: '물품' },
             { value: 'service', label: '용역' },
@@ -151,7 +151,7 @@ function buildDefaultValue(): SearchFilterValue {
     end: dayjs().format(DATE_FORMAT),
   }
   return {
-    taskSeNm: ['goods', 'service', 'construction', 'foreign'],
+    taskSeNm: ['0', 'goods', 'service', 'construction', 'foreign'], // 전체('0' = 전체 코드값)
     ctrtYmd: recent1m,
     passYmd: recent1m,
     ctrtNm: '',
@@ -205,15 +205,16 @@ export function InspDlvdocPrstPage() {
   }
   // 카드 클릭(slide33 계약번호 클릭 이벤트) — M07 결과상세 / M03 부대조달 상세 / M04 기성및준공.
   const handleCardClick = (item: InspDlvdocPrstItem) => {
+    // 식별자는 URL 이 아니라 state 로만 전달(상세가 item.id 로 조회).
     if (item.taskSeNm === '공사') {
-      navigate(`/ex/pxcnd/${item.id}`, { state: item })
+      navigate('/ex/pxcndCmcnInspDtl', { state: item })
       return
     }
     if (item.sbsdPrcmYn === 'Y') {
-      navigate(`/ex/dlvdoc/sbsd/${item.id}`, { state: item })
+      navigate('/ex/inspDlvdocDtlSbsdPrcm', { state: item })
       return
     }
-    navigate(`/ex/dlvdoc/rslt/${item.id}`, { state: item })
+    navigate('/ex/dlvdocRsltDtl', { state: item })
   }
 
   // ── 키워드 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 삭제) ──

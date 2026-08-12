@@ -1,11 +1,11 @@
 // 선금신청서상세 — MUI-WM-01-M02 PrpayApfrDtl. 설계서 05.대금청구및사후 v0.83 slide22~28.
-// P13 대금청구신청목록에서 선금신청서 카드 클릭 → /wm/prpay/:id 진입.
+// P13 대금청구신청목록에서 선금신청서 카드 클릭 → /wm/prpayApfrDtl 진입(식별자는 navigate state).
 // 구성: 중요 안내(Notice urgent) + sticky(요약 SummaryInfo + 스텝 StepBar + 탭 TabList)
 //   + 탭 콘텐츠(T01 신청정보 · T02 세부신청내역 · T23 지급상태(공용)) — EX/CT 상세 셸 준용.
 // 인쇄(slide28: 증명서출력 P30)·전자서명 검증은 상세설계 미확정 — 인쇄만 확인모달 스텁, 검증은 미배선.
 // 데이터: usePrpayApfrDtl — 조회 완료까지 PageLoading.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { usePrpayApfrDtl } from '@/queries/wm'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -42,7 +42,9 @@ function buildSteps(): StepItem[] {
 
 export function PrpayApfrDtlPage() {
   const navigate = useNavigate()
-  const { id = '' } = useParams()
+  // 식별자는 목록에서 navigate state 로 전달(URL 노출 금지).
+  const stateItem = useLocation().state as { id: string } | null
+  const id = stateItem?.id ?? ''
   const [tab, setTab] = useState('aply')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [printModalOpen, setPrintModalOpen] = useState(false)
@@ -50,6 +52,7 @@ export function PrpayApfrDtlPage() {
   const { data: detail } = usePrpayApfrDtl(id)
   const steps = buildSteps()
 
+  if (!stateItem) return <Navigate to="/wm" replace />
   if (!detail) return <PageLoading />
 
   return (

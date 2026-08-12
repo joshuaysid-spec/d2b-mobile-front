@@ -1,9 +1,9 @@
 // 대금청구상세(부대조달) — MUI-WM-01-M06 SbsdPrcmPymtClmDtl. 설계서 05.대금청구및사후 v0.83 slide46~54.
-// P13 대금청구신청목록에서 대금청구서(부대) 카드 클릭 → /wm/pymt-clm/sbsd/:id 진입.
+// P13 대금청구신청목록에서 대금청구서(부대) 카드 클릭 → /wm/sbsdPrcmPymtClmDtl 진입(식별자는 navigate state).
 // 구성: 중요 안내 + sticky(요약 + 스텝 + 탭) + 탭(T09 계약정보 · T10 대금신청업체정보 ·
 //   T11 대금신청금액 · T12 첨부파일) — M05 셸 준용. 인쇄(R31/R32) 확인모달 스텁(slide54).
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useSbsdPrcmPymtClmDtl } from '@/queries/wm'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -41,7 +41,9 @@ function buildSteps(): StepItem[] {
 
 export function SbsdPrcmPymtClmDtlPage() {
   const navigate = useNavigate()
-  const { id = '' } = useParams()
+  // 식별자는 목록에서 navigate state 로 전달(URL 노출 금지).
+  const stateItem = useLocation().state as { id: string } | null
+  const id = stateItem?.id ?? ''
   const [tab, setTab] = useState('ctrt')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [printModalOpen, setPrintModalOpen] = useState(false)
@@ -49,6 +51,7 @@ export function SbsdPrcmPymtClmDtlPage() {
   const { data: detail } = useSbsdPrcmPymtClmDtl(id)
   const steps = buildSteps()
 
+  if (!stateItem) return <Navigate to="/wm" replace />
   if (!detail) return <PageLoading />
 
   return (

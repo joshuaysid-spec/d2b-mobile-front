@@ -23,7 +23,7 @@ export function Dmdfrc_rpstrList() {
       searchTargets={RPSTR_SEARCH_TARGETS}
       searchSchema={RPSTR_SEARCH_SCHEMA}
       defaultFilter={{ ...RPSTR_DEFAULT }}
-      onCardClick={(it) => navigate(`${ROUTES.SUPPORT_ARCHIVE_DMDFRC}/${it.contsNo}`, { state: it })}
+      onCardClick={(it) => navigate(ROUTES.SUPPORT_ARCHIVE_DMDFRC_DETAIL, { state: it })}
       emptyText="자료가 없습니다."
     />
   )

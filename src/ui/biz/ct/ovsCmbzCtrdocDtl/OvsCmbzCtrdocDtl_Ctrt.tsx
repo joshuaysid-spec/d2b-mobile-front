@@ -1,19 +1,18 @@
 // 상업계약서상세 - '계약명세서' 탭 콘텐츠 (MUI-CT-01-T78 ovsCmbzCtrdocDtl_Ctrt). 설계서 slide180·183.
 // GRAND-TOTAL + 명세서 목록(번호/PR.No./Group No./SUB-TOTAL) — 항목 클릭 → P78 상업계약서명세서 팝업.
-import { useParams } from 'react-router-dom'
-
 import { useOvsCmbzDtst } from '@/queries/ct'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { SelectionFieldBox } from '@/ui/common/base/SelectionFieldBox'
 import { Table } from '@/ui/common/composites/Table'
 
 export interface OvsCmbzCtrdocDtl_CtrtProps {
+  /** 계약 식별자 — 부모 상세 페이지가 navigate state 에서 받아 전달. */
+  id: string
   /** PR.No./Group 클릭 → P78 상업계약서명세서 팝업 열기(컨테이너는 페이지 소유). */
   onOpenDtst: () => void
 }
 
-export function OvsCmbzCtrdocDtl_Ctrt({ onOpenDtst }: OvsCmbzCtrdocDtl_CtrtProps) {
-  const { id = '' } = useParams()
+export function OvsCmbzCtrdocDtl_Ctrt({ id, onOpenDtst }: OvsCmbzCtrdocDtl_CtrtProps) {
   const { data } = useOvsCmbzDtst(id)
   const groups = data?.groups ?? []
 

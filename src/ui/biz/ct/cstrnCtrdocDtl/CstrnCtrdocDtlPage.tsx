@@ -1,8 +1,8 @@
 // 공사계약서상세 (MUI-CT-01-M10). 설계서 03.계약 v0.83 slide69~75.
-// 계약통합목록 카드(공사 계약확정) 클릭 → /ct/cstrn-doc/:id 진입.
+// 계약통합목록 카드(공사 계약확정) 클릭 → /ct/cstrnCtrdocDtl 진입(식별자는 navigate state).
 // 탭 3개: 상세정보(T19 _Cn) · 하자담보책임(T20 _Flw) · 연대보증(T21 _Grnte).
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useCstrnCtrdocDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -18,6 +18,7 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { CstrnCtrdocDtl_Cn } from '@/ui/biz/ct/cstrnCtrdocDtl/CstrnCtrdocDtl_Cn'
 import { CstrnCtrdocDtl_Grnte } from '@/ui/biz/ct/cstrnCtrdocDtl/CstrnCtrdocDtl_Grnte'
 import { CstrnCtrdocDtl_Flw } from '@/ui/biz/ct/cstrnCtrdocDtl/CstrnCtrdocDtl_Flw'
+import type { CtrtIntgListItem } from '@/types/ct'
 
 // ── 탭 (slide69 탭바: 상세정보/하자담보책임/연대보증) ──────────────────────────
 const TABS: TabItem[] = [
@@ -37,7 +38,8 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CstrnCtrdocDtlPage() {
-  const { id = '' } = useParams()
+  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -46,6 +48,8 @@ export function CstrnCtrdocDtlPage() {
   const { data: detail } = useCstrnCtrdocDtl(id)
   const steps = stepsByStg('계약')
 
+  // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.
+  if (!stateItem) return <Navigate to="/ct" replace />
   if (!detail) return <PageLoading />
 
   return (
@@ -113,8 +117,8 @@ export function CstrnCtrdocDtlPage() {
       {/* 탭 콘텐츠 — 하자담보책임(T20)은 전용 탭 컴포넌트(M09 와 동일 데이터영역, slide74 1.2) */}
       <div className="min-h-[100dvh]">
         {tab === 'detail' && <CstrnCtrdocDtl_Cn detail={detail} />}
-        {tab === 'flw' && <CstrnCtrdocDtl_Flw />}
-        {tab === 'grnte' && <CstrnCtrdocDtl_Grnte />}
+        {tab === 'flw' && <CstrnCtrdocDtl_Flw id={id} />}
+        {tab === 'grnte' && <CstrnCtrdocDtl_Grnte id={id} />}
       </div>
 
       {/* FAB — 맨위로 */}

@@ -1,8 +1,8 @@
 // 발주의뢰서상세 — MUI-EX-02-M76 OvsOrderRqdcDtl. 설계서 04.이행 v0.83 slide68~73.
-// 발주의뢰서목록(M75) 카드 클릭 → /ex/order-rqdc/:id 진입.
+// 발주의뢰서목록(M75) 카드 클릭 → /ex/ovsOrderRqdcDtl 진입.
 // 구성: 중요 안내 + sticky(요약 + 스텝 + 탭) + 탭(T75 상세정보 · T76 물품목록) — M72 셸 준용.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useOvsOrderRqdcDtl } from '@/queries/ex'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -33,13 +33,16 @@ function buildSteps(): StepItem[] {
 
 export function OvsOrderRqdcDtlPage() {
   const navigate = useNavigate()
-  const { id = '' } = useParams()
+  // 목록 → 상세: 식별자는 URL 이 아니라 navigate state(클릭 항목)로 받는다.
+  const id = (useLocation().state as { id: string } | null)?.id ?? ''
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
   const { data: detail } = useOvsOrderRqdcDtl(id)
   const steps = buildSteps()
 
+  // state 없이 직접 진입 = 식별자를 알 수 없음 → 발주의뢰서목록으로.
+  if (!id) return <Navigate to="/ex/order-rqdc" replace />
   if (!detail) return <PageLoading />
 
   return (

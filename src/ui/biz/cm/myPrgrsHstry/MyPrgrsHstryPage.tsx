@@ -81,12 +81,11 @@ export function MyPrgrsHstryPage() {
     setStepItem(item)
   }
   const handleGoto = (item: MyPrgrsHstryItem) => {
-    // 공고 바로가기 → 입찰진행 상세(MUI-BD-03-M02, /bd/prgrs/:id).
-    // ⚠️ 진행업무현황 아이템(MyPrgrsHstryItem)은 입찰진행 상세가 기대하는 BidPrgrsItem 형태가 아니라,
-    //    navigate state 로 넘기면 상단 요약이 빈 값으로 깨진다(상세는 state 를 BidPrgrsItem 으로 캐스팅).
-    //    → state 없이 이동해 상세 페이지의 fallback 목업으로 정상 렌더한다. (API 연동 시 실제 조회로 대체)
+    // 공고 바로가기 → 입찰진행 상세(MUI-BD-03-M02). URL 에 식별자를 두지 않아 항목을 state 로 넘긴다.
+    // ⚠️ 진행업무현황 아이템(MyPrgrsHstryItem)은 입찰진행 상세가 기대하는 BidPrgrsItem 형태가 아니라
+    //    상단 요약 일부가 빈 값으로 뜬다(상세는 state 를 BidPrgrsItem 으로 캐스팅). API 연동 시 실제 조회로 대체.
     console.log('[MyPrgrsHstry] 바로가기', item.id) // 추후: bd 진행 상세 조회(prcmNo/공고번호 매핑)
-    navigate(`/bd/prgrs/${item.id}`)
+    navigate('/bd/bidPrgsDtlInq', { state: item })
   }
   // 세부 스텝 팝업의 '바로가기' — 선택 단계에 해당하는 목록으로 이동(설계서 slide79).
   const handleStepGoto = () => {

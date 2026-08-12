@@ -1,8 +1,6 @@
 // 해지/해제 일반단가제계약 상세 - '계약명세서' 탭 콘텐츠 (MUI-CT-03-T08). 설계서 slide125·128~129.
 // 계약 명세 정보: 부서명/조달판단번호 헤더 + 예산구분 그룹 품목 블록 반복.
 // 컬럼은 총액제(T05)와 동일(공동계약업체~예산항목, slide125). 데이터: useCncltnRmvGnrlCtrtDtst(id, 'untprc').
-import { useParams } from 'react-router-dom'
-
 import { useCncltnRmvGnrlCtrtDtst } from '@/queries/ct'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -34,8 +32,7 @@ function DtstGroup({ group }: { group: CtrtDtstGroup }) {
   )
 }
 
-export function CncltnRmvGnrlCtrtUntprcDtl_Artcl() {
-  const { id = '' } = useParams()
+export function CncltnRmvGnrlCtrtUntprcDtl_Artcl({ id }: { id: string }) {
   const { data } = useCncltnRmvGnrlCtrtDtst(id, 'untprc')
   const groups = data?.groups ?? []
 

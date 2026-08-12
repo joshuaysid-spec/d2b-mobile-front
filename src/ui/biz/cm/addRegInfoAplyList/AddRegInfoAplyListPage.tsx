@@ -12,6 +12,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
+import { ROUTES } from '@/constants/routes'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
@@ -158,7 +159,7 @@ export function AddRegInfoAplyListPage() {
   // 카드 클릭 → 처리상태 무관 상세(T05 물품(내자)신청 / T06 국내소재상사신청, 설계서 slide137).
   //   항목을 navigate state 로 넘겨 상세 상단(접수정보)을 그린다. 추가정보구분(addInfoCdNm)별 T05/T06 분기는 상세 페이지가 처리.
   const handleCardClick = (item: AddRegInfoAplyItem) => {
-    navigate(`/mypage/add-reg-info-aply/${item.id}`, { state: item })
+    navigate(ROUTES.ADD_REG_INFO_APLY_DETAIL, { state: item })
     console.log('[AddRegInfoAply] 상세 이동(T05/T06 분기)', item.rcptNo, item.addInfoCdNm)
   }
 

@@ -175,25 +175,26 @@ export function AnlPrgrsListPage() {
     STEP_LABELS.indexOf(prgrsStg as (typeof STEP_LABELS)[number])
   const items = progressed ? (MOCK_ANL_ITEMS[substep] ?? []) : []
 
-  // 카드 클릭 → 세부단계별 상세 라우팅(기존 상세 화면 재사용, 직접 진입 fallback 목업으로 렌더).
-  // 추후 API 연동 시 연관 건 조회 응답을 navigate state 로 전달해 상세 상단을 그 값으로 그린다.
+  // 카드 클릭 → 세부단계별 상세 라우팅(기존 상세 화면 재사용). URL 에 식별자를 두지 않으므로 항목을 state 로 넘긴다.
+  // ⚠️ 연관 건 아이템(AnlPrgrsItem)은 각 도메인 상세가 기대하는 아이템 타입이 아니라 상단 요약 일부가 빈다.
+  //    추후 API 연동 시 연관 건 조회 응답(도메인 아이템)을 state 로 전달해 상세 상단을 그 값으로 그린다.
   const goDetail = (it: AnlPrgrsItem) => {
     console.log('[AnlPrgrsList] 연관 건 상세 이동', substep, it.id)
     switch (substep) {
       case '조달계획':
-        navigate(`/op/${it.id}`)
+        navigate('/op/prcmPlanDtl', { state: it })
         break
       case '사전규격':
-        navigate(`/op/spec/${it.id}`)
+        navigate('/op/bfhdSpcfctDtl', { state: it })
         break
       case '입찰공고':
-        navigate(`/bd/${it.id}`)
+        navigate('/bd/bidPbancDtl', { state: it })
         break
       case '입찰진행':
-        navigate(`/bd/prgrs/${it.id}`)
+        navigate('/bd/bidPrgsDtlInq', { state: it })
         break
       case '개찰':
-        navigate(`/bd/result/${it.id}`)
+        navigate('/bd/bidRsltDtl', { state: it })
         break
       default:
         // 전자계약/검사 및 납품조서/대금청구 — 상세 화면 미구현. 추후 ct/ex/wm 상세 연결.

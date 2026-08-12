@@ -1,4 +1,4 @@
-// 이행/적격심사상세 컨테이너(MUI-BD-10-M01, 설계서 02입찰 v1.83). 입찰결과상세 > 일반정보 > '이행적격심사 신청하기' → /bd/implt/:id.
+// 이행/적격심사상세 컨테이너(MUI-BD-10-M01, 설계서 02입찰 v1.83). 입찰결과상세 > 일반정보 > '이행적격심사 신청하기' → /bd/implt.
 // 레퍼런스: 입찰결과상세 BidRsltDtlPage (요약정보+스텝바+탭+탭콘텐츠 동일 패턴).
 // 구성: 요약정보(SummaryInfo) + 스텝바(StepBar, 입찰) + 탭4(일반정보/입찰·반려정보/파일첨부/심사결과)
 //   + 탭 콘텐츠(일반정보=Implt1 T01 / 입찰·반려정보=Implt2 T02 / 파일첨부=Implt3 T03 / 심사결과=유형별 T04~T21)
@@ -6,9 +6,8 @@
 // 심사결과 탭은 유형(srngTyCd)별 18종(T04~T21)으로 갈림 — 물품(T05)=Implt, 그 외는 ImpltElgblRslt_* 로 분기(renderResultTab).
 // 상세화면이라 검색필터 없음. 상단은 개찰목록 항목(navigate state)으로 그림 + 직접진입 fallback 목업.
 import { useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
-import { getBdopnById } from '@/mocks/bd'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
@@ -131,13 +130,12 @@ function renderTabContent(tab: string, srngTyCd?: ImpltElgbSrngTyCd) {
 
 export function ImpltPage() {
   const navigate = useNavigate()
-  const { id } = useParams()
   const [tab, setTab] = useState('general')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
-  // 상단(요약/헤더) — 입찰결과상세에서 넘어온 개찰목록 항목(navigate state) 우선, 없으면 id 재조회, 그래도 없으면 fallback 목업.
+  // 상단(요약/헤더) — 입찰결과상세에서 넘어온 개찰목록 항목(navigate state). 직접 진입(state 없음)은 fallback 목업.
   const stateItem = useLocation().state as BdopnItem | null
-  const detail = stateItem ?? getBdopnById(id) ?? MOCK_DETAIL
+  const detail = stateItem ?? MOCK_DETAIL
 
   const summaryRows: SummaryInfoRow[] = [
     { label: '공고일자', value: detail.pbancDt },
@@ -193,7 +191,7 @@ export function ImpltPage() {
                   variant: 'primary',
                   itemClassName: wrap,
                   // 추후 API: scwin.btn_strg_onclick (이행/적격심사 신청 내역 임시 저장)
-                  onClick: () => console.log('[Implt] 이행/적격심사 임시 저장', id),
+                  onClick: () => console.log('[Implt] 이행/적격심사 임시 저장', detail.id),
                 },
               ]}
             />
@@ -206,7 +204,7 @@ export function ImpltPage() {
                   variant: 'primary',
                   itemClassName: wrap,
                   // 추후 API: scwin.btn_elgbSrngAply_onclick (이행/적격심사 신청 처리)
-                  onClick: () => console.log('[Implt] 이행/적격심사 제출하기', id),
+                  onClick: () => console.log('[Implt] 이행/적격심사 제출하기', detail.id),
                 },
               ]}
             />

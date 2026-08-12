@@ -1,10 +1,10 @@
 // 이전공고입찰내역등록 (MUI-BD-01-P79(구 M79 — v1.83 재편), 설계서 slide320·322·323 / 영문 OvsBfrTmprBidBidCnRegPage).
 // 이전 공고 보관함 목록의 입찰내역을 현재 공고의 입찰내역으로 불러오는 화면.
-// 진입: 홈 > 마이페이지 > 국외 보관함 > 입찰내역 작성(/bd/ovs/locker/:id/bid-cn) > 이전공고입찰내역등록.
+// 진입: 홈 > 마이페이지 > 국외 보관함 > 입찰내역 작성(/bd/ovsTmprBidCnReg) > 이전공고입찰내역등록.
 // 구성: 총건수 + 보관함 이전공고 카드 목록(dl_pbancInfo) + '입찰내역 품목 보기' → 이전공고입찰내역품목상세(P80) 풀팝업.
 // 데이터는 목업(설계서 1.1 dl_pbancInfo 항목명 그대로), 핸들러는 API 경계 스텁(console.log).
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 import { Button } from '@/ui/common/base/Button'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
@@ -62,7 +62,9 @@ const MOCK_BFR_PBANC_LIST: BfrPbancInfoItem[] = [
 ]
 
 export function OvsBfrTmprBidBidCnRegPage() {
-  const { id: lockerId } = useParams() // 국외 보관함 id (/bd/ovs/locker/:id/bfr-bid-cn)
+  // 국외 보관함 식별자(통합참조번호) — URL 미포함, 진입 화면이 navigate state 로 전달(공고 상세는 rfrncNo).
+  const entry = useLocation().state as { intgRfrncNo?: string; rfrncNo?: string } | null
+  const lockerId = entry?.intgRfrncNo ?? entry?.rfrncNo
   // 이전공고입찰내역품목상세(P80) — 열려 있는 대상 공고(행 클릭 시 설정). null = 닫힘.
   const [openPbanc, setOpenPbanc] = useState<BfrPbancInfoItem | null>(null)
 

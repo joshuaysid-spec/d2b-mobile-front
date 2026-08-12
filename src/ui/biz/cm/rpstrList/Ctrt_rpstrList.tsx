@@ -23,7 +23,7 @@ export function Ctrt_rpstrList() {
       searchTargets={RPSTR_SEARCH_TARGETS}
       searchSchema={RPSTR_SEARCH_SCHEMA}
       defaultFilter={{ ...RPSTR_DEFAULT }}
-      onCardClick={(it) => navigate(`${ROUTES.SUPPORT_ARCHIVE_CTRT}/${it.contsNo}`, { state: it })}
+      onCardClick={(it) => navigate(ROUTES.SUPPORT_ARCHIVE_CTRT_DETAIL, { state: it })}
       emptyText="자료가 없습니다."
     />
   )

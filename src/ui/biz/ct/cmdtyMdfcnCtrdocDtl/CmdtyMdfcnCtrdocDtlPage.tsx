@@ -1,9 +1,9 @@
 // 물품수정계약서상세 (MUI-CT-01-M06). 설계서 03.계약 v0.83 slide76~82.
-// 계약통합목록 카드(물품 '계약수정') 클릭 → /ct/mdfcn/:id 진입.
+// 계약통합목록 카드(물품 '계약수정') 클릭 → /ct/cmdtyMdfcnCtrdocDtl 진입(식별자는 navigate state).
 // 탭 3개: 상세정보(T22 _Cn) · 수정계약명세서(T23 _MdfcnCtrt) · 특수조건(T24 _Spcl).
 // FAB '+' 바로가기 → 계약명세서 조회(P13 물품수정계약명세서) + 출력.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useCmdtyMdfcnCtrdocDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -23,6 +23,7 @@ import { CmdtyMdfcnCtrdocDtl_Cn } from '@/ui/biz/ct/cmdtyMdfcnCtrdocDtl/CmdtyMdf
 import { CmdtyMdfcnCtrdocDtl_MdfcnCtrt } from '@/ui/biz/ct/cmdtyMdfcnCtrdocDtl/CmdtyMdfcnCtrdocDtl_MdfcnCtrt'
 import { CmdtyMdfcnCtrdocDtl_Spcl } from '@/ui/biz/ct/cmdtyMdfcnCtrdocDtl/CmdtyMdfcnCtrdocDtl_Spcl'
 import { CmdtyMdfcnCtrdocDtstFullPopup } from '@/ui/biz/ct/cmdtyMdfcnCtrdocDtl/CmdtyMdfcnCtrdocDtstFullPopup'
+import type { CtrtIntgListItem } from '@/types/ct'
 
 // ── 탭 (slide76 탭바: 상세정보/수정계약명세서/특수조건) ────────────────────────
 const TABS: TabItem[] = [
@@ -42,7 +43,8 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CmdtyMdfcnCtrdocDtlPage() {
-  const { id = '' } = useParams()
+  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -53,6 +55,8 @@ export function CmdtyMdfcnCtrdocDtlPage() {
   const { data: detail } = useCmdtyMdfcnCtrdocDtl(id)
   const steps = stepsByStg('계약')
 
+  // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.
+  if (!stateItem) return <Navigate to="/ct" replace />
   if (!detail) return <PageLoading />
 
   const openFromSheet = (open: (v: boolean) => void) => {
@@ -131,8 +135,8 @@ export function CmdtyMdfcnCtrdocDtlPage() {
       {/* 탭 콘텐츠 */}
       <div className="min-h-[100dvh]">
         {tab === 'detail' && <CmdtyMdfcnCtrdocDtl_Cn detail={detail} />}
-        {tab === 'mdfcnCtrt' && <CmdtyMdfcnCtrdocDtl_MdfcnCtrt />}
-        {tab === 'spcl' && <CmdtyMdfcnCtrdocDtl_Spcl />}
+        {tab === 'mdfcnCtrt' && <CmdtyMdfcnCtrdocDtl_MdfcnCtrt id={id} />}
+        {tab === 'spcl' && <CmdtyMdfcnCtrdocDtl_Spcl id={id} />}
       </div>
 
       {/* FAB — 맨위로 + '+' 바로가기(상세정보 탭) */}
@@ -176,7 +180,7 @@ export function CmdtyMdfcnCtrdocDtlPage() {
       />
 
       {/* P13 물품수정계약명세서 */}
-      <CmdtyMdfcnCtrdocDtstFullPopup open={dtstOpen} onOpenChange={setDtstOpen} />
+      <CmdtyMdfcnCtrdocDtstFullPopup id={id} open={dtstOpen} onOpenChange={setDtstOpen} />
     </div>
   )
 }

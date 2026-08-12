@@ -48,7 +48,7 @@ const WM_SEARCH_SCHEMA: SearchFilterSchema = {
           type: 'checkbox',
           key: 'taskSeCd',
           required: true, // 필수값(slide18) — default 전체
-          selectAll: true,
+          selectAll: { value: '0' }, // '0' = '전체' 코드값 — 전체 선택 시 값 배열에 포함
           options: [
             { value: 'goods', label: '물품' },
             { value: 'service', label: '용역' },
@@ -104,7 +104,7 @@ const WM_SEARCH_SCHEMA: SearchFilterSchema = {
 // On-Load 기본값(slide21): 계약일자 = 현재일-1개월 ~ 현재일, 업무구분 = 전체.
 function buildDefaultValue(): SearchFilterValue {
   return {
-    taskSeCd: ['goods', 'service', 'construction', 'foreign'],
+    taskSeCd: ['0', 'goods', 'service', 'construction', 'foreign'], // 전체('0' = 전체 코드값)
     ctrtYmd: {
       start: dayjs().subtract(1, 'month').format(DATE_FORMAT),
       end: dayjs().format(DATE_FORMAT),
@@ -168,28 +168,28 @@ export function PymtClmIntgListPage() {
   // 신청 카드 클릭(slide21) — 청구서 종류(clmDocNm, 임시 키)별 상세 분기.
   const handleAplyClick = (item: PymtClmAplyItem) => {
     if (item.clmDocNm === '선금신청서') {
-      navigate(`/wm/prpay/${item.id}`, { state: item })
+      navigate('/wm/prpayApfrDtl', { state: item })
       return
     }
     if (item.clmDocNm === '착중도금신청서') {
-      navigate(`/wm/dpsmn-itrpy/${item.id}`, { state: item })
+      navigate('/wm/dpsmnItrpyApfrDtl', { state: item })
       return
     }
     if (item.clmDocNm === '대금청구서') {
       // 유형 구분(prcmSeNm, 임시 키)으로 중앙(M05)/부대(M06)/공사(M07)/기성대가(M08) 분기.
-      const route =
+      const path =
         item.prcmSeNm === '부대'
-          ? 'sbsd/'
+          ? '/wm/sbsdPrcmPymtClmDtl'
           : item.prcmSeNm === '공사'
-            ? 'cstrn/'
+            ? '/wm/cstrnPymtClmDtl'
             : item.prcmSeNm === '기성대가'
-              ? 'pxcnd/'
-              : ''
-      navigate(`/wm/pymt-clm/${route}${item.id}`, { state: item })
+              ? '/wm/pxcndCstPymtClmDtl'
+              : '/wm/centerPrcmPymtClmDtl'
+      navigate(path, { state: item })
       return
     }
     if (item.clmDocNm === '사후정산청구서') {
-      navigate(`/wm/epfc-clcln/${item.id}`, { state: item })
+      navigate('/wm/epfcClclnClmDtl', { state: item })
       return
     }
     console.log('[P13] 상세 이동 — 미확인 청구서 종류', item.clmDocNm, item.id)

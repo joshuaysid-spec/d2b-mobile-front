@@ -88,7 +88,7 @@ export function TxivList_CtrtListPage() {
   }
   // 세금계산서 카드 클릭(P02) — 상세(M03) 이동.
   const handleTxivClick = (item: TxivItem) => {
-    navigate(`/ts/txiv/dtl/${item.id}`, { state: item })
+    navigate('/ts/txivDtl', { state: item })
   }
 
   const filteredList = useMemo(() => {

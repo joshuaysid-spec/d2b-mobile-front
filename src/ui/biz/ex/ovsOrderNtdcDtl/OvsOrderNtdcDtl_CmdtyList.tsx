@@ -9,7 +9,7 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { OvsOrderNtdcDtl, OvsOrderNtdcItemRow } from '@/types/ex'
 
 export interface OvsOrderNtdcDtl_CmdtyListProps {
-  /** 조회 대상 발주통보서 식별자 — 페이지(useParams id)가 주입. */
+  /** 조회 대상 발주통보서 식별자 — 페이지(navigate state id)가 주입. */
   id: string
   /** 요약 정보(품목수/금액) — 페이지 조회(detail)에서 주입. */
   detail: OvsOrderNtdcDtl

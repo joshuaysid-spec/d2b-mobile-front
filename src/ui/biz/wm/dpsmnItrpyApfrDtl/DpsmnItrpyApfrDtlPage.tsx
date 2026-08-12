@@ -1,10 +1,10 @@
 // 착·중도금신청서상세 — MUI-WM-01-M03 DpsmnItrpyApfrDtl. 설계서 05.대금청구및사후 v0.83 slide29~35.
-// P13 대금청구신청목록에서 착중도금신청서 카드 클릭 → /wm/dpsmn-itrpy/:id 진입.
+// P13 대금청구신청목록에서 착중도금신청서 카드 클릭 → /wm/dpsmnItrpyApfrDtl 진입(식별자는 navigate state).
 // 구성: 중요 안내 + sticky(요약 + 스텝 + 탭) + 탭(T03 신청정보 · T04 세부신청내역 · T23 지급상태(공용))
 //   — 선금(M02) 셸과 동일, 탭 콘텐츠·데이터만 다름(설계서 별도 화면 ID·폴더).
 // 데이터: useDpsmnItrpyApfrDtl — 조회 완료까지 PageLoading.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useDpsmnItrpyApfrDtl } from '@/queries/wm'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -41,7 +41,9 @@ function buildSteps(): StepItem[] {
 
 export function DpsmnItrpyApfrDtlPage() {
   const navigate = useNavigate()
-  const { id = '' } = useParams()
+  // 식별자는 목록에서 navigate state 로 전달(URL 노출 금지).
+  const stateItem = useLocation().state as { id: string } | null
+  const id = stateItem?.id ?? ''
   const [tab, setTab] = useState('aply')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [printModalOpen, setPrintModalOpen] = useState(false)
@@ -49,6 +51,7 @@ export function DpsmnItrpyApfrDtlPage() {
   const { data: detail } = useDpsmnItrpyApfrDtl(id)
   const steps = buildSteps()
 
+  if (!stateItem) return <Navigate to="/wm" replace />
   if (!detail) return <PageLoading />
 
   return (

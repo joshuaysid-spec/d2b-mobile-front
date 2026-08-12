@@ -1,8 +1,8 @@
 // 견적통보서상세 — MUI-EX-02-M74 OvsEstmtNtdcDtl. 설계서 04.이행 v0.83 slide58~63.
-// 견적통보서목록(M73) 카드 클릭 → /ex/estmt-ntdc/:id 진입.
+// 견적통보서목록(M73) 카드 클릭 → /ex/ovsEstmtNtdcDtl 진입.
 // 구성: 중요 안내 + sticky(요약 + 스텝 + 탭) + 탭(T73 상세정보 · T74 물품목록) — M72 셸 준용.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useOvsEstmtNtdcDtl } from '@/queries/ex'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -34,13 +34,16 @@ function buildSteps(): StepItem[] {
 
 export function OvsEstmtNtdcDtlPage() {
   const navigate = useNavigate()
-  const { id = '' } = useParams()
+  // 목록 → 상세: 식별자는 URL 이 아니라 navigate state(클릭 항목)로 받는다.
+  const id = (useLocation().state as { id: string } | null)?.id ?? ''
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
   const { data: detail } = useOvsEstmtNtdcDtl(id)
   const steps = buildSteps()
 
+  // state 없이 직접 진입 = 식별자를 알 수 없음 → 견적통보서목록으로.
+  if (!id) return <Navigate to="/ex/estmt-ntdc" replace />
   if (!detail) return <PageLoading />
 
   return (

@@ -102,7 +102,7 @@ const SpcfctItemCard = memo(function SpcfctItemCard({
 })
 
 export interface BfhdLoiDtl_ItemListProps {
-  /** 조회 대상 사전의향서 번호 — 페이지(useParams id)가 주입. */
+  /** 조회 대상 사전의향서 번호 — 페이지(navigate state id)가 주입. */
   id: string
   /** 접수기간 만료 여부(detail.expryYn) — 만료 시 의견작성 미노출. */
   expired: boolean

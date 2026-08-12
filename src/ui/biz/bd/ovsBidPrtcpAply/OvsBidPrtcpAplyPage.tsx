@@ -1,5 +1,5 @@
 // 국외 입찰참가신청서 작성 (MUI-BD-04-M71(컨테이너) · T71 서약서동의목록 · 스탭 T72~T75(구 M72~M77 — v1.83 재편) · 설계서 09국외입찰진행 slide324~341).
-// 라우트: /bd/ovs/prgrs/:id/aply — 국내(bidPrtcpAperWrt)와 동일한 '한 페이지 + 스탭 마법사' 구조(다음=다음탭).
+// 라우트: /bd/ovsBidPrtcpAply — 국내(bidPrtcpAperWrt)와 동일한 '한 페이지 + 스탭 마법사' 구조(다음=다음탭).
 // 흐름(설계서 slide327 화면 흐름도):
 //   서약서동의 목록(M71) → [다음으로] → 신청서 4탭(M72 일반정보 / M73 업체정보 / M74 입찰 보증금 / M77 첨부파일)
 //   → 마지막 탭 [신청하기](2026-07-02 화면 수정: 전자서명 → 신청하기) → 신청 완료(기존 aplyCmptn 재사용).
@@ -168,7 +168,7 @@ export function OvsBidPrtcpAplyPage() {
     // 신청 클릭(M77 설계서 slide341) — 입찰참가신청서 등록. 모의입찰 상태인 경우 모의입찰참가신청.
     console.log('[M77] 입찰참가신청서 등록', { pbancNo: detail.pbancNo })
     // 추후 API: bdService.registerOvsBidPrtcpAply
-    navigate(`/bd/prgrs/${detail.rNum}/aply-cmptn`, {
+    navigate('/bd/aplyCmptn', {
       state: {
         detail,
         aplyType: 'apfr',

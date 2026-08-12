@@ -237,7 +237,7 @@ export function PrfmncPrdocPage() {
   }
   const handleCardClick = (item: PrfmncPrdocItem) => {
     // 실적증명서확인(상세, MUI-CM-04-M07) — 클릭 항목을 state 로 전달(목록→상세 표준).
-    navigate(`/support/dcmnt-issu-aply/prfmnc-prdoc/${item.prfmncRcptNo}`, { state: item })
+    navigate(ROUTES.SUPPORT_PRFMNC_PRDOC_DTL, { state: item })
   }
   const handleAply = () => {
     setAplySheetOpen(false)

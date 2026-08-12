@@ -1,7 +1,5 @@
 // 국외전자계약진행상세 - '보증서' 탭 콘텐츠 (MUI-CT-01-T73 ovsWtgrTab). 설계서 slide160~161.
 // 데이터영역은 보증서 확인팝업(M73)과 동일(dm_ctrtInfo + dm_wtgrInfo) — useCtrtGrntes 재사용.
-import { useParams } from 'react-router-dom'
-
 import { useCtrtGrntes } from '@/queries/ct'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
@@ -25,8 +23,7 @@ function wtgrRows(w: CtrtGrnteInfo): TableRow[] {
   ]
 }
 
-export function OvsWtgrTab() {
-  const { id = '' } = useParams()
+export function OvsWtgrTab({ id }: { id: string }) {
   const { data } = useCtrtGrntes(id, true)
 
   return (

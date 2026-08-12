@@ -2,8 +2,6 @@
 // 계약관 첨부서류/계약업체 첨부서류 2섹션(각 총 N건) — 항목: 계약서류명 라벨 + 파일행(파일명 [크기] + 다운로드).
 // 파일 크기·파일명 없으면 '-' 표시(slide42). 다운로드 실패/성공 토스트는 실연동 시 — 현재 console.log 경계 스텁.
 // 데이터영역이 M03 첨부서류(_Adoc)와 동일하여 동일 데이터 훅(useCtrtAdocs)으로 구동.
-import { useParams } from 'react-router-dom'
-
 import { useCtrtAdocs } from '@/queries/ct'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
@@ -29,8 +27,7 @@ function AdocItem({ doc }: { doc: CtrtAdocFile }) {
   )
 }
 
-export function CstrnElctrCtrtPrgrsDtl_Adoc() {
-  const { id = '' } = useParams()
+export function CstrnElctrCtrtPrgrsDtl_Adoc({ id }: { id: string }) {
   const { data } = useCtrtAdocs(id)
   const refDocs = data?.refDocs ?? []
   const sbmsnDocs = data?.sbmsnDocs ?? []

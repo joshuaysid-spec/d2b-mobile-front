@@ -29,7 +29,7 @@ export function NoticeListPage() {
       searchTargets={NOTICE_SEARCH_TARGETS}
       searchSchema={NOTICE_SEARCH_SCHEMA_WITH_CATEGORY}
       defaultFilter={{ ...NOTICE_DEFAULT_WITH_CATEGORY }}
-      onCardClick={(it) => navigate(`${ROUTES.SUPPORT_NOTICE}/${it.contsNo}`, { state: it })}
+      onCardClick={(it) => navigate(ROUTES.SUPPORT_NOTICE_DETAIL, { state: it })}
       emptyText="공지사항이 없습니다."
     />
   )

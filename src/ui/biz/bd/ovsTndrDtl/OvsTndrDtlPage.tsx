@@ -1,5 +1,5 @@
 // 국외 입찰서 상세 (MUI-BD-06-M75(컨테이너) · 탭 T75~T79(구 M75~M79 — v1.83 재편), 설계서 국외입찰 slide375~379 · 항목설명 slide380~384).
-// 진입: 국외 입찰진행 상세 → 입찰서 조회 → /bd/ovs/prgrs/:id/tndr (navigate state = 진행 항목).
+// 진입: 국외 입찰진행 상세 → 입찰서 조회 → /bd/ovsTndrDtl (navigate state = 진행 항목).
 // 레퍼런스(국내): BidRsltDtlPage(다중탭 상세 — useCollapsibleHeader + SummaryInfo/StepBar/TabList sticky)
 //   + BidPrgsDtlInqPage(FAB 바로가기 시트, 조회/신청 바텀시트는 부모가 컨테이너/footer 소유).
 // 탭: 1.일반정보(M75, 이 파일 인라인) / 2.업체정보(M76, Tab2) / 3.입찰참여품목(M77 단가제·M78 총액제, Tab3 분기)
@@ -7,7 +7,7 @@
 // 바로가기(FAB +): 입찰등록결과조회(M80)·기술평가결과조회(P71)=바텀시트(footer 닫기),
 //   투찰취소 → 입찰취소신청서작성(P81)=바텀시트(footer 취소/제출하기, ref 핸들) — 설계서 slide385 이벤트.
 import { useEffect, useRef, useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
@@ -115,12 +115,12 @@ function GeneralInfo({ detail }: { detail: OvsTndrDtlItem }) {
 
 export function OvsTndrDtlPage() {
   const navigate = useNavigate()
-  const { id } = useParams()
   // 국외 입찰진행에서 넘어온 항목으로 상단(요약)을 그린다. 직접 URL 진입(state 없음)이면 페이지 목업.
-  //   id 끝자리 '2' 는 총액제(M78) 데모, 그 외 단가제(M77) — 목업 단계 분기 확인용.
+  //   단가제(M77)/총액제(M78) 분기 확인용: 직접 진입 시 ?alonbsYn=Y 로 총액제 확인 가능.
+  const [searchParams] = useSearchParams()
   const state = useLocation().state as OvsTndrDtlItem | null
   const detail: OvsTndrDtlItem =
-    state ?? { ...MOCK_OVS_TNDR_DETAIL, alonbsYn: id?.endsWith('2') ? 'Y' : 'N' }
+    state ?? { ...MOCK_OVS_TNDR_DETAIL, alonbsYn: searchParams.get('alonbsYn') === 'Y' ? 'Y' : 'N' }
 
   const [tab, setTab] = useState('general')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -132,8 +132,8 @@ export function OvsTndrDtlPage() {
   const rtrcnRef = useRef<OvsBidRtrcnAplyHandle>(null)
 
   useEffect(() => {
-    console.log('[M75] 국외 입찰서 상세 조회', id) // 추후 API: bdService.getOvsTndrDtl(id) — 입찰서조회, 입찰서품목조회
-  }, [id])
+    console.log('[M75] 국외 입찰서 상세 조회', detail.intgRfrncNo) // 추후 API: bdService.getOvsTndrDtl — 입찰서조회, 입찰서품목조회
+  }, [detail.intgRfrncNo])
 
   // 요약 헤더 배지 — 입찰서 상태(색) + 업무구분 + 입찰방식 + 계약방법.
   const summaryBadges: SummaryInfoBadge[] = [

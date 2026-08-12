@@ -1,14 +1,14 @@
 // 물품총액/단가계약서상세 - '계약명세서' 탭 콘텐츠 (MUI-CT-01-T14/T17 공용). 설계서 slide50·58.
 // 계약 명세 정보: 부서명/조달판단번호 헤더 + 예산구분 그룹(장기국채/총계/예산별 소계) 품목 블록 반복.
 // 총액제(T14)와 단가제(T17)는 품목 항목 세트가 다름 — 값 있는 필드만 렌더(설계서 '-' 표시).
-import { useParams } from 'react-router-dom'
-
 import { useCmdtyCtrdocDtst } from '@/queries/ct'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { CtCtrdocType, CtrtDtstGroup, CtrtDtstGroupItem } from '@/types/ct'
 
 export interface CmdtyGramtCtrdocDtl_CtrtProps {
+  /** 계약 식별자 — 부모 상세 페이지가 navigate state 에서 받아 전달. */
+  id: string
   type: CtCtrdocType
 }
 
@@ -74,8 +74,7 @@ function DtstGroup({ group, type }: { group: CtrtDtstGroup; type: CtCtrdocType }
   )
 }
 
-export function CmdtyGramtCtrdocDtl_Ctrt({ type }: CmdtyGramtCtrdocDtl_CtrtProps) {
-  const { id = '' } = useParams()
+export function CmdtyGramtCtrdocDtl_Ctrt({ id, type }: CmdtyGramtCtrdocDtl_CtrtProps) {
   const { data } = useCmdtyCtrdocDtst(id, type)
   const groups = data?.groups ?? []
 

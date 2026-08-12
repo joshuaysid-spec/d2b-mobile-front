@@ -1,4 +1,4 @@
-// 연간조달계획 상세 (경로 /op/ovs/:id) — 통합목록의 검색유형 '연간조달계획'(annual) 카드 진입.
+// 연간조달계획 상세 (경로 /op/ovsPrcmPlanDtl) — 통합목록의 검색유형 '연간조달계획'(annual) 카드 진입.
 // 탭 = 목록정보조회(군수품 목록) 3탭: 형상자료(MUI-OP-01-T73) / 식별자료(T74) / 참고자료(T75).
 //   설계서 p75 는 이 진입을 P76 목록정보조회 '풀페이지 팝업' 으로 규정하나,
 //   사용자 확정(2026-08-11)에 따라 이 페이지가 P76 컨테이너 역할을 겸한다(별도 WarSplList_Inq 없음).
@@ -6,7 +6,7 @@
 //   ⚠️ 구 탭 콘텐츠 OvsPrcmPlanDtl(T71 집행계획상세)·OvsPrcmPlanDtl_RsltList(T72 결과목록)는
 //      이 경로에서 제거됐다. 설계서 정의 화면이라 파일은 보존 — 국외 조달계획 동선 확정 시 재연결.
 import { useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import type { OpPlanItem } from '@/types/op'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -50,8 +50,11 @@ export function OvsPrcmPlanDtlPage() {
   const [tab, setTab] = useState('cnfg')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
-  // 연간조달계획 식별자 — 3탭의 디폴트 값 조회 기준(경로 /op/ovs/:id).
-  const { id = '' } = useParams<{ id: string }>()
+  // 통합목록에서 국외 카드 클릭 시 navigate(state)로 넘어온 항목(OpPlanItem) — 식별자 소스 겸 요약 표시값.
+  //   국외 요약 전용필드(지시예산 USD·조달요구번호 등)는 통합목록 아이템에 없어 페이지 목업으로 보완. 백엔드 미연동.
+  const passed = useLocation().state as OpPlanItem | null
+  // 연간조달계획 식별자 — 3탭의 디폴트 값 조회 기준.
+  const id = passed?.id ?? ''
 
   // NIIN — 설계서 slide78 "다른 탭 페이지에서 NIIN 설정 시 탭에 모두 NIIN 유지" 규칙 때문에
   // 페이지가 소유하고 3탭에 그대로 내려준다. 검색 실행 시에만 appliedNiin 이 확정되고,
@@ -85,9 +88,8 @@ export function OvsPrcmPlanDtlPage() {
   const [outputModalOpen, setOutputModalOpen] = useState(false)
   const handleOutput = () => setOutputModalOpen(true)
 
-  // 통합목록에서 국외 카드 클릭 시 navigate(state)로 넘어온 항목(OpPlanItem). 백엔드 미연동.
-  //   국외 요약 전용필드(지시예산 USD·조달요구번호 등)는 통합목록 아이템에 없어 페이지 목업으로 보완.
-  const passed = useLocation().state as OpPlanItem | null
+  // state 없이 직접 진입 = 식별자를 알 수 없음 → 통합목록으로.
+  if (!passed) return <Navigate to="/op" replace />
 
   return (
     <div ref={rootRef} className="flex w-full flex-col">

@@ -2,8 +2,6 @@
 // 데이터영역은 국외 인지세 탭(T74, 설계서 slide162~163)과 동일: dm_ctrtInfo + dl_stmtxPayInfo + dm_payAmt.
 // ⚠️ 설계서 화면목록에 M74 영문 ID 미기재(Figma 신규 채번) — 임시 파일명 StmtxCnfrm(인지세 확인), 확정 시 교체.
 // 구성: 계약 정보 + 인지세 정보(반복) + 납부금액 정보 + 유의사항(HelpDisclosure) + footer 닫기.
-import { useParams } from 'react-router-dom'
-
 import { useCtrtStmtx } from '@/queries/ct'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
@@ -13,6 +11,8 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { CtrtStmtxPayInfo } from '@/types/ct'
 
 export interface StmtxCnfrmFullPopupProps {
+  /** 계약 식별자 — 부모 상세 페이지가 navigate state 에서 받아 전달. */
+  id: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -32,8 +32,7 @@ function payInfoRows(p: CtrtStmtxPayInfo): TableRow[] {
   ]
 }
 
-export function StmtxCnfrmFullPopup({ open, onOpenChange }: StmtxCnfrmFullPopupProps) {
-  const { id = '' } = useParams()
+export function StmtxCnfrmFullPopup({ id, open, onOpenChange }: StmtxCnfrmFullPopupProps) {
   const { data } = useCtrtStmtx(id, open)
 
   return (

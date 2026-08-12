@@ -1,7 +1,5 @@
 // 물품수정계약서상세 - '수정계약명세서' 탭 콘텐츠 (MUI-CT-01-T23). 설계서 slide78·80~81.
 // 수정항목(mdfcnArtclNm) + 품목 수정내역 블록(구분 -을/-으로, 반복). 데이터: useCmdtyMdfcnCtrdocDtst.
-import { useParams } from 'react-router-dom'
-
 import { useCmdtyMdfcnCtrdocDtst } from '@/queries/ct'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -22,8 +20,7 @@ function itemRows(it: CtrtMdfcnDtstItem): TableRow[] {
   ]
 }
 
-export function CmdtyMdfcnCtrdocDtl_MdfcnCtrt() {
-  const { id = '' } = useParams()
+export function CmdtyMdfcnCtrdocDtl_MdfcnCtrt({ id }: { id: string }) {
   const { data } = useCmdtyMdfcnCtrdocDtst(id)
   const items = data?.items ?? []
 

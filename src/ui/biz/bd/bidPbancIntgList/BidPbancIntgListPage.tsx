@@ -90,7 +90,8 @@ const TASK_SE_ALL = ['goods', 'service', 'construction', 'foreign']
 //   신기술여부 = 업무구분 '전체'·'물품'·'용역' 선택 시 노출.
 // ('전체' = selectAll 로 4종 모두 선택. 미선택도 전체로 간주.)
 function buildBidFilterSchema(value: SearchFilterValue): SearchFilterSchema {
-  const task = (value.taskSeNm as string[]) ?? []
+  // '0' = '전체' 코드값(selectAll.value) — 개수 판정에서 제외하고 센다.
+  const task = ((value.taskSeNm as string[]) ?? []).filter((v) => v !== '0')
   const isAllTask = task.length === 0 || task.length === TASK_SE_ALL.length
   const showOvsFields = isAllTask || task.includes('foreign')
   const showNtch = isAllTask || task.includes('goods') || task.includes('service')
@@ -107,7 +108,8 @@ function buildBidFilterSchema(value: SearchFilterValue): SearchFilterSchema {
           {
             type: 'checkbox',
             key: 'taskSeNm',
-            selectAll: true,
+            selectAll: { value: '0' }, // '0' = '전체' 코드값 — 전체 선택 시 값 배열에 포함
+
             options: [
               { value: 'goods', label: '물품' },
               { value: 'service', label: '용역' },
@@ -222,7 +224,7 @@ function buildBidFilterSchema(value: SearchFilterValue): SearchFilterSchema {
 //   업무구분 전체 선택(slide14 '전체가 아닌 경우 최소 1개 이상'), 번호검색 공고번호,
 //   추정가격 1천만~2천만(slide14), 신기술 아니오.
 const DEFAULT_FILTER: SearchFilterValue = {
-  taskSeNm: TASK_SE_ALL,
+  taskSeNm: ['0', ...TASK_SE_ALL], // 전체 선택('0' = 전체 코드값 포함)
   dateType: 'opbid',
   date: {
     start: dayjs().subtract(1, 'month').format('YYYY-MM-DD'),
@@ -291,12 +293,12 @@ export function BidPbancIntgListPage() {
   const handleCardClick = (it: BidPbancItem) => {
     // 업무구분(taskSeNm) 데이터 필드로 국내/국외 상세 분기 — 목록 아이템을 state 로 전달(즉시표시 초기값).
     if (it.taskSeNm === '국외') {
-      // 국외 입찰공고 상세(MUI-BD-01-M71 · 탭 T71~T73(구 M71~M73 — v1.83 재편), /bd/ovs/:id)
-      navigate(`/bd/ovs/${it.id}`, { state: it })
+      // 국외 입찰공고 상세(MUI-BD-01-M71 · 탭 T71~T73(구 M71~M73 — v1.83 재편), /bd/ovsBidPbancDtl)
+      navigate('/bd/ovsBidPbancDtl', { state: it })
       return
     }
-    // 입찰공고상세(MUI-BD-01-M07, /bd/:id)
-    navigate(`/bd/${it.id}`, { state: it })
+    // 입찰공고상세(MUI-BD-01-M07, /bd/bidPbancDtl)
+    navigate('/bd/bidPbancDtl', { state: it })
   }
 
   // ── 키워드 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 이 블록 삭제) ──

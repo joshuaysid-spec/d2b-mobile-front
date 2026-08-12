@@ -1,9 +1,9 @@
 // 해지/해제 일반총액제계약 상세 (MUI-CT-03-M03). 설계서 03.계약 v0.83 slide115~122.
-// 해지/해제 목록 카드(dtlRouteCd='gramt') 클릭 → /ct/cncltn/gramt/:id 진입.
+// 해지/해제 목록 카드(dtlRouteCd='gramt') 클릭 → /ct/cncltnRmvGnrlCtrtGramtDtl 진입(식별자는 navigate state).
 // 탭 3개: 상세정보(T04 _Cn) · 계약명세서(T05 _Artcl) · 특수조건(T06 _Spcl).
 // 데이터: useCncltnRmvGnrlCtrtDtl(id, 'gramt') — 목업/실연동은 ctService(USE_MOCK)가 전환.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useCncltnRmvGnrlCtrtDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -19,6 +19,7 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { CncltnRmvGnrlCtrtGramtDtl_Cn } from '@/ui/biz/ct/cncltnRmvGnrlCtrtGramtDtl/CncltnRmvGnrlCtrtGramtDtl_Cn'
 import { CncltnRmvGnrlCtrtGramtDtl_Artcl } from '@/ui/biz/ct/cncltnRmvGnrlCtrtGramtDtl/CncltnRmvGnrlCtrtGramtDtl_Artcl'
 import { CncltnRmvGnrlCtrtGramtDtl_Spcl } from '@/ui/biz/ct/cncltnRmvGnrlCtrtGramtDtl/CncltnRmvGnrlCtrtGramtDtl_Spcl'
+import type { CncltnRmvListItem } from '@/types/ct'
 
 // ── 탭 (slide115 탭바: 상세정보/계약명세서/특수조건) ──────────────────────────
 const TABS: TabItem[] = [
@@ -38,7 +39,8 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CncltnRmvGnrlCtrtGramtDtlPage() {
-  const { id = '' } = useParams()
+  const stateItem = useLocation().state as CncltnRmvListItem | null
+  const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -47,6 +49,8 @@ export function CncltnRmvGnrlCtrtGramtDtlPage() {
   const { data: detail } = useCncltnRmvGnrlCtrtDtl(id, 'gramt')
   const steps = stepsByStg('계약')
 
+  // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.
+  if (!stateItem) return <Navigate to="/ct/cncltn" replace />
   if (!detail) return <PageLoading />
 
   return (
@@ -114,8 +118,8 @@ export function CncltnRmvGnrlCtrtGramtDtlPage() {
       {/* 탭 콘텐츠 */}
       <div className="min-h-[100dvh]">
         {tab === 'detail' && <CncltnRmvGnrlCtrtGramtDtl_Cn detail={detail} />}
-        {tab === 'ctrt' && <CncltnRmvGnrlCtrtGramtDtl_Artcl />}
-        {tab === 'spcl' && <CncltnRmvGnrlCtrtGramtDtl_Spcl />}
+        {tab === 'ctrt' && <CncltnRmvGnrlCtrtGramtDtl_Artcl id={id} />}
+        {tab === 'spcl' && <CncltnRmvGnrlCtrtGramtDtl_Spcl id={id} />}
       </div>
 
       {/* FAB — 맨위로 */}

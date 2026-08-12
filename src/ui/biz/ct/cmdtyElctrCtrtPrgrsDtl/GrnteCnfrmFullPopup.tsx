@@ -2,8 +2,6 @@
 // 데이터영역은 국외 보증서 탭(T73, 설계서 slide160~161)과 동일: dm_ctrtInfo + dm_wtgrInfo(반복).
 // ⚠️ 설계서 화면목록에 M73 영문 ID 미기재(Figma 신규 채번) — 임시 파일명 GrnteCnfrm(보증서 확인), 확정 시 교체.
 // 구성: 계약 정보 Table + 보증서 정보 Table(여러 건 반복) + 이용안내(HelpDisclosure) + footer 닫기.
-import { useParams } from 'react-router-dom'
-
 import { useCtrtGrntes } from '@/queries/ct'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
@@ -13,6 +11,8 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { CtrtGrnteInfo } from '@/types/ct'
 
 export interface GrnteCnfrmFullPopupProps {
+  /** 계약 식별자 — 부모 상세 페이지가 navigate state 에서 받아 전달. */
+  id: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -34,8 +34,7 @@ function wtgrRows(w: CtrtGrnteInfo): TableRow[] {
   ]
 }
 
-export function GrnteCnfrmFullPopup({ open, onOpenChange }: GrnteCnfrmFullPopupProps) {
-  const { id = '' } = useParams()
+export function GrnteCnfrmFullPopup({ id, open, onOpenChange }: GrnteCnfrmFullPopupProps) {
   const { data } = useCtrtGrntes(id, open)
 
   return (

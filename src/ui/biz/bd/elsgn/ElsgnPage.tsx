@@ -104,7 +104,7 @@ export function ElsgnPage() {
         pbancNo: detail.pbancNo,
       })
       setSheetOpen(false)
-      navigate(`/bd/prgrs/${detail.rNum}/aply-cmptn`, {
+      navigate('/bd/aplyCmptn', {
         state: {
           detail,
           aplyType,

@@ -3,7 +3,7 @@
 // 셸: SummaryInfo + StepBar(신청서/서명/제출) + TabList(4스텝) + 스텝콘텐츠 + 하단 액션바(asymmetric). FAB 없음.
 // ⚠️ 페이지(헤더) 타이틀 = '견적서 작성'(라우트 handle). 설계서 우선.
 import { useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
@@ -69,7 +69,6 @@ const scrollTop = () => document.getElementById('app-scroll')?.scrollTo({ top: 0
 
 export function OvsRlsVltrnsNgtnEtdcSbmsnPage() {
   const navigate = useNavigate()
-  const { id } = useParams()
   const summary = (useLocation().state as OvsRlsVltrnsSummary | null) ?? MOCK_SUMMARY
   const [tab, setTab] = useState('general')
 
@@ -87,7 +86,7 @@ export function OvsRlsVltrnsNgtnEtdcSbmsnPage() {
       goTab(tabOrder[tabIdx + 1])
       return
     }
-    console.log('[M74] 공개수의협상 견적서 제출', id) // 추후 API: bdService.submitOvsRlsVltrnsEtdc
+    console.log('[M74] 공개수의협상 견적서 제출', summary.intgRfrncNo) // 추후 API: bdService.submitOvsRlsVltrnsEtdc
   }
 
   // 스탭1 일반정보 표 (slide420) — 계획상세 일반정보와 동일.

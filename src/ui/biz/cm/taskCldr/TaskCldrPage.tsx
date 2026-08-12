@@ -144,8 +144,9 @@ export function TaskCldrPage() {
       setDetailItem(item)
       return
     }
-    // 관심(찜) 입찰공고 → 입찰공고 상세(MUI-BD-01-M02). 상세는 자체 fallback 목업으로 상단 렌더.
-    navigate(`/bd/${item.id}`)
+    // 관심(찜) 입찰공고 → 입찰공고 상세(MUI-BD-01-M02). URL 에 식별자를 두지 않아 일정 항목을 state 로 넘긴다
+    // (⚠️ 일정 항목은 공고 상세가 기대하는 아이템 타입이 아니라 상단 요약 일부가 빈다 — API 연동 시 공고 조회로 대체).
+    navigate('/bd/bidPbancDtl', { state: item })
   }
 
   // 등록 시트 열기 — 선택 날짜를 기본값으로.

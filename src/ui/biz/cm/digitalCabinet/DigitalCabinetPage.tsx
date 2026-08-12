@@ -10,6 +10,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { ROUTES } from '@/constants/routes'
 import { Icon } from '@/ui/common/base/Icon'
 import { Button } from '@/ui/common/base/Button'
 import { Notice } from '@/ui/common/composites/Notice'
@@ -77,7 +78,7 @@ export function DigitalCabinetPage() {
   // ── 동작 스텁 ──
   const handleOpenFolder = (folder: DigitalCabinetFldr) => {
     // 폴더 클릭 → 폴더 내 파일 목록(M16). 폴더 정보를 state 로 전달(추후 파일목록 조회 키).
-    navigate(`/mypage/digital-cabinet/${folder.fldrSn}`, { state: folder })
+    navigate(ROUTES.DIGITAL_CABINET_FILES, { state: folder })
   }
   const handleOpenPerm = (folder: DigitalCabinetFldr) => {
     // 권한 설정 시트 열기 — 편집 초기값을 폴더 권한 목록에서 구성.

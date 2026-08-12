@@ -1,13 +1,10 @@
 // 상업계약서상세 - '계약대상' 탭 콘텐츠 (MUI-CT-01-T79 ovsCmbzCtrdocDtl_Trgt). 설계서 slide181·183.
 // 계약담당 공무원 + 계약 상대자(dm_ctrtRlt) + 무역대리점-연대보증인.
-import { useParams } from 'react-router-dom'
-
 import { useOvsCmbzTrgt } from '@/queries/ct'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table } from '@/ui/common/composites/Table'
 
-export function OvsCmbzCtrdocDtl_Trgt() {
-  const { id = '' } = useParams()
+export function OvsCmbzCtrdocDtl_Trgt({ id }: { id: string }) {
   const { data } = useOvsCmbzTrgt(id)
 
   if (!data) return null

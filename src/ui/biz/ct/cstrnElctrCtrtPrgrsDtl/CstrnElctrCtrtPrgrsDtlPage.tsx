@@ -1,10 +1,11 @@
 // 공사전자계약진행상세 (MUI-CT-01-M09). 설계서 03.계약 v0.83 slide38~47.
-// 계약통합목록 카드(공사 진행) 클릭 → /ct/cstrn/:id 진입. 물품 상세(M03)와 동일 셸 —
+// 계약통합목록 카드(공사 진행) 클릭 → /ct/cstrnElctrCtrtPrgrsDtl 진입(식별자는 navigate state).
+// 물품 상세(M03)와 동일 셸 —
 // 탭만 다름(상세정보 _Cn / 계약업체 _Artcl / 하자담보책임 _Flw / 첨부서류 = M03 _Adoc 재사용).
 // 바로가기·보증서(M73)·인지세(M74) 팝업 재사용(진행단계별 매트릭스 slide47 = slide32 와 동일 구성).
 // 계약명세서(P11)는 물품 전용 → 공사 바로가기에서 제외.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useCstrnCtrtPrgrsDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -27,6 +28,7 @@ import { CstrnElctrCtrtPrgrsDtl_Adoc } from '@/ui/biz/ct/cstrnElctrCtrtPrgrsDtl/
 import { GrnteCnfrmFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/GrnteCnfrmFullPopup'
 import { StmtxCnfrmFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/StmtxCnfrmFullPopup'
 import { CtrtPrgrsSttsInqFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CtrtPrgrsSttsInqFullPopup'
+import type { CtrtIntgListItem } from '@/types/ct'
 
 // ── 탭 (설계서 slide38 탭바: 상세정보/계약업체/하자담보책임/첨부서류) ──────────
 const TABS: TabItem[] = [
@@ -48,7 +50,8 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CstrnElctrCtrtPrgrsDtlPage() {
-  const { id = '' } = useParams()
+  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -61,6 +64,8 @@ export function CstrnElctrCtrtPrgrsDtlPage() {
   const { data: detail } = useCstrnCtrtPrgrsDtl(id)
   const steps = stepsByStg('계약')
 
+  // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.
+  if (!stateItem) return <Navigate to="/ct" replace />
   if (!detail) return <PageLoading />
 
   // 바로가기 항목 클릭 → 시트 닫고 해당 팝업 열기.
@@ -157,10 +162,10 @@ export function CstrnElctrCtrtPrgrsDtlPage() {
       {/* 탭 콘텐츠 — 짧은 탭도 헤더 접힘을 지탱할 스크롤 높이 확보(M03 과 동일) */}
       <div className="min-h-[100dvh]">
         {tab === 'detail' && <CstrnElctrCtrtPrgrsDtl_Cn detail={detail} />}
-        {tab === 'bzenty' && <CstrnElctrCtrtPrgrsDtl_Artcl />}
-        {tab === 'flw' && <CstrnElctrCtrtPrgrsDtl_Flw />}
+        {tab === 'bzenty' && <CstrnElctrCtrtPrgrsDtl_Artcl id={id} />}
+        {tab === 'flw' && <CstrnElctrCtrtPrgrsDtl_Flw id={id} />}
         {/* 첨부서류(T12) — 국내 공통 구조(slide42 = slide27), 전용 탭 컴포넌트 */}
-        {tab === 'adoc' && <CstrnElctrCtrtPrgrsDtl_Adoc />}
+        {tab === 'adoc' && <CstrnElctrCtrtPrgrsDtl_Adoc id={id} />}
       </div>
 
       {/* 플로팅 버튼 — 맨위로(항상) + 상세정보 탭에서 '+' 바로가기 */}
@@ -200,9 +205,9 @@ export function CstrnElctrCtrtPrgrsDtlPage() {
       />
 
       {/* 보증서 확인(M73) · 인지세 확인(M74) · 계약진행상태(P17) 풀팝업 — M03 컴포넌트 재사용 */}
-      <GrnteCnfrmFullPopup open={grnteOpen} onOpenChange={setGrnteOpen} />
-      <StmtxCnfrmFullPopup open={stmtxOpen} onOpenChange={setStmtxOpen} />
-      <CtrtPrgrsSttsInqFullPopup open={prgrsSttsOpen} onOpenChange={setPrgrsSttsOpen} />
+      <GrnteCnfrmFullPopup id={id} open={grnteOpen} onOpenChange={setGrnteOpen} />
+      <StmtxCnfrmFullPopup id={id} open={stmtxOpen} onOpenChange={setStmtxOpen} />
+      <CtrtPrgrsSttsInqFullPopup id={id} open={prgrsSttsOpen} onOpenChange={setPrgrsSttsOpen} />
     </div>
   )
 }

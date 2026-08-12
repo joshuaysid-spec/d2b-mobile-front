@@ -2,18 +2,18 @@
 export const ROUTES = {
   HOME: '/',
   OP: '/op',
-  /** 조달계획 상세 (`:id` 파라미터). 이동: `/op/${id}`. */
-  OP_DETAIL: '/op/:id',
-  /** 사전규격 상세 (`:id` 파라미터). 이동: `/op/spec/${id}`. */
-  OP_SPEC_DETAIL: '/op/spec/:id',
+  /** 조달계획 상세. 식별자는 navigate state. */
+  OP_DETAIL: '/op/prcmPlanDtl',
+  /** 사전규격 상세. 식별자는 navigate state. */
+  OP_SPEC_DETAIL: '/op/bfhdSpcfctDtl',
   /** 입찰공고 통합목록 (MUI-BD-01-M01). */
   BD: '/bd',
-  /** 입찰공고 상세 (`:id` 파라미터). 이동: `/bd/${id}`. */
-  BD_DETAIL: '/bd/:id',
+  /** 입찰공고 상세. 식별자는 navigate state. */
+  BD_DETAIL: '/bd/bidPbancDtl',
   /** 입찰진행 목록 (MUI-BD-03-M01). */
   BD_PRGRS: '/bd/prgrs',
-  /** 입찰진행 상세 (MUI-BD-03-M02, `:id`). 이동: `/bd/prgrs/${id}`. */
-  BD_PRGRS_DETAIL: '/bd/prgrs/:id',
+  /** 입찰진행 상세. 식별자는 navigate state. */
+  BD_PRGRS_DETAIL: '/bd/bidPrgsDtlInq',
   /** 입찰등록심사 결과조회 (MUI-BD-03-M05). */
   BD_REG_RSLT: '/bd/reg-rslt',
   /** 사전심사(PQ) 결과조회 (MUI-BD-02-M02). */
@@ -26,72 +26,72 @@ export const ROUTES = {
   CT_PYMT: '/ct/pymt',
   /** 해지/해제 목록 (MUI-CT-03-M01). */
   CT_CNCLTN: '/ct/cncltn',
-  /** 해지/해제 물품일반계약 상세 (MUI-CT-03-M02, `:id`). 이동: `/ct/cncltn/${id}`. */
-  CT_CNCLTN_DETAIL: '/ct/cncltn/:id',
-  /** 해지/해제 일반총액제계약 상세 (MUI-CT-03-M03, `:id`). 이동: `/ct/cncltn/gramt/${id}`. */
-  CT_CNCLTN_GRAMT_DETAIL: '/ct/cncltn/gramt/:id',
-  /** 해지/해제 일반단가제계약 상세 (MUI-CT-03-M04, `:id`). 이동: `/ct/cncltn/untprc/${id}`. */
-  CT_CNCLTN_UNTPRC_DETAIL: '/ct/cncltn/untprc/:id',
-  /** 해지/해제 수정계약 상세 (MUI-CT-03-M05, `:id`). 이동: `/ct/cncltn/mdfcn/${id}`. */
-  CT_CNCLTN_MDFCN_DETAIL: '/ct/cncltn/mdfcn/:id',
-  /** 해지/해제 공사계약 상세 (MUI-CT-03-M06, `:id`). 이동: `/ct/cncltn/cstrn/${id}`. */
-  CT_CNCLTN_CSTRN_DETAIL: '/ct/cncltn/cstrn/:id',
-  /** 입찰결과상세(개찰상세) (MUI-BD-09-M01 · T01~T04(구 M01~M04 — v1.83 재편), `:id` 파라미터). 이동: `/bd/result/${id}`. */
-  BD_RESULT_DETAIL: '/bd/result/:id',
+  /** 해지/해제 물품일반계약 상세. 식별자는 navigate state. */
+  CT_CNCLTN_DETAIL: '/ct/cmdtyCtrtCncltnRmvDtl',
+  /** 해지/해제 일반총액제계약 상세. 식별자는 navigate state. */
+  CT_CNCLTN_GRAMT_DETAIL: '/ct/cncltnRmvGnrlCtrtGramtDtl',
+  /** 해지/해제 일반단가제계약 상세. 식별자는 navigate state. */
+  CT_CNCLTN_UNTPRC_DETAIL: '/ct/cncltnRmvGnrlCtrtUntprcDtl',
+  /** 해지/해제 수정계약 상세. 식별자는 navigate state. */
+  CT_CNCLTN_MDFCN_DETAIL: '/ct/cncltnRmvMdfcnCtrtDtl',
+  /** 해지/해제 공사계약 상세. 식별자는 navigate state. */
+  CT_CNCLTN_CSTRN_DETAIL: '/ct/cstrnCtrtCncltnRmvDtl',
+  /** 입찰결과상세(개찰상세) (MUI-BD-09-M01 · T01~T04(구 M01~M04 — v1.83 재편)). 식별자는 navigate state. */
+  BD_RESULT_DETAIL: '/bd/bidRsltDtl',
   /** 검사통합목록 (MUI-EX-01-M01). */
   EX: '/ex',
-  /** 검사및납품조서상세(중앙조달) (MUI-EX-01-M02, `:id`). 이동: `/ex/dlvdoc/${id}`. */
-  EX_DLVDOC_DETAIL: '/ex/dlvdoc/:id',
-  /** 검사및납품조서상세(부대조달) (MUI-EX-01-M03, `:id`). 이동: `/ex/dlvdoc/sbsd/${id}`. */
-  EX_DLVDOC_SBSD_DETAIL: '/ex/dlvdoc/sbsd/:id',
-  /** 기성및준공검사상세 (MUI-EX-01-M04, `:id`). 이동: `/ex/pxcnd/${id}`. */
-  EX_PXCND_DETAIL: '/ex/pxcnd/:id',
+  /** 검사및납품조서상세(중앙조달). 식별자는 navigate state. */
+  EX_DLVDOC_DETAIL: '/ex/inspDlvdocDtl',
+  /** 검사및납품조서상세(부대조달). 식별자는 navigate state. */
+  EX_DLVDOC_SBSD_DETAIL: '/ex/inspDlvdocDtlSbsdPrcm',
+  /** 기성및준공검사상세. 식별자는 navigate state. */
+  EX_PXCND_DETAIL: '/ex/pxcndCmcnInspDtl',
   /** 검사및납품조서현황목록 (MUI-EX-01-M05). */
   EX_PRST: '/ex/prst',
-  /** 검사및납품조서결과상세 (MUI-EX-01-M07, `:id`). 이동: `/ex/dlvdoc/rslt/${id}`. */
-  EX_DLVDOC_RSLT_DETAIL: '/ex/dlvdoc/rslt/:id',
+  /** 검사및납품조서결과상세. 식별자는 navigate state. */
+  EX_DLVDOC_RSLT_DETAIL: '/ex/dlvdocRsltDtl',
   /** 견적의뢰서목록 (MUI-EX-02-M71). */
   EX_ESTMT_RQDC: '/ex/estmt-rqdc',
-  /** 견적의뢰서상세 (MUI-EX-02-M72, `:id`). 이동: `/ex/estmt-rqdc/${id}`. */
-  EX_ESTMT_RQDC_DETAIL: '/ex/estmt-rqdc/:id',
+  /** 견적의뢰서상세. 식별자는 navigate state. */
+  EX_ESTMT_RQDC_DETAIL: '/ex/ovsEstmtRqdcDtl',
   /** 견적통보서목록 (MUI-EX-02-M73). */
   EX_ESTMT_NTDC: '/ex/estmt-ntdc',
-  /** 견적통보서상세 (MUI-EX-02-M74, `:id`). 이동: `/ex/estmt-ntdc/${id}`. */
-  EX_ESTMT_NTDC_DETAIL: '/ex/estmt-ntdc/:id',
+  /** 견적통보서상세. 식별자는 navigate state. */
+  EX_ESTMT_NTDC_DETAIL: '/ex/ovsEstmtNtdcDtl',
   /** 발주의뢰서목록 (MUI-EX-02-M75). */
   EX_ORDER_RQDC: '/ex/order-rqdc',
-  /** 발주의뢰서상세 (MUI-EX-02-M76, `:id`). 이동: `/ex/order-rqdc/${id}`. */
-  EX_ORDER_RQDC_DETAIL: '/ex/order-rqdc/:id',
+  /** 발주의뢰서상세. 식별자는 navigate state. */
+  EX_ORDER_RQDC_DETAIL: '/ex/ovsOrderRqdcDtl',
   /** 발주통보서목록 (MUI-EX-02-M77). */
   EX_ORDER_NTDC: '/ex/order-ntdc',
-  /** 발주통보서상세 (MUI-EX-02-M78, `:id`). 이동: `/ex/order-ntdc/${id}`. */
-  EX_ORDER_NTDC_DETAIL: '/ex/order-ntdc/:id',
+  /** 발주통보서상세. 식별자는 navigate state. */
+  EX_ORDER_NTDC_DETAIL: '/ex/ovsOrderNtdcDtl',
   /** 대금청구통합목록 (MUI-WM-01-M01). */
   WM: '/wm',
   /** 사전의향서목록 (MUI-TS-01-M01). */
   TS_LOI: '/ts/loi',
-  /** 사전의향서상세 (MUI-TS-01-M02, `:id`). 이동: `/ts/loi/${id}`. */
-  TS_LOI_DETAIL: '/ts/loi/:id',
+  /** 사전의향서상세. 식별자는 navigate state. */
+  TS_LOI_DETAIL: '/ts/bfhdLoiDtl',
   /** 세금계산서계약목록 (MUI-TS-04-M01). */
   TS_TXIV: '/ts/txiv',
-  /** 세금계산서상세 (MUI-TS-04-M03, `:id`). 이동: `/ts/txiv/dtl/${id}`. */
-  TS_TXIV_DETAIL: '/ts/txiv/dtl/:id',
+  /** 세금계산서상세. 식별자는 navigate state. */
+  TS_TXIV_DETAIL: '/ts/txivDtl',
   /** 세금계산서진행현황 (MUI-TS-04-M04). */
   TS_TXIV_PRGRS: '/ts/txiv/prgrs',
-  /** 선금신청서상세 (MUI-WM-01-M02, `:id`). 이동: `/wm/prpay/${id}`. */
-  WM_PRPAY_DETAIL: '/wm/prpay/:id',
-  /** 착·중도금신청서상세 (MUI-WM-01-M03, `:id`). 이동: `/wm/dpsmn-itrpy/${id}`. */
-  WM_DPSMN_ITRPY_DETAIL: '/wm/dpsmn-itrpy/:id',
-  /** 대금청구 상세(중앙조달) (MUI-WM-01-M05, `:id`). 이동: `/wm/pymt-clm/${id}`. */
-  WM_PYMT_CLM_DETAIL: '/wm/pymt-clm/:id',
-  /** 대금청구상세(부대조달) (MUI-WM-01-M06, `:id`). 이동: `/wm/pymt-clm/sbsd/${id}`. */
-  WM_PYMT_CLM_SBSD_DETAIL: '/wm/pymt-clm/sbsd/:id',
-  /** 대금청구상세(공사) (MUI-WM-01-M07, `:id`). 이동: `/wm/pymt-clm/cstrn/${id}`. */
-  WM_PYMT_CLM_CSTRN_DETAIL: '/wm/pymt-clm/cstrn/:id',
-  /** 대금청구상세(기성대가) (MUI-WM-01-M08, `:id`). 이동: `/wm/pymt-clm/pxcnd/${id}`. */
-  WM_PYMT_CLM_PXCND_DETAIL: '/wm/pymt-clm/pxcnd/:id',
-  /** 사후정산청구상세 (MUI-WM-01-M13, `:id`). 이동: `/wm/epfc-clcln/${id}`. */
-  WM_EPFC_CLCLN_DETAIL: '/wm/epfc-clcln/:id',
+  /** 선금신청서상세. 식별자는 navigate state. */
+  WM_PRPAY_DETAIL: '/wm/prpayApfrDtl',
+  /** 착·중도금신청서상세. 식별자는 navigate state. */
+  WM_DPSMN_ITRPY_DETAIL: '/wm/dpsmnItrpyApfrDtl',
+  /** 대금청구 상세(중앙조달). 식별자는 navigate state. */
+  WM_PYMT_CLM_DETAIL: '/wm/centerPrcmPymtClmDtl',
+  /** 대금청구상세(부대조달). 식별자는 navigate state. */
+  WM_PYMT_CLM_SBSD_DETAIL: '/wm/sbsdPrcmPymtClmDtl',
+  /** 대금청구상세(공사). 식별자는 navigate state. */
+  WM_PYMT_CLM_CSTRN_DETAIL: '/wm/cstrnPymtClmDtl',
+  /** 대금청구상세(기성대가). 식별자는 navigate state. */
+  WM_PYMT_CLM_PXCND_DETAIL: '/wm/pxcndCstPymtClmDtl',
+  /** 사후정산청구상세. 식별자는 navigate state. */
+  WM_EPFC_CLCLN_DETAIL: '/wm/epfcClclnClmDtl',
   /** 대금지불정보(반납) (MUI-WM-01-M10). */
   WM_RTN: '/wm/rtn',
   /** 대금청구진행현황 (MUI-WM-01-M11). */
@@ -100,32 +100,32 @@ export const ROUTES = {
   SUPPORT: '/support',
   /** 일반공지사항(공지사항 목록) (MUI-CM-04-M01). */
   SUPPORT_NOTICE: '/support/notice',
-  /** 일반공지사항 상세 (MUI-CM-04-M02, `:contsNo`). 이동: `/support/notice/${contsNo}`. */
-  SUPPORT_NOTICE_DETAIL: '/support/notice/:contsNo',
+  /** 일반공지사항 상세 (MUI-CM-04-M02). 식별자는 navigate state(NoticeListItem). */
+  SUPPORT_NOTICE_DETAIL: '/support/noticeDtl',
   /** 방위사업청공지사항 (MUI-CM-04-M21). */
   SUPPORT_NOTICE_DAPA: '/support/notice/dapa',
-  /** 방위사업청공지사항 상세 (MUI-CM-04-M22, `:contsNo`). */
-  SUPPORT_NOTICE_DAPA_DETAIL: '/support/notice/dapa/:contsNo',
+  /** 방위사업청공지사항 상세 (MUI-CM-04-M22). 식별자는 navigate state. */
+  SUPPORT_NOTICE_DAPA_DETAIL: '/support/d2bNoticeDtl',
   /** 수요부대별공지사항 (MUI-CM-04-M23). */
   SUPPORT_NOTICE_DMDFRC: '/support/notice/dmdfrc',
-  /** 수요부대별공지사항 상세 (MUI-CM-04-M24, `:contsNo`). */
-  SUPPORT_NOTICE_DMDFRC_DETAIL: '/support/notice/dmdfrc/:contsNo',
+  /** 수요부대별공지사항 상세 (MUI-CM-04-M24). 식별자는 navigate state. */
+  SUPPORT_NOTICE_DMDFRC_DETAIL: '/support/dmdfrcNoticeDtl',
   /** 일반자료실 (MUI-CM-04-M25). */
   SUPPORT_ARCHIVE: '/support/archive',
-  /** 일반자료실 상세 (MUI-CM-04-M26, `:contsNo`). */
-  SUPPORT_ARCHIVE_DETAIL: '/support/archive/:contsNo',
+  /** 일반자료실 상세 (MUI-CM-04-M26). 식별자는 navigate state(RpstrListItem). */
+  SUPPORT_ARCHIVE_DETAIL: '/support/rpstrDtl',
   /** 수요부대별자료실 (MUI-CM-04-M27). */
   SUPPORT_ARCHIVE_DMDFRC: '/support/archive/dmdfrc',
-  /** 수요부대별자료실 상세 (MUI-CM-04-M28, `:contsNo`). */
-  SUPPORT_ARCHIVE_DMDFRC_DETAIL: '/support/archive/dmdfrc/:contsNo',
+  /** 수요부대별자료실 상세 (MUI-CM-04-M28). 식별자는 navigate state. */
+  SUPPORT_ARCHIVE_DMDFRC_DETAIL: '/support/dmdfrcRpstrDtl',
   /** 계약관련서식자료실 (MUI-CM-04-M29). */
   SUPPORT_ARCHIVE_CTRT: '/support/archive/ctrt',
-  /** 계약관련서식자료실 상세 (MUI-CM-04-M30, `:contsNo`). */
-  SUPPORT_ARCHIVE_CTRT_DETAIL: '/support/archive/ctrt/:contsNo',
+  /** 계약관련서식자료실 상세 (MUI-CM-04-M30). 식별자는 navigate state. */
+  SUPPORT_ARCHIVE_CTRT_DETAIL: '/support/ctrtRpstrDtl',
   /** 시스템개선안내 (MUI-CM-04-M31). */
   SUPPORT_SYS_IMPV: '/support/sys-impv',
-  /** 시스템개선안내 상세 (MUI-CM-04-M32, `:contsNo`). */
-  SUPPORT_SYS_IMPV_DETAIL: '/support/sys-impv/:contsNo',
+  /** 시스템개선안내 상세 (MUI-CM-04-M32). 식별자는 navigate state(SysImpvListItem). */
+  SUPPORT_SYS_IMPV_DETAIL: '/support/sysImpvRpstrDtl',
   /** 자주묻는질문 (MUI-CM-04-M03). */
   SUPPORT_FAQ: '/support/faq',
   /** 민원서류발급신청 (MUI-CM-04-M04). 고객센터 > 민원서류발급신청 허브. */
@@ -134,8 +134,8 @@ export const ROUTES = {
   SUPPORT_APLY_STEP_INFO: '/support/dcmnt-issu-aply/aply-step-info',
   /** 실적증명서 신청 목록 (MUI-CM-04-M06). 민원서류발급신청 허브 > 실적 증명서 신청 목록. */
   SUPPORT_PRFMNC_PRDOC: '/support/dcmnt-issu-aply/prfmnc-prdoc',
-  /** 실적증명서 확인(상세) (MUI-CM-04-M07, `:prfmncRcptNo`). 목록 카드 클릭 진입. */
-  SUPPORT_PRFMNC_PRDOC_DTL: '/support/dcmnt-issu-aply/prfmnc-prdoc/:prfmncRcptNo',
+  /** 실적증명서 확인(상세) (MUI-CM-04-M07). 목록 카드 클릭 진입 — 식별자는 navigate state(PrfmncPrdocItem). */
+  SUPPORT_PRFMNC_PRDOC_DTL: '/support/prfmncPrdocDtl',
   /** 실적증명서 신청 플로우 (MUI-CM-04-P21 계약선택 → M12 신청정보 → T12/T13 실적정보). */
   SUPPORT_PRFMNC_PRDOC_REG: '/support/dcmnt-issu-aply/prfmnc-prdoc/reg',
   /** 국외조달원등록증신청목록 (MUI-CM-04-M21). 민원서류발급신청 허브 > 국외 조달원 등록증 신청 목록. */
@@ -191,8 +191,8 @@ export const ROUTES = {
   DMST_SOS_CNFDOC: '/mypage/dmst-sos-cnfdoc',
   /** 추가정보 신청 목록 (MUI-CM-01-M03, addRegInfoAplyList). 마이페이지 > 업체정보관리 > 추가정보 신청 목록(검색필터 P24). */
   ADD_REG_INFO_APLY: '/mypage/add-reg-info-aply',
-  /** 추가정보 신청내역상세 (MUI-CM-01-M03 상세, T05/T06, `:id`). 이동: `/mypage/add-reg-info-aply/${id}` + navigate state(항목). */
-  ADD_REG_INFO_APLY_DETAIL: '/mypage/add-reg-info-aply/:id',
+  /** 추가정보 신청내역상세 (MUI-CM-01-M03 상세, T05/T06). 식별자는 navigate state(AddRegInfoAplyItem). */
+  ADD_REG_INFO_APLY_DETAIL: '/mypage/addRegInfoAplyDtl',
   /** 업체정보 추가등록 — 물품(내자) (MUI-CM-01-M05, DmstLctnColInfoAddRegPage). 진입점 M01(업체정보관리) 미구현 — route만 등록. */
   BZENTY_ADD_REG_CMDTY: '/mypage/bzenty-add-reg/cmdty',
   /** 업체정보 추가등록 — 담당자정보 (MUI-CM-01-M22, DmstLctnColInfoAddRegPage_Pic). 진입점 M01 미구현 — route만 등록. */
@@ -225,12 +225,12 @@ export const ROUTES = {
   MY_PST: '/mypage/my-pst',
   /** 디지털캐비닛 (MUI-CM-06-M14). 마이페이지 > 디지털캐비닛(자료 폴더 목록). */
   DIGITAL_CABINET: '/mypage/digital-cabinet',
-  /** 폴더 내 파일 목록 (MUI-CM-06-M16, `:fldrSn`). 이동: `/mypage/digital-cabinet/${fldrSn}`. */
-  DIGITAL_CABINET_FILES: '/mypage/digital-cabinet/:fldrSn',
+  /** 폴더 내 파일 목록 (MUI-CM-06-M16). 폴더는 navigate state(DigitalCabinetFolder). */
+  DIGITAL_CABINET_FILES: '/mypage/digitalCabinetFileList',
   /** 문서함 (MUI-CM-06-M10). 마이페이지 > 문서함(받은/보낸/반려/임시저장 문서 목록). */
   DOC_BOX: '/mypage/doc-box',
-  /** 문서함 상세 (MUI-CM-06-M11, `:id`). 이동: `/mypage/doc-box/${id}`. */
-  DOC_BOX_DETAIL: '/mypage/doc-box/:id',
+  /** 문서함 상세 (MUI-CM-06-M11). 식별자는 navigate state(DocBoxItem). */
+  DOC_BOX_DETAIL: '/mypage/docBoxDtl',
   /** 사용자정보관리 허브 (MUI-CM-02-M01, IndvInfoMngPage). 마이페이지 > 사용자 정보관리(진입 버튼 목록). */
   INDV_INFO_MNG: '/mypage/indv-info-mng',
   /** 개인(생체)/비밀번호 인증 (MUI-CM-02-M02, IndvCertPage). 사용자정보관리 > 개인정보 접근 전 본인 인증. */

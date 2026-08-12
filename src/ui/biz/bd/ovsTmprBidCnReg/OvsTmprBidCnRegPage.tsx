@@ -1,11 +1,11 @@
 // 입찰내역 작성 (MUI-BD-01-M76 컨테이너 · 탭 T74 일반정보 · T75·T76 입찰내역(구 M77·M78 — v1.83 재편), 설계서 07국외입찰공고상세 slide312~319)
-// 접속: 홈 > 마이페이지 > 국외 보관함 > 국외 보관함 상세 > 입찰내역 작성 (/bd/ovs/locker/:id/bid-cn)
+// 접속: 홈 > 마이페이지 > 국외 보관함 > 국외 보관함 상세 > 입찰내역 작성 (/bd/ovsTmprBidCnReg)
 // 구성(TndrWrtPage 패턴): 요약(SummaryInfo) → 탭(일반정보 | 품목 목록) → 탭 콘텐츠 + 맨위로 FAB.
 //   - 일반정보 탭(M76): 공고일반(dm_bscPbancInfo) + 담당자 정보 — 본 파일 인라인(Table).
 //   - 품목 목록 탭: 입찰방법에 따라 단가제(M77 BidDsctn) / 총액제(M78 BidDsctn2) 를 같은 페이지에서 분기(페이지 복제 금지).
 // 단가제/총액제 분기 테스트: 직접 URL 진입 시 ?bidMthdNm=총액제 쿼리로 M78(총액제) 확인 가능.
 import { useState } from 'react'
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import { Button } from '@/ui/common/base/Button'
 import { PageTitle } from '@/ui/common/base/PageTitle'
@@ -39,7 +39,6 @@ const MOCK_BSC_PBANC_INFO: BscPbancInfo = {
 
 export function OvsTmprBidCnRegPage() {
   const navigate = useNavigate()
-  const { id = 'BAD83990EFD' } = useParams() // 보관함 상세 :id — 이전공고입찰내역 이동 경로에 사용
   const [searchParams] = useSearchParams()
 
   // 보관함 상세에서 navigate state 로 넘어온 항목 — 다른 유닛 화면에서 부분 필드만 넘어올 수 있어
@@ -68,7 +67,7 @@ export function OvsTmprBidCnRegPage() {
   const handleBfrBidCn = () => {
     console.log('[M76] 이전공고입찰내역 불러오기', detail.intgRfrncNo)
     // 추후 API: bdService.getOvsBfrPbancBidCnList(intgRfrncNo)
-    navigate(`/bd/ovs/locker/${id}/bfr-bid-cn`, { state: detail })
+    navigate('/bd/ovsBfrTmprBidBidCnReg', { state: detail })
   }
 
   // ── 일반정보 탭(M76) — 공고일반(dm_bscPbancInfo) + 담당자 정보 ──

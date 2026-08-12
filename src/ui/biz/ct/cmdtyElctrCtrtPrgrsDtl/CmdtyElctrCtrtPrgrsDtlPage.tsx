@@ -1,15 +1,16 @@
 // 물품전자계약진행상세 (MUI-CT-01-M03, Figma 10020-154603/154708/154930/154807 + 바로가기 155209).
-// 설계서 03.계약 v0.83 slide23~32. 계약통합목록 카드(물품 진행) 클릭 → /ct/:id 진입.
+// 설계서 03.계약 v0.83 slide23~32. 계약통합목록 카드(물품 진행) 클릭 → /ct/cmdtyElctrCtrtPrgrsDtl 진입.
 // ⚠️ M04 물품전자계약확정상세 겸용 — 설계서 slide33 참고사항 '물품전자계약진행상세와 화면이 동일함'
 //   (같은 구조 = 1페이지 원칙). 확정 상태는 상세 조회 응답(ctrtStatNm/ctrtPrgrsStcd)으로 구분되며,
 //   바로가기 '계약명세서'가 확정 시 P12 물품최종계약명세서로 분기된다.
 // 구성: 중요 안내(Notice urgent, PC 안내) + sticky(요약 SummaryInfo + 스텝 StepBar + 탭 TabList)
 //   + 탭 콘텐츠(상세정보 _Cn / 계약업체 _Artcl / 반송·취소사유 _RjctRsn / 첨부서류 _Adoc)
 //   + FAB(맨위로 + 상세정보 탭에서 '+' 바로가기 바텀시트) + 팝업(보증서 M73 · 인지세 M74 · 계약명세서 P11).
-// 데이터: useCtrtPrgrsDtl — 목록 state 는 요약 즉시표시에 안 쓰고 조회로 확정(필드 구성이 목록과 달라
-//   placeholder 부적합) → 조회 완료까지 PageLoading. 목업/실연동은 ctService(USE_MOCK)가 전환.
+// 데이터: 식별자(id)는 목록에서 navigate state 로 전달(URL 노출 금지). state 는 요약 즉시표시에 안 쓰고
+//   조회로 확정(필드 구성이 목록과 달라 placeholder 부적합) → 조회 완료까지 PageLoading.
+//   목업/실연동은 ctService(USE_MOCK)가 전환.
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useCtrtPrgrsDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -34,6 +35,7 @@ import { StmtxCnfrmFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/StmtxCnf
 import { CmdtyCtrtDtstFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyCtrtDtstFullPopup'
 import { CmdtyLastCtrdocDtstFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyLastCtrdocDtstFullPopup'
 import { CtrtPrgrsSttsInqFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CtrtPrgrsSttsInqFullPopup'
+import type { CtrtIntgListItem } from '@/types/ct'
 
 // ── 탭 (Figma 154930 tab bar — 화면목록 T03=특수조건은 레이아웃과 불일치, 레이아웃 기준) ──
 const TABS: TabItem[] = [
@@ -89,7 +91,8 @@ const BTN_MTRX_DEFAULT: { rprs: MtrxBtnKey[]; cnst: MtrxBtnKey[] } = {
 }
 
 export function CmdtyElctrCtrtPrgrsDtlPage() {
-  const { id = '' } = useParams()
+  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -105,6 +108,8 @@ export function CmdtyElctrCtrtPrgrsDtlPage() {
   // 진행 단계 — 계약 도메인 상세는 '계약' 단계(설계서 slide23 단계표시기).
   const steps = stepsByStg('계약')
 
+  // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.
+  if (!stateItem) return <Navigate to="/ct" replace />
   if (!detail) return <PageLoading />
 
   // 바로가기 항목 클릭 → 시트 닫고 해당 팝업 열기.
@@ -237,9 +242,9 @@ export function CmdtyElctrCtrtPrgrsDtlPage() {
       {/* 탭 콘텐츠 — 짧은 탭도 헤더 접힘을 지탱할 스크롤 높이 확보(진동 방지, OP 상세와 동일) */}
       <div className="min-h-[100dvh]">
         {tab === 'detail' && <CmdtyElctrCtrtPrgrsDtl_Cn detail={detail} />}
-        {tab === 'bzenty' && <CmdtyElctrCtrtPrgrsDtl_Artcl />}
-        {tab === 'rjctRsn' && <CmdtyElctrCtrtPrgrsDtl_RjctRsn />}
-        {tab === 'adoc' && <CmdtyElctrCtrtPrgrsDtl_Adoc />}
+        {tab === 'bzenty' && <CmdtyElctrCtrtPrgrsDtl_Artcl id={id} />}
+        {tab === 'rjctRsn' && <CmdtyElctrCtrtPrgrsDtl_RjctRsn id={id} />}
+        {tab === 'adoc' && <CmdtyElctrCtrtPrgrsDtl_Adoc id={id} />}
       </div>
 
       {/* 플로팅 버튼 — 맨위로(항상) + 상세정보 탭에서 '+' 바로가기(slide23: 현 상세내용 탭에서는 + 버튼) */}
@@ -279,11 +284,11 @@ export function CmdtyElctrCtrtPrgrsDtlPage() {
       />
 
       {/* 보증서 확인(M73) · 인지세 확인(M74) · 물품계약명세서(P11) · 물품최종계약명세서(P12) 풀팝업 */}
-      <GrnteCnfrmFullPopup open={grnteOpen} onOpenChange={setGrnteOpen} />
-      <StmtxCnfrmFullPopup open={stmtxOpen} onOpenChange={setStmtxOpen} />
-      <CmdtyCtrtDtstFullPopup open={dtstOpen} onOpenChange={setDtstOpen} />
-      <CmdtyLastCtrdocDtstFullPopup open={lastDtstOpen} onOpenChange={setLastDtstOpen} />
-      <CtrtPrgrsSttsInqFullPopup open={prgrsSttsOpen} onOpenChange={setPrgrsSttsOpen} />
+      <GrnteCnfrmFullPopup id={id} open={grnteOpen} onOpenChange={setGrnteOpen} />
+      <StmtxCnfrmFullPopup id={id} open={stmtxOpen} onOpenChange={setStmtxOpen} />
+      <CmdtyCtrtDtstFullPopup id={id} open={dtstOpen} onOpenChange={setDtstOpen} />
+      <CmdtyLastCtrdocDtstFullPopup id={id} open={lastDtstOpen} onOpenChange={setLastDtstOpen} />
+      <CtrtPrgrsSttsInqFullPopup id={id} open={prgrsSttsOpen} onOpenChange={setPrgrsSttsOpen} />
     </div>
   )
 }

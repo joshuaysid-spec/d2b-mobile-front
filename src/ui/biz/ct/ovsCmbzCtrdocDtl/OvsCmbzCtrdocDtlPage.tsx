@@ -1,8 +1,8 @@
 // 상업계약서상세 (MUI-CT-01-M77 OvsCmbzCtrdocDtlPage). 설계서 03.계약 v0.83 slide178~184.
-// 국외전자계약진행상세(M71) 바로가기 → /ct/ovs/cmbz/:id 진입(흐름도 slide147).
+// 국외전자계약진행상세(M71) 바로가기 → /ct/ovsCmbzCtrdocDtl 진입(흐름도 slide147, 식별자는 navigate state).
 // 탭 3개: 계약현황(T77 _Stts) · 계약명세서(T78 _Ctrt → P78 팝업) · 계약대상(T79 _Trgt).
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useOvsCmbzCtrdocDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -21,6 +21,7 @@ import { OvsCmbzCtrdocDtl_Stts } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrdo
 import { OvsCmbzCtrdocDtl_Ctrt } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrdocDtl_Ctrt'
 import { OvsCmbzCtrdocDtl_Trgt } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrdocDtl_Trgt'
 import { OvsCmbzCtrtDtst } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrtDtst'
+import type { CtrtIntgListItem } from '@/types/ct'
 
 // ── 탭 (slide178 탭바: 계약현황/계약명세서/계약대상) ───────────────────────────
 const TABS: TabItem[] = [
@@ -40,7 +41,8 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function OvsCmbzCtrdocDtlPage() {
-  const { id = '' } = useParams()
+  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('stts')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -50,6 +52,8 @@ export function OvsCmbzCtrdocDtlPage() {
   const { data: detail } = useOvsCmbzCtrdocDtl(id)
   const steps = stepsByStg('계약')
 
+  // 식별자는 목록/상위 상세에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.
+  if (!stateItem) return <Navigate to="/ct" replace />
   if (!detail) return <PageLoading />
 
   return (
@@ -114,8 +118,10 @@ export function OvsCmbzCtrdocDtlPage() {
       {/* 탭 콘텐츠 */}
       <div className="min-h-[100dvh]">
         {tab === 'stts' && <OvsCmbzCtrdocDtl_Stts detail={detail} />}
-        {tab === 'ctrt' && <OvsCmbzCtrdocDtl_Ctrt onOpenDtst={() => setDtstOpen(true)} />}
-        {tab === 'trgt' && <OvsCmbzCtrdocDtl_Trgt />}
+        {tab === 'ctrt' && (
+          <OvsCmbzCtrdocDtl_Ctrt id={id} onOpenDtst={() => setDtstOpen(true)} />
+        )}
+        {tab === 'trgt' && <OvsCmbzCtrdocDtl_Trgt id={id} />}
       </div>
 
       {/* FAB — 맨위로 */}
@@ -146,7 +152,7 @@ export function OvsCmbzCtrdocDtlPage() {
           </Button>
         }
       >
-        <OvsCmbzCtrtDtst open={dtstOpen} />
+        <OvsCmbzCtrtDtst id={id} open={dtstOpen} />
       </BottomSheet>
     </div>
   )

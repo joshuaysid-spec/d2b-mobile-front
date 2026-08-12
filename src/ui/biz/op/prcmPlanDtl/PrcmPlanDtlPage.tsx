@@ -1,11 +1,12 @@
-// 조달계획 상세 (MUI-OP-01-M03, Figma 9300-37444). 카드 클릭 → /op/:id 진입.
+// 조달계획 상세 (MUI-OP-01-M03, Figma 9300-37444). 카드 클릭 → /op/prcmPlanDtl 진입.
 // 구성(Figma contents area): 요약정보(SummaryInfo) + 스텝바(StepBar) + 탭(TabList)
 //   + 탭 콘텐츠(탭별 컴포넌트 분리: PrcmPlanDtl / PrcmPlanDtl_PrdList / PrcmPlanDtl_OpnnList / PrcmPlanDtl_spclCtrt / PrcmPlanDtl_Doc).
 // 상단(요약/헤더) 데이터: 목록 navigate state 를 placeholder 로 즉시 렌더 + useOpPlanDetail 조회로 확정.
-//   직접 URL 진입(state 없음)이면 조회 완료까지 PageLoading. 목업/실연동은 opService(USE_MOCK)가 전환.
+//   식별자도 state 로만 받는다(URL 미노출) — 직접 URL 진입(state 없음)이면 목록으로 되돌린다.
+//   목업/실연동은 opService(USE_MOCK)가 전환.
 // 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당이라 본문은 콘텐츠만 렌더.
 import { useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -83,7 +84,9 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 
 export function PrcmPlanDtlPage() {
   const navigate = useNavigate()
-  const { id = '' } = useParams()
+  // 목록 → 상세 데이터 전달: 클릭 항목이 곧 식별자 소스이자 placeholder(재조회 없이 즉시 렌더).
+  const stateItem = useLocation().state as OpPlanItem | null
+  const id = stateItem?.id ?? ''
   const [tab, setTab] = useState('detail')
   // 스크롤 시 상단 블록(요약+스텝+탭) 축소 + sticky 동작 — 로직은 훅에서. (overflow-anchor 진동방지 포함)
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
@@ -127,13 +130,12 @@ export function PrcmPlanDtlPage() {
   const [outputModalOpen, setOutputModalOpen] = useState(false)
   const handleOutput = () => setOutputModalOpen(true)
 
-  // 목록 → 상세 데이터 전달: navigate state 를 placeholder 로 즉시 렌더 + id 조회로 확정.
-  //   직접 URL 진입(state 없음)이면 조회 완료까지 PageLoading(아래 early return).
-  const stateItem = useLocation().state as OpPlanItem | null
   const { data: detail } = useOpPlanDetail(id, stateItem ?? undefined)
   // 진행단계(아이템 속성 prgrsStg) — detail 로 구동(없으면 '조달' fallback).
   const steps = stepsByStg(detail?.prgrsStg ?? '조달')
 
+  // state 없이 직접 진입 = 식별자를 알 수 없음 → 통합목록으로.
+  if (!stateItem) return <Navigate to="/op" replace />
   if (!detail) return <PageLoading />
 
   return (

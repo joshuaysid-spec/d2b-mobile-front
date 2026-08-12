@@ -1,8 +1,6 @@
 // 물품최종계약명세서 풀팝업 — MUI-CT-01-P12 CmdtyLastCtrdocDtst. 설계서 slide91~92.
 // 계약확정 상세(M04 = M03 화면 겸용)의 바로가기 '계약명세서'에서 진입(계약상태 확정 시 P11 대신).
 // 구성: 계약품목정보(총 N건, 품목별 반복 Table) + footer 닫기 — 계약정보 섹션 없음(slide91).
-import { useParams } from 'react-router-dom'
-
 import { useCtrtLastDtst } from '@/queries/ct'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
@@ -11,6 +9,8 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { CtrtLastDtstItem } from '@/types/ct'
 
 export interface CmdtyLastCtrdocDtstFullPopupProps {
+  /** 계약 식별자 — 부모 상세 페이지가 navigate state 에서 받아 전달. */
+  id: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -32,10 +32,10 @@ function itemRows(it: CtrtLastDtstItem): TableRow[] {
 }
 
 export function CmdtyLastCtrdocDtstFullPopup({
+  id,
   open,
   onOpenChange,
 }: CmdtyLastCtrdocDtstFullPopupProps) {
-  const { id = '' } = useParams()
   const { data: items = [] } = useCtrtLastDtst(id, open)
 
   return (

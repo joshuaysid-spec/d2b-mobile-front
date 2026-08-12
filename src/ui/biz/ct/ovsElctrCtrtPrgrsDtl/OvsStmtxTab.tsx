@@ -1,7 +1,5 @@
 // 국외전자계약진행상세 - '인지세' 탭 콘텐츠 (MUI-CT-01-T74 ovsStmtxTab). 설계서 slide162~163.
 // 데이터영역은 인지세 확인팝업(M74)과 동일(dm_ctrtInfo + dl_stmtxPayInfo + dm_payAmt) — useCtrtStmtx 재사용.
-import { useParams } from 'react-router-dom'
-
 import { useCtrtStmtx } from '@/queries/ct'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
@@ -23,8 +21,7 @@ function payInfoRows(p: CtrtStmtxPayInfo): TableRow[] {
   ]
 }
 
-export function OvsStmtxTab() {
-  const { id = '' } = useParams()
+export function OvsStmtxTab({ id }: { id: string }) {
   const { data } = useCtrtStmtx(id, true)
 
   return (

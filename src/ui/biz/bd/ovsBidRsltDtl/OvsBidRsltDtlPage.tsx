@@ -1,10 +1,10 @@
 // 국외 입찰결과조회 상세(단가제) — MUI-BD-09-M71(컨테이너) · T71 일반정보 · T72 입찰결과(단가제, 구 M72 — v1.83 재편).
-// 진입: 개찰목록 최상단 국외(단가제) 카드 클릭 → /bd/ovs/result/:id (state = 카드 요약).
+// 진입: 개찰목록 최상단 국외(단가제) 카드 클릭 → /bd/ovsBidRsltDtl (state = 카드 요약).
 // 레퍼런스: BidRsltDtlPage / OvsTndrDtlPage (요약+탭+탭콘텐츠).
 // ⚠️ 설계서 우선 — StepBar·즐겨찾기·출력·바로가기 없음(설계서 M71 레이아웃 미표기, 사용자 확정).
 // 상단 요약(배지/번호/사업명/요약행)은 카드와 동일(navigate state). 일반정보 탭은 slide403 데이터영역.
 import { useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
@@ -39,7 +39,7 @@ const MOCK_SUMMARY: OvsBidRsltSummary = {
   bdngDdlnDt: '2026-03-26 11:00',
   bdopnDt: '2026-03-30',
 }
-// 총액제 fallback — 단가제와 동일하되 입찰유형만 총액제. (id 'ovs-m73' 직접 진입 시 총액제로 분기)
+// 총액제 fallback — 단가제와 동일하되 입찰유형만 총액제. (직접 진입 시 ?bidTypeNm=총액제 로 분기)
 const MOCK_SUMMARY_TOTAL: OvsBidRsltSummary = { ...MOCK_SUMMARY, bidTypeNm: '총액제' }
 
 // 일반정보 탭 데이터 — 설계서 slide403 일반 데이터 영역 값·형식 그대로.
@@ -130,11 +130,12 @@ export function OvsBidRsltDtlPage() {
     { id: 'fx', label: '환율정보 바로가기', variant: 'tertiary' },
   ]
 
-  // 상단 요약 — 카드에서 넘어온 값(navigate state) 우선, 없으면 :id 로 fallback 분기(ovs-m73=총액제).
-  const { id } = useParams()
+  // 상단 요약 — 카드에서 넘어온 값(navigate state) 우선, 없으면 fallback 목업.
+  //   단가제/총액제 분기 테스트: 직접 URL 진입 시 ?bidTypeNm=총액제 쿼리로 총액제 확인 가능.
+  const [searchParams] = useSearchParams()
   const summary =
     (useLocation().state as OvsBidRsltSummary | null) ??
-    (id === 'ovs-m73' ? MOCK_SUMMARY_TOTAL : MOCK_SUMMARY)
+    (searchParams.get('bidTypeNm') === '총액제' ? MOCK_SUMMARY_TOTAL : MOCK_SUMMARY)
 
   // 요약 정보행 (설계서 slide402) — 입찰업체·구매요청번호·마감일시·개찰일자.
   const summaryRows: SummaryInfoRow[] = [

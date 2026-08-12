@@ -79,10 +79,12 @@ export interface CheckboxFieldDef extends BaseField {
   swipeable?: boolean
   /**
    * 상단 '전체' 칩 — 체크 시 모든 항목 선택/해제, 개별↔전체 자동 동기화(CheckboxGroup.selectAll).
-   * true 또는 { label, disabled } 객체. 사용 시 options 에 별도 '전체' 항목을 두지 않는다.
+   * true 또는 { label, disabled, value } 객체. 사용 시 options 에 별도 '전체' 항목을 두지 않는다.
    * disabled: '전체' 칩만 비활성(선택 가능 항목이 하나뿐이라 '전체'가 무의미할 때 등).
+   * value: '전체' 자체의 코드값(예: 공통코드 '0'). 지정 시 전체 선택 상태면 value 배열에 이 값도
+   *   포함되어 제출된다(PC 웹과 전송 규격 일치 — 전체 선택 = "0 1 2 3 4").
    */
-  selectAll?: boolean | { label?: ReactNode; disabled?: boolean }
+  selectAll?: boolean | { label?: ReactNode; disabled?: boolean; value?: string }
 }
 /** DateRangeInput 프리셋 칩 정의 — DateRangePreset 와 구조 호환(레이어링 위해 inline). */
 export type DateRangePresetDef =

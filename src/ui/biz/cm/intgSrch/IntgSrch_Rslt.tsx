@@ -62,8 +62,8 @@ interface IntgSrchRsltGroup {
   title: string
   /** 카테고리 총건수(API total) */
   total: number
-  /** 카드 → 상세 경로. ⚠️ TODO(라우트 확인): 통합검색→도메인 상세 경로는 코디네이터가 라우터에 확정. */
-  detailPath: (id: string) => string
+  /** 카드 → 상세 경로(고정 — 식별자는 navigate state). ⚠️ TODO(라우트 확인): 통합검색→도메인 상세 경로는 코디네이터가 라우터에 확정. */
+  detailPath: string
   items: IntgSrchRsltItem[]
 }
 
@@ -144,7 +144,7 @@ const RESULT_GROUPS: IntgSrchRsltGroup[] = [
     key: 'bidPbanc',
     title: '입찰공고',
     total: 533,
-    detailPath: (id) => `/bd/${id}`,
+    detailPath: '/bd/bidPbancDtl',
     items: mockItems('bp'),
   },
   {
@@ -152,7 +152,7 @@ const RESULT_GROUPS: IntgSrchRsltGroup[] = [
     title: '개찰결과',
     total: 27,
     // ⚠️ TODO(라우트 확인): 개찰결과 상세 경로 미확정 — 입찰공고 상세로 임시 라우팅.
-    detailPath: (id) => `/bd/${id}`,
+    detailPath: '/bd/bidPbancDtl',
     items: mockItems('bo'),
   },
 ]
@@ -198,7 +198,7 @@ function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProp
     console.log('[intgSrchRslt] 카드 이동', group.key, item.id)
     onNavigate?.() // 통합검색 오버레이 닫기
     // 클릭 항목을 state 로 전달(목록 → 상세 표준). ⚠️ TODO(라우트 확인): 카테고리별 상세 경로 확정 필요.
-    navigate(group.detailPath(item.id), { state: item })
+    navigate(group.detailPath, { state: item })
   }
 
   // 카드 props 매핑(Figma m_card): 배지(업무구분·입찰방식) + subtitle(공고구분 공고번호) + title(입찰건명) + 4행.

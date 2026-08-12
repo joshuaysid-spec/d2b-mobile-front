@@ -1,8 +1,6 @@
 // 해지/해제 물품일반계약 상세 - '해지해제 정보' 탭 콘텐츠 (MUI-CT-03-T03). 설계서 slide111·113.
 // 화면목록(slide10)상 명칭은 '특수조건'이나, 레이아웃(slide111)은 해지해제 통보내용 + 참조서류(다운로드).
 // 데이터: useCmdtyCncltnRmvNoti — 목업/실연동은 ctService(USE_MOCK)가 전환.
-import { useParams } from 'react-router-dom'
-
 import { useCmdtyCncltnRmvNoti } from '@/queries/ct'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -38,8 +36,7 @@ function AdocItem({ doc }: { doc: CtrtAdocFile }) {
   )
 }
 
-export function CmdtyCtrtCncltnRmvDtl_SpclCnd() {
-  const { id = '' } = useParams()
+export function CmdtyCtrtCncltnRmvDtl_SpclCnd({ id }: { id: string }) {
   const { data } = useCmdtyCncltnRmvNoti(id)
   const notis = data?.notis ?? []
   const adocs = data?.adocs ?? []

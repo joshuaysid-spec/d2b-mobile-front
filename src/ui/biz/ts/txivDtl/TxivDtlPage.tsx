@@ -1,11 +1,11 @@
 // 세금계산서상세 — MUI-TS-04-M03 TxivDtl. 설계서 06.업무지원 v0.82 slide28~30.
-// 세금계산서목록(P02) 카드 클릭 → /ts/txiv/dtl/:id 진입.
+// 세금계산서목록(P02) 카드 클릭 → /ts/txivDtl 진입(식별자는 navigate state).
 // 구성: sticky(요약 SummaryInfo — 뱃지는 P02 목록과 동일 3종) + 아코디언 4섹션
 //   (계약정보 · 공급자 정보 · 공급받는자 정보 · 계약서 일반정보) — 탭·StepBar 없음(slide28).
 // 계약번호 라벨은 조달구분(sOption)별 변경(재무관증빙번호/청구번호) — 상세설계 확정 전 '계약번호' 고정.
 // 출력 버튼(slide30) — Window print 처리(스텁).
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 
 import { useTxivDtl } from '@/queries/ts'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -18,12 +18,14 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 
 export function TxivDtlPage() {
-  const { id = '' } = useParams()
+  // 식별자는 목록에서 navigate state 로 전달(URL 노출 금지).
+  const stateItem = useLocation().state as { id: string } | null
   const { collapsed, rootRef, scrollToTop } = useCollapsibleHeader()
   const [printModalOpen, setPrintModalOpen] = useState(false)
 
-  const { data: detail } = useTxivDtl(id)
+  const { data: detail } = useTxivDtl(stateItem?.id ?? '')
 
+  if (!stateItem) return <Navigate to="/ts/txiv" replace />
   if (!detail) return <PageLoading />
 
   // ── 계약정보 (dmt_TxivWrtInfo, slide29 1.1) ───────────────────────────────

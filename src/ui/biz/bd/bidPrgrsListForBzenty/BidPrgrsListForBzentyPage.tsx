@@ -50,7 +50,7 @@ const PRGRS_FILTER_SCHEMA: SearchFilterSchema = {
         {
           type: 'checkbox',
           key: 'taskSecd',
-          selectAll: true,
+          selectAll: { value: '0' }, // '0' = '전체' 코드값 — 전체 선택 시 값 배열에 포함
           options: [
             { value: 'goods', label: '물품' },
             { value: 'service', label: '용역' },
@@ -162,7 +162,7 @@ export function BidPrgrsListForBzentyPage() {
       setToastMsg(blocked)
       return
     }
-    navigate(`/bd/prgrs/${it.rNum}`, { state: it })
+    navigate('/bd/bidPrgsDtlInq', { state: it })
   }
 
   // ── 키워드 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 이 블록 삭제) ──

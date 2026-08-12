@@ -1,5 +1,5 @@
 // 국외 입찰서제출 - 스탭1 일반정보 (MUI-BD-06-M71 컨테이너 · 스탭1 일반정보 T71(구 M71 탭 — v1.83 재편), 설계서 08국외입찰진행 slide366·370).
-// 접속: 홈 > 입찰 진행 > 입찰서제출 (/bd/ovs/prgrs/:id/tndr-sbmsn).
+// 접속: 홈 > 입찰 진행 > 입찰서제출 (/bd/ovsTndrSbmsn).
 // 레이아웃(국내 TndrWrtPage·BidPrtcpAperWrtPage 패턴 그대로): 요약(SummaryInfo) → 진행단계(StepBar)
 //   → 업무도움(Infobox) → 스탭 탭(TabList: 1.일반정보 / 2.입찰참여품목 / 3.첨부파일) → 탭 콘텐츠
 //   → 하단 액션바(이전/다음으로, 마지막 탭=신청하기) + 맨위로 FAB.
@@ -7,7 +7,7 @@
 // 마지막 탭 [신청하기] → 신청완료(M08, 기존 aplyCmptn 재사용).
 //   (설계서 slide369 2026-07-02 화면 수정: '전자서명하기' → '신청하기' — 전자서명 단계 없이 신청완료로 이동)
 import { useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
@@ -57,12 +57,12 @@ const TABS: TabItem[] = [
 
 export function OvsTndrSbmsnPage() {
   const navigate = useNavigate()
-  const { id } = useParams()
   const location = useLocation()
 
   // 목록(국외 입찰진행)에서 넘어온 항목으로 상단을 그린다 — 넘어온 항목에 없는 항목(담당자 등)은 목업 보완.
   // 직접 URL 진입(새로고침) 시에도 화면이 완전히 그려지도록 목업과 병합.
-  const stateItem = (location.state ?? null) as Partial<OvsTndrSbmsnDetail> | null
+  //   rNum(진행 항목 번호)은 URL 미포함 — 진입 화면이 state 로 함께 넘긴다(신청완료 요약 구동용).
+  const stateItem = (location.state ?? null) as (Partial<OvsTndrSbmsnDetail> & { rNum?: string }) | null
   // 테스트용 입찰방법 오버라이드 — ?bidMthdNm=총액제 로 직접 진입해 M73(총액제) 확인 가능.
   const bidMthdParam = new URLSearchParams(location.search).get('bidMthdNm')
   const detail: OvsTndrSbmsnDetail = {
@@ -115,7 +115,7 @@ export function OvsTndrSbmsnPage() {
     // 추후 API: bdService.submitOvsTndr(pbancNo, pbancOd, ...)
     // 신청완료(M08) 요약 헤더 구동용 — 기존 AplyCmptnPage(BidPrgrsItem 기반) 재사용을 위한 매핑.
     const aplyDetail: BidPrgrsItem = {
-      rNum: id ?? '0',
+      rNum: stateItem?.rNum ?? '0',
       taskSeNm: '국외',
       pbancNo: `${detail.pbancNo}-${detail.pbancOd}`,
       prcmNo: detail.prchsDmndNo,
@@ -134,7 +134,7 @@ export function OvsTndrSbmsnPage() {
       prdcpDcmntSbms: false,
       tndrStatNm: '제출',
     }
-    navigate(`/bd/prgrs/${id ?? '0'}/aply-cmptn`, {
+    navigate('/bd/aplyCmptn', {
       state: {
         detail: aplyDetail,
         aplyType: 'tndr',

@@ -2,7 +2,7 @@
 // 특수조건(spclCnd)은 총액제(T15)와 동일 데이터영역이라 총액제 _Spcl 을 단일 소스로 재사용한다.
 import { CmdtyGramtCtrdocDtl_Spcl } from '@/ui/biz/ct/cmdtyGramtCtrdocDtl/CmdtyGramtCtrdocDtl_Spcl'
 
-export function CmdtyUntprcCtrdocDtl_Spcl() {
-  return <CmdtyGramtCtrdocDtl_Spcl />
+export function CmdtyUntprcCtrdocDtl_Spcl({ id }: { id: string }) {
+  return <CmdtyGramtCtrdocDtl_Spcl id={id} />
 }
 CmdtyUntprcCtrdocDtl_Spcl.displayName = 'CmdtyUntprcCtrdocDtl_Spcl'

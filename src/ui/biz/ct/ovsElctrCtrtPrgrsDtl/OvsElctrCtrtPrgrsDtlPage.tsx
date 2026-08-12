@@ -1,10 +1,10 @@
 // 국외전자계약진행상세 (MUI-CT-01-M71 OvsElctrCtrtPrgrsDtlPage). 설계서 03.계약 v0.83 slide149~169.
-// 계약통합목록 카드(국외) 클릭 → /ct/ovs/:id 진입.
+// 계약통합목록 카드(국외) 클릭 → /ct/ovsElctrCtrtPrgrsDtl 진입(식별자는 navigate state).
 // 탭 6개: 일반현황(T71) · 계좌정보(T72) · 보증서(T73 — M73 데이터 재사용) · 인지세(T74 — M74 재사용)
 //   · 계약명세서(T75) · 첨부서류(T76 — 국내 구조 + 직인등록정보).
 // M72 국외전자계약확정상세 겸용 — 설계서 slide146 '탭은 국외전자계약진행상세와 동일함'(같은 구조 = 1페이지).
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useOvsCtrtDtl } from '@/queries/ct'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -26,6 +26,7 @@ import { OvsWtgrTab } from '@/ui/biz/ct/ovsElctrCtrtPrgrsDtl/OvsWtgrTab'
 import { OvsStmtxTab } from '@/ui/biz/ct/ovsElctrCtrtPrgrsDtl/OvsStmtxTab'
 import { OvsCtrtDtstTab } from '@/ui/biz/ct/ovsElctrCtrtPrgrsDtl/OvsCtrtDtstTab'
 import { OvsElctrCtrtPrgrsDtlTab_Adoc } from '@/ui/biz/ct/ovsElctrCtrtPrgrsDtl/OvsElctrCtrtPrgrsDtlTab_Adoc'
+import type { CtrtIntgListItem } from '@/types/ct'
 
 // ── 탭 (slide149 탭바 + slide155 탭 이벤트: 일반현황~계약명세서 + 첨부서류) ────
 const TABS: TabItem[] = [
@@ -49,7 +50,8 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 
 export function OvsElctrCtrtPrgrsDtlPage() {
   const navigate = useNavigate()
-  const { id = '' } = useParams()
+  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const id = stateItem?.id ?? ''
   const [tab, setTab] = useState('gnrl')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기
@@ -58,6 +60,8 @@ export function OvsElctrCtrtPrgrsDtlPage() {
   const { data: detail } = useOvsCtrtDtl(id)
   const steps = stepsByStg('계약')
 
+  // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.
+  if (!stateItem) return <Navigate to="/ct" replace />
   if (!detail) return <PageLoading />
 
   return (
@@ -123,11 +127,11 @@ export function OvsElctrCtrtPrgrsDtlPage() {
       {/* 탭 콘텐츠 */}
       <div className="min-h-[100dvh]">
         {tab === 'gnrl' && <OvsElctrCtrtPrgrsDtlTab detail={detail} />}
-        {tab === 'bacnt' && <OvsBacntInfoTab />}
-        {tab === 'wtgr' && <OvsWtgrTab />}
-        {tab === 'stmtx' && <OvsStmtxTab />}
-        {tab === 'dtst' && <OvsCtrtDtstTab />}
-        {tab === 'adoc' && <OvsElctrCtrtPrgrsDtlTab_Adoc />}
+        {tab === 'bacnt' && <OvsBacntInfoTab id={id} />}
+        {tab === 'wtgr' && <OvsWtgrTab id={id} />}
+        {tab === 'stmtx' && <OvsStmtxTab id={id} />}
+        {tab === 'dtst' && <OvsCtrtDtstTab id={id} />}
+        {tab === 'adoc' && <OvsElctrCtrtPrgrsDtlTab_Adoc id={id} />}
       </div>
 
       {/* FAB — 맨위로 + '+' 바로가기(일반현황 탭) */}
@@ -156,7 +160,7 @@ export function OvsElctrCtrtPrgrsDtlPage() {
               label: '상업계약서 상세',
               onClick: () => {
                 setShortcutOpen(false)
-                navigate(`/ct/ovs/cmbz/${id}`)
+                navigate('/ct/ovsCmbzCtrdocDtl', { state: stateItem })
               },
             },
           ]}

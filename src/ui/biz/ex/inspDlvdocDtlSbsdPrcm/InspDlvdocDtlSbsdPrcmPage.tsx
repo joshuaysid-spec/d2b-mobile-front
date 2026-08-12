@@ -1,12 +1,12 @@
 // 검사및납품조서상세(부대조달) — MUI-EX-01-M03 InspDlvdocDtlSbsdPrcm. 설계서 04.이행 v0.83 slide21~26.
-// P11 검사및납품조서목록에서 부대조달 조서 카드 클릭 → /ex/dlvdoc/sbsd/:id 진입.
+// P11 검사및납품조서목록에서 부대조달 조서 카드 클릭 → /ex/inspDlvdocDtlSbsdPrcm 진입.
 // 구성: 중요 안내(Notice urgent) + sticky(요약 SummaryInfo + 스텝 StepBar + 탭 TabList)
 //   + 탭 콘텐츠(T03 상세정보 InspDlvdocDtlSbsdPrcm · T04 물품목록 InspDlvdocDtlSbsdPrcm_CmdtyList)
 //   — 중앙조달(M02)과 셸 동일, 탭 콘텐츠(3섹션·증명문구)와 데이터가 다름(설계서 별도 화면 ID·폴더).
 // 인쇄 이벤트(slide26, R13 검사및납품조서): SummaryInfo 출력 버튼 → 확인 모달 → OZ 리포트 연계(스텁).
 // 데이터: useInspDlvdocSbsdDtl — 조회 완료까지 PageLoading(목록 state 는 필드 구성이 달라 placeholder 부적합).
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useInspDlvdocSbsdDtl } from '@/queries/ex'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -41,7 +41,8 @@ function buildSteps(): StepItem[] {
 
 export function InspDlvdocDtlSbsdPrcmPage() {
   const navigate = useNavigate()
-  const { id = '' } = useParams()
+  // 목록 → 상세: 식별자는 URL 이 아니라 navigate state(클릭 항목)로 받는다.
+  const id = (useLocation().state as { id: string } | null)?.id ?? ''
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   // 인쇄(R13) 확인 모달
@@ -50,6 +51,8 @@ export function InspDlvdocDtlSbsdPrcmPage() {
   const { data: detail } = useInspDlvdocSbsdDtl(id)
   const steps = buildSteps()
 
+  // state 없이 직접 진입 = 식별자를 알 수 없음 → 검사통합목록으로.
+  if (!id) return <Navigate to="/ex" replace />
   if (!detail) return <PageLoading />
 
   return (

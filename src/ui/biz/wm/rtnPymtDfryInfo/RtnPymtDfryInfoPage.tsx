@@ -36,7 +36,7 @@ const WM_RTN_SEARCH_SCHEMA: SearchFilterSchema = {
           type: 'checkbox',
           key: 'taskSeCd',
           required: true,
-          selectAll: true,
+          selectAll: { value: '0' }, // '0' = '전체' 코드값 — 전체 선택 시 값 배열에 포함
           options: [
             { value: 'goods', label: '물품' },
             { value: 'service', label: '용역' },
@@ -69,7 +69,7 @@ const WM_RTN_SEARCH_SCHEMA: SearchFilterSchema = {
 
 function buildDefaultValue(): SearchFilterValue {
   return {
-    taskSeCd: ['goods', 'service', 'construction'],
+    taskSeCd: ['0', 'goods', 'service', 'construction'], // 전체('0' = 전체 코드값)
     ctrtYmd: {
       start: dayjs().subtract(1, 'month').format(DATE_FORMAT),
       end: dayjs().format(DATE_FORMAT),

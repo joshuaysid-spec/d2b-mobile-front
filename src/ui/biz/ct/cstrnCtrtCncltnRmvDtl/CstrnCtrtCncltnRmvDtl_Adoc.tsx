@@ -1,8 +1,6 @@
 // 해지/해제 공사계약 상세 - '첨부서류' 탭 콘텐츠 (MUI-CT-03-T14). 설계서 slide142·143.
 // 해지해제 첨부서류/계약업체 첨부서류 2섹션(각 총 N건) — 계약서류명 라벨 + 파일행(파일명 [크기] + 다운로드).
 // 파일 크기·파일명 없으면 '-' 표시(slide142). 데이터: useCstrnCncltnRmvAdocs(CtrtAdocResult 재사용).
-import { useParams } from 'react-router-dom'
-
 import { useCstrnCncltnRmvAdocs } from '@/queries/ct'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
@@ -27,8 +25,7 @@ function AdocItem({ doc }: { doc: CtrtAdocFile }) {
   )
 }
 
-export function CstrnCtrtCncltnRmvDtl_Adoc() {
-  const { id = '' } = useParams()
+export function CstrnCtrtCncltnRmvDtl_Adoc({ id }: { id: string }) {
   const { data } = useCstrnCncltnRmvAdocs(id)
   const refDocs = data?.refDocs ?? []
   const sbmsnDocs = data?.sbmsnDocs ?? []

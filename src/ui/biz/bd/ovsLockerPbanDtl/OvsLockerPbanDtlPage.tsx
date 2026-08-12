@@ -4,7 +4,7 @@
 //   ※ 품목 목록 탭은 설계서 2026-06-22 수정으로 제거 — 품목은 '보관함 품목 관리(M73)'에서 일원 관리,
 //     입찰내역은 '입찰내역 작성(M76)'에서 처리 → 탭 없이 일반정보 단일 콘텐츠.
 // 데이터: 목록에서 navigate state 로 넘어온 항목으로 상단·본문을 그린다. 직접 URL 진입 시 페이지 fallback 목업.
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
@@ -61,7 +61,6 @@ export function OvsLockerPbanDtlPage() {
   const { collapsed, rootRef, scrollToTop } = useCollapsibleHeader()
 
   // 목록 → 상세 데이터 전달: navigate state 항목으로 상단/본문을 그린다. state 없으면 페이지 목업.
-  const { id } = useParams()
   const detail = (useLocation().state as OvsLockerPbanItem | null) ?? MOCK_OVS_LOCKER_PBAN_DETAIL
 
   // 일반정보 (설계서 slide304 공고일반 데이터 영역) — detail 필드로 구동.
@@ -87,12 +86,12 @@ export function OvsLockerPbanDtlPage() {
   const handleBidCn = () => {
     // btn_moveBidDetail_onclick → 입찰내역 작성(MUI-BD-01-M76)
     console.log('[OvsLockerDtl] 입찰내역 작성 이동', detail.intgRfrncNo)
-    navigate(`/bd/ovs/locker/${id ?? detail.id}/bid-cn`, { state: detail })
+    navigate('/bd/ovsTmprBidCnReg', { state: detail })
   }
   const handleItemMng = () => {
     // btn_openLockerItemMng_onclick → 보관함 품목 관리(MUI-CM-01-M73)
     console.log('[OvsLockerDtl] 보관함 품목 관리 이동', detail.intgRfrncNo)
-    navigate(`/bd/ovs/locker/${id ?? detail.id}/items`, { state: detail })
+    navigate('/bd/ovsLockerItemReg', { state: detail })
   }
   const handleApfr = () => {
     // btn_moveApplFormEdit_onlick → 국외 입찰참가신청서 작성. 청렴계약이행서약서동의(P71)는 신청서 화면에서 처리.
@@ -108,7 +107,7 @@ export function OvsLockerPbanDtlPage() {
       bidClrsDt: detail.regDdlnDt,
       tndrSbmsnDdlnDt: detail.bdngDdlnDt,
     }
-    navigate(`/bd/ovs/prgrs/${id ?? detail.id}/aply`, { state: aplyState })
+    navigate('/bd/ovsBidPrtcpAply', { state: aplyState })
   }
 
   return (

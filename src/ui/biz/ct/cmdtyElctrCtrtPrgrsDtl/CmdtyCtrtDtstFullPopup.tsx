@@ -2,8 +2,6 @@
 // 바로가기 바텀시트 '계약명세서'에서 진입(slide31 계약명세서조회 클릭 — 물품 진행상세는 P11).
 // P14 물품일반계약명세서(slide98~99)는 데이터영역이 P11 과 동일 — title 만 바꿔 재사용한다.
 // 구성: 계약정보 Table + 계약품목정보(총 N건, 품목별 반복 Table) + footer 닫기.
-import { useParams } from 'react-router-dom'
-
 import { useCmdtyCtrtDtst } from '@/queries/ct'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
@@ -12,6 +10,8 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { CtrtDtstItem } from '@/types/ct'
 
 export interface CmdtyCtrtDtstFullPopupProps {
+  /** 계약 식별자 — 부모 상세 페이지가 navigate state 에서 받아 전달. */
+  id: string
   open: boolean
   onOpenChange: (open: boolean) => void
   /** 팝업 타이틀 — 기본 '물품계약명세서'(P11). P14 재사용 시 '물품일반계약명세서'. */
@@ -50,11 +50,11 @@ function itemRows(it: CtrtDtstItem): TableRow[] {
 }
 
 export function CmdtyCtrtDtstFullPopup({
+  id,
   open,
   onOpenChange,
   title = '물품계약명세서',
 }: CmdtyCtrtDtstFullPopupProps) {
-  const { id = '' } = useParams()
   const { data } = useCmdtyCtrtDtst(id, open)
   const items = data?.items ?? []
 

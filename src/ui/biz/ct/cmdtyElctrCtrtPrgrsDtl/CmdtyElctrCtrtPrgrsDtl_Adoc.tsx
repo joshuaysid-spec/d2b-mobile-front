@@ -6,7 +6,6 @@
 //   행 클릭 → useDownloadFile.mutateAsync(키) 로 Blob 수신 → utils/download.saveBlob 으로 저장 트리거.
 //   실패 시 Toast 안내(slide27 4] 다운로드 실패 안내). 파일명 없는 행(fileNm '-')은 안내만.
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
 
 import { useCtrtAdocs } from '@/queries/ct'
 import { useDownloadFile } from '@/queries/file'
@@ -36,8 +35,7 @@ function AdocItem({ doc, onDownload }: { doc: CtrtAdocFile; onDownload: (doc: Ct
   )
 }
 
-export function CmdtyElctrCtrtPrgrsDtl_Adoc() {
-  const { id = '' } = useParams()
+export function CmdtyElctrCtrtPrgrsDtl_Adoc({ id }: { id: string }) {
   const { data } = useCtrtAdocs(id)
   const refDocs = data?.refDocs ?? []
   const sbmsnDocs = data?.sbmsnDocs ?? []

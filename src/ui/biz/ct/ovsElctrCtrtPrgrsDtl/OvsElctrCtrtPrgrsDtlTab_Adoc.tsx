@@ -1,7 +1,5 @@
 // 국외전자계약진행상세 - '첨부서류' 탭 콘텐츠 (MUI-CT-01-T76 ovsElctrCtrtPrgrsDtlTab_Adoc).
 // 설계서 slide167~169 — 국내(T04)와 동일한 첨부서류 화면 + 직인등록정보(dl_ofslReg) 추가.
-import { useParams } from 'react-router-dom'
-
 import { useOvsCtrtAdocs } from '@/queries/ct'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
@@ -32,8 +30,7 @@ function AdocItem({
   )
 }
 
-export function OvsElctrCtrtPrgrsDtlTab_Adoc() {
-  const { id = '' } = useParams()
+export function OvsElctrCtrtPrgrsDtlTab_Adoc({ id }: { id: string }) {
   const { data } = useOvsCtrtAdocs(id)
   const refDocs = data?.refDocs ?? []
   const sbmsnDocs = data?.sbmsnDocs ?? []

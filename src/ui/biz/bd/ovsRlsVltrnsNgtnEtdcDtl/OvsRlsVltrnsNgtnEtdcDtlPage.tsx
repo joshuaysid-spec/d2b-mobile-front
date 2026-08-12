@@ -3,7 +3,7 @@
 // 셸: SummaryInfo + StepBar(신청서/서명/제출, 전부 done) + TabList(4탭) + 탭콘텐츠(읽기전용). 하단 액션바·FAB 없음.
 // ⚠️ 페이지(헤더) 타이틀 = '견적서 조회'(라우트 handle). 설계서 우선 — 설계서에 없는 요소는 제거.
 import { useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
@@ -72,7 +72,6 @@ const scrollTop = () => document.getElementById('app-scroll')?.scrollTo({ top: 0
 
 export function OvsRlsVltrnsNgtnEtdcDtlPage() {
   const navigate = useNavigate()
-  const { id } = useParams()
   const summary = (useLocation().state as OvsRlsVltrnsSummary | null) ?? MOCK_SUMMARY
   const [tab, setTab] = useState('general')
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기 바텀시트
@@ -187,7 +186,7 @@ export function OvsRlsVltrnsNgtnEtdcDtlPage() {
               onClick: () => {
                 setShortcutOpen(false)
                 // 공개수의협상 결과조회(M83). 요약을 state 로 전달.
-                navigate(`/bd/ovs/rls-ngtn/${id ?? 'ovs-ngtn-m71'}/rslt`, { state: summary })
+                navigate('/bd/ovsRlsVltrnsNgtnSrngRsltInq', { state: summary })
               },
             },
           ]}

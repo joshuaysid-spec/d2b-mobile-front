@@ -106,7 +106,7 @@ export function OvsOrderNtdcListPage() {
       { label: '작성일', value: it.wrtYmd },
       { label: '수신자', value: it.rcvrNm },
     ],
-    onClick: () => navigate(`/ex/order-ntdc/${it.id}`, { state: it }),
+    onClick: () => navigate('/ex/ovsOrderNtdcDtl', { state: it }),
   }))
 
   return (

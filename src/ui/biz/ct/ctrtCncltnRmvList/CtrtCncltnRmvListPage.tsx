@@ -56,7 +56,7 @@ const CNCLTN_RMV_SEARCH_SCHEMA: SearchFilterSchema = {
           type: 'checkbox',
           key: 'taskSeNm',
           required: true, // 필수값(slide105) — default 전체
-          selectAll: true,
+          selectAll: { value: '0' }, // '0' = '전체' 코드값 — 전체 선택 시 값 배열에 포함
           options: [
             { value: 'goods', label: '물품' },
             { value: 'service', label: '용역' },
@@ -124,7 +124,7 @@ const RECENT_1M = () => ({
 // On-Load 기본값(slide105): 해지해제일자·계약일자 = 현재일-1개월 ~ 현재일, 업무구분 = 전체.
 function buildDefaultValue(): SearchFilterValue {
   return {
-    taskSeNm: ['goods', 'service', 'construction'],
+    taskSeNm: ['0', 'goods', 'service', 'construction'], // 전체('0' = 전체 코드값)
     cncltnRmvYmd: RECENT_1M(),
     ctrtYmd: RECENT_1M(),
     ctrtNm: '',
@@ -140,13 +140,13 @@ const SEARCH_TARGETS = [
   { value: 'ctrtNo', label: '계약번호' },
 ]
 
-// 카드 클릭 → 계약유형별 상세 경로(slide107).
-const DETAIL_PATH: Record<CncltnRmvListItem['dtlRouteCd'], (id: string) => string> = {
-  gnrl: (id) => `/ct/cncltn/${id}`,
-  gramt: (id) => `/ct/cncltn/gramt/${id}`,
-  untprc: (id) => `/ct/cncltn/untprc/${id}`,
-  mdfcn: (id) => `/ct/cncltn/mdfcn/${id}`,
-  cstrn: (id) => `/ct/cncltn/cstrn/${id}`,
+// 카드 클릭 → 계약유형별 상세 경로(slide107). 식별자는 URL 이 아니라 navigate state 로 전달.
+const DETAIL_PATH: Record<CncltnRmvListItem['dtlRouteCd'], string> = {
+  gnrl: '/ct/cmdtyCtrtCncltnRmvDtl',
+  gramt: '/ct/cncltnRmvGnrlCtrtGramtDtl',
+  untprc: '/ct/cncltnRmvGnrlCtrtUntprcDtl',
+  mdfcn: '/ct/cncltnRmvMdfcnCtrtDtl',
+  cstrn: '/ct/cstrnCtrtCncltnRmvDtl',
 }
 
 export function CtrtCncltnRmvListPage() {
@@ -185,7 +185,7 @@ export function CtrtCncltnRmvListPage() {
     setPage(page + 1)
   }
   const handleCardClick = (item: CncltnRmvListItem) => {
-    navigate(DETAIL_PATH[item.dtlRouteCd](item.id), { state: item })
+    navigate(DETAIL_PATH[item.dtlRouteCd], { state: item })
   }
 
   // ── 키워드 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 이 블록 삭제) ──
