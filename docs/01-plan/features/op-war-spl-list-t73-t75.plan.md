@@ -16,6 +16,27 @@ project-version: 0.1.0
 
 ---
 
+## ⚠️ 개정 (2026-08-18) — 진입 구조 변경: 상세 페이지 → 통합목록 바텀시트
+
+사용자 확정(2026-08-18)으로 v1 의 진입 구조(RISK 1 · 결정 1)를 폐기하고 아래로 대체한다.
+아래 "결정 사항" 2~9(영문 화면명·NIIN·탭별 구성·데이터 계층·항목명)는 그대로 유효하다.
+
+1. **진입** — 구 `/op/ovs/:id` 상세 페이지(`OvsPrcmPlanDtlPage`)·라우트는 **삭제**(2026-08-18 선행 작업).
+   연간조달계획(annual) 카드 클릭 시 **통합목록 페이지 위에 바텀시트**(`BottomSheet`, 타이틀 '목록정보 조회')를 띄운다.
+2. **P76 목록정보조회 = 바텀시트 콘텐츠 컴포넌트 `WarSplList_Inq`** (v1 에선 미생성) — 탭 3개(T73/T74/T75)와
+   NIIN 상태를 소유. 컨테이너(`BottomSheet` open/title/footer)는 부모 `PrcmPlanIntgListPage` 가 소유
+   (CLAUDE.md — `*Sheet` 래퍼 금지). footer = '닫기' 단일 버튼.
+3. **P77 업체정보 = 바텀시트가 아니라 아코디언**(사용자 요청) — 형상자료(T73) 참조번호 건별 블록 하위에
+   `AccordionSection('업체정보')` 로 표현하고, 콘텐츠는 P77 데이터영역(dm_bzentyInfo) 내용만 사용.
+   구 '업체정보 보기' 버튼 + 바텀시트는 폐기. 조회는 아코디언 펼침(마운트) 시 생산자부호로 실행.
+4. **파일 위치 이동** — 구 `src/ui/biz/op/ovsPrcmPlanDtl/` → **`src/ui/biz/op/warSplList_Inq/`**
+   (폴더명 = 컨테이너 화면 ID camelCase, CLAUDE.md 명명 규칙). 페이지 셸 요소(SummaryInfo·StepBar·
+   useCollapsibleHeader)는 바텀시트 구조에선 사용하지 않는다.
+5. **데이터 계층 재사용** — v1 의 `types/mocks/services/queries` WarSpl* 는 변경 없이 그대로 사용.
+6. T71/T72(`OvsPrcmPlanDtl`·`OvsPrcmPlanDtl_RsltList`)는 계속 파일 보존(진입점 없음).
+
+---
+
 ## Executive Summary
 
 | Perspective | Content |

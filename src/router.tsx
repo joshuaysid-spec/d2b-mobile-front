@@ -134,12 +134,6 @@ const BfhdSpcfctDtlPage = lazy(() =>
     default: m.BfhdSpcfctDtlPage,
   })),
 )
-// 국외 조달계획 상세(MUI-OP-01-M73, /op/ovs/:id) — biz/op/ovsPrcmPlanDtl.
-const OvsPrcmPlanDtlPage = lazy(() =>
-  import('@/ui/biz/op/ovsPrcmPlanDtl/OvsPrcmPlanDtlPage').then((m) => ({
-    default: m.OvsPrcmPlanDtlPage,
-  })),
-)
 // 계약 통합목록(MUI-CT-01-M01, /ct) — biz/ct/ctrtIntgList.
 const CtrtIntgListPage = lazy(() =>
   import('@/ui/biz/ct/ctrtIntgList/CtrtIntgListPage').then((m) => ({
@@ -1545,12 +1539,8 @@ export const router = createBrowserRouter([
         element: <BfhdSpcfctDtlPage />,
         handle: { header: { variant: 'sub', title: '사전규격 상세' } },
       },
-      {
-        // 진입 경로는 조달계획 통합목록의 검색유형 '연간조달계획'(annual) 카드뿐 → 헤더 타이틀도 '연간조달계획 상세'.
-        path: 'op/ovsPrcmPlanDtl',
-        element: <OvsPrcmPlanDtlPage />,
-        handle: { header: { variant: 'sub', title: '연간조달계획 상세' } },
-      },
+      // 구 국외(연간조달계획) 상세 라우트는 삭제(2026-08-18) —
+      // 연간조달계획은 통합목록 카드 위 '목록정보 조회' 바텀시트(WarSplList_Inq)로 대체(상세페이지 없음).
       {
         path: 'notification',
         element: <NotiPrstPage />,

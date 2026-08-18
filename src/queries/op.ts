@@ -7,6 +7,7 @@ import type {
   OpListRequest,
   OpNotifyRequest,
   OpPlanDetail,
+  PrcDataSearchRequest,
   WarSplInqRequest,
 } from '@/types/op'
 
@@ -22,6 +23,7 @@ export const opKeys = {
   warSplIdntf: (req: WarSplInqRequest) => ['op', 'warSplIdntf', req] as const,
   warSplRef: (req: WarSplInqRequest) => ['op', 'warSplRef', req] as const,
   warSplBzEnty: (prdctnCd: string) => ['op', 'warSplBzEnty', prdctnCd] as const,
+  prcDataList: (req: PrcDataSearchRequest) => ['op', 'prcDataList', req] as const,
 }
 
 /** 조달계획 통합목록 — 검색 확정값(appliedSearch)별 캐시. 키워드 세부 필터/페이징은 페이지 클라이언트 로직 유지. */
@@ -99,6 +101,15 @@ export function useWarSplBzEnty(prdctnCd: string) {
     queryKey: opKeys.warSplBzEnty(prdctnCd),
     queryFn: () => opService.getWarSplBzEnty(prdctnCd),
     enabled: Boolean(prdctnCd),
+  })
+}
+
+/** 품목별 가격자료(P75) — 검색 확정값(applied)이 있을 때만 호출(enabled 는 호출부가 넘김). */
+export function usePrcDataList(req: PrcDataSearchRequest, enabled = true) {
+  return useQuery({
+    queryKey: opKeys.prcDataList(req),
+    queryFn: () => opService.getPrcDataList(req),
+    enabled,
   })
 }
 

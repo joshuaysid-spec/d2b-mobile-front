@@ -1,12 +1,19 @@
 // 조달계획 상세 - '품목명세서' 탭 콘텐츠 (MUI-OP-01-M04, 문서 slide25).
 // 헤더(총건수 + 표시개수) + 품목 카드 N개(각 품목 = 테이블, 기본 4행 + "내역 펼쳐보기/접기"로 전체 토글)
-//   + 안내문 + 더보기. 재고번호 행의 [보기] → 목록정보조회 팝업(P75/P76) 스텁.
+//   + 안내문 + 더보기.
+// 재고번호 행의 [보기] → 품목별 가격자료(MUI-OP-01-P75) 바텀시트 — 컨테이너는 이 탭이 소유,
+//   콘텐츠는 PrcDataList(CLAUDE.md — *Sheet 래퍼 금지).
+//   TODO(설계서 slide71): 실적 'Y' 외 항목은 목록정보조회(P76) 분기 — 품목명세서 데이터에 실적
+//   필드가 확정되면 분기 추가(현재는 [보기] → P75 고정, op-prc-data-list-p75.plan.md RISK 2).
 // 단가·금액은 비공개('- 원'). 데이터는 목업 — 추후 API(opService.getItemSpecs)로 대체.
 // 미반영(추후): + 플로팅 버튼 → 출력물 바텀시트(MUI-BD-01-P17, OZ리포트).
 import { memo, useCallback, useMemo, useState } from 'react'
 
+import { PrcDataList } from '@/ui/biz/op/prcDataList/PrcDataList'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
@@ -179,9 +186,11 @@ export function PrcmPlanDtl_PrdList() {
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
 
-  // 재고번호 보기 → 목록정보조회 팝업(P75/P76) 스텁
+  // 재고번호 [보기] → 품목별 가격자료(P75) 바텀시트. null = 닫힘.
+  // 클릭한 행의 재고번호를 콘텐츠(PrcDataList)에 넘겨 군급/NIIN 프리필 + 즉시 조회.
+  const [prcDataInvtNo, setPrcDataInvtNo] = useState<string | null>(null)
   const handleView = useCallback((invtNo: string) => {
-    console.log('[M04] 목록정보조회(P75/P76) 열기', invtNo)
+    setPrcDataInvtNo(invtNo)
   }, [])
 
   const loaded = Math.min(page * pageSize, TOTAL)
@@ -227,6 +236,24 @@ export function PrcmPlanDtl_PrdList() {
           더보기 ({loaded}/{TOTAL})
         </Button>
       </div>
+
+      {/* 품목별 가격자료 바텀시트 (MUI-OP-01-P75) — 군급-재고번호 [보기] 클릭 시.
+          컨테이너는 이 탭이 소유(*Sheet 래퍼 금지), 콘텐츠(검색 + 결과)는 PrcDataList. */}
+      <BottomSheet
+        open={prcDataInvtNo !== null}
+        onOpenChange={(next) => {
+          if (!next) setPrcDataInvtNo(null)
+        }}
+        title="품목별 가격자료"
+        footer={
+          <ButtonGroup
+            layout="single"
+            items={[{ label: '닫기', variant: 'secondary', onClick: () => setPrcDataInvtNo(null) }]}
+          />
+        }
+      >
+        {prcDataInvtNo !== null && <PrcDataList invtNo={prcDataInvtNo} />}
+      </BottomSheet>
     </div>
   )
 }
