@@ -20,6 +20,8 @@ import type {
   OpPlanDetail,
   OpProducerSearchRequest,
   OpProducerSearchResult,
+  PrcDataResult,
+  PrcDataSearchRequest,
   WarSplBzEnty,
   WarSplCnfg,
   WarSplIdntf,
@@ -58,6 +60,8 @@ const EP = {
   WAR_SPL_REF: '/v1/ops/war-supplies/references',
   /** 목록정보조회 - 업체정보 — MUI-OP-01-P77 (ovsPrcmPlanDtl/WarSplList_BzEnty) */
   WAR_SPL_BZ_ENTY: '/v1/ops/war-supplies/business-entities',
+  /** 품목별 가격자료 — MUI-OP-01-P75 (prcDataList/PrcDataList) */
+  PRC_DATA: '/v1/ops/price-data',
 } as const
 
 export const opService = {
@@ -164,5 +168,26 @@ export const opService = {
   async getWarSplBzEnty(prdctnCd: string): Promise<WarSplBzEnty> {
     if (USE_MOCK) return mockDelay(MOCK_OP.warSplBzEnty)
     return apiClient.post<WarSplBzEnty, WarSplBzEnty>(EP.WAR_SPL_BZ_ENTY, { prdctnCd })
+  },
+
+  // ── 품목별 가격자료 — P75 ──────────────────────────────────────────────────
+
+  /** 품목별 가격자료 조회(dl_resultList) — 목업은 입력 필드만 부분일치(획득구분은 일치) 필터.
+   *  순번(no)은 "검색결과 순번"(설계서 slide74)이라 필터 후 1부터 재부여한다. */
+  async getPrcDataList(req: PrcDataSearchRequest): Promise<PrcDataResult> {
+    if (USE_MOCK) {
+      const list = MOCK_OP.prcDataList
+        .filter(
+          (it) =>
+            (!req.acqstnTypeCd || it.acqstnTypeCd === req.acqstnTypeCd) &&
+            (!req.fsc || it.fsc.includes(req.fsc)) &&
+            (!req.niin || it.niin.includes(req.niin)) &&
+            (!req.prtsNo || it.prtsNo.includes(req.prtsNo)) &&
+            (!req.itemNm || it.itemNm.includes(req.itemNm)),
+        )
+        .map((it, i) => ({ ...it, no: i + 1 }))
+      return mockDelay({ list, total: list.length })
+    }
+    return apiClient.post<PrcDataResult, PrcDataResult>(EP.PRC_DATA, req)
   },
 }

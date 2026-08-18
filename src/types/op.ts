@@ -332,3 +332,79 @@ export interface WarSplBzEnty {
   /** FAX(fxno). */
   fxno: string
 }
+
+// ── 품목별 가격자료 — MUI-OP-01-P75 (prcDataList/PrcDataList) ───────────────
+// 설계서 01.조달계획 v0.82 slide72(화면 p71) + slide73~74(항목설명 p72~73).
+// 항목명(영문)은 설계서 "항목 설명" 표 그대로 — 임의 작명 금지.
+
+/**
+ * 품목별 가격자료 검색조건(dm_searchInfo, slide73) — 전 필드 부분 입력 가능.
+ * TODO(백엔드 확정): 획득구분 코드값(acqstnTypeCd, 자리수 8)은 설계서에 라벨만 정의
+ *   (상업실적사/FMS실적가/BOA청구가/CSP구매가/업체공표(견적)가/무관정보가) — 코드 미정.
+ */
+export interface PrcDataSearchRequest {
+  /** 획득구분(acqstnTypeCd) — '전체' 선택 시 생략. */
+  acqstnTypeCd?: string
+  /** 군급(fsc). */
+  fsc?: string
+  /** NIIN — 국가식별코드(niin). */
+  niin?: string
+  /** 부품번호(prtsNo). */
+  prtsNo?: string
+  /** 품명(itemNm). */
+  itemNm?: string
+}
+
+/** 품목별 가격자료 검색결과 1건(dl_resultList, slide74 — 22항목). */
+export interface PrcDataItem {
+  /** 순번(no). */
+  no: number
+  /** 획득구분(acqstnTypeCd). */
+  acqstnTypeCd: string
+  /** 획득구분명(acqstnTypeNm). */
+  acqstnTypeNm: string
+  /** 군급(fsc). */
+  fsc: string
+  /** NIIN — 국가식별코드(niin). */
+  niin: string
+  /** 부품번호(prtsNo). */
+  prtsNo: string
+  /** 단위(unitNm). */
+  unitNm: string
+  /** 규격번호(spcfctNo). */
+  spcfctNo: string
+  /** 적용장비(aplcnEqpmntCd). */
+  aplcnEqpmntCd: string
+  /** 적용장비명(aplcnEqpmntNm). */
+  aplcnEqpmntNm: string
+  /** 품명(itemNm). */
+  itemNm: string
+  /** 화폐(crncNm). */
+  crncNm: string
+  /** 화폐구분명(crncEngNm). */
+  crncEngNm: string
+  /** 국가(ntnCd). */
+  ntnCd: string
+  /** 국가명(ntnNm). */
+  ntnNm: string
+  /** 단가(untprc). */
+  untprc: string
+  /** 수량(qty). */
+  qty: string
+  /** 계약일자(ctrtYmd). */
+  ctrtYmd: string
+  /** 업체(bzentyCd). */
+  bzentyCd: string
+  /** 업체명(bzentyNm). */
+  bzentyNm: string
+  /** 획득일자(acqstnYmd). */
+  acqstnYmd: string
+  /** 계약번호(획득근거)(ctrtNo). */
+  ctrtNo: string
+}
+
+/** 품목별 가격자료 조회 결과 — 결과 목록 + 총건수('총 N건' 표시). */
+export interface PrcDataResult {
+  list: PrcDataItem[]
+  total: number
+}
