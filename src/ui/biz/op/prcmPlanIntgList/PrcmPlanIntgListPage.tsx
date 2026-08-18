@@ -17,7 +17,10 @@ import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
+import { WarSplList_Inq } from '@/ui/biz/op/warSplList_Inq/WarSplList_Inq'
 import type {
   SearchFilterSchema,
   SearchFilterSection,
@@ -358,7 +361,9 @@ const ANNUAL_SEARCH_TARGETS = [
 
 // 목록 데이터는 useOpPlanList(검색유형별 조회)가 공급 — 목업 데이터는 mocks/op.ts(구 인라인 목업 이관).
 // 검색유형별 업무구분: plan=물품/용역/공사/국외 · spec=물품/용역/공사(국외 없음) · annual=국외만.
-// 카드 클릭 라우팅은 srchType 으로만 분기(handleCardClick): plan→/op/:id, spec→/op/spec/:id, annual→/op/ovs/:id.
+// 카드 클릭 라우팅은 srchType 으로만 분기(handleCardClick): plan→/op/:id, spec→/op/spec/:id.
+//   annual 은 상세페이지 이동 없음(2026-08-18, 구 /op/ovs/:id 상세 삭제) —
+//   '목록정보 조회' 바텀시트(MUI-OP-01-P76 WarSplList_Inq: 형상/식별/참고자료 탭)를 이 페이지 위에 띄운다.
 
 export function PrcmPlanIntgListPage() {
   const navigate = useNavigate()
@@ -430,21 +435,28 @@ export function PrcmPlanIntgListPage() {
   const handleLoadMore = () => {
     setPage(page + 1)
   }
+  // 목록정보 조회 바텀시트(MUI-OP-01-P76) — 연간조달계획(annual) 카드 클릭 시 열림. null = 닫힘.
+  // 컨테이너(BottomSheet)는 페이지가 소유하고 콘텐츠는 WarSplList_Inq(CLAUDE.md — *Sheet 래퍼 금지).
+  const [warSplItem, setWarSplItem] = useState<OpPlanItem | null>(null)
+
   // 카드 클릭 라우팅 — 검색유형(srchType)으로만 분기(taskSeNm 하드코딩 분기 제거).
   //   조달계획(plan)  → 조달계획상세 (/op/:id)      ※ 국외 업무구분이어도 항상 조달계획상세
   //   사전규격(spec)  → 사전규격상세 (/op/spec/:id)
-  //   연간조달(annual) → 국외 상세   (/op/ovs/:id)   ※ 연간조달 = 국외 → 항상 국외 상세
-  const ROUTE_BY_SRCH_TYPE: Record<OpSrchType, (id: string) => string> = {
+  //   연간조달(annual) → 상세페이지 이동 없음(구 /op/ovs/:id 삭제) — '목록정보 조회' 바텀시트 오픈.
+  const ROUTE_BY_SRCH_TYPE: Record<Exclude<OpSrchType, 'annual'>, (id: string) => string> = {
     plan: (id) => `/op/${id}`,
     spec: (id) => `/op/spec/${id}`,
-    annual: (id) => `/op/ovs/${id}`,
   }
   const handleCardClick = (item: OpPlanItem) => {
+    if (item.srchType === 'annual') {
+      // 연간조달계획 — 페이지 이동 대신 목록정보 조회 바텀시트(형상/식별/참고자료 탭).
+      setWarSplItem(item)
+      return
+    }
     // 클릭 항목을 state 로 함께 전달 — 상세에서 즉시표시 초기값(재조회 없이 헤더/요약 렌더).
     // (CLAUDE.md "목록 → 상세 데이터 전달")
-    navigate((ROUTE_BY_SRCH_TYPE[item.srchType] ?? ROUTE_BY_SRCH_TYPE.plan)(item.id), {
-      state: item,
-    })
+    const toPath = ROUTE_BY_SRCH_TYPE[item.srchType] ?? ROUTE_BY_SRCH_TYPE.plan
+    navigate(toPath(item.id), { state: item })
   }
 
   // ── 키워드 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 이 블록 삭제) ──
@@ -578,6 +590,24 @@ export function PrcmPlanIntgListPage() {
         defaultValue={tabDefaultValue}
         onSearch={handleFilterSearch}
       />
+
+      {/* 목록정보 조회 바텀시트 (MUI-OP-01-P76) — 연간조달계획 카드 클릭 시.
+          컨테이너는 페이지 소유(*Sheet 래퍼 금지), 콘텐츠(탭 3개 + NIIN 상태)는 WarSplList_Inq. */}
+      <BottomSheet
+        open={warSplItem !== null}
+        onOpenChange={(next) => {
+          if (!next) setWarSplItem(null)
+        }}
+        title="목록정보 조회"
+        footer={
+          <ButtonGroup
+            layout="single"
+            items={[{ label: '닫기', variant: 'secondary', onClick: () => setWarSplItem(null) }]}
+          />
+        }
+      >
+        {warSplItem && <WarSplList_Inq planId={warSplItem.id} />}
+      </BottomSheet>
     </div>
   )
 }

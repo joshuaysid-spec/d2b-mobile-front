@@ -1,15 +1,16 @@
 // 참고자료 (MUI-OP-01-T75, WarSplList_Ref) — 설계서 01.조달계획 v0.82 slide80 / 항목설명 slide84(1.7).
-// 연간조달계획 상세(/op/ovs/:id) '참고자료' 탭 콘텐츠.
+// 목록정보 조회 바텀시트(WarSplList_Inq) '참고자료' 탭 콘텐츠.
 // 구성: NIIN 검색 + 참고자료(dl_refList) **건별 테이블 반복**(설계서 목업 3건).
 // 표시 규칙(사용자 확정 2026-08-11): 목록은 해당 연간조달계획의 **디폴트 값**이고,
 //   NIIN 검색 시 디폴트 목록 아래로 검색 결과가 이어붙는다(교체 아님).
 //   ⚠️ '교정' 항목은 화면 목업 표기가 RNIC, 항목설명 1.7 은 RNJC(rnjc) — 항목설명을 권위로 rnjc 사용.
 //   ⚠️ '설계(SADC)' 는 항목설명 1.7 에만 있고 화면 목업 컬럼에는 없다 — 데이터영역 기준으로 표시.
+// 시트 본문(px-16) 안이라 AccordionSection 은 flush(콘텐츠 좌우 패딩 제거 — 2중 패딩 방지).
 import { useWarSplRef } from '@/queries/op'
 import type { WarSplRef } from '@/types/op'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import { WarSplList_NiinSrch } from '@/ui/biz/op/ovsPrcmPlanDtl/WarSplList_NiinSrch'
+import { WarSplList_NiinSrch } from '@/ui/biz/op/warSplList_Inq/WarSplList_NiinSrch'
 
 // 라벨(한글 + 부호명) ↔ 항목명(영문) — 설계서 "항목 설명 1.7 참고자료 데이터 영역" 순서 그대로.
 const REF_FIELDS: { label: string; key: keyof WarSplRef }[] = [
@@ -28,7 +29,7 @@ const REF_FIELDS: { label: string; key: keyof WarSplRef }[] = [
 export interface WarSplList_RefProps {
   /** 연간조달계획 식별자 — 디폴트 값 조회 기준. */
   planId: string
-  /** 입력 중 NIIN(페이지 소유 — 탭 전환 시에도 유지). */
+  /** 입력 중 NIIN(시트 콘텐츠 소유 — 탭 전환 시에도 유지). */
   niin: string
   onNiinChange: (next: string) => void
   /** 검색 실행(확정값 반영). */
@@ -51,7 +52,7 @@ export function WarSplList_Ref({
   const list = [...(base ?? []), ...(found ?? [])]
 
   return (
-    // pt-krds-8: 상단 sticky 탭(TabList)과 NIIN 검색 섹션 사이 여백(2026-08-11 요청).
+    // pt-krds-8: 탭(TabList)과 NIIN 검색 섹션 사이 여백(2026-08-11 요청과 동일 간격 유지).
     <div className="flex flex-col gap-krds-7 pt-krds-8 pb-6">
       <WarSplList_NiinSrch
         id="war-spl-ref-niin"
@@ -67,6 +68,7 @@ export function WarSplList_Ref({
           title="참고자료"
           titleInfo={list.length > 0 ? `총 ${list.length}건` : undefined}
           // borderTop 유지(기본 true) — 위의 NIIN 검색 영역과 콘텐츠를 가르는 선.
+          flush
         >
           <div className="flex flex-col gap-krds-7">
             {list.map((ref) => {
