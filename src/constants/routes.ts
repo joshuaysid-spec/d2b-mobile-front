@@ -16,6 +16,8 @@ export const ROUTES = {
   BD_PRGRS_DETAIL: '/bd/bidPrgsDtlInq',
   /** 입찰등록심사 결과조회 (MUI-BD-03-M05). */
   BD_REG_RSLT: '/bd/reg-rslt',
+  /** 입찰참가신청조회 (MUI-BD-04-M22 · 탭 T01~T07). 식별자는 navigate state. */
+  BD_PRTCP_APER_DETAIL: '/bd/bidPrtcpAperDtl',
   /** 사전심사(PQ) 결과조회 (MUI-BD-02-M02). */
   BD_SRNG_RSLT: '/bd/srng-rslt',
   /** 개찰목록 (MUI-BD-08-M01). */

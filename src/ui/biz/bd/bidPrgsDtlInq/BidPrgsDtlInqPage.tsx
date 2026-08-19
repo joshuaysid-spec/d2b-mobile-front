@@ -54,6 +54,14 @@ const MOCK_BID_PRGRS_DETAIL: BidPrgrsDetail = {
   techEvlRsltYn: true,
 }
 
+// 입찰참가신청서 [내용 보기] 목적지 판정(설계서 slide66 상태값) — 제출은 끝났고 등록심사 전/동의 단계면
+// 신청서 자체를 읽기전용 조회(M22), 등록확정·반려 등 심사 결과가 나온 건은 결과조회(M05).
+const APFR_SUBMITTED_STATS = ['신청완료', '미동의', '동의완료']
+function isApfrSubmitted(it: BidPrgrsDetail) {
+  if (it.bidRegCfmtnYn === 'Y' || it.regRjctYn) return false
+  return Boolean(it.apfrStatNm && APFR_SUBMITTED_STATS.includes(it.apfrStatNm))
+}
+
 // 진행상태 배지(요약 헤더에서 상태를 알 수 있게) — 목록 카드와 동일 규칙.
 function statusBadge(
   it: BidPrgrsItem,
@@ -179,8 +187,12 @@ export function BidPrgsDtlInqPage() {
   // 보기 버튼 → 결과조회 연계. 기술평가/생산능력서류는 풀팝업(P01/P06), 그 외는 결과 화면 이동.
   const handleView = (key: string) => {
     if (key === 'apfr') {
-      // 국외: 입찰참가신청서 상세(MUI-BD-04-M78, /bd/ovsBidPrtcpApfrDtl — state 는 목업 위 병합) / 국내: 입찰등록심사 결과조회
+      // 국외: 입찰참가신청서 상세(MUI-BD-04-M78, /bd/ovsBidPrtcpApfrDtl — state 는 목업 위 병합).
+      // 국내: 설계서 slide66 '입찰참가신청서 상태값' 흐름대로 분기 —
+      //   신청완료/미동의/동의완료 → 입찰참가신청조회(MUI-BD-04-M22)
+      //   등록불가/등록확정/반려   → 입찰등록심사 결과조회(MUI-BD-03-M05)
       if (isOvs) navigate('/bd/ovsBidPrtcpApfrDtl', { state: detail })
+      else if (isApfrSubmitted(detail)) navigate('/bd/bidPrtcpAperDtl', { state: detail })
       else navigate('/bd/reg-rslt', { state: detail })
     } else if (key === 'tndr' && isOvs) {
       // 국외 입찰서 상세(MUI-BD-06-M75, /bd/ovsTndrDtl) — state 미전달(페이지가 OvsTndrDtlItem 전체를

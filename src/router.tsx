@@ -465,6 +465,13 @@ const BidPrtcpAperWrtPage = lazy(() =>
     default: m.BidPrtcpAperWrtPage,
   })),
 )
+// 입찰참가신청조회(MUI-BD-04-M22 · 탭 T01~T07, /bd/bidPrtcpAperDtl) — biz/bd/bidPrtcpAperDtl.
+// 제출 완료된 입찰참가신청서의 읽기전용 조회(서약서 + 7탭). 식별자는 navigate state.
+const BidPrtcpAperDtlPage = lazy(() =>
+  import('@/ui/biz/bd/bidPrtcpAperDtl/BidPrtcpAperDtlPage').then((m) => ({
+    default: m.BidPrtcpAperDtlPage,
+  })),
+)
 // 입찰서(견적서) 작성(MUI-BD-06-M01~M07, /bd/prgrs/:id/tndr-wrt) — biz/bd/tndrWrt. 7탭 마법사(일반정보~약관동의). 신청 → 전자서명 → 신청완료.
 const TndrWrtPage = lazy(() =>
   import('@/ui/biz/bd/tndrWrt/TndrWrtPage').then((m) => ({ default: m.TndrWrtPage })),
@@ -1381,6 +1388,12 @@ export const router = createBrowserRouter([
         path: 'bd/bidPrtcpAperWrt',
         element: <BidPrtcpAperWrtPage />,
         handle: { header: { variant: 'sub', title: '입찰참가신청서' } },
+      },
+      {
+        path: 'bd/bidPrtcpAperDtl',
+        element: <BidPrtcpAperDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '입찰참가신청서 조회' } },
       },
       {
         path: 'bd/tndrWrt',

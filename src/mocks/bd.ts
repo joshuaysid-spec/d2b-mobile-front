@@ -492,9 +492,35 @@ const prgrsListBase: BidPrgrsItem[] = [
     tndrSbmsnPntmCd: 'post',
     regRjctYn: false,
   },
+  // 8) 입찰참가신청서 제출완료(신청완료) → [내용 보기]가 입찰참가신청조회(MUI-BD-04-M22)로 분기.
+  {
+    rNum: '8',
+    taskSeNm: '물품',
+    pbancNo: '2026LGM000611845-01',
+    prcmNo: '2026LGM000611845',
+    bidNm: '(26-물품-15) 특수작전용 대물타격 무인항공기 구매',
+    rfrncNo: '2026LGM61184',
+    orderInstTelno: '02-3456-7890',
+    ctrtMthdNm: '경쟁입찰',
+    bidMthdNm: '전자입찰',
+    bidClrsDt: '2026-03-18 15:00',
+    tndrSbmsnDdlnDt: '2026-03-19 15:00',
+    pbancYmd: '2026-02-14',
+    bdopnDt: '2026-03-27 11:00',
+    bzentySeNm: '대표',
+    bfhdSrng: false,
+    bidPrgrsApfr: true,
+    tndr: true,
+    techEvl: false,
+    prdcpDcmntSbms: false,
+    apfrStatNm: '신청완료',
+    tndrStatNm: '미제출',
+    tndrSbmsnPntmCd: 'post',
+    regRjctYn: false,
+  },
 ]
 
-// 목업 확장 — 보유 7건을 인덱스로 복제해 총건수(더보기 데모)만큼 구성.
+// 목업 확장 — 보유 8건을 인덱스로 복제해 총건수(더보기 데모)만큼 구성.
 // 국외 공고번호(EFD0007-2500)는 '-차수' 재접미사 규칙이 안 맞으므로 원형 유지(설계서 형식 보존).
 const PRGRS_TOTAL = 2010
 const prgrsList: BidPrgrsItem[] = Array.from({ length: PRGRS_TOTAL }, (_, i) => {
