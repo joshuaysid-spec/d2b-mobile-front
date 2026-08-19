@@ -21,7 +21,9 @@ import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListF
 import { TechEvlRsltInq } from '@/ui/biz/bd/bfhdSrngRsltInq/TechEvlRsltInq'
 import { PrdctnAbltDcmntSbmsn, type PrdctnAbltDcmntSbmsnHandle } from '@/ui/biz/bd/bfhdSrngRsltInq/PrdctnAbltDcmntSbmsn'
 import { BidAbndAperWrt, type BidAbndAperWrtHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidAbndAperWrt'
+import { BidAbndAperDtl } from '@/ui/biz/bd/bidPrgsDtlInq/BidAbndAperDtl'
 import { BidRtrcnAperInq, type BidRtrcnAperInqHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidRtrcnAperInq'
+import { BidRtrcnAperInqDtl } from '@/ui/biz/bd/bidPrgsDtlInq/BidRtrcnAperInqDtl'
 import type { BidPrgrsItem, BidPrgrsDetail } from '@/types/bd'
 
 // 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — 설계서 dlt_bidPrgrsList 항목명/형식 그대로.
@@ -162,6 +164,8 @@ export function BidPrgsDtlInqPage() {
   const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보 조회(M74)
   const [abandonOpen, setAbandonOpen] = useState(false) // 입찰포기신청서(P03)
   const [cancelOpen, setCancelOpen] = useState(false) // 입찰취소신청서(P04)
+  const [abandonDtlOpen, setAbandonDtlOpen] = useState(false) // 입찰포기신청서조회(P09)
+  const [cancelDtlOpen, setCancelDtlOpen] = useState(false) // 입찰취소신청서조회(P10)
   const [techEvlOpen, setTechEvlOpen] = useState(false) // 기술평가결과조회(P01)
   const [prdcpOpen, setPrdcpOpen] = useState(false) // 생산능력서류제출(P06)
   // P03/P04/P06 은 바텀시트 콘텐츠 전용 — 컨테이너/footer 는 여기(부모)가 소유, 제출은 ref 핸들로 호출.
@@ -229,6 +233,13 @@ export function BidPrgsDtlInqPage() {
     shortcutItems.push({ id: 'giveup', label: '입찰포기 신청서 작성하기', variant: 'secondary' })
     shortcutItems.push({ id: 'cancel', label: '입찰취소 신청서 작성하기', variant: 'secondary' })
   }
+  // 이미 포기/취소를 신청한 건은 제출한 신청서를 읽기전용으로 호출(P09/P10, slide109·112).
+  if (detail.tndrStatNm === '입찰포기') {
+    shortcutItems.push({ id: 'giveupDtl', label: '입찰포기 신청서 조회하기', variant: 'secondary' })
+  }
+  if (detail.tndrStatNm === '입찰취소') {
+    shortcutItems.push({ id: 'cancelDtl', label: '입찰취소 신청서 조회하기', variant: 'secondary' })
+  }
   shortcutItems.push({ id: 'fx', label: '환율정보 바로가기', variant: 'tertiary' })
 
   const handleShortcut = (id: string) => {
@@ -253,6 +264,12 @@ export function BidPrgsDtlInqPage() {
         break
       case 'cancel':
         setCancelOpen(true)
+        break
+      case 'giveupDtl':
+        setAbandonDtlOpen(true)
+        break
+      case 'cancelDtl':
+        setCancelDtlOpen(true)
         break
       default:
         console.log('[M02] 바로가기', id) // 입찰서 작성 등 — 추후 연계
@@ -378,6 +395,36 @@ export function BidPrgsDtlInqPage() {
         }
       >
         <BidRtrcnAperInq ref={cancelRef} detail={detail} onSubmitted={() => setCancelOpen(false)} />
+      </BottomSheet>
+
+      {/* 입찰포기신청서조회(P09) — 읽기전용 조회(footer=닫기, 부모 소유) */}
+      <BottomSheet
+        open={abandonDtlOpen}
+        onOpenChange={setAbandonDtlOpen}
+        title="입찰포기신청서"
+        footer={
+          <ButtonGroup
+            layout="single"
+            items={[{ label: '닫기', variant: 'primary', onClick: () => setAbandonDtlOpen(false) }]}
+          />
+        }
+      >
+        <BidAbndAperDtl detail={detail} />
+      </BottomSheet>
+
+      {/* 입찰취소신청서조회(P10) — 읽기전용 조회(footer=닫기, 부모 소유) */}
+      <BottomSheet
+        open={cancelDtlOpen}
+        onOpenChange={setCancelDtlOpen}
+        title="입찰취소신청서"
+        footer={
+          <ButtonGroup
+            layout="single"
+            items={[{ label: '닫기', variant: 'primary', onClick: () => setCancelDtlOpen(false) }]}
+          />
+        }
+      >
+        <BidRtrcnAperInqDtl detail={detail} />
       </BottomSheet>
     </div>
   )

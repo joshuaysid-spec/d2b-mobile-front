@@ -126,8 +126,10 @@ const ATTACH_FILES: FileDownloadItem[] = [
 // 일반정보 탭(M01) — 설계서 순서: 일반정보 → 첨부서류 → 담당자 정보 (slide152 일반정보·첨부서류, slide153 담당자).
 function GeneralInfo({ item }: { item: BdopnItem }) {
   const navigate = useNavigate()
-  // 이행/적격심사 포기신청 풀팝업(MUI-BD-10-P02, 구 P21) 열림 상태.
+  // 이행/적격심사 포기신청 풀팝업(MUI-BD-10-P02) 열림 상태.
   const [abndOpen, setAbndOpen] = useState(false)
+  // 이미 심사포기한 건은 같은 팝업이 조회 모드로 열린다(MUI-BD-10-P03 이행/적격심사포기신청조회, slide273~274).
+  const srngAbnd = item.impltElgbSrngStatNm === '심사포기'
 
   return (
     <>
@@ -153,7 +155,7 @@ function GeneralInfo({ item }: { item: BdopnItem }) {
           layout="split"
           items={[
             {
-              label: '이행/적격심사 포기하기',
+              label: srngAbnd ? '이행/적격심사 포기신청 조회' : '이행/적격심사 포기하기',
               variant: 'secondary',
               itemClassName: 'h-auto min-h-12 whitespace-normal break-keep py-2 text-center leading-tight',
               onClick: () => setAbndOpen(true),
@@ -179,8 +181,13 @@ function GeneralInfo({ item }: { item: BdopnItem }) {
         />
       </div>
 
-      {/* 이행/적격심사 포기신청 풀팝업(MUI-BD-10-P02, 구 P21) */}
-      <ImpltElgbSrngAbndAply open={abndOpen} onOpenChange={setAbndOpen} detail={item} />
+      {/* 이행/적격심사 포기신청 풀팝업 — 작성 MUI-BD-10-P02 / 심사포기 상태면 조회 MUI-BD-10-P03 */}
+      <ImpltElgbSrngAbndAply
+        open={abndOpen}
+        onOpenChange={setAbndOpen}
+        detail={item}
+        readOnly={srngAbnd}
+      />
     </>
   )
 }

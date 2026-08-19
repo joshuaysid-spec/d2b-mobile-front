@@ -81,6 +81,12 @@ export interface BdopnItem {
    *   정의돼 있지 않아 신 화면ID 소문자('t04'~'t21')로 임시 부여. 값 없으면 심사결과 탭은 물품(t05) 기본.
    */
   srngTyCd?: ImpltElgbSrngTyCd
+  /**
+   * 이행/적격심사 상태 ('심사포기' 등) — 포기신청 팝업의 작성(P02)/조회(P03) 분기용.
+   * ⚠️ TODO(설계서 영문ID 미확인 — 임시 키, BD 상태필드 선례): slide274 비고 "이행/적격심사 상태가
+   *   심사포기인 경우 조회 항목으로 속성 변경" 만 있고 상태 항목 자체는 데이터영역에 정의돼 있지 않다.
+   */
+  impltElgbSrngStatNm?: string
 }
 /**
  * 입찰진행 목록 카드 1건 (MUI-BD-03-M01, 설계서 02입찰 v1.83 slide69 화면 · slide71 데이터영역 dlt_bidPrgrsList).
@@ -145,8 +151,8 @@ export interface BidPrgrsItem {
   //    임시 항목(사용자 승인). 상세설계에서 영문 항목명이 확정되면 그 이름으로 교체한다.
   /** 입찰참가신청서 상태 (apfrStatNm) — '신청'|'미동의'. 등록확정은 bidRegCfmtnYn(설계서 항목)으로 판단 */
   apfrStatNm?: '신청' | '미동의'
-  /** 입찰서 상태 (tndrStatNm) — '미제출'|'제출'|'완료'|'입찰취소' */
-  tndrStatNm?: '미제출' | '제출' | '완료' | '입찰취소'
+  /** 입찰서 상태 (tndrStatNm) — '미제출'|'제출'|'완료'|'입찰포기'|'입찰취소'. 포기/취소는 신청서 조회(P09/P10) 분기 */
+  tndrStatNm?: '미제출' | '제출' | '완료' | '입찰포기' | '입찰취소'
   /** 입찰참가등록반려 신청 여부 (regRjctYn) — false=신청전(등록반려 버튼)·true=신청후(반려신청조회 버튼) */
   regRjctYn?: boolean
   /** 사전심사(PQ) 결과 유무 (bfhdSrngRsltYn) — 결과 있을 때 사전심사 결과조회 버튼 노출 */
@@ -1348,7 +1354,7 @@ export interface OvsTndrDtlItem {
   /** 업무구분 (taskSeNm) — 국내 dlt_bidPrgrsList 항목 차용. 요약 배지(국외) */
   taskSeNm?: string
   /** 입찰서 상태 (tndrStatNm) — 국내 임시 항목과 동일. '제출' 일 때 투찰취소 바로가기 노출 */
-  tndrStatNm?: '미제출' | '제출' | '완료' | '입찰취소'
+  tndrStatNm?: '미제출' | '제출' | '완료' | '입찰포기' | '입찰취소'
   /** 총액제 여부 (alonbsYn) — ⚠️ 설계서 미정의. 입찰참여품목 탭 단가제(M77)/총액제(M78) 분기 구동
    *  (설계서 총액제 데이터영역 접두 dl_alonbs* 차용). 상세설계 확정 시 그 이름으로 교체 */
   alonbsYn?: 'Y' | 'N'
