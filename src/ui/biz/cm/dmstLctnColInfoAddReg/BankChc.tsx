@@ -8,7 +8,7 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { Button } from '@/ui/common/base/Button'
 import type { BankChcItem } from '@/types/cm'
 
-// 은행 목록 목업 (설계서 slide173 예시 — 코드 00100000…/은행명). 추후 API: cmService.getBankList.
+// 은행 목록 목업 (설계서 slide173 예시 — 코드 00100000…/은행명). 추후 API: cmService.selectBankList.
 const MOCK_BANK: BankChcItem[] = [
   { bankCd: '00100000', bankNm: '한국은행' },
   { bankCd: '00200000', bankNm: '산업은행' },
@@ -29,7 +29,7 @@ export function BankChc({ onSelect }: BankChcProps) {
 
   const handleSearch = () => {
     setApplied(keyword.trim())
-    console.log('[P12] 주거래은행 검색', keyword) // 추후 API: cmService.getBankList(keyword)
+    console.log('[P12] 주거래은행 검색', keyword) // 추후 API: cmService.selectBankList(keyword)
   }
 
   const results = useMemo(

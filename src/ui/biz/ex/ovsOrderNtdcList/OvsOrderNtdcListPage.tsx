@@ -4,7 +4,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { useOvsOrderNtdcList } from '@/queries/ex'
+import { exQueries } from '@/queries/bds/ex/queries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
@@ -66,7 +66,7 @@ export function OvsOrderNtdcListPage() {
   const [filterApplied, setFilterApplied] = useState(false)
   const [appliedSearch, setAppliedSearch] = useState<string | null>(null)
 
-  const { data: listData, isLoading } = useOvsOrderNtdcList()
+  const { data: listData, isLoading } = exQueries.useSelectOvsOrderNtdcList()
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)

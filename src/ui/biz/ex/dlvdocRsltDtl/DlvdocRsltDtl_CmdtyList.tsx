@@ -1,6 +1,6 @@
 // 검사및납품조서결과상세 - '물품목록' 탭 콘텐츠 (MUI-EX-01-T06). 설계서 04.이행 v0.83 slide38~39.
 // 부대조달 T04 와 동일 구성("물품 목록 - 총 N건" + Table 반복 + 증명 문구) — 데이터 소스만 M07 조회.
-import { useDlvdocRsltCmdtys } from '@/queries/ex'
+import { exQueries } from '@/queries/bds/ex/queries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { DlvdocRsltCmdtyItem } from '@/types/ex'
@@ -24,7 +24,7 @@ function cmdtyRows(it: DlvdocRsltCmdtyItem): TableRow[] {
 }
 
 export function DlvdocRsltDtl_CmdtyList({ id }: DlvdocRsltDtl_CmdtyListProps) {
-  const { data: items = [] } = useDlvdocRsltCmdtys(id)
+  const { data: items = [] } = exQueries.useSelectDlvdocRsltCmdtys(id)
 
   return (
     <section className="flex flex-col gap-krds-7 pb-6">

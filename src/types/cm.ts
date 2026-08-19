@@ -1999,7 +1999,7 @@ export interface ScrtyMsrmtPrsn {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ── API 요청/응답 타입(추정 — TODO(백엔드 확정)) ──────────────────────────────
-//   cmService/도메인 소형 서비스(bzentyService 등)의 요청 파라미터·응답 봉투 타입.
+//   cmService(services/bds/cm.ts)의 요청 파라미터·응답 봉투 타입.
 //   설계서 데이터영역에 없는(화면·목업에서만 관찰되는) 형태라 잠정 정의 — 백엔드 스펙 확정 시 교체.
 //   ⚠️ services/cm.ts 전용. 페이지는 여전히 위쪽 데이터영역 타입(항목명 영문)만 참조한다.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -2303,7 +2303,7 @@ export interface DfEqpmntTradeAgncChgPayload {
   files: DfEqpmntTradeAgncAtchFile[]
 }
 
-// ── 업체정보관리 상세 (bzentyService, MUI-CM-01-M02) ──
+// ── 업체정보관리 상세 (cmService.selectBzenty*, MUI-CM-01-M02) ──
 /** 업체일반(T01) 상세 응답 — 일반 + 상태/수배/대표자/입찰대리인. */
 export interface BzentyGnrlDetail {
   /** 업체일반. */

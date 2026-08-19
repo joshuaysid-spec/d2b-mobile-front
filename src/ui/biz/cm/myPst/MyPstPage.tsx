@@ -27,7 +27,7 @@ const dl_myPstList: MyPstItem[] = [
   { id: '3', pstTtl: '작성한 제목 표시 영역', wrtYmd: '2025-11-28' },
 ]
 
-// ⚠️ 임시 목업 — API 연동 시 이 상수와 페이징 로직을 통째로 교체(myPstService.getList).
+// ⚠️ 임시 목업 — API 연동 시 이 상수와 페이징 로직을 통째로 교체(cmService.selectMyPstList).
 const MOCK_LIST: MyPstItem[] = Array.from({ length: TOTAL }, (_, i) => ({
   ...dl_myPstList[i % dl_myPstList.length],
   id: String(i + 1),

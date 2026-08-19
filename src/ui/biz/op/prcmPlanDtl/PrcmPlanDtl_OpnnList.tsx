@@ -1,7 +1,7 @@
 // 조달계획 상세 - '업체의견' 탭 콘텐츠 (MUI-OP-01-M05, 문서 slide26).
 // 제목(PageTitle) + 헤더(총건수 + 의견등록 버튼) + 의견 카드 목록(PrcmPlanDtl_OpnnCard, 일부 답변 포함) + 더보기.
 // 동작(스텁): 의견등록→등록 팝업 / 카드 클릭→상세 팝업 / 비공개는 "비공개 글입니다" 안내.
-// 데이터는 목업 — 추후 API(opService.getOpinions)로 대체.
+// 데이터는 목업 — 추후 API(opService.selectOpinions)로 대체.
 import { useCallback, useMemo, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'

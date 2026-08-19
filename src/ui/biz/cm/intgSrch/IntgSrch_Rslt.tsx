@@ -4,7 +4,7 @@
 //   ① {검색어} 검색결과 총 N개(SectionTitle) → ② 검색필터 버튼 + 정렬 셀렉트 →
 //   ③ 결과 카테고리별(입찰공고·개찰결과) 섹션: 카테고리 총건수 + 카드 리스트 + 더보기.
 // 데이터는 파일 내 목업 상수, 핸들러는 console.log + // 추후 API 주석으로 경계 표시.
-//   실제 검색결과는 cmService.searchAll(keyword) → 카테고리별 목록/총건수 반환.
+//   실제 검색결과는 cmService.selectSearchAll(keyword) → 카테고리별 목록/총건수 반환.
 // common/(base·composites)만 조립 — 신규 공통 컴포넌트 없음(정렬 셀렉트는 base SelectBox 로 근사).
 //
 // ⚠️ TODO(설계서 확인): M10 데이터영역의 영문 항목ID(카드 필드)가 설계서에서 미확정이라, 아래 목업은
@@ -67,7 +67,7 @@ interface IntgSrchRsltGroup {
   items: IntgSrchRsltItem[]
 }
 
-// 카테고리별 목업 6건씩 — 추후 API: cmService.searchAll(keyword).category(items/total).
+// 카테고리별 목업 6건씩 — 추후 API: cmService.selectSearchAll(keyword).category(items/total).
 function mockItems(prefix: string): IntgSrchRsltItem[] {
   const seed: Omit<IntgSrchRsltItem, 'id' | 'pbancNo'>[] = [
     {
@@ -179,7 +179,7 @@ function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProp
   const handleSort = (value: string) => {
     setSort(value)
     console.log('[intgSrchRslt] 정렬', value)
-    // 추후 API: cmService.searchAll(keyword, { sort: value }) 재조회
+    // 추후 API: cmService.selectSearchAll(keyword, { sort: value }) 재조회
   }
 
   const handleFilter = () => {
@@ -191,7 +191,7 @@ function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProp
   const handleLoadMore = (group: IntgSrchRsltGroup) => {
     setPages((prev) => ({ ...prev, [group.key]: (prev[group.key] ?? 1) + 1 }))
     console.log('[intgSrchRslt] 더보기', group.key)
-    // 추후 API: cmService.searchAll(keyword).category(group.key).nextPage() 누적
+    // 추후 API: cmService.selectSearchAll(keyword).category(group.key).nextPage() 누적
   }
 
   const handleCardClick = (group: IntgSrchRsltGroup, item: IntgSrchRsltItem) => {

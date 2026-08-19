@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { useCstrnPymtClmDtl } from '@/queries/wm'
+import { wmQueries } from '@/queries/bds/wm/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Notice } from '@/ui/common/composites/Notice'
@@ -43,7 +43,7 @@ export function CstrnPymtClmDtlPage() {
   const [tab, setTab] = useState('ctrt')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
-  const { data: detail } = useCstrnPymtClmDtl(id)
+  const { data: detail } = wmQueries.useSelectCstrnPymtClmDtl(id)
   const steps = buildSteps()
 
   if (!stateItem) return <Navigate to="/wm" replace />

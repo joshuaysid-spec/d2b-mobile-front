@@ -5,7 +5,7 @@
 //   콘텐츠는 PrcDataList(CLAUDE.md — *Sheet 래퍼 금지).
 //   TODO(설계서 slide71): 실적 'Y' 외 항목은 목록정보조회(P76) 분기 — 품목명세서 데이터에 실적
 //   필드가 확정되면 분기 추가(현재는 [보기] → P75 고정, op-prc-data-list-p75.plan.md RISK 2).
-// 단가·금액은 비공개('- 원'). 데이터는 목업 — 추후 API(opService.getItemSpecs)로 대체.
+// 단가·금액은 비공개('- 원'). 데이터는 목업 — 추후 API(opService.selectItemSpecs)로 대체.
 // 미반영(추후): + 플로팅 버튼 → 출력물 바텀시트(MUI-BD-01-P17, OZ리포트).
 import { memo, useCallback, useMemo, useState } from 'react'
 

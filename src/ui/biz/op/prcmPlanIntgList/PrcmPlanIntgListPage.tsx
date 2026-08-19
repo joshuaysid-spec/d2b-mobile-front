@@ -1,13 +1,13 @@
 // 조달계획 통합목록(MUI-OP-01-M01, node 9300-36815). Design Ref: op-list-page.design.
 // 구성: 업무도움(Infobox) + 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더(총건수·page size)
 //      + 카드 리스트(CardList, Card 재사용) + 더보기 + 맨위로 FAB.
-// 데이터: useOpPlanList(queries/op) — 목업/실연동은 opService(USE_MOCK)가 전환. 목업 데이터는 mocks/op.ts.
-// 키워드 검색·더보기(페이징)는 아직 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행 — queries/op.ts 참조).
+// 데이터: useSelectPlanList(queries/bds/op) — 목업/실연동은 opService(USE_MOCK)가 전환. 목업 데이터는 mocks/op.ts.
+// 키워드 검색·더보기(페이징)는 아직 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행 — queries/bds/op/queries.ts 참조).
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
-import { useOpPlanList } from '@/queries/op'
+import { opQueries } from '@/queries/bds/op/queries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SectionDivider } from '@/ui/common/base/SectionDivider'
@@ -363,7 +363,7 @@ const ANNUAL_SEARCH_TARGETS = [
   { value: 'prcmReqNo', label: '조달요구번호' },
 ]
 
-// 목록 데이터는 useOpPlanList(검색유형별 조회)가 공급 — 목업 데이터는 mocks/op.ts(구 인라인 목업 이관).
+// 목록 데이터는 useSelectPlanList(검색유형별 조회)가 공급 — 목업 데이터는 mocks/op.ts(구 인라인 목업 이관).
 // 검색유형별 업무구분: plan=물품/용역/공사/국외 · spec=물품/용역/공사(국외 없음) · annual=국외만.
 // 카드 클릭 라우팅은 srchType 으로만 분기(handleCardClick): plan→/op/prcmPlanDtl, spec→/op/bfhdSpcfctDtl.
 //   annual 은 상세페이지 이동 없음(2026-08-18, 구 국외 상세 삭제) —
@@ -399,9 +399,9 @@ export function PrcmPlanIntgListPage() {
 
   // 목록 조회 — 검색유형(탭)별 전체 목록(목업/실연동은 opService 의 USE_MOCK 분기가 전환).
   // 서버 페이징/키워드 검색 전환 시: req 에 page/pageSize/keyword 를 넣으면 queryKey 가 바뀌어 재조회된다.
-  const { data: planData } = useOpPlanList({ srchType: tab })
+  const { data: planData } = opQueries.useSelectPlanList({ srchType: tab })
 
-  // ── 목록 핸들러 — 확정값 상태만 갱신(조회는 useOpPlanList + 아래 클라이언트 필터가 담당) ──
+  // ── 목록 핸들러 — 확정값 상태만 갱신(조회는 useSelectPlanList + 아래 클라이언트 필터가 담당) ──
   // 검색유형 탭 전환 — 목록 유형 변경 + 관련 상태 리셋(page/빠른검색/필터). 구 normalize(업무구분 보정)는
   // 여기서 filter 를 그 유형 기본값(buildDefaultValue)으로 통째로 리셋하며 흡수한다.
   const handleTabChange = (next: string) => {
@@ -415,7 +415,7 @@ export function PrcmPlanIntgListPage() {
     setAppliedSearch(null)
     // 빠른검색 대상을 새 유형 기본값으로(연간조달=재고번호, 그 외=조달명).
     setTargets([type === 'annual' ? 'stockNo' : 'prcmPlanNm'])
-    // 탭 변경 → useOpPlanList queryKey 변경 → 유형별 목록 자동 재조회.
+    // 탭 변경 → useSelectPlanList queryKey 변경 → 유형별 목록 자동 재조회.
   }
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)
@@ -423,14 +423,14 @@ export function PrcmPlanIntgListPage() {
     setPage(1) // 필터 적용 시 첫 페이지부터
     setKeyword('') // 검색필터 팝업에서 '검색' 실행 시 빠른검색 입력값 비움(닫기는 유지 — handleSearch 만 호출됨)
     setAppliedSearch(null) // 빠른검색어 초기화
-    // 서버 필터 전환 시: useOpPlanList req 에 filter(value)를 포함시켜 재조회한다(현재는 클라 필터 미적용 표시용).
+    // 서버 필터 전환 시: useSelectPlanList req 에 filter(value)를 포함시켜 재조회한다(현재는 클라 필터 미적용 표시용).
   }
   const handleQuickSearch = () => {
     // 검색대상(targets)은 single 칩이라 항상 1개만 선택됨 — 첫 값을 검색 기준으로 사용.
     const target = targets[0] ?? 'prcmPlanNm'
     setAppliedSearch({ keyword: keyword.trim(), target })
     setPage(1) // 새 검색은 첫 페이지부터
-    // 서버 검색 전환 시: useOpPlanList req 에 keyword/searchTarget 포함(현재는 아래 filteredList 클라 필터).
+    // 서버 검색 전환 시: useSelectPlanList req 에 keyword/searchTarget 포함(현재는 아래 filteredList 클라 필터).
   }
   const handlePageSize = (size: number) => {
     setPageSize(size)
@@ -466,7 +466,7 @@ export function PrcmPlanIntgListPage() {
   //   filteredList: 조회 결과(planData.list)를 빠른검색 확정값으로 부분일치(대소문자 무시) 필터.
   //     - 'prcmPlanNm'(조달명) → 제목 · 그 외(판단번호·재고번호·조달요구번호) → prcmNo(목업 한계, API 연동 시 매핑)
   //   visibleList: 더보기 누른 만큼(page*pageSize)만 노출.
-  //   서버 전환 시: keyword/page 를 useOpPlanList req 로 옮기고 planData.total 을 총건수로 사용.
+  //   서버 전환 시: keyword/page 를 useSelectPlanList req 로 옮기고 planData.total 을 총건수로 사용.
   const filteredList = useMemo(() => {
     const list = planData?.list ?? []
     if (!appliedSearch || !appliedSearch.keyword) return list

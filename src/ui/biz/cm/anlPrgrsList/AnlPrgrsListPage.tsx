@@ -4,7 +4,7 @@
 // 진입: 상세 화면들의 진행현황 바텀시트(StepBar ▾ → buildProgressSheet)에서 세부단계(2depth) 클릭
 //   → 해당 단계의 "기준 건과 엮인(통합참조번호 등 동일 계열) 연관 건"만 목록으로 표시(대체로 1건, 더러 2건).
 // 구성(기획 확정): 상단 스텝바(가로 StepBar) + 총건수(SectionTitle info) + 카드 UI 리스트.
-// 데이터: 페이지 내 목업 — 추후 API: cmService.getAnlPrgrsList(rfrncNo, substep) 등 연관 건 조회로 교체.
+// 데이터: 페이지 내 목업 — 추후 API: cmService.selectAnlPrgrsList(rfrncNo, substep) 등 연관 건 조회로 교체.
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 

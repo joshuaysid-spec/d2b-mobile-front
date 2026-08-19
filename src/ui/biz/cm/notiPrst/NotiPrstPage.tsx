@@ -24,7 +24,7 @@ const CATEGORY_COLOR: Record<string, 'blue' | 'red' | 'yellow' | 'green'> = {
   대금청구: 'red',
 }
 
-// 추후 API: notificationService.getList()
+// 추후 API: cmService.selectNotiList()
 const MOCK_NOTIFICATIONS: NotiItem[] = [
   {
     id: 'noti-1',
@@ -101,7 +101,7 @@ export function NotiPrstPage() {
   const markAllRead = useAuthStore((s) => s.markAllRead)
 
   // 알림 화면 진입 = 읽음 처리 → BottomNav dot 제거.
-  // 추후 API: notificationService.markAllRead() 호출 후 store 동기화.
+  // 추후 API: cmService.markAllRead() 호출 후 store 동기화.
   useEffect(() => {
     markAllRead()
   }, [markAllRead])

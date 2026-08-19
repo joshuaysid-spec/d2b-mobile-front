@@ -8,7 +8,7 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { Button } from '@/ui/common/base/Button'
 import type { AsctGrpChcItem } from '@/types/cm'
 
-// 조합/단체 목록 목업 (설계서 slide163 예시 — 조합코드/단체명). 추후 API: cmService.getAsctGrpList.
+// 조합/단체 목록 목업 (설계서 slide163 예시 — 조합코드/단체명). 추후 API: cmService.selectAsctGrpList.
 const MOCK_ASCT: AsctGrpChcItem[] = [
   { asctCd: '11000', asctCdNm: '한국피복공업협동조합' },
   { asctCd: '11740', asctCdNm: '대한기계설비건설협회' },
@@ -29,7 +29,7 @@ export function AsctGrpChc({ onSelect }: AsctGrpChcProps) {
 
   const handleSearch = () => {
     setApplied(keyword.trim())
-    console.log('[P07] 조합/단체 검색', keyword) // 추후 API: cmService.getAsctGrpList(keyword)
+    console.log('[P07] 조합/단체 검색', keyword) // 추후 API: cmService.selectAsctGrpList(keyword)
   }
 
   const results = useMemo(

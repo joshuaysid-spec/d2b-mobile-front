@@ -16,7 +16,7 @@ export interface FSCChcHandle {
   register: () => void
 }
 
-// FSC 목록 목업 (설계서 slide171 예시 — 군급 1000·1001…/군급명). 추후 API: cmService.getFscList.
+// FSC 목록 목업 (설계서 slide171 예시 — 군급 1000·1001…/군급명). 추후 API: cmService.selectFscList.
 const MOCK_FSC: DmsAgtFscCode[] = [
   { fscCd: '1000', gunGrdNm: '군급명 1000' },
   { fscCd: '1001', gunGrdNm: '군급명 1001' },
@@ -37,7 +37,7 @@ const FSCChc = forwardRef<FSCChcHandle, FSCChcProps>(({ onRegister }, ref) => {
 
   const handleSearch = () => {
     setApplied(keyword.trim())
-    console.log('[P11] FSC 검색', keyword) // 추후 API: cmService.getFscList(keyword)
+    console.log('[P11] FSC 검색', keyword) // 추후 API: cmService.selectFscList(keyword)
   }
 
   const results = useMemo(

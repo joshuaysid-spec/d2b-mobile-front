@@ -55,7 +55,7 @@ const BZSTAT_OPTIONS = [
   { value: '17', label: '벤처용역' },
 ]
 
-// 등록품목명세 초기 목업 (설계서 slide151 예시 — 항목명/형식 그대로). 추후 API: cmService.getRegItemList.
+// 등록품목명세 초기 목업 (설계서 slide151 예시 — 항목명/형식 그대로). 추후 API: cmService.selectRegItemList.
 const INITIAL_ITEMS: AddRegItemRow[] = [
   {
     id: '1',

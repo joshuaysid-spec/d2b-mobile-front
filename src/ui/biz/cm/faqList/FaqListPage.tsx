@@ -57,7 +57,7 @@ export function FaqListPage() {
     setApplied({ keyword: keyword.trim(), scope })
     setPage(1)
     console.log('[Faq] 검색', { keyword: keyword.trim(), scope })
-    // cmService.getFaqList({ [scope]: keyword, bizFldCd: category, page: 1, ... })
+    // cmService.selectFaqList({ [scope]: keyword, bizFldCd: category, page: 1, ... })
   }
   const handleTab = (v: string) => {
     setCategory(v)

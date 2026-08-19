@@ -6,7 +6,7 @@
 //    동일하게 탭으로 노출 — 진입 시 마이페이지에서 넘어온 docType 으로 초기 탭 선택.)
 // 구성(위→아래): 분기 탭(TabList button) → 상단바(총건수+표시개수) → 카드 리스트 → 더보기 → 맨위로 FAB.
 //   카드 클릭 → 문서함 상세(M11)로 navigate(state 전달, CLAUDE.md "목록 → 상세 데이터 전달").
-// 데이터=파일 내 목업(설계서 항목명/형식), 동작=API 경계 스텁(console.log + '// 추후: docBoxService.xxx').
+// 데이터=파일 내 목업(설계서 항목명/형식), 동작=API 경계 스텁(console.log + '// 추후: cmService.selectDocBoxXxx').
 import { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -112,7 +112,7 @@ const DOC_TOTALS: Record<DocBoxSeCd, number> = {
   temp: 3,
 }
 
-// ⚠️ 임시 목업 — API 연동 시 이 상수·페이징 로직을 통째로 교체(docBoxService.getDocBoxList).
+// ⚠️ 임시 목업 — API 연동 시 이 상수·페이징 로직을 통째로 교체(cmService.selectDocBoxList).
 const MOCK_DOCS: DocBoxItem[] = (Object.keys(DOC_SAMPLES) as DocBoxSeCd[]).flatMap((se) => {
   const samples = DOC_SAMPLES[se]
   return Array.from({ length: DOC_TOTALS[se] }, (_, i) => ({
@@ -139,7 +139,7 @@ export function DocBoxPage() {
   const handleTab = (next: string) => {
     setTab(next as DocBoxSeCd)
     setPage(1)
-    console.log('[DocBox] 탭', next) // 추후: docBoxService.getDocBoxList({ docSeCd: next })
+    console.log('[DocBox] 탭', next) // 추후: cmService.selectDocBoxList({ docSeCd: next })
   }
   const handlePageSize = (size: number) => {
     setPageSize(size)

@@ -3,11 +3,11 @@
 // 구성: 중요 안내(Notice urgent) + sticky(요약 SummaryInfo + 스텝 StepBar + 탭 TabList)
 //   + 탭 콘텐츠(T05 상세정보 DlvdocRsltDtl · T06 물품목록 DlvdocRsltDtl_CmdtyList) — M02/M03 셸 준용.
 // 요약 행은 M05 카드와 동일 구성(계약일자/계약금액/합격일자/납품일자, slide36).
-// 데이터: useDlvdocRsltDtl — 조회 완료까지 PageLoading.
+// 데이터: exQueries.useSelectDlvdocRsltDtl — 조회 완료까지 PageLoading.
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { useDlvdocRsltDtl } from '@/queries/ex'
+import { exQueries } from '@/queries/bds/ex/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Notice } from '@/ui/common/composites/Notice'
@@ -43,7 +43,7 @@ export function DlvdocRsltDtlPage() {
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
-  const { data: detail } = useDlvdocRsltDtl(id)
+  const { data: detail } = exQueries.useSelectDlvdocRsltDtl(id)
   const steps = buildSteps()
 
   // state 없이 직접 진입 = 식별자를 알 수 없음 → 조서현황목록으로.

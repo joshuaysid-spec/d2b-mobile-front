@@ -125,7 +125,7 @@ const dl_resultList: AddRegInfoAplyItem[] = [
   },
 ]
 
-// ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 filteredList/visibleList 로직을 서버 조회로 교체(cmService.getAddRegInfoAplyList).
+// ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 filteredList/visibleList 로직을 서버 조회로 교체(cmService.selectAddRegInfoAplyList).
 const MOCK_LIST: AddRegInfoAplyItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dl_resultList[i % dl_resultList.length]
   return { ...base, id: String(i + 1), rcptNo: `${base.rcptNo}${String(i + 1).padStart(2, '0')}`.slice(0, 12) }
@@ -144,7 +144,7 @@ export function AddRegInfoAplyListPage() {
     setFilter(value)
     setFilterApplied(true)
     setPage(1)
-    console.log('[AddRegInfoAply] 검색필터', value) // 추후: cmService.getAddRegInfoAplyList(toRequest(value))
+    console.log('[AddRegInfoAply] 검색필터', value) // 추후: cmService.selectAddRegInfoAplyList(toRequest(value))
   }
   const handlePageSize = (size: number) => {
     setPageSize(size)

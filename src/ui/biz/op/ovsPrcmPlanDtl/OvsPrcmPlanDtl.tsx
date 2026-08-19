@@ -1,6 +1,6 @@
 // 국외 조달계획 상세 - '집행계획상세' 탭 콘텐츠 (MUI-OP-01-M73, ovsPrcmPlanDtl).
 // 국내 상세내용(M03)과 일부 중복되나 군수/해외조달(USD·재고번호·부품번호 등) 기준.
-// 데이터는 목업 — 추후 API(opService.getOverseasPlanDetail)로 대체.
+// 데이터는 목업 — 추후 API(opService.selectOvsPlanDtl)로 대체.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 

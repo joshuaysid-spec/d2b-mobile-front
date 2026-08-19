@@ -1,6 +1,6 @@
 // 국외 조달계획 상세 - '결과목록' 탭 콘텐츠 (MUI-OP-01-M74, ovsPrcmPlanDtl_RsltList).
 // 국외 조달 결과(품목별) 목록. 행 클릭 시 품목별가격자료(P75)/목록정보조회(P76·P77) 팝업 연계 예정.
-// 데이터는 목업 — 추후 API(opService.getOverseasPlanResults)로 대체.
+// 데이터는 목업 — 추후 API(opService.selectOvsPlanResults)로 대체.
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 
 interface OvsResult {

@@ -2,11 +2,11 @@
 // P13 대금청구신청목록에서 대금청구서 카드 클릭 → /wm/centerPrcmPymtClmDtl 진입(식별자는 navigate state).
 // 구성: 중요 안내 + sticky(요약 + 스텝 + 탭) + 탭(T05 계약정보 · T06 공급자정보 · T07 대금신청금액
 //   · T08 세금계산서 · 진행상태(T23 공용)) — M02/M03 셸 준용. 안내문 버튼 → P09 풀팝업.
-// 데이터: useCenterPrcmPymtClmDtl — 조회 완료까지 PageLoading.
+// 데이터: wmQueries.useSelectCenterPrcmPymtClmDtl — 조회 완료까지 PageLoading.
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { useCenterPrcmPymtClmDtl } from '@/queries/wm'
+import { wmQueries } from '@/queries/bds/wm/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Notice } from '@/ui/common/composites/Notice'
@@ -52,7 +52,7 @@ export function CenterPrcmPymtClmDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [gdntcOpen, setGdntcOpen] = useState(false) // P09 대금청구 안내문
 
-  const { data: detail } = useCenterPrcmPymtClmDtl(id)
+  const { data: detail } = wmQueries.useSelectCenterPrcmPymtClmDtl(id)
   const steps = buildSteps()
 
   if (!stateItem) return <Navigate to="/wm" replace />

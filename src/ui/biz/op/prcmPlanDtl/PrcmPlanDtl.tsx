@@ -1,6 +1,6 @@
 // 조달계획 상세 - '상세내용' 탭 콘텐츠 (MUI-OP-01-M03, 문서 slide 22·24 [물품/용역]).
 // 제목(PageTitle) + 아코디언 4개(집행계획·판단내역·연관정보·문의처) with 테이블.
-// 데이터는 목업 — 추후 API(opService.getDetail)로 대체.
+// 데이터는 목업 — 추후 API(opService.selectPlanDtl)로 대체.
 import { useState } from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'

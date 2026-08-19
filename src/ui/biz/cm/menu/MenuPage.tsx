@@ -4,7 +4,7 @@
 // 인증 상태·유저 정보는 props 로만 받는다(authStore import 금지 — 부모 AppLayout 이 주입).
 // 메뉴 트리는 아래 MENU_TREE(1/2/3depth) 로 구동 → 공통 composites/MenuAccordion 이 렌더.
 //   (예전 biz 전용 MenuGroup·menuData 는 MenuAccordion 과 중복이라 제거 — 공통 컴포넌트로 일원화.)
-// 검색은 useSearchAll 훅 호출 → 결과 없으면 공통 Toast 알림. 핸들러는 console.log 스텁(// 추후 라우팅).
+// 검색은 cmQueries.useSelectSearchAll 훅 호출 → 결과 없으면 공통 Toast 알림. 핸들러는 console.log 스텁(// 추후 라우팅).
 import { useCallback, useMemo, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -20,7 +20,7 @@ import {
   MenuAccordion,
   type MenuItem as MenuAccordionItem,
 } from '@/ui/common/composites/MenuAccordion'
-import { useSearchAll } from '@/queries/cm'
+import { cmQueries } from '@/queries/bds/cm/queries'
 import chatbotImage from '@/assets/images/chatbot.png'
 
 export interface MenuPageProps {
@@ -232,7 +232,7 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
   const [emptyToastOpen, setEmptyToastOpen] = useState(false)
   // 검색 진행 중 — 연타/중복 호출 방어.
   const [searching, setSearching] = useState(false)
-  const searchAll = useSearchAll()
+  const searchAll = cmQueries.useSelectSearchAll()
 
   const quickIcons: QuickIcon[] = [
     {
@@ -278,7 +278,7 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
     },
   ]
 
-  // 통합검색 — useSearchAll 훅 호출. 결과 없으면 토스트 알림(현재 목업은 항상 빈 배열).
+  // 통합검색 — cmQueries.useSelectSearchAll 훅 호출. 결과 없으면 토스트 알림(현재 목업은 항상 빈 배열).
   const handleSearch = async () => {
     const trimmed = keyword.trim()
     if (!trimmed || searching) return

@@ -67,7 +67,7 @@ export function BzentyGnrlInfoDtlPage() {
       setToastMsg('갱신은 1일 1회로 제한됩니다.')
       return
     }
-    console.log('[M02] 나라장터(G2B) 조달업체정보 갱신') // 추후 API: bzentyService.refreshG2b
+    console.log('[M02] 나라장터(G2B) 조달업체정보 갱신') // 추후 API: cmService.refreshG2b
     setRefreshedToday(true)
     setToastMsg('갱신되었습니다.')
   }

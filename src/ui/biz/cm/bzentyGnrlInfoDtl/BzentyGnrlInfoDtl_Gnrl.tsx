@@ -2,7 +2,7 @@
 // 아코디언(업체일반·상태/부정당·수의계약배제·대표자·입찰대리인) with 테이블.
 //   - 상태/부정당·수의계약배제·대표자·입찰대리인은 목록형(dl_*) → 항목별 Table 반복.
 //   - 수의계약배제는 기본 3개월 필터/전체(SegmentedControl). 없으면 안내 문구.
-// 데이터는 목업(설계서 데이터영역 항목명·형식 그대로) — 추후 API(bzentyService.getGnrlInfo)로 대체.
+// 데이터는 목업(설계서 데이터영역 항목명·형식 그대로) — 추후 API(cmService.selectBzentyGnrlInfo)로 대체.
 import { useState } from 'react'
 
 import type {
@@ -161,7 +161,7 @@ function EmptyRow({ children }: { children: React.ReactNode }) {
 export function BzentyGnrlInfoDtl_Gnrl() {
   // 수의계약배제 조회 조건 — 기본 3개월(설계서 slide117 "기본 값 : 3개월"), 전체 토글.
   const [exclPeriod, setExclPeriod] = useState<'3m' | 'all'>('3m')
-  // 목업이라 실제 필터링은 하지 않고 조회 조건만 표시(추후 API: bzentyService.getRlsVltrnsRstric(period)).
+  // 목업이라 실제 필터링은 하지 않고 조회 조건만 표시(추후 API: cmService.selectBzentyRlsVltrnsRstric(period)).
   const exclList = RLS_VLTRNS_LIST
 
   return (
@@ -197,7 +197,7 @@ export function BzentyGnrlInfoDtl_Gnrl() {
             value={exclPeriod}
             onValueChange={(v) => {
               setExclPeriod(v as '3m' | 'all')
-              console.log('[T01] 수의계약배제 조회기간 →', v) // 추후 API: bzentyService.getRlsVltrnsRstric
+              console.log('[T01] 수의계약배제 조회기간 →', v) // 추후 API: cmService.selectBzentyRlsVltrnsRstric
             }}
           />
           {exclList.length > 0 ? (

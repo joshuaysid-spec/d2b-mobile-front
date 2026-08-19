@@ -4,11 +4,11 @@
 //   + 탭 콘텐츠(T03 상세정보 InspDlvdocDtlSbsdPrcm · T04 물품목록 InspDlvdocDtlSbsdPrcm_CmdtyList)
 //   — 중앙조달(M02)과 셸 동일, 탭 콘텐츠(3섹션·증명문구)와 데이터가 다름(설계서 별도 화면 ID·폴더).
 // 인쇄 이벤트(slide26, R13 검사및납품조서): SummaryInfo 출력 버튼 → 확인 모달 → OZ 리포트 연계(스텁).
-// 데이터: useInspDlvdocSbsdDtl — 조회 완료까지 PageLoading(목록 state 는 필드 구성이 달라 placeholder 부적합).
+// 데이터: exQueries.useSelectInspDlvdocSbsdDtl — 조회 완료까지 PageLoading(목록 state 는 필드 구성이 달라 placeholder 부적합).
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { useInspDlvdocSbsdDtl } from '@/queries/ex'
+import { exQueries } from '@/queries/bds/ex/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Notice } from '@/ui/common/composites/Notice'
@@ -48,7 +48,7 @@ export function InspDlvdocDtlSbsdPrcmPage() {
   // 인쇄(R13) 확인 모달
   const [printModalOpen, setPrintModalOpen] = useState(false)
 
-  const { data: detail } = useInspDlvdocSbsdDtl(id)
+  const { data: detail } = exQueries.useSelectInspDlvdocSbsdDtl(id)
   const steps = buildSteps()
 
   // state 없이 직접 진입 = 식별자를 알 수 없음 → 검사통합목록으로.

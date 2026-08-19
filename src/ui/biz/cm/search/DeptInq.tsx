@@ -6,7 +6,7 @@
 //   · 정렬 = 기관구분 오름차순 → 발주기관 가나다 오름차순 · 발주기관명이 길면 말줄임(…).
 // 콘텐츠 전용 — BottomSheet 컨테이너/타이틀/닫기(X)는 SearchFilter 셸이 소유(이 시트는 footer 미사용).
 //   SearchSheetHandle(ref)은 셸 인터페이스 호환용으로 유지. 닫힘 시 언마운트로 상태 자동 초기화.
-// 목록은 목업(추후 API: opService.searchDepts 로 대체).
+// 목록은 목업(추후 API: opService.selectDeptSearch 로 대체).
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'

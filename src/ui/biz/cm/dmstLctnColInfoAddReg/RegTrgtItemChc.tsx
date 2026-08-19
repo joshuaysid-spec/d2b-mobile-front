@@ -19,7 +19,7 @@ export interface RegTrgtItemChcHandle {
   apply: () => void
 }
 
-// 품류 드롭다운 옵션(목업, slide165 '품류를 선택해주세요.'). 추후 API: cmService.getKnditmList.
+// 품류 드롭다운 옵션(목업, slide165 '품류를 선택해주세요.'). 추후 API: cmService.selectKnditmList.
 const KNDITM_OPTIONS = [
   { value: '05', label: '05 / 피복' },
   { value: '60', label: '60 / 총탄' },
@@ -63,7 +63,7 @@ const RegTrgtItemChc = forwardRef<RegTrgtItemChcHandle, RegTrgtItemChcProps>(
 
     const handleSearch = () => {
       setApplied(true)
-      console.log('[P08] 등록대상 품목 검색', { knditmCd, itemNm, bzstatCd }) // 추후 API: cmService.searchRegTrgtItems
+      console.log('[P08] 등록대상 품목 검색', { knditmCd, itemNm, bzstatCd }) // 추후 API: cmService.selectRegTrgtItemList
     }
 
     // Like 검색(목업) — 검색 실행 전엔 결과 미노출(설계서: 조건 검색 후 목록).

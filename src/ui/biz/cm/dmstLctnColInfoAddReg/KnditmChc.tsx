@@ -9,7 +9,7 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { Button } from '@/ui/common/base/Button'
 import type { KnditmChcItem } from '@/types/cm'
 
-// 품류 목록 목업 (설계서 slide161 예시 — 품류코드 11000·11740…/품류명). 추후 API: cmService.getKnditmList.
+// 품류 목록 목업 (설계서 slide161 예시 — 품류코드 11000·11740…/품류명). 추후 API: cmService.selectKnditmList.
 const MOCK_KNDITM: KnditmChcItem[] = [
   { knditmCd: '11000', knditmCdNm: '사무용기기' },
   { knditmCd: '11740', knditmCdNm: '피복' },
@@ -30,7 +30,7 @@ export function KnditmChc({ onSelect }: KnditmChcProps) {
 
   const handleSearch = () => {
     setApplied(keyword.trim())
-    console.log('[P06] 품류 검색', keyword) // 추후 API: cmService.getKnditmList(keyword)
+    console.log('[P06] 품류 검색', keyword) // 추후 API: cmService.selectKnditmList(keyword)
   }
 
   // Like 검색(목업) — 검색 실행 전(applied 공백)엔 전체 노출.

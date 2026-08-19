@@ -1,6 +1,6 @@
 // 착·중도금신청서상세 - '세부 신청내역' 탭 콘텐츠 (MUI-WM-01-T04). 설계서 05.대금청구및사후 v0.83 slide31~33.
 // 금액구분별 Table 반복 — 선금(T02)과 달리 신청금액·승인된 전 차수 수령금액의 합계(0703 화면수정).
-import { useDpsmnItrpyAplyDsctns } from '@/queries/wm'
+import { wmQueries } from '@/queries/bds/wm/queries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { DpsmnItrpyAplyDsctnItem } from '@/types/wm'
@@ -25,7 +25,7 @@ function dsctnRows(it: DpsmnItrpyAplyDsctnItem): TableRow[] {
 }
 
 export function DpsmnItrpyApfrDtl_AplyDtsm({ id }: DpsmnItrpyApfrDtl_AplyDtsmProps) {
-  const { data: items = [] } = useDpsmnItrpyAplyDsctns(id)
+  const { data: items = [] } = wmQueries.useSelectDpsmnItrpyAplyDsctns(id)
 
   return (
     <section className="flex flex-col gap-krds-7 pb-6">

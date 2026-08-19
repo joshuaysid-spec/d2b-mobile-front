@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
-import { usePrfmncCancelSubmit, usePrfmncSubmit, useSbmsnAsctnList } from '@/queries/cm'
+import { cmQueries } from '@/queries/bds/cm/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { Button } from '@/ui/common/base/Button'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
@@ -138,9 +138,9 @@ export function PrfmncPrdocDtlPage() {
   const [sbmsnSelected, setSbmsnSelected] = useState<string[]>([]) // 선택 협회명(멀티)
 
   // On-Load(slide336 scwin.onpageload) — 시트가 열릴 때만 조회.
-  const { data: sbmsnAsctnList } = useSbmsnAsctnList(detail.prfmncRcptNo, sbmsnOpen)
-  const prfmncSubmit = usePrfmncSubmit()
-  const prfmncCancelSubmit = usePrfmncCancelSubmit()
+  const { data: sbmsnAsctnList } = cmQueries.useSelectSbmsnAsctnList(detail.prfmncRcptNo, sbmsnOpen)
+  const prfmncSubmit = cmQueries.useSubmitPrfmncPrdoc()
+  const prfmncCancelSubmit = cmQueries.useCancelSubmitPrfmncPrdoc()
 
   // 조회 결과를 편집 가능한 로컬 상태로 반영(비고 rmrkCn 는 입력 대상).
   useEffect(() => {

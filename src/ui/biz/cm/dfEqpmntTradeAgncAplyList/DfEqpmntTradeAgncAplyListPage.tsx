@@ -53,7 +53,7 @@ const dl_dfEqpmntTradAgncAplyList: DfEqpmntTradeAgncAplyItem[] = [
   { id: '5', regAplySecd: '갱신', rcptNo: '2026-0016', rcptYmd: '2026-02-01', aprvYmd: '2026-02-10', ersrYmd: '2029-02-10', expryYmd: '2029-02-10', aprvSecdNm: '실효' },
 ]
 
-// ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 페이징 로직을 통째로 교체(cmService.getDfEqpmntTradeAgncAplyList).
+// ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 페이징 로직을 통째로 교체(cmService.selectDfEqpmntTradeAgncAplyList).
 //   설계서 slide178 '더보기 (10/258)' 시연 위해 5건을 258건으로 부풀린다.
 const TOTAL = 258
 const MOCK_LIST: DfEqpmntTradeAgncAplyItem[] = Array.from({ length: TOTAL }, (_, i) => {

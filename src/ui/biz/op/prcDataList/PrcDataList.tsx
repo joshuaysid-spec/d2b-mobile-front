@@ -15,7 +15,7 @@
 // 닫힘 시 Radix 가 콘텐츠를 언마운트 → 재진입 시 폼/결과 자동 초기화(별도 reset effect 불필요).
 import { memo, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 
-import { usePrcDataList } from '@/queries/op'
+import { opQueries } from '@/queries/bds/op/queries'
 import type { PrcDataItem, PrcDataSearchRequest } from '@/types/op'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
@@ -170,7 +170,7 @@ export function PrcDataList({ invtNo }: PrcDataListProps) {
       ? { fsc: init.fsc || undefined, niin: init.niin || undefined }
       : null,
   )
-  const { data } = usePrcDataList(applied ?? {}, applied !== null)
+  const { data } = opQueries.useSelectPrcDataList(applied ?? {}, applied !== null)
 
   // 진입 시 군급 입력 가능 상태(slide72) — Radix Dialog 가 마운트 직후 첫 포커서블(닫기 X)로 포커스를
   // 옮기므로, 그 뒤 태스크에서 군급 입력으로 이동시킨다(autoFocus 속성만으론 밀려남).

@@ -5,7 +5,7 @@
 //   ① 검색어 없음             → 최근 검색어(TagList/Empty) + 자주 찾는 서비스(1~10)
 //   ② 검색어 있음 · 자동완성 ON → 자동완성 6건(검색어 하이라이트) + 자동완성 토글 + 관련 서비스
 //   ③ 검색어 있음 · 자동완성 OFF → 안내 Empty + 자동완성 토글 + 관련 서비스
-// 데이터는 파일 내 목업 상수, 핸들러는 console.log + // 추후 API 주석으로 경계 표시. 실제 검색은 cmService.searchAll.
+// 데이터는 파일 내 목업 상수, 핸들러는 console.log + // 추후 API 주석으로 경계 표시. 실제 검색은 cmService.selectSearchAll.
 // common/(base·composites)만 조립 — 신규 공통 컴포넌트 없음.
 import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react'
 
@@ -26,7 +26,7 @@ export interface IntgSrchPageProps {
 }
 
 // ─── 목업 데이터 ──────────────────────────────────────────────────────────────
-// 최근 검색어(최대 10) — 추후 API: cmService.getRecentSearches() / localStorage.
+// 최근 검색어(최대 10) — 추후 API: cmService.selectRecentSearches() / localStorage.
 interface RecentSearch {
   id: string
   keyword: string
@@ -39,7 +39,7 @@ const RECENT_SEARCHES_SEED: RecentSearch[] = [
   { id: 'r5', keyword: '인증서 가져오기' },
 ]
 
-// 자주 찾는 서비스(최대 10) — 추후 API: cmService.getFrequentServices().
+// 자주 찾는 서비스(최대 10) — 추후 API: cmService.selectFrequentServices().
 interface FrequentService {
   id: string
   label: string
@@ -57,7 +57,7 @@ const FREQUENT_SERVICES: FrequentService[] = [
   { id: 'f10', label: '국민신문고' },
 ]
 
-// 자동완성 후보 풀(메뉴명) — 추후 API: cmService.getAutocomplete(keyword).
+// 자동완성 후보 풀(메뉴명) — 추후 API: cmService.selectAutocomplete(keyword).
 const AUTOCOMPLETE_POOL: string[] = [
   '입찰 공고',
   '입찰참가신청',
@@ -80,7 +80,7 @@ const AUTOCOMPLETE_POOL: string[] = [
   '용어사전',
 ]
 
-// 관련 서비스 — 추후 API: cmService.getRelatedServices(keyword).
+// 관련 서비스 — 추후 API: cmService.selectRelatedServices(keyword).
 interface RelatedService {
   id: string
   label: string
@@ -179,7 +179,7 @@ function IntgSrchPage({ open, onOpenChange }: IntgSrchPageProps) {
     if (!q) return
     setExecuted(q) // 결과목록(IntgSrch_Rslt) 노출 트리거
     console.log('[intgSrch] 통합검색', q)
-    // 추후 API: cmService.searchAll(q) → 카테고리별 결과목록(MUI-MS-01-M10)
+    // 추후 API: cmService.selectSearchAll(q) → 카테고리별 결과목록(MUI-MS-01-M10)
   }
 
   const handleRemoveRecent = (id: string | number) => {

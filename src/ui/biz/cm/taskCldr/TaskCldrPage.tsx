@@ -37,7 +37,7 @@ const SCHDL_BADGE: Record<MyPageSchdlSeCd, { label: string; color: 'blue' | 'gre
 // ── 목업 (설계서 slide84 예시 + 항목명/형식) ─────────────────────────────────
 // 날짜는 '오늘' 기준 상대값 — 캘린더 기본 노출 월에 표식이 보이도록. API 연동 시 실제 일자로 교체.
 const schdlDt = (offset: number) => dayjs().add(offset, 'day').format('YYYY-MM-DD')
-// ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 로직을 교체(taskCldrService.getList / getSchdlDtl).
+// ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 로직을 교체(cmService.selectTaskCldrList / getSchdlDtl).
 const MOCK_TASK_CLDR: TaskCldrItem[] = [
   {
     id: '1',
@@ -166,7 +166,7 @@ export function TaskCldrPage() {
           it.id === id ? { ...it, schdlDt: values.schdlDt, schdlTtl: values.schdlTtl, schdlCn: values.schdlCn } : it,
         ),
       )
-      console.log('[TaskCldr] 일정 수정', id, values) // 추후: taskCldrService.updateSchdl(id, values)
+      console.log('[TaskCldr] 일정 수정', id, values) // 추후: cmService.updateSchdl(id, values)
     } else {
       const newItem: TaskCldrItem = {
         id: `personal-${Date.now()}`,
@@ -178,7 +178,7 @@ export function TaskCldrPage() {
       }
       setItems((prev) => [...prev, newItem])
       setSelected(values.schdlDt) // 등록한 날짜로 선택 이동
-      console.log('[TaskCldr] 일정 등록', newItem) // 추후: taskCldrService.createSchdl(values)
+      console.log('[TaskCldr] 일정 등록', newItem) // 추후: cmService.createSchdl(values)
     }
     setRegSheet(null)
   }
@@ -192,7 +192,7 @@ export function TaskCldrPage() {
     if (!deleteTarget) return
     const id = deleteTarget.id
     setItems((prev) => prev.filter((it) => it.id !== id))
-    console.log('[TaskCldr] 일정 삭제', id) // 추후: taskCldrService.deleteSchdl(id)
+    console.log('[TaskCldr] 일정 삭제', id) // 추후: cmService.deleteSchdl(id)
     setDeleteTarget(null)
     setToast('삭제되었습니다.')
   }

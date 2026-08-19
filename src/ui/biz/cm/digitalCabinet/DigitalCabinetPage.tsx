@@ -88,7 +88,7 @@ export function DigitalCabinetPage() {
     setPermFolder(folder)
   }
   const handleSavePerm = () => {
-    console.log('[DigitalCabinet] 권한 저장', permFolder?.fldrSn, permDraft) // 추후: digitalCabinetService.saveAuthrt(...)
+    console.log('[DigitalCabinet] 권한 저장', permFolder?.fldrSn, permDraft) // 추후: cmService.saveAuthrt(...)
     setPermFolder(null)
     setToastOpen(true) // 설계서 slide109: 저장 시 토스트("변경 저장 되었습니다.")
   }

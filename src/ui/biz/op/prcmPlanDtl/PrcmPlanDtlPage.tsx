@@ -1,7 +1,7 @@
 // 조달계획 상세 (MUI-OP-01-M03, Figma 9300-37444). 카드 클릭 → /op/prcmPlanDtl 진입.
 // 구성(Figma contents area): 요약정보(SummaryInfo) + 스텝바(StepBar) + 탭(TabList)
 //   + 탭 콘텐츠(탭별 컴포넌트 분리: PrcmPlanDtl / PrcmPlanDtl_PrdList / PrcmPlanDtl_OpnnList / PrcmPlanDtl_spclCtrt / PrcmPlanDtl_Doc).
-// 상단(요약/헤더) 데이터: 목록 navigate state 를 placeholder 로 즉시 렌더 + useOpPlanDetail 조회로 확정.
+// 상단(요약/헤더) 데이터: 목록 navigate state 를 placeholder 로 즉시 렌더 + useSelectPlanDtl 조회로 확정.
 //   식별자도 state 로만 받는다(URL 미노출) — 직접 URL 진입(state 없음)이면 목록으로 되돌린다.
 //   목업/실연동은 opService(USE_MOCK)가 전환.
 // 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당이라 본문은 콘텐츠만 렌더.
@@ -10,7 +10,7 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { useApplyNotify, useOpPlanDetail } from '@/queries/op'
+import { opQueries } from '@/queries/bds/op/queries'
 import type { OpPlanItem } from '@/types/op'
 import type { ApiError } from '@/types/api'
 
@@ -38,7 +38,7 @@ import { PrcmPlanDtl_spclCtrt } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_spclCt
 import { PrcmPlanDtl_Doc } from '@/ui/biz/op/prcmPlanDtl/PrcmPlanDtl_Doc'
 
 // (구 페이지 fallback 목업 MOCK_PLAN_DETAIL 은 mocks/op.ts 의 planDetail 로 이관 —
-//  직접 URL 진입 시 useOpPlanDetail 조회가 공급한다.)
+//  직접 URL 진입 시 useSelectPlanDtl 조회가 공급한다.)
 
 // ── 탭 (Figma m_tab) ──────────────────────────────────────────────────────
 const TABS: TabItem[] = [
@@ -102,7 +102,7 @@ export function PrcmPlanDtlPage() {
   })
   // 알림신청 실패 안내(AlertModal) — null 이면 닫힘.
   const [notifyError, setNotifyError] = useState<string | null>(null)
-  const applyNotify = useApplyNotify()
+  const applyNotify = opQueries.useApplyNotify()
   const handleNotifyApply = notiForm.handleSubmit(
     async (data) => {
       try {
@@ -130,7 +130,7 @@ export function PrcmPlanDtlPage() {
   const [outputModalOpen, setOutputModalOpen] = useState(false)
   const handleOutput = () => setOutputModalOpen(true)
 
-  const { data: detail } = useOpPlanDetail(id, stateItem ?? undefined)
+  const { data: detail } = opQueries.useSelectPlanDtl(id, stateItem ?? undefined)
   // 진행단계(아이템 속성 prgrsStg) — detail 로 구동(없으면 '조달' fallback).
   const steps = stepsByStg(detail?.prgrsStg ?? '조달')
 

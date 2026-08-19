@@ -6,7 +6,7 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { useOvsEstmtRqdcDtl } from '@/queries/ex'
+import { exQueries } from '@/queries/bds/ex/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Notice } from '@/ui/common/composites/Notice'
@@ -45,7 +45,7 @@ export function OvsEstmtRqdcDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [printModalOpen, setPrintModalOpen] = useState(false)
 
-  const { data: detail } = useOvsEstmtRqdcDtl(id)
+  const { data: detail } = exQueries.useSelectOvsEstmtRqdcDtl(id)
   const steps = buildSteps()
 
   // state 없이 직접 진입 = 식별자를 알 수 없음 → 견적의뢰서목록으로.

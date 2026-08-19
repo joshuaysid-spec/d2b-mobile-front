@@ -3,7 +3,7 @@
 // 콘텐츠 전용 — BottomSheet 컨테이너/타이틀/footer(초기화·검색)는 SearchFilter 셸이 슬롯으로 소유한다.
 //   폼 상태는 이 컴포넌트가 캡슐화하고, footer 동작(reset/search)만 SearchSheetHandle(ref)로 노출.
 //   닫힘 시 Radix 가 콘텐츠를 언마운트 → 재진입 시 상태가 자동 초기화(별도 reset effect 불필요).
-// 목록은 목업(추후 API: opService.searchItems 로 대체).
+// 목록은 목업(추후 API: opService.selectItemSearch 로 대체).
 // "가상 키패드"는 하이브리드 네이티브 영역 — 웹은 디바이스 기본 키보드 사용(별도 구현 X).
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react'
 import dayjs from 'dayjs'
@@ -47,7 +47,7 @@ const ItemInq = forwardRef<SearchSheetHandle, ItemInqProps>(({ onSelect }, ref) 
     setResults(null)
   }, [])
 
-  // Like 검색(목업) — 입력된 필드만 부분일치. 추후 opService.searchItems 로 대체.
+  // Like 검색(목업) — 입력된 필드만 부분일치. 추후 opService.selectItemSearch 로 대체.
   const handleSearch = useCallback(() => {
     const filtered = MOCK_ITEMS.filter(
       (it) =>

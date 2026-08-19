@@ -20,7 +20,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from 'react-router-dom'
 
-import { useLogin, useLoginWith } from '@/queries/auth'
+import { authQueries } from '@/queries/bds/auth/queries'
 import { useAuthStore } from '@/stores/authStore'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
@@ -96,8 +96,8 @@ export function IdPswdLoginPage() {
   const [loginError, setLoginError] = useState<string | null>(null)
   // 통합 로그인 계정등록안내(P21) 팝업 — 구버전 아이디 로그인 시 노출. null 이면 닫힘.
   const [newIdInfo, setNewIdInfo] = useState<{ userNm: string } | null>(null)
-  const login = useLogin()
-  const loginWith = useLoginWith()
+  const login = authQueries.useLogin()
+  const loginWith = authQueries.useLoginWith()
 
   const {
     register,

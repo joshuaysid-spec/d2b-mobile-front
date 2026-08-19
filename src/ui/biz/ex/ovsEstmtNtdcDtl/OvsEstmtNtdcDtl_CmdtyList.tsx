@@ -2,7 +2,7 @@
 // 요약 정보(품목수/변경 품목수/총 금액, dm_itemCntInfo) + 품목 Table 반복(dl_estmtNtdcItem) + 더보기.
 import { useState } from 'react'
 
-import { useOvsEstmtNtdcItems } from '@/queries/ex'
+import { exQueries } from '@/queries/bds/ex/queries'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -39,7 +39,7 @@ export function OvsEstmtNtdcDtl_CmdtyList({ id, detail }: OvsEstmtNtdcDtl_CmdtyL
   const [page, setPage] = useState(1)
   const pageSize = 10
 
-  const { data: items = [] } = useOvsEstmtNtdcItems(id)
+  const { data: items = [] } = exQueries.useSelectOvsEstmtNtdcItems(id)
 
   const total = items.length
   const loaded = Math.min(page * pageSize, total)

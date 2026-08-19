@@ -7,7 +7,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
-import { useOvsEstmtRqdcList } from '@/queries/ex'
+import { exQueries } from '@/queries/bds/ex/queries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
@@ -77,7 +77,7 @@ export function OvsEstmtRqdcListPage() {
   const [filterApplied, setFilterApplied] = useState(false)
   const [appliedSearch, setAppliedSearch] = useState<string | null>(null)
 
-  const { data: listData, isLoading } = useOvsEstmtRqdcList()
+  const { data: listData, isLoading } = exQueries.useSelectOvsEstmtRqdcList()
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)

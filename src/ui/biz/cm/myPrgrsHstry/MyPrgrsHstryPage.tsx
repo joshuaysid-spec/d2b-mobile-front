@@ -47,7 +47,7 @@ const dl_myPrgrsList: MyPrgrsHstryItem[] = [
   },
 ]
 
-// ⚠️ 임시 목업 — API 연동 시 이 상수와 페이징 로직을 통째로 교체(myTaskService.getPrgrsList).
+// ⚠️ 임시 목업 — API 연동 시 이 상수와 페이징 로직을 통째로 교체(cmService.selectMyPrgrsList).
 const MOCK_LIST: MyPrgrsHstryItem[] = Array.from({ length: TOTAL }, (_, i) => ({
   ...dl_myPrgrsList[i % dl_myPrgrsList.length],
   id: String(i + 1),
@@ -70,7 +70,7 @@ export function MyPrgrsHstryPage() {
   const handlePageSize = (size: number) => {
     setPageSize(size)
     setPage(1)
-    console.log('[MyPrgrsHstry] pageSize →', size) // 추후: myTaskService.getPrgrsList(...)
+    console.log('[MyPrgrsHstry] pageSize →', size) // 추후: cmService.selectMyPrgrsList(...)
   }
   const handleLoadMore = () => {
     setPage((p) => p + 1)

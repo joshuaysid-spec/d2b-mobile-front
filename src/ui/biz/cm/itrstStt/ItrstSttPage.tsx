@@ -46,7 +46,7 @@ const dl_itrstSttList: ItrstSttItem[] = [
   },
 ]
 
-// ⚠️ 임시 목업 — API 연동 시 이 상수와 페이징 로직을 통째로 교체(itrstSttService.getList).
+// ⚠️ 임시 목업 — API 연동 시 이 상수와 페이징 로직을 통째로 교체(cmService.selectItrstSttList).
 const MOCK_LIST: ItrstSttItem[] = Array.from({ length: TOTAL }, (_, i) => ({
   ...dl_itrstSttList[i % dl_itrstSttList.length],
   id: String(i + 1),
@@ -80,7 +80,7 @@ export function ItrstSttPage() {
   const handleToggleStar = (it: ItrstSttItem) => {
     // 별표 하이라이트만 토글 — 현재 페이지에서는 목록 유지(해제 메시지 없음).
     setItems((prev) => prev.map((x) => (x.id === it.id ? { ...x, itrst: !x.itrst } : x)))
-    console.log('[ItrstStt] 관심 토글', it.id) // 추후: itrstSttService.toggleFavorite(id)
+    console.log('[ItrstStt] 관심 토글', it.id) // 추후: cmService.toggleFavorite(id)
   }
 
   return (

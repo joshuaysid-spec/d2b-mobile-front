@@ -1,7 +1,7 @@
 // 검사통합목록 — MUI-EX-01-M01 InspIntgListInq. 설계서 04.이행 v0.83 slide10~12.
 // 구성: 검색조건(SearchCondition, 대상칩 계약명/계약번호 + 필터버튼→풀팝업) + 목록헤더(총건수·page size)
 //      + 카드 리스트(CardList) + 더보기 + 맨위로 FAB + 검색필터(SearchFilter schema 주입, MUI-EX-01-P08).
-// 데이터: useInspIntgList(queries/ex) — 목업/실연동은 exService(USE_MOCK)가 전환. 목업은 mocks/ex.ts.
+// 데이터: exQueries.useSelectInspIntgList(queries/bds/ex) — 목업/실연동은 exService(USE_MOCK)가 전환. 목업은 mocks/ex.ts.
 // 키워드 검색·더보기(페이징)는 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행).
 // 업무도움(slide10 1])은 '내역이 없으면 항목을 표시하지 않음' — 안내 내역 확정 전이라 미표시(CT 동일 판단).
 // 카드 클릭(slide10 3-1): 물품/용역 → P10 납품통지목록 풀팝업 · 공사 → M04 기성및준공검사상세(그룹 4 예정).
@@ -9,7 +9,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
-import { useInspIntgList } from '@/queries/ex'
+import { exQueries } from '@/queries/bds/ex/queries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
@@ -133,16 +133,16 @@ export function InspIntgListInqPage() {
 
   // 목록 조회 — 목업/실연동은 exService 의 USE_MOCK 분기가 전환.
   // 서버 필터/페이징 전환 시: req 에 filter/page/keyword 를 넣으면 queryKey 가 바뀌어 재조회된다.
-  const { data: listData, isLoading } = useInspIntgList()
+  const { data: listData, isLoading } = exQueries.useSelectInspIntgList()
 
-  // ── 핸들러 — 확정값 상태만 갱신(조회는 useInspIntgList + 아래 클라이언트 필터가 담당) ──
+  // ── 핸들러 — 확정값 상태만 갱신(조회는 exQueries.useSelectInspIntgList + 아래 클라이언트 필터가 담당) ──
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)
     setFilterApplied(true)
     setPage(1)
     setKeyword('')
     setAppliedSearch(null)
-    // 서버 필터 전환 시: useInspIntgList req 에 filter(value)를 포함시켜 재조회(현재는 표시용).
+    // 서버 필터 전환 시: exQueries.useSelectInspIntgList req 에 filter(value)를 포함시켜 재조회(현재는 표시용).
   }
   const handleQuickSearch = () => {
     const target = targets[0] ?? 'ctrtNm'

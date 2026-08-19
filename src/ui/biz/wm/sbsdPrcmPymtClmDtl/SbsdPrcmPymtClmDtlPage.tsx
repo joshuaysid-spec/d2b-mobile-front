@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { useSbsdPrcmPymtClmDtl } from '@/queries/wm'
+import { wmQueries } from '@/queries/bds/wm/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Notice } from '@/ui/common/composites/Notice'
@@ -48,7 +48,7 @@ export function SbsdPrcmPymtClmDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [printModalOpen, setPrintModalOpen] = useState(false)
 
-  const { data: detail } = useSbsdPrcmPymtClmDtl(id)
+  const { data: detail } = wmQueries.useSelectSbsdPrcmPymtClmDtl(id)
   const steps = buildSteps()
 
   if (!stateItem) return <Navigate to="/wm" replace />

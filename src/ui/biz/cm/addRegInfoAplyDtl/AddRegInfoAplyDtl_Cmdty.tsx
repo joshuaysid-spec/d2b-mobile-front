@@ -1,7 +1,7 @@
 // 추가정보 신청내역상세 — 물품(내자) 신청정보 탭 (MUI-CM-01-T05, addRegInfoAplyDtl_Cmdty). 설계서 slide140(문서 P139).
 //   웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 추가정보 신청 목록 > 상세.
 //   접수한 신청 데이터를 읽기전용으로 표시(아코디언 + Table). 구성: 일반정보 · 담당자정보 · 대표품류및조합/단체 · 등록품목명세.
-//   데이터=목업(설계서 slide140 예시값, 항목명 영문 준수) — 추후 API: cmService.getAddRegInfoAplyDtl.
+//   데이터=목업(설계서 slide140 예시값, 항목명 영문 준수) — 추후 API: cmService.selectAddRegInfoAplyDtl.
 import type { RegTrgtItem, PicInfo, KnditmAsctGrp } from '@/types/cm'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'

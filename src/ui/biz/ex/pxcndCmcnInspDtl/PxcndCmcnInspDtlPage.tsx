@@ -2,12 +2,12 @@
 // 검사통합목록(M01)에서 공사 계약 카드 클릭 → /ex/pxcndCmcnInspDtl 진입.
 // 구성: 중요 안내(Notice urgent) + sticky(요약 SummaryInfo + 스텝 StepBar + 탭 TabList)
 //   + 상세정보 탭(단일 탭 — slide27 탭 내용: 상세정보만) — M02/M03 셸 준용.
-// 데이터: usePxcndCmcnInspDtl — 조회 완료까지 PageLoading.
+// 데이터: exQueries.useSelectPxcndCmcnInspDtl — 조회 완료까지 PageLoading.
 // 업무도움은 '내역이 있는 경우만 표시' — 안내 내역 확정 전이라 미표시(형제 화면 동일 판단).
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { usePxcndCmcnInspDtl } from '@/queries/ex'
+import { exQueries } from '@/queries/bds/ex/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Notice } from '@/ui/common/composites/Notice'
@@ -39,7 +39,7 @@ export function PxcndCmcnInspDtlPage() {
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
-  const { data: detail } = usePxcndCmcnInspDtl(id)
+  const { data: detail } = exQueries.useSelectPxcndCmcnInspDtl(id)
   const steps = buildSteps()
 
   // state 없이 직접 진입 = 식별자를 알 수 없음 → 검사통합목록으로.

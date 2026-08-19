@@ -5,7 +5,7 @@
 import { useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 
-import { useRtnPymtDfryInfoList } from '@/queries/wm'
+import { wmQueries } from '@/queries/bds/wm/queries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
@@ -97,7 +97,7 @@ export function RtnPymtDfryInfoPage() {
   )
   const [gdntcOpen, setGdntcOpen] = useState(false) // P09 안내문
 
-  const { data: listData, isLoading } = useRtnPymtDfryInfoList()
+  const { data: listData, isLoading } = wmQueries.useSelectRtnPymtDfryInfoList()
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)

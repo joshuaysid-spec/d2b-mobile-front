@@ -1,7 +1,7 @@
 // 업체정보 상세 - '시설' 탭 콘텐츠 (MUI-CM-01-T03, 설계서 slide124~125 / 문서 P123~124).
 // 아코디언(시설정보·시설면허정보·주력분야) with 테이블 + 시공능력평가액 안내(Infobox).
 //   - 시설면허정보(dl_bzentyFcltLcnsList)·주력분야(dl_bzentyFcltMfrcFldList)는 목록형 → 항목별 Table 반복.
-// 데이터는 목업(설계서 데이터영역 항목명·형식 그대로) — 추후 API(bzentyService.getFcltInfo)로 대체.
+// 데이터는 목업(설계서 데이터영역 항목명·형식 그대로) — 추후 API(cmService.selectBzentyFcltInfo)로 대체.
 import type { BzentyFcltInfo, BzentyFcltLcns, BzentyFcltMfrcFld } from '@/types/cm'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Infobox } from '@/ui/common/composites/Infobox'

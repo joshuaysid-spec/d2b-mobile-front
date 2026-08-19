@@ -2,7 +2,7 @@
 // 요약 정보(발주/수락/거부 품목수 + 발주/수락금액, dm_itemCntInfo) + 품목 Table 반복(dl_orderNtdcItem) + 더보기.
 import { useState } from 'react'
 
-import { useOvsOrderNtdcItems } from '@/queries/ex'
+import { exQueries } from '@/queries/bds/ex/queries'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -41,7 +41,7 @@ export function OvsOrderNtdcDtl_CmdtyList({ id, detail }: OvsOrderNtdcDtl_CmdtyL
   const [page, setPage] = useState(1)
   const pageSize = 10
 
-  const { data: items = [] } = useOvsOrderNtdcItems(id)
+  const { data: items = [] } = exQueries.useSelectOvsOrderNtdcItems(id)
 
   const total = items.length
   const loaded = Math.min(page * pageSize, total)

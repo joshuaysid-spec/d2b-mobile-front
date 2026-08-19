@@ -8,7 +8,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
-import { usePymtClmPrgrsPrstList } from '@/queries/wm'
+import { wmQueries } from '@/queries/bds/wm/queries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
@@ -107,7 +107,7 @@ export function PymtClmPrgrsPrstPage() {
   )
   const [gdntcOpen, setGdntcOpen] = useState(false) // P09 안내문
 
-  const { data: listData, isLoading } = usePymtClmPrgrsPrstList()
+  const { data: listData, isLoading } = wmQueries.useSelectPymtClmPrgrsPrstList()
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)
