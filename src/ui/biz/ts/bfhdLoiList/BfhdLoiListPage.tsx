@@ -8,7 +8,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
-import { useSelectBfhdLoiList } from '@/queries/bds/ts/queries'
+import { tsQueries } from '@/queries/bds/ts/queries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
@@ -86,7 +86,7 @@ export function BfhdLoiListPage() {
     null,
   )
 
-  const { data: listData, isLoading } = useSelectBfhdLoiList()
+  const { data: listData, isLoading } = tsQueries.useSelectBfhdLoiList()
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)

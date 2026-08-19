@@ -7,7 +7,7 @@
 import { useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 
-import { useSelectBfhdLoiDtl } from '@/queries/bds/ts/queries'
+import { tsQueries } from '@/queries/bds/ts/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Button } from '@/ui/common/base/Button'
@@ -33,7 +33,7 @@ export function BfhdLoiDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputOpen, setOutputOpen] = useState(false) // 출력 레포트 목록 바텀시트(slide12)
 
-  const { data: detail } = useSelectBfhdLoiDtl(id)
+  const { data: detail } = tsQueries.useSelectBfhdLoiDtl(id)
 
   if (!stateItem) return <Navigate to="/ts/loi" replace />
   if (!detail) return <PageLoading />

@@ -6,7 +6,7 @@
 // 재고번호 [보기](품목별검색 P71 팝업)는 상세설계 미확정 — 콘솔 스텁.
 import { memo, useMemo, useState } from 'react'
 
-import { useSelectBfhdLoiSpcfctList, useSaveBfhdLoiOpnn } from '@/queries/bds/ts/queries'
+import { tsQueries } from '@/queries/bds/ts/queries'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
@@ -121,8 +121,8 @@ export function BfhdLoiDtl_ItemList({ id, expired }: BfhdLoiDtl_ItemListProps) {
   // 저장 없이 닫기(내용 있음) Y/N 확인
   const [closeConfirmOpen, setCloseConfirmOpen] = useState(false)
 
-  const { data: items = [] } = useSelectBfhdLoiSpcfctList(id)
-  const saveOpnn = useSaveBfhdLoiOpnn()
+  const { data: items = [] } = tsQueries.useSelectBfhdLoiSpcfctList(id)
+  const saveOpnn = tsQueries.useSaveBfhdLoiOpnn()
 
   const total = items.length
   const loaded = Math.min(page * pageSize, total)

@@ -7,7 +7,7 @@
 import { useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 
-import { useSelectTxivDtl } from '@/queries/bds/ts/queries'
+import { tsQueries } from '@/queries/bds/ts/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
@@ -23,7 +23,7 @@ export function TxivDtlPage() {
   const { collapsed, rootRef, scrollToTop } = useCollapsibleHeader()
   const [printModalOpen, setPrintModalOpen] = useState(false)
 
-  const { data: detail } = useSelectTxivDtl(stateItem?.id ?? '')
+  const { data: detail } = tsQueries.useSelectTxivDtl(stateItem?.id ?? '')
 
   if (!stateItem) return <Navigate to="/ts/txiv" replace />
   if (!detail) return <PageLoading />
