@@ -1,7 +1,7 @@
 // 물품최종계약명세서 풀팝업 — MUI-CT-01-P12 CmdtyLastCtrdocDtst. 설계서 slide91~92.
 // 계약확정 상세(M04 = M03 화면 겸용)의 바로가기 '계약명세서'에서 진입(계약상태 확정 시 P11 대신).
 // 구성: 계약품목정보(총 N건, 품목별 반복 Table) + footer 닫기 — 계약정보 섹션 없음(slide91).
-import { ctQueries } from '@/queries/bds/ct/queries'
+import { ctQueries } from '@/queries/bds/ct/ctQueries'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FullPopup } from '@/ui/common/composites/FullPopup'

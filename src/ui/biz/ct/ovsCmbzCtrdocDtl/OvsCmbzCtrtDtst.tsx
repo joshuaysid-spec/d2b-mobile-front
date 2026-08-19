@@ -2,7 +2,7 @@
 // 계약명세서 탭(T78)의 그룹 클릭 → 그룹 품목 상세(L/I·Stock-No·Part-No 등) 조회.
 // 컨테이너(BottomSheet)·타이틀·footer 는 부모 페이지(OvsCmbzCtrdocDtlPage) 소유.
 // 시트가 좌우 16px 패딩을 제공하므로 콘텐츠는 자체 px-* 를 두지 않는다(2중 패딩 금지).
-import { ctQueries } from '@/queries/bds/ct/queries'
+import { ctQueries } from '@/queries/bds/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { OvsCmbzCtrtDtstResult } from '@/types/ct'

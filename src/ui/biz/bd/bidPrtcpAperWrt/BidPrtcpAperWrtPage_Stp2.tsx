@@ -4,7 +4,7 @@
 // 품목 목록은 bdQueries.useSelectItemList(bdService.selectItemList) 가 공급 — 목업은 mocks/bd.ts(구 인라인 이관).
 import { useState } from 'react'
 
-import { bdQueries } from '@/queries/bds/bd/queries'
+import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Button } from '@/ui/common/base/Button'
 import { Table, type TableRow } from '@/ui/common/composites/Table'

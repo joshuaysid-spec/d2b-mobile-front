@@ -6,7 +6,7 @@
 // 재고번호 [보기](품목별검색 P71 팝업)는 상세설계 미확정 — 콘솔 스텁.
 import { memo, useMemo, useState } from 'react'
 
-import { tsQueries } from '@/queries/bds/ts/queries'
+import { tsQueries } from '@/queries/bds/ts/tsQueries'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'

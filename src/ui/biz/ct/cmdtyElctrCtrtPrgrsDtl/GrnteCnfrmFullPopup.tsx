@@ -2,7 +2,7 @@
 // 데이터영역은 국외 보증서 탭(T73, 설계서 slide160~161)과 동일: dm_ctrtInfo + dm_wtgrInfo(반복).
 // ⚠️ 설계서 화면목록에 M73 영문 ID 미기재(Figma 신규 채번) — 임시 파일명 GrnteCnfrm(보증서 확인), 확정 시 교체.
 // 구성: 계약 정보 Table + 보증서 정보 Table(여러 건 반복) + 이용안내(HelpDisclosure) + footer 닫기.
-import { ctQueries } from '@/queries/bds/ct/queries'
+import { ctQueries } from '@/queries/bds/ct/ctQueries'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FullPopup } from '@/ui/common/composites/FullPopup'

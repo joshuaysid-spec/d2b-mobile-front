@@ -3,7 +3,7 @@
 // 훅명 = use + 서비스 함수명 · 쿼리키 = keys.ts(함수명 동일).
 import { useQuery } from '@tanstack/react-query'
 import { exService } from '@/services/bds/ex'
-import { exKeys } from '@/queries/bds/ex/keys'
+import { exKeys } from '@/queries/bds/ex/exKeys'
 import type {
   InspDlvdocPrstRequest,
   InspIntgListRequest,

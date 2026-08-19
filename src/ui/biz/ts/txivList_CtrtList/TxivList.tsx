@@ -4,7 +4,7 @@
 // 뱃지 3종(구분/진행상태/수정사유 — 수정사유 없으면 미노출), 세부 선택 시 상세(M03) 이동은 부모 콜백.
 import { useState } from 'react'
 
-import { tsQueries } from '@/queries/bds/ts/queries'
+import { tsQueries } from '@/queries/bds/ts/tsQueries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'

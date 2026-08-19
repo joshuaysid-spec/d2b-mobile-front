@@ -7,7 +7,7 @@
 import { useRef, useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { bdQueries } from '@/queries/bds/bd/queries'
+import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'

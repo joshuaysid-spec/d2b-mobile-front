@@ -20,7 +20,7 @@ import {
   MenuAccordion,
   type MenuItem as MenuAccordionItem,
 } from '@/ui/common/composites/MenuAccordion'
-import { cmQueries } from '@/queries/bds/cm/queries'
+import { cmQueries } from '@/queries/bds/cm/cmQueries'
 import chatbotImage from '@/assets/images/chatbot.png'
 
 export interface MenuPageProps {

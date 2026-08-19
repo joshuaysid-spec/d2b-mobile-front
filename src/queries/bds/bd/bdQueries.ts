@@ -7,7 +7,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { queryClient } from '@/lib/queryClient'
 import { bdService } from '@/services/bds/bd'
-import { bdKeys } from '@/queries/bds/bd/keys'
+import { bdKeys } from '@/queries/bds/bd/bdKeys'
 import type { BidListSearchRequest, BidPbancDetail, BdopnItem, TndrSavePayload } from '@/types/bd'
 
 export const bdQueries = {

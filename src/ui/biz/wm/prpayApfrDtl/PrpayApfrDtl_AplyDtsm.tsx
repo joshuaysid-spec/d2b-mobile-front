@@ -1,7 +1,7 @@
 // 선금신청서상세 - '세부 신청내역' 탭 콘텐츠 (MUI-WM-01-T02). 설계서 05.대금청구및사후 v0.83 slide24~26.
 // 금액구분(재료비 수입/국내/간접 · 노무비 직접/간접 · 경비 직접/간접 · 일반관리비 · 기타 · 합계)별
 // Table 반복 — 행: 대상금액/신청금액(기사용·사용예정·계)/신청금액의 비율(dmt_aplyDsctnInfo 순서).
-import { wmQueries } from '@/queries/bds/wm/queries'
+import { wmQueries } from '@/queries/bds/wm/wmQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { PrpayAplyDsctnItem } from '@/types/wm'

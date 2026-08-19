@@ -1,6 +1,6 @@
 // 국외전자계약진행상세 - '계약명세서' 탭 콘텐츠 (MUI-CT-01-T75 ovsCtrtDtstTab). 설계서 slide164~166.
 // 계약 정보(dm_ctrtInfo) + 계약품목 내역(dl_ctrtItemList, 반복) + 품목 단가 합계.
-import { ctQueries } from '@/queries/bds/ct/queries'
+import { ctQueries } from '@/queries/bds/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { OvsCtrtDtstItem } from '@/types/ct'

@@ -2,7 +2,7 @@
 // "물품 목록 - 총 N건" + 품목 1건 = Table 반복(dl_estmtRqdcItem 순서) + 더보기.
 import { useState } from 'react'
 
-import { exQueries } from '@/queries/bds/ex/queries'
+import { exQueries } from '@/queries/bds/ex/exQueries'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'

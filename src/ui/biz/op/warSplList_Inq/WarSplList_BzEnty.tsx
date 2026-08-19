@@ -4,7 +4,7 @@
 // 이 컴포넌트는 그 아코디언의 **콘텐츠 전용** — 컨테이너(AccordionSection)는 부모(WarSplList_Cnfg)가 소유.
 // 조회: 아코디언 펼침 시에만 마운트되므로 여기서 생산자부호로 직접 조회한다(닫힘 상태 미조회).
 // 항목: dm_bzentyInfo 6항목 — 업체명/대표자/본사주소/사업자번호/전화번호/FAX.
-import { opQueries } from '@/queries/bds/op/queries'
+import { opQueries } from '@/queries/bds/op/opQueries'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 
 export interface WarSplList_BzEntyProps {

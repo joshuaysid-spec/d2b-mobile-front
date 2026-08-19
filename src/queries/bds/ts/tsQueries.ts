@@ -5,7 +5,7 @@
 // 제출 성공 시 영향받는 조회 캐시 무효화는 mutation onSuccess 에서 중앙 처리(전역 staleTime 대응).
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { tsService } from '@/services/bds/ts'
-import { tsKeys } from '@/queries/bds/ts/keys'
+import { tsKeys } from '@/queries/bds/ts/tsKeys'
 import type {
   BfhdLoiListRequest,
   BfhdLoiOpnnRequest,

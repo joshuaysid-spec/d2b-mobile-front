@@ -6,7 +6,7 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { bdQueries } from '@/queries/bds/bd/queries'
+import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { AgreementList } from '@/ui/common/composites/AgreementList'
 import { AlertModal } from '@/ui/common/composites/AlertModal'

@@ -1,7 +1,7 @@
 // 공사계약서상세 - '연대보증' 탭 콘텐츠 (MUI-CT-01-T21). 설계서 slide72·74(1.3).
 // 연대보증 블록(상호/금융기관/사업자등록번호/계좌번호/대표자/예금주/주소/전화번호) —
 // 추가 내용에 따라 여러 건 반복 표시. 데이터: ctQueries.useSelectCtrtJntGrntes.
-import { ctQueries } from '@/queries/bds/ct/queries'
+import { ctQueries } from '@/queries/bds/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { CtrtJntGrnte } from '@/types/ct'

@@ -3,7 +3,7 @@
 // 훅명 = use + 서비스 함수명 · 쿼리키 = keys.ts(함수명 동일).
 import { useQuery } from '@tanstack/react-query'
 import { wmService } from '@/services/bds/wm'
-import { wmKeys } from '@/queries/bds/wm/keys'
+import { wmKeys } from '@/queries/bds/wm/wmKeys'
 import type {
   PymtClmIntgListRequest,
   PymtClmPrgrsPrstRequest,

@@ -9,8 +9,8 @@
 import { useRef, useState, type ChangeEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { bdQueries } from '@/queries/bds/bd/queries'
-import { fileQueries } from '@/queries/bds/file/queries'
+import { bdQueries } from '@/queries/bds/bd/bdQueries'
+import { fileQueries } from '@/queries/bds/file/fileQueries'
 import { validateFile } from '@/services/bds/file'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { AlertModal } from '@/ui/common/composites/AlertModal'

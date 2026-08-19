@@ -4,7 +4,7 @@
 // 조회는 useQuery 훅 · 저장/제출은 useMutation 훅(2026-07-30 확정 — 페이지의 서비스 직접 import 금지).
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { opService } from '@/services/bds/op'
-import { opKeys } from '@/queries/bds/op/keys'
+import { opKeys } from '@/queries/bds/op/opKeys'
 import type {
   OpListRequest,
   OpNotifyRequest,

@@ -6,7 +6,7 @@
 //   ⚠️ '교정' 항목은 화면 목업 표기가 RNIC, 항목설명 1.7 은 RNJC(rnjc) — 항목설명을 권위로 rnjc 사용.
 //   ⚠️ '설계(SADC)' 는 항목설명 1.7 에만 있고 화면 목업 컬럼에는 없다 — 데이터영역 기준으로 표시.
 // 시트 본문(px-16) 안이라 AccordionSection 은 flush(콘텐츠 좌우 패딩 제거 — 2중 패딩 방지).
-import { opQueries } from '@/queries/bds/op/queries'
+import { opQueries } from '@/queries/bds/op/opQueries'
 import type { WarSplRef } from '@/types/op'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'

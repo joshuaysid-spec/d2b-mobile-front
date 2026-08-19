@@ -1,7 +1,7 @@
 // 지급상태 — MUI-WM-01-T23 PrpayDpsmnItrpyGiveStts. 설계서 05.대금청구및사후 v0.83 slide36~37.
 // 선금(M02)/착·중도금(M03)/사후정산(M13) 상세의 공용 '지급상태' 탭 콘텐츠 — 페이지가 id 를 주입.
 // 지급 건 1건 = Table 반복(신청년도/계약번호/신청차수/신청금액/진행상태 — dlt_prgrsSttsList 순서).
-import { wmQueries } from '@/queries/bds/wm/queries'
+import { wmQueries } from '@/queries/bds/wm/wmQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { GiveSttsItem } from '@/types/wm'

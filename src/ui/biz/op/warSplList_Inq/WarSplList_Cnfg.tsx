@@ -8,7 +8,7 @@
 //   → 조회를 디폴트(niin 없음) / 검색(niin 있음) 두 갈래로 호출하고 영역별로 concat 한다.
 //   ⚠️ 재검색 시 이어붙은 블록은 마지막 검색 결과로 교체된다(검색마다 무한 누적하지 않음).
 // 시트 본문(px-16) 안이라 AccordionSection 은 flush(콘텐츠 좌우 패딩 제거 — 2중 패딩 방지).
-import { opQueries } from '@/queries/bds/op/queries'
+import { opQueries } from '@/queries/bds/op/opQueries'
 import type { WarSplItemInfo } from '@/types/op'
 import { cn } from '@/utils/cn'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'

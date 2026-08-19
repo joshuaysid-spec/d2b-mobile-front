@@ -1,7 +1,7 @@
 // 해지/해제 일반단가제계약 상세 - '계약명세서' 탭 콘텐츠 (MUI-CT-03-T08). 설계서 slide125·128~129.
 // 계약 명세 정보: 부서명/조달판단번호 헤더 + 예산구분 그룹 품목 블록 반복.
 // 컬럼은 총액제(T05)와 동일(공동계약업체~예산항목, slide125). 데이터: ctQueries.useSelectCncltnRmvGnrlCtrtDtst(id, 'untprc').
-import { ctQueries } from '@/queries/bds/ct/queries'
+import { ctQueries } from '@/queries/bds/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { CtrtDtstGroup, CtrtDtstGroupItem } from '@/types/ct'

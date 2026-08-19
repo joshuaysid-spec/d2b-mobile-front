@@ -10,7 +10,7 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { bdQueries } from '@/queries/bds/bd/queries'
+import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { AlertModal } from '@/ui/common/composites/AlertModal'

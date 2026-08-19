@@ -3,7 +3,7 @@
 // 탭바는 '반송/취소 사유'다(M03 탭에 특수조건 없음) — 레이아웃 기준. 영문 ID 미기재 → 상위 화면 ID 파생(_RjctRsn).
 // 구성: 업무도움(HelpDisclosure, [필독] 전자수입인지 안내) + 사유 블록(타이틀+본문 박스, 세로 제한 없음)
 //   + 하단 PC 안내 불릿. 데이터: ctQueries.useSelectCtrtRjctRsns — 단계별 타이틀(낙찰단가/제출서류/계약서 반송·계약 취소).
-import { ctQueries } from '@/queries/bds/ct/queries'
+import { ctQueries } from '@/queries/bds/ct/ctQueries'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 
 export function CmdtyElctrCtrtPrgrsDtl_RjctRsn({ id }: { id: string }) {

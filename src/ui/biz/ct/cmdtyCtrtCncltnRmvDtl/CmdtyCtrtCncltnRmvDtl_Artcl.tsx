@@ -1,7 +1,7 @@
 // 해지/해제 물품일반계약 상세 - '계약업체' 탭 콘텐츠 (MUI-CT-03-T02). 설계서 slide110·113.
 // 화면목록(slide10)상 명칭은 '세부항목'이나, 레이아웃(slide110)은 계약업체(여러 업체 반복) 표시.
 // 데이터: ctQueries.useSelectCmdtyCncltnRmvBzentys — 목업/실연동은 ctService(USE_MOCK)가 전환.
-import { ctQueries } from '@/queries/bds/ct/queries'
+import { ctQueries } from '@/queries/bds/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { CtrtBzenty } from '@/types/ct'

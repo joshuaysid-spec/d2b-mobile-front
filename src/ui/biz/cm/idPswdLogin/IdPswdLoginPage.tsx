@@ -20,7 +20,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from 'react-router-dom'
 
-import { authQueries } from '@/queries/bds/auth/queries'
+import { authQueries } from '@/queries/bds/auth/authQueries'
 import { useAuthStore } from '@/stores/authStore'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'

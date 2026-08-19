@@ -4,7 +4,7 @@
 // 카드 클릭 시 중앙조달(M02)/부대조달(M03) 상세 분기(sbsdPrcmYn, 임시 키)는 부모 콜백으로 위임.
 import { useState } from 'react'
 
-import { exQueries } from '@/queries/bds/ex/queries'
+import { exQueries } from '@/queries/bds/ex/exQueries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'

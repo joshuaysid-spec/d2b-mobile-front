@@ -12,14 +12,15 @@
 
 ```
 src/services/bds/{도메인}.ts          {도메인}Service = { selectXxx, saveXxx, … }   ← URL 함수 인라인
-src/queries/bds/{도메인}/keys.ts      {도메인}Keys    = { selectXxx: … }            ← ['{도메인}', 함수명, 파라미터] 3단
-src/queries/bds/{도메인}/queries.ts   {도메인}Queries = { useSelectXxx, … }         ← use + 서비스 함수명
+src/queries/bds/{도메인}/{도메인}Keys.ts     {도메인}Keys    = { selectXxx: … }       ← ['{도메인}', 함수명, 파라미터] 3단
+src/queries/bds/{도메인}/{도메인}Queries.ts  {도메인}Queries = { useSelectXxx, … }    ← use + 서비스 함수명
 ```
 
 - **함수명 = 백엔드 메서드명**(실규격 확정 전엔 select~ 스타일 임시 명명) — 서비스·쿼리키·훅이 같은 이름을 공유해 어느 층에서든 grep 1:1 추적. 조회는 `select~`, 뮤테이션은 동사 그대로(save/submit/reg …). 훅명은 `use` + 함수명(첫 글자 대문자).
 - 쿼리키는 **`['{도메인}', 함수명, 파라미터]` 3단 유지** — 도메인 전체 무효화(`['op']`)와 함수 prefix 무효화가 모두 가능해야 함.
-- keys.ts 를 훅과 분리하는 이유: mutation 무효화가 파일 경계를 넘어도 순환 import 없이 키만 참조. (file 처럼 쿼리키가 0개인 도메인은 keys.ts 생략)
-- 페이지 사용 형태: `import { opQueries } from '@/queries/bds/op/queries'` → `opQueries.useSelectPlanList(req)`.
+- Keys 파일을 훅과 분리하는 이유: mutation 무효화가 파일 경계를 넘어도 순환 import 없이 키만 참조. (file 처럼 쿼리키가 0개인 도메인은 Keys 파일 생략)
+- 파일명 = export 객체명 동일(`cmQueries.ts` 안에 `cmQueries`) — 에디터 탭/검색에서 도메인 구분(2026-08-19, 구 `queries.ts`/`keys.ts` 공통 파일명 폐기).
+- 페이지 사용 형태: `import { opQueries } from '@/queries/bds/op/opQueries'` → `opQueries.useSelectPlanList(req)`.
 
 **핵심 규칙:**
 1. **페이지는 서비스를 직접 import 하지 않는다 — 모든 API 호출은 `{도메인}Queries` 훅으로만** (2026-07-30 확정. 구 "제출은 서비스 직접 await" 정책 폐기 — 전 페이지 전환 완료).

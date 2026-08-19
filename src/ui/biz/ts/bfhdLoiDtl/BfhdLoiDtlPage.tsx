@@ -7,7 +7,7 @@
 import { useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 
-import { tsQueries } from '@/queries/bds/ts/queries'
+import { tsQueries } from '@/queries/bds/ts/tsQueries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Button } from '@/ui/common/base/Button'

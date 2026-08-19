@@ -15,7 +15,7 @@
 // 닫힘 시 Radix 가 콘텐츠를 언마운트 → 재진입 시 폼/결과 자동 초기화(별도 reset effect 불필요).
 import { memo, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 
-import { opQueries } from '@/queries/bds/op/queries'
+import { opQueries } from '@/queries/bds/op/opQueries'
 import type { PrcDataItem, PrcDataSearchRequest } from '@/types/op'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'

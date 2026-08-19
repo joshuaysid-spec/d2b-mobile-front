@@ -13,7 +13,7 @@
 //   - 타이틀 24px Bold · 안내 박스 bg-primary-faint(#ecf1fa) · radius 8 · p 20 · 텍스트 17 Medium ink.
 import { useNavigate } from 'react-router-dom'
 
-import { authQueries } from '@/queries/bds/auth/queries'
+import { authQueries } from '@/queries/bds/auth/authQueries'
 import { useAuthStore } from '@/stores/authStore'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'

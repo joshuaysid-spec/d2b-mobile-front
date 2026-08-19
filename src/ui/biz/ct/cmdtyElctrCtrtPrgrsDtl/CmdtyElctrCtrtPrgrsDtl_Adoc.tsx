@@ -7,8 +7,8 @@
 //   실패 시 Toast 안내(slide27 4] 다운로드 실패 안내). 파일명 없는 행(fileNm '-')은 안내만.
 import { useState } from 'react'
 
-import { ctQueries } from '@/queries/bds/ct/queries'
-import { fileQueries } from '@/queries/bds/file/queries'
+import { ctQueries } from '@/queries/bds/ct/ctQueries'
+import { fileQueries } from '@/queries/bds/file/fileQueries'
 import { saveBlob } from '@/utils/download'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'

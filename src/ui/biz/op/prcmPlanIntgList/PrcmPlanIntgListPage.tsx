@@ -2,12 +2,12 @@
 // 구성: 업무도움(Infobox) + 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더(총건수·page size)
 //      + 카드 리스트(CardList, Card 재사용) + 더보기 + 맨위로 FAB.
 // 데이터: useSelectPlanList(queries/bds/op) — 목업/실연동은 opService(USE_MOCK)가 전환. 목업 데이터는 mocks/op.ts.
-// 키워드 검색·더보기(페이징)는 아직 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행 — queries/bds/op/queries.ts 참조).
+// 키워드 검색·더보기(페이징)는 아직 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행 — queries/bds/op/opQueries.ts 참조).
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
-import { opQueries } from '@/queries/bds/op/queries'
+import { opQueries } from '@/queries/bds/op/opQueries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SectionDivider } from '@/ui/common/base/SectionDivider'

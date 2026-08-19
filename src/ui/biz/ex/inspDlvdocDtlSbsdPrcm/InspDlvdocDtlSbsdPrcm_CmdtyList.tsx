@@ -1,7 +1,7 @@
 // 검사및납품조서상세(부대조달) - '물품목록' 탭 콘텐츠 (MUI-EX-01-T04). 설계서 04.이행 v0.83 slide23~24.
 // "물품 목록 - 총 N건" 헤더 + 물품 1건 = Table 반복(dlt_CmdtyList — 중앙 T02 와 달리 총계약수량 tctrtQty)
 // + 하단 증명 문구(slide23: 검사합격/납품 증명). 데이터는 exQueries.useSelectInspDlvdocSbsdCmdtys 조회.
-import { exQueries } from '@/queries/bds/ex/queries'
+import { exQueries } from '@/queries/bds/ex/exQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { InspDlvdocSbsdCmdtyItem } from '@/types/ex'

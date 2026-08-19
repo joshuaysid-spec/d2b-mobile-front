@@ -4,7 +4,7 @@
 // 조회는 useQuery 훅, 저장/제출은 페이지 핸들러에서 서비스 직접 await(useMutation 미도입).
 import { useQuery } from '@tanstack/react-query'
 import { ctService } from '@/services/bds/ct'
-import { ctKeys } from '@/queries/bds/ct/keys'
+import { ctKeys } from '@/queries/bds/ct/ctKeys'
 import type { CncltnRmvListRequest, CtCtrdocType, CtrtIntgListRequest } from '@/types/ct'
 
 export const ctQueries = {

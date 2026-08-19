@@ -1,7 +1,7 @@
 // 계약진행상태 풀팝업 — MUI-CT-01-P17 CtrtPrgrsSttsInq. 설계서 slide84~86.
 // 물품/공사 계약의 진행 상태 이력 조회(내역 조회만, 클릭 불가). 상세 바로가기에서 진입.
 // 국외 계약은 처리담당자·반려사유 추가 표시(반려사유 없으면 미표시) — 값 있는 행만 렌더.
-import { ctQueries } from '@/queries/bds/ct/queries'
+import { ctQueries } from '@/queries/bds/ct/ctQueries'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FullPopup } from '@/ui/common/composites/FullPopup'

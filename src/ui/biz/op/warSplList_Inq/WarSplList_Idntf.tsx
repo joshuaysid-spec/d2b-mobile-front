@@ -4,7 +4,7 @@
 // 표시 규칙(사용자 확정 2026-08-11): 내용은 해당 연간조달계획의 **디폴트 값**이고,
 //   NIIN 검색 시 디폴트 값 아래로 검색 결과 테이블이 이어붙는다(교체 아님).
 // 시트 본문(px-16) 안이라 AccordionSection 은 flush(콘텐츠 좌우 패딩 제거 — 2중 패딩 방지).
-import { opQueries } from '@/queries/bds/op/queries'
+import { opQueries } from '@/queries/bds/op/opQueries'
 import type { WarSplIdntf } from '@/types/op'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table } from '@/ui/common/composites/Table'

@@ -10,7 +10,7 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { opQueries } from '@/queries/bds/op/queries'
+import { opQueries } from '@/queries/bds/op/opQueries'
 import type { OpPlanItem } from '@/types/op'
 import type { ApiError } from '@/types/api'
 
