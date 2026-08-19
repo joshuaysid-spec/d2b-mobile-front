@@ -7,7 +7,7 @@
 import { useRef, useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { useBidPbancDetail, useToggleFavorite } from '@/queries/bd'
+import { bdQueries } from '@/queries/bds/bd/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
@@ -85,7 +85,7 @@ export function BidPbancDtlPage() {
   const [cancelOpen, setCancelOpen] = useState(false)
   const abandonRef = useRef<BidAbndAperWrtHandle>(null)
   const cancelRef = useRef<BidRtrcnAperInqHandle>(null)
-  // 관심공고(즐겨찾기) 등록 여부 — 추후 bdService.getDetail 응답(관심공고 등록 여부)으로 초기화. 현재 mock false.
+  // 관심공고(즐겨찾기) 등록 여부 — 추후 bdService.selectPbancDtl 응답(관심공고 등록 여부)으로 초기화. 현재 mock false.
   const [favorite, setFavorite] = useState(false)
   const [loginGuideOpen, setLoginGuideOpen] = useState(false) // 로그인 안내(MUI-MS-03-P15)
   const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보 조회 풀팝업(MUI-BD-01-M74)
@@ -99,8 +99,8 @@ export function BidPbancDtlPage() {
   //   URL 에 식별자를 두지 않으므로 state 없이 직접 진입하면 목록으로 되돌린다(아래 early return).
   const stateItem = useLocation().state as BidPbancItem | null
   const id = stateItem?.id ?? ''
-  const { data: detail } = useBidPbancDetail(id, stateItem ?? undefined)
-  const toggleFavorite = useToggleFavorite()
+  const { data: detail } = bdQueries.useSelectPbancDtl(id, stateItem ?? undefined)
+  const toggleFavorite = bdQueries.useToggleFavorite()
 
   // 즐겨찾기(관심공고) 토글 — 로그인 필요. 등록/제외에 따라 아이콘(라인↔채움) + 토스트(P13).
   // 낙관적 갱신(즉시 반영) 후 mutation 훅 await, 실패 시 이전 상태로 복원.
@@ -141,7 +141,7 @@ export function BidPbancDtlPage() {
 
   // 신청서 화면들(사전심사/입찰서/참가신청서/포기·취소)은 입찰진행 아이템(BidPrgrsItem) 형태를 기대 —
   // 공고 아이템을 매핑해 전달한다. 공고 아이템에 없는 필드(판단번호·연락처·계약/입찰방법·진행 플래그)는
-  // 목업으로 보완(추후 API: bdService.getBidPbancDtl 응답으로 교체).
+  // 목업으로 보완(추후 API: bdService.selectBidPbancDtl 응답으로 교체).
   const prgrsDetail: BidPrgrsItem = {
     rNum: detail.id,
     taskSeNm: detail.taskSeNm ?? '물품',

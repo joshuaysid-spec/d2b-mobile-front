@@ -1,7 +1,7 @@
 // 국외 입찰공고 상세 - '품목 목록' 탭 (MUI-BD-01-T72(구 M72 — v1.83 재편), 설계서 slide291·295).
 // 품목별 아코디언(항목번호·품명) + 필드 테이블(dl_itemList 항목 그대로) + 보관함 추가/삭제(업체담당자).
 // 첨부문서 '보기' = 파일다운로드, 재고번호 '보기' = 목록정보조회 팝업(UI-OP-01-P75, 추후 연결).
-// 10개 노출 후 더보기 버튼으로 10개씩 추가 로드(설계서). 데이터는 목업(추후 bdService.getOvsBidItemList).
+// 10개 노출 후 더보기 버튼으로 10개씩 추가 로드(설계서). 데이터는 목업(추후 bdService.selectOvsBidItemList).
 import { useState } from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
@@ -14,7 +14,7 @@ import { OvsBidPbanc_AtchFileInq } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbanc_
 import type { OvsAtchDoc, OvsBidItem } from '@/types/bd'
 
 // 품목목록(dl_itemList) 목업 — 설계서 slide291 예시값(수량 1+1+1=3, 예산 608,000.00 USD) 기반.
-// 항목번호별로 재고·부품·규격번호와 품명만 달리해 실제 응답처럼 구성. 추후 bdService.getOvsBidItemList
+// 항목번호별로 재고·부품·규격번호와 품명만 달리해 실제 응답처럼 구성. 추후 bdService.selectOvsBidItemList
 type OvsBidItemBase = Pick<
   OvsBidItem,
   'frcptlArtclNo' | 'itemNm' | 'invtNo' | 'prtsNo' | 'spcfctNo' | 'lockerYn' | 'atchDocEn' | 'inspShpNm'
@@ -54,7 +54,7 @@ const MOCK_ITEM_LIST: OvsBidItem[] = MOCK_ITEM_BASE.map((it) => ({
 const PAGE_STEP = 10 // 더보기 10개씩(설계서)
 
 // 첨부파일조회(MUI-BD-01-P76) 목업 — 선택 품목의 첨부서류 목록(dl_docList 형태).
-// 설계서 slide15 Layout(순번·첨부서류명 + 첨부파일명.hwp [파일크기]) 그대로. 추후 API: bdService.getOvsItemAtchFileList
+// 설계서 slide15 Layout(순번·첨부서류명 + 첨부파일명.hwp [파일크기]) 그대로. 추후 API: bdService.selectOvsItemAtchFileList
 const buildAtchDocs = (item: OvsBidItem): OvsAtchDoc[] => [
   { no: 1, atchDocNm: '규격서', atchFileNm: `규격서(${item.spcfctNo}).hwp`, fileSz: '786KB' },
   { no: 2, atchDocNm: '도면', atchFileNm: `도면(${item.prtsNo}).pdf`, fileSz: '1.2MB' },
@@ -87,7 +87,7 @@ export function OvsBidPbancDtl() {
   const [atchItem, setAtchItem] = useState<OvsBidItem | null>(null)
   const handleOpenAtchDoc = (item: OvsBidItem) => {
     setAtchItem(item)
-    console.log('[M72] 첨부파일조회(P76) 열기', item.frcptlArtclNo) // 추후 API: bdService.getOvsItemAtchFileList
+    console.log('[M72] 첨부파일조회(P76) 열기', item.frcptlArtclNo) // 추후 API: bdService.selectOvsItemAtchFileList
   }
 
   // 재고번호 클릭 (scwin.grd_list_oncellclick) — 목록정보조회 팝업(UI-OP-01-P75) 호출.

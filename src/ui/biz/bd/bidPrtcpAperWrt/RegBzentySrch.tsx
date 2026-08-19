@@ -27,7 +27,7 @@ const SRCH_TYPES = [
   { value: '사업자번호', label: '사업자번호' },
 ]
 
-// 조회 결과 목업 3건 — 추후 bdService.getRegBzentyList 로 교체.
+// 조회 결과 목업 3건 — 추후 bdService.selectRegBzentyList 로 교체.
 const MOCK_RESULTS: RegBzentyRow[] = [
   { id: 'b1', bizRegNo: '123-45-67890', bizNm: '㈜업체명 표시 영역' },
   { id: 'b2', bizRegNo: '234-56-78901', bizNm: '㈜방산테크' },
@@ -40,7 +40,7 @@ export function RegBzentySrch({ onSelect }: Props) {
   const [results, setResults] = useState<RegBzentyRow[]>(MOCK_RESULTS)
 
   const handleSearch = () => {
-    // 추후 API: bdService.getRegBzentyList({ srchType, keyword })
+    // 추후 API: bdService.selectRegBzentyList({ srchType, keyword })
     console.log('[P11] 등록업체검색', { srchType, keyword })
     setResults(MOCK_RESULTS)
   }

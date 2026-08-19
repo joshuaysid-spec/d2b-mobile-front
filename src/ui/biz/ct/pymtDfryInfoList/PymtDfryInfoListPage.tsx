@@ -5,7 +5,7 @@
 import { useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 
-import { usePymtDfryInfoList } from '@/queries/ct'
+import { ctQueries } from '@/queries/bds/ct/queries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
@@ -87,7 +87,7 @@ export function PymtDfryInfoListPage() {
   // P16 대금지불정보조회 — 카드 클릭 시 해당 계약번호로 조회.
   const [inqCtrtNo, setInqCtrtNo] = useState<string | null>(null)
 
-  const { data: list = [] } = usePymtDfryInfoList()
+  const { data: list = [] } = ctQueries.useSelectPymtDfryInfoList()
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)

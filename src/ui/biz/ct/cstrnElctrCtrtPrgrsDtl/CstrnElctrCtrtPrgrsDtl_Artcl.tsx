@@ -1,7 +1,7 @@
 // 공사전자계약진행상세 - '계약업체' 탭 콘텐츠 (MUI-CT-01-T10). 설계서 slide40·44(1.2).
 // 물품(T02)과 동일 구조에 공사 확장 필드(계약유형·전자서명여부·전화번호·법인번호·주소) 추가.
-// 생산공장 섹션 없음(물품 전용). 데이터: useCtrtBzentys 재사용.
-import { useCtrtBzentys } from '@/queries/ct'
+// 생산공장 섹션 없음(물품 전용). 데이터: ctQueries.useSelectCtrtBzentys 재사용.
+import { ctQueries } from '@/queries/bds/ct/queries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { CtrtBzenty } from '@/types/ct'
@@ -28,7 +28,7 @@ function bzentyRows(b: CtrtBzenty): TableRow[] {
 }
 
 export function CstrnElctrCtrtPrgrsDtl_Artcl({ id }: { id: string }) {
-  const { data } = useCtrtBzentys(id)
+  const { data } = ctQueries.useSelectCtrtBzentys(id)
   const bzentys = data?.bzentys ?? []
 
   return (

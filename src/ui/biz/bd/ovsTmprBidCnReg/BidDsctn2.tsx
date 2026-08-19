@@ -18,7 +18,7 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { AlonbsBidCnInfo, AlonbsItem, BscPbancInfo } from '@/types/bd'
 
 // ── 목업 코드값 — On-Load 입찰업체목록/화폐단위 조회 결과(설계서 slide319) ──
-// 추후 API: bdService.getOvsBidBzentyList / bdService.getCrncList
+// 추후 API: bdService.selectOvsBidBzentyList / bdService.selectCrncList
 const SPLY_BZENTY_ITEMS = [
   { value: 'MD Helicopters Inc.', label: 'MD Helicopters Inc.' },
   { value: 'Boeing Global Services Co.', label: 'Boeing Global Services Co.' },
@@ -118,7 +118,7 @@ export function BidDsctn2({ detail }: { detail: BscPbancInfo }) {
 
   const handleLoadMore = () => {
     console.log('[M78] 입찰 품목 더보기', detail.intgRfrncNo, visibleCount)
-    // 추후 API: bdService.getOvsLockerBidItemList(intgRfrncNo, page) — 다음 페이지 append
+    // 추후 API: bdService.selectOvsLockerBidItemList(intgRfrncNo, page) — 다음 페이지 append
     setVisibleCount((c) => Math.min(c + PAGE_SIZE, MOCK_ALONBS_ITEM_LIST.length))
   }
 

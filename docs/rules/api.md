@@ -4,21 +4,34 @@
 
 ## API 연동 컨벤션 (2026-07-20 서비스 레이어 구축 — 구 "페이지 인라인 목업 + service 스텁 금지" 정책 폐기)
 
-> **서비스 레이어가 전 도메인에 존재한다**: `src/services/{bd,cm,op,auth,file}.ts` (15개 서비스 객체, ~190 메서드).
-> 각 메서드 = `if (USE_MOCK) 목업(mocks/) : apiClient 실호출(EP 맵)` 분기. 폐쇄망 반입 후 연동 절차는
-> `docs/closed-network-checklist.md` §4 (`.env` 2줄 + EP 맵 대조 + 잔여 페이지 배선).
+> **서비스 레이어가 전 도메인에 존재한다**: `src/services/bds/{도메인}.ts` (~280 메서드).
+> 각 메서드 = `if (USE_MOCK) 목업(mocks/) : apiClient 실호출(URL 인라인)` 분기. 폐쇄망 반입 후 연동 절차는
+> `docs/closed-network-checklist.md` §4 (`.env` 2줄 + URL 대조 + 잔여 페이지 배선).
+
+**폴더 구조 · 3자 대칭 명명 (2026-08-19 재구성 — 구 `services/{도메인}.ts`·`queries/{도메인}.ts` 평면 구조 폐기):**
+
+```
+src/services/bds/{도메인}.ts          {도메인}Service = { selectXxx, saveXxx, … }   ← URL 함수 인라인
+src/queries/bds/{도메인}/keys.ts      {도메인}Keys    = { selectXxx: … }            ← ['{도메인}', 함수명, 파라미터] 3단
+src/queries/bds/{도메인}/queries.ts   {도메인}Queries = { useSelectXxx, … }         ← use + 서비스 함수명
+```
+
+- **함수명 = 백엔드 메서드명**(실규격 확정 전엔 select~ 스타일 임시 명명) — 서비스·쿼리키·훅이 같은 이름을 공유해 어느 층에서든 grep 1:1 추적. 조회는 `select~`, 뮤테이션은 동사 그대로(save/submit/reg …). 훅명은 `use` + 함수명(첫 글자 대문자).
+- 쿼리키는 **`['{도메인}', 함수명, 파라미터]` 3단 유지** — 도메인 전체 무효화(`['op']`)와 함수 prefix 무효화가 모두 가능해야 함.
+- keys.ts 를 훅과 분리하는 이유: mutation 무효화가 파일 경계를 넘어도 순환 import 없이 키만 참조. (file 처럼 쿼리키가 0개인 도메인은 keys.ts 생략)
+- 페이지 사용 형태: `import { opQueries } from '@/queries/bds/op/queries'` → `opQueries.useSelectPlanList(req)`.
 
 **핵심 규칙:**
-1. **페이지는 서비스를 직접 import 하지 않는다 — 모든 API 호출은 `src/queries/{도메인}.ts` 훅으로만** (2026-07-30 확정. 구 "제출은 서비스 직접 await" 정책 폐기 — 전 페이지 전환 완료).
+1. **페이지는 서비스를 직접 import 하지 않는다 — 모든 API 호출은 `{도메인}Queries` 훅으로만** (2026-07-30 확정. 구 "제출은 서비스 직접 await" 정책 폐기 — 전 페이지 전환 완료).
    - 조회 = useQuery 훅(소비가 생길 때 추가, `{도메인}Keys` queryKey 중앙관리) · 저장/제출/이벤트성 조회 = **useMutation 훅**. 핸들러에서 `await xxx.mutateAsync(...)` + try/catch(`ApiError.message` → `AlertModal`/`InputMessage`) — mutateAsync 도 실패 시 throw 라 catch 패턴 동일. fire-and-forget 은 `mutate()`(unhandled rejection 방지).
    - **제출 성공 시 영향받는 조회 캐시 무효화는 mutation 훅 `onSuccess` 에서 중앙 처리** — 전역 `staleTime: 60s` 라 수동 재조회가 안 되기 때문(목업 모드에선 안 드러나는 잠복 버그). prefix 무효화 키(예: `bdKeys.progressListAll`)는 `{도메인}Keys` 에 정의. 적용 예: `useSignElsgn`/`useSaveTndr` → 입찰진행목록 무효화.
      - 무효화를 mutation `onSuccess` 에 두는 건 라이브러리 제약이 아니라 **팀 규율** — 데이터가 낡는 원인은 대부분 "방금 한 변경"이므로 변경 지점에 중앙화한다(화면 곳곳에서 invalidate 하면 추적 불가). 기본은 `invalidateQueries`(캐시를 지우지 않고 stale 딱지 → 옛 데이터 보여주며 백그라운드 교체) — `removeQueries` 는 로그아웃 등 "더 보이면 안 되는" 캐시 폐기 전용(일반 갱신에 쓰면 빈 로딩 UX).
    - **staleTime 은 데이터 성격별로 개별 useQuery 에서 오버라이드**: 전역 기본 60초. 사실상 불변(공통코드·부서목록)은 `staleTime: Infinity`(+`gcTime: Infinity` — 세션 내 1회 호출 확정. 요청 파람이 같으면 queryKey 가 같아 캐시 즉시 반환), 실시간성(개찰 진행 등)은 짧게.
    - 순수 유틸(예: `validateFile`)은 서비스 파일에서 직접 import 해도 된다(API 호출이 아님).
-2. **엔드포인트는 서비스 파일 상단 `EP` 상수 맵에만** 둔다(추정 REST, JSDoc 에 화면 ID+소비 파일). 페이지에 URL 문자열 금지. 반입 후 EP 맵만 수정(메서드 본문 불변).
+2. **엔드포인트 URL 은 서비스 함수 안에만** 인라인한다(구 `EP` 상수 맵 폐기 — 2026-08-19. 함수당 URL 1회 사용이라 맵은 오버헤드). JSDoc 에 화면 ID+소비 파일 유지. 페이지에 URL 문자열 금지. 반입 후 실경로 확정 시 해당 함수만 수정.
 3. **목업 데이터 위치**: 배선된 페이지의 목업은 `src/mocks/{도메인}.ts` (단일 소스, 페이지의 `MOCK_*` 상수를 이동). **미배선 페이지는 인라인 목업 유지** — 그 페이지를 배선할 때 이동한다. 서비스의 미배선 메서드 목업은 최소 대표값(1~3건).
 4. **실호출 타이핑 — 전 API POST 통일(2026-07-30 확정)**: 백엔드 규격상 조회/저장/삭제 전부 `apiClient.post<T, T>(url, body?)` 로 호출한다(get/put/delete 금지 — 구 GET 의 `{ params }` 는 POST body 로). 응답 인터셉터가 봉투를 벗기므로 axios 2번째 제네릭에 알맹이 타입 지정. 다운로드는 `post<Blob, Blob>(url, null, { responseType: 'blob' })`. `any` 금지.
-5. **인증**: 토큰 저장은 `authStore.setAccessToken`(localStorage 브리지 내장 — 직접 localStorage 만지지 말 것). 로그인 응답 매핑은 `services/auth.ts` 의 `LoginResult` 로 격리.
+5. **인증**: 토큰 저장은 `authStore.setAccessToken`(localStorage 브리지 내장 — 직접 localStorage 만지지 말 것). 로그인 응답 매핑은 `services/bds/auth.ts` 의 `LoginResult` 로 격리.
 
 **목록 → 상세 데이터 전달 — URL 에 식별자 금지, navigate state 로만 (2026-08-12 전환 완료):**
 

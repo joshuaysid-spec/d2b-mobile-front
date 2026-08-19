@@ -66,7 +66,7 @@ export function OvsTmprBidCnRegPage() {
   // 이전공고입찰내역 불러오기 → 이전공고입찰내역등록 화면으로 이동
   const handleBfrBidCn = () => {
     console.log('[M76] 이전공고입찰내역 불러오기', detail.intgRfrncNo)
-    // 추후 API: bdService.getOvsBfrPbancBidCnList(intgRfrncNo)
+    // 추후 API: bdService.selectOvsBfrPbancBidCnList(intgRfrncNo)
     navigate('/bd/ovsBfrTmprBidBidCnReg', { state: detail })
   }
 

@@ -108,7 +108,7 @@ export function OvsBidPrtcpApfrDtlPage_Tab3({
           onValueChange={(v) => {
             setGrnteExmptnSe(v as 'N' | 'Y')
             setPage(1)
-            console.log('[M80] 입찰보증금 구분 변경', v) // 추후 API: bdService.getOvsBidGrnteList
+            console.log('[M80] 입찰보증금 구분 변경', v) // 추후 API: bdService.selectOvsBidGrnteList
           }}
           items={[
             { value: 'N', label: '보증금 비면제' },

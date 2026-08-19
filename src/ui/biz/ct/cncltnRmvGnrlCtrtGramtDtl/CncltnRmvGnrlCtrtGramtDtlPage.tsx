@@ -1,11 +1,11 @@
 // 해지/해제 일반총액제계약 상세 (MUI-CT-03-M03). 설계서 03.계약 v0.83 slide115~122.
 // 해지/해제 목록 카드(dtlRouteCd='gramt') 클릭 → /ct/cncltnRmvGnrlCtrtGramtDtl 진입(식별자는 navigate state).
 // 탭 3개: 상세정보(T04 _Cn) · 계약명세서(T05 _Artcl) · 특수조건(T06 _Spcl).
-// 데이터: useCncltnRmvGnrlCtrtDtl(id, 'gramt') — 목업/실연동은 ctService(USE_MOCK)가 전환.
+// 데이터: ctQueries.useSelectCncltnRmvGnrlCtrtDtl(id, 'gramt') — 목업/실연동은 ctService(USE_MOCK)가 전환.
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { useCncltnRmvGnrlCtrtDtl } from '@/queries/ct'
+import { ctQueries } from '@/queries/bds/ct/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Notice } from '@/ui/common/composites/Notice'
@@ -46,7 +46,7 @@ export function CncltnRmvGnrlCtrtGramtDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputModalOpen, setOutputModalOpen] = useState(false)
 
-  const { data: detail } = useCncltnRmvGnrlCtrtDtl(id, 'gramt')
+  const { data: detail } = ctQueries.useSelectCncltnRmvGnrlCtrtDtl(id, 'gramt')
   const steps = stepsByStg('계약')
 
   // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.

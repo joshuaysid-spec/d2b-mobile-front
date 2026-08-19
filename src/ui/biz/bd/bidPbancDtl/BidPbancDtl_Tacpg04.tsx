@@ -1,6 +1,6 @@
 // 입찰공고 상세 - '계약특수조건' 탭 (MUI-BD-01-T04(구 M10 — v1.83 재편), 설계서 slide46(화면구성)·slide47(데이터영역)).
 // 섹션 2개(설계서 목업 타이틀 둘 다 '계약특수조건'): ① 계약특수조건 항목 정보 테이블 ② 전문(번호별, 축약 없이 전체 표시 — 없으면 '(없음)').
-// 계약방법 '경쟁입찰' 중 계약특수조건 내용이 있는 경우에만 탭 노출(컨테이너에서 제어). 데이터는 목업(추후 bdService.getDetail).
+// 계약방법 '경쟁입찰' 중 계약특수조건 내용이 있는 경우에만 탭 노출(컨테이너에서 제어). 데이터는 목업(추후 bdService.selectPbancDtl).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 

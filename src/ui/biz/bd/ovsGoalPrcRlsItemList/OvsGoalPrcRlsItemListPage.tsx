@@ -2,7 +2,7 @@
 // 홈 > 입찰 공고 > 목표가공개품목조회 — 국외 입찰공고의 목표가공개 품목 목록을 On-Load 로 조회(scwin.onpageload).
 // 설계서상 별도 검색조건 없음(진입 즉시 목록) — 목록헤더(총건수·표시개수) + 카드 리스트 + 더보기 + 맨위로 FAB.
 // 레퍼런스: BidPbancIntgListPage(목록 조립)·OvsExchrtListFullPopup(국외 조회성 화면 톤).
-// 데이터는 목업(dl_resultList, 설계서 항목명/형식 그대로) — 추후 bdService.getOvsGoalPrcRlsItemList 로 대체.
+// 데이터는 목업(dl_resultList, 설계서 항목명/형식 그대로) — 추후 bdService.selectOvsGoalPrcRlsItemList 로 대체.
 import { useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
@@ -166,7 +166,7 @@ export function OvsGoalPrcRlsItemListPage() {
   const [page, setPage] = useState(1)
 
   // ── API 경계 스텁 (백엔드 연동 시 services/bd 로 대체) ──
-  // On-Load: 입찰공고의 목표가공개 품목 목록 조회 — 추후 API: bdService.getOvsGoalPrcRlsItemList()
+  // On-Load: 입찰공고의 목표가공개 품목 목록 조회 — 추후 API: bdService.selectOvsGoalPrcRlsItemList()
   const handlePageSize = (size: number) => {
     setPageSize(size)
     setPage(1)
@@ -175,7 +175,7 @@ export function OvsGoalPrcRlsItemListPage() {
   const handleLoadMore = () => {
     const next = page + 1
     setPage(next)
-    console.log('[M75] loadMore → page', next) // 추후 API: bdService.getOvsGoalPrcRlsItemList({ page: next })
+    console.log('[M75] loadMore → page', next) // 추후 API: bdService.selectOvsGoalPrcRlsItemList({ page: next })
   }
 
   const total = MOCK_LIST.length

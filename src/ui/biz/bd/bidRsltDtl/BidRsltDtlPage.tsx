@@ -3,11 +3,11 @@
 // 구성: 요약정보(SummaryInfo, 즐겨찾기) + 스텝바(StepBar, 입찰) + 탭4(일반정보/품목정보/입찰결과/협상결과)
 //   + 탭 콘텐츠(일반정보=이 파일 인라인=T01 / 품목정보=BidRsltDtlList T02 / 입찰결과=BidRsltDtl T03 / 협상결과=BidRsltDtl2 T04)
 //   + 맨위로 FAB.
-// 상세화면이라 검색필터 없음. 데이터는 목업(추후 bdService.getBidRsltDetail). 헤더는 전역 Header(AppLayout).
+// 상세화면이라 검색필터 없음. 데이터는 목업(추후 bdService.selectBidRsltDtl). 헤더는 전역 Header(AppLayout).
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { useBidRsltDetail } from '@/queries/bd'
+import { bdQueries } from '@/queries/bds/bd/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import type { BdopnItem } from '@/types/bd'
@@ -236,7 +236,7 @@ export function BidRsltDtlPage() {
   //   입찰진행현황 탭의 '입찰결과 바로가기' 는 id 만 넘기므로 조회 완료까지 PageLoading.
   const stateItem = useLocation().state as BdopnItem | { id: string } | null
   const id = stateItem?.id ?? ''
-  const { data: item } = useBidRsltDetail(id, stateItem && 'bidPbancNo' in stateItem ? stateItem : undefined)
+  const { data: item } = bdQueries.useSelectBidRsltDtl(id, stateItem && 'bidPbancNo' in stateItem ? stateItem : undefined)
   // 진행단계(prgrsStg) — 입찰결과상세이므로 '입찰'(개찰/낙찰). 추후 bdService 응답으로 대체.
   const [prgrsStg] = useState('입찰')
   const steps = stepsByStg(prgrsStg)

@@ -1,14 +1,14 @@
 // 해지/해제 목록 — MUI-CT-03-M01. 설계서 03.계약 v0.83 slide104~107.
 // 구성: 검색조건(SearchCondition, 대상칩 계약명/계약번호 + 필터버튼→풀팝업 MUI-CT-03-P07)
 //      + 목록헤더(총건수·page size) + 카드 리스트(CardList) + 더보기 + 맨위로 FAB.
-// 데이터: useCncltnRmvList(queries/ct) — 목업/실연동은 ctService(USE_MOCK)가 전환. 목업은 mocks/ct.ts.
+// 데이터: ctQueries.useSelectCncltnRmvList(queries/ct) — 목업/실연동은 ctService(USE_MOCK)가 전환. 목업은 mocks/ct.ts.
 // 카드 클릭 → 계약유형(dtlRouteCd)별 상세 분기(slide107): M02 물품일반 · M03 총액제 · M04 단가제
 //   · M05 수정계약 · M06 공사계약.
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
-import { useCncltnRmvList } from '@/queries/ct'
+import { ctQueries } from '@/queries/bds/ct/queries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
@@ -163,7 +163,7 @@ export function CtrtCncltnRmvListPage() {
     null,
   )
 
-  const { data: listData } = useCncltnRmvList()
+  const { data: listData } = ctQueries.useSelectCncltnRmvList()
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)

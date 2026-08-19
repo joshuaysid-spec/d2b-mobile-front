@@ -72,7 +72,7 @@ export function OvsBidWtgrInqFullPopup({ open, onOpenChange, onApply }: OvsBidWt
   const [dtlFor, setDtlFor] = useState<OvsBidWtgrItem | null>(null)
 
   // On-Load 입찰보증서 목록 조회(scwin.onpageload) — 목업.
-  // 추후 API: bdService.getOvsBidWtgrList
+  // 추후 API: bdService.selectOvsBidWtgrList
   const list = MOCK_WTGR_LIST
 
   // 보증서 적용(scwin.btn_confirm_onclick) — P75 카드 또는 P76 footer 공통.

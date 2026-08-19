@@ -380,14 +380,14 @@ export function OvsTndrSbmsnPage_Stp2({ detail }: { detail: OvsTndrSbmsnDetail }
 
   const handleLoadMore = () => {
     console.log('[M72/M73] 입찰참여품목 더보기', detail.pbancNo, visibleCount)
-    // 추후 API: bdService.getOvsTndrItemList(pbancNo, pbancOd, page) — 다음 페이지 조회 append
+    // 추후 API: bdService.selectOvsTndrItemList(pbancNo, pbancOd, page) — 다음 페이지 조회 append
     setVisibleCount((c) => Math.min(c + PAGE_SIZE, listLength))
   }
 
   // 품목대체/MOQ 첨부문서 [보기] → 첨부문서조회 팝업(UI-BD-05-P76) 호출 스텁(설계서 slide373).
   const handleOpenAtchDoc = (kind: '품목대체' | 'MOQ', item: OvsItitbBidCnItem) => {
     console.log(`[M72] ${kind}첨부문서 조회(P76)`, item.frcptlArtclNo, item.invtNo)
-    // 추후 API: bdService.getOvsAtchDoc(...) — 첨부문서조회 팝업(UI-BD-05-P76) 호출
+    // 추후 API: bdService.selectOvsAtchDoc(...) — 첨부문서조회 팝업(UI-BD-05-P76) 호출
   }
 
   return (

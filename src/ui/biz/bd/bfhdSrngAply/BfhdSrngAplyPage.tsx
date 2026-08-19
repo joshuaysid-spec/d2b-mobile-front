@@ -5,13 +5,13 @@
 //   ⚠️ v1.83 개정(2026-07-01 화면 수정 '주민등록번호 삭제') 반영 — 업체내역은 데이터영역 6항목만.
 // '파일 추가' 클릭 → 파일첨부 방식 선택 바텀시트(MUI-BD-04-P13, CabinetLink) — 직접 업로드/캐비닛 선택.
 //   직접 업로드 = 숨은 <input type=file>(다중) → fileService 업로드(건당 순차) → guid 보관.
-// '신청하기' 클릭 → 제출확인 AlertModal → 확인 시 useApplyBfhdSrng(pbancNo, fileGuids) 제출.
+// '신청하기' 클릭 → 제출확인 AlertModal → 확인 시 bdQueries.useApplyBfhdSrng(pbancNo, fileGuids) 제출.
 import { useRef, useState, type ChangeEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { useApplyBfhdSrng } from '@/queries/bd'
-import { useRemoveFile, useUploadFile } from '@/queries/file'
-import { validateFile } from '@/services/file'
+import { bdQueries } from '@/queries/bds/bd/queries'
+import { fileQueries } from '@/queries/bds/file/queries'
+import { validateFile } from '@/services/bds/file'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
@@ -84,9 +84,9 @@ export function BfhdSrngAplyPage() {
   const inputRef = useRef<HTMLInputElement>(null)
   // 순차 업로드 큐 — 프라미스 체인으로 항상 1건씩만 전송(모바일 망 품질 협의사항).
   const queueRef = useRef(Promise.resolve())
-  const uploadFile = useUploadFile()
-  const removeFile = useRemoveFile()
-  const applyBfhdSrng = useApplyBfhdSrng()
+  const uploadFile = fileQueries.useUploadFile()
+  const removeFile = fileQueries.useRemoveFile()
+  const applyBfhdSrng = bdQueries.useApplyBfhdSrng()
 
   // 공고일반(dmt_bidPbancInfo) — 설계서 slide94 표 1 항목 순서/명칭 그대로.
   const pbancRows: TableRow[] = [

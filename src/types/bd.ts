@@ -56,7 +56,7 @@ export interface BidPbancItem {
  * 개찰목록 카드 1건 (MUI-BD-08-M01, 설계서 02입찰 slide144 Layout).
  * "개찰일시가 도래한 이후 개찰 처리 및 결과를 확인하기 위한 통합 목록조회 화면."
  * 카드 표시는 입찰공고 목록과 동일 스타일이나, 정보행은 설계서대로 공고일자·개찰일시 2행만 사용.
- * 필드명·코드값·형식은 설계서 그대로 — 목업이지만 실제 API 응답처럼 구성(추후 bdService.getBdopnList 매핑).
+ * 필드명·코드값·형식은 설계서 그대로 — 목업이지만 실제 API 응답처럼 구성(추후 bdService.selectBdopnList 매핑).
  */
 export interface BdopnItem {
   /** 카드 식별자 (상세 라우팅 키) */
@@ -84,7 +84,7 @@ export interface BdopnItem {
 }
 /**
  * 입찰진행 목록 카드 1건 (MUI-BD-03-M01, 설계서 02입찰 v1.83 slide69 화면 · slide71 데이터영역 dlt_bidPrgrsList).
- * "조달업체가 신청한 입찰 내역" — 항목명/코드값 설계서 그대로(추후 bdService.getBidProgressList 매핑).
+ * "조달업체가 신청한 입찰 내역" — 항목명/코드값 설계서 그대로(추후 bdService.selectProgressList 매핑).
  */
 export interface BidPrgrsItem {
   /** 번호 (rNum) — 조회 번호. 카드 식별자/상세 라우팅 키 */

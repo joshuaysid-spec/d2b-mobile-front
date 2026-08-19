@@ -115,7 +115,7 @@ export function OvsBidWtgrDtlFullPopup({
   onApply,
 }: OvsBidWtgrDtlFullPopupProps) {
   // On-Load 보증서 정보 상세 조회 — 선택 보증서 값 병합(목업).
-  // 추후 API: bdService.getOvsBidWtgrDtl(item.wtgrNo)
+  // 추후 API: bdService.selectOvsBidWtgrDtl(item.wtgrNo)
   const info: OvsBidWtgrInfo = {
     ...MOCK_WTGR_INFO,
     ...(item && {

@@ -4,11 +4,11 @@
 //   → /ct/cmdtyUntprcCtrdocDtl (식별자는 navigate state).
 // 탭: 상세정보(T16 _Cn) · 계약명세서(T17 _Ctrt) · 특수조건(T18 _Spcl). 탭 콘텐츠 로직은 총액제와
 //   동일 데이터영역이라 전용 탭 컴포넌트가 총액제 컴포넌트를 단일 소스로 재사용한다(로직 중복 방지).
-// 데이터: useCmdtyCtrdocDtl(id, 'untprc') — 목업/실연동은 ctService(USE_MOCK)가 전환. 목업은 mocks/ct.ts.
+// 데이터: ctQueries.useSelectCmdtyCtrdocDtl(id, 'untprc') — 목업/실연동은 ctService(USE_MOCK)가 전환. 목업은 mocks/ct.ts.
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { useCmdtyCtrdocDtl } from '@/queries/ct'
+import { ctQueries } from '@/queries/bds/ct/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Notice } from '@/ui/common/composites/Notice'
@@ -49,7 +49,7 @@ export function CmdtyUntprcCtrdocDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputModalOpen, setOutputModalOpen] = useState(false)
 
-  const { data: detail } = useCmdtyCtrdocDtl(id, 'untprc')
+  const { data: detail } = ctQueries.useSelectCmdtyCtrdocDtl(id, 'untprc')
   const steps = stepsByStg('계약')
 
   // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.

@@ -1,11 +1,11 @@
 // 해지/해제 공사계약 상세 (MUI-CT-03-M06). 설계서 03.계약 v0.83 slide139~144.
 // 해지/해제 목록 카드(dtlRouteCd='cstrn') 클릭 → /ct/cstrnCtrtCncltnRmvDtl 진입(식별자는 navigate state).
 // 탭 2개: 상세정보(T13 _Cn) · 첨부서류(T14 _Adoc). 출력 → 해지해제확정서 출력물(R21, slide140·144).
-// 데이터: useCstrnCncltnRmvDtl — 목업/실연동은 ctService(USE_MOCK)가 전환.
+// 데이터: ctQueries.useSelectCstrnCncltnRmvDtl — 목업/실연동은 ctService(USE_MOCK)가 전환.
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { useCstrnCncltnRmvDtl } from '@/queries/ct'
+import { ctQueries } from '@/queries/bds/ct/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Notice } from '@/ui/common/composites/Notice'
@@ -44,7 +44,7 @@ export function CstrnCtrtCncltnRmvDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputModalOpen, setOutputModalOpen] = useState(false)
 
-  const { data: detail } = useCstrnCncltnRmvDtl(id)
+  const { data: detail } = ctQueries.useSelectCstrnCncltnRmvDtl(id)
   const steps = stepsByStg('계약')
 
   // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.

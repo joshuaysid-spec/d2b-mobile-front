@@ -72,7 +72,7 @@ export function BidPrtcpAperWrtPage_Stp5({ detail }: Props) {
   }
 
   const handleSelect = (row: { bizNm: string }) => {
-    // 추후 API: bdService.getRegBzentyDetail — 선택 업체로 공동수급업체 행 채움
+    // 추후 API: bdService.selectRegBzentyDetail — 선택 업체로 공동수급업체 행 채움
     setCompanies((prev) =>
       prev.map((c) => (c.id === activeId ? { ...c, bzentyNm: row.bizNm } : c)),
     )

@@ -14,8 +14,8 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { CabinetLink, type CabinetLinkKind } from '@/ui/biz/bd/bidPrtcpAperWrt/CabinetLink'
-import { useRemoveFile, useUploadFile } from '@/queries/file'
-import { validateFile } from '@/services/file'
+import { fileQueries } from '@/queries/bds/file/queries'
+import { validateFile } from '@/services/bds/file'
 import { formatFileSize } from '@/utils/format'
 import type { UploadedFile } from '@/types/file'
 import type { BidPrgrsItem } from '@/types/bd'
@@ -50,8 +50,8 @@ export function BidPrtcpAperWrtPage_Stp6({ detail, files, onFilesChange }: Props
   const inputRef = useRef<HTMLInputElement>(null)
   // 순차 업로드 큐 — 프라미스 체인으로 항상 1건씩만 전송(추가 선택·재시도도 뒤에 이어붙음).
   const queueRef = useRef(Promise.resolve())
-  const uploadFile = useUploadFile()
-  const removeFile = useRemoveFile()
+  const uploadFile = fileQueries.useUploadFile()
+  const removeFile = fileQueries.useRemoveFile()
 
   const setStatus = (id: string, status: PendingFile['status']) =>
     setPending((prev) => prev.map((p) => (p.id === id ? { ...p, status } : p)))

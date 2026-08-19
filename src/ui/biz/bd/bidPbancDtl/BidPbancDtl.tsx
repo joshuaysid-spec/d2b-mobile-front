@@ -3,7 +3,7 @@
 //   slide28(지역제한·공증및면허제한·시공능력평가제한·지명경쟁업체·첨부서류·문의처) ·
 //   slide29~31(공고일반 데이터 영역 dmt_bidPbancGnrl 항목설명 — 영문 키·형식·비고).
 // 일반정보 + 지역제한 + 공증·면허제한(업무도움) + 시공능력평가제한 + 지명경쟁업체 + 첨부서류 + 문의처 아코디언.
-// 데이터는 목업(추후 bdService.getDetail) — 값은 설계서 slide26~28 예시 그대로.
+// 데이터는 목업(추후 bdService.selectPbancDtl) — 값은 설계서 slide26~28 예시 그대로.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'

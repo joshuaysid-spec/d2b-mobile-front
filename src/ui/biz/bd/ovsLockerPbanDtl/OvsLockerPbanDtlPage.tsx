@@ -40,7 +40,7 @@ const MOCK_OVS_LOCKER_PBAN_DETAIL: OvsLockerPbanItem = {
 }
 
 // 담당자 정보 (설계서 slide303~304 표시 영역 — 데이터영역 미정의, 표시 항목 그대로 목업).
-// 추후 API: bdService.getOvsLockerPbanDtl 응답의 담당자 영역으로 교체.
+// 추후 API: bdService.selectOvsLockerPbanDtl 응답의 담당자 영역으로 교체.
 const CONTACT_ROWS: TableRow[] = [
   { label: '담당 부서명', value: '국제부품계약팀' },
   { label: '담당자', value: '정영금' },

@@ -1,7 +1,7 @@
 // 환율정보 조회 (MUI-BD-01-M74, 설계서 slide57·58 / 영문 ovsExchrtListPopup).
 // 입찰공고 상세 플로팅(+) → 바로가기 → '환율정보 바로가기' 로 진입하는 풀페이지 팝업(FullPopup).
 // 조회일자(crtrYmd, 초기값 당일) 기준으로 공시 환율을 조회. 미국환(기준) 최상단 고정, 10개씩 더보기.
-// 데이터는 목업(설계서 항목명/예시값 그대로) — 추후 bdService.getExchangeRates(crtrYmd) 로 대체.
+// 데이터는 목업(설계서 항목명/예시값 그대로) — 추후 bdService.selectExchangeRates(crtrYmd) 로 대체.
 import { useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 
@@ -148,7 +148,7 @@ export function OvsExchrtListFullPopup({ open, onOpenChange }: OvsExchrtListFull
   const [crtrYmd, setCrtrYmd] = useState(today) // 조회일자 — 초기값 당일(설계서)
   const [visible, setVisible] = useState(PAGE_STEP) // 더보기 노출 개수
 
-  // 조회결과(목업) — 미국환 기준 최상단 고정 후 순번 순. 추후 bdService.getExchangeRates(crtrYmd).
+  // 조회결과(목업) — 미국환 기준 최상단 고정 후 순번 순. 추후 bdService.selectExchangeRates(crtrYmd).
   const list = MOCK_RATES
   const total = list.length
   // 통화별 행 → 기존 CardList(Card) 매핑: 순번 subtitle · 국가 title · 화폐/3환율 rows.
@@ -171,7 +171,7 @@ export function OvsExchrtListFullPopup({ open, onOpenChange }: OvsExchrtListFull
   // 검색 — 조회일자 기준 재조회(스텁). 실제로는 list 가 API 응답으로 교체됨.
   const handleSearch = () => {
     setVisible(PAGE_STEP)
-    console.log('[M74] 환율정보 조회', { crtrYmd }) // 추후 API: bdService.getExchangeRates(crtrYmd)
+    console.log('[M74] 환율정보 조회', { crtrYmd }) // 추후 API: bdService.selectExchangeRates(crtrYmd)
   }
   const handleLoadMore = () => setVisible((v) => v + PAGE_STEP)
 

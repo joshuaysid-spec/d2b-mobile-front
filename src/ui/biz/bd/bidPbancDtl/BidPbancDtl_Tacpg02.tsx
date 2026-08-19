@@ -9,7 +9,7 @@
 //   ※ slide32 'Tab 구성 정책' 표에는 공사 업무구분의 기초예비가격 탭이 비어 있으나 slide33 은 공사 화면을 정의 —
 //     설계서 내 상충. 탭 노출은 컨테이너(BidPbancDtlPage)가 제어하므로 여기서는 세 변형 모두 데이터로 준비.
 // 세 변형(총액제/단가제/공사)은 한 컴포넌트에서 variant 데이터 분기 — 현 목업 단계 대표 케이스는 총액제
-// (일반정보 탭 목업의 단가제유형 '총액제' 와 일치). 데이터는 목업(추후 bdService.getDetail).
+// (일반정보 탭 목업의 단가제유형 '총액제' 와 일치). 데이터는 목업(추후 bdService.selectPbancDtl).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'

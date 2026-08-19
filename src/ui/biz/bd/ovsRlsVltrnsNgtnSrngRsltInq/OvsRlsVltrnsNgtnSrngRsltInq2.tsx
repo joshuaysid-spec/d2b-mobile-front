@@ -13,7 +13,7 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
 import type { OvsRlsVltrnsSrngRsltItem } from '@/types/bd'
 
-// 조회결과 목업 — 설계서 slide443 값. 첫 건 낙찰(+계약포기), 이후 탈락. 추후 bdService.getOvsRlsVltrnsSrngRslt 매핑.
+// 조회결과 목업 — 설계서 slide443 값. 첫 건 낙찰(+계약포기), 이후 탈락. 추후 bdService.selectOvsRlsVltrnsSrngRslt 매핑.
 const ITEM_BASE: Omit<OvsRlsVltrnsSrngRsltItem, 'no' | 'rnk' | 'scsbdYn' | 'rsn' | 'abndDt' | 'abndRsn'> = {
   sbtBzentyCd: '7001F',
   sbtBzentyNm: 'A 무역대리점',

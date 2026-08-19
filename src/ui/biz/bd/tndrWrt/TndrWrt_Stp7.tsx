@@ -47,7 +47,7 @@ export function TndrWrt_Stp7({ detail }: { detail: BidPrgrsItem }) {
     // 목록에 저장된 동의 상태를 시트 라디오 초기값으로 반영.
     setChoice(checked.includes(AGREEMENT_ID) ? '동의함' : '동의안함')
     setSheetOpen(true)
-    console.log('[M07] 동의서 열람', AGREEMENT_ID) // 추후 API: bdService.getAgreement
+    console.log('[M07] 동의서 열람', AGREEMENT_ID) // 추후 API: bdService.selectAgreement
   }
 
   // 저장 후 닫기 → 확인 모달에서 확정 시 라디오 선택('동의함'만 동의 완료)으로 목록 체크 반영.

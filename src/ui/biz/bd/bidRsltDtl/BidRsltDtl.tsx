@@ -1,6 +1,6 @@
 // 입찰결과상세 - '입찰결과' 탭 (MUI-BD-09-T03(구 M03 — v1.83 재편), 설계서 02입찰 slide155).
 // 입찰결과 목록 — "내 업체 정보만 표시"(설계서). 항목당 표(순번/차수/업체코드/사업자등록번호/업체명/대표자/
-// 결과 + 첨부서류[보기]·서약서[보기]) + 더보기(10개씩). 데이터는 목업(추후 bdService.getBidRsltDetail).
+// 결과 + 첨부서류[보기]·서약서[보기]) + 더보기(10개씩). 데이터는 목업(추후 bdService.selectBidRsltDtl).
 import { useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
@@ -74,7 +74,7 @@ export function BidRsltDtl() {
 
   const handleLoadMore = () => {
     setPage((p) => p + 1)
-    console.log('[BidRsltDtl] 입찰결과 더보기') // 추후 API: bdService.getBidRslt(page+1)
+    console.log('[BidRsltDtl] 입찰결과 더보기') // 추후 API: bdService.selectBidRslt(page+1)
   }
 
   return (

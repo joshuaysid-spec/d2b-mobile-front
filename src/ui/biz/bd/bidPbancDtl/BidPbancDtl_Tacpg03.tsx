@@ -9,7 +9,7 @@
 //  이벤트(slide36~37·45): 군급-재고번호/조달요구번호/품보형태 클릭 → 목록정보조회(MUI-OP-01-T73) 팝업
 //    (NIIN·식별자료·참고자료·업체정보 팝업 slide38~41 은 별도 화면 — 이번 범위 밖, 스텁 처리)
 //    · 출력 클릭(scwin.btn_itemListOtpt_onclick, OZ 리포트 PDB025BC/BD.ozr)은 모바일 미배선.
-// 데이터는 목업(추후 bdService.getDetail) — 분기 메타 포함 인라인.
+// 데이터는 목업(추후 bdService.selectPbancDtl) — 분기 메타 포함 인라인.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'

@@ -1,6 +1,6 @@
 // 입찰결과상세 - '협상결과' 탭 (MUI-BD-09-T04(구 M04 — v1.83 재편), 설계서 02입찰 slide156).
 // 협상결과 목록 — "내 업체 정보만 표시"(설계서). 항목당 표(차수/업체코드/업체명/대표자/견적단가/낙찰률/결과)
-// + 더보기(10개씩). 데이터는 목업(추후 bdService.getBidRsltDetail).
+// + 더보기(10개씩). 데이터는 목업(추후 bdService.selectBidRsltDtl).
 import { useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
@@ -54,7 +54,7 @@ export function BidRsltDtl2() {
 
   const handleLoadMore = () => {
     setPage((p) => p + 1)
-    console.log('[BidRsltDtl] 협상결과 더보기') // 추후 API: bdService.getNegoRslt(page+1)
+    console.log('[BidRsltDtl] 협상결과 더보기') // 추후 API: bdService.selectNegoRslt(page+1)
   }
 
   return (

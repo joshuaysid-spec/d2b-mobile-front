@@ -5,7 +5,7 @@
 //  - 물품/용역 공고: 무효처리된 공고·계약방법 '협상에의한계약(서류)' 이면 탭 숨김.
 //  - 공사 공고: 무효처리된 공고이면 탭 숨김.
 //  - 자료구분값이 신자료('Y')면 탭 미노출 — 일반정보 탭 첨부서류의 조회 클릭 시 입찰결과상세로 이동(첨부파일 대체).
-// 데이터영역 dlt_BidPrgrsPrst(slide51) — 목업(추후 bdService.getBidProgress).
+// 데이터영역 dlt_BidPrgrsPrst(slide51) — 목업(추후 bdService.selectBidProgress).
 import { useNavigate } from 'react-router-dom'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'

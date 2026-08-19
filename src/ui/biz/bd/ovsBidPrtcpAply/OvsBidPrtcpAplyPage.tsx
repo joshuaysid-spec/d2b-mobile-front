@@ -134,7 +134,7 @@ export function OvsBidPrtcpAplyPage() {
   const openWrot = () => {
     setWrotChoice('동의안함') // 기본값: 동의안함(설계서 slide331)
     setWrotOpen(true)
-    console.log('[M71] 서약서 열람', WROT_ID) // 추후 API: bdService.getOvsProbWrotAgre
+    console.log('[M71] 서약서 열람', WROT_ID) // 추후 API: bdService.selectOvsProbWrotAgre
   }
 
   // 저장 클릭(P03) — 동의함 선택 시에만 활성. 저장 후 목록 체크 반영.

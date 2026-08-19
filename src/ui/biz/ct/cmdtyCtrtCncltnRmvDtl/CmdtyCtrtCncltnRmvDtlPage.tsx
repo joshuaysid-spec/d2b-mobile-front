@@ -2,11 +2,11 @@
 // 해지/해제 목록 카드(dtlRouteCd='gnrl') 클릭 → /ct/cmdtyCtrtCncltnRmvDtl 진입(식별자는 navigate state).
 // 탭 3개(화면목록 slide10 = 상세정보/세부항목/특수조건, 레이아웃 slide108 기준으로 콘텐츠 구성):
 //   상세정보(T01 _Cn) · 계약업체(T02 _Artcl) · 해지해제 정보(T03 _SpclCnd — 통보내용+참조서류).
-// 데이터: useCmdtyCncltnRmvDtl — 목업/실연동은 ctService(USE_MOCK)가 전환. 조회 완료까지 PageLoading.
+// 데이터: ctQueries.useSelectCmdtyCncltnRmvDtl — 목업/실연동은 ctService(USE_MOCK)가 전환. 조회 완료까지 PageLoading.
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { useCmdtyCncltnRmvDtl } from '@/queries/ct'
+import { ctQueries } from '@/queries/bds/ct/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Notice } from '@/ui/common/composites/Notice'
@@ -47,7 +47,7 @@ export function CmdtyCtrtCncltnRmvDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputModalOpen, setOutputModalOpen] = useState(false)
 
-  const { data: detail } = useCmdtyCncltnRmvDtl(id)
+  const { data: detail } = ctQueries.useSelectCmdtyCncltnRmvDtl(id)
   const steps = stepsByStg('계약')
 
   // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.

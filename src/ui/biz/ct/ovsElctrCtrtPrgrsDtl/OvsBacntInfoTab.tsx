@@ -1,11 +1,11 @@
 // 국외전자계약진행상세 - '계좌정보' 탭 콘텐츠 (MUI-CT-01-T72 ovsBacntInfoTab). 설계서 slide156~159.
 // 섹션 5개: 계약 정보 · 계약 업체 · 계좌정보 · 지정운송인정보 · 제조사정보 — 전부 조회 전용 표.
-import { useOvsBacntInfo } from '@/queries/ct'
+import { ctQueries } from '@/queries/bds/ct/queries'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table } from '@/ui/common/composites/Table'
 
 export function OvsBacntInfoTab({ id }: { id: string }) {
-  const { data } = useOvsBacntInfo(id)
+  const { data } = ctQueries.useSelectOvsBacntInfo(id)
 
   if (!data) return null
 

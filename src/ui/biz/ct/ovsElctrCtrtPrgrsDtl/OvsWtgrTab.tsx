@@ -1,6 +1,6 @@
 // 국외전자계약진행상세 - '보증서' 탭 콘텐츠 (MUI-CT-01-T73 ovsWtgrTab). 설계서 slide160~161.
-// 데이터영역은 보증서 확인팝업(M73)과 동일(dm_ctrtInfo + dm_wtgrInfo) — useCtrtGrntes 재사용.
-import { useCtrtGrntes } from '@/queries/ct'
+// 데이터영역은 보증서 확인팝업(M73)과 동일(dm_ctrtInfo + dm_wtgrInfo) — ctQueries.useSelectCtrtGrntes 재사용.
+import { ctQueries } from '@/queries/bds/ct/queries'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -24,7 +24,7 @@ function wtgrRows(w: CtrtGrnteInfo): TableRow[] {
 }
 
 export function OvsWtgrTab({ id }: { id: string }) {
-  const { data } = useCtrtGrntes(id, true)
+  const { data } = ctQueries.useSelectCtrtGrntes(id, true)
 
   return (
     <div className="flex flex-col pb-[72px]">

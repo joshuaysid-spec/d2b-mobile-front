@@ -1,10 +1,10 @@
 // 입찰서(견적서) 작성 - 품목내역 (MUI-BD-06-M02, Figma 9973-63264 · 설계서 02입찰 slide122·129)
 // 입찰서 작성 마법사의 '품목내역' 스텝 탭 콘텐츠. 요약/스텝/탭/하단 액션바는 컨테이너(TndrWrtPage) 소유 —
 // 이 컴포넌트는 섹션(품목 카드 반복) + 더보기만 렌더한다.
-// 품목 목록은 useBidTndrItemList(bdService.getBidTndrItemList) 가 공급 — 목업은 mocks/bd.ts(구 인라인 이관).
+// 품목 목록은 bdQueries.useSelectTndrItemList(bdService.selectTndrItemList) 가 공급 — 목업은 mocks/bd.ts(구 인라인 이관).
 import { useState } from 'react'
 
-import { useBidTndrItemList } from '@/queries/bd'
+import { bdQueries } from '@/queries/bds/bd/queries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Button } from '@/ui/common/base/Button'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -29,8 +29,8 @@ function itemRows(item: BidItemListRow): TableRow[] {
 }
 
 export function TndrWrt_Stp2({ detail }: { detail: BidPrgrsItem }) {
-  // 품목 목록 조회 — 목업/실연동은 bdService.getBidTndrItemList 의 USE_MOCK 분기가 전환.
-  const { data } = useBidTndrItemList(detail.pbancNo)
+  // 품목 목록 조회 — 목업/실연동은 bdService.selectTndrItemList 의 USE_MOCK 분기가 전환.
+  const { data } = bdQueries.useSelectTndrItemList(detail.pbancNo)
   const items = data ?? []
   // 더보기 페이징(클라이언트) — 목업 소진 시 버튼 숨김. 서버 페이징 전환 시 page 파라미터로 이행.
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)

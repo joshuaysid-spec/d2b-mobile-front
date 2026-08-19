@@ -2,7 +2,7 @@
 // 단가제/총액제를 한 파일에서 분기(alonbsYn) — 설계서 화면목록(slide326)의 파일 중복 지정은 오기라 Tab3 로 정리.
 //   단가제(M77): 품목 목록(dl_ititbBidCnList) — 항목당 아코디언(내역 펼쳐보기/접기) + 구분/내용 표 + 더보기(10개씩).
 //   총액제(M78): 입찰 품목(dl_alonbsItemList) 목록 + 입찰내역(dl_alonbsBidCnInfo) 단건 표.
-// 항목명(영문)·코드값(As it is/Replace, Y/N, 'O' 표시) 설계서 그대로. 데이터는 목업 — 추후 API: bdService.getOvsTndrItemList.
+// 항목명(영문)·코드값(As it is/Replace, Y/N, 'O' 표시) 설계서 그대로. 데이터는 목업 — 추후 API: bdService.selectOvsTndrItemList.
 // 첨부문서 '보기' 는 첨부문서조회 팝업(UI-BD-05-P76, 타 유닛) 연계 예정 — console.log 스텁.
 import { useState } from 'react'
 
@@ -181,7 +181,7 @@ function ItitbList() {
 
   const handleLoadMore = () => {
     setPage((p) => p + 1)
-    console.log('[M77] 품목 목록 더보기') // 추후 API: bdService.getOvsTndrItemList(page+1)
+    console.log('[M77] 품목 목록 더보기') // 추후 API: bdService.selectOvsTndrItemList(page+1)
   }
 
   return (
@@ -222,7 +222,7 @@ function AlonbsList() {
 
   const handleLoadMore = () => {
     setPage((p) => p + 1)
-    console.log('[M78] 입찰 품목 더보기') // 추후 API: bdService.getOvsTndrItemList(page+1)
+    console.log('[M78] 입찰 품목 더보기') // 추후 API: bdService.selectOvsTndrItemList(page+1)
   }
 
   return (

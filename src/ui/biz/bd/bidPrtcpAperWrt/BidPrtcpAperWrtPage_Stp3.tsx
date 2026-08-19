@@ -72,7 +72,7 @@ export function BidPrtcpAperWrtPage_Stp3({ detail }: { detail: BidPrgrsItem }) {
           variant="secondary"
           className="w-full"
           onClick={() => console.log('[M07] 공종및면허 더보기', detail.pbancNo)}
-          // 추후 API: bdService.getCnstwkLcnsList(pbancNo, page)
+          // 추후 API: bdService.selectCnstwkLcnsList(pbancNo, page)
         >
           더보기 (10/100)
         </Button>

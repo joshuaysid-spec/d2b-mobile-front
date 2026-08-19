@@ -7,7 +7,7 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { useCstrnCtrtPrgrsDtl } from '@/queries/ct'
+import { ctQueries } from '@/queries/bds/ct/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Button } from '@/ui/common/base/Button'
@@ -61,7 +61,7 @@ export function CstrnElctrCtrtPrgrsDtlPage() {
   const [prgrsSttsOpen, setPrgrsSttsOpen] = useState(false) // 계약진행상태(P17)
   const [outputModalOpen, setOutputModalOpen] = useState(false) // 출력 확인
 
-  const { data: detail } = useCstrnCtrtPrgrsDtl(id)
+  const { data: detail } = ctQueries.useSelectCstrnCtrtPrgrsDtl(id)
   const steps = stepsByStg('계약')
 
   // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.

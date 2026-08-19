@@ -1,6 +1,6 @@
 // 국외 입찰공고 상세 - '첨부파일' 탭 (MUI-BD-01-T73(구 M73 — v1.83 재편), 설계서 slide292·294).
 // 첨부서류(dl_docList) 목록 — 순번·첨부서류명 라벨 + 첨부파일 행(파일명 [크기] + 다운로드).
-// 데이터는 목업(추후 bdService.getOvsBidAtchDocList). 다운로드 클릭 = 파일다운로드 스텁.
+// 데이터는 목업(추후 bdService.selectOvsBidAtchDocList). 다운로드 클릭 = 파일다운로드 스텁.
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import type { OvsAtchDoc } from '@/types/bd'

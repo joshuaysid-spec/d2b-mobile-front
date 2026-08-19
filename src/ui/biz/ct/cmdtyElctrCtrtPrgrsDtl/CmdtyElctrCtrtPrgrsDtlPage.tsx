@@ -12,7 +12,7 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { useCtrtPrgrsDtl } from '@/queries/ct'
+import { ctQueries } from '@/queries/bds/ct/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Button } from '@/ui/common/base/Button'
@@ -104,7 +104,7 @@ export function CmdtyElctrCtrtPrgrsDtlPage() {
   const [prgrsSttsOpen, setPrgrsSttsOpen] = useState(false) // 계약진행상태(P17)
   const [outputModalOpen, setOutputModalOpen] = useState(false) // 출력 확인(MUI-BD-01-P14 패턴)
 
-  const { data: detail } = useCtrtPrgrsDtl(id)
+  const { data: detail } = ctQueries.useSelectCtrtPrgrsDtl(id)
   // 진행 단계 — 계약 도메인 상세는 '계약' 단계(설계서 slide23 단계표시기).
   const steps = stepsByStg('계약')
 

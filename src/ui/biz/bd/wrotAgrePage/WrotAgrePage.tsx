@@ -6,7 +6,7 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { useSaveWrot } from '@/queries/bd'
+import { bdQueries } from '@/queries/bds/bd/queries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { AgreementList } from '@/ui/common/composites/AgreementList'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
@@ -83,7 +83,7 @@ export function WrotAgrePage() {
   const [choice, setChoice] = useState('') // 바텀시트 '동의 선택' 라디오 값(열람 시작 시 기본값 리셋)
   const [agreeWarnOpen, setAgreeWarnOpen] = useState(false) // 필수 서약서 '동의함' 미체크 경고
   const [saveError, setSaveError] = useState<string | null>(null) // 서약서 저장 실패 안내(null=닫힘)
-  const saveWrot = useSaveWrot()
+  const saveWrot = bdQueries.useSaveWrot()
 
   const toggle = (id: string, on: boolean) =>
     setChecked((prev) => (on ? [...new Set([...prev, id])] : prev.filter((v) => v !== id)))

@@ -4,7 +4,7 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import type { OvsRlsVltrnsAtchDoc } from '@/types/bd'
 
-// 첨부파일 목업 — 설계서 slide414(구분·첨부파일명). 추후 bdService.getOvsRlsVltrnsAtchDocs 매핑.
+// 첨부파일 목업 — 설계서 slide414(구분·첨부파일명). 추후 bdService.selectOvsRlsVltrnsAtchDocs 매핑.
 const MOCK_DOCS: OvsRlsVltrnsAtchDoc[] = [
   { id: 'atc-1', docSeNm: '공고문안', fileNm: '첨부파일명.hwp', fileSz: '786KB' },
   { id: 'atc-2', docSeNm: '일반조건', fileNm: '첨부파일명.hwp', fileSz: '1.2MB' },

@@ -1,7 +1,7 @@
 // 계약 통합목록 — MUI-CT-01-M01 (Figma 10020-154484). 설계서 03.계약 v0.83 slide18~22.
 // 구성: 검색조건(SearchCondition, 대상칩 계약명/계약번호 + 필터버튼→풀팝업) + 목록헤더(총건수·page size)
 //      + 카드 리스트(CardList) + 더보기 + 맨위로 FAB + 검색필터(SearchFilter schema 주입, MUI-CT-01-P02).
-// 데이터: useCtrtIntgList(queries/ct) — 목업/실연동은 ctService(USE_MOCK)가 전환. 목업은 mocks/ct.ts.
+// 데이터: ctQueries.useSelectCtrtIntgList(queries/ct) — 목업/실연동은 ctService(USE_MOCK)가 전환. 목업은 mocks/ct.ts.
 // 키워드 검색·더보기(페이징)는 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행).
 // 업무도움(slide18 1])은 '내역이 없으면 항목을 표시하지 않음' — 안내 내역 확정 전이라 미표시(Figma 동일).
 // 상세 화면(M03/M04/M09/M10 등 업무구분·상태 분기, slide22)은 미구현 → 카드 클릭은 console.log 스텁.
@@ -9,7 +9,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
-import { useCtrtIntgList } from '@/queries/ct'
+import { ctQueries } from '@/queries/bds/ct/queries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
@@ -181,16 +181,16 @@ export function CtrtIntgListPage() {
 
   // 목록 조회 — 목업/실연동은 ctService 의 USE_MOCK 분기가 전환.
   // 서버 필터/페이징 전환 시: req 에 filter/page/keyword 를 넣으면 queryKey 가 바뀌어 재조회된다.
-  const { data: listData } = useCtrtIntgList()
+  const { data: listData } = ctQueries.useSelectCtrtIntgList()
 
-  // ── 핸들러 — 확정값 상태만 갱신(조회는 useCtrtIntgList + 아래 클라이언트 필터가 담당) ──
+  // ── 핸들러 — 확정값 상태만 갱신(조회는 ctQueries.useSelectCtrtIntgList + 아래 클라이언트 필터가 담당) ──
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)
     setFilterApplied(true)
     setPage(1)
     setKeyword('')
     setAppliedSearch(null)
-    // 서버 필터 전환 시: useCtrtIntgList req 에 filter(value)를 포함시켜 재조회(현재는 표시용).
+    // 서버 필터 전환 시: ctQueries.useSelectCtrtIntgList req 에 filter(value)를 포함시켜 재조회(현재는 표시용).
   }
   const handleQuickSearch = () => {
     const target = targets[0] ?? 'ctrtNm'

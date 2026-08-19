@@ -22,7 +22,7 @@ const RESULT_OPTIONS = [
 ]
 const RESULT_VALUES = ['낙찰', '조건부 낙찰', '동가 낙찰', '유찰']
 
-// 입찰결과 목록(총액제) 목업 — 설계서 slide405 항목. 추후 bdService.getOvsBidRslt 매핑.
+// 입찰결과 목록(총액제) 목업 — 설계서 slide405 항목. 추후 bdService.selectOvsBidRslt 매핑.
 // bidRsltNm 은 결과 필터 데모용으로 4종 순환.
 const ITEM_BASE: Omit<OvsBidRsltTotalItem, 'seq' | 'bidRsltNm'> = {
   bidBzentyNm: 'A 국외업체',
@@ -137,7 +137,7 @@ export function OvsBidRsltDtl3({ bidTypeNm }: { bidTypeNm: string }) {
             onClick={() => {
               const next = page + 1
               setPage(next)
-              console.log('[OvsBidRslt] 더보기 → page', next) // 추후 API: bdService.getOvsBidRslt(next)
+              console.log('[OvsBidRslt] 더보기 → page', next) // 추후 API: bdService.selectOvsBidRslt(next)
             }}
           >
             더보기 ({loaded}/{total})

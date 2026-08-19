@@ -1,6 +1,6 @@
 // 국외 입찰서 상세 — 탭2 업체정보 (MUI-BD-06-T76(구 M76 — v1.83 재편), 설계서 slide376 · 항목설명 slide380~381).
 // 신청업체(dm_sbtInfo) + 입찰업체(dm_splyInfo) 아코디언 + 구분/내용 표. 항목명(영문) 설계서 그대로.
-// 데이터는 로그인 업체(입찰서 제출 업체) 정보라 목업 상수 — 추후 API: bdService.getOvsTndrDtl 응답 매핑.
+// 데이터는 로그인 업체(입찰서 제출 업체) 정보라 목업 상수 — 추후 API: bdService.selectOvsTndrDtl 응답 매핑.
 // ※ 2026-07-01 화면 수정 반영: 주민등록번호 항목 없음(삭제), 사업자번호 = 사업자등록번호 또는 DUNS NUM.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'

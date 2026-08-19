@@ -4,7 +4,7 @@
 // 이 탭이 동의서 BottomSheet 컨테이너(선택 동의서 title, footer=저장 후 닫기/취소)와 저장 확인 AlertModal 을 직접 소유.
 import { useState } from 'react'
 
-import { useSaveAgreement } from '@/queries/bd'
+import { bdQueries } from '@/queries/bds/bd/queries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { AgreementList } from '@/ui/common/composites/AgreementList'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
@@ -66,7 +66,7 @@ export function BidPrtcpAperWrtPage_Stp7({ detail }: { detail: BidPrgrsItem }) {
   const [sheetOpen, setSheetOpen] = useState(false) // 동의서 바텀시트
   const [confirmOpen, setConfirmOpen] = useState(false) // 저장 확인 모달
   const [saveError, setSaveError] = useState<string | null>(null) // 동의서 저장 실패 안내(null=닫힘)
-  const saveAgreement = useSaveAgreement()
+  const saveAgreement = bdQueries.useSaveAgreement()
 
   const toggle = (id: string, on: boolean) =>
     setChecked((prev) => (on ? [...new Set([...prev, id])] : prev.filter((v) => v !== id)))

@@ -99,7 +99,7 @@ export function BidRegRsltInqPage() {
           <button
             type="button"
             aria-label="출력"
-            onClick={() => console.log('[M05] 출력')} // 추후 API: bdService.getBidRegResult
+            onClick={() => console.log('[M05] 출력')} // 추후 API: bdService.selectBidRegResult
             className="flex size-[37px] shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-field bg-background text-krds-text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring active:opacity-70"
           >
             <Icon name="Print" size={24} aria-hidden />

@@ -3,7 +3,7 @@
 // 구성: 검색조건(SearchCondition, 필터→풀팝업) + 목록헤더 + 품목 카드 + 더보기 + FAB.
 //   ※ 최종 확정(260709): 선택 버튼·일괄 추가/삭제 삭제 — 카드마다 보관함 여부에 따라 [보관함 추가]/[보관함 삭제] 단일 버튼만 노출.
 // 카드에 추가/삭제 버튼이 있어 CardList(onClick=button 컨테이너) 대신 Card 를 직접 조립(중첩 버튼 방지).
-// 데이터: 페이지 내 목업(dl_resultList, 항목명 설계서 그대로) — 추후 API: bdService.getOvsLockerBidItemList.
+// 데이터: 페이지 내 목업(dl_resultList, 항목명 설계서 그대로) — 추후 API: bdService.selectOvsLockerBidItemList.
 import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
@@ -144,7 +144,7 @@ const TOTAL = 258 // 총 건수(목업 — 설계서 slide308 '더보기(10/258)
 
 // 입찰품목 목록 목업 생성 — 상위(보관함 상세)에서 넘어온 공고 항목이 있으면 그 공고 번호를 반영.
 // 값 형식은 설계서 slide308 그대로(재고번호 9자리·부품번호·지시단가 20,767.85 USD (미달러)).
-// 추후 API: bdService.getOvsLockerBidItemList(pbancNo, ...) 응답으로 교체.
+// 추후 API: bdService.selectOvsLockerBidItemList(pbancNo, ...) 응답으로 교체.
 function buildMockItems(pbanc: OvsLockerPbanItem | null): OvsLockerBidItem[] {
   const base = {
     pbancNo: pbanc?.pbancNo ?? 'EFE00012',
@@ -206,13 +206,13 @@ export function OvsLockerItemRegPage() {
     setPage(1)
     setKeyword('')
     setAppliedSearch(null)
-    console.log('[OvsLockerItem] 상세필터 검색', value) // 추후 API: bdService.getOvsLockerBidItemList
+    console.log('[OvsLockerItem] 상세필터 검색', value) // 추후 API: bdService.selectOvsLockerBidItemList
   }
   const handleQuickSearch = () => {
     const target = targets[0] ?? 'intgRfrncNo'
     setAppliedSearch({ keyword: keyword.trim(), target })
     setPage(1)
-    console.log('[OvsLockerItem] 빠른검색', { keyword, target }) // 추후 API: bdService.getOvsLockerBidItemList
+    console.log('[OvsLockerItem] 빠른검색', { keyword, target }) // 추후 API: bdService.selectOvsLockerBidItemList
   }
   const handlePageSize = (size: number) => {
     setPageSize(size)

@@ -2,7 +2,7 @@
 // 바로가기 바텀시트 '계약명세서'에서 진입(slide31 계약명세서조회 클릭 — 물품 진행상세는 P11).
 // P14 물품일반계약명세서(slide98~99)는 데이터영역이 P11 과 동일 — title 만 바꿔 재사용한다.
 // 구성: 계약정보 Table + 계약품목정보(총 N건, 품목별 반복 Table) + footer 닫기.
-import { useCmdtyCtrtDtst } from '@/queries/ct'
+import { ctQueries } from '@/queries/bds/ct/queries'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
@@ -55,7 +55,7 @@ export function CmdtyCtrtDtstFullPopup({
   onOpenChange,
   title = '물품계약명세서',
 }: CmdtyCtrtDtstFullPopupProps) {
-  const { data } = useCmdtyCtrtDtst(id, open)
+  const { data } = ctQueries.useSelectCmdtyCtrtDtst(id, open)
   const items = data?.items ?? []
 
   return (

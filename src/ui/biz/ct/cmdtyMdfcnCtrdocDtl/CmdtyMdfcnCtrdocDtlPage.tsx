@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { useCmdtyMdfcnCtrdocDtl } from '@/queries/ct'
+import { ctQueries } from '@/queries/bds/ct/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Button } from '@/ui/common/base/Button'
@@ -52,7 +52,7 @@ export function CmdtyMdfcnCtrdocDtlPage() {
   const [dtstOpen, setDtstOpen] = useState(false) // P13 물품수정계약명세서
   const [outputModalOpen, setOutputModalOpen] = useState(false)
 
-  const { data: detail } = useCmdtyMdfcnCtrdocDtl(id)
+  const { data: detail } = ctQueries.useSelectCmdtyMdfcnCtrdocDtl(id)
   const steps = stepsByStg('계약')
 
   // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.

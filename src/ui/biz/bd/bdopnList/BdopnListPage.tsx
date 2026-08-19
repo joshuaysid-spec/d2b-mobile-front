@@ -3,7 +3,7 @@
 // 구성: 업무도움(Infobox) + 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더(총건수·page size)
 //      + 카드 리스트(CardList) + 더보기 + 맨위로 FAB.
 // 개찰목록 카드는 설계서 MUI-BD-08-M01 대로 정보행이 공고일자·개찰일시 2행(입찰공고 목록은 4행).
-// 데이터는 useBdopnList(queries/bd) — 목업/실연동은 bdService(USE_MOCK)가 전환. 목업 데이터는 mocks/bd.ts.
+// 데이터는 bdQueries.useSelectBdopnList(queries/bds/bd) — 목업/실연동은 bdService(USE_MOCK)가 전환. 목업 데이터는 mocks/bd.ts.
 // 키워드 검색·더보기(페이징)는 페이지 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행).
 // 화면 타이틀('개찰목록')은 전역 Header(라우트 handle)가 제공 → 페이지 본문엔 타이틀 안 그림.
 // 상세필터 풀팝업은 공통 SearchFilter 셸 사용 — 검색조건은 입찰공고 필터(MUI-BD-01-M02)와 동일.
@@ -13,7 +13,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { useBdopnList } from '@/queries/bd'
+import { bdQueries } from '@/queries/bds/bd/queries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
@@ -200,8 +200,8 @@ const DEFAULT_FILTER: SearchFilterValue = {
   newTech: 'no',
 }
 
-// 개찰목록 데이터는 useBdopnList(bdService.getBdopnList) 가 공급 — 목업은 mocks/bd.ts(구 인라인 dlt_bdopnList 이관).
-// 상세(BidRsltDtlPage)는 useBidRsltDetail(id) 로 재조회(그 목업 분기가 mocks/bd.ts 의 getBdopnById lookup 사용).
+// 개찰목록 데이터는 bdQueries.useSelectBdopnList(bdService.selectBdopnList) 가 공급 — 목업은 mocks/bd.ts(구 인라인 dlt_bdopnList 이관).
+// 상세(BidRsltDtlPage)는 bdQueries.useSelectBidRsltDtl(id) 로 재조회(그 목업 분기가 mocks/bd.ts 의 getBdopnById lookup 사용).
 
 // 국외 개찰 카드 = 상세 상단 요약 공통 데이터 (MUI-BD-09-M71 slide402) — 목록 최상단 고정.
 // 카드 클릭 시 이 값을 navigate state 로 넘겨 상세 상단(배지/번호/사업명/요약행)을 카드와 동일하게 표시.
@@ -290,10 +290,10 @@ export function BdopnListPage() {
     null,
   )
 
-  // 목록 조회 — 전체 목록(목업/실연동은 bdService.getBdopnList 의 USE_MOCK 분기가 전환).
-  const { data } = useBdopnList()
+  // 목록 조회 — 전체 목록(목업/실연동은 bdService.selectBdopnList 의 USE_MOCK 분기가 전환).
+  const { data } = bdQueries.useSelectBdopnList()
 
-  // ── 목록 핸들러 — 확정값 상태만 갱신(조회는 useBdopnList + 아래 클라이언트 필터가 담당) ──
+  // ── 목록 핸들러 — 확정값 상태만 갱신(조회는 bdQueries.useSelectBdopnList + 아래 클라이언트 필터가 담당) ──
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)
     setPage(1)

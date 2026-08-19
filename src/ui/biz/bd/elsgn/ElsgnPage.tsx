@@ -10,7 +10,7 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { useElsgnCertList, useSignElsgn } from '@/queries/bd'
+import { bdQueries } from '@/queries/bds/bd/queries'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
@@ -61,10 +61,10 @@ export function ElsgnPage() {
   const [pwd, setPwd] = useState('')
   const [signError, setSignError] = useState<string | null>(null) // 전자서명 실패 안내(null=닫힘)
 
-  // 전자서명 인증서 목록 — 목업/실연동은 bdService.getElsgnCertList 의 USE_MOCK 분기가 전환.
-  const { data: certData } = useElsgnCertList()
+  // 전자서명 인증서 목록 — 목업/실연동은 bdService.selectElsgnCerts 의 USE_MOCK 분기가 전환.
+  const { data: certData } = bdQueries.useSelectElsgnCerts()
   const certs = certData ?? []
-  const signElsgn = useSignElsgn()
+  const signElsgn = bdQueries.useSignElsgn()
 
   // 시트 초기화 — 닫거나 다시 열 때 단계/선택/비밀번호 리셋.
   const resetSheet = () => {

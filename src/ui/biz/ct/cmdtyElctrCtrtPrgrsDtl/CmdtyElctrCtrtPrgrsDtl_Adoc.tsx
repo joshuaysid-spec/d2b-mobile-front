@@ -7,8 +7,8 @@
 //   실패 시 Toast 안내(slide27 4] 다운로드 실패 안내). 파일명 없는 행(fileNm '-')은 안내만.
 import { useState } from 'react'
 
-import { useCtrtAdocs } from '@/queries/ct'
-import { useDownloadFile } from '@/queries/file'
+import { ctQueries } from '@/queries/bds/ct/queries'
+import { fileQueries } from '@/queries/bds/file/queries'
 import { saveBlob } from '@/utils/download'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
@@ -36,11 +36,11 @@ function AdocItem({ doc, onDownload }: { doc: CtrtAdocFile; onDownload: (doc: Ct
 }
 
 export function CmdtyElctrCtrtPrgrsDtl_Adoc({ id }: { id: string }) {
-  const { data } = useCtrtAdocs(id)
+  const { data } = ctQueries.useSelectCtrtAdocs(id)
   const refDocs = data?.refDocs ?? []
   const sbmsnDocs = data?.sbmsnDocs ?? []
 
-  const downloadFile = useDownloadFile()
+  const downloadFile = fileQueries.useDownloadFile()
   const [toast, setToast] = useState<string | null>(null) // 다운로드 실패/안내 토스트(null=닫힘)
 
   // 다운로드 — guid 로 Blob 수신 → 원본 파일명으로 저장. 실패는 토스트 안내.

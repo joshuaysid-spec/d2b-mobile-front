@@ -1,6 +1,6 @@
 // 상업계약서상세 - '계약명세서' 탭 콘텐츠 (MUI-CT-01-T78 ovsCmbzCtrdocDtl_Ctrt). 설계서 slide180·183.
 // GRAND-TOTAL + 명세서 목록(번호/PR.No./Group No./SUB-TOTAL) — 항목 클릭 → P78 상업계약서명세서 팝업.
-import { useOvsCmbzDtst } from '@/queries/ct'
+import { ctQueries } from '@/queries/bds/ct/queries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { SelectionFieldBox } from '@/ui/common/base/SelectionFieldBox'
 import { Table } from '@/ui/common/composites/Table'
@@ -13,7 +13,7 @@ export interface OvsCmbzCtrdocDtl_CtrtProps {
 }
 
 export function OvsCmbzCtrdocDtl_Ctrt({ id, onOpenDtst }: OvsCmbzCtrdocDtl_CtrtProps) {
-  const { data } = useOvsCmbzDtst(id)
+  const { data } = ctQueries.useSelectOvsCmbzDtst(id)
   const groups = data?.groups ?? []
 
   return (
