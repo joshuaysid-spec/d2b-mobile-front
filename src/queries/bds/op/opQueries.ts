@@ -41,6 +41,15 @@ export const opQueries = {
     })
   },
 
+  /** 국외 연간조달계획 상세(MUI-OP-01-M78) — 목록 카드 클릭 시 state 로 받은 id 로 조회. */
+  useSelectOvsPlanDtl(id: string) {
+    return useQuery({
+      queryKey: opKeys.selectOvsPlanDtl(id),
+      queryFn: () => opService.selectOvsPlanDtl(id),
+      enabled: Boolean(id),
+    })
+  },
+
   /** 업체의견 탭(조달계획·사전규격 공용). */
   useSelectOpinions(id: string) {
     return useQuery({

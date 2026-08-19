@@ -8,7 +8,7 @@ import { SelectionFieldBox } from '@/ui/common/base/SelectionFieldBox'
 import { Button } from '@/ui/common/base/Button'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import { AnlPrcmPlanDtl } from '@/ui/biz/op/prcmPlanDtl/AnlPrcmPlanDtl'
+import { AnlBfhdSpcfctDtl } from '@/ui/biz/op/bfhdSpcfctDtl/AnlBfhdSpcfctDtl'
 
 // ── 집행계획 (목업 — 문서 slide22 [물품/용역]) ──────────────────────────────
 const EXEC_ROWS: TableRow[] = [
@@ -69,7 +69,7 @@ const CONTACT_ROWS: TableRow[] = [
 ]
 
 export function PrcmPlanDtl() {
-  // 연관정보 클릭 → 연관조달계획상세(MUI-OP-01-P12) 바텀시트
+  // 연관정보(사전규격번호) 클릭 → 연관 사전규격상세(MUI-OP-01-P13) 바텀시트 (설계서 slide28)
   const [relatedOpen, setRelatedOpen] = useState(false)
 
   return (
@@ -87,7 +87,7 @@ export function PrcmPlanDtl() {
         </AccordionSection>
         <AccordionSection value="related" title="연관정보">
           <SelectionFieldBox
-            value="조달계획번호 2026-00590"
+            value="사전규격번호 2026-00590"
             onClick={() => setRelatedOpen(true)}
           />
         </AccordionSection>
@@ -96,18 +96,18 @@ export function PrcmPlanDtl() {
         </AccordionSection>
       </Accordion>
 
-      {/* 연관조달계획상세 바텀시트 (P12) — 컨테이너는 부모가 직접 조립, 콘텐츠만 컴포넌트로 분리 */}
+      {/* 연관 사전규격상세 바텀시트 (P13) — 컨테이너는 부모가 직접 조립, 콘텐츠만 컴포넌트로 분리 */}
       <BottomSheet
         open={relatedOpen}
         onOpenChange={setRelatedOpen}
-        title="연관조달계획상세"
+        title="연관사전규격상세"
         footer={
           <Button variant="secondary" className="w-full" onClick={() => setRelatedOpen(false)}>
             닫기
           </Button>
         }
       >
-        <AnlPrcmPlanDtl />
+        <AnlBfhdSpcfctDtl />
       </BottomSheet>
     </>
   )

@@ -6,6 +6,8 @@ export const ROUTES = {
   OP_DETAIL: '/op/prcmPlanDtl',
   /** 사전규격 상세. 식별자는 navigate state. */
   OP_SPEC_DETAIL: '/op/bfhdSpcfctDtl',
+  /** 국외 연간조달계획 상세 (MUI-OP-01-M78). 식별자는 navigate state. */
+  OP_OVS_DETAIL: '/op/ovsPrcmPlanDtl',
   /** 입찰공고 통합목록 (MUI-BD-01-M01). */
   BD: '/bd',
   /** 입찰공고 상세. 식별자는 navigate state. */

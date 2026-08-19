@@ -10,7 +10,6 @@ export const opKeys = {
   selectOpinions: (id: string) => ['op', 'selectOpinions', id] as const,
   selectSpecDtl: (id: string) => ['op', 'selectSpecDtl', id] as const,
   selectOvsPlanDtl: (id: string) => ['op', 'selectOvsPlanDtl', id] as const,
-  selectOvsPlanResults: (id: string) => ['op', 'selectOvsPlanResults', id] as const,
   selectWarSplCnfg: (req: WarSplInqRequest) => ['op', 'selectWarSplCnfg', req] as const,
   selectWarSplIdntf: (req: WarSplInqRequest) => ['op', 'selectWarSplIdntf', req] as const,
   selectWarSplRef: (req: WarSplInqRequest) => ['op', 'selectWarSplRef', req] as const,

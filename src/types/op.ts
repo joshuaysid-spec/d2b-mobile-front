@@ -129,16 +129,69 @@ export interface OpOpinion {
   datetime: string
 }
 
-/** 국외 조달계획 집행결과 1건 — 국외 상세 결과목록(MUI-OP-01-M74, getOverseasPlanResults). */
-export interface OpOverseasPlanResult {
-  /** 안정 고유 식별자(id). */
+// ── 국외 연간조달계획 상세 — MUI-OP-01-M78 (ovsPrcmPlanDtl/OvsPrcmPlanDtlPage) ──────
+// 설계서 01.조달계획 v0.84 slide22(항목설명 dlt_anlPrcmPlanList) + slide76~77(화면).
+// M78 은 "목록 데이터 전체 표시"라 연간조달계획 목록 데이터영역 1건이 곧 상세 데이터다.
+// ⚠️ 여기서 'Anl' 은 **연간**(dml_anlPrcmPlanSrch/dlt_anlPrcmPlanList)이다 —
+//    연관조달계획상세(P12, AnlPrcmPlanDtl)와 철자가 같지만 다른 화면이니 혼동하지 말 것.
+
+/** 연간조달계획 1건(dlt_anlPrcmPlanList) — 목록 카드 표시분 + 상세 전체 항목. */
+export interface OpAnlPrcmPlanItem {
+  /** 카드 식별자(상세 조회 키) — 설계서 데이터영역 미정의, 프론트 목록 key 용. */
   id: string
-  /** 조달요구번호(prcmReqNo). */
-  prcmReqNo: string
+  /** 순번(no). */
+  no: number
+  /** 업무구분(taskSeNm) — 연간조달계획은 '국외' 고정(설계서 slide76 '기본 노출 국외'). */
+  taskSeNm: string
+  /** 군구분(prcmRqtInstCd). */
+  prcmRqtInstCd: string
+  /** 조달요구번호(prcmRqtNo). */
+  prcmRqtNo: string
+  /** 재고번호(fscCdNtnItemIdntfNo = 군급코드 + 국가품목식별번호). 클릭 시 목록정보조회(P76). */
+  fscCdNtnItemIdntfNo: string
+  /** 부품번호(prtsNo). */
+  prtsNo: string
+  /** 품질 등급(inspShcd). */
+  inspShcd: string
+  /** 생산자 부호(prdcrSgn). */
+  prdcrSgn: string
+  /** 생산자 중복(prdcrDpcn). */
+  prdcrDpcn: string
+  /** 단위(unitCd). */
+  unitCd: string
+  /** 수량(drctnQty). */
+  drctnQty: number
+  /** 지시단가(USD)(drctnUntprc). */
+  drctnUntprc: number
+  /** 지시예산(USD)(drctnAmt). */
+  drctnAmt: number
   /** 품명(itemNm). */
   itemNm: string
-  /** 계약금액(USD, ctrtAmtUsd) — 표시 시 '$' + 콤마. */
-  ctrtAmtUsd: number
+  /** 규격번호(spcfctNo). */
+  spcfctNo: string
+  /** 장비부호(aplcnEqpmntCd). */
+  aplcnEqpmntCd: string
+  /** 장비명(aplcnEqpmntNm). */
+  aplcnEqpmntNm: string
+  /** 구매요청번호(prgrNo). */
+  prgrNo: string
+  /** 항목 번호(clsfNo). */
+  clsfNo: string
+  /**
+   * 기능 — ⚠️ 설계서(slide20 검색조건·slide22 데이터영역)가 품질 등급과 **같은 영문키 `inspShcd`**
+   * 를 적어 두 항목을 구분할 수 없다. 한 객체에 같은 키를 둘 수 없어 임시 키 `functnNm` 사용
+   * (검색필터 구분설정의 기능 키는 `functnCd`). 상세설계 확정 시 실제 항목명으로 교체.
+   */
+  functnNm: string
+  /** 진행상태(frcptlItemMsprgStcd) — 조달계획/공고게시/계약대기/계약완료. */
+  frcptlItemMsprgStcd: string
+  /** 품류(itemFwkCd). */
+  itemFwkCd: string
+  /**
+   * 접수기간 — 카드/요약 표시 항목(설계서 slide76·77 화면)이나 데이터영역(slide22)에 영문키가
+   * 없다. 임시 키 `rcptPd`(yyyy-mm-dd ~ yyyy-mm-dd) — 상세설계 확정 시 교체.
+   */
+  rcptPd: string
 }
 
 /** 품목별 검색 요청 — 품목별 검색(MUI-OP-01-P71, searchItems). */

@@ -134,6 +134,12 @@ const BfhdSpcfctDtlPage = lazy(() =>
     default: m.BfhdSpcfctDtlPage,
   })),
 )
+// 국외 연간조달계획 상세(MUI-OP-01-M78, /op/ovsPrcmPlanDtl) — biz/op/ovsPrcmPlanDtl.
+const OvsPrcmPlanDtlPage = lazy(() =>
+  import('@/ui/biz/op/ovsPrcmPlanDtl/OvsPrcmPlanDtlPage').then((m) => ({
+    default: m.OvsPrcmPlanDtlPage,
+  })),
+)
 // 계약 통합목록(MUI-CT-01-M01, /ct) — biz/ct/ctrtIntgList.
 const CtrtIntgListPage = lazy(() =>
   import('@/ui/biz/ct/ctrtIntgList/CtrtIntgListPage').then((m) => ({
@@ -1622,8 +1628,14 @@ export const router = createBrowserRouter([
         element: <BfhdSpcfctDtlPage />,
         handle: { header: { variant: 'sub', title: '사전규격 상세' } },
       },
-      // 구 국외(연간조달계획) 상세 라우트는 삭제(2026-08-18) —
-      // 연간조달계획은 통합목록 카드 위 '목록정보 조회' 바텀시트(WarSplList_Inq)로 대체(상세페이지 없음).
+      {
+        // 국외 연간조달계획 상세(MUI-OP-01-M78, 설계서 2026-08-14 화면 추가).
+        // 목록정보조회(P76)는 이 상세 안 재고번호 [보기]에서 바텀시트로 연다.
+        path: 'op/ovsPrcmPlanDtl',
+        element: <OvsPrcmPlanDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '국외 연간조달계획 상세' } },
+      },
       {
         path: 'notification',
         element: <NotiPrstPage />,

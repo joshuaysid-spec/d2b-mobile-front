@@ -8,6 +8,7 @@ import { apiClient } from '@/lib/apiClient'
 import { USE_MOCK, mockDelay } from '@/lib/env'
 import { MOCK_OP } from '@/mocks/op'
 import type {
+  OpAnlPrcmPlanItem,
   OpDeptSearchRequest,
   OpDeptSearchResult,
   OpItemSearchRequest,
@@ -17,7 +18,6 @@ import type {
   OpListResult,
   OpNotifyRequest,
   OpOpinion,
-  OpOverseasPlanResult,
   OpPlanDetail,
   OpProducerSearchRequest,
   OpProducerSearchResult,
@@ -76,20 +76,13 @@ export const opService = {
     return apiClient.post<OpPlanDetail, OpPlanDetail>(`/v1/ops/pre-specs/${id}`)
   },
 
-  // ── 국외 조달계획 상세 ─────────────────────────────────────────────────────
+  // ── 국외 연간조달계획 상세 ─────────────────────────────────────────────────
 
-  /** 국외 조달계획 상세 조회(헤더/요약) — MUI-OP-01-M73 (ovsPrcmPlanDtl/OvsPrcmPlanDtl). */
-  async selectOvsPlanDtl(id: string): Promise<OpPlanDetail> {
-    if (USE_MOCK) return mockDelay(MOCK_OP.planDetail)
-    return apiClient.post<OpPlanDetail, OpPlanDetail>(`/v1/ops/overseas-plans/${id}`)
-  },
-
-  /** 국외 조달계획 집행결과 목록 조회 — MUI-OP-01-M74 (ovsPrcmPlanDtl/OvsPrcmPlanDtl_RsltList). */
-  async selectOvsPlanResults(id: string): Promise<OpOverseasPlanResult[]> {
-    if (USE_MOCK) return mockDelay(MOCK_OP.overseasResults)
-    return apiClient.post<OpOverseasPlanResult[], OpOverseasPlanResult[]>(
-      `/v1/ops/overseas-plans/${id}/results`,
-    )
+  /** 국외 연간조달계획 상세 조회 — MUI-OP-01-M78 (ovsPrcmPlanDtl/OvsPrcmPlanDtlPage).
+   *  응답 = 연간조달계획 목록 데이터영역(dlt_anlPrcmPlanList) 1건 전체(설계서 slide77 '목록 데이터 전체 표시'). */
+  async selectOvsPlanDtl(id: string): Promise<OpAnlPrcmPlanItem> {
+    if (USE_MOCK) return mockDelay(MOCK_OP.anlPrcmPlanDtl)
+    return apiClient.post<OpAnlPrcmPlanItem, OpAnlPrcmPlanItem>(`/v1/ops/overseas-plans/${id}`)
   },
 
   // ── 검색 바텀시트(품목/생산자/발주부서) ────────────────────────────────────

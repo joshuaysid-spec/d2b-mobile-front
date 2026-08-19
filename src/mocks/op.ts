@@ -2,11 +2,11 @@
 // 설계서(조달계획 통합목록/상세) 데이터영역 항목·형식을 반영(임의 더미 금지).
 // ⚠️ 폐쇄망 반입 후 실백엔드 연동 시 이 파일은 사용되지 않는다(서비스가 apiClient 분기).
 import type {
+  OpAnlPrcmPlanItem,
   OpDeptSearchResult,
   OpItemSearchResult,
   OpItemSpec,
   OpOpinion,
-  OpOverseasPlanResult,
   OpPlanDetail,
   OpPlanItem,
   OpProducerSearchResult,
@@ -166,11 +166,33 @@ const OPINIONS: OpOpinion[] = [
   { id: '3', isPublic: true, company: '㈜미래회사', title: '업체의 의견이 있습니다', name: '성춘향', datetime: '2026-01-03 14:50' },
 ]
 
-// 국외 조달계획 집행결과(USD).
-const OVERSEAS_RESULTS: OpOverseasPlanResult[] = [
-  { id: '1', prcmReqNo: 'A-2026-0001', itemNm: 'NIGHT VISION GOGGLE', ctrtAmtUsd: 540000 },
-  { id: '2', prcmReqNo: 'A-2026-0002', itemNm: 'THERMAL SIGHT', ctrtAmtUsd: 312500 },
-]
+// 국외 연간조달계획 상세(MUI-OP-01-M78) — 설계서 slide76·77 목업값 그대로(dlt_anlPrcmPlanList).
+const ANL_PRCM_PLAN_DTL: OpAnlPrcmPlanItem = {
+  id: '6',
+  no: 1,
+  taskSeNm: '국외',
+  prcmRqtInstCd: '육군',
+  prcmRqtNo: 'ABCD1234',
+  fscCdNtnItemIdntfNo: 'A1234567890',
+  prtsNo: 'AA',
+  inspShcd: '-',
+  prdcrSgn: 'A123',
+  prdcrDpcn: '2',
+  unitCd: 'EA',
+  drctnQty: 1600,
+  drctnUntprc: 4000,
+  drctnAmt: 6400000,
+  itemNm: 'GBU-12 신관 FMU-139급(비)',
+  spcfctNo: '-',
+  aplcnEqpmntCd: '-',
+  aplcnEqpmntNm: '-',
+  prgrNo: '-',
+  clsfNo: '-',
+  functnNm: '-',
+  frcptlItemMsprgStcd: '지시중',
+  itemFwkCd: '-',
+  rcptPd: '2026-02-10 ~ 2026-02-12',
+}
 
 // 품목별 검색 결과(P71).
 const ITEM_SEARCH: OpItemSearchResult[] = [
@@ -523,7 +545,7 @@ export const MOCK_OP = {
   planDetail: PLAN_DETAIL,
   itemSpecs: ITEM_SPECS,
   opinions: OPINIONS,
-  overseasResults: OVERSEAS_RESULTS,
+  anlPrcmPlanDtl: ANL_PRCM_PLAN_DTL,
   itemSearch: ITEM_SEARCH,
   producerSearch: PRODUCER_SEARCH,
   deptSearch: DEPT_SEARCH,

@@ -72,9 +72,11 @@ const SEARCH_TARGETS = [
   { value: 'prchsDmndNo', label: '구매요청번호' },
 ]
 
-// ── 상세필터 schema — 설계서 slide309·310 1.1 보관함품목 검색조건(dm_searchInfo) ──
-// 일자구분(srchYmdSe) 구분코드 GTSB0001: 개찰일자/입찰참가/입찰서제출.
-// 빠른 설정 칩 — 설계서 slide309: 최근 1개월/최근 3개월/최근 6개월.
+// ── 상세필터 schema — 설계서 slide417·418 1.1 보관함품목 검색조건(dm_searchInfo) ──
+// 일자구분(srchYmdSe) — 설계서 slide417 '개찰일자, 공고일자 토글 스위치' 2종(구 3종
+//   개찰일자/입찰참가/입찰서제출에서 축소). ⚠️ 항목설명(slide418)의 구분코드 GTSB0001 설명은
+//   아직 구 3종 표기라 코드값은 상세설계 확정 시 대조 필요 — '공고'는 임시 코드값(pbanc).
+// 빠른 설정 칩 — 설계서 slide417: 최근 1개월/최근 3개월/최근 6개월.
 const DATE_PRESETS: DateRangePresetDef[] = [
   { label: '최근 1개월', months: 1 },
   { label: '최근 3개월', months: 3 },
@@ -91,9 +93,8 @@ const ITEM_FILTER_SCHEMA: SearchFilterSchema = {
           type: 'segment',
           key: 'srchYmdSe',
           options: [
-            { value: 'bdopn', label: '개찰일자' },
-            { value: 'bidPrtcp', label: '입찰참가' },
-            { value: 'tndrSbmsn', label: '입찰서제출' },
+            { value: 'bdopn', label: '개찰' },
+            { value: 'pbanc', label: '공고' },
           ],
         },
         // 기준일자시작(srchEndYmd)~기준일자끝(srchBgngYmd) — value 는 { start, end } 로 관리.

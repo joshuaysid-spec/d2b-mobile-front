@@ -5,8 +5,10 @@ import { useState } from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { SelectionFieldBox } from '@/ui/common/base/SelectionFieldBox'
+import { Button } from '@/ui/common/base/Button'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import { AnlBfhdSpcfctDtlSheet } from '@/ui/biz/op/bfhdSpcfctDtl/AnlBfhdSpcfctDtlSheet'
+import { AnlPrcmPlanDtl } from '@/ui/biz/op/prcmPlanDtl/AnlPrcmPlanDtl'
 
 // ── 집행계획 (목업 — 문서 slide22 [물품/용역]) ──────────────────────────────
 const EXEC_ROWS: TableRow[] = [
@@ -67,7 +69,7 @@ const CONTACT_ROWS: TableRow[] = [
 ]
 
 export function BfhdSpcfctDtl() {
-  // 연관정보 클릭 → 연관조달계획상세(MUI-OP-01-P12) 바텀시트
+  // 연관정보(조달계획번호) 클릭 → 연관조달계획상세(MUI-OP-01-P12) 바텀시트 (설계서 slide48)
   const [relatedOpen, setRelatedOpen] = useState(false)
 
   return (
@@ -94,8 +96,19 @@ export function BfhdSpcfctDtl() {
         </AccordionSection>
       </Accordion>
 
-      {/* 연관조달계획상세 바텀시트 (P12) */}
-      <AnlBfhdSpcfctDtlSheet open={relatedOpen} onOpenChange={setRelatedOpen} />
+      {/* 연관조달계획상세 바텀시트 (P12) — 컨테이너는 부모가 직접 조립, 콘텐츠만 컴포넌트로 분리 */}
+      <BottomSheet
+        open={relatedOpen}
+        onOpenChange={setRelatedOpen}
+        title="연관조달계획상세"
+        footer={
+          <Button variant="secondary" className="w-full" onClick={() => setRelatedOpen(false)}>
+            닫기
+          </Button>
+        }
+      >
+        <AnlPrcmPlanDtl />
+      </BottomSheet>
     </>
   )
 }
