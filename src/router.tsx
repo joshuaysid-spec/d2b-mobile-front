@@ -314,6 +314,30 @@ const PymtClmPrgrsPrstPage = lazy(() =>
     default: m.PymtClmPrgrsPrstPage,
   })),
 )
+// 물품수령확인서목록(MUI-WM-01-M71, 국외) — biz/wm/ovsCmdtyRcvCnfdocList.
+const OvsCmdtyRcvCnfdocListPage = lazy(() =>
+  import('@/ui/biz/wm/ovsCmdtyRcvCnfdocList/OvsCmdtyRcvCnfdocListPage').then((m) => ({
+    default: m.OvsCmdtyRcvCnfdocListPage,
+  })),
+)
+// 전자계산서상세(MUI-WM-01-M74, 국외) — biz/wm/ovsElcrtTxivDtl.
+const OvsElcrtTxivDtlPage = lazy(() =>
+  import('@/ui/biz/wm/ovsElcrtTxivDtl/OvsElcrtTxivDtlPage').then((m) => ({
+    default: m.OvsElcrtTxivDtlPage,
+  })),
+)
+// 대금지불정보(MUI-WM-01-M75, 국외) — biz/wm/ovsRtnPymtDfryInfo.
+const OvsRtnPymtDfryInfoPage = lazy(() =>
+  import('@/ui/biz/wm/ovsRtnPymtDfryInfo/OvsRtnPymtDfryInfoPage').then((m) => ({
+    default: m.OvsRtnPymtDfryInfoPage,
+  })),
+)
+// 대금지급현황(MUI-WM-01-M77, 국외) — biz/wm/ovsPymtPrgrsList.
+const OvsPymtPrgrsListPage = lazy(() =>
+  import('@/ui/biz/wm/ovsPymtPrgrsList/OvsPymtPrgrsListPage').then((m) => ({
+    default: m.OvsPymtPrgrsListPage,
+  })),
+)
 // 물품전자계약진행상세(MUI-CT-01-M03, /ct/:id) — biz/ct/cmdtyElctrCtrtPrgrsDtl.
 const CmdtyElctrCtrtPrgrsDtlPage = lazy(() =>
   import('@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyElctrCtrtPrgrsDtlPage').then((m) => ({
@@ -1256,6 +1280,42 @@ export const router = createBrowserRouter([
         element: <PymtClmPrgrsPrstPage />,
         handle: {
           header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.WM_PRGRS] },
+          scrollReset: true,
+          showBottomNav: true,
+        },
+      },
+      {
+        path: 'wm/ovsCmdtyRcvCnfdocList',
+        element: <OvsCmdtyRcvCnfdocListPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.WM_OVS_CMDTY_RCV_CNFDOC] },
+          scrollReset: true,
+          showBottomNav: true,
+        },
+      },
+      {
+        path: 'wm/ovsElcrtTxivDtl',
+        element: <OvsElcrtTxivDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: { header: { variant: 'sub', title: '전자계산서 상세조회' } },
+      },
+      {
+        path: 'wm/ovsRtnPymtDfryInfo',
+        element: <OvsRtnPymtDfryInfoPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.WM_OVS_RTN_PYMT_DFRY_INFO] },
+          scrollReset: true,
+          showBottomNav: true,
+        },
+      },
+      {
+        path: 'wm/ovsPymtPrgrsList',
+        element: <OvsPymtPrgrsListPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.WM_OVS_PYMT_PRGRS] },
           scrollReset: true,
           showBottomNav: true,
         },

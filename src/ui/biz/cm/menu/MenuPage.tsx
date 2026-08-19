@@ -85,6 +85,15 @@ const MENU_TREE: MenuNode[] = [
       { id: 'wm-claim-list', label: LINKED_MENU_LABELS[ROUTES.WM] },
       { id: 'wm-payment-return', label: LINKED_MENU_LABELS[ROUTES.WM_RTN] },
       { id: 'wm-claim-progress', label: LINKED_MENU_LABELS[ROUTES.WM_PRGRS] },
+      {
+        id: 'wm-goods-receipt',
+        label: LINKED_MENU_LABELS[ROUTES.WM_OVS_CMDTY_RCV_CNFDOC],
+      },
+      {
+        id: 'wm-ovs-payment-info',
+        label: LINKED_MENU_LABELS[ROUTES.WM_OVS_RTN_PYMT_DFRY_INFO],
+      },
+      { id: 'wm-ovs-payment-progress', label: LINKED_MENU_LABELS[ROUTES.WM_OVS_PYMT_PRGRS] },
     ],
   },
   {
@@ -194,6 +203,9 @@ const MENU_ROUTES: Record<string, string> = {
   'wm-claim-list': ROUTES.WM, // 대금청구통합목록(MUI-WM-01-M01)
   'wm-payment-return': ROUTES.WM_RTN, // 대금지불정보(반납)(MUI-WM-01-M10)
   'wm-claim-progress': ROUTES.WM_PRGRS, // 대금청구진행현황(MUI-WM-01-M11)
+  'wm-goods-receipt': ROUTES.WM_OVS_CMDTY_RCV_CNFDOC, // 물품수령확인서목록(MUI-WM-01-M71, 국외)
+  'wm-ovs-payment-info': ROUTES.WM_OVS_RTN_PYMT_DFRY_INFO, // 대금지불정보(MUI-WM-01-M75, 국외)
+  'wm-ovs-payment-progress': ROUTES.WM_OVS_PYMT_PRGRS, // 대금지급현황(MUI-WM-01-M77, 국외)
   'ts-intent': ROUTES.TS_LOI, // 사전의향서목록(MUI-TS-01-M01)
   'ts-tax-invoice': ROUTES.TS_TXIV, // 세금계산서계약목록(MUI-TS-04-M01)
   'support-notice-general': ROUTES.SUPPORT_NOTICE, // 일반공지사항(MUI-CM-04-M01)

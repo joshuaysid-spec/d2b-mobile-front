@@ -100,6 +100,14 @@ export const ROUTES = {
   WM_RTN: '/wm/rtn',
   /** 대금청구진행현황 (MUI-WM-01-M11). */
   WM_PRGRS: '/wm/prgrs',
+  /** 물품수령확인서목록 (MUI-WM-01-M71, 국외). */
+  WM_OVS_CMDTY_RCV_CNFDOC: '/wm/ovsCmdtyRcvCnfdocList',
+  /** 전자계산서상세 (MUI-WM-01-M74, 국외). 식별자는 navigate state. */
+  WM_OVS_ELCRT_TXIV_DETAIL: '/wm/ovsElcrtTxivDtl',
+  /** 대금지불정보 (MUI-WM-01-M75, 국외). */
+  WM_OVS_RTN_PYMT_DFRY_INFO: '/wm/ovsRtnPymtDfryInfo',
+  /** 대금지급현황 (MUI-WM-01-M77, 국외). */
+  WM_OVS_PYMT_PRGRS: '/wm/ovsPymtPrgrsList',
   NOTIFICATION: '/notification',
   SUPPORT: '/support',
   /** 일반공지사항(공지사항 목록) (MUI-CM-04-M01). */

@@ -25,6 +25,16 @@ import type {
   PymtClmPrgrsPrstResult,
   RtnPymtDfryInfoRequest,
   RtnPymtDfryInfoResult,
+  OvsCmdtyRcvCnfdocRequest,
+  OvsCmdtyRcvCnfdocResult,
+  OvsElcrtTxivDtl,
+  OvsElcrtTxivItem,
+  OvsElcrtTxivItemRow,
+  OvsPymtPrgrsRequest,
+  OvsPymtPrgrsResult,
+  OvsRtnPymtDfryInfoRequest,
+  OvsRtnPymtDfryInfoResult,
+  OvsShpgItemDsctnItem,
 } from '@/types/wm'
 
 export const wmService = {
@@ -211,6 +221,102 @@ export const wmService = {
     return apiClient.post<RtnPymtDfryInfoResult, RtnPymtDfryInfoResult>(
       '/v1/wms/return-payment-infos',
       req,
+    )
+  },
+
+  // ── 물품수령확인서목록 (MUI-WM-01-M71, 국외) ──────────────────────────────
+
+  /**
+   * 물품수령확인서 목록 조회 — MUI-WM-01-M71
+   * (ovsCmdtyRcvCnfdocList/OvsCmdtyRcvCnfdocListPage). 계약번호 필수(slide93 이벤트).
+   */
+  async selectOvsCmdtyRcvCnfdocList(
+    req: OvsCmdtyRcvCnfdocRequest = {},
+  ): Promise<OvsCmdtyRcvCnfdocResult> {
+    if (USE_MOCK) {
+      const list = MOCK_WM.ovsCmdtyRcvCnfdocList
+      return mockDelay({ list, total: list.length })
+    }
+    return apiClient.post<OvsCmdtyRcvCnfdocResult, OvsCmdtyRcvCnfdocResult>(
+      '/v1/wms/overseas/goods-receipt-confirmations',
+      req,
+    )
+  },
+
+  // ── 전자계산서목록/상세 (MUI-WM-01-P73 · M74, 국외) ───────────────────────
+
+  /**
+   * 선택 물품수령확인서의 전자계산서 목록 조회 — MUI-WM-01-P73
+   * (ovsCmdtyRcvCnfdocList/OvsElcrtTxivList, 바텀시트 콘텐츠).
+   */
+  async selectOvsElcrtTxivList(ctrtNo: string): Promise<OvsElcrtTxivItem[]> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.ovsElcrtTxivList)
+    return apiClient.post<OvsElcrtTxivItem[], OvsElcrtTxivItem[]>(
+      '/v1/wms/overseas/electronic-invoices',
+      { ctrtNo },
+    )
+  },
+
+  /** 전자계산서상세 조회 — MUI-WM-01-M74 (ovsElcrtTxivDtl/OvsElcrtTxivDtlPage). */
+  async selectOvsElcrtTxivDtl(bilPblcnNo: string): Promise<OvsElcrtTxivDtl> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.ovsElcrtTxivDtl)
+    return apiClient.post<OvsElcrtTxivDtl, OvsElcrtTxivDtl>(
+      `/v1/wms/overseas/electronic-invoices/${bilPblcnNo}`,
+    )
+  },
+
+  /** 전자계산서 품목정보 조회 — MUI-WM-01-M74 품목정보(slide95). */
+  async selectOvsElcrtTxivItems(bilPblcnNo: string): Promise<OvsElcrtTxivItemRow[]> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.ovsElcrtTxivItems)
+    return apiClient.post<OvsElcrtTxivItemRow[], OvsElcrtTxivItemRow[]>(
+      `/v1/wms/overseas/electronic-invoices/${bilPblcnNo}/items`,
+    )
+  },
+
+  // ── 대금지불정보 (MUI-WM-01-M75, 국외) ────────────────────────────────────
+
+  /**
+   * 대금지불정보 목록 조회 — MUI-WM-01-M75 (ovsRtnPymtDfryInfo/OvsRtnPymtDfryInfoPage).
+   * On-Load 심사일자 = 1개월 전 ~ 현재일(slide102).
+   */
+  async selectOvsRtnPymtDfryInfoList(
+    req: OvsRtnPymtDfryInfoRequest = {},
+  ): Promise<OvsRtnPymtDfryInfoResult> {
+    if (USE_MOCK) {
+      const list = MOCK_WM.ovsRtnPymtDfryInfoList
+      return mockDelay({ list, total: list.length })
+    }
+    return apiClient.post<OvsRtnPymtDfryInfoResult, OvsRtnPymtDfryInfoResult>(
+      '/v1/wms/overseas/payment-delivery-infos',
+      req,
+    )
+  },
+
+  // ── 대금지급현황 · 선적품목내역 (MUI-WM-01-M77 · P78, 국외) ───────────────
+
+  /**
+   * 대금지급현황 목록 조회 — MUI-WM-01-M77 (ovsPymtPrgrsList/OvsPymtPrgrsListPage).
+   * 계약번호 필수 — 없으면 목록 미표시(slide103 2-2]).
+   */
+  async selectOvsPymtPrgrsList(req: OvsPymtPrgrsRequest = {}): Promise<OvsPymtPrgrsResult> {
+    if (USE_MOCK) {
+      const list = MOCK_WM.ovsPymtPrgrsList
+      return mockDelay({ list, total: list.length })
+    }
+    return apiClient.post<OvsPymtPrgrsResult, OvsPymtPrgrsResult>(
+      '/v1/wms/overseas/payment-progresses',
+      req,
+    )
+  },
+
+  /**
+   * 선적품목내역 조회 — MUI-WM-01-P78 (ovsPymtPrgrsList/OvsShpgItemDsctn, 바텀시트 콘텐츠).
+   */
+  async selectOvsShpgItemDsctns(blNo: string): Promise<OvsShpgItemDsctnItem[]> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.ovsShpgItemDsctns)
+    return apiClient.post<OvsShpgItemDsctnItem[], OvsShpgItemDsctnItem[]>(
+      '/v1/wms/overseas/shipping-items',
+      { blNo },
     )
   },
 }

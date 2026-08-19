@@ -723,3 +723,230 @@ export interface RtnPymtDfryInfoResult {
   list: RtnPymtDfryInfoItem[]
   total: number
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+// 국외(2026-08-13 설계서 추가분) — 05.대금청구및사후 v0.85 slide86~105
+//   MUI-WM-01-M71 물품수령확인서목록 · P73 전자계산서목록 · M74 전자계산서상세
+//   MUI-WM-01-M75 대금지불정보 · M77 대금지급현황 · P78 선적품목내역
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 물품수령확인서목록 검색조건 (dm_search, slide92 1.1 + P72). */
+export interface OvsCmdtyRcvCnfdocRequest {
+  /** 계약번호 (ctrtNo, 35) — 필수(slide93 이벤트). 계약번호조회 공통시트(MUI-EX-02-P79). */
+  ctrtNo?: string
+  /** B/L번호 (blNo, 30). */
+  blNo?: string
+}
+
+/** 물품수령확인서 1건 (dl_goodsConfirmInfo, slide92 1.2). */
+export interface OvsCmdtyRcvCnfdocItem {
+  /** 목록 key — `${blNo}-${invcNo}` (클라 생성). */
+  id: string
+  /** INVOICE (invcNo, 22). */
+  invcNo: string
+  /** L/C번호 (lcNo, 20). */
+  lcNo: string
+  /** B/L번호 (blNo, 30). */
+  blNo: string
+  /** 계약품목수 (ctrtItemNmbt, 5). */
+  ctrtItemNmbt: number
+  /** 계약금액 (ctrtAmt, 22) — 외화. */
+  ctrtAmt: number
+  /** 선적품목수 (shpgItemCnt, 10). */
+  shpgItemCnt: number
+  /** 송장금액 (invcAmtmn, 22) — 외화. */
+  invcAmtmn: number
+  /** 수령품목수 (rcptItemQty, 10). */
+  rcptItemQty: number
+  /** 수령금액 (rcptAmtmn, 22) — 외화. */
+  rcptAmtmn: number
+  /** 계약번호 (ctrtNo, 35) — 계약정보(dm_search) 항목. 카드 4-2] '계약번호+회차' 표기용. */
+  ctrtNo: string
+  /** 회차 (ctrtCycl) — ⚠️ 데이터영역 미정의, 카드 4-2] '계약번호+회차노출' 을 위해 M01 항목명 재사용. */
+  ctrtCycl: string
+}
+
+export interface OvsCmdtyRcvCnfdocResult {
+  list: OvsCmdtyRcvCnfdocItem[]
+  total: number
+}
+
+/** 전자계산서 1건 (dl_billInfo, slide92 1.3) — P73 목록 카드 · M74 상세 요약 공용. */
+export interface OvsElcrtTxivItem {
+  /** 목록 key — 계산서발행번호(bilPblcnNo). */
+  id: string
+  /** 구분 (billSe, 2) — 일반/수정. */
+  billSe: string
+  /** 진행상태 (prgrsSttsCd, 2) — 국세청(승인)/작성/저장. */
+  prgrsSttsCd: string
+  /** 수정사유 (mdfcnRsn, 200) — 수정세금계산서만. */
+  mdfcnRsn?: string
+  /** 계산서발행번호 (bilPblcnNo, 20). */
+  bilPblcnNo: string
+  /** 계약번호 (ctrtNo, 35). */
+  ctrtNo: string
+  /** 발행일자 (pblcnYmd, 8) — yyyy-mm-dd. */
+  pblcnYmd: string
+  /** 계약건명 (ctrtNm, 500). */
+  ctrtNm: string
+  /** 계약금액 (ctrtAmt, 22) — 외화. */
+  ctrtAmt: number
+  /** 공급가액 (splyEqvl, 22) — 외화. */
+  splyEqvl: number
+}
+
+/**
+ * 전자계산서 공급자/공급받는자 정보 (dm_billInfo, slide97 1.3).
+ * 설계서가 공급자·공급받는자에 같은 항목명을 쓰므로 한 타입을 두 번 사용한다.
+ */
+export interface OvsElcrtTxivPrtyInfo {
+  /** 사업자번호 (brno, 10). */
+  brno: string
+  /** 대표명 (rprsvNm, 100). */
+  rprsvNm: string
+  /** 상호(업체명) (bzentyNm, 100). */
+  bzentyNm: string
+  /** 주소 (splrAddr, 150). */
+  splrAddr: string
+  /** 업태 (bzstatCd, 2) — 상위코드 MBTC. 공급받는자는 미표시. */
+  bzstatCd?: string
+  /** 업종 (splrTpbizNm, 100) — 공급자만. */
+  splrTpbizNm?: string
+  /** 청구인성명 (splrPicNm, 100) — 공급자만. */
+  splrPicNm?: string
+  /** 연락처 (splrEntlno, 88, 암호화전화번호) — 공급자만. */
+  splrEntlno?: string
+  /** 부서명 (splrTkcgDeptNm, 200) — 공급자만. */
+  splrTkcgDeptNm?: string
+}
+
+/** 전자계산서 품목 1건 (slide96 1.1 품목정보). */
+export interface OvsElcrtTxivItemRow {
+  /** 목록 key — `${issuNo}-${순번}` (클라 생성). */
+  id: string
+  /** 월일 (wrtYmd, 8) — yyyy-mm-dd. */
+  wrtYmd: string
+  /** 계산서번호 (issuNo, 20). */
+  issuNo: string
+  /** 품목 (itemNm, 200). */
+  itemNm: string
+  /** 공급자 (brno, 10). */
+  brno: string
+  /** 수량 (dlvgdsQty, 15). */
+  dlvgdsQty: number
+  /** 단가 (ctrtUntprc, 17). */
+  ctrtUntprc: number
+  /** 공급가액 (splyEqvl, 17). */
+  splyEqvl: number
+  /** 세액 (vatAmt, 17) — 영세/면세는 0 리턴 시 하이픈 표시(slide95). */
+  vatAmt: number
+  /** 비고 (rmrkCn, 4000). */
+  rmrkCn: string
+}
+
+/** 전자계산서상세 (MUI-WM-01-M74, slide94~97). */
+export interface OvsElcrtTxivDtl extends OvsElcrtTxivItem {
+  /** 일반정보 — 책번호 (bookNo, 3). */
+  bookNo: string
+  /** 일반정보 — 일련번호 (regSn, 10). */
+  regSn: string
+  /** 일반정보 — 발행번호 (txivNo, 15). */
+  txivNo: string
+  /** 일반정보 — 세액구분 (vatSecd, 1) — 상위코드 VATA. 과세/영세/면세. */
+  vatSecd: string
+  /** 일반정보 — 확정구분 (cfmtnYn, 1) — Y 확정 / N 미확정. */
+  cfmtnYn: string
+  /** 세금계산서 공급자정보. */
+  splr: OvsElcrtTxivPrtyInfo
+  /** 세금계산서 공급받는자정보. */
+  splrcp: OvsElcrtTxivPrtyInfo
+}
+
+/** 대금지불정보 검색조건 (dm_search, slide101 1.1). */
+export interface OvsRtnPymtDfryInfoRequest {
+  /** 심사일자(From) (srngYmdFrom, 8). */
+  srngYmdFrom?: string
+  /** 심사일자(To) (srngYmdTo, 8). */
+  srngYmdTo?: string
+  /** 계약번호 (ctrtNo, 35) — 계약번호조회 공통시트(MUI-EX-02-P79). */
+  ctrtNo?: string
+  /** B/L NO (blNo, 30). */
+  blNo?: string
+  /** INVOICE NO (invcNo, 22). */
+  invcNo?: string
+}
+
+/** 대금지불정보 1건 (dl_paymentInfo, slide101 1.2). */
+export interface OvsRtnPymtDfryInfoItem {
+  /** 목록 key — `${blNo}-${invcNo}` (클라 생성). */
+  id: string
+  /** 지불일자 (dfryYmd, 8). */
+  dfryYmd: string
+  /** 지출상태 (expndStts, 20). */
+  expndStts: string
+  /** 진행상황 (prgrsSttn, 20). */
+  prgrsSttn: string
+  /** 이체일자 (payYmd, 8). */
+  payYmd: string
+  /** 화폐단위 (cmcUnit, 10) — 금액 뒤에 붙여 표시(slide99 4-2]). */
+  cmcUnit: string
+  /** 지불의뢰금액(외화) (dfryAmt, 22). */
+  dfryAmt: number
+  /** 지체상금(외화) (arrsPrmny, 22). */
+  arrsPrmny: number
+  /** 실지급액(외화) (giveAmt, 22). */
+  giveAmt: number
+  /** 심사일자 (srngYmd, 8). */
+  srngYmd: string
+  /** 계약번호 (ctrtNo, 35). */
+  ctrtNo: string
+  /** L/C 개설은행 (lcNo, 20). */
+  lcNo: string
+  /** B/L NO (blNo, 30). */
+  blNo: string
+  /** INVOICE NO (invcNo, 22). */
+  invcNo: string
+}
+
+export interface OvsRtnPymtDfryInfoResult {
+  list: OvsRtnPymtDfryInfoItem[]
+  total: number
+}
+
+/** 대금지급현황 검색조건 (dm_statSearch, slide105 1.1) — 계약번호 필수. */
+export interface OvsPymtPrgrsRequest {
+  /** 계약번호 (ctrtNo, 35) — 필수. 계약번호조회 공통시트(MUI-EX-02-P79). */
+  ctrtNo?: string
+}
+
+/** 대금지급현황 1건 — 카드/항목이 대금지불정보(M75)와 동일(slide103). */
+export type OvsPymtPrgrsItem = OvsRtnPymtDfryInfoItem
+
+export interface OvsPymtPrgrsResult {
+  list: OvsPymtPrgrsItem[]
+  total: number
+}
+
+/** 선적품목내역 1건 (dl_shipItemInfo, slide105 1.3). */
+export interface OvsShpgItemDsctnItem {
+  /** 목록 key — `${blNo}-${invtNo}` (클라 생성). */
+  id: string
+  /** 계약번호 (ctrtNo, 35). */
+  ctrtNo: string
+  /** B/L번호 (blNo, 30). */
+  blNo: string
+  /** INVOICE 번호 (invcNo, 22). */
+  invcNo: string
+  /** 재고번호 (invtNo, 9). */
+  invtNo: string
+  /** 부품번호 (prtsNo, 32). */
+  prtsNo: string
+  /** 품명 (itemNm, 200). */
+  itemNm: string
+  /** 선적수량 (shpgQty, 15). */
+  shpgQty: number
+  /** 선적단가 (shpgUntprc, 22) — 외화. */
+  shpgUntprc: number
+  /** 선적금액 (shpgAmt, 22) — 외화. */
+  shpgAmt: number
+}

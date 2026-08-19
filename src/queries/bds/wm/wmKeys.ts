@@ -5,6 +5,9 @@ import type {
   PymtClmIntgListRequest,
   PymtClmPrgrsPrstRequest,
   RtnPymtDfryInfoRequest,
+  OvsCmdtyRcvCnfdocRequest,
+  OvsPymtPrgrsRequest,
+  OvsRtnPymtDfryInfoRequest,
 } from '@/types/wm'
 
 export const wmKeys = {
@@ -25,4 +28,16 @@ export const wmKeys = {
     ['wm', 'selectPymtClmPrgrsPrstList', req] as const,
   selectRtnPymtDfryInfoList: (req: RtnPymtDfryInfoRequest) =>
     ['wm', 'selectRtnPymtDfryInfoList', req] as const,
+  selectOvsCmdtyRcvCnfdocList: (req: OvsCmdtyRcvCnfdocRequest) =>
+    ['wm', 'selectOvsCmdtyRcvCnfdocList', req] as const,
+  selectOvsElcrtTxivList: (ctrtNo: string) => ['wm', 'selectOvsElcrtTxivList', ctrtNo] as const,
+  selectOvsElcrtTxivDtl: (bilPblcnNo: string) =>
+    ['wm', 'selectOvsElcrtTxivDtl', bilPblcnNo] as const,
+  selectOvsElcrtTxivItems: (bilPblcnNo: string) =>
+    ['wm', 'selectOvsElcrtTxivItems', bilPblcnNo] as const,
+  selectOvsRtnPymtDfryInfoList: (req: OvsRtnPymtDfryInfoRequest) =>
+    ['wm', 'selectOvsRtnPymtDfryInfoList', req] as const,
+  selectOvsPymtPrgrsList: (req: OvsPymtPrgrsRequest) =>
+    ['wm', 'selectOvsPymtPrgrsList', req] as const,
+  selectOvsShpgItemDsctns: (blNo: string) => ['wm', 'selectOvsShpgItemDsctns', blNo] as const,
 }

@@ -2,6 +2,13 @@
 // 설계서(05.대금청구및사후 v0.83) 항목설명 항목·형식·slide16/17/19 목업값을 반영(임의 더미 금지).
 // ⚠️ 폐쇄망 반입 후 실백엔드 연동 시 이 파일은 사용되지 않는다(서비스가 apiClient 분기).
 import type {
+  OvsCmdtyRcvCnfdocItem,
+  OvsElcrtTxivDtl,
+  OvsElcrtTxivItem,
+  OvsElcrtTxivItemRow,
+  OvsPymtPrgrsItem,
+  OvsRtnPymtDfryInfoItem,
+  OvsShpgItemDsctnItem,
   CenterPrcmPymtClmDtl,
   CstrnPymtClmDtl,
   DpsmnItrpyAplyDsctnItem,
@@ -665,6 +672,267 @@ const RTN_PYMT_DFRY_INFO_LIST: RtnPymtDfryInfoItem[] = [
   },
 ]
 
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M71 물품수령확인서목록 — slide89 목업(L/C·B/L 2025000000-01 · 계약 품목수 1 ·
+// 계약금액/송장금액/수령금액 1,100.00 · INVOICE 123456).
+// ────────────────────────────────────────────────────────────────────────────
+const OVS_CMDTY_RCV_CNFDOC_LIST: OvsCmdtyRcvCnfdocItem[] = [
+  {
+    id: '2025000000-01-123456',
+    invcNo: 'INVOICE 123456',
+    lcNo: '2025000000 - 01',
+    blNo: '2025000000 - 01',
+    ctrtItemNmbt: 1,
+    ctrtAmt: 1100,
+    shpgItemCnt: 1,
+    invcAmtmn: 1100,
+    rcptItemQty: 1,
+    rcptAmtmn: 1100,
+    ctrtNo: '2025 0000 00',
+    ctrtCycl: '01',
+  },
+  {
+    id: '2025000000-02-123457',
+    invcNo: 'INVOICE 123457',
+    lcNo: '2025000000 - 02',
+    blNo: '2025000000 - 02',
+    ctrtItemNmbt: 12,
+    ctrtAmt: 259300.5,
+    shpgItemCnt: 10,
+    invcAmtmn: 210800,
+    rcptItemQty: 8,
+    rcptAmtmn: 180400,
+    ctrtNo: '2025 0000 00',
+    ctrtCycl: '02',
+  },
+  {
+    id: '2025000001-01-123460',
+    invcNo: 'INVOICE 123460',
+    lcNo: '2025000001 - 01',
+    blNo: '2025000001 - 01',
+    ctrtItemNmbt: 3,
+    ctrtAmt: 48000,
+    shpgItemCnt: 3,
+    invcAmtmn: 48000,
+    rcptItemQty: 0,
+    rcptAmtmn: 0,
+    ctrtNo: '2025 0001 00',
+    ctrtCycl: '01',
+  },
+]
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-P73 전자계산서목록 — slide91 목업(계산서 발행번호 1234567890 · 발행일자
+// 2025-11-20 · 구분 일반/수정 · 진행상태 국세청승인/작성/저장 · 총 3건).
+// ────────────────────────────────────────────────────────────────────────────
+const OVS_ELCRT_TXIV_LIST: OvsElcrtTxivItem[] = [
+  {
+    id: '1234567890',
+    billSe: '일반',
+    prgrsSttsCd: '국세청승인',
+    bilPblcnNo: '1234567890',
+    ctrtNo: '2025 0000 00',
+    pblcnYmd: '2025-11-20',
+    ctrtNm: '변속기 부품 계약의 건',
+    ctrtAmt: 1100,
+    splyEqvl: 1000,
+  },
+  {
+    id: '1234567891',
+    billSe: '수정',
+    prgrsSttsCd: '작성',
+    mdfcnRsn: '기재사항 착오정정',
+    bilPblcnNo: '1234567891',
+    ctrtNo: '2025 0000 00',
+    pblcnYmd: '2025-11-25',
+    ctrtNm: '변속기 부품 계약의 건',
+    ctrtAmt: 1100,
+    splyEqvl: 1000,
+  },
+  {
+    id: '1234567892',
+    billSe: '일반',
+    prgrsSttsCd: '저장',
+    bilPblcnNo: '1234567892',
+    ctrtNo: '2025 0000 00',
+    pblcnYmd: '2025-12-01',
+    ctrtNm: '변속기 부품 계약의 건',
+    ctrtAmt: 259300.5,
+    splyEqvl: 235727.72,
+  },
+]
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M74 전자계산서상세 — slide94~95 목업(공급자 조달업체A · 공급받는자 방위사업청 ·
+// 일반정보 계약번호 2025 0000 00-01/책번호 000/일련번호 0000 0000 000/발행번호 1 ·
+// 품목 배추김치 2025-11-23 계산서번호 20257135021).
+// ────────────────────────────────────────────────────────────────────────────
+const OVS_ELCRT_TXIV_DTL: OvsElcrtTxivDtl = {
+  ...OVS_ELCRT_TXIV_LIST[0],
+  bookNo: '000',
+  regSn: '0000 0000 000',
+  txivNo: '1',
+  vatSecd: '과세',
+  cfmtnYn: '확정',
+  splr: {
+    brno: '123-45-67890',
+    rprsvNm: '홍길동',
+    bzentyNm: '조달업체A',
+    bzstatCd: '제조',
+    splrAddr: '서울특별시 종로구 세종대로 209',
+    splrTpbizNm: '개발',
+    splrPicNm: '홍길동',
+    splrEntlno: '02-1234-5678',
+    splrTkcgDeptNm: '영업개발',
+  },
+  splrcp: {
+    brno: '123-45-67890',
+    rprsvNm: '홍길순',
+    bzentyNm: '방위사업청',
+    splrAddr: '경기도 과천시 관문로 47',
+  },
+}
+
+const OVS_ELCRT_TXIV_ITEMS: OvsElcrtTxivItemRow[] = [
+  {
+    id: '20257135021-1',
+    wrtYmd: '2025-11-23',
+    issuNo: '20257135021',
+    itemNm: '배추김치',
+    brno: '조달업체A',
+    dlvgdsQty: 1,
+    ctrtUntprc: 10000000,
+    splyEqvl: 10000000,
+    vatAmt: 1000000,
+    rmrkCn: '',
+  },
+  {
+    id: '20257135021-2',
+    wrtYmd: '2025-11-23',
+    issuNo: '20257135021',
+    itemNm: '변속기 조립체',
+    brno: '조달업체A',
+    dlvgdsQty: 2,
+    ctrtUntprc: 5500000,
+    splyEqvl: 11000000,
+    vatAmt: 1100000,
+    rmrkCn: '분할 납품',
+  },
+  {
+    id: '20257135022-1',
+    wrtYmd: '2025-11-24',
+    issuNo: '20257135022',
+    itemNm: '유압 실린더',
+    brno: '조달업체A',
+    dlvgdsQty: 4,
+    ctrtUntprc: 1250000,
+    splyEqvl: 5000000,
+    vatAmt: 0, // 영세율 — 화면에서 하이픈(-)으로 표시(slide95)
+    rmrkCn: '',
+  },
+]
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-M75 대금지불정보 — slide99 목업(B/L 2025000000-01 · 계약번호 KD0000 0000 00 ·
+// L/C XX은행 · 심사 2026-01-20 · 이체/지불 2026-03-10 · INVOICE 123456 · 지불/이체완료).
+// ────────────────────────────────────────────────────────────────────────────
+const OVS_RTN_PYMT_DFRY_INFO_LIST: OvsRtnPymtDfryInfoItem[] = [
+  {
+    id: '2025000000-01-123456',
+    dfryYmd: '2026-03-10',
+    expndStts: '지불',
+    prgrsSttn: '이체완료',
+    payYmd: '2026-03-10',
+    cmcUnit: 'USD',
+    dfryAmt: 1234567.89,
+    arrsPrmny: 12345.67,
+    giveAmt: 1222222.22,
+    srngYmd: '2026-01-20',
+    ctrtNo: 'KD2025 0001 00',
+    lcNo: 'XX은행',
+    blNo: '2025000000 - 01',
+    invcNo: 'INVOICE 123456',
+  },
+  {
+    id: '2025000000-02-123457',
+    dfryYmd: '2026-02-14',
+    expndStts: '지불',
+    prgrsSttn: '이체요청',
+    payYmd: '2026-02-14',
+    cmcUnit: 'USD',
+    dfryAmt: 259300.5,
+    arrsPrmny: 0,
+    giveAmt: 259300.5,
+    srngYmd: '2026-01-05',
+    ctrtNo: 'KD2025 0001 00',
+    lcNo: 'XX은행',
+    blNo: '2025000000 - 02',
+    invcNo: 'INVOICE 123457',
+  },
+  {
+    id: '2025000001-01-123460',
+    dfryYmd: '2026-01-30',
+    expndStts: '심사',
+    prgrsSttn: '심사중',
+    payYmd: '',
+    cmcUnit: 'EUR',
+    dfryAmt: 48000,
+    arrsPrmny: 480,
+    giveAmt: 47520,
+    srngYmd: '2026-01-28',
+    ctrtNo: 'KD2025 0002 00',
+    lcNo: 'YY은행',
+    blNo: '2025000001 - 01',
+    invcNo: 'INVOICE 123460',
+  },
+]
+
+// MUI-WM-01-M77 대금지급현황 — 카드/항목이 M75와 동일(slide103). 계약번호로 조회된 건만 표시.
+const OVS_PYMT_PRGRS_LIST: OvsPymtPrgrsItem[] = OVS_RTN_PYMT_DFRY_INFO_LIST
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-P78 선적품목내역 — slide104 목업(재고번호 1234567890 · 부품번호 259 ·
+// 선적수량 12 · 선적단가/선적금액 USD · 총 3건).
+// ────────────────────────────────────────────────────────────────────────────
+const OVS_SHPG_ITEM_DSCTNS: OvsShpgItemDsctnItem[] = [
+  {
+    id: '2025000000-01-1234567890',
+    ctrtNo: 'KD2025 0001 00',
+    blNo: '2025000000 - 01',
+    invcNo: 'INVOICE 123456',
+    invtNo: '1234567890',
+    prtsNo: '259',
+    itemNm: '변속기 조립체',
+    shpgQty: 12,
+    shpgUntprc: 102880.65,
+    shpgAmt: 1234567.8,
+  },
+  {
+    id: '2025000000-01-1234567891',
+    ctrtNo: 'KD2025 0001 00',
+    blNo: '2025000000 - 01',
+    invcNo: 'INVOICE 123456',
+    invtNo: '1234567891',
+    prtsNo: '260-A',
+    itemNm: '유압 실린더',
+    shpgQty: 4,
+    shpgUntprc: 12500,
+    shpgAmt: 50000,
+  },
+  {
+    id: '2025000000-01-1234567892',
+    ctrtNo: 'KD2025 0001 00',
+    blNo: '2025000000 - 01',
+    invcNo: 'INVOICE 123456',
+    invtNo: '1234567892',
+    prtsNo: '261-B',
+    itemNm: '오일 필터',
+    shpgQty: 30,
+    shpgUntprc: 320.5,
+    shpgAmt: 9615,
+  },
+]
+
 export const MOCK_WM = {
   pymtClmIntgList: PYMT_CLM_INTG_LIST,
   pymtClmAplyList: PYMT_CLM_APLY_LIST,
@@ -680,4 +948,11 @@ export const MOCK_WM = {
   epfcClclnClmDtl: EPFC_CLCLN_CLM_DTL,
   pymtClmPrgrsPrstList: PYMT_CLM_PRGRS_PRST_LIST,
   rtnPymtDfryInfoList: RTN_PYMT_DFRY_INFO_LIST,
+  ovsCmdtyRcvCnfdocList: OVS_CMDTY_RCV_CNFDOC_LIST,
+  ovsElcrtTxivList: OVS_ELCRT_TXIV_LIST,
+  ovsElcrtTxivDtl: OVS_ELCRT_TXIV_DTL,
+  ovsElcrtTxivItems: OVS_ELCRT_TXIV_ITEMS,
+  ovsRtnPymtDfryInfoList: OVS_RTN_PYMT_DFRY_INFO_LIST,
+  ovsPymtPrgrsList: OVS_PYMT_PRGRS_LIST,
+  ovsShpgItemDsctns: OVS_SHPG_ITEM_DSCTNS,
 }
