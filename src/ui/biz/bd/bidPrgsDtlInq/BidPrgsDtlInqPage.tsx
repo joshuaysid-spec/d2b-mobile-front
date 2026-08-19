@@ -125,11 +125,18 @@ function buildRows(it: BidPrgrsDetail, onView: (key: string) => void): TableRow[
     })
   }
   if (it.tndr) {
-    rows.push({
-      label: '입찰서',
-      value: statusCell(it.tndrStatNm ?? '미제출', '내용 보기', 'tndr'),
-      type: 'combination',
-    })
+    // 미제출이면 조회할 입찰서가 없으므로 [내용 보기] 미노출 — 설계서 slide172 입찰서조회(M09) 진입 조건이
+    //   '입찰서 제출완료상태'. 작성은 바로가기('입찰서(견적서) 작성하기')가 담당한다.
+    const tndrStat = it.tndrStatNm ?? '미제출'
+    rows.push(
+      tndrStat === '미제출'
+        ? { label: '입찰서', value: tndrStat }
+        : {
+            label: '입찰서',
+            value: statusCell(tndrStat, '내용 보기', 'tndr'),
+            type: 'combination',
+          },
+    )
   }
   if (it.bfhdSrng) {
     rows.push({
@@ -194,10 +201,13 @@ export function BidPrgsDtlInqPage() {
       if (isOvs) navigate('/bd/ovsBidPrtcpApfrDtl', { state: detail })
       else if (isApfrSubmitted(detail)) navigate('/bd/bidPrtcpAperDtl', { state: detail })
       else navigate('/bd/reg-rslt', { state: detail })
-    } else if (key === 'tndr' && isOvs) {
+    } else if (key === 'tndr') {
       // 국외 입찰서 상세(MUI-BD-06-M75, /bd/ovsTndrDtl) — state 미전달(페이지가 OvsTndrDtlItem 전체를
       // 기대하므로 BidPrgrsItem 을 넘기면 상단이 깨짐 → fallback 목업으로 렌더. API 연동 시 조회로 대체).
-      navigate('/bd/ovsTndrDtl')
+      // 국내: 제출 완료된 입찰서를 읽기전용 조회(MUI-BD-06-M09, /bd/tndrInq). 미제출 건은 위 buildRows 에서
+      //   [내용 보기] 자체를 노출하지 않는다.
+      if (isOvs) navigate('/bd/ovsTndrDtl')
+      else navigate('/bd/tndrInq', { state: detail })
     } else if (key === 'pq') {
       // 사전심사(PQ) — 결과 있으면 결과조회(M02), 심사 전이면 신청조회(M03, v1.86 신규).
       navigate(detail.bfhdSrngRsltYn ? '/bd/srng-rslt' : '/bd/srng-aply-inq', { state: detail })
