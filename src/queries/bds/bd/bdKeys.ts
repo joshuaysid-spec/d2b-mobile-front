@@ -11,6 +11,8 @@ export const bdKeys = {
   selectProgressListAll: ['bd', 'selectProgressList'] as const,
   selectBdopnList: (req?: BidListSearchRequest) => ['bd', 'selectBdopnList', req] as const,
   selectBidRsltDtl: (id: string) => ['bd', 'selectBidRsltDtl', id] as const,
+  selectPlrlRsrvPrcInfo: (id: string) => ['bd', 'selectPlrlRsrvPrcInfo', id] as const,
+  selectSmprcScsbdRsltInfo: (id: string) => ['bd', 'selectSmprcScsbdRsltInfo', id] as const,
   selectItemList: (pbancNo: string, page: number) =>
     ['bd', 'selectItemList', { pbancNo, page }] as const,
   selectTndrItemList: (pbancNo: string, page: number) =>

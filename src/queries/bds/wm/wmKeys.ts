@@ -19,6 +19,7 @@ export const wmKeys = {
   selectDpsmnItrpyApfrDtl: (id: string) => ['wm', 'selectDpsmnItrpyApfrDtl', id] as const,
   selectDpsmnItrpyAplyDsctns: (id: string) => ['wm', 'selectDpsmnItrpyAplyDsctns', id] as const,
   selectGiveSttsList: (id: string) => ['wm', 'selectGiveSttsList', id] as const,
+  selectPymtClmPrgrsSttList: (id: string) => ['wm', 'selectPymtClmPrgrsSttList', id] as const,
   selectCenterPrcmPymtClmDtl: (id: string) => ['wm', 'selectCenterPrcmPymtClmDtl', id] as const,
   selectSbsdPrcmPymtClmDtl: (id: string) => ['wm', 'selectSbsdPrcmPymtClmDtl', id] as const,
   selectCstrnPymtClmDtl: (id: string) => ['wm', 'selectCstrnPymtClmDtl', id] as const,

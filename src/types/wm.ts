@@ -246,6 +246,25 @@ export interface GiveSttsItem {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
+// MUI-WM-01-T24 진행상태 (v0.85 slide80~81, 2026-08-05 화면 추가) — prcmPymtClmStts/PrcmPymtClmStts
+//   대금청구 상세(중앙조달 M05)·사후정산청구상세(M13) 공용 탭. 지급상태(T23)와 다른 화면이다.
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 진행상태 1건 (dlt_pymtClmPrgrsSttList, slide81 1.1). */
+export interface PymtClmPrgrsSttItem {
+  /** 번호 (no, 10) — 목록 key */
+  no: string
+  /** 진행상태 (dlvdocPrgrsSt, 2, 상위코드 UA34/UB58) — 표시명. */
+  dlvdocPrgrsSt: string
+  /** 진행상태 처리일시 (prcsDt, yyyy-mm-dd hh:mm) */
+  prcsDt: string
+  /** 진행상태 처리부대/업체명 (prcsUnitBzentyNm, 100) */
+  prcsUnitBzentyNm: string
+  /** 진행상태 처리담당자 (prcsPicNm, 100) */
+  prcsPicNm: string
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 // MUI-WM-01-M05 대금청구 상세(중앙조달) (slide38~45) — centerPrcmPymtClmDtl/CenterPrcmPymtClmDtlPage
 //   탭: T05 계약정보(_Ctrt) · T06 공급자정보(_Splr) · T07 대금신청금액(_Pymt) · T08 세금계산서(_Txiv)
 //   · 진행상태(T23 공용).

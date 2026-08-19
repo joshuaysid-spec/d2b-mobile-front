@@ -55,6 +55,24 @@ export const bdQueries = {
     })
   },
 
+  /** 복수예비가격(P02) — 팝업 열릴 때만 조회. */
+  useSelectPlrlRsrvPrcInfo(id: string, enabled: boolean) {
+    return useQuery({
+      queryKey: bdKeys.selectPlrlRsrvPrcInfo(id),
+      queryFn: () => bdService.selectPlrlRsrvPrcInfo(id),
+      enabled: Boolean(id) && enabled,
+    })
+  },
+
+  /** 동가낙찰결과(P03) — 팝업 열릴 때만 조회. */
+  useSelectSmprcScsbdRsltInfo(id: string, enabled: boolean) {
+    return useQuery({
+      queryKey: bdKeys.selectSmprcScsbdRsltInfo(id),
+      queryFn: () => bdService.selectSmprcScsbdRsltInfo(id),
+      enabled: Boolean(id) && enabled,
+    })
+  },
+
   /** 입찰참가신청 품목목록(M06). */
   useSelectItemList(pbancNo: string, page = 1) {
     return useQuery({

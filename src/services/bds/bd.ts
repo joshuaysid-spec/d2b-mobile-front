@@ -56,7 +56,9 @@ import type {
   OvsTndrDoc,
   OvsTndrDtlItem,
   OvsTndrItitbItem,
+  PlrlRsrvPrcInfo,
   PqResultResponse,
+  SmprcScsbdRsltInfo,
   RegBzentyRow,
   RegBzentySrchRequest,
   RegionResult,
@@ -171,6 +173,26 @@ export const bdService = {
   async selectBidRsltItems(id: string, page: number): Promise<BidRsltProductItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.bidRsltItems)
     return apiClient.post<BidRsltProductItem[], BidRsltProductItem[]>(`/v1/bds/bdopns/${id}/items`, { page })
+  },
+
+  /**
+   * 복수예비가격 조회(생성된 예가 + 업체 선택번호) — MUI-BD-09-P02
+   * (bidRsltDtl/PrprcFullPopup). 입찰결과 탭의 '복수예가조회' 버튼(slide245 이벤트표).
+   */
+  async selectPlrlRsrvPrcInfo(id: string): Promise<PlrlRsrvPrcInfo> {
+    if (USE_MOCK) return mockDelay(MOCK_BD.plrlRsrvPrcInfo)
+    return apiClient.post<PlrlRsrvPrcInfo, PlrlRsrvPrcInfo>(`/v1/bds/bdopns/${id}/reserve-prices`)
+  },
+
+  /**
+   * 동가낙찰결과 조회(자동추첨 + 가위바위보) — MUI-BD-09-P03
+   * (bidRsltDtl/SmprcScsbdRsltFullPopup). 입찰결과 탭의 '동가낙찰결과' 버튼(slide245 이벤트표).
+   */
+  async selectSmprcScsbdRsltInfo(id: string): Promise<SmprcScsbdRsltInfo> {
+    if (USE_MOCK) return mockDelay(MOCK_BD.smprcScsbdRsltInfo)
+    return apiClient.post<SmprcScsbdRsltInfo, SmprcScsbdRsltInfo>(
+      `/v1/bds/bdopns/${id}/same-price-results`,
+    )
   },
 
   /** 이행/적격심사 신청 — MUI-BD-10 (bidRsltDtl/BidRsltDtlPage). */

@@ -76,6 +76,15 @@ export const wmQueries = {
     })
   },
 
+  /** 진행상태(T24, 상세 공용 탭). */
+  useSelectPymtClmPrgrsSttList(id: string) {
+    return useQuery({
+      queryKey: wmKeys.selectPymtClmPrgrsSttList(id),
+      queryFn: () => wmService.selectPymtClmPrgrsSttList(id),
+      enabled: Boolean(id),
+    })
+  },
+
   /** 대금청구 상세(중앙조달, M05). */
   useSelectCenterPrcmPymtClmDtl(id: string) {
     return useQuery({

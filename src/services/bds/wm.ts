@@ -23,6 +23,7 @@ import type {
   PymtClmIntgListResult,
   PymtClmPrgrsPrstRequest,
   PymtClmPrgrsPrstResult,
+  PymtClmPrgrsSttItem,
   RtnPymtDfryInfoRequest,
   RtnPymtDfryInfoResult,
   OvsCmdtyRcvCnfdocRequest,
@@ -118,6 +119,19 @@ export const wmService = {
     if (USE_MOCK) return mockDelay(MOCK_WM.giveSttsList)
     return apiClient.post<GiveSttsItem[], GiveSttsItem[]>(
       `/v1/wms/payment-claims/${id}/payment-statuses`,
+    )
+  },
+
+  // ── 진행상태 (MUI-WM-01-T24, 상세 공용 탭) ────────────────────────────────
+
+  /**
+   * 대금청구 진행상태 목록 조회 — MUI-WM-01-T24 (prcmPymtClmStts/PrcmPymtClmStts,
+   * 대금청구 상세 M05·사후정산청구상세 M13 공용 탭). On-Load(slide81).
+   */
+  async selectPymtClmPrgrsSttList(id: string): Promise<PymtClmPrgrsSttItem[]> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.pymtClmPrgrsSttList)
+    return apiClient.post<PymtClmPrgrsSttItem[], PymtClmPrgrsSttItem[]>(
+      `/v1/wms/payment-claims/${id}/progress-statuses`,
     )
   },
 

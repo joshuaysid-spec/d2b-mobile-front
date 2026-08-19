@@ -47,7 +47,9 @@ import type {
   OvsTndrDtlItem,
   OvsTndrItitbItem,
   BidSelectOption,
+  PlrlRsrvPrcInfo,
   PqResultResponse,
+  SmprcScsbdRsltInfo,
   RegBzentyRow,
   RegionResult,
   WrotDoc,
@@ -279,6 +281,77 @@ const bidRsltItems: BidRsltProductItem[] = [
     amount: '85,000,000',
   },
 ]
+
+// 복수예비가격 (MUI-BD-09-P02, slide246 예시값 그대로 — 15개 생성 + 업체 선택번호 8건).
+const plrlRsrvPrcInfo: PlrlRsrvPrcInfo = {
+  plrlRsrvPrc: [
+    { regSn: '1', prprc: 97813420, chcNmtm: 0 },
+    { regSn: '2', prprc: 102547340, chcNmtm: 7 },
+    { regSn: '3', prprc: 101246870, chcNmtm: 6 },
+    { regSn: '4', prprc: 98431560, chcNmtm: 2 },
+    { regSn: '5', prprc: 97564100, chcNmtm: 0 },
+    { regSn: '6', prprc: 102548230, chcNmtm: 1 },
+    { regSn: '7', prprc: 100123980, chcNmtm: 3 },
+    { regSn: '8', prprc: 99870000, chcNmtm: 6 },
+    { regSn: '9', prprc: 97587700, chcNmtm: 1 },
+    { regSn: '10', prprc: 101254450, chcNmtm: 2 },
+    { regSn: '11', prprc: 101350470, chcNmtm: 3 },
+    { regSn: '12', prprc: 98954910, chcNmtm: 0 },
+    { regSn: '13', prprc: 102645450, chcNmtm: 1 },
+    { regSn: '14', prprc: 102912370, chcNmtm: 2 },
+    { regSn: '15', prprc: 99547560, chcNmtm: 0 },
+  ],
+  chcNo: [
+    { regSn: '2', prprc: 102547340, bzentyNm: '테스트업체1' },
+    { regSn: '3', prprc: 101246870, bzentyNm: '테스트업체2' },
+    { regSn: '2', prprc: 102547340, bzentyNm: '테스트업체3' },
+    { regSn: '4', prprc: 98431560, bzentyNm: '테스트업체4' },
+    { regSn: '7', prprc: 100123980, bzentyNm: '테스트업체5' },
+    { regSn: '8', prprc: 99870000, bzentyNm: '테스트업체6' },
+    { regSn: '14', prprc: 102912370, bzentyNm: '테스트업체7' },
+    { regSn: '11', prprc: 101350470, bzentyNm: '테스트업체8' },
+  ],
+}
+
+// 동가낙찰결과 (MUI-BD-09-P03, slide249 예시값 그대로 — 자동추첨 2건 + 가위바위보 5차).
+const smprcScsbdRsltInfo: SmprcScsbdRsltInfo = {
+  smprcScsbdRslt: [
+    {
+      no: '0',
+      brno: '123-12-31230',
+      bzentyNm: '테스트업체1',
+      regDt: '2025-12-01 10:00:00',
+      smprcScsbdBzentyYn: '당첨',
+    },
+    {
+      no: '1',
+      brno: '222-11-33333',
+      bzentyNm: '테스트업체25',
+      regDt: '2025-12-01 10:00:00',
+      smprcScsbdBzentyYn: '-',
+    },
+  ],
+  rps: [
+    {
+      bzentyCd: '123',
+      bzentyNm: '테스트업체1',
+      smprcScsbdRslt1: '가위',
+      smprcScsbdRslt2: '바위',
+      smprcScsbdRslt3: '보',
+      smprcScsbdRslt4: '가위',
+      smprcScsbdRslt5: '바위',
+    },
+    {
+      bzentyCd: '456',
+      bzentyNm: '테스트업체25',
+      smprcScsbdRslt1: '바위',
+      smprcScsbdRslt2: '가위',
+      smprcScsbdRslt3: '가위',
+      smprcScsbdRslt4: '보',
+      smprcScsbdRslt5: '보',
+    },
+  ],
+}
 
 // ── 사전심사 (MUI-BD-02) ───────────────────────────────────────────────────
 const pqResult: PqResultResponse = {
@@ -1162,6 +1235,8 @@ export const MOCK_BD = {
   bidRsltList,
   negoList,
   bidRsltItems,
+  plrlRsrvPrcInfo,
+  smprcScsbdRsltInfo,
   // 사전심사
   pqResult,
   // 입찰진행

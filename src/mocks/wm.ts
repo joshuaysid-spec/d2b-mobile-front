@@ -21,6 +21,7 @@ import type {
   PymtClmAplyItem,
   PymtClmListItem,
   PymtClmPrgrsPrstItem,
+  PymtClmPrgrsSttItem,
   RtnPymtDfryInfoItem,
   SbsdPrcmPymtClmDtl,
   WmAdocItem,
@@ -324,6 +325,32 @@ const GIVE_STTS_LIST: GiveSttsItem[] = [
     ctrtCycl: '02',
     giveClmAmt: 5000000,
     expndStcd: '지급완료',
+  },
+]
+
+// MUI-WM-01-T24 진행상태 (slide80~81) — 부대조달 대금청구 진행상태(UA34) 처리 이력.
+// 최신 처리건이 위로 오도록 역순.
+const PYMT_CLM_PRGRS_STT_LIST: PymtClmPrgrsSttItem[] = [
+  {
+    no: '3',
+    dlvdocPrgrsSt: '대금확정',
+    prcsDt: '2026-02-20 14:30',
+    prcsUnitBzentyNm: '제8385부대',
+    prcsPicNm: '홍길동',
+  },
+  {
+    no: '2',
+    dlvdocPrgrsSt: '대금청구',
+    prcsDt: '2026-02-12 09:10',
+    prcsUnitBzentyNm: 'A 업체',
+    prcsPicNm: '김철수',
+  },
+  {
+    no: '1',
+    dlvdocPrgrsSt: '선금신청',
+    prcsDt: '2026-02-05 16:45',
+    prcsUnitBzentyNm: 'A 업체',
+    prcsPicNm: '김철수',
   },
 ]
 
@@ -941,6 +968,7 @@ export const MOCK_WM = {
   dpsmnItrpyApfrDtl: DPSMN_ITRPY_APFR_DTL,
   dpsmnItrpyAplyDsctns: DPSMN_ITRPY_APLY_DSCTNS,
   giveSttsList: GIVE_STTS_LIST,
+  pymtClmPrgrsSttList: PYMT_CLM_PRGRS_STT_LIST,
   centerPrcmPymtClmDtl: CENTER_PRCM_PYMT_CLM_DTL,
   sbsdPrcmPymtClmDtl: SBSD_PRCM_PYMT_CLM_DTL,
   cstrnPymtClmDtl: CSTRN_PYMT_CLM_DTL,

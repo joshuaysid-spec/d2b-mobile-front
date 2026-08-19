@@ -1535,6 +1535,82 @@ export interface BidRsltProductItem {
   amount: string
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-BD-09-P02 복수예비가격 (설계서 02입찰 v1.88 slide246~248, 2026-08-13 화면 추가)
+//   입찰결과 탭(T03)의 '복수예가조회' 버튼 → Prprc 팝업.
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 생성된 복수예비가격 1건 (dmt_plrlRsrvPrc, slide247 1.1). */
+export interface PlrlRsrvPrcItem {
+  /** 번호 (regSn, 10) */
+  regSn: string
+  /** 금액 (prprc, 17,2) */
+  prprc: number
+  /** 횟수 (chcNmtm, 10) — 업체가 선택한 번호의 횟수 */
+  chcNmtm: number
+}
+
+/** 업체가 선택한 번호 1건 (dmt_chcNo, slide247 1.2). */
+export interface PlrlRsrvPrcChcNoItem {
+  /** 번호 (regSn, 10) */
+  regSn: string
+  /** 금액 (prprc, 17,2) */
+  prprc: number
+  /** 업체명 (bzentyNm, 100) — 마스킹 정책 적용 대상 */
+  bzentyNm: string
+}
+
+/** 복수예비가격 조회 응답 (scwin.getPlrlRsrvPrcInfo, slide248). */
+export interface PlrlRsrvPrcInfo {
+  plrlRsrvPrc: PlrlRsrvPrcItem[]
+  chcNo: PlrlRsrvPrcChcNoItem[]
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-BD-09-P03 동가낙찰결과 (설계서 02입찰 v1.88 slide249~250, 2026-08-13 화면 추가)
+//   입찰결과 탭(T03)의 '동가낙찰결과' 버튼 → SmprcScsbdRslt 팝업.
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 동가낙찰결과(자동추첨) 1건 (dlt_smprcScsbdRslt, slide250 1.1). */
+export interface SmprcScsbdRsltItem {
+  /** 번호 (no, 10) — 입찰서 제출 순서 */
+  no: string
+  /** 사업자등록번호 (brno, 10) */
+  brno: string
+  /** 상호명 (bzentyNm, 100) */
+  bzentyNm: string
+  /** 입찰서제출일시 (regDt) */
+  regDt: string
+  /** 당첨여부 (smprcScsbdBzentyYn, 1) — 표시명('당첨'/'-') */
+  smprcScsbdBzentyYn: string
+}
+
+/** 동가낙찰결과(가위바위보) 1건 (dlt_smprcScsbdRslt, slide250 1.2). */
+export interface SmprcScsbdRpsItem {
+  /** 업체코드 (bzentyCd, 5) */
+  bzentyCd: string
+  /** 업체명 (bzentyNm, 100) */
+  bzentyNm: string
+  /** 1차 (smprcScsbdRslt1, 10) */
+  smprcScsbdRslt1: string
+  /** 2차 (smprcScsbdRslt2, 10) */
+  smprcScsbdRslt2: string
+  /** 3차 (smprcScsbdRslt3, 10) */
+  smprcScsbdRslt3: string
+  /** 4차 (smprcScsbdRslt4, 10) */
+  smprcScsbdRslt4: string
+  /** 5차 (smprcScsbdRslt5, 10) */
+  smprcScsbdRslt5: string
+}
+
+/** 동가낙찰결과 조회 응답 (scwin.getSmprcScsbdRsltInfo, slide250). */
+export interface SmprcScsbdRsltInfo {
+  /** 업체정보(자동추첨) */
+  smprcScsbdRslt: SmprcScsbdRsltItem[]
+  /** 가위바위보 결과 — 없으면 빈 배열 */
+  rps: SmprcScsbdRpsItem[]
+}
+
 /** 사전심사(PQ) 결과 (MUI-BD-02-M02) — 공고/업체/심사 요약 + 첨부. */
 export interface PqResultResponse {
   pbancInfo: BidLabeledRow[]

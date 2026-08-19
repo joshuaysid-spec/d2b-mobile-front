@@ -1,7 +1,7 @@
 // 사후정산청구상세 — MUI-WM-01-M13 EpfcClclnClm. 설계서 05.대금청구및사후 v0.83 slide72~79.
 // P13 대금청구신청목록에서 사후정산청구서 카드 클릭 → /wm/epfcClclnClmDtl 진입(식별자는 navigate state).
 // 구성: 중요 안내 + sticky(요약 + 스텝 + 탭) + 탭(T20 계약정보 · T21 신청내역 · T22 세금계산서
-//   · 진행상태(T23 공용)) — M02/M05 셸 준용.
+//   · T24 진행상태(공용)) — M02/M05 셸 준용.
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
@@ -17,14 +17,14 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { EpfcClclnClmDtl_CN } from '@/ui/biz/wm/epfcClclnClmDtl/EpfcClclnClmDtl_CN'
 import { EpfcClclnClmDtl_AplyAmt } from '@/ui/biz/wm/epfcClclnClmDtl/EpfcClclnClmDtl_AplyAmt'
 import { EpfcClclnClmDtl_Txiv } from '@/ui/biz/wm/epfcClclnClmDtl/EpfcClclnClmDtl_Txiv'
-import { PrpayDpsmnItrpyGiveStts } from '@/ui/biz/wm/prpayDpsmnItrpyGiveStts/PrpayDpsmnItrpyGiveStts'
+import { PrcmPymtClmStts } from '@/ui/biz/wm/prcmPymtClmStts/PrcmPymtClmStts'
 
 // ── 탭 (slide73 탭 영역: 계약정보 · 신청내역 · 세금계산서 · 진행상태) ────────
 const TABS: TabItem[] = [
   { value: 'ctrt', label: '계약정보' },
   { value: 'aply', label: '신청내역' },
   { value: 'txiv', label: '세금계산서' },
-  { value: 'give', label: '진행상태' },
+  { value: 'stts', label: '진행상태' },
 ]
 
 const STEP_LABELS = ['조달', '입찰', '계약', '이행', '대금청구'] as const
@@ -110,7 +110,7 @@ export function EpfcClclnClmDtlPage() {
         {tab === 'ctrt' && <EpfcClclnClmDtl_CN detail={detail} />}
         {tab === 'aply' && <EpfcClclnClmDtl_AplyAmt detail={detail} />}
         {tab === 'txiv' && <EpfcClclnClmDtl_Txiv detail={detail} />}
-        {tab === 'give' && <PrpayDpsmnItrpyGiveStts id={id} />}
+        {tab === 'stts' && <PrcmPymtClmStts id={id} />}
       </div>
 
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />

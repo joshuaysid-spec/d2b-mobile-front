@@ -199,7 +199,7 @@ function renderTabContent(tab: string, item: BdopnItem) {
     case 'item':
       return <BidRsltDtlList />
     case 'bid':
-      return <BidRsltDtl />
+      return <BidRsltDtl id={item.id} />
     case 'nego':
       return <BidRsltDtl2 />
     default:
