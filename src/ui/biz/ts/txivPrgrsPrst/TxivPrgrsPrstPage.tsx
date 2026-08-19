@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
-import { useTxivPrgrsPrstList } from '@/queries/ts'
+import { useSelectTxivPrgrsPrstList } from '@/queries/bds/ts/queries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
@@ -99,7 +99,7 @@ export function TxivPrgrsPrstPage() {
   const [filterApplied, setFilterApplied] = useState(false)
   const [appliedSearch, setAppliedSearch] = useState<string | null>(null)
 
-  const { data: listData, isLoading } = useTxivPrgrsPrstList()
+  const { data: listData, isLoading } = useSelectTxivPrgrsPrstList()
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)

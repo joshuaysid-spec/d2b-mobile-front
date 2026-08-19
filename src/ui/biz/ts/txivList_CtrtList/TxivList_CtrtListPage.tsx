@@ -8,7 +8,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
-import { useTxivCtrtList } from '@/queries/ts'
+import { useSelectTxivCtrtList } from '@/queries/bds/ts/queries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
@@ -73,7 +73,7 @@ export function TxivList_CtrtListPage() {
   // P02 세금계산서목록 바텀시트 — 선택한 계약(null=닫힘). key 리마운트로 재오픈 시 초기화.
   const [pickedCtrt, setPickedCtrt] = useState<TxivCtrtItem | null>(null)
 
-  const { data: listData, isLoading } = useTxivCtrtList()
+  const { data: listData, isLoading } = useSelectTxivCtrtList()
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)

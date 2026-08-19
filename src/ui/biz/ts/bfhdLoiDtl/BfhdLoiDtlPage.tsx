@@ -3,11 +3,11 @@
 // 구성: sticky(요약 SummaryInfo + 탭 TabList) + 탭(T01 상세내용 · T02 품목명세서) —
 //   업무지원 상세는 진행 단계(StepBar) 없음(slide12).
 // 타이틀 우측 출력 버튼 → 출력 가능 레포트 목록 바텀시트(slide12, OZ 연계 스텁).
-// 공지사항(업무도움)은 내역 확정 전 미표시. 데이터: useBfhdLoiDtl — 조회 완료까지 PageLoading.
+// 공지사항(업무도움)은 내역 확정 전 미표시. 데이터: useSelectBfhdLoiDtl — 조회 완료까지 PageLoading.
 import { useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 
-import { useBfhdLoiDtl } from '@/queries/ts'
+import { useSelectBfhdLoiDtl } from '@/queries/bds/ts/queries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Button } from '@/ui/common/base/Button'
@@ -33,7 +33,7 @@ export function BfhdLoiDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputOpen, setOutputOpen] = useState(false) // 출력 레포트 목록 바텀시트(slide12)
 
-  const { data: detail } = useBfhdLoiDtl(id)
+  const { data: detail } = useSelectBfhdLoiDtl(id)
 
   if (!stateItem) return <Navigate to="/ts/loi" replace />
   if (!detail) return <PageLoading />
