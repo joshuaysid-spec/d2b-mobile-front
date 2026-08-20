@@ -2,7 +2,7 @@
 // 생산자명으로 생산자 목록(CAGE 코드)을 조회 → 결과 클릭 시 생산자명을 호출 필드로 반환.
 // 콘텐츠 전용 — BottomSheet 컨테이너/타이틀/footer(초기화·검색)는 SearchFilter 셸이 슬롯으로 소유한다.
 //   폼 상태는 캡슐화하고 footer 동작만 SearchSheetHandle(ref)로 노출. 닫힘 시 언마운트로 상태 자동 초기화.
-// 목록은 목업(추후 API: opService.selectProducerSearch 로 대체).
+// 목록은 목업(추후 API: opService.selectPrdcrList 로 대체).
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react'
 
 import { InputBox } from '@/ui/common/base/InputBox'
@@ -37,7 +37,7 @@ const PrdcrInq = forwardRef<SearchSheetHandle, PrdcrInqProps>(({ onSelect }, ref
     setResults(null)
   }, [])
 
-  // Like 검색(목업) — 추후 opService.selectProducerSearch 로 대체.
+  // Like 검색(목업) — 추후 opService.selectPrdcrList 로 대체.
   const handleSearch = useCallback(() => {
     const filtered = MOCK_PRODUCERS.filter(
       (p) => !prdctnNm || p.prdctnNm.toLowerCase().includes(prdctnNm.toLowerCase()),

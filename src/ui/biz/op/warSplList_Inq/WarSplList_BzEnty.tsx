@@ -13,7 +13,7 @@ export interface WarSplList_BzEntyProps {
 }
 
 export function WarSplList_BzEnty({ prdctnCd }: WarSplList_BzEntyProps) {
-  const { data } = opQueries.useSelectWarSplBzEnty(prdctnCd)
+  const { data } = opQueries.useSelectPrdcrDtl(prdctnCd)
 
   if (!data) {
     return <p className="py-krds-8 text-center text-[17px] text-krds-text-muted">조회 중입니다.</p>

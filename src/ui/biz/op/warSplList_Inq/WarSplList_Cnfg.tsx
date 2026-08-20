@@ -46,8 +46,8 @@ export function WarSplList_Cnfg({
   appliedNiin,
 }: WarSplList_CnfgProps) {
   // 디폴트(연간조달계획 보유값) + 검색 결과 — 검색 결과는 디폴트 아래에 이어붙는다.
-  const { data: base } = opQueries.useSelectWarSplCnfg({ planId })
-  const { data: found } = opQueries.useSelectWarSplCnfg(
+  const { data: base } = opQueries.useSelectCnfgInfo({ planId })
+  const { data: found } = opQueries.useSelectCnfgInfo(
     { planId, niin: appliedNiin },
     Boolean(appliedNiin),
   )

@@ -1,7 +1,7 @@
 // 사전규격 상세 (MUI-OP-01-M11, bfhdSpcfctDtl). 검색유형=사전규격 진입.
 // 조달계획상세(M03)와 레이아웃 동일하나 탭 3개(상세내용/업체의견/첨부서류) — 품목명세서·계약특수조건·알림신청 없음.
 // 구성: 요약정보(SummaryInfo) + 스텝바(StepBar) + 탭(TabList) + 탭 콘텐츠(BfhdSpcfctDtl / BfhdSpcfctDtl_OpnnList / BfhdSpcfctDtl_Doc).
-// 데이터는 목업 — 추후 API(opService.selectSpecDtl)로 대체. 헤더는 전역 Header(AppLayout) 담당.
+// 데이터는 목업 — 추후 API(opService.selectBfhdSpcfcDtl)로 대체. 헤더는 전역 Header(AppLayout) 담당.
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 

@@ -3,7 +3,7 @@
 // 구성: 발주기관 규격서(Table) + 업체의견 목록(카드 + 더보기) + 첨부파일(FileDownloadList).
 //   - 의견 등록 버튼 없음(설계서 slide54) — 읽기 전용.
 //   - 비공개 의견은 작성자만 접근 → '비공개 글입니다.' 안내(스텁).
-// 데이터는 목업 — 추후 API(opService.selectSpecDtl/selectOpinions)로 대체.
+// 데이터는 목업 — 추후 API(opService.selectBfhdSpcfcDtl/selectBzentyOpnn)로 대체.
 import { useState, type ReactNode } from 'react'
 
 import { Button } from '@/ui/common/base/Button'

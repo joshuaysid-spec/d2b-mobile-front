@@ -45,8 +45,8 @@ export function WarSplList_Ref({
   onSearch,
   appliedNiin,
 }: WarSplList_RefProps) {
-  const { data: base } = opQueries.useSelectWarSplRef({ planId })
-  const { data: found } = opQueries.useSelectWarSplRef(
+  const { data: base } = opQueries.useSelectRefInfo({ planId })
+  const { data: found } = opQueries.useSelectRefInfo(
     { planId, niin: appliedNiin },
     Boolean(appliedNiin),
   )

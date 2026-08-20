@@ -1,6 +1,6 @@
 // 사전규격 상세 - '상세내용' 탭 콘텐츠 (MUI-OP-01-M11, bfhdSpcfctDtl).
 // 레이아웃은 조달계획상세(M03)와 동일 구조(PageTitle + 아코디언 + 테이블)로 시작 — 실제 사전규격 값/항목은 추후 반영.
-// 데이터는 목업 — 추후 API(opService.selectSpecDtl)로 대체.
+// 데이터는 목업 — 추후 API(opService.selectBfhdSpcfcDtl)로 대체.
 import { useState } from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'

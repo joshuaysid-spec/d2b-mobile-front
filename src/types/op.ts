@@ -136,6 +136,23 @@ export interface OpOpinion {
   datetime: string
 }
 
+/**
+ * 업체의견 등록/수정 요청 — MUI-OP-01-P07 (insert/updateBzentyOpnn, 실 API no.9·no.10).
+ * ⚠️ 항목명 잠정 — 화면 미배선(등록 팝업은 아직 목업). 상세설계 확정 시 교체.
+ */
+export interface OpOpnnRequest {
+  /** 대상 조달계획/사전규격 식별자 — 판단번호(prcmNo). */
+  prcmNo: string
+  /** 업체의견 식별자 — 수정(no.10) 시에만. */
+  opnnId?: string
+  /** 제목(title). */
+  title: string
+  /** 내용(cn). */
+  cn: string
+  /** 공개여부(isPublic). */
+  isPublic: boolean
+}
+
 // ── 국외 연간조달계획 상세 — MUI-OP-01-M78 (ovsPrcmPlanDtl/OvsPrcmPlanDtlPage) ──────
 // 설계서 01.조달계획 v0.84 slide22(항목설명 dlt_anlPrcmPlanList) + slide76~77(화면).
 // M78 은 "목록 데이터 전체 표시"라 연간조달계획 목록 데이터영역 1건이 곧 상세 데이터다.

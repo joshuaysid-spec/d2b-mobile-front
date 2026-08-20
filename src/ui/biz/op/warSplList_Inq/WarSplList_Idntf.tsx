@@ -56,8 +56,8 @@ export function WarSplList_Idntf({
   onSearch,
   appliedNiin,
 }: WarSplList_IdntfProps) {
-  const { data: base } = opQueries.useSelectWarSplIdntf({ planId })
-  const { data: found } = opQueries.useSelectWarSplIdntf(
+  const { data: base } = opQueries.useSelectIdntfInfo({ planId })
+  const { data: found } = opQueries.useSelectIdntfInfo(
     { planId, niin: appliedNiin },
     Boolean(appliedNiin),
   )

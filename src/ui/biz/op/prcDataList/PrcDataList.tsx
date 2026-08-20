@@ -170,7 +170,7 @@ export function PrcDataList({ invtNo }: PrcDataListProps) {
       ? { fsc: init.fsc || undefined, niin: init.niin || undefined }
       : null,
   )
-  const { data } = opQueries.useSelectPrcDataList(applied ?? {}, applied !== null)
+  const { data } = opQueries.useSelectPrcDataListByItem(applied ?? {}, applied !== null)
 
   // 진입 시 군급 입력 가능 상태(slide72) — Radix Dialog 가 마운트 직후 첫 포커서블(닫기 X)로 포커스를
   // 옮기므로, 그 뒤 태스크에서 군급 입력으로 이동시킨다(autoFocus 속성만으론 밀려남).

@@ -33,7 +33,7 @@ export function OvsPrcmPlanDtlPage() {
   // 컨테이너(BottomSheet)는 페이지가 소유하고 콘텐츠는 WarSplList_Inq(CLAUDE.md — *Sheet 래퍼 금지).
   const [warSplOpen, setWarSplOpen] = useState(false)
 
-  const { data: detail } = opQueries.useSelectOvsPlanDtl(id, stateItem ?? undefined)
+  const { data: detail } = opQueries.useSelectOvsPrcmPlanDtl(id, stateItem ?? undefined)
 
   // state 없이 직접 진입 = 식별자를 알 수 없음 → 통합목록으로.
   if (!stateItem) return <Navigate to="/op" replace />

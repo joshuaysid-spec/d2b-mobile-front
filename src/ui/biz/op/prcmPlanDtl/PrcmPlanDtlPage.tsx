@@ -102,7 +102,7 @@ export function PrcmPlanDtlPage() {
   })
   // 알림신청 실패 안내(AlertModal) — null 이면 닫힘.
   const [notifyError, setNotifyError] = useState<string | null>(null)
-  const applyNotify = opQueries.useApplyNotify()
+  const applyNotify = opQueries.useSavePbancPstgNotiAply()
   const handleNotifyApply = notiForm.handleSubmit(
     async (data) => {
       try {
@@ -130,7 +130,7 @@ export function PrcmPlanDtlPage() {
   const [outputModalOpen, setOutputModalOpen] = useState(false)
   const handleOutput = () => setOutputModalOpen(true)
 
-  const { data: detail } = opQueries.useSelectPlanDtl(id, stateItem ?? undefined)
+  const { data: detail } = opQueries.useSelectPrcmPlanDtl(id, stateItem ?? undefined)
   // 진행단계(아이템 속성 prgrsStg) — detail 로 구동(없으면 '조달' fallback).
   const steps = stepsByStg(detail?.prgrsStg ?? '조달')
 
