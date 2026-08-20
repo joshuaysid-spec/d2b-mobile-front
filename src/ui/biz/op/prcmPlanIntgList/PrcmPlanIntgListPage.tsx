@@ -287,7 +287,12 @@ function buildOpSearchSchema(type: OpSrchType, draft?: SearchFilterValue): Searc
   const sections =
     type === 'spec'
       ? [taskSection(type), ...dateSections(type), keywordSection(type, isGoods), opnDtSection()]
-      : [taskSection(type), ...dateSections(type), keywordSection(type, isGoods), ...categorySections(type)]
+      : [
+          taskSection(type),
+          ...dateSections(type),
+          keywordSection(type, isGoods),
+          ...categorySections(type),
+        ]
   return {
     title: '검색필터',
     sections,
@@ -394,6 +399,7 @@ export function PrcmPlanIntgListPage() {
 
   // 현재 탭 기준 schema — 함수로 넘겨 셸이 draft 로 재계산(동적 스키마: 물품 체크 시에만 대표품명).
   const schema = useMemo(() => (draft: SearchFilterValue) => buildOpSearchSchema(tab, draft), [tab])
+
   const tabDefaultValue = useMemo(() => buildDefaultValue(tab), [tab])
 
   // 목록 조회 — 검색유형(탭)별 전체 목록(목업/실연동은 opService 의 USE_MOCK 분기가 전환).
