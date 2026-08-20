@@ -71,15 +71,13 @@ const LOCKER_FILTER_SCHEMA: SearchFilterSchema = {
       ],
     },
     {
-      // 참가신청상태(bidPrtcpAplyStts) — 구분(전체, 작성, 미작성). 설계서 slide306 1.1.
+      // 참가신청상태(bidPrtcpAplyStts) — 구분(전체, 작성, 미작성). 설계서 slide410 1.1 — 셀렉트박스(사용자 확정).
       key: 'bidPrtcpAplyStts',
       title: '참가신청상태',
       fields: [
         {
-          type: 'radio',
+          type: 'select',
           key: 'bidPrtcpAplyStts',
-          direction: 'horizontal',
-          showIndicator: true,
           options: [
             { value: 'all', label: '전체' },
             { value: 'written', label: '작성' },
