@@ -23,7 +23,9 @@ const AppAuthrtAgrePage = lazy(() =>
     default: m.AppAuthrtAgrePage,
   })),
 )
-// 앱 이용안내(MUI-MS-01-M06, /app-guide) — 셸 밖 풀스크린. biz/cm/appSrvcExpln. (설계서 slide7 목록 기준 M06 — slide365 는 P06 표기, 문서 내 불일치)
+// 앱 이용안내(MUI-MS-01-M06, /app-guide) — 셸 밖 풀스크린. biz/cm/appSrvcExpln.
+// 설계서 00.공통 v0.86 slide22: 최초 기동 시 배너 5페이지 온보딩 + [다시 보지 않기]/[이전]/[다음].
+// 전체메뉴 > 이용안내 > 앱 이용안내(MUI-CM-05-M16, AppSrvcExplnIdx/Coach — AppLayout 오버레이)와는 별개 화면.
 const AppSrvcExplnPage = lazy(() =>
   import('@/ui/biz/cm/appSrvcExpln/AppSrvcExplnPage').then((m) => ({
     default: m.AppSrvcExplnPage,

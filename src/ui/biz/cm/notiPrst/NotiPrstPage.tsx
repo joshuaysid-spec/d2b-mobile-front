@@ -74,7 +74,7 @@ const MOCK_NOTIFICATIONS: NotiItem[] = [
 function buildItems(items: NotiItem[]): CardListItem[] {
   return items.map((noti) => ({
     id: noti.id,
-    // 뱃지 = 카테고리 + (안읽음일 때만) '안읽음' 뱃지. 읽음은 별도 표기 없음.
+    // 뱃지 = 카테고리 + (미확인일 때만) '미확인' 뱃지. 읽음(확인)은 별도 표기 없음.
     badges: (
       <>
         <Badge type="pastel" color={CATEGORY_COLOR[noti.category] ?? 'blue'}>
@@ -82,7 +82,7 @@ function buildItems(items: NotiItem[]): CardListItem[] {
         </Badge>
         {!noti.read && (
           <Badge type="pastel" color="red">
-            안읽음
+            미확인
           </Badge>
         )}
       </>

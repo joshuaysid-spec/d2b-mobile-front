@@ -25,8 +25,11 @@ import {
 } from '@/ui/biz/cm/home/HomeNoticeSection'
 import { HomeBanner, type BannerSlide } from '@/ui/biz/cm/home/HomeBanner'
 import { FirstVisitGuide, type GuideItem } from '@/ui/biz/cm/home/FirstVisitGuide'
-import { SysExpln } from '@/ui/biz/cm/mscrn/SysExpln'
-import { AppSrvcExplnPage } from '@/ui/biz/cm/appSrvcExpln/AppSrvcExplnPage'
+import { SysExpln, isSysExplnDismissed } from '@/ui/biz/cm/mscrn/SysExpln'
+import {
+  AppSrvcExplnPage,
+  APP_SRVC_EXPLN_SEEN_KEY,
+} from '@/ui/biz/cm/appSrvcExpln/AppSrvcExplnPage'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
 import { ROUTES } from '@/constants/routes'
 import opIcon from '@/assets/images/opIcon.svg'
@@ -152,14 +155,20 @@ export function HomePage() {
 
   // 공지 탭
   const [noticeTab, setNoticeTab] = useState('dapa')
-  // 홈 첫 진입 흐름: 앱 이용안내(MUI-MS-01-M06, 구 P06) → 중요 공지(MUI-MS-01-P08).
-  // 첫 진입이면 M06 먼저(오버레이) → 닫으면 P08. 이미 봤으면 바로 P08. (세션 기준 — 추후 localStorage/서버)
-  const [guideOpen, setGuideOpen] = useState(() => !sessionStorage.getItem('appLaunchGuideSeen'))
-  const [noticeOpen, setNoticeOpen] = useState(() => !!sessionStorage.getItem('appLaunchGuideSeen'))
+  // 홈 첫 진입 흐름: 앱 이용안내(MUI-MS-01-M06) → 중요 공지(MUI-MS-01-P08).
+  // 첫 진입이면 M06 먼저(오버레이) → 닫으면 P08. 이미 봤으면 바로 P08.
+  // 저장은 localStorage(설계서 "이후 기동 시 앱 이용안내 화면 미노출") — 키 소유자는 AppSrvcExplnPage.
+  const [guideOpen, setGuideOpen] = useState(
+    () => !localStorage.getItem(APP_SRVC_EXPLN_SEEN_KEY),
+  )
+  // 공지는 [더 이상 안보기] 처리된 공지(SysExpln 이 localStorage 에 기록)면 스킵.
+  const [noticeOpen, setNoticeOpen] = useState(
+    () => !!localStorage.getItem(APP_SRVC_EXPLN_SEEN_KEY) && !isSysExplnDismissed('notice'),
+  )
+  // 안내 종료([다시 보지 않기]) — 저장은 AppSrvcExplnPage 가 하고, 여기선 오버레이만 닫고 공지로 넘긴다.
   const handleGuideClose = () => {
-    sessionStorage.setItem('appLaunchGuideSeen', '1')
     setGuideOpen(false)
-    setNoticeOpen(true) // 공지 있으면(데모: 항상 노출)
+    setNoticeOpen(!isSysExplnDismissed('notice')) // 노출 중단한 공지가 아니면 공지 팝업으로
   }
 
   // 설정값이 기본과 다르면 ON (설계서 rule 5)
@@ -315,10 +324,10 @@ export function HomePage() {
         onSearch={handleFilterSearch}
       />
 
-      {/* 홈 첫 진입: 앱 이용안내(P06) 오버레이 → 닫으면 공지(P08) */}
+      {/* 홈 첫 진입: 앱 이용안내(MUI-MS-01-M06) 오버레이 → 닫으면 공지(P08) */}
       {guideOpen && (
         <div className="fixed inset-0 z-[60]">
-          <AppSrvcExplnPage onLaunch={handleGuideClose} />
+          <AppSrvcExplnPage onClose={handleGuideClose} />
         </div>
       )}
 

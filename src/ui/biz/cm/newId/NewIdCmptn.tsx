@@ -1,4 +1,4 @@
-// MUI-CM-03-M23 통합로그인 계정등록완료 (설계서 00.공통 v0.84 slide37)
+// MUI-CM-03-M23 통합로그인 계정등록완료 (설계서 00.공통 v0.86 slide36)
 // 통합로그인 계정등록(MUI-CM-03-M22, NewIdPwReg)에서 등록 완료 시 이동하는 완료 화면.
 // 등록한 통합 ID 를 표시하고 [로그인 바로가기](M01) / [메인홈 바로가기]로 분기.
 // 셸(AppLayout) 안 + sub헤더 라우트(/login/new-id/result, header variant='sub' title='통합 로그인 계정 등록 완료').
@@ -13,7 +13,7 @@ import { Icon } from '@/ui/common/base/Icon'
 export function NewIdCmptn() {
   const navigate = useNavigate()
   const location = useLocation()
-  // 등록한 통합 계정 아이디 — M22 에서 전달. 직접 URL 진입 시 설계서 slide37 예시값(userID1234) 폴백.
+  // 등록한 통합 계정 아이디 — M22 에서 전달. 직접 URL 진입 시 설계서 slide36 예시값(userID1234) 폴백.
   const userId = (location.state as { userId?: string } | null)?.userId ?? 'userID1234'
 
   return (
