@@ -73,6 +73,15 @@ export const bdQueries = {
     })
   },
 
+  /** 평가위원별 기술평가점수(P04) — 팝업 열릴 때만 조회. */
+  useSelectEvlMbcmtTechEvlScrInfo(bidRsltId: string, enabled: boolean) {
+    return useQuery({
+      queryKey: bdKeys.selectEvlMbcmtTechEvlScrInfo(bidRsltId),
+      queryFn: () => bdService.selectEvlMbcmtTechEvlScrInfo(bidRsltId),
+      enabled: Boolean(bidRsltId) && enabled,
+    })
+  },
+
   /** 입찰참가신청 품목목록(M06). */
   useSelectItemList(pbancNo: string, page = 1) {
     return useQuery({

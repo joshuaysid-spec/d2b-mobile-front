@@ -20,6 +20,7 @@ import type {
   CnstwkLcnsRow,
   CrncOption,
   ElsgnCert,
+  EvlMbcmtTechEvlScrItem,
   LicenseResult,
   NegoRsltRow,
   OvsAtchDoc,
@@ -352,6 +353,14 @@ const smprcScsbdRsltInfo: SmprcScsbdRsltInfo = {
     },
   ],
 }
+
+// 평가위원별 기술평가점수 (MUI-BD-09-P04, slide251 예시값 — 공개 3건 + 비공개 1건).
+const evlMbcmtTechEvlScrList: EvlMbcmtTechEvlScrItem[] = [
+  { bzentyNm: '테스트업체1', evlMbcmtNm: '평가위원1', evlScr: 99 },
+  { bzentyNm: '테스트업체1', evlMbcmtNm: '평가위원2', evlScr: 91 },
+  { bzentyNm: '테스트업체1', evlMbcmtNm: '평가위원3', evlScr: 89 },
+  { bzentyNm: '테스트업체1', prvtRsn: '비공개' },
+]
 
 // ── 사전심사 (MUI-BD-02) ───────────────────────────────────────────────────
 const pqResult: PqResultResponse = {
@@ -1237,6 +1246,7 @@ export const MOCK_BD = {
   bidRsltItems,
   plrlRsrvPrcInfo,
   smprcScsbdRsltInfo,
+  evlMbcmtTechEvlScrList,
   // 사전심사
   pqResult,
   // 입찰진행

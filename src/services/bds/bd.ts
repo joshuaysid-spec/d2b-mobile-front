@@ -29,6 +29,7 @@ import type {
   CnstwkLcnsRow,
   CrncOption,
   ElsgnCert,
+  EvlMbcmtTechEvlScrItem,
   ItitbBidCnItem,
   LicenseResult,
   NegoRsltRow,
@@ -192,6 +193,17 @@ export const bdService = {
     if (USE_MOCK) return mockDelay(MOCK_BD.smprcScsbdRsltInfo)
     return apiClient.post<SmprcScsbdRsltInfo, SmprcScsbdRsltInfo>(
       `/v1/bds/bdopns/${id}/same-price-results`,
+    )
+  },
+
+  /**
+   * 평가위원별 기술평가점수 조회 — MUI-BD-09-P04
+   * (bidRsltDtl/EvlMbcmtTechEvlScrDtlFullPopup). 입찰결과 탭 업체 행의 '기술점수' 버튼(slide245).
+   */
+  async selectEvlMbcmtTechEvlScrInfo(bidRsltId: string): Promise<EvlMbcmtTechEvlScrItem[]> {
+    if (USE_MOCK) return mockDelay(MOCK_BD.evlMbcmtTechEvlScrList)
+    return apiClient.post<EvlMbcmtTechEvlScrItem[], EvlMbcmtTechEvlScrItem[]>(
+      `/v1/bds/bid-results/${bidRsltId}/tech-evaluation-scores`,
     )
   },
 

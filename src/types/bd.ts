@@ -1611,6 +1611,23 @@ export interface SmprcScsbdRsltInfo {
   rps: SmprcScsbdRpsItem[]
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// MUI-BD-09-P04 평가위원별기술평가점수상세조회 (설계서 02입찰 v1.88 slide251~252, 2026-08-13 화면 추가)
+//   입찰결과 탭(T03) 업체 행의 '기술점수' 버튼 → EvlMbcmtTechEvlScrDtl 팝업.
+// ────────────────────────────────────────────────────────────────────────────
+
+/** 평가위원별 기술평가점수 1건 (dlt_evlMbcmtTechEvlScrInfo, slide252 1.1). */
+export interface EvlMbcmtTechEvlScrItem {
+  /** 업체명 (bzentyNm, 100) */
+  bzentyNm: string
+  /** 평가위원 (evlMbcmtNm, 100) — 비공개인 경우 제공하지 않음 */
+  evlMbcmtNm?: string
+  /** 평가점수 (evlScr, 8,5) — 비공개인 경우 제공하지 않음 */
+  evlScr?: number
+  /** 비공개사유 (prvtRsn, 500) — 비공개인 경우 제공 */
+  prvtRsn?: string
+}
+
 /** 사전심사(PQ) 결과 (MUI-BD-02-M02) — 공고/업체/심사 요약 + 첨부. */
 export interface PqResultResponse {
   pbancInfo: BidLabeledRow[]
