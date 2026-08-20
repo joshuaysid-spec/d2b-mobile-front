@@ -149,7 +149,7 @@ function opnDtSection(): SearchFilterSection {
 // 검색어 섹션 — 유형별 필드 구성 다름.
 // 선택필드(`>`) 는 SearchFilter 셸이 공통 검색시트를 직접 연다(searchSheet):
 //   'item' → 품목별조회(P71, ItemInq) · 'producer' → 생산자조회(P72, PrdcrInq)
-function keywordSection(type: OpSrchType): SearchFilterSection {
+function keywordSection(type: OpSrchType, isGoods: boolean): SearchFilterSection {
   if (type === 'annual') {
     // 연간조달: 군구분·품질등급·재고번호·부품번호 + 품목(품목별검색)·생산자(생산자검색)
     return {
@@ -194,7 +194,7 @@ function keywordSection(type: OpSrchType): SearchFilterSection {
     { type: 'text', key: 'prcmPlanNm', label: '제목', placeholder: '제목을 입력하세요.' },
     { type: 'text', key: 'prcmNo', label: '판단번호', placeholder: '번호를 입력하세요.' },
   ]
-  if (type === 'plan') {
+  if (type === 'plan' && isGoods) {
     // 대표품명 → 품목별조회(P71)
     fields.push({
       type: 'selectionField',
@@ -279,13 +279,15 @@ function categorySections(type: OpSrchType): SearchFilterSection[] {
 }
 
 // 최종 schema 빌더 — 현재 탭(검색유형)으로 섹션 조립. 검색유형은 페이지 탭이 정하므로 인자로 받는다.
-// (탭 안에서는 섹션이 고정 → 정적 SearchFilterSchema 를 반환. 페이지가 useMemo(tab)로 캐시.)
-function buildOpSearchSchema(type: OpSrchType): SearchFilterSchema {
+// 동적 스키마: 셸이 매 렌더 draft(편집 중 값)로 재호출 — 업무구분 '물품' 체크 여부로 대표품명 노출 전환.
+function buildOpSearchSchema(type: OpSrchType, draft?: SearchFilterValue): SearchFilterSchema {
+  // draft 미전달(초기)이면 노출 — plan 탭 기본값이 전체 선택(goods 포함)이라 기본 상태와 일치.
+  const isGoods = !draft || ((draft.taskSeNm as string[]) ?? []).includes('goods')
   // 사전규격: 일자설정 → 검색어 → 공개일설정 (공개일이 검색어 뒤). 그 외: 날짜 → 검색어 → 구분설정.
   const sections =
     type === 'spec'
-      ? [taskSection(type), ...dateSections(type), keywordSection(type), opnDtSection()]
-      : [taskSection(type), ...dateSections(type), keywordSection(type), ...categorySections(type)]
+      ? [taskSection(type), ...dateSections(type), keywordSection(type, isGoods), opnDtSection()]
+      : [taskSection(type), ...dateSections(type), keywordSection(type, isGoods), ...categorySections(type)]
   return {
     title: '검색필터',
     sections,
@@ -390,8 +392,8 @@ export function PrcmPlanIntgListPage() {
   const isAnnual = tab === 'annual'
   const searchTargets = isAnnual ? ANNUAL_SEARCH_TARGETS : SEARCH_TARGETS
 
-  // 현재 탭 기준 schema / 초기화 기준값 — 탭 안에서는 고정이라 탭이 바뀔 때만 재계산.
-  const schema = useMemo(() => buildOpSearchSchema(tab), [tab])
+  // 현재 탭 기준 schema — 함수로 넘겨 셸이 draft 로 재계산(동적 스키마: 물품 체크 시에만 대표품명).
+  const schema = useMemo(() => (draft: SearchFilterValue) => buildOpSearchSchema(tab, draft), [tab])
   const tabDefaultValue = useMemo(() => buildDefaultValue(tab), [tab])
 
   // 목록 조회 — 검색유형(탭)별 전체 목록(목업/실연동은 opService 의 USE_MOCK 분기가 전환).
@@ -415,6 +417,10 @@ export function PrcmPlanIntgListPage() {
     // 탭 변경 → useSelectPrcmPlanList queryKey 변경 → 유형별 목록 자동 재조회.
   }
   const handleFilterSearch = (value: SearchFilterValue) => {
+    // 대표품명은 업무구분 '물품' 체크 시에만 노출되는 필드 — 물품 해제 상태로 검색하면
+    // 숨겨지기 전 입력값이 남아 실려올 수 있어 여기서 비운다(동적 스키마 잔존값 정제).
+    const isGoods = ((value.taskSeNm as string[]) ?? []).includes('goods')
+    if (!isGoods) value = { ...value, rprsItemNm: '' }
     setFilter(value)
     setFilterApplied(true) // 상세필터 적용됨 → 필터 버튼 강조
     setPage(1) // 필터 적용 시 첫 페이지부터
