@@ -2,7 +2,7 @@
 // P13 대금청구신청목록에서 착중도금신청서 카드 클릭 → /wm/dpsmnItrpyApfrDtl 진입(식별자는 navigate state).
 // 구성: 중요 안내 + sticky(요약 + 스텝 + 탭) + 탭(T03 신청정보 · T04 세부신청내역 · T23 지급상태(공용))
 //   — 선금(M02) 셸과 동일, 탭 콘텐츠·데이터만 다름(설계서 별도 화면 ID·폴더).
-// 데이터: wmQueries.useSelectDpsmnItrpyApfrDtl — 조회 완료까지 PageLoading.
+// 데이터: wmQueries.useSelectDpsmnItrpyAplyDtlDsctn — 조회 완료까지 PageLoading.
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
@@ -48,7 +48,7 @@ export function DpsmnItrpyApfrDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [printModalOpen, setPrintModalOpen] = useState(false)
 
-  const { data: detail } = wmQueries.useSelectDpsmnItrpyApfrDtl(id)
+  const { data: detail } = wmQueries.useSelectDpsmnItrpyAplyDtlDsctn(id)
   const steps = buildSteps()
 
   if (!stateItem) return <Navigate to="/wm" replace />

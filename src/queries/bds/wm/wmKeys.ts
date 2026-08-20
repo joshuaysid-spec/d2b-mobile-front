@@ -14,21 +14,22 @@ export const wmKeys = {
   selectPymtClmIntgList: (req: PymtClmIntgListRequest) =>
     ['wm', 'selectPymtClmIntgList', req] as const,
   selectPymtClmAplyList: (ctrtNo: string) => ['wm', 'selectPymtClmAplyList', ctrtNo] as const,
-  selectPrpayApfrDtl: (id: string) => ['wm', 'selectPrpayApfrDtl', id] as const,
+  selectPrpayClmAplyDtl: (id: string) => ['wm', 'selectPrpayClmAplyDtl', id] as const,
   selectPrpayAplyDsctns: (id: string) => ['wm', 'selectPrpayAplyDsctns', id] as const,
-  selectDpsmnItrpyApfrDtl: (id: string) => ['wm', 'selectDpsmnItrpyApfrDtl', id] as const,
+  selectDpsmnItrpyAplyDtlDsctn: (id: string) =>
+    ['wm', 'selectDpsmnItrpyAplyDtlDsctn', id] as const,
   selectDpsmnItrpyAplyDsctns: (id: string) => ['wm', 'selectDpsmnItrpyAplyDsctns', id] as const,
-  selectGiveSttsList: (id: string) => ['wm', 'selectGiveSttsList', id] as const,
-  selectPymtClmPrgrsSttList: (id: string) => ['wm', 'selectPymtClmPrgrsSttList', id] as const,
+  selectGiveStts: (id: string) => ['wm', 'selectGiveStts', id] as const,
+  selectPymtClmPrgrsStts: (id: string) => ['wm', 'selectPymtClmPrgrsStts', id] as const,
   selectCenterPrcmPymtClmDtl: (id: string) => ['wm', 'selectCenterPrcmPymtClmDtl', id] as const,
   selectSbsdPrcmPymtClmDtl: (id: string) => ['wm', 'selectSbsdPrcmPymtClmDtl', id] as const,
   selectCstrnPymtClmDtl: (id: string) => ['wm', 'selectCstrnPymtClmDtl', id] as const,
   selectPxcndCstPymtClmDtl: (id: string) => ['wm', 'selectPxcndCstPymtClmDtl', id] as const,
-  selectEpfcClclnClmDtl: (id: string) => ['wm', 'selectEpfcClclnClmDtl', id] as const,
-  selectPymtClmPrgrsPrstList: (req: PymtClmPrgrsPrstRequest) =>
-    ['wm', 'selectPymtClmPrgrsPrstList', req] as const,
-  selectRtnPymtDfryInfoList: (req: RtnPymtDfryInfoRequest) =>
-    ['wm', 'selectRtnPymtDfryInfoList', req] as const,
+  selectEpfcClcInAplyDtlDtsm: (id: string) => ['wm', 'selectEpfcClcInAplyDtlDtsm', id] as const,
+  selectPymtClmPrgrsList: (req: PymtClmPrgrsPrstRequest) =>
+    ['wm', 'selectPymtClmPrgrsList', req] as const,
+  selectPymtDfryInfoRtnList: (req: RtnPymtDfryInfoRequest) =>
+    ['wm', 'selectPymtDfryInfoRtnList', req] as const,
   selectOvsCmdtyRcvCnfdocList: (req: OvsCmdtyRcvCnfdocRequest) =>
     ['wm', 'selectOvsCmdtyRcvCnfdocList', req] as const,
   selectOvsElcrtTxivList: (ctrtNo: string) => ['wm', 'selectOvsElcrtTxivList', ctrtNo] as const,

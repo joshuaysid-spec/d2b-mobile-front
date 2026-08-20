@@ -32,10 +32,10 @@ export const wmQueries = {
   },
 
   /** 선금신청서상세(M02) — 목록 state 는 placeholder 로 쓰지 않음(필드 구성 상이). */
-  useSelectPrpayApfrDtl(id: string) {
+  useSelectPrpayClmAplyDtl(id: string) {
     return useQuery({
-      queryKey: wmKeys.selectPrpayApfrDtl(id),
-      queryFn: () => wmService.selectPrpayApfrDtl(id),
+      queryKey: wmKeys.selectPrpayClmAplyDtl(id),
+      queryFn: () => wmService.selectPrpayClmAplyDtl(id),
       enabled: Boolean(id),
     })
   },
@@ -50,10 +50,10 @@ export const wmQueries = {
   },
 
   /** 착·중도금신청서상세(M03). */
-  useSelectDpsmnItrpyApfrDtl(id: string) {
+  useSelectDpsmnItrpyAplyDtlDsctn(id: string) {
     return useQuery({
-      queryKey: wmKeys.selectDpsmnItrpyApfrDtl(id),
-      queryFn: () => wmService.selectDpsmnItrpyApfrDtl(id),
+      queryKey: wmKeys.selectDpsmnItrpyAplyDtlDsctn(id),
+      queryFn: () => wmService.selectDpsmnItrpyAplyDtlDsctn(id),
       enabled: Boolean(id),
     })
   },
@@ -68,19 +68,19 @@ export const wmQueries = {
   },
 
   /** 지급상태(T23, 상세 공용 탭). */
-  useSelectGiveSttsList(id: string) {
+  useSelectGiveStts(id: string) {
     return useQuery({
-      queryKey: wmKeys.selectGiveSttsList(id),
-      queryFn: () => wmService.selectGiveSttsList(id),
+      queryKey: wmKeys.selectGiveStts(id),
+      queryFn: () => wmService.selectGiveStts(id),
       enabled: Boolean(id),
     })
   },
 
   /** 진행상태(T24, 상세 공용 탭). */
-  useSelectPymtClmPrgrsSttList(id: string) {
+  useSelectPymtClmPrgrsStts(id: string) {
     return useQuery({
-      queryKey: wmKeys.selectPymtClmPrgrsSttList(id),
-      queryFn: () => wmService.selectPymtClmPrgrsSttList(id),
+      queryKey: wmKeys.selectPymtClmPrgrsStts(id),
+      queryFn: () => wmService.selectPymtClmPrgrsStts(id),
       enabled: Boolean(id),
     })
   },
@@ -122,27 +122,27 @@ export const wmQueries = {
   },
 
   /** 사후정산청구상세(M13). */
-  useSelectEpfcClclnClmDtl(id: string) {
+  useSelectEpfcClcInAplyDtlDtsm(id: string) {
     return useQuery({
-      queryKey: wmKeys.selectEpfcClclnClmDtl(id),
-      queryFn: () => wmService.selectEpfcClclnClmDtl(id),
+      queryKey: wmKeys.selectEpfcClcInAplyDtlDtsm(id),
+      queryFn: () => wmService.selectEpfcClcInAplyDtlDtsm(id),
       enabled: Boolean(id),
     })
   },
 
   /** 대금청구진행현황(M11). */
-  useSelectPymtClmPrgrsPrstList(req: PymtClmPrgrsPrstRequest = {}) {
+  useSelectPymtClmPrgrsList(req: PymtClmPrgrsPrstRequest = {}) {
     return useQuery({
-      queryKey: wmKeys.selectPymtClmPrgrsPrstList(req),
-      queryFn: () => wmService.selectPymtClmPrgrsPrstList(req),
+      queryKey: wmKeys.selectPymtClmPrgrsList(req),
+      queryFn: () => wmService.selectPymtClmPrgrsList(req),
     })
   },
 
   /** 대금지불정보(반납)(M10). */
-  useSelectRtnPymtDfryInfoList(req: RtnPymtDfryInfoRequest = {}) {
+  useSelectPymtDfryInfoRtnList(req: RtnPymtDfryInfoRequest = {}) {
     return useQuery({
-      queryKey: wmKeys.selectRtnPymtDfryInfoList(req),
-      queryFn: () => wmService.selectRtnPymtDfryInfoList(req),
+      queryKey: wmKeys.selectPymtDfryInfoRtnList(req),
+      queryFn: () => wmService.selectPymtDfryInfoRtnList(req),
     })
   },
 

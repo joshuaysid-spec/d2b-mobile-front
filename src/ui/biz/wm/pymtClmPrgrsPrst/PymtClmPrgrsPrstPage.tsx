@@ -107,7 +107,7 @@ export function PymtClmPrgrsPrstPage() {
   )
   const [gdntcOpen, setGdntcOpen] = useState(false) // P09 안내문
 
-  const { data: listData, isLoading } = wmQueries.useSelectPymtClmPrgrsPrstList()
+  const { data: listData, isLoading } = wmQueries.useSelectPymtClmPrgrsList()
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)

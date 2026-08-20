@@ -1,9 +1,21 @@
 // 대금청구/사후(WM) 도메인 API — frontend-architecture.md §7.1.
 // USE_MOCK=true(기본): 목업 반환 · false: apiClient 실호출.
-// 함수명 = 백엔드 메서드명(쿼리키·훅명과 통일: wmKeys.selectXxx / useSelectXxx) — 실규격 확정 전 임시 명명(select~ 스타일).
-// URL 은 각 함수 안에 인라인(실백엔드 .do 경로 확정 시 해당 함수만 수정).
+// 함수명 = 백엔드 메서드명(쿼리키·훅명과 통일: wmKeys.selectXxx / useSelectXxx) — 실 API 목록(no.407~444,
+// BirqController) 기준. 실목록에 없는 화면은 임시 명명(select~ 스타일)·임시 URL 유지.
+// URL 은 각 함수 안에 인라인(실백엔드 .do 경로).
+// 식별자는 POST body 로 전달 — 페이지가 넘기는 `id` 는 목록에서 만든 클라 합성키(`${clmNo}-${clmOdr}` ·
+// `${birqNo}-${ctrtCycl}`)라 청구번호(birqNo) 로 보낸다. 요청 항목명·분해 여부는 상세설계 확정 시 대조.
 // 응답 인터셉터가 공통 봉투({metadata,data})를 벗겨 data 알맹이를 반환하므로,
 // apiClient.post 의 2번째 제네릭(R)에 알맹이 타입을 지정해 반환 타입을 맞춘다.
+//
+// 실 API 목록에 있으나 모바일 설계서(05.대금청구및사후 v0.85)에 대응 화면이 없어 미배선인 건 —
+// 화면이 생기면 함수 추가(응답 항목명이 설계서에 없어 타입을 임의 작명하지 않는다):
+//   no.418 지급조건 조회            /cts/wm/birq/selectGiveCnd.do
+//   no.423 사용기간 경과 사용 세부내역서 호출  /cts/wm/birq/popupUsePrdElpsUseDtlDtsm.do
+//   no.424 국내재료비 및 직접경비 지급내역서 호출 /cts/wm/birq/popupDmstMtcoDrexpGiveDtsm.do
+//   no.435 대금청구이행보증서 조회   /cts/wm/birq/selectPymtClmImpltWtgr.do
+//   no.437 계약상대업체 조회         /cts/wm/birq/selectCtrtRltBzenty.do
+//   no.444 선금/착.중도금전자보증서조회 /cts/wm/birq/selectPrpayDpsmnItrpyElWtgrInq.do
 import { apiClient } from '@/lib/apiClient'
 import { USE_MOCK, mockDelay } from '@/lib/env'
 import { MOCK_WM } from '@/mocks/wm'
@@ -26,6 +38,7 @@ import type {
   PymtClmPrgrsSttItem,
   RtnPymtDfryInfoRequest,
   RtnPymtDfryInfoResult,
+  TxBllItem,
   OvsCmdtyRcvCnfdocRequest,
   OvsCmdtyRcvCnfdocResult,
   OvsElcrtTxivDtl,
@@ -42,7 +55,7 @@ export const wmService = {
   // ── 대금청구통합목록 (MUI-WM-01-M01) ──────────────────────────────────────
 
   /**
-   * 대금청구통합목록 조회 — MUI-WM-01-M01 (pymtClmIntgList/PymtClmIntgListPage).
+   * no.407 대금청구통합목록 조회 — MUI-WM-01-M01 (pymtClmIntgList/PymtClmIntgListPage).
    * 키워드 필터/더보기 페이징은 페이지 클라이언트 로직(서버 전환 시 req 로 이행).
    */
   async selectPymtClmIntgList(req: PymtClmIntgListRequest = {}): Promise<PymtClmIntgListResult> {
@@ -51,7 +64,7 @@ export const wmService = {
       return mockDelay({ list, total: list.length })
     }
     return apiClient.post<PymtClmIntgListResult, PymtClmIntgListResult>(
-      '/v1/wms/payment-claims',
+      '/cts/wm/birq/selectPymtClmIntgList.do',
       req,
     )
   },
@@ -61,6 +74,8 @@ export const wmService = {
   /**
    * 선택 계약의 대금청구 신청 목록 조회 — MUI-WM-01-P13 (pymtClmIntgList/PymtClmIntgAplyList).
    * 카드 클릭 → 바텀시트(slide21).
+   * 실목록(no.407~444) 에 대응 API 없음 — URL 임시. 통합목록(no.407)의 계약별 하위 목록이라
+   * 별도 번호가 모바일 Y 로 누락됐을 가능성 있어 반입 전 확인 필요.
    */
   async selectPymtClmAplyList(ctrtNo: string): Promise<PymtClmAplyItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.pymtClmAplyList)
@@ -72,15 +87,22 @@ export const wmService = {
   // ── 선금신청서상세 (MUI-WM-01-M02) ────────────────────────────────────────
 
   /**
-   * 선금신청서상세(차수·계약내용·신청금액·공급자) 조회 — MUI-WM-01-M02/T01
-   * (prpayApfrDtl/PrpayApfrDtlPage). On-Load(slide28).
+   * no.408 선금청구 신청상세 내역 조회 — MUI-WM-01-M02/T01
+   * (prpayApfrDtl/PrpayApfrDtlPage). 차수·계약내용·신청금액·공급자. On-Load(slide28).
+   * 구 `selectPrpayApfrDtl`.
    */
-  async selectPrpayApfrDtl(id: string): Promise<PrpayApfrDtl> {
+  async selectPrpayClmAplyDtl(id: string): Promise<PrpayApfrDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.prpayApfrDtl)
-    return apiClient.post<PrpayApfrDtl, PrpayApfrDtl>(`/v1/wms/prepayment-applications/${id}`)
+    return apiClient.post<PrpayApfrDtl, PrpayApfrDtl>('/cts/wm/birq/selectPrpayClmAplyDtl.do', {
+      birqNo: id,
+    })
   },
 
-  /** 선금 세부신청내역 조회 — MUI-WM-01-T02 (prpayApfrDtl/PrpayApfrDtl_AplyDtsm). */
+  /**
+   * 선금 세부신청내역 조회 — MUI-WM-01-T02 (prpayApfrDtl/PrpayApfrDtl_AplyDtsm).
+   * 실목록 외 — URL 임시. 설계서상 세부신청내역(dmt_aplyDsctnInfo)은 M02 데이터영역에 속하므로
+   * 상세조회(no.408) 응답에 포함될 가능성이 높다(사후정산 M13 은 실제로 상세에 포함) — 반입 전 확인.
+   */
   async selectPrpayAplyDsctns(id: string): Promise<PrpayAplyDsctnItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.prpayAplyDsctns)
     return apiClient.post<PrpayAplyDsctnItem[], PrpayAplyDsctnItem[]>(
@@ -91,17 +113,21 @@ export const wmService = {
   // ── 착·중도금신청서상세 (MUI-WM-01-M03) ───────────────────────────────────
 
   /**
-   * 착·중도금신청서상세 조회 — MUI-WM-01-M03/T03
-   * (dpsmnItrpyApfrDtl/DpsmnItrpyApfrDtlPage).
+   * no.421 착·중도금 신청상세 내역 조회 — MUI-WM-01-M03/T03
+   * (dpsmnItrpyApfrDtl/DpsmnItrpyApfrDtlPage). 구 `selectDpsmnItrpyApfrDtl`.
    */
-  async selectDpsmnItrpyApfrDtl(id: string): Promise<DpsmnItrpyApfrDtl> {
+  async selectDpsmnItrpyAplyDtlDsctn(id: string): Promise<DpsmnItrpyApfrDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.dpsmnItrpyApfrDtl)
     return apiClient.post<DpsmnItrpyApfrDtl, DpsmnItrpyApfrDtl>(
-      `/v1/wms/interim-payment-applications/${id}`,
+      '/cts/wm/birq/selectDpsmnItrpyAplyDtlDsctn.do',
+      { birqNo: id },
     )
   },
 
-  /** 착·중도금 세부신청내역 조회 — MUI-WM-01-T04 (dpsmnItrpyApfrDtl/DpsmnItrpyApfrDtl_AplyDtsm). */
+  /**
+   * 착·중도금 세부신청내역 조회 — MUI-WM-01-T04 (dpsmnItrpyApfrDtl/DpsmnItrpyApfrDtl_AplyDtsm).
+   * 실목록 외 — URL 임시(선금 T02 과 동일 사유: no.421 응답 포함 가능성).
+   */
   async selectDpsmnItrpyAplyDsctns(id: string): Promise<DpsmnItrpyAplyDsctnItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.dpsmnItrpyAplyDsctns)
     return apiClient.post<DpsmnItrpyAplyDsctnItem[], DpsmnItrpyAplyDsctnItem[]>(
@@ -112,101 +138,130 @@ export const wmService = {
   // ── 지급상태 (MUI-WM-01-T23, 상세 공용 탭) ────────────────────────────────
 
   /**
-   * 지급상태 목록 조회 — MUI-WM-01-T23
-   * (prpayDpsmnItrpyGiveStts/PrpayDpsmnItrpyGiveStts, 상세 공용 탭).
+   * no.433 지급상태조회 — MUI-WM-01-T23
+   * (prpayDpsmnItrpyGiveStts/PrpayDpsmnItrpyGiveStts, 상세 공용 탭). 구 `selectGiveSttsList`.
    */
-  async selectGiveSttsList(id: string): Promise<GiveSttsItem[]> {
+  async selectGiveStts(id: string): Promise<GiveSttsItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.giveSttsList)
-    return apiClient.post<GiveSttsItem[], GiveSttsItem[]>(
-      `/v1/wms/payment-claims/${id}/payment-statuses`,
-    )
+    return apiClient.post<GiveSttsItem[], GiveSttsItem[]>('/cts/wm/birq/selectGiveStts.do', {
+      birqNo: id,
+    })
   },
 
   // ── 진행상태 (MUI-WM-01-T24, 상세 공용 탭) ────────────────────────────────
 
   /**
-   * 대금청구 진행상태 목록 조회 — MUI-WM-01-T24 (prcmPymtClmStts/PrcmPymtClmStts,
+   * no.441 대금청구진행상태별조회 — MUI-WM-01-T24 (prcmPymtClmStts/PrcmPymtClmStts,
    * 대금청구 상세 M05·사후정산청구상세 M13 공용 탭). On-Load(slide81).
+   * 구 `selectPymtClmPrgrsSttList` — 진행현황 목록(no.432, M11)과 다른 API 다.
    */
-  async selectPymtClmPrgrsSttList(id: string): Promise<PymtClmPrgrsSttItem[]> {
+  async selectPymtClmPrgrsStts(id: string): Promise<PymtClmPrgrsSttItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.pymtClmPrgrsSttList)
     return apiClient.post<PymtClmPrgrsSttItem[], PymtClmPrgrsSttItem[]>(
-      `/v1/wms/payment-claims/${id}/progress-statuses`,
+      '/cts/wm/birq/selectPymtClmPrgrsStts.do',
+      { birqNo: id },
     )
   },
 
   // ── 대금청구 상세(중앙조달) (MUI-WM-01-M05) ───────────────────────────────
 
   /**
-   * 대금청구 상세(중앙조달: 계약정보+신청대상+공급자+신청금액+세금계산서) 조회 —
-   * MUI-WM-01-M05/T05~T08 (centerPrcmPymtClmDtl/CenterPrcmPymtClmDtlPage). On-Load(slide45).
+   * no.429 대금청구신청상세 내역 조회 — MUI-WM-01-M05/T05~T08
+   * (centerPrcmPymtClmDtl/CenterPrcmPymtClmDtlPage). 계약정보+신청대상+공급자+신청금액+세금계산서.
+   * On-Load(slide45).
+   *
+   * ⚠️ no.429 는 대금청구 상세 4유형(중앙 M05 · 부대 M06 · 공사 M07 · 기성대가 M08)이 공유하는
+   *   단일 엔드포인트로 판단해 4개 함수에 같은 URL 을 인라인했다(유형 분기는 요청 파라미터 추정,
+   *   응답 구조가 유형별로 달라 함수·타입은 화면별로 유지). 유형별 별도 API 로 확인되면 해당 함수만 수정.
    */
   async selectCenterPrcmPymtClmDtl(id: string): Promise<CenterPrcmPymtClmDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.centerPrcmPymtClmDtl)
     return apiClient.post<CenterPrcmPymtClmDtl, CenterPrcmPymtClmDtl>(
-      `/v1/wms/central-payment-claims/${id}`,
+      '/cts/wm/birq/selectPymtClmAplyDtlDsctn.do',
+      { birqNo: id },
     )
   },
 
   // ── 대금청구상세(부대조달) (MUI-WM-01-M06) ────────────────────────────────
 
   /**
-   * 대금청구상세(부대조달: 계약정보+신청대상+업체+신청금액+첨부) 조회 —
-   * MUI-WM-01-M06/T09~T12 (sbsdPrcmPymtClmDtl/SbsdPrcmPymtClmDtlPage).
+   * no.429 대금청구신청상세 내역 조회(부대조달) — MUI-WM-01-M06/T09~T12
+   * (sbsdPrcmPymtClmDtl/SbsdPrcmPymtClmDtlPage). 계약정보+신청대상+업체+신청금액+첨부.
+   * 엔드포인트 공유 사유는 `selectCenterPrcmPymtClmDtl` 주석 참고.
    */
   async selectSbsdPrcmPymtClmDtl(id: string): Promise<SbsdPrcmPymtClmDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.sbsdPrcmPymtClmDtl)
     return apiClient.post<SbsdPrcmPymtClmDtl, SbsdPrcmPymtClmDtl>(
-      `/v1/wms/subsidiary-payment-claims/${id}`,
+      '/cts/wm/birq/selectPymtClmAplyDtlDsctn.do',
+      { birqNo: id },
     )
   },
 
   // ── 대금청구상세(공사) (MUI-WM-01-M07) ────────────────────────────────────
 
   /**
-   * 대금청구상세(공사: 계약정보+비고+대가지급업체+첨부) 조회 —
-   * MUI-WM-01-M07/T13~T15 (cstrnPymtClmDtl/CstrnPymtClmDtlPage).
+   * no.429 대금청구신청상세 내역 조회(공사) — MUI-WM-01-M07/T13~T15
+   * (cstrnPymtClmDtl/CstrnPymtClmDtlPage). 계약정보+비고+대가지급업체+첨부.
+   * 엔드포인트 공유 사유는 `selectCenterPrcmPymtClmDtl` 주석 참고.
    */
   async selectCstrnPymtClmDtl(id: string): Promise<CstrnPymtClmDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.cstrnPymtClmDtl)
     return apiClient.post<CstrnPymtClmDtl, CstrnPymtClmDtl>(
-      `/v1/wms/construction-payment-claims/${id}`,
+      '/cts/wm/birq/selectPymtClmAplyDtlDsctn.do',
+      { birqNo: id },
     )
   },
 
   // ── 대금청구상세(기성대가) (MUI-WM-01-M08) ────────────────────────────────
 
   /**
-   * 대금청구상세(기성대가: 계약정보+업체+기성대가 신청금액+세금계산서+첨부) 조회 —
-   * MUI-WM-01-M08/T16~T19 (pxcndCstPymtClmDtl/PxcndCstPymtClmDtlPage).
+   * no.429 대금청구신청상세 내역 조회(기성대가) — MUI-WM-01-M08/T16~T19
+   * (pxcndCstPymtClmDtl/PxcndCstPymtClmDtlPage). 계약정보+업체+기성대가 신청금액+세금계산서+첨부.
+   * 엔드포인트 공유 사유는 `selectCenterPrcmPymtClmDtl` 주석 참고.
    */
   async selectPxcndCstPymtClmDtl(id: string): Promise<PxcndCstPymtClmDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.pxcndCstPymtClmDtl)
     return apiClient.post<PxcndCstPymtClmDtl, PxcndCstPymtClmDtl>(
-      `/v1/wms/progress-payment-claims/${id}`,
+      '/cts/wm/birq/selectPymtClmAplyDtlDsctn.do',
+      { birqNo: id },
     )
   },
 
   // ── 사후정산청구상세 (MUI-WM-01-M13) ──────────────────────────────────────
 
   /**
-   * 사후정산청구상세(차수+계약내용+신청금액+신청내역+공급자+세금계산서) 조회 —
-   * MUI-WM-01-M13/T20~T22 (epfcClclnClmDtl/EpfcClclnClmDtlPage).
+   * no.439 사후정산 신청상세 내역 조회 — MUI-WM-01-M13/T20~T22
+   * (epfcClclnClmDtl/EpfcClclnClmDtlPage). 차수+계약내용+신청금액+신청내역+공급자+세금계산서.
+   * 구 `selectEpfcClclnClmDtl`.
    */
-  async selectEpfcClclnClmDtl(id: string): Promise<EpfcClclnClmDtl> {
+  async selectEpfcClcInAplyDtlDtsm(id: string): Promise<EpfcClclnClmDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.epfcClclnClmDtl)
     return apiClient.post<EpfcClclnClmDtl, EpfcClclnClmDtl>(
-      `/v1/wms/post-settlement-claims/${id}`,
+      '/cts/wm/birq/selectEpfcClcInAplyDtlDtsm.do',
+      { birqNo: id },
     )
+  },
+
+  // ── 세금계산서 목록 (M05 T08 · M08 T18 · M13 T22 세금계산서 탭) ────────────
+
+  /**
+   * no.438 세금계산서 목록 조회 — 대금청구 상세의 세금계산서 탭(dlt_txBllList).
+   * 현재 화면은 상세 응답(txBlls)으로 렌더하므로 훅 없이 함수만 둔다(소비처 생기면 훅 추가).
+   */
+  async selectTxivList(id: string): Promise<TxBllItem[]> {
+    if (USE_MOCK) return mockDelay(MOCK_WM.centerPrcmPymtClmDtl.txBlls)
+    return apiClient.post<TxBllItem[], TxBllItem[]>('/cts/wm/birq/selectTxivList.do', {
+      birqNo: id,
+    })
   },
 
   // ── 대금청구진행현황 (MUI-WM-01-M11) ──────────────────────────────────────
 
   /**
-   * 대금청구진행현황 목록 조회 — MUI-WM-01-M11 (pymtClmPrgrsPrst/PymtClmPrgrsPrstPage).
-   * 키워드 필터/더보기 페이징은 페이지 클라이언트 로직.
+   * no.432 대금청구진행현황 목록 조회 — MUI-WM-01-M11 (pymtClmPrgrsPrst/PymtClmPrgrsPrstPage).
+   * 키워드 필터/더보기 페이징은 페이지 클라이언트 로직. 구 `selectPymtClmPrgrsPrstList`.
    */
-  async selectPymtClmPrgrsPrstList(
+  async selectPymtClmPrgrsList(
     req: PymtClmPrgrsPrstRequest = {},
   ): Promise<PymtClmPrgrsPrstResult> {
     if (USE_MOCK) {
@@ -214,7 +269,7 @@ export const wmService = {
       return mockDelay({ list, total: list.length })
     }
     return apiClient.post<PymtClmPrgrsPrstResult, PymtClmPrgrsPrstResult>(
-      '/v1/wms/payment-claim-progresses',
+      '/cts/wm/birq/selectPymtClmPrgrsList.do',
       req,
     )
   },
@@ -222,10 +277,10 @@ export const wmService = {
   // ── 대금지불정보(반납) (MUI-WM-01-M10) ────────────────────────────────────
 
   /**
-   * 대금지불정보(반납) 목록 조회 — MUI-WM-01-M10 (rtnPymtDfryInfo/RtnPymtDfryInfoPage).
-   * 키워드 필터/더보기 페이징은 페이지 클라이언트 로직.
+   * no.431 대금지불정보(반납) 목록 조회 — MUI-WM-01-M10 (rtnPymtDfryInfo/RtnPymtDfryInfoPage).
+   * 키워드 필터/더보기 페이징은 페이지 클라이언트 로직. 구 `selectRtnPymtDfryInfoList`.
    */
-  async selectRtnPymtDfryInfoList(
+  async selectPymtDfryInfoRtnList(
     req: RtnPymtDfryInfoRequest = {},
   ): Promise<RtnPymtDfryInfoResult> {
     if (USE_MOCK) {
@@ -233,10 +288,14 @@ export const wmService = {
       return mockDelay({ list, total: list.length })
     }
     return apiClient.post<RtnPymtDfryInfoResult, RtnPymtDfryInfoResult>(
-      '/v1/wms/return-payment-infos',
+      '/cts/wm/birq/selectPymtDfryInfoRtnList.do',
       req,
     )
   },
+
+  // ══ 국외(M71·P73·M74·M75·M77·P78) ════════════════════════════════════════
+  // 실 API 목록의 wm 은 BirqController(국내 대금청구) 16건뿐 — 국외 대금청구 컨트롤러가 없다.
+  // 아래 7개 함수는 전부 URL 임시 유지. 국외 목록 확보 시 이 블록만 교체.
 
   // ── 물품수령확인서목록 (MUI-WM-01-M71, 국외) ──────────────────────────────
 

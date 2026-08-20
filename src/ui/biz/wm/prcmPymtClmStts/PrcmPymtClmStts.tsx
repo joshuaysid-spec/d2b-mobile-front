@@ -24,7 +24,7 @@ function sttsRows(it: PymtClmPrgrsSttItem): TableRow[] {
 }
 
 export function PrcmPymtClmStts({ id }: PrcmPymtClmSttsProps) {
-  const { data: items = [] } = wmQueries.useSelectPymtClmPrgrsSttList(id)
+  const { data: items = [] } = wmQueries.useSelectPymtClmPrgrsStts(id)
 
   return (
     <section className="flex flex-col gap-krds-7 pb-6">

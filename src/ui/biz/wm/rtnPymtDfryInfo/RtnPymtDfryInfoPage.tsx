@@ -97,7 +97,7 @@ export function RtnPymtDfryInfoPage() {
   )
   const [gdntcOpen, setGdntcOpen] = useState(false) // P09 안내문
 
-  const { data: listData, isLoading } = wmQueries.useSelectRtnPymtDfryInfoList()
+  const { data: listData, isLoading } = wmQueries.useSelectPymtDfryInfoRtnList()
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)

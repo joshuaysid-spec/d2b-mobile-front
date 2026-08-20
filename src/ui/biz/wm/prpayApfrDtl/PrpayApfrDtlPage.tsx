@@ -3,7 +3,7 @@
 // 구성: 중요 안내(Notice urgent) + sticky(요약 SummaryInfo + 스텝 StepBar + 탭 TabList)
 //   + 탭 콘텐츠(T01 신청정보 · T02 세부신청내역 · T23 지급상태(공용)) — EX/CT 상세 셸 준용.
 // 인쇄(slide28: 증명서출력 P30)·전자서명 검증은 상세설계 미확정 — 인쇄만 확인모달 스텁, 검증은 미배선.
-// 데이터: wmQueries.useSelectPrpayApfrDtl — 조회 완료까지 PageLoading.
+// 데이터: wmQueries.useSelectPrpayClmAplyDtl — 조회 완료까지 PageLoading.
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
@@ -49,7 +49,7 @@ export function PrpayApfrDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [printModalOpen, setPrintModalOpen] = useState(false)
 
-  const { data: detail } = wmQueries.useSelectPrpayApfrDtl(id)
+  const { data: detail } = wmQueries.useSelectPrpayClmAplyDtl(id)
   const steps = buildSteps()
 
   if (!stateItem) return <Navigate to="/wm" replace />

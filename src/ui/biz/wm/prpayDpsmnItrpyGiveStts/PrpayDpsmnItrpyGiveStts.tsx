@@ -23,7 +23,7 @@ function sttsRows(it: GiveSttsItem): TableRow[] {
 }
 
 export function PrpayDpsmnItrpyGiveStts({ id }: PrpayDpsmnItrpyGiveSttsProps) {
-  const { data: items = [] } = wmQueries.useSelectGiveSttsList(id)
+  const { data: items = [] } = wmQueries.useSelectGiveStts(id)
 
   return (
     <section className="flex flex-col gap-krds-7 pb-6">

@@ -45,7 +45,7 @@ export function EpfcClclnClmDtlPage() {
   const [tab, setTab] = useState('ctrt')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
-  const { data: detail } = wmQueries.useSelectEpfcClclnClmDtl(id)
+  const { data: detail } = wmQueries.useSelectEpfcClcInAplyDtlDtsm(id)
   const steps = buildSteps()
 
   if (!stateItem) return <Navigate to="/wm" replace />
