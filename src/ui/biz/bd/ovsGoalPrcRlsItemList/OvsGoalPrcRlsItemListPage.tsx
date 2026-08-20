@@ -185,10 +185,10 @@ export function OvsGoalPrcRlsItemListPage() {
   // 목업 → Table rows 매핑 — 설계서 데이터영역(dl_resultList) 항목 순서 그대로 노출. 숫자/금액은 우측 정렬(type: number).
   const itemRows = (it: OvsGoalPrcRlsItem): TableRow[] => [
     { label: '항목번호', value: it.frcptlArtclNo },
-    { label: '품명', value: it.itemNm },
     { label: '재고번호', value: it.invtNo },
     { label: '부품번호', value: it.prtsNo },
     { label: '규격번호', value: it.spcfctNo },
+    { label: '품명', value: it.itemNm },
     { label: '납기기준일자', value: it.dudtYmd },
     { label: '단위', value: it.unitNm },
     { label: '본조수량', value: it.bscbgtQty.toLocaleString(), type: 'number' },
