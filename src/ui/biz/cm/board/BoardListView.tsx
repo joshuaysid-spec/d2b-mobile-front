@@ -73,7 +73,7 @@ export function BoardListView<T>({
     setAppliedSearch({ keyword: keyword.trim(), target })
     setPage(1)
     console.log('[BoardList] 검색', { keyword: keyword.trim(), target })
-    // cmService.selectBoardList({ [target]: keyword, page: 1, ... })
+    // cmService.selectNoticeList({ [target]: keyword, page: 1, ... })
   }
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)
@@ -82,7 +82,7 @@ export function BoardListView<T>({
     setKeyword('')
     setAppliedSearch(null)
     console.log('[BoardList] 상세필터 검색', value)
-    // cmService.selectBoardList(toRequest(value)) → 목록 재조회
+    // cmService.selectNoticeList(toRequest(value)) → 목록 재조회
   }
   const handlePageSize = (size: number) => {
     setPageSize(size)

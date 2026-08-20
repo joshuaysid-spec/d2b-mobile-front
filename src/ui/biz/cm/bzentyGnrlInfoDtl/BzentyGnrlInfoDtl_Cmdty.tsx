@@ -1,7 +1,7 @@
 // 업체정보 상세 - '물품(내자)' 탭 콘텐츠 (MUI-CM-01-T02, 설계서 slide122~123 / 문서 P121~122).
 // 아코디언(등록품목명세·담당자정보·대표품류및조합/단체) with 테이블 + 제출서류 안내(Infobox).
 //   - 등록품목명세(dl_regTrgtItemList)는 목록형 → 항목별 Table 반복.
-// 데이터는 목업(설계서 데이터영역 항목명·형식 그대로) — 추후 API(cmService.selectBzentyCmdtyInfo)로 대체.
+// 데이터는 목업(설계서 데이터영역 항목명·형식 그대로) — 추후 API(cmService.selectBzentyDmscptInfo)로 대체.
 import type { RegTrgtItem, PicInfo, KnditmAsctGrp } from '@/types/cm'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Infobox } from '@/ui/common/composites/Infobox'

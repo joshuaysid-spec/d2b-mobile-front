@@ -2,7 +2,7 @@
 //   웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 추가정보 신청 목록 > 상세.
 //   접수한 신청 데이터를 읽기전용으로 표시(아코디언 + Table). 구성: 일반정보 · 법인/개인 구분 · 보안측정인원 · FSC · 영업정보.
 //   ⚠️ 국내소재상사(T06)는 설계서에 데이터영역(항목명 영문) 표가 없어 화면 표기 기준 잠정 영문키(types/cm 참고).
-//   데이터=목업(설계서 slide144·145 예시값) — 추후 API: cmService.selectAddRegInfoAplyDtl. (2026-07-01 개정: 주민등록번호 삭제)
+//   데이터=목업(설계서 slide144·145 예시값) — 추후 API: cmService.selectBzentyInfoAddRegAplyDtl. (2026-07-01 개정: 주민등록번호 삭제)
 import type { ScrtyMsrmtPrsn, DmsAgtFscCode } from '@/types/cm'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'

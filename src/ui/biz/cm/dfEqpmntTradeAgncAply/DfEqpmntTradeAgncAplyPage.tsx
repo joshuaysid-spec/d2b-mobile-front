@@ -222,7 +222,7 @@ export function DfEqpmntTradeAgncAplyPage() {
   const handleSave = () => {
     setSaveSubmitOpen(false)
     setToastMsg('저장되었습니다.')
-    console.log('[M17] 저장하기', { mode, files }) // 추후: cmService.saveDfEqpmntTradeAgncAply(payload)
+    console.log('[M17] 저장하기', { mode, files }) // 추후: cmService.saveDfEqpmntTradeAgnc(payload)
   }
   // 제출하기 → 저장/제출 시트 닫고 제출 확인 모달 오픈.
   const openSubmitConfirm = () => {

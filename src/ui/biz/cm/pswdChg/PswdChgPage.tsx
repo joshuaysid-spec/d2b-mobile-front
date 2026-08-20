@@ -80,9 +80,9 @@ export function PswdChgPage() {
     defaultValues: { currentPassword: '', newPassword: '', newPasswordConfirm: '' },
   })
 
-  // 검증 통과 → 완료 모달 오픈. (추후 API: authService.changePassword — 실패 시 서버 검증 메시지 반영)
+  // 검증 통과 → 완료 모달 오픈. (추후 API: authService.procPswdStng — 실패 시 서버 검증 메시지 반영)
   const onSubmit = (data: PswdChgForm) => {
-    console.log('[pw-change] 비밀번호 변경', data) // 추후 API: authService.changePassword
+    console.log('[pw-change] 비밀번호 변경', data) // 추후 API: authService.procPswdStng
     setDoneOpen(true)
   }
 

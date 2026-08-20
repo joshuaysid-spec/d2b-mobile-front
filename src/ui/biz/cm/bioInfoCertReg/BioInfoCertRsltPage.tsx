@@ -23,7 +23,7 @@ export function BioInfoCertRsltPage() {
   const navigate = useNavigate()
   const setAccessToken = useAuthStore((s) => s.setAccessToken)
   const setUser = useAuthStore((s) => s.setUser)
-  const biometricLogin = authQueries.useBiometricLogin()
+  const biometricLogin = authQueries.useProcCertLogin()
 
   // [생체인증 로그인] — 디바이스 생체인증 로그인 → 토큰/유저 저장(store) 후 메인 홈 이동.
   const handleBioLogin = async () => {

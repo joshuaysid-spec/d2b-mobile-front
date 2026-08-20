@@ -23,7 +23,7 @@ export function PcQRLgnPage() {
       {/* QR 스캐너 프레임(280x280) — 4개 흰색 코너 브래킷 + 카메라 프리뷰 자리 */}
       <div className="relative size-70 shrink-0">
         {/* 카메라 프리뷰 자리(목업). 실제로는 <video> 카메라 스트림이 이 영역에 렌더됨.
-            // 추후: QR 스캔 — 후면 카메라 스트림 연결 + QR 디코드(예: cmService.scanPcQr) */}
+            // 추후: QR 스캔 — 후면 카메라 스트림 연결 + QR 디코드(예: authService.procQrLogin) */}
         <div aria-hidden className="absolute inset-0 rounded-krds-xl bg-neutral-300" />
         {/* 코너 브래킷 4개 — 흰색 L자 가이드 */}
         <span

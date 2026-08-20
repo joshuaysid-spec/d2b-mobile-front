@@ -138,8 +138,8 @@ export function PrfmncPrdocDtlPage() {
   const [sbmsnSelected, setSbmsnSelected] = useState<string[]>([]) // 선택 협회명(멀티)
 
   // On-Load(slide336 scwin.onpageload) — 시트가 열릴 때만 조회.
-  const { data: sbmsnAsctnList } = cmQueries.useSelectSbmsnAsctnList(detail.prfmncRcptNo, sbmsnOpen)
-  const prfmncSubmit = cmQueries.useSubmitPrfmncPrdoc()
+  const { data: sbmsnAsctnList } = cmQueries.useSelectPrfmncPrdocSbmsnList(detail.prfmncRcptNo, sbmsnOpen)
+  const prfmncSubmit = cmQueries.useProcPrfmncPrdocSbmsn()
   const prfmncCancelSubmit = cmQueries.useCancelSubmitPrfmncPrdoc()
 
   // 조회 결과를 편집 가능한 로컬 상태로 반영(비고 rmrkCn 는 입력 대상).

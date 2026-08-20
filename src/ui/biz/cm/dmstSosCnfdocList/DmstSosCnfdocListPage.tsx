@@ -86,7 +86,7 @@ const APPLICANT = {
   aplcntTelno: '010-1234-5678',
 }
 
-// 조달원확인서 신청 목록 데이터(dl_resultList, 설계서 slide134 항목명 영문) — 목업, 추후 API(cmService.selectDmstSosCnfdocList).
+// 조달원확인서 신청 목록 데이터(dl_resultList, 설계서 slide134 항목명 영문) — 목업, 추후 API(cmService.selectDmstSosCnfdocAplyList).
 //   상태(aplyRcptStts)는 '발급'으로 고정(신청 시 바로 발급, 설계서 slide134 비고). 신청사유(aplyRsn)=입찰참가용/확인용.
 const dl_resultList: DmstSosCnfdocItem[] = [
   {
@@ -178,7 +178,7 @@ export function DmstSosCnfdocListPage() {
     setFilterApplied(true)
     setPage(1)
     console.log('[DmstSosCnfdoc] 검색필터 조회', value)
-    // cmService.selectDmstSosCnfdocList({ edpPrcsYmdFrom, edpPrcsYmdTo, aplcntNm })
+    // cmService.selectDmstSosCnfdocAplyList({ edpPrcsYmdFrom, edpPrcsYmdTo, aplcntNm })
   }
   const handleSort = (value: string) => {
     setSort(value as 'latest' | 'oldest')
@@ -205,7 +205,7 @@ export function DmstSosCnfdocListPage() {
     setAplyOpen(false)
     setToastOpen(true)
     console.log('[DmstSosCnfdoc] 신청', { ...APPLICANT, aplyRsn: values.aplyRsn })
-    // cmService.applyDmstSosCnfdoc({ aplcntNm, aplcntTelno, aplyRsn }) → 성공 시 목록 재조회
+    // cmService.insertDmstSosCnfdocAply({ aplcntNm, aplcntTelno, aplyRsn }) → 성공 시 목록 재조회
   }
   // 제출 실패(신청사유 미입력) — 시트 스크롤 컨테이너에서 첫 에러 필드로 스크롤.
   const onAplyInvalid = () => {

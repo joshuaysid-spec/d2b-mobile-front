@@ -80,7 +80,7 @@ export function ItrstSttPage() {
   const handleToggleStar = (it: ItrstSttItem) => {
     // 별표 하이라이트만 토글 — 현재 페이지에서는 목록 유지(해제 메시지 없음).
     setItems((prev) => prev.map((x) => (x.id === it.id ? { ...x, itrst: !x.itrst } : x)))
-    console.log('[ItrstStt] 관심 토글', it.id) // 추후: cmService.toggleFavorite(id)
+    console.log('[ItrstStt] 관심 토글', it.id) // 추후: cmService.cancelBkmSttInfo(id)
   }
 
   return (

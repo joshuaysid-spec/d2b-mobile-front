@@ -145,7 +145,7 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
       persons, fscList, anlSaleAmt, astScl, lncLmt, bank, brnchNm, mlsplyFrstPtcpYmd,
       trnsPrdFrom, trnsPrdTo, dunsNo, agreed,
     })
-    // 추후 API: cmService.applyAddRegDmsAgt({ ... })
+    // 추후 API: cmService.insertBzentyDmstLctnCoInfoAddReg({ ... })
     setToastMsg('신청 완료되었습니다.')
     window.setTimeout(() => navigate(-1), 1200)
   }

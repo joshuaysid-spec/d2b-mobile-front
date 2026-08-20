@@ -208,7 +208,7 @@ export function DmstLctnColInfoAddRegPage() {
   // P14 확인 — 신청 접수(스텁) → 완료 토스트 → 목록 이동.
   const handleConfirmApply = () => {
     console.log('[M05] 추가 등록 신청', { bplcSecd, isoYn, rprsvEngNm, addrEng, knditm, bzstat, asctGrp, items, agreed })
-    // 추후 API: cmService.applyAddReg({ ... })
+    // 추후 API: cmService.insertBzentyDmscptInfoAddReg({ ... })
     setToastMsg('신청 완료되었습니다.')
     window.setTimeout(() => navigate(-1), 1200)
   }

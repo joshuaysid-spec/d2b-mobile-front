@@ -218,13 +218,13 @@ export function PrfmncPrdocPage() {
     setKeyword('')
     setAppliedSearch(null)
     console.log('[PrfmncPrdoc] 상세필터 검색', value)
-    // 추후 API: cmService.getPrfmncPrdocList({ aplyYmdFrom, aplyYmdTo, ctrtNo, prcsStts })
+    // 추후 API: cmService.selectPrfmncPrdocAplyList({ aplyYmdFrom, aplyYmdTo, ctrtNo, prcsStts })
   }
   const handleQuickSearch = () => {
     setAppliedSearch({ keyword: keyword.trim() })
     setPage(1)
     console.log('[PrfmncPrdoc] 빠른검색(계약번호)', keyword)
-    // 추후 API: cmService.getPrfmncPrdocList({ ctrtNo: keyword })
+    // 추후 API: cmService.selectPrfmncPrdocAplyList({ ctrtNo: keyword })
   }
   const handlePageSize = (size: number) => {
     setPageSize(size)

@@ -35,7 +35,7 @@ export const CTRT_RPSTR_SEEDS: RpstrListItem[] = [
 export const CTRT_RPSTR_MOCK: RpstrListItem[] = inflateRpstr(CTRT_RPSTR_SEEDS, 100)
 
 // 자료실 목록 아이템 → 상세(dm_rpstrInfo). 담당부서(deptNm)·내용(contsCn)은 목록에 없어 목업 보완.
-// 추후 API: cmService.selectRpstrDetail(contsNo).
+// 추후 API: cmService.selectRpstrDtl(contsNo).
 export function toRpstrDetail(item: RpstrListItem, deptNm = '자료실운영팀'): RpstrDetail {
   return {
     contsNo: item.contsNo,

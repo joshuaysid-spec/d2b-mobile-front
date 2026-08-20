@@ -11,7 +11,7 @@ export function DocBoxDtl_Atch({ files }: { files: DocBoxAtchFile[] }) {
     id: f.edmsDocId ?? `${f.fileNm}-${i}`, // 파일명 중복 가능 → 고유 id
     name: f.fileNm,
     size: f.fileSize,
-    onDownload: () => console.log('[DocBoxDtl] 첨부 다운로드', f.fileNm), // 추후: cmService.downloadAtch(edmsDocId, fileNm)
+    onDownload: () => console.log('[DocBoxDtl] 첨부 다운로드', f.fileNm), // 추후: cmService.downloadAtchFile(edmsDocId, fileNm)
   }))
 
   return (

@@ -62,7 +62,7 @@ export function NewIdPwReg() {
   const [idCheck, setIdCheck] = useState<IdCheckState>('idle')
   const intgAcntTarget = authQueries.useSelectIntgAcntTarget()
   const checkIntgAcntId = authQueries.useCheckIntgAcntId()
-  const registerIntgAcnt = authQueries.useRegisterIntgAcnt()
+  const registerIntgAcnt = authQueries.useInsertIntgLoginInfo()
 
   const {
     control,

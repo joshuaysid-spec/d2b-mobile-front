@@ -161,7 +161,7 @@ function EmptyRow({ children }: { children: React.ReactNode }) {
 export function BzentyGnrlInfoDtl_Gnrl() {
   // 수의계약배제 조회 조건 — 기본 3개월(설계서 slide117 "기본 값 : 3개월"), 전체 토글.
   const [exclPeriod, setExclPeriod] = useState<'3m' | 'all'>('3m')
-  // 목업이라 실제 필터링은 하지 않고 조회 조건만 표시(추후 API: cmService.selectBzentyRlsVltrnsRstric(period)).
+  // 목업이라 실제 필터링은 하지 않고 조회 조건만 표시(추후 API: cmService.selectBzentyRlsVltrnsRstrcList(period)).
   const exclList = RLS_VLTRNS_LIST
 
   return (
@@ -197,7 +197,7 @@ export function BzentyGnrlInfoDtl_Gnrl() {
             value={exclPeriod}
             onValueChange={(v) => {
               setExclPeriod(v as '3m' | 'all')
-              console.log('[T01] 수의계약배제 조회기간 →', v) // 추후 API: cmService.selectBzentyRlsVltrnsRstric
+              console.log('[T01] 수의계약배제 조회기간 →', v) // 추후 API: cmService.selectBzentyRlsVltrnsRstrcList
             }}
           />
           {exclList.length > 0 ? (

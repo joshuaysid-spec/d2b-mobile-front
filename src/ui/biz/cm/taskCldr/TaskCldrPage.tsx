@@ -37,7 +37,7 @@ const SCHDL_BADGE: Record<MyPageSchdlSeCd, { label: string; color: 'blue' | 'gre
 // ── 목업 (설계서 slide84 예시 + 항목명/형식) ─────────────────────────────────
 // 날짜는 '오늘' 기준 상대값 — 캘린더 기본 노출 월에 표식이 보이도록. API 연동 시 실제 일자로 교체.
 const schdlDt = (offset: number) => dayjs().add(offset, 'day').format('YYYY-MM-DD')
-// ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 로직을 교체(cmService.selectTaskCldrList / getSchdlDtl).
+// ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 로직을 교체(cmService.selectTaskCldrList / selectTaskCldrDtl).
 const MOCK_TASK_CLDR: TaskCldrItem[] = [
   {
     id: '1',
@@ -178,7 +178,7 @@ export function TaskCldrPage() {
       }
       setItems((prev) => [...prev, newItem])
       setSelected(values.schdlDt) // 등록한 날짜로 선택 이동
-      console.log('[TaskCldr] 일정 등록', newItem) // 추후: cmService.createSchdl(values)
+      console.log('[TaskCldr] 일정 등록', newItem) // 추후: cmService.insertTaskCldr(values)
     }
     setRegSheet(null)
   }

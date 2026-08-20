@@ -42,7 +42,7 @@ const dl_indvRcofcList: IndvRcofcItem[] = [
   },
 ]
 
-// ⚠️ 임시 목업 — API 연동 시 이 상수와 페이징 로직을 통째로 교체(cmService.selectIndvRcofcList).
+// ⚠️ 임시 목업 — API 연동 시 이 상수와 페이징 로직을 통째로 교체(cmService.selectIndvRcofcInfoList).
 const TOTAL = 258 // 설계서 slide103 더보기 (10/258)
 const MOCK_LIST: IndvRcofcItem[] = Array.from({ length: TOTAL }, (_, i) => ({
   ...dl_indvRcofcList[i % dl_indvRcofcList.length],

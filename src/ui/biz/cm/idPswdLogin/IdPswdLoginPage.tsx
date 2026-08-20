@@ -13,7 +13,7 @@
 //
 // 설계서 반영 메모:
 //   - '비밀번호 마스킹 - 비밀번호 입력 시 마스킹 보기 아이콘 표시'(설계서 콘텐츠영역) → 눈 아이콘 토글.
-//   - 로그인 = authService.login → 소속 업체 2건 이상이면 업체선택(P14) → loginWith 로 확정 →
+//   - 로그인 = authService.procIdPswdLogin → 소속 업체 2건 이상이면 업체선택(P14) → loginWith 로 확정 →
 //     authStore(토큰+유저) 저장 → 홈 이동. 실패는 AlertModal 안내(ApiError.message).
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -96,7 +96,7 @@ export function IdPswdLoginPage() {
   const [loginError, setLoginError] = useState<string | null>(null)
   // 통합 로그인 계정등록안내(P21) 팝업 — 구버전 아이디 로그인 시 노출. null 이면 닫힘.
   const [newIdInfo, setNewIdInfo] = useState<{ userNm: string } | null>(null)
-  const login = authQueries.useLogin()
+  const login = authQueries.useProcIdPswdLogin()
   const loginWith = authQueries.useLoginWith()
 
   const {

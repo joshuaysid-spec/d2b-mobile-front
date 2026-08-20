@@ -71,7 +71,7 @@ const dl_prcmBzentyUserList: BzentyUser[] = [
   { id: '2', userId: 'test2', userNm: '홍길동', deptNm: '총무부', telno: '02-1234-5678', mbtlNo: '010-1234-5678', rmrk: '-', userTyNm: '입찰대리인', userSttsCd: 'Y', userSttsNm: '사용' },
 ]
 
-// ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 페이징/필터를 통째로 교체(cmService.selectBzentyUserList).
+// ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 페이징/필터를 통째로 교체(cmService.selectPrcmBzentyUserList).
 //   설계서 slide203 '총 2,010 명' 시연 위해 2건을 2,010건으로 부풀린다.
 const TOTAL = 2010
 const MOCK_USERS: BzentyUser[] = Array.from({ length: TOTAL }, (_, i) => {
@@ -150,7 +150,7 @@ export function PrcmBzentyUserMngPage() {
         u.id === sttsTarget.id ? { ...u, userSttsCd: code, userSttsNm: STTS_NM[code] } : u,
       ),
     )
-    console.log('[PrcmBzentyUserMng] 상태변경 저장', sttsTarget.userId, '→', code) // 추후 API: cmService.changeBzentyUserStatus(userId, code)
+    console.log('[PrcmBzentyUserMng] 상태변경 저장', sttsTarget.userId, '→', code) // 추후 API: cmService.updatePrcmBzentyUserSttsList(userId, code)
     closeSttsChg()
   }
 

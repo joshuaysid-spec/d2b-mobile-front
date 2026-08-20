@@ -213,7 +213,7 @@ export function DfEqpmntTradeAgncChgPage() {
   const handleSave = () => {
     setSaveSubmitOpen(false)
     setToastMsg('저장되었습니다.')
-    console.log('[M18] 저장하기', { files }) // 추후: cmService.saveDfEqpmntTradeAgncChg(payload)
+    console.log('[M18] 저장하기', { files }) // 추후: cmService.updateDfEqpmntTradeAgnc(payload)
   }
   const openSubmitConfirm = () => {
     setSaveSubmitOpen(false)

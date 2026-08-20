@@ -24,7 +24,7 @@ const CATEGORY_COLOR: Record<string, 'blue' | 'red' | 'yellow' | 'green'> = {
   대금청구: 'red',
 }
 
-// 추후 API: cmService.selectNotiList()
+// 추후 API: cmService.selectNotiPrstList()
 const MOCK_NOTIFICATIONS: NotiItem[] = [
   {
     id: 'noti-1',

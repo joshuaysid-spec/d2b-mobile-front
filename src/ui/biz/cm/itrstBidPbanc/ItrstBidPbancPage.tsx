@@ -102,7 +102,7 @@ const dl_itrstBidPbancList: ItrstBidPbancItem[] = [
   },
 ]
 
-// ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 페이징 로직을 통째로 교체(cmService.selectItrstBidList).
+// ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 페이징 로직을 통째로 교체(cmService.selectItrstBidPbancList).
 const MOCK_LIST: ItrstBidPbancItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dl_itrstBidPbancList[i % dl_itrstBidPbancList.length]
   return { ...base, id: String(i + 1) }
@@ -134,7 +134,7 @@ export function ItrstBidPbancPage() {
     setFilter(value)
     setFilterApplied(true)
     setPage(1)
-    console.log('[ItrstBidPbanc] 검색필터', value) // 추후: cmService.selectItrstBidList(toRequest(value))
+    console.log('[ItrstBidPbanc] 검색필터', value) // 추후: cmService.selectItrstBidPbancList(toRequest(value))
   }
   const handlePageSize = (size: number) => {
     setPageSize(size)
@@ -158,7 +158,7 @@ export function ItrstBidPbancPage() {
   const unfavorite = (id: string) => {
     setItrst(id, false)
     setToastOpen(true) // 설계서: 즐겨찾기 해제 시 토스트("관심공고에서 제외 되었습니다.")
-    console.log('[ItrstBidPbanc] 관심공고 해제', id) // 추후: cmService.removeFavorite(id)
+    console.log('[ItrstBidPbanc] 관심공고 해제', id) // 추후: cmService.deleteItrstBidPbanc(id)
   }
   const handleToggleStar = (item: ItrstBidPbancItem) => {
     if (!item.itrst) {

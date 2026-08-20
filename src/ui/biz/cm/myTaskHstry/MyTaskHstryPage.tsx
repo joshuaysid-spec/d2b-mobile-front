@@ -79,7 +79,7 @@ const dl_myTaskList: MyTaskHstryItem[] = [
   },
 ]
 
-// ⚠️ 임시 목업 — API 연동 시 이 상수와 페이징 로직을 통째로 교체(cmService.selectMyTaskHstryList).
+// ⚠️ 임시 목업 — API 연동 시 이 상수와 페이징 로직을 통째로 교체(cmService.selectBidPrtcpAplyList).
 const MOCK_LIST: MyTaskHstryItem[] = Array.from({ length: 99 }, (_, i) => ({
   ...dl_myTaskList[i % dl_myTaskList.length],
   id: String(i + 1),
@@ -101,7 +101,7 @@ export function MyTaskHstryPage() {
   const handleTab = (next: string) => {
     setTab(next)
     setPage(1)
-    console.log('[MyTaskHstry] 탭', next) // 추후: cmService.selectMyTaskHstryList({ stts: next })
+    console.log('[MyTaskHstry] 탭', next) // 추후: cmService.selectBidPrtcpAplyList({ stts: next })
   }
   const handlePageSize = (size: number) => {
     setPageSize(size)

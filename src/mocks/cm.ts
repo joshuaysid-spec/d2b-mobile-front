@@ -21,6 +21,7 @@ import type {
   AsctGrpChcItem,
   BankChcItem,
   DmsAgtFscCode,
+  ItemInqDetail,
   KnditmChcItem,
   RegTrgtItemChcItem,
   // 추가정보 신청
@@ -28,11 +29,13 @@ import type {
   AddRegInfoAplyDetail,
   // 조달원확인서
   DmstSosCnfdocItem,
+  DmstSosCnfdocAplyInfo,
   // 군수품무역대리업
   DfEqpmntTradeAgncAplyItem,
   // 연관진행현황
   AnlPrgrsItem,
   // 업체정보관리 상세
+  BzentyInfo,
   BzentyGnrlDetail,
   BzentyCmdtyInfo,
   BzentyFcltDetail,
@@ -609,6 +612,31 @@ const SBMSN_ASCTN_LIST: SbmsnAsctnItem[] = [
   { sbmsnSttsNm: '한국소방시설협회' },
 ]
 
+// ── 업체 기본정보 / 품목상세 / 국내조달원확인서 신청인 (실 API 배선분, 소비 화면 대기) ──
+// no.677 업체기본정보조회 · no.644 조달업체목록조회 응답 1건. 다른 목업(BZENTY_GNRL_DETAIL)과 같은 업체.
+const BZENTY_BSC_INFO: BzentyInfo = {
+  bzentyNm: '(주)대한방산',
+  brno: '1234567890',
+  bzentyCd: 'BZ001',
+  rprsvNm: '김대표',
+  bzentyRgstrtYmd: '20180312',
+  crno: '1101110012345',
+}
+
+// no.632 품목상세조회 — 등록대상품목 선택(P08) 후 품목코드/업종 확정값.
+const ITEM_DTL_INFO: ItemInqDetail = {
+  itemCd: '8415101234',
+  bzstatCd: '2822',
+  bzstatNm: '제조업',
+}
+
+// no.624 국내조달원확인서조회 — 신청인 정보(자동완성 read-only 2건 + 신청사유).
+const DMST_SOS_CNFDOC_INFO: DmstSosCnfdocAplyInfo = {
+  aplcntNm: '홍길동',
+  aplcntTelno: '02-1234-5678',
+  aplyRsn: '군수품 납품을 위한 국내조달원 확인서 발급을 신청합니다.',
+}
+
 export const MOCK_CM = {
   // 통합검색
   searchResults: SEARCH_RESULTS,
@@ -662,4 +690,8 @@ export const MOCK_CM = {
   myPstList: MY_PST_LIST,
   // 실적증명서 제출(MUI-CM-04-P20)
   sbmsnAsctnList: SBMSN_ASCTN_LIST,
+  // 실 API 배선분(소비 화면 대기)
+  bzentyBscInfo: BZENTY_BSC_INFO,
+  itemDtlInfo: ITEM_DTL_INFO,
+  dmstSosCnfdocInfo: DMST_SOS_CNFDOC_INFO,
 } as const
