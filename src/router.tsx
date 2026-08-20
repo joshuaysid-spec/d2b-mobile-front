@@ -614,12 +614,6 @@ const OvsTmprBidCnRegPage = lazy(() =>
     default: m.OvsTmprBidCnRegPage,
   })),
 )
-// 이전공고입찰내역등록(MUI-BD-01-P79(구 M79 — v1.83 재편), /bd/ovs/locker/:id/bfr-bid-cn) — biz/bd/ovsBfrTmprBidBidCnReg.
-const OvsBfrTmprBidBidCnRegPage = lazy(() =>
-  import('@/ui/biz/bd/ovsBfrTmprBidBidCnReg/OvsBfrTmprBidBidCnRegPage').then((m) => ({
-    default: m.OvsBfrTmprBidBidCnRegPage,
-  })),
-)
 // 국외 입찰참가신청서 작성(MUI-BD-04-M71 · T71~T75(구 M71~M77 — v1.83 재편), /bd/ovs/prgrs/:id/aply) — biz/bd/ovsBidPrtcpAply. 서약서 → 신청서 4탭 마법사.
 const OvsBidPrtcpAplyPage = lazy(() =>
   import('@/ui/biz/bd/ovsBidPrtcpAply/OvsBidPrtcpAplyPage').then((m) => ({
@@ -1585,11 +1579,6 @@ export const router = createBrowserRouter([
         path: 'bd/ovsTmprBidCnReg',
         element: <OvsTmprBidCnRegPage />,
         handle: { header: { variant: 'sub', title: '입찰내역 작성' } },
-      },
-      {
-        path: 'bd/ovsBfrTmprBidBidCnReg',
-        element: <OvsBfrTmprBidBidCnRegPage />,
-        handle: { header: { variant: 'sub', title: '이전공고입찰내역등록' } },
       },
       {
         path: 'bd/ovsBidPrtcpAply',

@@ -26,6 +26,7 @@ import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
+import { OvsBfrTmprBidBidCnRegFullPopup } from '@/ui/biz/bd/ovsBfrTmprBidBidCnReg/OvsBfrTmprBidBidCnRegFullPopup'
 import { OvsBidPbancDtl } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbancDtl'
 import { OvsBidPbancDtl2 } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbancDtl2'
 
@@ -228,6 +229,7 @@ export function OvsBidPbancDtlPage() {
   const [favorite, setFavorite] = useState(false)
   const [loginGuideOpen, setLoginGuideOpen] = useState(false) // 로그인 안내(MUI-MS-03-P15)
   const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보조회 풀팝업(MUI-BD-01-M74, UI-BD-01-P73)
+  const [bfrBidOpen, setBfrBidOpen] = useState(false) // 이전공고입찰내역등록 풀팝업(MUI-BD-01-P79)
   // 관심공고 등록/제외 토스트(MUI-BD-01-P13)
   const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
 
@@ -285,7 +287,7 @@ export function OvsBidPbancDtlPage() {
         navigate('/bd/ovs/locker') // 국외 보관함 목록(MUI-CM-01-M71)
         break
       case 'prevBid':
-        navigate('/bd/ovsBfrTmprBidBidCnReg', { state: passed }) // 이전공고입찰내역등록(UI-BD-01-P78)
+        setBfrBidOpen(true) // 이전공고입찰내역등록(MUI-BD-01-P79) — 풀페이지 팝업
         break
       case 'goalPrc':
         navigate('/bd/ovs/goal-prc-items') // 목표가공개품목조회(MUI-BD-01-M75)
@@ -399,6 +401,13 @@ export function OvsBidPbancDtlPage() {
 
       {/* 환율정보 조회 풀팝업 (MUI-BD-01-M74) — 일반정보 탭 '환율정보' / 바로가기 '환율정보 바로가기' */}
       <OvsExchrtListFullPopup open={exchrtOpen} onOpenChange={setExchrtOpen} />
+
+      {/* 이전공고입찰내역등록 (MUI-BD-01-P79) — 풀페이지 팝업. */}
+      <OvsBfrTmprBidBidCnRegFullPopup
+        open={bfrBidOpen}
+        onOpenChange={setBfrBidOpen}
+        lockerId={passed.rfrncNo}
+      />
 
       {/* 로그인 안내 (MUI-MS-03-P15) — 업체담당자 전용 동작을 비로그인 사용자가 시도할 때. */}
       <AlertModal

@@ -5,7 +5,7 @@
 //   - 품목 목록 탭: 입찰방법에 따라 단가제(M77 BidDsctn) / 총액제(M78 BidDsctn2) 를 같은 페이지에서 분기(페이지 복제 금지).
 // 단가제/총액제 분기 테스트: 직접 URL 진입 시 ?bidMthdNm=총액제 쿼리로 M78(총액제) 확인 가능.
 import { useState } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router-dom'
 
 import { Button } from '@/ui/common/base/Button'
 import { PageTitle } from '@/ui/common/base/PageTitle'
@@ -14,6 +14,7 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
+import { OvsBfrTmprBidBidCnRegFullPopup } from '@/ui/biz/bd/ovsBfrTmprBidBidCnReg/OvsBfrTmprBidBidCnRegFullPopup'
 import { BidDsctn } from '@/ui/biz/bd/ovsTmprBidCnReg/BidDsctn'
 import { BidDsctn2 } from '@/ui/biz/bd/ovsTmprBidCnReg/BidDsctn2'
 import type { BscPbancInfo } from '@/types/bd'
@@ -38,7 +39,6 @@ const MOCK_BSC_PBANC_INFO: BscPbancInfo = {
 }
 
 export function OvsTmprBidCnRegPage() {
-  const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
   // 보관함 상세에서 navigate state 로 넘어온 항목 — 다른 유닛 화면에서 부분 필드만 넘어올 수 있어
@@ -63,11 +63,12 @@ export function OvsTmprBidCnRegPage() {
     document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  // 이전공고입찰내역 불러오기 → 이전공고입찰내역등록 화면으로 이동
+  // 이전공고입찰내역 불러오기 → 이전공고입찰내역등록 풀팝업(MUI-BD-01-P79)
+  const [bfrBidOpen, setBfrBidOpen] = useState(false)
   const handleBfrBidCn = () => {
     console.log('[M76] 이전공고입찰내역 불러오기', detail.intgRfrncNo)
     // 추후 API: bdService.selectOvsBfrPbancBidCnList(intgRfrncNo)
-    navigate('/bd/ovsBfrTmprBidBidCnReg', { state: detail })
+    setBfrBidOpen(true)
   }
 
   // ── 일반정보 탭(M76) — 공고일반(dm_bscPbancInfo) + 담당자 정보 ──
@@ -153,6 +154,13 @@ export function OvsTmprBidCnRegPage() {
           )}
         </>
       )}
+
+      {/* 이전공고입찰내역등록 (MUI-BD-01-P79) — 풀페이지 팝업 */}
+      <OvsBfrTmprBidBidCnRegFullPopup
+        open={bfrBidOpen}
+        onOpenChange={setBfrBidOpen}
+        lockerId={detail.intgRfrncNo}
+      />
 
       {/* 플로팅 — 맨위로 */}
       <FloatingActionButton

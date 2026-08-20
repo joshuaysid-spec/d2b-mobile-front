@@ -1,13 +1,13 @@
-// 이전공고입찰내역등록 (MUI-BD-01-P79(구 M79 — v1.83 재편), 설계서 slide320·322·323 / 영문 OvsBfrTmprBidBidCnRegPage).
-// 이전 공고 보관함 목록의 입찰내역을 현재 공고의 입찰내역으로 불러오는 화면.
-// 진입: 홈 > 마이페이지 > 국외 보관함 > 입찰내역 작성(/bd/ovsTmprBidCnReg) > 이전공고입찰내역등록.
+// 이전공고입찰내역등록 (MUI-BD-01-P79(구 M79 — v1.83 재편), 설계서 slide320·322·323 / 영문 OvsBfrTmprBidBidCnReg).
+// 이전 공고 보관함 목록의 입찰내역을 현재 공고의 입찰내역으로 불러오는 풀페이지 팝업(*FullPopup 컨벤션).
+// 진입: 국외 입찰공고 상세(M71) 플로팅 · 입찰내역 작성(M76) '이전공고입찰내역 불러오기' — 부모가 open 상태 소유.
 // 구성: 총건수 + 보관함 이전공고 카드 목록(dl_pbancInfo) + '입찰내역 품목 보기' → 이전공고입찰내역품목상세(P80) 풀팝업.
 // 데이터는 목업(설계서 1.1 dl_pbancInfo 항목명 그대로), 핸들러는 API 경계 스텁(console.log).
-import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
+import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { BfrPbancBidDsctnItemDtlFullPopup } from '@/ui/biz/bd/ovsBfrTmprBidBidCnReg/BfrPbancBidDsctnItemDtlFullPopup'
 import type { BfrPbancInfoItem } from '@/types/bd'
 
@@ -61,12 +61,25 @@ const MOCK_BFR_PBANC_LIST: BfrPbancInfoItem[] = [
   },
 ]
 
-export function OvsBfrTmprBidBidCnRegPage() {
-  // 국외 보관함 식별자(통합참조번호) — URL 미포함, 진입 화면이 navigate state 로 전달(공고 상세는 rfrncNo).
-  const entry = useLocation().state as { intgRfrncNo?: string; rfrncNo?: string } | null
-  const lockerId = entry?.intgRfrncNo ?? entry?.rfrncNo
+export interface OvsBfrTmprBidBidCnRegFullPopupProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  /** 국외 보관함 식별자(통합참조번호) — 진입 화면이 주입(공고 상세는 rfrncNo). */
+  lockerId?: string
+}
+
+export function OvsBfrTmprBidBidCnRegFullPopup({
+  open,
+  onOpenChange,
+  lockerId,
+}: OvsBfrTmprBidBidCnRegFullPopupProps) {
   // 이전공고입찰내역품목상세(P80) — 열려 있는 대상 공고(행 클릭 시 설정). null = 닫힘.
   const [openPbanc, setOpenPbanc] = useState<BfrPbancInfoItem | null>(null)
+
+  // 팝업이 다시 열릴 때 중첩 팝업 상태 초기화 — 공고를 바꿔 재진입해도 이전 상태가 남지 않게.
+  useEffect(() => {
+    if (open) setOpenPbanc(null)
+  }, [open])
 
   // On-Load: 보관함이전공고목록조회 — 목업. 추후 API: bdService.selectBfrPbancLockerList(lockerId)
   const list = MOCK_BFR_PBANC_LIST
@@ -74,7 +87,7 @@ export function OvsBfrTmprBidBidCnRegPage() {
 
   // 보관함목록행 클릭(grd_list_oncecllclick) — 클릭한 공고의 입찰내역 목록 조회(P80 팝업).
   const handlePbancClick = (item: BfrPbancInfoItem) => {
-    console.log('[M79] 이전공고입찰내역목록조회', { lockerId, pbancNo: item.pbancNo, pbancOd: item.pbancOd })
+    console.log('[P79] 이전공고입찰내역목록조회', { lockerId, pbancNo: item.pbancNo, pbancOd: item.pbancOd })
     // 추후 API: bdService.selectBfrPbancBidCnList(item.pbancNo, item.pbancOd)
     setOpenPbanc(item)
   }
@@ -97,28 +110,30 @@ export function OvsBfrTmprBidBidCnRegPage() {
   }))
 
   return (
-    <div className="flex w-full flex-col">
-      {/* 총 건수 */}
-      <div className="px-4 pt-4">
-        <p className="text-[17px] font-bold leading-normal text-krds-text-primary-active">
-          총 {total}건
-        </p>
-      </div>
+    <FullPopup open={open} onOpenChange={onOpenChange} title="이전공고입찰내역등록">
+      <div className="flex w-full flex-col">
+        {/* 총 건수 */}
+        <div className="px-4 pt-4">
+          <p className="text-[17px] font-bold leading-normal text-krds-text-primary-active">
+            총 {total}건
+          </p>
+        </div>
 
-      {/* 보관함 이전공고 카드 목록 (px-4 인셋) */}
-      <div className="flex flex-col gap-krds-7 px-4 pb-6 pt-krds-7">
-        <CardList items={cardItems} />
-      </div>
+        {/* 보관함 이전공고 카드 목록 (px-4 인셋) */}
+        <div className="flex flex-col gap-krds-7 px-4 pb-6 pt-krds-7">
+          <CardList items={cardItems} />
+        </div>
 
-      {/* 이전공고입찰내역품목상세(MUI-BD-01-P80) — 풀팝업. 컨테이너 상태는 페이지가 소유. */}
-      <BfrPbancBidDsctnItemDtlFullPopup
-        open={openPbanc !== null}
-        onOpenChange={(open) => {
-          if (!open) setOpenPbanc(null)
-        }}
-        pbanc={openPbanc}
-      />
-    </div>
+        {/* 이전공고입찰내역품목상세(MUI-BD-01-P80) — 풀팝업. 컨테이너 상태는 P79 가 소유. */}
+        <BfrPbancBidDsctnItemDtlFullPopup
+          open={openPbanc !== null}
+          onOpenChange={(next) => {
+            if (!next) setOpenPbanc(null)
+          }}
+          pbanc={openPbanc}
+        />
+      </div>
+    </FullPopup>
   )
 }
-OvsBfrTmprBidBidCnRegPage.displayName = 'OvsBfrTmprBidBidCnRegPage'
+OvsBfrTmprBidBidCnRegFullPopup.displayName = 'OvsBfrTmprBidBidCnRegFullPopup'

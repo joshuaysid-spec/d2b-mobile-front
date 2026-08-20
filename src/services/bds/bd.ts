@@ -915,7 +915,7 @@ export const bdService = {
 
   /**
    * 국외 이전공고 보관함목록 조회(보관함 ID)
-   * — MUI-BD-01-P79(구 M79 — v1.83 재편) (ovsBfrTmprBidBidCnReg/OvsBfrTmprBidBidCnRegPage).
+   * — MUI-BD-01-P79(구 M79 — v1.83 재편) (ovsBfrTmprBidBidCnReg/OvsBfrTmprBidBidCnRegFullPopup).
    */
   async selectBfrPbancLockerList(lockerId: string): Promise<BfrPbancInfoItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.bfrPbancLockerList)
