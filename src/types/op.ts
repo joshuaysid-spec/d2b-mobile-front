@@ -13,11 +13,12 @@ export type OpSearchFilter = SearchFilterValue
 export type OpSrchType = 'plan' | 'spec' | 'annual'
 
 // 조달계획 통합목록 데이터(설계서 dlt_prcmPlanList) 카드 1건 — 항목명 설계서 그대로.
+// 연간조달계획(annual)은 데이터영역이 아예 다르다(dlt_anlPrcmPlanList → OpAnlPrcmPlanItem).
 export interface OpPlanItem {
   /** 카드 식별자 (상세 라우팅 키) */
   id: string
   /** 검색유형(srchType) — 'spec'(사전규격)이면 사전규격상세로 라우팅. */
-  srchType: OpSrchType
+  srchType: 'plan' | 'spec'
   /** 순번 (no) */
   no: number
   /** 업무구분(taskSeNm) — 물품/용역/공사/국외. '국외'면 국외 조달(국내/국외 분기 기준). */
@@ -73,10 +74,16 @@ export interface OpListRequest {
   filter?: OpSearchFilter
 }
 
+/**
+ * 통합목록 카드 1건 — 검색유형(srchType)으로 판별하는 유니온.
+ * 조달계획/사전규격(dlt_prcmPlanList)과 연간조달계획(dlt_anlPrcmPlanList)은 표시 항목이 완전히 다르다.
+ */
+export type OpListItem = OpPlanItem | OpAnlPrcmPlanItem
+
 /** 목록 조회 결과 — 카드 목록 + 총건수(더보기/페이징 구동). */
 export interface OpListResult {
   /** 현재 페이지 카드 목록. */
-  list: OpPlanItem[]
+  list: OpListItem[]
   /** 전체 건수(총 N건 표시·더보기 종료 판정). */
   total: number
 }
@@ -139,6 +146,8 @@ export interface OpOpinion {
 export interface OpAnlPrcmPlanItem {
   /** 카드 식별자(상세 조회 키) — 설계서 데이터영역 미정의, 프론트 목록 key 용. */
   id: string
+  /** 검색유형(srchType) — 연간조달계획 고정. OpPlanItem 과의 판별자. */
+  srchType: 'annual'
   /** 순번(no). */
   no: number
   /** 업무구분(taskSeNm) — 연간조달계획은 '국외' 고정(설계서 slide76 '기본 노출 국외'). */

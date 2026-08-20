@@ -125,24 +125,9 @@ const BASE_PLAN_LIST: OpPlanItem[] = [
     drctnAmt: 210000000,
     implPrgrsStcd: '공고게시',
   },
-  {
-    id: '6',
-    srchType: 'annual',
-    no: 8,
-    taskSeNm: '국외',
-    ctrtMthdCd: '일반경쟁',
-    bidMthdCd: '전자입찰',
-    prcmNo: '6000F',
-    prcmPlanNm: "'26년 연간 군수품 해외조달",
-    orderPrnmntYm: '2026-06',
-    deptCd: '해외조달팀',
-    userNm: '최해외',
-    drctnAmt: 880000000,
-    implPrgrsStcd: '계약대기',
-  },
 ]
 
-// 보유 샘플(8건)을 100건으로 부풀림 — 더보기(10개씩)·검색 데모용. id·prcmNo·no 는 인덱스로 고유화.
+// 보유 샘플(7건)을 100건으로 부풀림 — 더보기(10개씩)·검색 데모용. id·prcmNo·no 는 인덱스로 고유화.
 // 실백엔드 연동 시 이 파일은 미사용(서비스 apiClient 분기)이라 그대로 두면 된다.
 const PLAN_LIST: OpPlanItem[] = Array.from({ length: 100 }, (_, i) => {
   const base = BASE_PLAN_LIST[i % BASE_PLAN_LIST.length]
@@ -166,33 +151,73 @@ const OPINIONS: OpOpinion[] = [
   { id: '3', isPublic: true, company: '㈜미래회사', title: '업체의 의견이 있습니다', name: '성춘향', datetime: '2026-01-03 14:50' },
 ]
 
-// 국외 연간조달계획 상세(MUI-OP-01-M78) — 설계서 slide76·77 목업값 그대로(dlt_anlPrcmPlanList).
-const ANL_PRCM_PLAN_DTL: OpAnlPrcmPlanItem = {
-  id: '6',
-  no: 1,
-  taskSeNm: '국외',
-  prcmRqtInstCd: '육군',
-  prcmRqtNo: 'ABCD1234',
-  fscCdNtnItemIdntfNo: 'A1234567890',
-  prtsNo: 'AA',
-  inspShcd: '-',
-  prdcrSgn: 'A123',
-  prdcrDpcn: '2',
-  unitCd: 'EA',
-  drctnQty: 1600,
-  drctnUntprc: 4000,
-  drctnAmt: 6400000,
-  itemNm: 'GBU-12 신관 FMU-139급(비)',
-  spcfctNo: '-',
-  aplcnEqpmntCd: '-',
-  aplcnEqpmntNm: '-',
-  prgrNo: '-',
-  clsfNo: '-',
-  functnNm: '-',
-  frcptlItemMsprgStcd: '지시중',
-  itemFwkCd: '-',
-  rcptPd: '2026-02-10 ~ 2026-02-12',
-}
+// 연간조달계획(dlt_anlPrcmPlanList) — 통합목록 annual 카드 + 국외 연간조달계획상세(M78) 공용.
+// 설계서 slide76(카드 2건: 육군/공군) · slide77(상세 전체 항목) 목업값 그대로.
+const BASE_ANNUAL_LIST: OpAnlPrcmPlanItem[] = [
+  {
+    id: 'a1',
+    srchType: 'annual',
+    no: 1,
+    taskSeNm: '국외',
+    prcmRqtInstCd: '육군',
+    prcmRqtNo: 'ABCD1234',
+    fscCdNtnItemIdntfNo: 'A1234567890',
+    prtsNo: 'AA',
+    inspShcd: '-',
+    prdcrSgn: 'A123',
+    prdcrDpcn: '2',
+    unitCd: 'EA',
+    drctnQty: 1600,
+    drctnUntprc: 4000,
+    drctnAmt: 6400000,
+    itemNm: 'GBU-12 신관 FMU-139급(비)',
+    spcfctNo: '-',
+    aplcnEqpmntCd: '-',
+    aplcnEqpmntNm: '-',
+    prgrNo: '-',
+    clsfNo: '-',
+    functnNm: '-',
+    frcptlItemMsprgStcd: '지시중',
+    itemFwkCd: '-',
+    rcptPd: '2026-02-10 ~ 2026-02-12',
+  },
+  {
+    id: 'a2',
+    srchType: 'annual',
+    no: 2,
+    taskSeNm: '국외',
+    prcmRqtInstCd: '공군',
+    prcmRqtNo: 'EFGH1234',
+    fscCdNtnItemIdntfNo: 'F987654123',
+    prtsNo: 'BB',
+    inspShcd: '-',
+    prdcrSgn: 'B123',
+    prdcrDpcn: '1',
+    unitCd: 'EA',
+    drctnQty: 320,
+    drctnUntprc: 12500,
+    drctnAmt: 4000000,
+    itemNm: 'AIM-9 발사대 LAU-129급(비)',
+    spcfctNo: '-',
+    aplcnEqpmntCd: '-',
+    aplcnEqpmntNm: '-',
+    prgrNo: '-',
+    clsfNo: '-',
+    functnNm: '-',
+    frcptlItemMsprgStcd: '지시중',
+    itemFwkCd: '-',
+    rcptPd: '2026-01-03 ~ 2026-01-14',
+  },
+]
+
+// 조달계획 목록과 같은 방식으로 100건 부풀림(더보기 데모). id 는 'a' 접두사로 조달계획 id 와 분리.
+const ANNUAL_LIST: OpAnlPrcmPlanItem[] = Array.from({ length: 100 }, (_, i) => {
+  const base = BASE_ANNUAL_LIST[i % BASE_ANNUAL_LIST.length]
+  return { ...base, id: `a${i + 1}`, no: i + 1, prcmRqtNo: `${base.prcmRqtNo}-${i + 1}` }
+})
+
+// M78 상세 — 목록 첫 건과 동일(설계서 slide77 '목록 데이터 전체 표시').
+const ANL_PRCM_PLAN_DTL: OpAnlPrcmPlanItem = ANNUAL_LIST[0]
 
 // 품목별 검색 결과(P71).
 const ITEM_SEARCH: OpItemSearchResult[] = [
@@ -541,7 +566,7 @@ const PRC_DATA_LIST: PrcDataItem[] = [
 ]
 
 export const MOCK_OP = {
-  planList: PLAN_LIST,
+  planList: [...PLAN_LIST, ...ANNUAL_LIST],
   planDetail: PLAN_DETAIL,
   itemSpecs: ITEM_SPECS,
   opinions: OPINIONS,

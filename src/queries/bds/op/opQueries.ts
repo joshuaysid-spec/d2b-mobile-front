@@ -6,6 +6,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { opService } from '@/services/bds/op'
 import { opKeys } from '@/queries/bds/op/opKeys'
 import type {
+  OpAnlPrcmPlanItem,
   OpListRequest,
   OpNotifyRequest,
   OpPlanDetail,
@@ -41,11 +42,12 @@ export const opQueries = {
     })
   },
 
-  /** 국외 연간조달계획 상세(MUI-OP-01-M78) — 목록 카드 클릭 시 state 로 받은 id 로 조회. */
-  useSelectOvsPlanDtl(id: string) {
+  /** 국외 연간조달계획 상세(MUI-OP-01-M78) — 목록에서 navigate state 로 넘어온 항목을 placeholder 로 즉시 렌더. */
+  useSelectOvsPlanDtl(id: string, placeholder?: OpAnlPrcmPlanItem) {
     return useQuery({
       queryKey: opKeys.selectOvsPlanDtl(id),
       queryFn: () => opService.selectOvsPlanDtl(id),
+      placeholderData: placeholder,
       enabled: Boolean(id),
     })
   },

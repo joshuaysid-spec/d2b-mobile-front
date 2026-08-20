@@ -9,7 +9,7 @@ import { useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 
 import { opQueries } from '@/queries/bds/op/opQueries'
-import type { OpPlanItem } from '@/types/op'
+import type { OpAnlPrcmPlanItem } from '@/types/op'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
@@ -24,8 +24,8 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { WarSplList_Inq } from '@/ui/biz/op/warSplList_Inq/WarSplList_Inq'
 
 export function OvsPrcmPlanDtlPage() {
-  // 목록 → 상세 데이터 전달: 클릭 항목이 식별자 소스(값은 상세 조회가 공급).
-  const stateItem = useLocation().state as OpPlanItem | null
+  // 목록 → 상세 데이터 전달: 클릭 항목이 식별자 소스이자 placeholder(재조회 전 즉시 렌더).
+  const stateItem = useLocation().state as OpAnlPrcmPlanItem | null
   const id = stateItem?.id ?? ''
   // 스크롤 시 상단 요약 블록 축소 + sticky — 로직은 훅에서(overflow-anchor 진동방지 포함).
   const { collapsed, rootRef, scrollToTop } = useCollapsibleHeader()
@@ -33,7 +33,7 @@ export function OvsPrcmPlanDtlPage() {
   // 컨테이너(BottomSheet)는 페이지가 소유하고 콘텐츠는 WarSplList_Inq(CLAUDE.md — *Sheet 래퍼 금지).
   const [warSplOpen, setWarSplOpen] = useState(false)
 
-  const { data: detail } = opQueries.useSelectOvsPlanDtl(id)
+  const { data: detail } = opQueries.useSelectOvsPlanDtl(id, stateItem ?? undefined)
 
   // state 없이 직접 진입 = 식별자를 알 수 없음 → 통합목록으로.
   if (!stateItem) return <Navigate to="/op" replace />

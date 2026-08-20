@@ -24,7 +24,7 @@ import type {
   SearchFilterValue,
   DateRangePresetDef,
 } from '@/types/search-filter'
-import type { OpSearchFilter, OpPlanItem, OpSrchType } from '@/types/op'
+import type { OpSearchFilter, OpListItem, OpSrchType } from '@/types/op'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
@@ -445,7 +445,7 @@ export function PrcmPlanIntgListPage() {
     spec: '/op/bfhdSpcfctDtl',
     annual: '/op/ovsPrcmPlanDtl',
   }
-  const handleCardClick = (item: OpPlanItem) => {
+  const handleCardClick = (item: OpListItem) => {
     // 클릭 항목을 state 로 전달 — 식별자는 URL 에 노출하지 않고 state 로만 넘긴다.
     // 상세는 이 값을 즉시표시 초기값 겸 조회 키로 쓴다. (CLAUDE.md "목록 → 상세 데이터 전달")
     navigate(ROUTE_BY_SRCH_TYPE[item.srchType], { state: item })
@@ -453,7 +453,8 @@ export function PrcmPlanIntgListPage() {
 
   // ── 키워드 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 이 블록 삭제) ──
   //   filteredList: 조회 결과(planData.list)를 빠른검색 확정값으로 부분일치(대소문자 무시) 필터.
-  //     - 'prcmPlanNm'(조달명) → 제목 · 그 외(판단번호·재고번호·조달요구번호) → prcmNo(목업 한계, API 연동 시 매핑)
+  //     - 조달계획/사전규격: 'prcmPlanNm'(조달명) → 제목 · 그 외(판단번호) → prcmNo
+  //     - 연간조달계획: 'prcmReqNo'(조달요구번호) → prcmRqtNo · 그 외(재고번호) → fscCdNtnItemIdntfNo
   //   visibleList: 더보기 누른 만큼(page*pageSize)만 노출.
   //   서버 전환 시: keyword/page 를 useSelectPlanList req 로 옮기고 planData.total 을 총건수로 사용.
   const filteredList = useMemo(() => {
@@ -461,7 +462,14 @@ export function PrcmPlanIntgListPage() {
     if (!appliedSearch || !appliedSearch.keyword) return list
     const kw = appliedSearch.keyword.toLowerCase()
     return list.filter((it) => {
-      const field = appliedSearch.target === 'prcmPlanNm' ? it.prcmPlanNm : it.prcmNo
+      const field =
+        it.srchType === 'annual'
+          ? appliedSearch.target === 'prcmReqNo'
+            ? it.prcmRqtNo
+            : it.fscCdNtnItemIdntfNo
+          : appliedSearch.target === 'prcmPlanNm'
+            ? it.prcmPlanNm
+            : it.prcmNo
       return field.toLowerCase().includes(kw)
     })
   }, [appliedSearch, planData])
@@ -472,25 +480,48 @@ export function PrcmPlanIntgListPage() {
   // 더보기 누른 만큼만 노출 (10개씩 추가). API 연동 시엔 서버가 페이지 단위로 주므로 slice 불필요.
   const visibleList = filteredList.slice(0, loaded)
 
-  // 목업 → Card props 매핑 (Design §3.2)
-  const cardItems: CardListItem[] = visibleList.map((it) => ({
-    id: it.id,
-    badges: (
-      <>
-        <Badge>{it.taskSeNm}</Badge>
-        <Badge>{it.ctrtMthdCd}</Badge>
-      </>
-    ),
-    subtitle: `판단번호 ${it.prcmNo}`,
-    title: it.prcmPlanNm,
-    rows: [
-      { label: '발주예정월', value: it.orderPrnmntYm },
-      { label: '발주기관', value: it.deptCd },
-      { label: '입찰방법', value: it.bidMthdCd },
-      { label: '예산금액', value: `${it.drctnAmt.toLocaleString()} 원` },
-    ],
-    onClick: () => handleCardClick(it),
-  }))
+  // 목업 → Card props 매핑 (Design §3.2). 검색유형별 카드 항목이 다름:
+  //   조달계획/사전규격(설계서 slide9) — 업무구분·계약방법 배지 + 판단번호/제목 + 발주정보 4행
+  //   연간조달계획(설계서 slide76)     — 업무구분·군구분 배지 + 조달요구번호 + 품목정보 5행
+  const cardItems: CardListItem[] = visibleList.map((it) =>
+    it.srchType === 'annual'
+      ? {
+          id: it.id,
+          badges: (
+            <>
+              <Badge>{it.taskSeNm}</Badge>
+              <Badge>{it.prcmRqtInstCd}</Badge>
+            </>
+          ),
+          title: `조달요구번호 ${it.prcmRqtNo}`,
+          rows: [
+            { label: '재고번호', value: it.fscCdNtnItemIdntfNo },
+            { label: '부품번호', value: it.prtsNo },
+            { label: '품질등급', value: it.inspShcd },
+            { label: '생산자부호', value: it.prdcrSgn },
+            { label: '접수기간', value: it.rcptPd },
+          ],
+          onClick: () => handleCardClick(it),
+        }
+      : {
+          id: it.id,
+          badges: (
+            <>
+              <Badge>{it.taskSeNm}</Badge>
+              <Badge>{it.ctrtMthdCd}</Badge>
+            </>
+          ),
+          subtitle: `판단번호 ${it.prcmNo}`,
+          title: it.prcmPlanNm,
+          rows: [
+            { label: '발주예정월', value: it.orderPrnmntYm },
+            { label: '발주기관', value: it.deptCd },
+            { label: '입찰방법', value: it.bidMthdCd },
+            { label: '예산금액', value: `${it.drctnAmt.toLocaleString()} 원` },
+          ],
+          onClick: () => handleCardClick(it),
+        },
+  )
 
   return (
     // 조달계획관리 공통 셸(PageTitle + full-bleed 플러시 스택). 과거 OpPageLayout 래퍼를 인라인.
