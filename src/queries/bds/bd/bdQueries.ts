@@ -1,6 +1,6 @@
 // 입찰(BD) 도메인 Query 훅 — frontend-architecture.md §7.2 (services 1:1).
-// 3자 대칭: bdService(services/bds/bd.ts) · bdQueries(이 파일) · bdKeys(keys.ts).
-// 훅명 = use + 서비스 함수명 · 쿼리키 = keys.ts(함수명 동일).
+// 3자 대칭: bdService(services/bds/bd.ts) · bdQueries(이 파일) · bdKeys(bdKeys.ts).
+// 훅명 = use + 서비스 함수명 · 쿼리키 = bdKeys(함수명 동일).
 // 조회는 useQuery 훅 · 저장/제출은 useMutation 훅(2026-07-30 확정 — 페이지의 서비스 직접 import 금지).
 // 무효화(invalidate)는 mutation 훅 onSuccess 에서 중앙 처리.
 // (여기 훅은 실제로 소비하는 페이지 것만 둔다 — 투기적 훅 금지.)
@@ -11,33 +11,33 @@ import { bdKeys } from '@/queries/bds/bd/bdKeys'
 import type { BidListSearchRequest, BidPbancDetail, BdopnItem, TndrSavePayload } from '@/types/bd'
 
 export const bdQueries = {
-  /** 입찰공고 통합목록 — 목업은 전체 반환, 키워드/페이징은 페이지 클라이언트 로직 유지. */
-  useSelectPbancList(req?: BidListSearchRequest) {
+  /** 입찰공고 통합목록(no.28) — 목업은 전체 반환, 키워드/페이징은 페이지 클라이언트 로직 유지. */
+  useSelectBidPbancIntgList(req?: BidListSearchRequest) {
     return useQuery({
-      queryKey: bdKeys.selectPbancList(req),
-      queryFn: () => bdService.selectPbancList(req),
+      queryKey: bdKeys.selectBidPbancIntgList(req),
+      queryFn: () => bdService.selectBidPbancIntgList(req),
     })
   },
 
-  /** 입찰공고 상세 — 목록에서 navigate state 로 넘어온 항목을 placeholder 로 즉시 렌더. */
-  useSelectPbancDtl(id: string, placeholder?: BidPbancDetail) {
+  /** 입찰공고 상세 공고일반(no.32) — 목록에서 navigate state 로 넘어온 항목을 placeholder 로 즉시 렌더. */
+  useSelectPbancGnrlInfo(id: string, placeholder?: BidPbancDetail) {
     return useQuery({
-      queryKey: bdKeys.selectPbancDtl(id),
-      queryFn: () => bdService.selectPbancDtl(id),
+      queryKey: bdKeys.selectPbancGnrlInfo(id),
+      queryFn: () => bdService.selectPbancGnrlInfo(id),
       placeholderData: placeholder,
       enabled: Boolean(id),
     })
   },
 
-  /** 입찰진행 목록(조달업체) — 목업 전체 반환, 검색/페이징은 페이지 클라이언트 로직 유지. */
-  useSelectProgressList(req?: BidListSearchRequest) {
+  /** 입찰진행 목록(조달업체, no.73) — 목업 전체 반환, 검색/페이징은 페이지 클라이언트 로직 유지. */
+  useSelectBidPrgrsListForBzenty(req?: BidListSearchRequest) {
     return useQuery({
-      queryKey: bdKeys.selectProgressList(req),
-      queryFn: () => bdService.selectProgressList(req),
+      queryKey: bdKeys.selectBidPrgrsListForBzenty(req),
+      queryFn: () => bdService.selectBidPrgrsListForBzenty(req),
     })
   },
 
-  /** 개찰목록 — 목업 전체 반환, 검색/페이징은 페이지 클라이언트 로직 유지. */
+  /** 개찰목록(no.147) — 목업 전체 반환, 검색/페이징은 페이지 클라이언트 로직 유지. */
   useSelectBdopnList(req?: BidListSearchRequest) {
     return useQuery({
       queryKey: bdKeys.selectBdopnList(req),
@@ -45,11 +45,11 @@ export const bdQueries = {
     })
   },
 
-  /** 개찰(입찰결과) 상세 — 목록에서 넘어온 항목을 placeholder 로 즉시 렌더(없으면 id 조회). */
-  useSelectBidRsltDtl(id: string, placeholder?: BdopnItem) {
+  /** 입찰결과정보(no.165) — 목록에서 넘어온 항목을 placeholder 로 즉시 렌더(없으면 id 조회). */
+  useSelctBidRsltInfo(id: string, placeholder?: BdopnItem) {
     return useQuery({
-      queryKey: bdKeys.selectBidRsltDtl(id),
-      queryFn: () => bdService.selectBidRsltDtl(id),
+      queryKey: bdKeys.selctBidRsltInfo(id),
+      queryFn: () => bdService.selctBidRsltInfo(id),
       placeholderData: placeholder,
       enabled: Boolean(id),
     })
@@ -73,7 +73,7 @@ export const bdQueries = {
     })
   },
 
-  /** 평가위원별 기술평가점수(P04) — 팝업 열릴 때만 조회. */
+  /** 평가위원별 기술평가점수(no.167, P04) — 팝업 열릴 때만 조회. */
   useSelectEvlMbcmtTechEvlScrInfo(bidRsltId: string, enabled: boolean) {
     return useQuery({
       queryKey: bdKeys.selectEvlMbcmtTechEvlScrInfo(bidRsltId),
@@ -110,11 +110,11 @@ export const bdQueries = {
 
   // ── 제출/액션 mutation 훅 — 페이지는 서비스 직접 import 없이 이 훅만 사용. ──
 
-  /** 관심공고 등록/해제(MUI-BD-01-M03 즐겨찾기 토글) — 페이지가 낙관적 갱신/롤백 소유. */
-  useToggleFavorite() {
+  /** 관심공고 등록/해제(no.30, MUI-BD-01-M03 즐겨찾기 토글) — 페이지가 낙관적 갱신/롤백 소유. */
+  useInsertItrstPbanc() {
     return useMutation({
       mutationFn: ({ id, favorite }: { id: string; favorite: boolean }) =>
-        bdService.toggleFavorite(id, favorite),
+        bdService.insertItrstPbanc(id, favorite),
     })
   },
 
@@ -123,7 +123,8 @@ export const bdQueries = {
     return useMutation({
       mutationFn: ({ certId, pbancNo }: { certId: string; pbancNo: string }) =>
         bdService.signElsgn(certId, pbancNo),
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: bdKeys.selectProgressListAll }),
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: bdKeys.selectBidPrgrsListForBzentyAll }),
     })
   },
 
@@ -145,15 +146,17 @@ export const bdQueries = {
     return useMutation({
       mutationFn: ({ pbancNo, fileGuids }: { pbancNo: string; fileGuids: string[] }) =>
         bdService.applyBfhdSrng(pbancNo, fileGuids),
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: bdKeys.selectProgressListAll }),
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: bdKeys.selectBidPrgrsListForBzentyAll }),
     })
   },
 
-  /** 입찰서 저장(MUI-BD-05 TndrWrt) — 성공 시 진행목록 캐시 무효화. */
-  useSaveTndr() {
+  /** 입찰서제출(no.118, MUI-BD-06 TndrWrt) — 성공 시 진행목록 캐시 무효화. */
+  useInsertTndrSbmsn() {
     return useMutation({
-      mutationFn: (payload: TndrSavePayload) => bdService.saveTndr(payload),
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: bdKeys.selectProgressListAll }),
+      mutationFn: (payload: TndrSavePayload) => bdService.insertTndrSbmsn(payload),
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: bdKeys.selectBidPrgrsListForBzentyAll }),
     })
   },
 }

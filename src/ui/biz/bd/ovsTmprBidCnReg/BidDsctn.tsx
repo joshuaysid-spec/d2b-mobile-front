@@ -26,7 +26,7 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { BscPbancInfo, ItitbBidCnItem } from '@/types/bd'
 
 // ── 목업 코드값 — On-Load 입찰업체목록/화폐단위 조회 결과(설계서 slide319) ──
-// 추후 API: bdService.selectOvsBidBzentyList / bdService.selectCrncList
+// 추후 API: bdService.selectOvsBidBzentyList / bdService.selectCrncUnitList
 const SPLY_BZENTY_ITEMS = [
   { value: 'MD Helicopters Inc.', label: 'MD Helicopters Inc.' },
   { value: 'Boeing Global Services Co.', label: 'Boeing Global Services Co.' },
@@ -288,7 +288,7 @@ export function BidDsctn({ detail }: { detail: BscPbancInfo }) {
       }
     }
     console.log('[M77] 입찰내역 저장(암호화)', detail.intgRfrncNo, rows)
-    // 추후 API: bdService.saveOvsTmprBidCn(intgRfrncNo, rows) — 임시입찰내용저장
+    // 추후 API: bdService.saveTmprBidCn(intgRfrncNo, rows) — 임시입찰내용저장
     setNotice({ open: true, variant: 'check', title: '입찰내역이 저장되었습니다.' })
   }
 
@@ -302,7 +302,7 @@ export function BidDsctn({ detail }: { detail: BscPbancInfo }) {
   }
   const handleDeleteConfirm = () => {
     console.log('[M77] 입찰내역 삭제', detail.intgRfrncNo, checkedNos)
-    // 추후 API: bdService.deleteOvsTmprBidCn(intgRfrncNo, checkedNos) — 임시입찰내용삭제
+    // 추후 API: bdService.deleteTmprBidCn(intgRfrncNo, checkedNos) — 임시입찰내용삭제
     setRows((prev) =>
       prev.map((r) => (checkedNos.includes(r.frcptlArtclNo) ? { ...r, ...EMPTY_BID_FIELDS } : r)),
     )
@@ -311,7 +311,7 @@ export function BidDsctn({ detail }: { detail: BscPbancInfo }) {
 
   const handleLoadMore = () => {
     console.log('[M77] 입찰 품목 더보기', detail.intgRfrncNo, visibleCount)
-    // 추후 API: bdService.selectOvsLockerBidItemList(intgRfrncNo, page) — 다음 페이지 append
+    // 추후 API: bdService.selectTmprBidCnList(intgRfrncNo) — no.60 임시입찰내용조회(다음 페이지 append)
     setVisibleCount((c) => Math.min(c + PAGE_SIZE, rows.length))
   }
 

@@ -95,7 +95,7 @@ const OvsBidRtrcnAply = forwardRef<OvsBidRtrcnAplyHandle, OvsBidRtrcnAplyProps>(
     useImperativeHandle(ref, () => ({ submit: () => setConfirmOpen(true) }), [])
 
     const handleConfirm = () => {
-      console.log('[P81] 입찰취소 신청서 제출', { rsn }) // 추후 API: bdService.submitOvsBidRtrcn — 투찰취소신청
+      console.log('[P81] 입찰취소 신청서 제출', { rsn }) // 추후 API: bdService.insertAplyBdngRtrcn — 투찰취소신청
       setConfirmOpen(false)
       onSubmitted()
     }

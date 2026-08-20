@@ -2,7 +2,7 @@
 // 레퍼런스: 조달계획 통합목록 PrcmPlanIntgListPage (구성·상태·페이징 동일 패턴).
 // 구성: 업무도움(Infobox) + 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더(총건수·page size)
 //      + 카드 리스트(CardList) + 더보기 + 맨위로 FAB.
-// 데이터는 bdQueries.useSelectPbancList(queries/bds/bd) — 목업/실연동은 bdService(USE_MOCK)가 전환. 목업 데이터는 mocks/bd.ts.
+// 데이터는 bdQueries.useSelectBidPbancIntgList(queries/bds/bd) — 목업/실연동은 bdService(USE_MOCK)가 전환. 목업 데이터는 mocks/bd.ts.
 // 키워드 검색·더보기(페이징)는 페이지 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행).
 // 화면 타이틀('입찰공고')은 전역 Header(라우트 handle)가 제공 → 페이지 본문엔 타이틀 안 그림(설계서 Figma 타이틀 제거).
 // 상세필터 풀팝업은 공통 SearchFilter 셸 + 동적 resolver(MUI-BD-01-M02, 설계서 slide14/19/21 기준).
@@ -249,7 +249,7 @@ const DEFAULT_FILTER: SearchFilterValue = {
   ntchYn: 'N',
 }
 
-// 목록 데이터는 bdQueries.useSelectPbancList(bdService.selectPbancList) 가 공급 — 목업 데이터는 mocks/bd.ts(구 인라인 이관).
+// 목록 데이터는 bdQueries.useSelectBidPbancIntgList(bdService.selectBidPbancIntgList) 가 공급 — 목업 데이터는 mocks/bd.ts(구 인라인 이관).
 // 키워드 검색·더보기(페이징)는 아직 페이지 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행).
 
 export function BidPbancIntgListPage() {
@@ -265,23 +265,23 @@ export function BidPbancIntgListPage() {
     null,
   )
 
-  // 목록 조회 — 전체 목록(목업/실연동은 bdService.selectPbancList 의 USE_MOCK 분기가 전환).
+  // 목록 조회 — 전체 목록(목업/실연동은 bdService.selectBidPbancIntgList 의 USE_MOCK 분기가 전환).
   // 서버 페이징/키워드 검색 전환 시: req 에 page/pageSize/keyword 를 넣으면 queryKey 가 바뀌어 재조회된다.
-  const { data } = bdQueries.useSelectPbancList()
+  const { data } = bdQueries.useSelectBidPbancIntgList()
 
-  // ── 목록 핸들러 — 확정값 상태만 갱신(조회는 bdQueries.useSelectPbancList + 아래 클라이언트 필터가 담당) ──
+  // ── 목록 핸들러 — 확정값 상태만 갱신(조회는 bdQueries.useSelectBidPbancIntgList + 아래 클라이언트 필터가 담당) ──
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)
     setPage(1)
     setKeyword('')
     setAppliedSearch(null)
-    // 서버 필터 전환 시: bdQueries.useSelectPbancList req 에 filter(value)를 포함시켜 재조회한다.
+    // 서버 필터 전환 시: bdQueries.useSelectBidPbancIntgList req 에 filter(value)를 포함시켜 재조회한다.
   }
   const handleQuickSearch = () => {
     const target = targets[0] ?? 'rprsItemNm'
     setAppliedSearch({ keyword: keyword.trim(), target })
     setPage(1)
-    // 서버 검색 전환 시: bdQueries.useSelectPbancList req 에 keyword/searchTarget 포함(현재는 아래 filteredList 클라 필터).
+    // 서버 검색 전환 시: bdQueries.useSelectBidPbancIntgList req 에 keyword/searchTarget 포함(현재는 아래 filteredList 클라 필터).
   }
   const handlePageSize = (size: number) => {
     setPageSize(size)

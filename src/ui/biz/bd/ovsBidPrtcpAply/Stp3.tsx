@@ -267,7 +267,7 @@ export function Stp3({ detail }: { detail: BidPrgrsItem }) {
                   onValueChange={(v) => {
                     setDepositType(v)
                     console.log('[M74] 입찰보증금 구분 변경', { pbancNo: detail.pbancNo, depositType: v })
-                    // 추후 API: bdService.selectOvsBidGrnteBizList(detail.pbancNo, v)
+                    // 추후 API: bdService.selectBidPrtcpBizList(detail.pbancNo, v)
                   }}
                 />
               ),

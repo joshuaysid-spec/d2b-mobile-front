@@ -132,7 +132,7 @@ export function OvsTndrDtlPage() {
   const rtrcnRef = useRef<OvsBidRtrcnAplyHandle>(null)
 
   useEffect(() => {
-    console.log('[M75] 국외 입찰서 상세 조회', detail.intgRfrncNo) // 추후 API: bdService.selectOvsTndrDtl — 입찰서조회, 입찰서품목조회
+    console.log('[M75] 국외 입찰서 상세 조회', detail.intgRfrncNo) // 추후 API: bdService.selectTndr — 입찰서조회, 입찰서품목조회
   }, [detail.intgRfrncNo])
 
   // 요약 헤더 배지 — 입찰서 상태(색) + 업무구분 + 입찰방식 + 계약방법.

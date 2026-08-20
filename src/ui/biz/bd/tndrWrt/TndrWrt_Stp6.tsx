@@ -63,7 +63,7 @@ export function TndrWrt_Stp6({ detail }: { detail: BidPrgrsItem }) {
   const selectChoice = (field: string, value: string) => {
     setChoices((prev) => ({ ...prev, [field]: value }))
     console.log('[TndrWrt] 동가낙찰 선추첨 선택', field, value)
-    // 추후 API: bdService.saveTndr({ [field]: value })
+    // 추후 API: bdService.insertTndrSbmsn({ [field]: value })
   }
 
   return (

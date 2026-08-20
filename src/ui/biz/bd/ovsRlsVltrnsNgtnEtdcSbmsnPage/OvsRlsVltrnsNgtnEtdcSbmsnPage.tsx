@@ -86,7 +86,7 @@ export function OvsRlsVltrnsNgtnEtdcSbmsnPage() {
       goTab(tabOrder[tabIdx + 1])
       return
     }
-    console.log('[M74] 공개수의협상 견적서 제출', summary.intgRfrncNo) // 추후 API: bdService.submitOvsRlsVltrnsEtdc
+    console.log('[M74] 공개수의협상 견적서 제출', summary.intgRfrncNo) // 추후 API: bdService.insertEtdcSbmsn
   }
 
   // 스탭1 일반정보 표 (slide420) — 계획상세 일반정보와 동일.

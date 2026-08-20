@@ -85,7 +85,7 @@ export function BidPbancDtlPage() {
   const [cancelOpen, setCancelOpen] = useState(false)
   const abandonRef = useRef<BidAbndAperWrtHandle>(null)
   const cancelRef = useRef<BidRtrcnAperInqHandle>(null)
-  // 관심공고(즐겨찾기) 등록 여부 — 추후 bdService.selectPbancDtl 응답(관심공고 등록 여부)으로 초기화. 현재 mock false.
+  // 관심공고(즐겨찾기) 등록 여부 — 추후 bdService.selectPbancGnrlInfo 응답(관심공고 등록 여부)으로 초기화. 현재 mock false.
   const [favorite, setFavorite] = useState(false)
   const [loginGuideOpen, setLoginGuideOpen] = useState(false) // 로그인 안내(MUI-MS-03-P15)
   const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보 조회 풀팝업(MUI-BD-01-M74)
@@ -99,8 +99,8 @@ export function BidPbancDtlPage() {
   //   URL 에 식별자를 두지 않으므로 state 없이 직접 진입하면 목록으로 되돌린다(아래 early return).
   const stateItem = useLocation().state as BidPbancItem | null
   const id = stateItem?.id ?? ''
-  const { data: detail } = bdQueries.useSelectPbancDtl(id, stateItem ?? undefined)
-  const toggleFavorite = bdQueries.useToggleFavorite()
+  const { data: detail } = bdQueries.useSelectPbancGnrlInfo(id, stateItem ?? undefined)
+  const insertItrstPbanc = bdQueries.useInsertItrstPbanc()
 
   // 즐겨찾기(관심공고) 토글 — 로그인 필요. 등록/제외에 따라 아이콘(라인↔채움) + 토스트(P13).
   // 낙관적 갱신(즉시 반영) 후 mutation 훅 await, 실패 시 이전 상태로 복원.
@@ -116,7 +116,7 @@ export function BidPbancDtlPage() {
       message: next ? '관심공고에 등록 되었습니다.' : '관심공고에서 제외 되었습니다.',
     })
     try {
-      await toggleFavorite.mutateAsync({ id, favorite: next })
+      await insertItrstPbanc.mutateAsync({ id, favorite: next })
     } catch {
       setFavorite(!next) // 실패 → 낙관적 갱신 롤백
     }

@@ -11,7 +11,7 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
 import type { OvsRlsVltrnsItem } from '@/types/bd'
 
-// 품목 목록 목업 — 설계서 slide413 값 그대로. 추후 bdService.selectOvsRlsVltrnsItems 매핑.
+// 품목 목록 목업 — 설계서 slide413 값 그대로. 추후 bdService.selectRlsVltrnsNgtnDtl 매핑.
 const ITEM_BASE: Omit<OvsRlsVltrnsItem, 'clsfNo'> = {
   qltyGrd: 'A',
   atchDocYn: 'O',

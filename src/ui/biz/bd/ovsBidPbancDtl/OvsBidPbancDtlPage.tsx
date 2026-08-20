@@ -109,7 +109,7 @@ const MOCK_OVS_LIST_ITEM: BidPbancItem = {
   prgrsStg: '입찰',
 }
 
-// 공고일반(dm_bscPbancInfo) 목업 — 설계서 slide290 데이터영역 예시값 그대로. 추후 bdService.selectOvsBidPbancDetail
+// 공고일반(dm_bscPbancInfo) 목업 — 설계서 slide290 데이터영역 예시값 그대로. 추후 bdService.selectOvsBidPbancDtl
 const MOCK_OVS_BID_PBANC_DETAIL: OvsBidPbancDetail = {
   pbancNo: 'EFD0007',
   pbancOd: '2',
@@ -225,7 +225,7 @@ export function OvsBidPbancDtlPage() {
   const [tab, setTab] = useState('general')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기 바텀시트
-  // 관심공고(즐겨찾기) 등록 여부 — 추후 bdService.selectOvsBidPbancDetail 응답으로 초기화. 현재 mock false.
+  // 관심공고(즐겨찾기) 등록 여부 — 추후 bdService.selectOvsBidPbancDtl 응답으로 초기화. 현재 mock false.
   const [favorite, setFavorite] = useState(false)
   const [loginGuideOpen, setLoginGuideOpen] = useState(false) // 로그인 안내(MUI-MS-03-P15)
   const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보조회 풀팝업(MUI-BD-01-M74, UI-BD-01-P73)
@@ -257,7 +257,7 @@ export function OvsBidPbancDtlPage() {
       open: true,
       message: next ? '관심공고에 등록 되었습니다.' : '관심공고에서 제외 되었습니다.',
     })
-    console.log('[M71] 관심공고', next ? '등록' : '제외', id) // 추후 API: bdService.toggleFavorite
+    console.log('[M71] 관심공고', next ? '등록' : '제외', id) // 추후 API: bdService.insertItrstPbanc
   }
 
   // 바로가기 바텀시트 항목 — 설계서 이벤트 설명(slide296) 기반.

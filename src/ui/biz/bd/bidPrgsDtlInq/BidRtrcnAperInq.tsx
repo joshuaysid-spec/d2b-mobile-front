@@ -58,7 +58,7 @@ const BidRtrcnAperInq = forwardRef<BidRtrcnAperInqHandle, BidRtrcnAperInqProps>(
 
     const handleConfirm = () => {
       console.log('[P04] 입찰취소신청서 제출', { bidRtrcnAplyRsn })
-      // 추후 API: bdService.submitBidCancel
+      // 추후 API: bdService.insertBidRtrcnApfrSbmsn
       setConfirmOpen(false)
       onSubmitted()
     }

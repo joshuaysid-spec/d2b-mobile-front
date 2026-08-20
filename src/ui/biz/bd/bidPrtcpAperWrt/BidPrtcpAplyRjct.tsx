@@ -30,7 +30,7 @@ const BidPrtcpAplyRjct = forwardRef<BidPrtcpAplyRjctHandle, BidPrtcpAplyRjctProp
       () => ({
         submit: () => {
           console.log('[P07] 입찰참가등록반려 신청', { pbancNo: detail.pbancNo })
-          // 추후 API: bdService.applyBidPrtcpRegReject(detail.pbancNo)
+          // 추후 API: bdService.insertBidPrtcpRegRjctAply(detail.pbancNo)
           onSubmitted()
         },
       }),

@@ -237,7 +237,7 @@ export function OvsLockerItemRegPage() {
       message: adding ? '보관함에 추가되었습니다.' : '보관함에서 삭제되었습니다.',
     })
     console.log('[OvsLockerItem]', adding ? '보관함 추가' : '보관함 삭제', target.id)
-    // 추후 API: bdService.addLockerItem / bdService.deleteLockerItem
+    // 추후 API: bdService.insertItemToLocker / bdService.deleteItemFromLocker
   }
 
   // ── 임시 목업 검색/페이징 (API 연동 시 이 블록 통째로 교체) ──

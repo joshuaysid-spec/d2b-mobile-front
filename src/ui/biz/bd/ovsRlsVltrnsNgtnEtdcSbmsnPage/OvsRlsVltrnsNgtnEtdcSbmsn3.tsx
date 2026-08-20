@@ -26,7 +26,7 @@ const CRNCY_OPTIONS = [
   { value: '원화', label: '원화' },
 ]
 
-// 입찰참여품목 목업 — 설계서 slide422 값 그대로. 추후 bdService.selectOvsRlsVltrnsEtdcItems 매핑.
+// 입찰참여품목 목업 — 설계서 slide422 값 그대로. 추후 bdService.selectEtdcSbmsn 매핑.
 const ITEM_BASE: Omit<
   OvsRlsVltrnsEtdcItem,
   'frcptlArtclNo' | 'itemSbstSe' | 'mdfcnInvtNo' | 'mdfcnPrtsNo' | 'estmtUntprc'

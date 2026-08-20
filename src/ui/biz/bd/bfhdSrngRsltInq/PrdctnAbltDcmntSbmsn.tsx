@@ -39,7 +39,7 @@ const PrdctnAbltDcmntSbmsn = forwardRef<PrdctnAbltDcmntSbmsnHandle, PrdctnAbltDc
       () => ({
         submit: () => {
           console.log('[P06] 생산능력서류 제출', { pbancNo: detail.pbancNo, files })
-          // 추후 API: bdService.submitProdAbilityDocs(detail.pbancNo, files)
+          // 추후 API: bdService.insertPrdcpDcmntSbmsn(detail.pbancNo, files)
           onSubmitted()
         },
       }),

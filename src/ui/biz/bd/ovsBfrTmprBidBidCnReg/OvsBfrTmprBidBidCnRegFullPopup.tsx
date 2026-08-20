@@ -12,7 +12,7 @@ import { BfrPbancBidDsctnItemDtlFullPopup } from '@/ui/biz/bd/ovsBfrTmprBidBidCn
 import type { BfrPbancInfoItem } from '@/types/bd'
 
 // ── 목업 — 보관함 이전공고 목록(dl_pbancInfo). 설계서 와이어프레임 '총 5건' + 예시값(VDW2523-03 등).
-//    On-Load 보관함이전공고목록조회 — 추후 API: bdService.selectBfrPbancLockerList(lockerId)
+//    On-Load 보관함이전공고목록조회 — 추후 API: bdService.selectLockerBfrPbancList(lockerId)
 const MOCK_BFR_PBANC_LIST: BfrPbancInfoItem[] = [
   {
     no: 1,
@@ -81,14 +81,14 @@ export function OvsBfrTmprBidBidCnRegFullPopup({
     if (open) setOpenPbanc(null)
   }, [open])
 
-  // On-Load: 보관함이전공고목록조회 — 목업. 추후 API: bdService.selectBfrPbancLockerList(lockerId)
+  // On-Load: 보관함이전공고목록조회 — 목업. 추후 API: bdService.selectLockerBfrPbancList(lockerId)
   const list = MOCK_BFR_PBANC_LIST
   const total = list.length
 
   // 보관함목록행 클릭(grd_list_oncecllclick) — 클릭한 공고의 입찰내역 목록 조회(P80 팝업).
   const handlePbancClick = (item: BfrPbancInfoItem) => {
     console.log('[P79] 이전공고입찰내역목록조회', { lockerId, pbancNo: item.pbancNo, pbancOd: item.pbancOd })
-    // 추후 API: bdService.selectBfrPbancBidCnList(item.pbancNo, item.pbancOd)
+    // 추후 API: bdService.selectBfrTmprBidCnList(item.pbancNo, item.pbancOd)
     setOpenPbanc(item)
   }
 

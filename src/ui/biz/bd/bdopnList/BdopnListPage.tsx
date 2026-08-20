@@ -201,7 +201,7 @@ const DEFAULT_FILTER: SearchFilterValue = {
 }
 
 // 개찰목록 데이터는 bdQueries.useSelectBdopnList(bdService.selectBdopnList) 가 공급 — 목업은 mocks/bd.ts(구 인라인 dlt_bdopnList 이관).
-// 상세(BidRsltDtlPage)는 bdQueries.useSelectBidRsltDtl(id) 로 재조회(그 목업 분기가 mocks/bd.ts 의 getBdopnById lookup 사용).
+// 상세(BidRsltDtlPage)는 bdQueries.useSelctBidRsltInfo(id) 로 재조회(그 목업 분기가 mocks/bd.ts 의 getBdopnById lookup 사용).
 
 // 국외 개찰 카드 = 상세 상단 요약 공통 데이터 (MUI-BD-09-M71 slide402) — 목록 최상단 고정.
 // 카드 클릭 시 이 값을 navigate state 로 넘겨 상세 상단(배지/번호/사업명/요약행)을 카드와 동일하게 표시.

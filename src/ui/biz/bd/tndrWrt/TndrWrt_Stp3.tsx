@@ -80,7 +80,7 @@ export function TndrWrt_Stp3({ detail }: { detail: BidPrgrsItem }) {
   const amtInputType = isUntprc ? 'text' : 'numeric'
   const amtFormat = isUntprc ? formatDecimal2 : formatThousands
 
-  // 추후 API: 입찰금액/단가/수량은 페이지(TndrWrtPage) 제출 시 전송 — bdService.saveTndr
+  // 추후 API: 입찰금액/단가/수량은 페이지(TndrWrtPage) 제출 시 전송 — bdService.insertTndrSbmsn
   //   (투찰금액 검증·암호화·입찰차수별 키 생성, 설계서 slide130·131).
 
   return (

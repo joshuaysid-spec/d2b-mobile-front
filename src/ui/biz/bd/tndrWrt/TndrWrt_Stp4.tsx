@@ -61,7 +61,7 @@ export function TndrWrt_Stp4({ detail }: { detail: BidPrgrsItem }) {
     const next = { ...choices, [field]: no }
     setChoices(next)
     console.log('[TndrWrt] 복수예비가격 선택', field, no)
-    // 추후 API: bdService.saveTndr({ [field]: no })
+    // 추후 API: bdService.insertTndrSbmsn({ [field]: no })
     const unpicked = ROUNDS.find((r) => !next[r.field])
     setOpenRound(unpicked ? unpicked.field : '')
   }

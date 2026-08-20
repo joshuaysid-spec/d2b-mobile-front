@@ -32,7 +32,7 @@ export function AtchDocReg({ detail }: { detail: BidPrgrsItem }) {
 
   const handleAdd = () => {
     console.log('[M77] 입찰참가 서류 파일 추가', detail.pbancNo)
-    // 추후: 네이티브 파일 선택 → bdService.uploadOvsBidPrtcpAtchDoc
+    // 추후: 네이티브 파일 선택 → bdService.saveAtchDoc
   }
 
   const handleRemove = (id: string) => {

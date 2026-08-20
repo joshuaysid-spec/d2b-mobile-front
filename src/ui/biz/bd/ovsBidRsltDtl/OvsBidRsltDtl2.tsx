@@ -33,7 +33,7 @@ const MOCK_STATUS: OvsBidRsltUnitPriceStatus = {
   usd: { scsbd: '000,000,000.00 USD', cndl: '000,000,000.00 USD', eqv: '0.00 USD', sub: '000,000,000.00 USD' },
 }
 
-// 입찰결과 목록(단가제) 목업 — 설계서 slide404 항목. 추후 bdService.selectOvsBidRslt 매핑.
+// 입찰결과 목록(단가제) 목업 — 설계서 slide404 항목. 추후 bdService.selectBidCnListByItem 매핑.
 // bidRsltNm 은 결과 필터 데모용으로 4종(낙찰/조건부 낙찰/동가 낙찰/유찰) 순환.
 const ITEM_BASE: Omit<OvsBidRsltUnitPriceItem, 'clsfNo' | 'bidRsltNm'> = {
   prdctNm: '500MD',
@@ -192,7 +192,7 @@ export function OvsBidRsltDtl2({ bidTypeNm }: { bidTypeNm: string }) {
             onClick={() => {
               const next = page + 1
               setPage(next)
-              console.log('[OvsBidRslt] 더보기 → page', next) // 추후 API: bdService.selectOvsBidRslt(next)
+              console.log('[OvsBidRslt] 더보기 → page', next) // 추후 API: bdService.selectBidCnListByItem(next)
             }}
           >
             더보기 ({loaded}/{total})

@@ -112,7 +112,7 @@ export function OvsTndrSbmsnPage() {
     }
     // 신청하기(설계서 slide369·373 투찰 클릭) — 입찰 작성내역 암호화 저장(모의입찰 상태면 모의투찰).
     console.log('[M74] 국외 입찰서 제출(투찰)', detail.pbancNo, detail.pbancOd)
-    // 추후 API: bdService.submitOvsTndr(pbancNo, pbancOd, ...)
+    // 추후 API: bdService.insertOvsTndrSbmsn(pbancNo, pbancOd, ...)
     // 신청완료(M08) 요약 헤더 구동용 — 기존 AplyCmptnPage(BidPrgrsItem 기반) 재사용을 위한 매핑.
     const aplyDetail: BidPrgrsItem = {
       rNum: stateItem?.rNum ?? '0',

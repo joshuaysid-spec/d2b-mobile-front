@@ -68,7 +68,7 @@ export function TndrWrtPage() {
   ]
   const [tab, setTab] = useState('일반정보')
   const [submitError, setSubmitError] = useState<string | null>(null) // 입찰서 저장 실패 안내(null=닫힘)
-  const saveTndr = bdQueries.useSaveTndr()
+  const insertTndrSbmsn = bdQueries.useInsertTndrSbmsn()
 
   // 탭 = 하위 스텝. 다음/이전으로 탭 이동, 마지막 탭(약관동의)의 [신청] = 전자서명(M21) → 신청완료(M08).
   const tabOrder = tabs.map((t) => t.value)
@@ -86,7 +86,7 @@ export function TndrWrtPage() {
     }
     // 신청(설계서 slide131 제출 클릭) — 입찰서 저장 후 전자서명(M21). 실패 시 AlertModal 안내.
     try {
-      await saveTndr.mutateAsync({ pbancNo: detail.pbancNo })
+      await insertTndrSbmsn.mutateAsync({ pbancNo: detail.pbancNo })
       navigate('/bd/elsgn', { state: { detail, aplyType: 'tndr' } })
     } catch (err) {
       setSubmitError(

@@ -52,7 +52,7 @@ export function Stp2({ detail }: { detail: BidPrgrsItem }) {
           onChange={(e) => {
             setSplyBzentyCd(e.target.value)
             console.log('[M73] 입찰업체 업체코드 입력', { pbancNo: detail.pbancNo, splyBzentyCd: e.target.value })
-            // 추후 API: bdService.selectOvsSplyInfo(splyBzentyCd)
+            // 추후 API: bdService.selectBzentyDtl(splyBzentyCd)
           }}
           placeholder="업체코드를 입력하세요."
         />

@@ -1,7 +1,7 @@
 // 국외 보관함 목록 (MUI-CM-01-M71, 설계서 slide301·306·307 + 최종 와이어프레임 260709). 보관함에 추가한 국외 공고 목록 조회.
 // 레퍼런스: 입찰공고 통합목록 BidPbancIntgListPage (구성·상태·페이징 동일 패턴).
 // 구성: 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더(총건수·page size) + 카드 리스트 + 더보기 + FAB.
-// 데이터/페이징/검색은 페이지 소유. 목록은 목업(dl_resultList, 항목명 설계서 그대로) — 추후 API: bdService.selectOvsLockerPbanList.
+// 데이터/페이징/검색은 페이지 소유. 목록은 목업(dl_resultList, 항목명 설계서 그대로) — 추후 API: bdService.selectLockerPbancList.
 // 카드 하단 버튼(260709 확정 — 상태 버튼 1개 + 보관함 품목 관리 1개, 총 2개. 260706 보관함상세 삭제로 '상세보기' 없음):
 //   - 상태 버튼(우선순위 분기, 1개만):
 //     ① 입찰참가신청 완료 → [입찰진행 바로가기](해당 공고 진행 상세 직행)
@@ -96,7 +96,7 @@ const DEFAULT_FILTER: SearchFilterValue = {
   bidPrtcpAplyStts: 'all',
 }
 
-// 보관함 공고 목록(설계서 slide306 dl_resultList) — 목업, 추후 API: bdService.selectOvsLockerPbanList.
+// 보관함 공고 목록(설계서 slide306 dl_resultList) — 목업, 추후 API: bdService.selectLockerPbancList.
 // 필드명·형식은 설계서 그대로(통합참조번호 BDF01823EFE·공고번호 EFE00012-2·일시 14자리 표시형식).
 const dl_resultList: OvsLockerPbanItem[] = [
   {
@@ -239,13 +239,13 @@ export function OvsLockerPbanListPage() {
     setPage(1)
     setKeyword('')
     setAppliedSearch(null)
-    console.log('[OvsLockerList] 상세필터 검색', value) // 추후 API: bdService.selectOvsLockerPbanList(toRequest(value))
+    console.log('[OvsLockerList] 상세필터 검색', value) // 추후 API: bdService.selectLockerPbancList(toRequest(value))
   }
   const handleQuickSearch = () => {
     const target = targets[0] ?? 'intgRfrncNo'
     setAppliedSearch({ keyword: keyword.trim(), target })
     setPage(1)
-    console.log('[OvsLockerList] 빠른검색', { keyword, target }) // 추후 API: bdService.selectOvsLockerPbanList
+    console.log('[OvsLockerList] 빠른검색', { keyword, target }) // 추후 API: bdService.selectLockerPbancList
   }
   const handlePageSize = (size: number) => {
     setPageSize(size)

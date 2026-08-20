@@ -2,7 +2,7 @@
 // 설계서 slide360~364. 레퍼런스: 국내 기술평가결과조회 TechEvlRsltInq(읽기전용 조회 콘텐츠) — 디자인 통일.
 // 구성: 공고 일반정보(dm_bscPbancInfo) + 신청업체(dm_sbtInfo) + 입찰업체(dm_splyInfo)
 //   + 사업별등록결과(dl_resultList — 사업별 Table) + 더보기.
-// 사업별등록결과 목록은 조회 전용 목업(설계서 slide361 예시값 형식) — 추후 API: bdService.selectOvsBidRegRsltByBiz.
+// 사업별등록결과 목록은 조회 전용 목업(설계서 slide361 예시값 형식) — 추후 API: bdService.selectBidRegRsltListByBiz.
 import { useState } from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'

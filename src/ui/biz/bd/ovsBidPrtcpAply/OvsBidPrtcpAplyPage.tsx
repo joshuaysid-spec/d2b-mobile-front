@@ -167,7 +167,7 @@ export function OvsBidPrtcpAplyPage() {
     }
     // 신청 클릭(M77 설계서 slide341) — 입찰참가신청서 등록. 모의입찰 상태인 경우 모의입찰참가신청.
     console.log('[M77] 입찰참가신청서 등록', { pbancNo: detail.pbancNo })
-    // 추후 API: bdService.registerOvsBidPrtcpAply
+    // 추후 API: bdService.insertOvsBidPrtcpAply
     navigate('/bd/aplyCmptn', {
       state: {
         detail,

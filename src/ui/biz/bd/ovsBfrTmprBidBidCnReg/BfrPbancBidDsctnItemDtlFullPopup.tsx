@@ -17,7 +17,7 @@ import { cn } from '@/utils/cn'
 import type { BfrPbancBidCnItem, BfrPbancInfoItem } from '@/types/bd'
 
 // ── 목업 — 이전공고 입찰내역 목록(dl_bidCnList). 와이어프레임 예시값(A000-A0000·0000T-80U/TBE-3·OA 업체·10,000 USD) 기반.
-//    이전공고입찰내역목록조회 — 추후 API: bdService.selectBfrPbancBidCnList(pbancNo, pbancOd)
+//    이전공고입찰내역목록조회 — 추후 API: bdService.selectBfrTmprBidCnList(pbancNo, pbancOd)
 const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
   {
     no: 1,
@@ -289,7 +289,7 @@ export function BfrPbancBidDsctnItemDtlFullPopup({
     }
   }, [open])
 
-  // 클릭한 공고의 입찰내역 목록 — 목업. 추후 API: bdService.selectBfrPbancBidCnList(pbanc.pbancNo, pbanc.pbancOd)
+  // 클릭한 공고의 입찰내역 목록 — 목업. 추후 API: bdService.selectBfrTmprBidCnList(pbanc.pbancNo, pbanc.pbancOd)
   const list = MOCK_BID_CN_LIST
   const total = list.length
   const visibleList = useMemo(() => list.slice(0, visible), [list, visible])
@@ -310,7 +310,7 @@ export function BfrPbancBidDsctnItemDtlFullPopup({
       count: items.length,
       items,
     })
-    // 추후 API: bdService.loadBfrPbancBidCn(pbanc.pbancNo, pbanc.pbancOd, items)
+    // 추후 API: bdService.saveBfrTmprBidCn(pbanc.pbancNo, pbanc.pbancOd, items)
     onOpenChange(false)
   }
 

@@ -1,7 +1,7 @@
 // 입찰진행 목록 (MUI-BD-03-M01, 설계서 02입찰 v1.83 slide69 화면 · slide71 데이터영역). "조달업체가 신청한 입찰 내역" 목록.
 // 레퍼런스: 입찰공고 통합목록 BidPbancIntgListPage (구성·상태·페이징 동일 패턴).
 // 구성: 업무도움(Infobox) + 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더 + 카드 리스트 + 더보기 + FAB.
-// 데이터는 bdQueries.useSelectProgressList(queries/bds/bd) — 목업/실연동은 bdService(USE_MOCK)가 전환. 목업 데이터는 mocks/bd.ts.
+// 데이터는 bdQueries.useSelectBidPrgrsListForBzenty(queries/bds/bd) — 목업/실연동은 bdService(USE_MOCK)가 전환. 목업 데이터는 mocks/bd.ts.
 // 키워드 검색·더보기(페이징)는 페이지 클라이언트 로직(서버 페이징 전환 시 훅 파라미터로 이행).
 // ⚠️ 2026-06-18 개정('공고 목록 설명 변경', slide69 주석 ②): 목록은 공고 전체를 보여주되 상세 진입을 제한한다.
 //    - 입찰 진행 일시 미도래 → 토스트 '입찰 진행 일이 아닙니다.'
@@ -85,7 +85,7 @@ const DEFAULT_FILTER: SearchFilterValue = {
   rfrncNo: '',
 }
 
-// 목록 데이터는 bdQueries.useSelectProgressList(bdService.selectProgressList) 가 공급 — 목업은 mocks/bd.ts(구 인라인 이관).
+// 목록 데이터는 bdQueries.useSelectBidPrgrsListForBzenty(bdService.selectBidPrgrsListForBzenty) 가 공급 — 목업은 mocks/bd.ts(구 인라인 이관).
 // (구 인라인 dlt_bidPrgrsList 7건 + 확장은 mocks/bd.ts 로 이관 — 단일 소스. 각 아이템 = 업무구분/진행상태/실데이터
 //  를 담은 완결 객체라 그대로 상세 navigate state 로 넘기면 상세가 상태값으로 버튼을 분기해 굴러간다.)
 
@@ -133,10 +133,10 @@ export function BidPrgrsListForBzentyPage() {
   )
   const [toastMsg, setToastMsg] = useState<string | null>(null) // 진입 제한 안내(null=닫힘)
 
-  // 목록 조회 — 전체 목록(목업/실연동은 bdService.selectProgressList 의 USE_MOCK 분기가 전환).
-  const { data } = bdQueries.useSelectProgressList()
+  // 목록 조회 — 전체 목록(목업/실연동은 bdService.selectBidPrgrsListForBzenty 의 USE_MOCK 분기가 전환).
+  const { data } = bdQueries.useSelectBidPrgrsListForBzenty()
 
-  // ── 목록 핸들러 — 확정값 상태만 갱신(조회는 bdQueries.useSelectProgressList + 아래 클라이언트 필터가 담당) ──
+  // ── 목록 핸들러 — 확정값 상태만 갱신(조회는 bdQueries.useSelectBidPrgrsListForBzenty + 아래 클라이언트 필터가 담당) ──
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)
     setPage(1)

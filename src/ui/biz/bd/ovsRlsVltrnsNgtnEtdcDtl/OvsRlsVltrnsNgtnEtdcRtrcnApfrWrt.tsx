@@ -76,7 +76,7 @@ export function OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt({
   ]
 
   const handleConfirm = () => {
-    console.log('[P82] 견적서 취소 신청서 제출', { rsn }) // 추후 API: bdService.submitOvsRlsVltrnsEtdcRtrcn
+    console.log('[P82] 견적서 취소 신청서 제출', { rsn }) // 추후 API: bdService.cancelEtdcRtrcnApfrSbmsn
     setConfirmOpen(false)
     onOpenChange(false)
   }

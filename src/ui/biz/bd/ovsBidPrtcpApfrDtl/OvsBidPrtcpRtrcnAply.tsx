@@ -58,7 +58,7 @@ const OvsBidPrtcpRtrcnAply = forwardRef<OvsBidPrtcpRtrcnAplyHandle, OvsBidPrtcpR
         targets: targets.map((t) => t.prchsDmndNo),
         rsn,
       })
-      // 추후 API: bdService.submitOvsBidPrtcpRtrcn
+      // 추후 API: bdService.inserBidPrtcpRtrcnAply
       setConfirmOpen(false)
       onSubmitted()
     }

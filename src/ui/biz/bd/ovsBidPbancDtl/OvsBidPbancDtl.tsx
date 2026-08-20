@@ -1,7 +1,7 @@
 // 국외 입찰공고 상세 - '품목 목록' 탭 (MUI-BD-01-T72(구 M72 — v1.83 재편), 설계서 slide291·295).
 // 품목별 아코디언(항목번호·품명) + 필드 테이블(dl_itemList 항목 그대로) + 보관함 추가/삭제(업체담당자).
 // 첨부문서 '보기' = 파일다운로드, 재고번호 '보기' = 목록정보조회 팝업(UI-OP-01-P75, 추후 연결).
-// 10개 노출 후 더보기 버튼으로 10개씩 추가 로드(설계서). 데이터는 목업(추후 bdService.selectOvsBidItemList).
+// 10개 노출 후 더보기 버튼으로 10개씩 추가 로드(설계서). 데이터는 목업(추후 bdService.selectBidItemList).
 import { useState } from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
@@ -14,7 +14,7 @@ import { OvsBidPbanc_AtchFileInq } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbanc_
 import type { OvsAtchDoc, OvsBidItem } from '@/types/bd'
 
 // 품목목록(dl_itemList) 목업 — 설계서 slide291 예시값(수량 1+1+1=3, 예산 608,000.00 USD) 기반.
-// 항목번호별로 재고·부품·규격번호와 품명만 달리해 실제 응답처럼 구성. 추후 bdService.selectOvsBidItemList
+// 항목번호별로 재고·부품·규격번호와 품명만 달리해 실제 응답처럼 구성. 추후 bdService.selectBidItemList
 type OvsBidItemBase = Pick<
   OvsBidItem,
   'frcptlArtclNo' | 'itemNm' | 'invtNo' | 'prtsNo' | 'spcfctNo' | 'lockerYn' | 'atchDocEn' | 'inspShpNm'
@@ -79,7 +79,7 @@ export function OvsBidPbancDtl() {
       open: true,
       message: next === 'Y' ? '보관함에 추가 되었습니다.' : '보관함에서 삭제 되었습니다.',
     })
-    // 추후 API: bdService.addOvsLockerItem / bdService.deleteOvsLockerItem
+    // 추후 API: bdService.insertItemToLocker / bdService.deleteItemFromLocker
     console.log('[M72] 보관함', next === 'Y' ? '추가' : '삭제', item.frcptlArtclNo)
   }
 

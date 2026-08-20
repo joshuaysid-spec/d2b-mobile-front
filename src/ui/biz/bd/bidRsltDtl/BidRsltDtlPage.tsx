@@ -3,7 +3,7 @@
 // 구성: 요약정보(SummaryInfo, 즐겨찾기) + 스텝바(StepBar, 입찰) + 탭4(일반정보/품목정보/입찰결과/협상결과)
 //   + 탭 콘텐츠(일반정보=이 파일 인라인=T01 / 품목정보=BidRsltDtlList T02 / 입찰결과=BidRsltDtl T03 / 협상결과=BidRsltDtl2 T04)
 //   + 맨위로 FAB.
-// 상세화면이라 검색필터 없음. 데이터는 목업(추후 bdService.selectBidRsltDtl). 헤더는 전역 Header(AppLayout).
+// 상세화면이라 검색필터 없음. 데이터는 목업(추후 bdService.selctBidRsltInfo). 헤더는 전역 Header(AppLayout).
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
@@ -145,7 +145,7 @@ function GeneralInfo({ item }: { item: BdopnItem }) {
         </AccordionSection>
       </Accordion>
 
-      {/* 이행/적격심사 액션 — 담당자 정보와 간격 두고 균등 분할(포기하기/신청하기) + 풀폭 제출내용 확인. 추후 API: bdService.applyPfmncElgblScrn */}
+      {/* 이행/적격심사 액션 — 담당자 정보와 간격 두고 균등 분할(포기하기/신청하기) + 풀폭 제출내용 확인. 추후 API: bdService.saveImpltElgbSrngAply */}
       {/* 하단 여백: 우측 플로팅 버튼(48px + 하단 10px + safe-area)에 안 가리도록 확보. */}
       <div
         className="flex flex-col gap-krds-5 px-4 pt-krds-8"
@@ -236,14 +236,14 @@ export function BidRsltDtlPage() {
       open: true,
       message: next ? '관심공고에 등록 되었습니다.' : '관심공고에서 제외 되었습니다.',
     })
-    console.log('[BidRsltDtl] 관심공고', next ? '등록' : '제외', id) // 추후 API: bdService.toggleFavorite
+    console.log('[BidRsltDtl] 관심공고', next ? '등록' : '제외', id) // 추후 API: bdService.insertItrstPbanc
   }
 
   // navigate state 가 식별자 원천(URL 미포함). 개찰목록 카드는 항목 전체를 넘겨 placeholder 로 즉시 렌더하고,
   //   입찰진행현황 탭의 '입찰결과 바로가기' 는 id 만 넘기므로 조회 완료까지 PageLoading.
   const stateItem = useLocation().state as BdopnItem | { id: string } | null
   const id = stateItem?.id ?? ''
-  const { data: item } = bdQueries.useSelectBidRsltDtl(id, stateItem && 'bidPbancNo' in stateItem ? stateItem : undefined)
+  const { data: item } = bdQueries.useSelctBidRsltInfo(id, stateItem && 'bidPbancNo' in stateItem ? stateItem : undefined)
   // 진행단계(prgrsStg) — 입찰결과상세이므로 '입찰'(개찰/낙찰). 추후 bdService 응답으로 대체.
   const [prgrsStg] = useState('입찰')
   const steps = stepsByStg(prgrsStg)
