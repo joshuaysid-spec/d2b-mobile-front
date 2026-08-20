@@ -21,7 +21,7 @@ export type SysExplnType = 'notice' | 'system'
 
 // TODO(설계서 확인): 공지/안내 데이터 항목 영문ID 미제공(설계서에 항목명 명시 없음) →
 //   임시 필드명(title/content) 사용. API 연동 시 공지(board) 도메인 항목명으로 교체.
-interface SysExplnData {
+export interface SysExplnData {
   title: string
   content: string
 }
@@ -47,6 +47,19 @@ const MOCK_DATA: Record<SysExplnType, SysExplnData> = {
 const HEADING: Record<SysExplnType, string> = {
   notice: '중요 공지사항',
   system: '시스템 안내',
+}
+
+// ── [더 이상 안보기] 영속화 ──────────────────────────────────────────────
+// 설계서(slide26): "현재 노출 공지를 더 이상 표시 안 함" — 앱 전체가 아니라 **공지 1건 단위**.
+// 노출 중단한 공지의 식별값을 종류별로 저장해 두고, 같은 공지면 스킵 / 새 공지가 등록되면 다시 노출.
+// TODO(API 연동): 식별값을 title 대신 공지 게시글 id 로 교체(현 목업엔 id 가 없어 title 로 근사).
+// TODO(하이브리드 앱 탑재): 필요 시 네이티브 저장(브릿지)으로 교체.
+const dismissKey = (type: SysExplnType) => `sysExplnDismissed:${type}`
+
+/** 해당 종류의 현재 공지가 [더 이상 안보기] 처리됐는지. 부모가 open 초기값 계산에 사용. */
+export function isSysExplnDismissed(type: SysExplnType, data?: SysExplnData) {
+  const item = data ?? MOCK_DATA[type]
+  return localStorage.getItem(dismissKey(type)) === item.title
 }
 
 export interface SysExplnProps {
@@ -77,10 +90,11 @@ export function SysExpln({
     onMore?.()
     // 추후 API: 해당 공지 게시글 상세 화면으로 이동
   }
+  // [더 이상 안보기] — 현재 공지 식별값 저장(이후 같은 공지는 미노출, 새 공지는 노출).
+  // 닫힘은 AlertModal 이 onClick 후 자동 처리. 서버 플래그가 생기면 저장을 API 로 교체.
   const handleDismissForever = () => {
-    console.log('[SysExpln] 더 이상 안보기', type)
+    localStorage.setItem(dismissKey(type), item.title)
     onDismissForever?.()
-    // 추후 API: noticeService 로 현재 공지 노출 중단 처리(로컬/서버 플래그)
   }
 
   return (
