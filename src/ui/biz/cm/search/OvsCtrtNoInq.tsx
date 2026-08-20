@@ -5,7 +5,9 @@
 // 콘텐츠 전용 — BottomSheet 컨테이너/타이틀/footer([닫기/계약번호 선택])는 SearchFilter 셸이 슬롯으로 소유한다.
 //   내부 [검색] 버튼은 Figma 원본대로 콘텐츠가 소유(검색 전엔 목록 없음). 폼 상태 캡슐화, footer 확정만 ref(confirm) 노출.
 // 항목명은 설계서 slide86 그대로: 검색(dm_searchInfo)=ctrtYr·ctrtNo / 결과(dl_resultList)=ctrtNo·ctrtYmd·crncCd·ctrtBzentyCd·prcmPicNm.
-// 목록은 목업(추후 API: exService.searchCtrtNo 류로 대체). DeptInq 패턴 + 라디오카드(Figma m_radiocard) 변형.
+// 목록은 목업 — 실 API 는 no.383 계약정보목록조회(/cts/ex/ovsLmtamtCtrt/selectCtrtInfoList.do).
+//   배선 시 exService.selectCtrtInfoList + exQueries 훅을 추가하고 아래 MOCK_RESULTS 를 mocks/ex.ts 로 이동한다.
+// DeptInq 패턴 + 라디오카드(Figma m_radiocard) 변형.
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
@@ -63,7 +65,7 @@ const OvsCtrtNoInq = forwardRef<SearchSheetHandle, OvsCtrtNoInqProps>(({ onSelec
     setPicked(null)
   }, [])
 
-  // 계약연도 And 계약번호 검색(목업) — 추후 exService 실호출로 대체.
+  // 계약연도 And 계약번호 검색(목업) — 추후 exService.selectCtrtInfoList(no.383) 실호출로 대체.
   const handleSearch = useCallback(() => {
     const kw = ctrtNo.trim().toLowerCase()
     const filtered = MOCK_RESULTS.filter((r) => !kw || r.ctrtNo.toLowerCase().includes(kw))

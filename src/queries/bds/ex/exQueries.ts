@@ -1,6 +1,7 @@
 // 이행(EX) 도메인 Query 훅 — frontend-architecture.md §7.2 (services 1:1).
 // 3자 대칭: exService(services/bds/ex.ts) · exQueries(이 파일) · exKeys(keys.ts).
 // 훅명 = use + 서비스 함수명 · 쿼리키 = keys.ts(함수명 동일).
+// 소비처 없는 서비스 함수(no.376 검사관·no.377 감독관)는 훅을 만들지 않는다.
 import { useQuery } from '@tanstack/react-query'
 import { exService } from '@/services/bds/ex'
 import { exKeys } from '@/queries/bds/ex/exKeys'
@@ -21,10 +22,10 @@ export const exQueries = {
   },
 
   /** 납품통지목록(P10) — 풀팝업 열릴 때만 조회. */
-  useSelectDlvgdsAvtsmtList(ctrtNo: string, enabled: boolean) {
+  useSelectInspRqstDocList(ctrtNo: string, enabled: boolean) {
     return useQuery({
-      queryKey: exKeys.selectDlvgdsAvtsmtList(ctrtNo),
-      queryFn: () => exService.selectDlvgdsAvtsmtList(ctrtNo),
+      queryKey: exKeys.selectInspRqstDocList(ctrtNo),
+      queryFn: () => exService.selectInspRqstDocList(ctrtNo),
       enabled: Boolean(ctrtNo) && enabled,
     })
   },
@@ -39,47 +40,47 @@ export const exQueries = {
   },
 
   /** 검사및납품조서상세(M02) — 목록 state 는 placeholder 로 쓰지 않음(필드 구성이 달라 조회로 확정). */
-  useSelectInspDlvdocDtl(id: string) {
+  useSelectInspDlvdocBscInfo(recrdPblcnNo: string) {
     return useQuery({
-      queryKey: exKeys.selectInspDlvdocDtl(id),
-      queryFn: () => exService.selectInspDlvdocDtl(id),
-      enabled: Boolean(id),
+      queryKey: exKeys.selectInspDlvdocBscInfo(recrdPblcnNo),
+      queryFn: () => exService.selectInspDlvdocBscInfo(recrdPblcnNo),
+      enabled: Boolean(recrdPblcnNo),
     })
   },
 
   /** 검사및납품조서상세 물품목록(T02). */
-  useSelectInspDlvdocCmdtys(id: string) {
+  useSelectInspDlvdocDlvgdsList(recrdPblcnNo: string) {
     return useQuery({
-      queryKey: exKeys.selectInspDlvdocCmdtys(id),
-      queryFn: () => exService.selectInspDlvdocCmdtys(id),
-      enabled: Boolean(id),
+      queryKey: exKeys.selectInspDlvdocDlvgdsList(recrdPblcnNo),
+      queryFn: () => exService.selectInspDlvdocDlvgdsList(recrdPblcnNo),
+      enabled: Boolean(recrdPblcnNo),
     })
   },
 
   /** 검사및납품조서상세(부대조달, M03). */
-  useSelectInspDlvdocSbsdDtl(id: string) {
+  useSelectInspDlvdocSbsdDtl(recrdPblcnNo: string) {
     return useQuery({
-      queryKey: exKeys.selectInspDlvdocSbsdDtl(id),
-      queryFn: () => exService.selectInspDlvdocSbsdDtl(id),
-      enabled: Boolean(id),
+      queryKey: exKeys.selectInspDlvdocSbsdDtl(recrdPblcnNo),
+      queryFn: () => exService.selectInspDlvdocSbsdDtl(recrdPblcnNo),
+      enabled: Boolean(recrdPblcnNo),
     })
   },
 
   /** 부대조달 물품목록(T04). */
-  useSelectInspDlvdocSbsdCmdtys(id: string) {
+  useSelectInspDlvdocSbsdCmdtys(recrdPblcnNo: string) {
     return useQuery({
-      queryKey: exKeys.selectInspDlvdocSbsdCmdtys(id),
-      queryFn: () => exService.selectInspDlvdocSbsdCmdtys(id),
-      enabled: Boolean(id),
+      queryKey: exKeys.selectInspDlvdocSbsdCmdtys(recrdPblcnNo),
+      queryFn: () => exService.selectInspDlvdocSbsdCmdtys(recrdPblcnNo),
+      enabled: Boolean(recrdPblcnNo),
     })
   },
 
-  /** 기성및준공검사상세(M04). */
-  useSelectPxcndCmcnInspDtl(id: string) {
+  /** 기성및준공검사상세(M04) — 식별자는 계약번호+기성차수(M01 공사 카드). */
+  useSelectPxcndCmcnInspBscInfo(ctrtNo: string, pxcndCycl: string) {
     return useQuery({
-      queryKey: exKeys.selectPxcndCmcnInspDtl(id),
-      queryFn: () => exService.selectPxcndCmcnInspDtl(id),
-      enabled: Boolean(id),
+      queryKey: exKeys.selectPxcndCmcnInspBscInfo(ctrtNo, pxcndCycl),
+      queryFn: () => exService.selectPxcndCmcnInspBscInfo(ctrtNo, pxcndCycl),
+      enabled: Boolean(ctrtNo),
     })
   },
 
@@ -92,124 +93,124 @@ export const exQueries = {
   },
 
   /** 검사및납품조서결과상세(M07). */
-  useSelectDlvdocRsltDtl(id: string) {
+  useSelectDlvdocRsltDtl(recrdPblcnNo: string) {
     return useQuery({
-      queryKey: exKeys.selectDlvdocRsltDtl(id),
-      queryFn: () => exService.selectDlvdocRsltDtl(id),
-      enabled: Boolean(id),
+      queryKey: exKeys.selectDlvdocRsltDtl(recrdPblcnNo),
+      queryFn: () => exService.selectDlvdocRsltDtl(recrdPblcnNo),
+      enabled: Boolean(recrdPblcnNo),
     })
   },
 
   /** 결과상세 물품목록(T06). */
-  useSelectDlvdocRsltCmdtys(id: string) {
+  useSelectDlvdocRsltCmdtys(recrdPblcnNo: string) {
     return useQuery({
-      queryKey: exKeys.selectDlvdocRsltCmdtys(id),
-      queryFn: () => exService.selectDlvdocRsltCmdtys(id),
-      enabled: Boolean(id),
+      queryKey: exKeys.selectDlvdocRsltCmdtys(recrdPblcnNo),
+      queryFn: () => exService.selectDlvdocRsltCmdtys(recrdPblcnNo),
+      enabled: Boolean(recrdPblcnNo),
     })
   },
 
   /** 견적의뢰서목록(M71). */
-  useSelectOvsEstmtRqdcList(req: OvsEstmtRqdcListRequest = {}) {
+  useSelectEstmtRqdcList(req: OvsEstmtRqdcListRequest = {}) {
     return useQuery({
-      queryKey: exKeys.selectOvsEstmtRqdcList(req),
-      queryFn: () => exService.selectOvsEstmtRqdcList(req),
+      queryKey: exKeys.selectEstmtRqdcList(req),
+      queryFn: () => exService.selectEstmtRqdcList(req),
     })
   },
 
   /** 견적의뢰서상세(M72). */
-  useSelectOvsEstmtRqdcDtl(id: string) {
+  useSelectOvsEstmtRqdcDtl(clmSeq: string) {
     return useQuery({
-      queryKey: exKeys.selectOvsEstmtRqdcDtl(id),
-      queryFn: () => exService.selectOvsEstmtRqdcDtl(id),
-      enabled: Boolean(id),
+      queryKey: exKeys.selectOvsEstmtRqdcDtl(clmSeq),
+      queryFn: () => exService.selectOvsEstmtRqdcDtl(clmSeq),
+      enabled: Boolean(clmSeq),
     })
   },
 
   /** 견적의뢰서 품목목록(T72). */
-  useSelectOvsEstmtRqdcItems(id: string) {
+  useSelectEstmtRqdcDtlList(clmSeq: string) {
     return useQuery({
-      queryKey: exKeys.selectOvsEstmtRqdcItems(id),
-      queryFn: () => exService.selectOvsEstmtRqdcItems(id),
-      enabled: Boolean(id),
+      queryKey: exKeys.selectEstmtRqdcDtlList(clmSeq),
+      queryFn: () => exService.selectEstmtRqdcDtlList(clmSeq),
+      enabled: Boolean(clmSeq),
     })
   },
 
   /** 견적통보서목록(M73) — 상단 계약정보 + 연계 견적 목록. */
-  useSelectOvsEstmtNtdcList(ctrtNo?: string) {
+  useSelectEstmtNtdcList(ctrtNo?: string) {
     return useQuery({
-      queryKey: exKeys.selectOvsEstmtNtdcList(ctrtNo),
-      queryFn: () => exService.selectOvsEstmtNtdcList(ctrtNo),
+      queryKey: exKeys.selectEstmtNtdcList(ctrtNo),
+      queryFn: () => exService.selectEstmtNtdcList(ctrtNo),
     })
   },
 
   /** 견적통보서상세(M74). */
-  useSelectOvsEstmtNtdcDtl(id: string) {
+  useSelectOvsEstmtNtdcDtl(clmSeq: string) {
     return useQuery({
-      queryKey: exKeys.selectOvsEstmtNtdcDtl(id),
-      queryFn: () => exService.selectOvsEstmtNtdcDtl(id),
-      enabled: Boolean(id),
+      queryKey: exKeys.selectOvsEstmtNtdcDtl(clmSeq),
+      queryFn: () => exService.selectOvsEstmtNtdcDtl(clmSeq),
+      enabled: Boolean(clmSeq),
     })
   },
 
   /** 견적통보서 품목목록(T74). */
-  useSelectOvsEstmtNtdcItems(id: string) {
+  useSelectEstmtNtdcDtlList(clmSeq: string) {
     return useQuery({
-      queryKey: exKeys.selectOvsEstmtNtdcItems(id),
-      queryFn: () => exService.selectOvsEstmtNtdcItems(id),
-      enabled: Boolean(id),
+      queryKey: exKeys.selectEstmtNtdcDtlList(clmSeq),
+      queryFn: () => exService.selectEstmtNtdcDtlList(clmSeq),
+      enabled: Boolean(clmSeq),
     })
   },
 
   /** 발주의뢰서목록(M75). */
-  useSelectOvsOrderRqdcList(req: OvsOrderRqdcListRequest = {}) {
+  useSelectOrderRqdcList(req: OvsOrderRqdcListRequest = {}) {
     return useQuery({
-      queryKey: exKeys.selectOvsOrderRqdcList(req),
-      queryFn: () => exService.selectOvsOrderRqdcList(req),
+      queryKey: exKeys.selectOrderRqdcList(req),
+      queryFn: () => exService.selectOrderRqdcList(req),
     })
   },
 
   /** 발주의뢰서상세(M76). */
-  useSelectOvsOrderRqdcDtl(id: string) {
+  useSelectOvsOrderRqdcDtl(orderSeq: string) {
     return useQuery({
-      queryKey: exKeys.selectOvsOrderRqdcDtl(id),
-      queryFn: () => exService.selectOvsOrderRqdcDtl(id),
-      enabled: Boolean(id),
+      queryKey: exKeys.selectOvsOrderRqdcDtl(orderSeq),
+      queryFn: () => exService.selectOvsOrderRqdcDtl(orderSeq),
+      enabled: Boolean(orderSeq),
     })
   },
 
   /** 발주의뢰서 품목목록(T76). */
-  useSelectOvsOrderRqdcItems(id: string) {
+  useSelectOrderRqdcDtlList(orderSeq: string) {
     return useQuery({
-      queryKey: exKeys.selectOvsOrderRqdcItems(id),
-      queryFn: () => exService.selectOvsOrderRqdcItems(id),
-      enabled: Boolean(id),
+      queryKey: exKeys.selectOrderRqdcDtlList(orderSeq),
+      queryFn: () => exService.selectOrderRqdcDtlList(orderSeq),
+      enabled: Boolean(orderSeq),
     })
   },
 
   /** 발주통보서목록(M77) — 상단 계약정보 + 목록. */
-  useSelectOvsOrderNtdcList(ctrtNo?: string) {
+  useSelectOrderNtdcList(ctrtNo?: string) {
     return useQuery({
-      queryKey: exKeys.selectOvsOrderNtdcList(ctrtNo),
-      queryFn: () => exService.selectOvsOrderNtdcList(ctrtNo),
+      queryKey: exKeys.selectOrderNtdcList(ctrtNo),
+      queryFn: () => exService.selectOrderNtdcList(ctrtNo),
     })
   },
 
   /** 발주통보서상세(M78). */
-  useSelectOvsOrderNtdcDtl(id: string) {
+  useSelectOvsOrderNtdcDtl(orderSeq: string) {
     return useQuery({
-      queryKey: exKeys.selectOvsOrderNtdcDtl(id),
-      queryFn: () => exService.selectOvsOrderNtdcDtl(id),
-      enabled: Boolean(id),
+      queryKey: exKeys.selectOvsOrderNtdcDtl(orderSeq),
+      queryFn: () => exService.selectOvsOrderNtdcDtl(orderSeq),
+      enabled: Boolean(orderSeq),
     })
   },
 
   /** 발주통보서 품목목록(T78). */
-  useSelectOvsOrderNtdcItems(id: string) {
+  useSelectOrderNtdcDtlList(orderSeq: string) {
     return useQuery({
-      queryKey: exKeys.selectOvsOrderNtdcItems(id),
-      queryFn: () => exService.selectOvsOrderNtdcItems(id),
-      enabled: Boolean(id),
+      queryKey: exKeys.selectOrderNtdcDtlList(orderSeq),
+      queryFn: () => exService.selectOrderNtdcDtlList(orderSeq),
+      enabled: Boolean(orderSeq),
     })
   },
 }

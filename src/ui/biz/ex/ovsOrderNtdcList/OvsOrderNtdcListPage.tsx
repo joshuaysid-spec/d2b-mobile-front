@@ -66,7 +66,7 @@ export function OvsOrderNtdcListPage() {
   const [filterApplied, setFilterApplied] = useState(false)
   const [appliedSearch, setAppliedSearch] = useState<string | null>(null)
 
-  const { data: listData, isLoading } = exQueries.useSelectOvsOrderNtdcList()
+  const { data: listData, isLoading } = exQueries.useSelectOrderNtdcList()
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)

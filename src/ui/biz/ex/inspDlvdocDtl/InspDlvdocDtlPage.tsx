@@ -2,7 +2,7 @@
 // P11 검사및납품조서목록에서 중앙조달 조서 카드 클릭 → /ex/inspDlvdocDtl 진입.
 // 구성: 중요 안내(Notice urgent, PC 안내) + sticky(요약 SummaryInfo + 스텝 StepBar + 탭 TabList)
 //   + 탭 콘텐츠(T01 상세정보 InspDlvdocDtl · T02 물품목록 InspDlvdocDtl_CmdtyList) — CT 상세(M03) 구조 준용.
-// 데이터: exQueries.useSelectInspDlvdocDtl — 목록 state 는 요약 즉시표시에 안 쓰고 조회로 확정(필드 구성이 목록과 달라
+// 데이터: exQueries.useSelectInspDlvdocBscInfo — 목록 state 는 요약 즉시표시에 안 쓰고 조회로 확정(필드 구성이 목록과 달라
 //   placeholder 부적합) → 조회 완료까지 PageLoading. 목업/실연동은 exService(USE_MOCK)가 전환.
 // 업무도움(slide17)은 '내역이 있는 경우만 표시' — 안내 내역 확정 전이라 미표시(M01·CT 동일 판단).
 import { useState } from 'react'
@@ -39,13 +39,13 @@ function buildSteps(): StepItem[] {
 
 export function InspDlvdocDtlPage() {
   const navigate = useNavigate()
-  // 목록 → 상세: 식별자는 URL 이 아니라 navigate state(클릭 항목)로 받는다.
-  const id = (useLocation().state as { id: string } | null)?.id ?? ''
+  // 목록 → 상세: 식별자는 URL 이 아니라 navigate state(P11 클릭 항목)로 받는다 — 조회 키는 조서발행번호.
+  const id = (useLocation().state as { recrdPblcnNo: string } | null)?.recrdPblcnNo ?? ''
   const [tab, setTab] = useState('detail')
   // 스크롤 시 상단 블록(요약+스텝+탭) 축소 + sticky 동작 — 로직은 훅에서.
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
-  const { data: detail } = exQueries.useSelectInspDlvdocDtl(id)
+  const { data: detail } = exQueries.useSelectInspDlvdocBscInfo(id)
   const steps = buildSteps()
 
   // state 없이 직접 진입 = 식별자를 알 수 없음 → 검사통합목록으로.

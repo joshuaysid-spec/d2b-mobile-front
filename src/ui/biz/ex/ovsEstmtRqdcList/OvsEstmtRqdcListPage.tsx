@@ -77,7 +77,7 @@ export function OvsEstmtRqdcListPage() {
   const [filterApplied, setFilterApplied] = useState(false)
   const [appliedSearch, setAppliedSearch] = useState<string | null>(null)
 
-  const { data: listData, isLoading } = exQueries.useSelectOvsEstmtRqdcList()
+  const { data: listData, isLoading } = exQueries.useSelectEstmtRqdcList()
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)

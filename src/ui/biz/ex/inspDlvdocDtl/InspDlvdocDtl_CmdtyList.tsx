@@ -1,6 +1,6 @@
 // 검사및납품조서상세(중앙조달) - '물품목록' 탭 콘텐츠 (MUI-EX-01-T02). 설계서 04.이행 v0.83 slide19~20.
 // "물품 목록 - 총 N건" 헤더 + 물품 1건 = Table 반복(조달요구번호/재고번호/품명/단위/계약수량/
-// 기 작성수량/금번 납품수량 — dlt_CmdtyList 순서 그대로). 데이터는 exQueries.useSelectInspDlvdocCmdtys 조회.
+// 기 작성수량/금번 납품수량 — dlt_CmdtyList 순서 그대로). 데이터는 exQueries.useSelectInspDlvdocDlvgdsList 조회.
 import { exQueries } from '@/queries/bds/ex/exQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -25,7 +25,7 @@ function cmdtyRows(it: InspDlvdocCmdtyItem): TableRow[] {
 }
 
 export function InspDlvdocDtl_CmdtyList({ id }: InspDlvdocDtl_CmdtyListProps) {
-  const { data: items = [] } = exQueries.useSelectInspDlvdocCmdtys(id)
+  const { data: items = [] } = exQueries.useSelectInspDlvdocDlvgdsList(id)
 
   return (
     <section className="flex flex-col gap-krds-7 pb-6">

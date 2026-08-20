@@ -37,7 +37,7 @@ export function DlvgdsAvtsmtListFullPopup({
   // P11 바텀시트 — 선택한 통지번호(null=닫힘)
   const [pickedAvtsmtNo, setPickedAvtsmtNo] = useState<string | null>(null)
 
-  const { data: items = [], isLoading } = exQueries.useSelectDlvgdsAvtsmtList(ctrtNo, open)
+  const { data: items = [], isLoading } = exQueries.useSelectInspRqstDocList(ctrtNo, open)
 
   // 닫힘 시 로컬 상태 초기화 — 이 래퍼는 부모(M01)가 open prop 으로만 토글하고 항상 마운트라
   // 리셋 없이는 재오픈 때 이전 계약의 P11 시트(stale avtsmtNo)·더보기 진행 상태가 남는다.

@@ -38,8 +38,9 @@ function buildSteps(): StepItem[] {
 
 export function DlvdocRsltDtlPage() {
   const navigate = useNavigate()
-  // 목록 → 상세: 식별자는 URL 이 아니라 navigate state(클릭 항목)로 받는다.
-  const id = (useLocation().state as { id: string } | null)?.id ?? ''
+  // 목록 → 상세: 식별자는 URL 이 아니라 navigate state(클릭 항목)로 받는다 — 조회 키는 조서발행번호
+  //   (M05 카드의 id 는 `계약번호-통지번호` 합성값이라 조회에 쓰지 않는다).
+  const id = (useLocation().state as { recrdPblcnNo: string } | null)?.recrdPblcnNo ?? ''
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 

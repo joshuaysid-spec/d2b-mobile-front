@@ -72,7 +72,7 @@ export function OvsOrderRqdcListPage() {
   const [filterApplied, setFilterApplied] = useState(false)
   const [appliedSearch, setAppliedSearch] = useState<string | null>(null)
 
-  const { data: listData, isLoading } = exQueries.useSelectOvsOrderRqdcList()
+  const { data: listData, isLoading } = exQueries.useSelectOrderRqdcList()
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)

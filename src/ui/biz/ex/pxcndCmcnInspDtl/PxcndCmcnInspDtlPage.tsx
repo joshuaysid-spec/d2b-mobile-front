@@ -2,7 +2,7 @@
 // 검사통합목록(M01)에서 공사 계약 카드 클릭 → /ex/pxcndCmcnInspDtl 진입.
 // 구성: 중요 안내(Notice urgent) + sticky(요약 SummaryInfo + 스텝 StepBar + 탭 TabList)
 //   + 상세정보 탭(단일 탭 — slide27 탭 내용: 상세정보만) — M02/M03 셸 준용.
-// 데이터: exQueries.useSelectPxcndCmcnInspDtl — 조회 완료까지 PageLoading.
+// 데이터: exQueries.useSelectPxcndCmcnInspBscInfo — 조회 완료까지 PageLoading.
 // 업무도움은 '내역이 있는 경우만 표시' — 안내 내역 확정 전이라 미표시(형제 화면 동일 판단).
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
@@ -17,6 +17,7 @@ import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { PxcndCmcnInspDtl } from '@/ui/biz/ex/pxcndCmcnInspDtl/PxcndCmcnInspDtl'
+import type { InspIntgListItem } from '@/types/ex'
 
 // ── 탭 (slide27 탭 영역: 상세정보 단일 — 진입 시 고정 노출) ──────────────────
 const TABS: TabItem[] = [{ value: 'detail', label: '상세정보' }]
@@ -34,16 +35,21 @@ function buildSteps(): StepItem[] {
 
 export function PxcndCmcnInspDtlPage() {
   const navigate = useNavigate()
-  // 목록 → 상세: 식별자는 URL 이 아니라 navigate state(클릭 항목)로 받는다.
-  const id = (useLocation().state as { id: string } | null)?.id ?? ''
+  // 목록 → 상세: 식별자는 URL 이 아니라 navigate state(클릭 항목)로 받는다 — 조회 키는 계약번호+기성차수.
+  // ⚠️ 진입 경로 2개(M01 InspIntgListItem · M05 InspDlvdocPrstItem)인데 M05 항목엔 기성차수가 없다
+  //   (dlt_InspDlvdocPrst 미정의) → 없으면 계약번호만으로 조회. 상세설계 확정 시 M05 항목에 pxcndCycl 추가.
+  const item = useLocation().state as Partial<InspIntgListItem> | null
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
-  const { data: detail } = exQueries.useSelectPxcndCmcnInspDtl(id)
+  const { data: detail } = exQueries.useSelectPxcndCmcnInspBscInfo(
+    item?.ctrtNo ?? '',
+    item?.pxcndCycl ?? '',
+  )
   const steps = buildSteps()
 
   // state 없이 직접 진입 = 식별자를 알 수 없음 → 검사통합목록으로.
-  if (!id) return <Navigate to="/ex" replace />
+  if (!item?.ctrtNo) return <Navigate to="/ex" replace />
   if (!detail) return <PageLoading />
 
   return (

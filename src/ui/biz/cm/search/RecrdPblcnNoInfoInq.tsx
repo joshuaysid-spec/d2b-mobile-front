@@ -5,7 +5,7 @@
 //   내부 [검색] 버튼은 설계서 원본대로 콘텐츠가 소유(검색 전엔 목록 없음). OvsCtrtNoInq(P79) 확정형 패턴.
 // 항목명은 설계서 slide35 그대로: 검색(dmt_RecrdPblcnNo)=recrdPblcnNo /
 //   결과(dlt_RecrdPblcnNoItemInfo)=no·prcmRqtNo·itemNm·ctrtQty·ctrtUntprc·ctrtAmt·dlvgdsCmptnQty·dlvgdsQty.
-// 목록은 목업(추후 API: exService.getRecrdPblcnNoItemInfos 류로 대체).
+// 목록은 목업 — 조서발행번호 검색에 대응하는 실 API 가 EX 목록(no.367~398)에 없다(반입 전 확인 필요).
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
@@ -78,7 +78,7 @@ const RecrdPblcnNoInfoInq = forwardRef<SearchSheetHandle, RecrdPblcnNoInfoInqPro
       setSearched('')
     }, [])
 
-    // 조서발행번호 검색(목업) — 추후 exService 실호출로 대체.
+    // 조서발행번호 검색(목업) — 실 API 확정 시 exService 실호출로 대체.
     const handleSearch = useCallback(() => {
       const no = recrdPblcnNo.trim()
       if (!no) return

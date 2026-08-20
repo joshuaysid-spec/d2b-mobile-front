@@ -41,7 +41,7 @@ export function OvsOrderNtdcDtl_CmdtyList({ id, detail }: OvsOrderNtdcDtl_CmdtyL
   const [page, setPage] = useState(1)
   const pageSize = 10
 
-  const { data: items = [] } = exQueries.useSelectOvsOrderNtdcItems(id)
+  const { data: items = [] } = exQueries.useSelectOrderNtdcDtlList(id)
 
   const total = items.length
   const loaded = Math.min(page * pageSize, total)

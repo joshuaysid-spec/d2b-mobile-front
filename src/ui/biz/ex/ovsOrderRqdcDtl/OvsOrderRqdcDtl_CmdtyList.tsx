@@ -40,7 +40,7 @@ export function OvsOrderRqdcDtl_CmdtyList({ id }: OvsOrderRqdcDtl_CmdtyListProps
   const [page, setPage] = useState(1)
   const pageSize = 10
 
-  const { data: items = [] } = exQueries.useSelectOvsOrderRqdcItems(id)
+  const { data: items = [] } = exQueries.useSelectOrderRqdcDtlList(id)
 
   const total = items.length
   const loaded = Math.min(page * pageSize, total)
