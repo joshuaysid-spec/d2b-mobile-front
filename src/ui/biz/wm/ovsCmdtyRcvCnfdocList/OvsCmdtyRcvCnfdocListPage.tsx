@@ -74,7 +74,7 @@ export function OvsCmdtyRcvCnfdocListPage() {
     }),
     [appliedCtrtNo, filter],
   )
-  const { data: listData, isLoading } = wmQueries.useSelectOvsCmdtyRcvCnfdocList(req)
+  const { data: listData, isLoading } = wmQueries.useSelectGoodsReceiveConfirmList(req)
 
   const sheetOpen = picked !== null
 

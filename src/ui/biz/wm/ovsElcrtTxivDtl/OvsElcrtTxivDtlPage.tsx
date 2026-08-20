@@ -46,7 +46,7 @@ export function OvsElcrtTxivDtlPage() {
   const pageSize = 10
 
   const id = stateItem?.id ?? ''
-  const { data: detail } = wmQueries.useSelectOvsElcrtTxivDtl(id)
+  const { data: detail } = wmQueries.useSelectElectronicBill(id)
   const { data: items = [] } = wmQueries.useSelectOvsElcrtTxivItems(id)
 
   if (!stateItem) return <Navigate to="/wm/ovsCmdtyRcvCnfdocList" replace />

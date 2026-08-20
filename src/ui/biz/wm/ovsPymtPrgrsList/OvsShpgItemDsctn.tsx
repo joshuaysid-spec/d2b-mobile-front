@@ -28,7 +28,7 @@ export function OvsShpgItemDsctn({ blNo, ctrtNo, invcNo, open }: OvsShpgItemDsct
   const [page, setPage] = useState(1)
   const pageSize = 10
 
-  const { data: items = [], isLoading } = wmQueries.useSelectOvsShpgItemDsctns(blNo, open)
+  const { data: items = [], isLoading } = wmQueries.useSelectPackingItemList(blNo, open)
 
   const total = items.length
   const loaded = Math.min(page * pageSize, total)

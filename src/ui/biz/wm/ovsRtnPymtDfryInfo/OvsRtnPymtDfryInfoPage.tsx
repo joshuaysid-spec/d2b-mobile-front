@@ -98,7 +98,7 @@ export function OvsRtnPymtDfryInfoPage() {
       srngYmdTo: srngYmd?.end ?? '',
     }
   }, [appliedCtrtNo, filter])
-  const { data: listData, isLoading } = wmQueries.useSelectOvsRtnPymtDfryInfoList(req)
+  const { data: listData, isLoading } = wmQueries.useSelectPaymentList(req)
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)

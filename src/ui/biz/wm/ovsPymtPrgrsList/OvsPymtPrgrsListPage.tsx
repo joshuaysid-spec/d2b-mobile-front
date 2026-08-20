@@ -64,7 +64,7 @@ export function OvsPymtPrgrsListPage() {
   const [picked, setPicked] = useState<OvsPymtPrgrsItem | null>(null)
 
   const ctrtNo = appliedCtrtNo ?? String(filter.ctrtNo ?? '')
-  const { data: listData, isLoading } = wmQueries.useSelectOvsPymtPrgrsList({ ctrtNo })
+  const { data: listData, isLoading } = wmQueries.useSelectPaymentStatusList({ ctrtNo })
 
   const sheetOpen = picked !== null
 

@@ -30,16 +30,16 @@ export const wmKeys = {
     ['wm', 'selectPymtClmPrgrsList', req] as const,
   selectPymtDfryInfoRtnList: (req: RtnPymtDfryInfoRequest) =>
     ['wm', 'selectPymtDfryInfoRtnList', req] as const,
-  selectOvsCmdtyRcvCnfdocList: (req: OvsCmdtyRcvCnfdocRequest) =>
-    ['wm', 'selectOvsCmdtyRcvCnfdocList', req] as const,
+  selectGoodsReceiveConfirmList: (req: OvsCmdtyRcvCnfdocRequest) =>
+    ['wm', 'selectGoodsReceiveConfirmList', req] as const,
   selectOvsElcrtTxivList: (ctrtNo: string) => ['wm', 'selectOvsElcrtTxivList', ctrtNo] as const,
-  selectOvsElcrtTxivDtl: (bilPblcnNo: string) =>
-    ['wm', 'selectOvsElcrtTxivDtl', bilPblcnNo] as const,
+  selectElectronicBill: (bilPblcnNo: string) =>
+    ['wm', 'selectElectronicBill', bilPblcnNo] as const,
   selectOvsElcrtTxivItems: (bilPblcnNo: string) =>
     ['wm', 'selectOvsElcrtTxivItems', bilPblcnNo] as const,
-  selectOvsRtnPymtDfryInfoList: (req: OvsRtnPymtDfryInfoRequest) =>
-    ['wm', 'selectOvsRtnPymtDfryInfoList', req] as const,
-  selectOvsPymtPrgrsList: (req: OvsPymtPrgrsRequest) =>
-    ['wm', 'selectOvsPymtPrgrsList', req] as const,
-  selectOvsShpgItemDsctns: (blNo: string) => ['wm', 'selectOvsShpgItemDsctns', blNo] as const,
+  selectPaymentList: (req: OvsRtnPymtDfryInfoRequest) =>
+    ['wm', 'selectPaymentList', req] as const,
+  selectPaymentStatusList: (req: OvsPymtPrgrsRequest) =>
+    ['wm', 'selectPaymentStatusList', req] as const,
+  selectPackingItemList: (blNo: string) => ['wm', 'selectPackingItemList', blNo] as const,
 }

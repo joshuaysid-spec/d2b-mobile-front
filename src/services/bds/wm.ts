@@ -16,6 +16,13 @@
 //   no.435 대금청구이행보증서 조회   /cts/wm/birq/selectPymtClmImpltWtgr.do
 //   no.437 계약상대업체 조회         /cts/wm/birq/selectCtrtRltBzenty.do
 //   no.444 선금/착.중도금전자보증서조회 /cts/wm/birq/selectPrpayDpsmnItrpyElWtgrInq.do
+// 국외(OvsPymtClmController, /cts/wm/ovsPymtClm/) 중 모바일 소비처가 없어 미배선인 건 —
+// 작성/제출은 PC 전용(모바일은 조회만), 다운로드는 모바일 미제공, 수송비지불현황은 설계서에 화면 없음:
+//   no.447 전자계산서 제출 updateElectronicBill.do · no.448 전자계산서 삭제 deleteElectronicBill.do
+//   no.450 전자계산서 저장 saveElectronicBill.do · no.451 전자계산서 Xml 다운로드 downloadElecronicBill.do
+//   no.453 대금지불정보 엑셀다운 downloadPaymentExcel.do
+//   no.456 수송비지불현황목록 조회 selectTransportPaymentStatusList.do
+//   no.457 수송비지불현황 엑셀다운 downloadTransportPaymentStatus.do
 import { apiClient } from '@/lib/apiClient'
 import { USE_MOCK, mockDelay } from '@/lib/env'
 import { MOCK_WM } from '@/mocks/wm'
@@ -293,17 +300,16 @@ export const wmService = {
     )
   },
 
-  // ══ 국외(M71·P73·M74·M75·M77·P78) ════════════════════════════════════════
-  // 실 API 목록의 wm 은 BirqController(국내 대금청구) 16건뿐 — 국외 대금청구 컨트롤러가 없다.
-  // 아래 7개 함수는 전부 URL 임시 유지. 국외 목록 확보 시 이 블록만 교체.
+  // ══ 국외 — OvsPymtClmController (no.446~457) ══════════════════════════════
 
   // ── 물품수령확인서목록 (MUI-WM-01-M71, 국외) ──────────────────────────────
 
   /**
-   * 물품수령확인서 목록 조회 — MUI-WM-01-M71
+   * no.446 물품수령확인서 목록 조회 — MUI-WM-01-M71
    * (ovsCmdtyRcvCnfdocList/OvsCmdtyRcvCnfdocListPage). 계약번호 필수(slide93 이벤트).
+   * 구 `selectOvsCmdtyRcvCnfdocList`.
    */
-  async selectOvsCmdtyRcvCnfdocList(
+  async selectGoodsReceiveConfirmList(
     req: OvsCmdtyRcvCnfdocRequest = {},
   ): Promise<OvsCmdtyRcvCnfdocResult> {
     if (USE_MOCK) {
@@ -311,7 +317,7 @@ export const wmService = {
       return mockDelay({ list, total: list.length })
     }
     return apiClient.post<OvsCmdtyRcvCnfdocResult, OvsCmdtyRcvCnfdocResult>(
-      '/v1/wms/overseas/goods-receipt-confirmations',
+      '/cts/wm/ovsPymtClm/selectGoodsReceiveConfirmList.do',
       req,
     )
   },
@@ -321,46 +327,57 @@ export const wmService = {
   /**
    * 선택 물품수령확인서의 전자계산서 목록 조회 — MUI-WM-01-P73
    * (ovsCmdtyRcvCnfdocList/OvsElcrtTxivList, 바텀시트 콘텐츠).
+   *
+   * ⚠️ 전용 목록 API 가 없어 no.446 URL 을 공유한다 — 설계서 slide92 데이터영역이
+   *   물품수령확인서목록(dl_goodsConfirmInfo)과 전자계산서목록(dl_billInfo)을 같은 화면(M71)에
+   *   묶어 두어 한 응답에 실릴 가능성이 높다. 확인되면 이 함수를 지우고 446 응답에서 꺼내 쓸 것.
    */
   async selectOvsElcrtTxivList(ctrtNo: string): Promise<OvsElcrtTxivItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.ovsElcrtTxivList)
     return apiClient.post<OvsElcrtTxivItem[], OvsElcrtTxivItem[]>(
-      '/v1/wms/overseas/electronic-invoices',
+      '/cts/wm/ovsPymtClm/selectGoodsReceiveConfirmList.do',
       { ctrtNo },
     )
   },
 
-  /** 전자계산서상세 조회 — MUI-WM-01-M74 (ovsElcrtTxivDtl/OvsElcrtTxivDtlPage). */
-  async selectOvsElcrtTxivDtl(bilPblcnNo: string): Promise<OvsElcrtTxivDtl> {
+  /**
+   * no.449 전자계산서상세조회 — MUI-WM-01-M74 (ovsElcrtTxivDtl/OvsElcrtTxivDtlPage).
+   * 구 `selectOvsElcrtTxivDtl`.
+   */
+  async selectElectronicBill(bilPblcnNo: string): Promise<OvsElcrtTxivDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.ovsElcrtTxivDtl)
     return apiClient.post<OvsElcrtTxivDtl, OvsElcrtTxivDtl>(
-      `/v1/wms/overseas/electronic-invoices/${bilPblcnNo}`,
+      '/cts/wm/ovsPymtClm/selectElectronicBill.do',
+      { bilPblcnNo },
     )
   },
 
-  /** 전자계산서 품목정보 조회 — MUI-WM-01-M74 품목정보(slide95). */
+  /**
+   * 전자계산서 품목정보 조회 — MUI-WM-01-M74 품목정보(slide95).
+   * ⚠️ 전용 API 없음 — 품목정보(slide96 1.1)가 M74 데이터영역이라 상세(no.449) 응답 포함 가능성이
+   *   높아 같은 URL 을 공유한다. 확인되면 이 함수를 지우고 449 응답에서 꺼내 쓸 것.
+   */
   async selectOvsElcrtTxivItems(bilPblcnNo: string): Promise<OvsElcrtTxivItemRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.ovsElcrtTxivItems)
     return apiClient.post<OvsElcrtTxivItemRow[], OvsElcrtTxivItemRow[]>(
-      `/v1/wms/overseas/electronic-invoices/${bilPblcnNo}/items`,
+      '/cts/wm/ovsPymtClm/selectElectronicBill.do',
+      { bilPblcnNo },
     )
   },
 
   // ── 대금지불정보 (MUI-WM-01-M75, 국외) ────────────────────────────────────
 
   /**
-   * 대금지불정보 목록 조회 — MUI-WM-01-M75 (ovsRtnPymtDfryInfo/OvsRtnPymtDfryInfoPage).
-   * On-Load 심사일자 = 1개월 전 ~ 현재일(slide102).
+   * no.452 대금지불정보 조회 — MUI-WM-01-M75 (ovsRtnPymtDfryInfo/OvsRtnPymtDfryInfoPage).
+   * On-Load 심사일자 = 1개월 전 ~ 현재일(slide102). 구 `selectOvsRtnPymtDfryInfoList`.
    */
-  async selectOvsRtnPymtDfryInfoList(
-    req: OvsRtnPymtDfryInfoRequest = {},
-  ): Promise<OvsRtnPymtDfryInfoResult> {
+  async selectPaymentList(req: OvsRtnPymtDfryInfoRequest = {}): Promise<OvsRtnPymtDfryInfoResult> {
     if (USE_MOCK) {
       const list = MOCK_WM.ovsRtnPymtDfryInfoList
       return mockDelay({ list, total: list.length })
     }
     return apiClient.post<OvsRtnPymtDfryInfoResult, OvsRtnPymtDfryInfoResult>(
-      '/v1/wms/overseas/payment-delivery-infos',
+      '/cts/wm/ovsPymtClm/selectPaymentList.do',
       req,
     )
   },
@@ -368,27 +385,28 @@ export const wmService = {
   // ── 대금지급현황 · 선적품목내역 (MUI-WM-01-M77 · P78, 국외) ───────────────
 
   /**
-   * 대금지급현황 목록 조회 — MUI-WM-01-M77 (ovsPymtPrgrsList/OvsPymtPrgrsListPage).
-   * 계약번호 필수 — 없으면 목록 미표시(slide103 2-2]).
+   * no.454 대금지급현황 조회 — MUI-WM-01-M77 (ovsPymtPrgrsList/OvsPymtPrgrsListPage).
+   * 계약번호 필수 — 없으면 목록 미표시(slide103 2-2]). 구 `selectOvsPymtPrgrsList`.
    */
-  async selectOvsPymtPrgrsList(req: OvsPymtPrgrsRequest = {}): Promise<OvsPymtPrgrsResult> {
+  async selectPaymentStatusList(req: OvsPymtPrgrsRequest = {}): Promise<OvsPymtPrgrsResult> {
     if (USE_MOCK) {
       const list = MOCK_WM.ovsPymtPrgrsList
       return mockDelay({ list, total: list.length })
     }
     return apiClient.post<OvsPymtPrgrsResult, OvsPymtPrgrsResult>(
-      '/v1/wms/overseas/payment-progresses',
+      '/cts/wm/ovsPymtClm/selectPaymentStatusList.do',
       req,
     )
   },
 
   /**
-   * 선적품목내역 조회 — MUI-WM-01-P78 (ovsPymtPrgrsList/OvsShpgItemDsctn, 바텀시트 콘텐츠).
+   * no.455 선적품목내역조회 — MUI-WM-01-P78 (ovsPymtPrgrsList/OvsShpgItemDsctn, 바텀시트 콘텐츠).
+   * 구 `selectOvsShpgItemDsctns`.
    */
-  async selectOvsShpgItemDsctns(blNo: string): Promise<OvsShpgItemDsctnItem[]> {
+  async selectPackingItemList(blNo: string): Promise<OvsShpgItemDsctnItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.ovsShpgItemDsctns)
     return apiClient.post<OvsShpgItemDsctnItem[], OvsShpgItemDsctnItem[]>(
-      '/v1/wms/overseas/shipping-items',
+      '/cts/wm/ovsPymtClm/selectPackingItemList.do',
       { blNo },
     )
   },

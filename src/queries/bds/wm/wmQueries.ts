@@ -147,10 +147,10 @@ export const wmQueries = {
   },
 
   /** 물품수령확인서목록(M71, 국외) — 계약번호 필수라 값이 있을 때만 조회. */
-  useSelectOvsCmdtyRcvCnfdocList(req: OvsCmdtyRcvCnfdocRequest = {}) {
+  useSelectGoodsReceiveConfirmList(req: OvsCmdtyRcvCnfdocRequest = {}) {
     return useQuery({
-      queryKey: wmKeys.selectOvsCmdtyRcvCnfdocList(req),
-      queryFn: () => wmService.selectOvsCmdtyRcvCnfdocList(req),
+      queryKey: wmKeys.selectGoodsReceiveConfirmList(req),
+      queryFn: () => wmService.selectGoodsReceiveConfirmList(req),
       enabled: Boolean(req.ctrtNo),
     })
   },
@@ -165,10 +165,10 @@ export const wmQueries = {
   },
 
   /** 전자계산서상세(M74). */
-  useSelectOvsElcrtTxivDtl(bilPblcnNo: string) {
+  useSelectElectronicBill(bilPblcnNo: string) {
     return useQuery({
-      queryKey: wmKeys.selectOvsElcrtTxivDtl(bilPblcnNo),
-      queryFn: () => wmService.selectOvsElcrtTxivDtl(bilPblcnNo),
+      queryKey: wmKeys.selectElectronicBill(bilPblcnNo),
+      queryFn: () => wmService.selectElectronicBill(bilPblcnNo),
       enabled: Boolean(bilPblcnNo),
     })
   },
@@ -183,27 +183,27 @@ export const wmQueries = {
   },
 
   /** 대금지불정보(M75, 국외). */
-  useSelectOvsRtnPymtDfryInfoList(req: OvsRtnPymtDfryInfoRequest = {}) {
+  useSelectPaymentList(req: OvsRtnPymtDfryInfoRequest = {}) {
     return useQuery({
-      queryKey: wmKeys.selectOvsRtnPymtDfryInfoList(req),
-      queryFn: () => wmService.selectOvsRtnPymtDfryInfoList(req),
+      queryKey: wmKeys.selectPaymentList(req),
+      queryFn: () => wmService.selectPaymentList(req),
     })
   },
 
   /** 대금지급현황(M77, 국외) — 계약번호 필수라 값이 있을 때만 조회(slide103 2-2]). */
-  useSelectOvsPymtPrgrsList(req: OvsPymtPrgrsRequest = {}) {
+  useSelectPaymentStatusList(req: OvsPymtPrgrsRequest = {}) {
     return useQuery({
-      queryKey: wmKeys.selectOvsPymtPrgrsList(req),
-      queryFn: () => wmService.selectOvsPymtPrgrsList(req),
+      queryKey: wmKeys.selectPaymentStatusList(req),
+      queryFn: () => wmService.selectPaymentStatusList(req),
       enabled: Boolean(req.ctrtNo),
     })
   },
 
   /** 선적품목내역(P78) — 바텀시트 열릴 때만 조회. */
-  useSelectOvsShpgItemDsctns(blNo: string, enabled: boolean) {
+  useSelectPackingItemList(blNo: string, enabled: boolean) {
     return useQuery({
-      queryKey: wmKeys.selectOvsShpgItemDsctns(blNo),
-      queryFn: () => wmService.selectOvsShpgItemDsctns(blNo),
+      queryKey: wmKeys.selectPackingItemList(blNo),
+      queryFn: () => wmService.selectPackingItemList(blNo),
       enabled: Boolean(blNo) && enabled,
     })
   },
