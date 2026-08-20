@@ -1,10 +1,10 @@
-// MUI-CM-03-M22 통합로그인 계정등록 (설계서 00.공통 v0.84 slide34~36)
+// MUI-CM-03-M22 통합로그인 계정등록 (설계서 00.공통 v0.86 slide34~35)
 // 구버전 아이디로 로그인한 사용자가 통합 로그인 계정(아이디·비밀번호)을 새로 등록하는 화면.
 // 통합로그인계정등록안내(MUI-CM-03-P21, NewIdChgInfo) 팝업의 [통합 로그인 계정 등록]에서 진입.
 // 셸(AppLayout) 안 + sub헤더 라우트(/login/new-id, header variant='sub' title='통합 로그인 계정 등록').
 // 헤더·스크롤(#app-scroll)·뒤로가기는 AppLayout 이 소유 → 페이지는 콘텐츠만 렌더.
 //
-// 설계서(slide35·slide36) 2단계 흐름:
+// 설계서(slide34·slide35) 2단계 흐름:
 //   [본인인증 전] 성명(읽기전용) + 주민등록번호 입력 → [본인인증하기](Nice 본인인증 솔루션 호출, CI 값 획득).
 //     - 실패 시 토스트 "본인인증에 실패했습니다." (하이브리드 브릿지 미연동 — 목업은 성공만 반영)
 //   [본인인증 후] 주민등록번호 마스킹 읽기전용(123456-7******)으로 전환 + 안내 문구 변경 +
@@ -29,7 +29,7 @@ import { Infobox } from '@/ui/common/composites/Infobox'
 import { newIdPwRegSchema, type NewIdPwRegForm } from '@/ui/biz/cm/newId/NewIdPwReg.schema'
 import type { IntgAcntTarget } from '@/types/domain'
 
-// 도움말 문구(설계서 slide35 그대로). 안정적 key = 문구 자체(고정 상수).
+// 도움말 문구(설계서 slide34 그대로). 안정적 key = 문구 자체(고정 상수).
 const HELP_ITEMS = [
   '비밀번호는 9~16자 숫자, 영문 소문자, 특수문자 조합으로 입력하세요.',
   '입력 불가한 특수문자 : `~&()_{}[]|\\:;"\',.<>?/',
@@ -112,7 +112,7 @@ export function NewIdPwReg() {
       userId: data.userId,
       userEnpswd: data.userEnpswd,
     })
-    // 설계서 slide35 는 '메인 이동 + 재로그인 안내 팝업' 이나, v0.84 는 등록완료 화면(M23)을 신설 → 완료 화면으로 이동.
+    // 설계서 slide34 는 '메인 이동 + 재로그인 안내 팝업' 이나, 등록완료 화면(M23, slide36)이 신설돼 완료 화면으로 이동.
     navigate('/login/new-id/result', { state: { userId: data.userId } })
   }
 
