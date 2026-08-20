@@ -43,7 +43,7 @@ export function CmdtyGnrlCtrdocDtlPage() {
   const [dtstOpen, setDtstOpen] = useState(false) // P14 물품일반계약명세서
   const [outputModalOpen, setOutputModalOpen] = useState(false)
 
-  const { data: detail } = ctQueries.useSelectCmdtyGnrlCtrdocDtl(id)
+  const { data: detail } = ctQueries.useSelectCtrdocDtlInq(id)
   const steps = stepsByStg('계약')
 
   // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.

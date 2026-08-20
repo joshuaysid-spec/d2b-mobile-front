@@ -31,7 +31,7 @@ export function CtrtPrgrsSttsInqFullPopup({
   open,
   onOpenChange,
 }: CtrtPrgrsSttsInqFullPopupProps) {
-  const { data: sttsList = [] } = ctQueries.useSelectCtrtPrgrsStts(id, open)
+  const { data: sttsList = [] } = ctQueries.useSelectCtrtPrgrsSttsCdInq(id, open)
 
   return (
     <FullPopup

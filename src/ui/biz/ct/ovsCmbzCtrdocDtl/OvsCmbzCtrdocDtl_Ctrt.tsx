@@ -13,7 +13,7 @@ export interface OvsCmbzCtrdocDtl_CtrtProps {
 }
 
 export function OvsCmbzCtrdocDtl_Ctrt({ id, onOpenDtst }: OvsCmbzCtrdocDtl_CtrtProps) {
-  const { data } = ctQueries.useSelectOvsCmbzDtst(id)
+  const { data } = ctQueries.useSelectCmbzCtrtDtstInfo(id)
   const groups = data?.groups ?? []
 
   return (

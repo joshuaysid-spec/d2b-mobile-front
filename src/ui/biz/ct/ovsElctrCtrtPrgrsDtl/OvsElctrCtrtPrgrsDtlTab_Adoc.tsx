@@ -31,7 +31,7 @@ function AdocItem({
 }
 
 export function OvsElctrCtrtPrgrsDtlTab_Adoc({ id }: { id: string }) {
-  const { data } = ctQueries.useSelectOvsCtrtAdocs(id)
+  const { data } = ctQueries.useSelectCtrtDcmntList(id)
   const refDocs = data?.refDocs ?? []
   const sbmsnDocs = data?.sbmsnDocs ?? []
   const ofslRegs = data?.ofslRegs ?? []

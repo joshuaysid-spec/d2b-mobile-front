@@ -55,7 +55,7 @@ export function CmdtyCtrtDtstFullPopup({
   onOpenChange,
   title = '물품계약명세서',
 }: CmdtyCtrtDtstFullPopupProps) {
-  const { data } = ctQueries.useSelectCmdtyCtrtDtst(id, open)
+  const { data } = ctQueries.useSelectCtrtDtstInq(id, open)
   const items = data?.items ?? []
 
   return (

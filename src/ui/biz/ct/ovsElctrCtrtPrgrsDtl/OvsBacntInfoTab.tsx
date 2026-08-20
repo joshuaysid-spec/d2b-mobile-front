@@ -5,7 +5,7 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table } from '@/ui/common/composites/Table'
 
 export function OvsBacntInfoTab({ id }: { id: string }) {
-  const { data } = ctQueries.useSelectOvsBacntInfo(id)
+  const { data } = ctQueries.useSelectBacntInfo(id)
 
   if (!data) return null
 

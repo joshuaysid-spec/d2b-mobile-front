@@ -57,7 +57,7 @@ export function OvsElctrCtrtPrgrsDtlPage() {
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기
   const [outputModalOpen, setOutputModalOpen] = useState(false)
 
-  const { data: detail } = ctQueries.useSelectOvsCtrtDtl(id)
+  const { data: detail } = ctQueries.useSelectCtrdocDtl(id)
   const steps = stepsByStg('계약')
 
   // 식별자는 목록에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.

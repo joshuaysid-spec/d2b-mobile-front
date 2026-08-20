@@ -49,7 +49,7 @@ export function OvsCmbzCtrdocDtlPage() {
   const [dtstOpen, setDtstOpen] = useState(false) // P78 상업계약서명세서
   const [outputModalOpen, setOutputModalOpen] = useState(false)
 
-  const { data: detail } = ctQueries.useSelectOvsCmbzCtrdocDtl(id)
+  const { data: detail } = ctQueries.useSelectCmbzCtrdocDtlInfo(id)
   const steps = stepsByStg('계약')
 
   // 식별자는 목록/상위 상세에서만 전달 — 직접 URL 진입(state 없음)은 목록으로 되돌린다.

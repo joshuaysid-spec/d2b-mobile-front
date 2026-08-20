@@ -89,19 +89,19 @@ export const ctQueries = {
   },
 
   /** 물품계약명세서(P11·P14 공용) — 팝업 열릴 때만 조회(enabled). */
-  useSelectCmdtyCtrtDtst(id: string, enabled: boolean) {
+  useSelectCtrtDtstInq(id: string, enabled: boolean) {
     return useQuery({
-      queryKey: ctKeys.selectCmdtyCtrtDtst(id),
-      queryFn: () => ctService.selectCmdtyCtrtDtst(id),
+      queryKey: ctKeys.selectCtrtDtstInq(id),
+      queryFn: () => ctService.selectCtrtDtstInq(id),
       enabled: Boolean(id) && enabled,
     })
   },
 
   /** 물품일반계약서 상세(M05). */
-  useSelectCmdtyGnrlCtrdocDtl(id: string) {
+  useSelectCtrdocDtlInq(id: string) {
     return useQuery({
-      queryKey: ctKeys.selectCmdtyGnrlCtrdocDtl(id),
-      queryFn: () => ctService.selectCmdtyGnrlCtrdocDtl(id),
+      queryKey: ctKeys.selectCtrdocDtlInq(id),
+      queryFn: () => ctService.selectCtrdocDtlInq(id),
       enabled: Boolean(id),
     })
   },
@@ -179,10 +179,10 @@ export const ctQueries = {
   },
 
   /** 대금지불정보 목록(M15). */
-  useSelectPymtDfryInfoList() {
+  useSelectPymtDfryInfoListInq() {
     return useQuery({
-      queryKey: ctKeys.selectPymtDfryInfoList,
-      queryFn: () => ctService.selectPymtDfryInfoList(),
+      queryKey: ctKeys.selectPymtDfryInfoListInq,
+      queryFn: () => ctService.selectPymtDfryInfoListInq(),
     })
   },
 
@@ -196,64 +196,82 @@ export const ctQueries = {
   },
 
   /** 계약진행상태(P17) — 팝업 열릴 때만 조회. */
-  useSelectCtrtPrgrsStts(id: string, enabled: boolean) {
+  useSelectCtrtPrgrsSttsCdInq(id: string, enabled: boolean) {
     return useQuery({
-      queryKey: ctKeys.selectCtrtPrgrsStts(id),
-      queryFn: () => ctService.selectCtrtPrgrsStts(id),
+      queryKey: ctKeys.selectCtrtPrgrsSttsCdInq(id),
+      queryFn: () => ctService.selectCtrtPrgrsSttsCdInq(id),
       enabled: Boolean(id) && enabled,
     })
   },
 
   /** 국외 계약 일반현황(M71/T71). */
-  useSelectOvsCtrtDtl(id: string) {
+  useSelectCtrdocDtl(id: string) {
     return useQuery({
-      queryKey: ctKeys.selectOvsCtrtDtl(id),
-      queryFn: () => ctService.selectOvsCtrtDtl(id),
+      queryKey: ctKeys.selectCtrdocDtl(id),
+      queryFn: () => ctService.selectCtrdocDtl(id),
       enabled: Boolean(id),
     })
   },
 
   /** 국외 계좌정보 탭(T72). */
-  useSelectOvsBacntInfo(id: string) {
+  useSelectBacntInfo(id: string) {
     return useQuery({
-      queryKey: ctKeys.selectOvsBacntInfo(id),
-      queryFn: () => ctService.selectOvsBacntInfo(id),
+      queryKey: ctKeys.selectBacntInfo(id),
+      queryFn: () => ctService.selectBacntInfo(id),
+      enabled: Boolean(id),
+    })
+  },
+
+  /** 국외 보증서 탭(T73) — 데이터영역은 국내 M73 과 같으나 실 API 가 달라 훅 분리. */
+  useSelectWtgr(id: string) {
+    return useQuery({
+      queryKey: ctKeys.selectWtgr(id),
+      queryFn: () => ctService.selectWtgr(id),
+      enabled: Boolean(id),
+    })
+  },
+
+  /** 국외 인지세 탭(T74) — 데이터영역은 국내 M74 와 같으나 실 API 가 달라 훅 분리. */
+  useSelectStmtxPayList(id: string) {
+    return useQuery({
+      queryKey: ctKeys.selectStmtxPayList(id),
+      queryFn: () => ctService.selectStmtxPayList(id),
       enabled: Boolean(id),
     })
   },
 
   /** 국외 계약명세서 탭(T75). */
-  useSelectOvsCtrtDtst(id: string) {
+  useSelectCtrtDtstList(id: string) {
     return useQuery({
-      queryKey: ctKeys.selectOvsCtrtDtst(id),
-      queryFn: () => ctService.selectOvsCtrtDtst(id),
+      queryKey: ctKeys.selectCtrtDtstList(id),
+      queryFn: () => ctService.selectCtrtDtstList(id),
       enabled: Boolean(id),
     })
   },
 
   /** 국외 첨부서류 탭(T76). */
-  useSelectOvsCtrtAdocs(id: string) {
+  useSelectCtrtDcmntList(id: string) {
     return useQuery({
-      queryKey: ctKeys.selectOvsCtrtAdocs(id),
-      queryFn: () => ctService.selectOvsCtrtAdocs(id),
+      queryKey: ctKeys.selectCtrtDcmntList(id),
+      queryFn: () => ctService.selectCtrtDcmntList(id),
       enabled: Boolean(id),
     })
   },
 
   /** 상업계약서 계약현황(M77/T77). */
-  useSelectOvsCmbzCtrdocDtl(id: string) {
+  useSelectCmbzCtrdocDtlInfo(id: string) {
     return useQuery({
-      queryKey: ctKeys.selectOvsCmbzCtrdocDtl(id),
-      queryFn: () => ctService.selectOvsCmbzCtrdocDtl(id),
+      queryKey: ctKeys.selectCmbzCtrdocDtlInfo(id),
+      queryFn: () => ctService.selectCmbzCtrdocDtlInfo(id),
       enabled: Boolean(id),
     })
   },
 
   /** 상업계약서 계약명세서 탭(T78). */
-  useSelectOvsCmbzDtst(id: string) {
+  useSelectCmbzCtrtDtstInfo(id: string) {
     return useQuery({
-      queryKey: ctKeys.selectOvsCmbzDtst(id),
-      queryFn: () => ctService.selectOvsCmbzDtst(id),
+      queryKey: ctKeys.selectCmbzCtrtDtstInfo(id),
+      queryFn: () => ctService.selectCmbzCtrtDtstInfo(id),
       enabled: Boolean(id),
     })
   },
@@ -279,18 +297,18 @@ export const ctQueries = {
   // ── 해지/해제 계열 (MUI-CT-03) ────────────────────────────────────────────
 
   /** 해지/해제 목록(M01) — 키워드/더보기 페이징은 페이지 클라이언트 로직 유지. */
-  useSelectCncltnRmvList(req: CncltnRmvListRequest = {}) {
+  useSelectCtrtCncltnRmvListInq(req: CncltnRmvListRequest = {}) {
     return useQuery({
-      queryKey: ctKeys.selectCncltnRmvList(req),
-      queryFn: () => ctService.selectCncltnRmvList(req),
+      queryKey: ctKeys.selectCtrtCncltnRmvListInq(req),
+      queryFn: () => ctService.selectCtrtCncltnRmvListInq(req),
     })
   },
 
   /** 물품 해지/해제 상세정보(M02/T01). */
-  useSelectCmdtyCncltnRmvDtl(id: string) {
+  useSelectCtrtCncltnRmvDtlInfoInq(id: string) {
     return useQuery({
-      queryKey: ctKeys.selectCmdtyCncltnRmvDtl(id),
-      queryFn: () => ctService.selectCmdtyCncltnRmvDtl(id),
+      queryKey: ctKeys.selectCtrtCncltnRmvDtlInfoInq(id),
+      queryFn: () => ctService.selectCtrtCncltnRmvDtlInfoInq(id),
       enabled: Boolean(id),
     })
   },

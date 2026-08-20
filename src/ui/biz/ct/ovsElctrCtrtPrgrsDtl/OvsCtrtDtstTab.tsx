@@ -26,7 +26,7 @@ function itemRows(it: OvsCtrtDtstItem): TableRow[] {
 }
 
 export function OvsCtrtDtstTab({ id }: { id: string }) {
-  const { data } = ctQueries.useSelectOvsCtrtDtst(id)
+  const { data } = ctQueries.useSelectCtrtDtstList(id)
   const items = data?.items ?? []
 
   return (
