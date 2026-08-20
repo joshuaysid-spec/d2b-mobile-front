@@ -3,7 +3,7 @@
 // 훅명 = use + 서비스 함수명 · 쿼리키 = keys.ts(함수명 동일).
 // 조회 = useQuery 훅 · 저장/제출 = useMutation 훅(핸들러에서 mutateAsync + try/catch).
 // 제출 성공 시 영향받는 조회 캐시 무효화는 mutation onSuccess 에서 중앙 처리(전역 staleTime 대응).
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query'
 import { tsService } from '@/services/bds/ts'
 import { tsKeys } from '@/queries/bds/ts/tsKeys'
 import type {
@@ -41,10 +41,10 @@ export const tsQueries = {
   },
 
   /** 세금계산서계약목록(TS-04 M01). */
-  useSelectTxivCtrtList(req: TxivCtrtListRequest = {}) {
+  useSelectCtrtList(req: TxivCtrtListRequest = {}) {
     return useQuery({
-      queryKey: tsKeys.selectTxivCtrtList(req),
-      queryFn: () => tsService.selectTxivCtrtList(req),
+      queryKey: tsKeys.selectCtrtList(req),
+      queryFn: () => tsService.selectCtrtList(req),
     })
   },
 
@@ -75,18 +75,30 @@ export const tsQueries = {
   },
 
   /**
-   * 의견작성 임시저장/제출(P03) — 성공 시 품목명세서(기 작성 내역 반영)·목록(진행상태 뱃지) 캐시 무효화
+   * 의견작성 임시저장(P03) — 성공 시 품목명세서(기 작성 내역 반영)·목록(진행상태 뱃지) 캐시 무효화
    * (slide14: 임시저장/제출 클릭 시 본 화면에 내용 반영).
    */
-  useSaveBfhdLoiOpnn() {
+  useSaveMnftrPrchsOpnnInpt() {
     const queryClient = useQueryClient()
     return useMutation({
-      mutationFn: (req: BfhdLoiOpnnRequest) => tsService.saveBfhdLoiOpnn(req),
-      onSuccess: (_data, req) => {
-        queryClient.invalidateQueries({ queryKey: tsKeys.selectBfhdLoiSpcfctList(req.bfhdLoiNo) })
-        queryClient.invalidateQueries({ queryKey: tsKeys.selectBfhdLoiDtl(req.bfhdLoiNo) })
-        queryClient.invalidateQueries({ queryKey: tsKeys.selectBfhdLoiListAll })
-      },
+      mutationFn: (req: BfhdLoiOpnnRequest) => tsService.saveMnftrPrchsOpnnInpt(req),
+      onSuccess: (_data, req) => invalidateBfhdLoi(queryClient, req.bfhdLoiNo),
     })
   },
+
+  /** 사전의향서 제출(P03) — 무효화 대상은 임시저장과 동일. */
+  useSaveBfhdLoiSbmsn() {
+    const queryClient = useQueryClient()
+    return useMutation({
+      mutationFn: (req: BfhdLoiOpnnRequest) => tsService.saveBfhdLoiSbmsn(req),
+      onSuccess: (_data, req) => invalidateBfhdLoi(queryClient, req.bfhdLoiNo),
+    })
+  },
+}
+
+/** 의견 저장/제출 후 공통 무효화(품목명세서·상세·목록). */
+function invalidateBfhdLoi(queryClient: QueryClient, bfhdLoiNo: string) {
+  queryClient.invalidateQueries({ queryKey: tsKeys.selectBfhdLoiSpcfctList(bfhdLoiNo) })
+  queryClient.invalidateQueries({ queryKey: tsKeys.selectBfhdLoiDtl(bfhdLoiNo) })
+  queryClient.invalidateQueries({ queryKey: tsKeys.selectBfhdLoiListAll })
 }

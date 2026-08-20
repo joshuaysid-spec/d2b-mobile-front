@@ -73,7 +73,7 @@ export function TxivList_CtrtListPage() {
   // P02 세금계산서목록 바텀시트 — 선택한 계약(null=닫힘). key 리마운트로 재오픈 시 초기화.
   const [pickedCtrt, setPickedCtrt] = useState<TxivCtrtItem | null>(null)
 
-  const { data: listData, isLoading } = tsQueries.useSelectTxivCtrtList()
+  const { data: listData, isLoading } = tsQueries.useSelectCtrtList()
 
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)

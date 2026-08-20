@@ -122,7 +122,9 @@ export function BfhdLoiDtl_ItemList({ id, expired }: BfhdLoiDtl_ItemListProps) {
   const [closeConfirmOpen, setCloseConfirmOpen] = useState(false)
 
   const { data: items = [] } = tsQueries.useSelectBfhdLoiSpcfctList(id)
-  const saveOpnn = tsQueries.useSaveBfhdLoiOpnn()
+  // 임시저장/제출이 각각 별도 API(no.481/no.482) — mode 로 분기.
+  const saveOpnn = tsQueries.useSaveMnftrPrchsOpnnInpt()
+  const submitLoi = tsQueries.useSaveBfhdLoiSbmsn()
 
   const total = items.length
   const loaded = Math.min(page * pageSize, total)
@@ -152,7 +154,7 @@ export function BfhdLoiDtl_ItemList({ id, expired }: BfhdLoiDtl_ItemListProps) {
       return
     }
     try {
-      await saveOpnn.mutateAsync({
+      await (mode === 'save' ? saveOpnn : submitLoi).mutateAsync({
         bfhdLoiNo: id,
         prcmRqtNo: pickedItem.prcmRqtNo,
         mnftrPrchsSecd,

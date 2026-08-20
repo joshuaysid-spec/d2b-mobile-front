@@ -13,7 +13,7 @@ export const tsKeys = {
   selectBfhdLoiListAll: ['ts', 'selectBfhdLoiList'] as const,
   selectBfhdLoiDtl: (id: string) => ['ts', 'selectBfhdLoiDtl', id] as const,
   selectBfhdLoiSpcfctList: (id: string) => ['ts', 'selectBfhdLoiSpcfctList', id] as const,
-  selectTxivCtrtList: (req: TxivCtrtListRequest) => ['ts', 'selectTxivCtrtList', req] as const,
+  selectCtrtList: (req: TxivCtrtListRequest) => ['ts', 'selectCtrtList', req] as const,
   selectTxivList: (ctrtNo: string) => ['ts', 'selectTxivList', ctrtNo] as const,
   selectTxivDtl: (id: string) => ['ts', 'selectTxivDtl', id] as const,
   selectTxivPrgrsPrstList: (req: TxivPrgrsPrstRequest) =>
