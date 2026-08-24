@@ -201,7 +201,7 @@ export const DMDFRC_NOTICE_SEEDS: NoticeListItem[] = [
 export const DMDFRC_NOTICE_MOCK: NoticeListItem[] = inflateNotice(DMDFRC_NOTICE_SEEDS, 100)
 
 // 목록 아이템(요약) → 상세(dm_noticeInfo). 목록에 없는 상세 필드(게시기간·내용·첨부)는 목업 본문으로 보완.
-// 추후 API: cmService.selectNoticeDtl(contsNo). 목록에서 넘어온 값(state)으로 상단은 즉시 표시.
+// 추후 API: tssCmService.selectNoticeDtl(contsNo). 목록에서 넘어온 값(state)으로 상단은 즉시 표시.
 export function toNoticeDetail(item: NoticeListItem): NoticeDetail {
   return {
     contsNo: item.contsNo,

@@ -2,7 +2,7 @@
 // USE_MOCK=true(기본): 목업 반환 · false: apiClient 실호출.
 // 함수명 = 백엔드 메서드명(쿼리키·훅명과 통일: cmKeys.selectXxx / useSelectXxx) — 실 API 목록 기준.
 //   대상: /cbs/cm/*(no.619~764, PrcmBzentyInfoMng·CvlcptDcmntMng·Com·WdgtMng·MyTaskMng·DocBox·
-//   DigitalCabinetMng·ItrstBidPbanc·SttInfo·TaskHstryMng) + /tss/cm/board/*(no.925~936 공지/자료실/FAQ).
+//   DigitalCabinetMng·ItrstBidPbanc·SttInfo·TaskHstryMng) + /tss/cm/board 게시판은 services/tss/cm.ts 로 분리.
 //   로그인·본인확인·사용자정보(/cbs/cm/login/*, userReg·userInfoMng)도 이 파일 — URL 이 전부 /cbs/cm/* 라
 //   구 authService(services/bds/auth.ts)를 흡수했다(2026-08-24, 대메뉴 폴더 재편).
 // URL 은 각 함수 안에 인라인(실백엔드 .do 경로).
@@ -35,13 +35,6 @@ import type {
   SearchResult,
   RecentSearch,
   SearchServiceLink,
-  // FAQ / 게시판
-  FaqListItem,
-  FaqListRequest,
-  BoardListItem,
-  BoardListRequest,
-  NoticeDetail,
-  RpstrDetail,
   // 업체정보 추가등록
   AddRegItemRow,
   AddRegPayload,
@@ -161,61 +154,8 @@ export const cmService = {
     })
   },
 
-  // ── 게시판 / FAQ (/tss/cm/board, no.925~936) ──────────────────────────────
-  // 구 `selectBoardList(kind, params)` 은 종류별 URL 이 달라 3개(notice/rpstr/sysImpv)로 분리.
-
-  /** no.935 자주묻는질문목록조회 — MUI-CM-04-M03 (faqList/FaqListPage). */
-  async selectFaqList(params: FaqListRequest): Promise<FaqListItem[]> {
-    if (USE_MOCK) return mockDelay(MOCK_CM.faqList)
-    return apiClient.post<FaqListItem[], FaqListItem[]>('/tss/cm/board/selectFaqList.do', params)
-  },
-
-  /** no.936 자주묻는질문상세 — MUI-CM-04-M03 아코디언 본문(목록 응답에 포함 시 미사용). 소비처 대기. */
-  async selectFaqDtl(contsNo: string): Promise<FaqListItem> {
-    if (USE_MOCK) return mockDelay(MOCK_CM.faqList[0])
-    return apiClient.post<FaqListItem, FaqListItem>('/tss/cm/board/selectFaqDtl.do', { contsNo })
-  },
-
-  /** no.925 공지사항목록조회 — MUI-CM-04-M01 (noticeList/board/BoardListView). 구 `selectBoardList('notice')`. */
-  async selectNoticeList(params: BoardListRequest): Promise<BoardListItem[]> {
-    if (USE_MOCK) return mockDelay(MOCK_CM.noticeList)
-    return apiClient.post<BoardListItem[], BoardListItem[]>(
-      '/tss/cm/board/selectNoticeList.do',
-      params,
-    )
-  },
-
-  /** no.926 공지사항상세조회 — MUI-CM-04-M02. 구 `selectNoticeDetail`. */
-  async selectNoticeDtl(contsNo: string): Promise<NoticeDetail> {
-    if (USE_MOCK) return mockDelay(MOCK_CM.noticeDetail)
-    return apiClient.post<NoticeDetail, NoticeDetail>('/tss/cm/board/selectNoticeDtl.do', {
-      contsNo,
-    })
-  },
-
-  /** no.930 자료실목록조회 — MUI-CM-04-M25 (rpstrList/board/BoardListView). 구 `selectBoardList('rpstr')`. */
-  async selectRpstrList(params: BoardListRequest): Promise<BoardListItem[]> {
-    if (USE_MOCK) return mockDelay(MOCK_CM.rpstrList)
-    return apiClient.post<BoardListItem[], BoardListItem[]>(
-      '/tss/cm/board/selectRpstrList.do',
-      params,
-    )
-  },
-
-  /** no.931 자료실상세조회 — MUI-CM-04-M26. 구 `selectRpstrDetail`. */
-  async selectRpstrDtl(contsNo: string): Promise<RpstrDetail> {
-    if (USE_MOCK) return mockDelay(MOCK_CM.rpstrDetail)
-    return apiClient.post<RpstrDetail, RpstrDetail>('/tss/cm/board/selectRpstrDtl.do', { contsNo })
-  },
-
-  /**
-   * 시스템개선 목록 — 구 `selectBoardList('sysImpv')`.
-   * TODO(백엔드 확정): /tss/cm/board 실 API 는 공지/자료실/FAQ 3종뿐 — 시스템개선 게시판 URL 임시.
-   */
-  async selectSysImpvList(params: BoardListRequest): Promise<BoardListItem[]> {
-    if (USE_MOCK) return mockDelay(MOCK_CM.sysImpvList)
-    return apiClient.post<BoardListItem[], BoardListItem[]>('/v1/cms/boards/sysImpv', params)
-  },
+  // ── 게시판/FAQ 는 URL 이 /tss/cm/board/* 라 대메뉴 규칙에 따라 services/tss/cm.ts
+  //    (tssCmService)로 분리(2026-08-24) — 공지/자료실/FAQ/시스템개선 no.925~936.
 
   // ── 업체정보관리 상세 (bzentyGnrlInfoDtl, MUI-CM-01-M02) ──────────────────
 
