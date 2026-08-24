@@ -21,14 +21,24 @@ const isWrappableBody = (body: unknown): boolean =>
   !(body instanceof URLSearchParams) &&
   !(body instanceof ArrayBuffer)
 
+// 백엔드 2원화 — URL 시스템 프리픽스로 요청별 서버 분기(서비스 함수는 무수정).
+// 기본(A서버) = VITE_API_BASE_URL, 아래 프리픽스로 시작하는 요청만 B서버(VITE_API_BASE_URL_B)로.
+// ⚠️ 프리픽스↔서버 매핑 잠정 — 백엔드 확정 시 이 배열만 수정.
+const B_SERVER_PREFIXES = ['/cbs', '/tss']
+
 // 요청 인터셉터 — ① 인증 토큰 자동 첨부 ② body 를 { data } 봉투로 래핑(개발계 실규격 확인:
 // 요청은 { data } 만, metadata 는 응답 전용(requestId/timestamp/status — 서버가 채움).
 // 페이징 등 부가정보도 data 안의 명명 맵(dll_*_paging)으로 들어간다).
 // 서비스는 봉투 없이 알맹이만 보낸다(응답 언래핑과 동일 원칙).
+// ③ B서버 프리픽스면 이 요청만 baseURL 교체(env 미설정 시 A서버로 폴백 — 동작 무변).
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
+  }
+  const baseUrlB = import.meta.env.VITE_API_BASE_URL_B
+  if (baseUrlB && B_SERVER_PREFIXES.some((p) => config.url?.startsWith(p))) {
+    config.baseURL = baseUrlB
   }
   if (isWrappableBody(config.data)) {
     config.data = { data: config.data }
