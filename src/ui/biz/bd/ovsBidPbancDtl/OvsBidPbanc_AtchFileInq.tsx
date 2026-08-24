@@ -6,6 +6,7 @@
 // 파일명 클릭 = 뷰어 솔루션 호출(추후 연동), 다운로드 클릭 = 다운로드 실행(추후 API).
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
+import { formatFileSize } from '@/utils/format'
 import type { OvsAtchDoc } from '@/types/bd'
 
 interface OvsBidPbanc_AtchFileInqProps {
@@ -21,21 +22,21 @@ export function OvsBidPbanc_AtchFileInq({ docs }: OvsBidPbanc_AtchFileInqProps) 
         첨부서류
       </SectionTitle>
       <div className="flex flex-col gap-krds-7">
-        {docs.map((doc) => (
-          <div key={doc.no} className="flex flex-col gap-krds-3">
-            {/* 순번 · 첨부서류명(atchDocNm) */}
+        {docs.map((doc, i) => (
+          <div key={doc.fileId} className="flex flex-col gap-krds-3">
+            {/* 순번 · 첨부서류명(docTitl) */}
             <p className="text-krds-body-sm font-medium text-krds-text-muted">
-              {doc.no}. {doc.atchDocNm}
+              {i + 1}. {doc.docTitl}
             </p>
-            {/* 첨부파일명(atchFileNm) [파일크기(fileSz)] + 다운로드 */}
+            {/* 첨부파일명(fileNm) [파일크기(fileSz)] + 다운로드 */}
             <FileDownloadList
               files={[
                 {
-                  id: `p76-${doc.no}`,
-                  name: doc.atchFileNm,
-                  size: doc.fileSz,
-                  // 추후 API: bdService.downloadOvsItemAtchFile(doc.no)
-                  onDownload: () => console.log('[P76] 첨부파일 다운로드', doc.atchFileNm),
+                  id: `p76-${doc.fileId}`,
+                  name: doc.fileNm,
+                  size: formatFileSize(doc.fileSz),
+                  // 추후 API: bdService.downloadOvsItemAtchFile(doc.fileId)
+                  onDownload: () => console.log('[P76] 첨부파일 다운로드', doc.fileNm),
                 },
               ]}
             />

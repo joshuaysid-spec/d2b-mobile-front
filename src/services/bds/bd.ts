@@ -46,6 +46,7 @@ import type {
   BidListSearchRequest,
   BidPbancDetail,
   BidPbancItem,
+  BidPbancListSrchMap,
   BidProgressRow,
   BidPrgrsDetail,
   BidPrgrsItem,
@@ -121,8 +122,10 @@ export const bdService = {
   /**
    * no.28 입찰공고통합목록조회 — MUI-BD-01-M01 (bidPbancIntgList/BidPbancIntgListPage).
    * 목업은 전체 반환(키워드/페이징은 페이지 클라이언트 로직 소관). 구 `selectPbancList`.
+   * 요청/응답 키는 PC 실 인터페이스(TempbidPbancIntgList ISrchMap/IBidPbancList, 2026-08-24 판독본) 반영 —
+   * 서버 검색 전환 시 페이지 SearchFilterValue → BidPbancListSrchMap 변환 배선 필요.
    */
-  async selectBidPbancIntgList(params?: BidListSearchRequest): Promise<BidPbancItem[]> {
+  async selectBidPbancIntgList(params?: BidPbancListSrchMap): Promise<BidPbancItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.pbancList)
     return apiClient.post<BidPbancItem[], BidPbancItem[]>(
       '/bds/bd/bidPbanc/selectBidPbancIntgList.do',
@@ -737,18 +740,27 @@ export const bdService = {
    * no.45 입찰공고상세조회(OvsBidPbancController) — MUI-BD-01-M71
    * (ovsBidPbancDtl/OvsBidPbancDtlPage). 구 `selectOvsBidPbancDetail`.
    * 백엔드 메서드명은 `selectBidPbancDtl` 이나 국내 동명 함수와 충돌하므로 Ovs 접두.
+   * 요청 body = PC 실 인터페이스(ovsBidPbancDtl.ISearch, 2026-08-24 판독본) — 구 잠정 body({ pbancNo }) 해소.
+   * (같은 파일 ISearchParam 판독본은 IResultPbanc+ISearch 가 이어진 형태로 스크롤 경계 누락 가능 — 원본 대조 필요.)
    */
-  async selectOvsBidPbancDtl(id: string): Promise<OvsBidPbancDetail> {
+  async selectOvsBidPbancDtl(params: {
+    /** 공고번호 */ pbancNo: string
+    /** 공고차수 */ pbancOd: string
+    /** 조달번호 */ prcmNo?: string
+    /** 공고구분 */ pbancTypeCd?: string
+    /** 개찰일자 */ bidYmd?: string
+  }): Promise<OvsBidPbancDetail> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsBidPbancDetail)
     return apiClient.post<OvsBidPbancDetail, OvsBidPbancDetail>(
       '/bds/bd/ovsBidPbanc/selectBidPbancDtl.do',
-      { pbancNo: id },
+      params,
     )
   },
 
   /**
    * no.46 입찰품목목록조회 — MUI-BD-01-T72(구 M72 — v1.83 재편) (ovsBidPbancDtl/OvsBidPbancDtl).
-   * 구 `selectOvsBidItemList`.
+   * 구 `selectOvsBidItemList`. 응답 = PC 실 인터페이스(ovsBidPbancDtl.IResultItem, 2026-08-24 판독본).
+   * body 는 판독본 ISearch(공고번호+차수 등) 공유 여부 미확정 — 잠정 { pbancNo } 유지(원본 대조 필요).
    */
   async selectBidItemList(id: string): Promise<OvsBidItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsBidItemList)
@@ -759,7 +771,7 @@ export const bdService = {
 
   /**
    * no.48 첨부서류목록조회 — MUI-BD-01-T73(구 M73 — v1.83 재편) (ovsBidPbancDtl/OvsBidPbancDtl2).
-   * 구 `selectOvsBidAtchDocList`.
+   * 구 `selectOvsBidAtchDocList`. 응답 = PC 실 인터페이스(ovsBidPbancDtl.IResultAttach, 2026-08-24 판독본).
    */
   async selectAtchDocList(id: string): Promise<OvsAtchDoc[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsAtchDocList)
@@ -781,18 +793,18 @@ export const bdService = {
     })
   },
 
-  /** 국외 품목 첨부파일 다운로드 — MUI-BD-01-P76. 실목록 외(file 도메인) — URL 임시. */
-  async downloadOvsItemAtchFile(no: number): Promise<Blob> {
-    if (USE_MOCK) return mockBlob(`ovs-item-atch-${no}`)
-    return apiClient.post<Blob, Blob>(`/v1/bds/ovs/item-atch-files/${no}/download`, null, {
+  /** 국외 품목 첨부파일 다운로드 — MUI-BD-01-P76. 실목록 외(file 도메인) — URL 임시. 식별자는 IResultAttach.fileId. */
+  async downloadOvsItemAtchFile(fileId: string): Promise<Blob> {
+    if (USE_MOCK) return mockBlob(`ovs-item-atch-${fileId}`)
+    return apiClient.post<Blob, Blob>(`/v1/bds/ovs/item-atch-files/${fileId}/download`, null, {
       responseType: 'blob',
     })
   },
 
-  /** 국외 공고 첨부서류 다운로드 — MUI-BD-01-T73. 실목록 외(file 도메인) — URL 임시. */
-  async downloadOvsBidAtchDoc(no: number): Promise<Blob> {
-    if (USE_MOCK) return mockBlob(`ovs-atch-doc-${no}`)
-    return apiClient.post<Blob, Blob>(`/v1/bds/ovs/atch-docs/${no}/download`, null, {
+  /** 국외 공고 첨부서류 다운로드 — MUI-BD-01-T73. 실목록 외(file 도메인) — URL 임시. 식별자는 IResultAttach.fileId. */
+  async downloadOvsBidAtchDoc(fileId: string): Promise<Blob> {
+    if (USE_MOCK) return mockBlob(`ovs-atch-doc-${fileId}`)
+    return apiClient.post<Blob, Blob>(`/v1/bds/ovs/atch-docs/${fileId}/download`, null, {
       responseType: 'blob',
     })
   },
@@ -1130,6 +1142,9 @@ export const bdService = {
   /**
    * no.173 동가낙찰결과조회(OvsBidRsltController) — 국외 동가낙찰결과.
    * 화면 미배선(국내 P03 SmprcScsbdRsltFullPopup 의 국외판 화면 없음) — 소비처 생기면 훅 추가.
+   * TODO(원본 대조): PC 실 응답(ovsSmprcScsbdRsltPopup.IDataList1, 2026-08-24 판독본)은
+   * { bzentyCd, bzentyNm, smprcScsbdChcNm1~5 } — 국내 공용 SmprcScsbdRsltItem 과 다름.
+   * 국외판 화면이 생기면 전용 타입으로 교체.
    */
   async selectSmprcScsbdRsltList(pbancNo: string): Promise<SmprcScsbdRsltItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.smprcScsbdRsltInfo.smprcScsbdRslt)
@@ -1141,7 +1156,10 @@ export const bdService = {
 
   // ── 국외 환율/목표가/보관함 (MUI-BD-01 · MUI-CM-01) ─────────────────────────
 
-  /** no.54 환율정보조회(기준일자) — MUI-BD-01-M74 (ovsExchrtList/OvsExchrtListFullPopup). 구 `selectExchangeRates`. */
+  /**
+   * no.54 환율정보조회(기준일자) — MUI-BD-01-M74 (ovsExchrtList/OvsExchrtListFullPopup). 구 `selectExchangeRates`.
+   * 요청 { crtrYmd }·응답 IResult 는 PC 실 인터페이스(ovsExchrtListPopup, 2026-08-24 판독본)와 정합 확인.
+   */
   async selectExchrtList(crtrYmd: string): Promise<OvsExchrtItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.exchrtList)
     return apiClient.post<OvsExchrtItem[], OvsExchrtItem[]>(
@@ -1153,8 +1171,12 @@ export const bdService = {
   /**
    * no.56 목표가공개품목조회 — MUI-BD-01-M75 (ovsGoalPrcRlsItemList/OvsGoalPrcRlsItemListPage).
    * 구 `selectOvsGoalPrcRlsItemList`. 목업은 전체 반환(페이지 더보기).
+   * 요청 body = PC 실 인터페이스(ovsGoalPrcRlsItemListPopup.ISearch, 2026-08-24 판독본).
    */
-  async selectGoalPrcRlsItemList(params?: BidListSearchRequest): Promise<OvsGoalPrcRlsItem[]> {
+  async selectGoalPrcRlsItemList(params: {
+    /** 공고번호 */ pbancNo: string
+    /** 조달번호 */ prcmNo: string
+  }): Promise<OvsGoalPrcRlsItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsGoalPrcRlsList)
     return apiClient.post<OvsGoalPrcRlsItem[], OvsGoalPrcRlsItem[]>(
       '/bds/bd/ovsBidPbanc/selectGoalPrcRlsItemList.do',
@@ -1165,6 +1187,8 @@ export const bdService = {
   /**
    * no.57 보관함공고목록조회 — MUI-CM-01-M71 (ovsLockerPbanList/OvsLockerPbanListPage).
    * 구 `selectOvsLockerPbanList`. 목업은 전체 반환(페이지 클라이언트 필터/페이징).
+   * 응답은 PC 실 인터페이스(ovsLockerPbanList.IDataList1, 2026-08-24 판독본) 반영 —
+   * 요청(ISearch)은 판독본에 미포함이라 잠정 유지(원본 대조 필요).
    */
   async selectLockerPbancList(params?: BidListSearchRequest): Promise<OvsLockerPbanItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsLockerPbanList)

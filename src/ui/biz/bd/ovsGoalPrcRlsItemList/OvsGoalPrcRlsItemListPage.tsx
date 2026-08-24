@@ -9,50 +9,31 @@ import { Button } from '@/ui/common/base/Button'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+// 조회결과 1건 — PC 실 인터페이스(ovsGoalPrcRlsItemListPopup.IResult, 2026-08-24 판독본) 공유 타입.
+import type { OvsGoalPrcRlsItem } from '@/types/bd'
 
-// 조회결과 1건 (dl_resultList, 설계서 slide300 항목설명 표)
-export interface OvsGoalPrcRlsItem {
-  frcptlArtclNo: string // 항목번호 (5)
-  invtNo: string // 재고번호 (9)
-  prtsNo: string // 부품번호 (32)
-  spcfctNo: string // 규격번호 (20)
-  itemNm: string // 품명 (200)
-  dudtYmd: string // 납기기준일자 (8, YYYY-MM-DD 표기)
-  unitNm: string // 단위 (2)
-  bscbgtQty: number // 본조수량 — 국가 예산 수량
-  athrtQty: number // 당국수량 — 당해년도 국채 수량
-  ltbndQty: number // 장국수량 — 장기국채 수량
-  bscbgtDrctnAmt: number // 본조예산 — 국가 예산
-  athrtDrctnAmt: number // 당국예산 — 당해년도 국채 예산
-  ltbndDrctnAmt: number // 장국예산 — 장기국채 예산
-  sumQty: number // 수량합계 (본조수량+당국수량+장국수량)
-  drctnUntprc: number // 지시단가
-  drctnAmt: number // 지시금액
-  aplcnEqpmntCd: string // 장비부호 (8)
-  aplcnEqpmntNm: string // 장비명 (100)
-}
-
-// 금액(예산·단가·금액) 표기 — 설계서 예시 '1,000.00' / '3,000.00' (소수 2자리).
-const formatAmt = (n: number) =>
-  n.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+// 금액(예산·단가·금액) 표기 — 설계서 예시 '1,000.00' / '3,000.00' (소수 2자리). string 필드는 Number() 경유.
+const formatAmt = (n: number | string) =>
+  Number(n).toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 // 목업 기본 행 — 설계서 slide299 예시행(COLLAR,BREECH RING·발칸 20미리) 기반 실전형 값.
-const dl_resultListBase: Omit<OvsGoalPrcRlsItem, 'frcptlArtclNo' | 'invtNo'>[] = [
+const dl_resultListBase: Omit<OvsGoalPrcRlsItem, 'artclNo' | 'invtNo'>[] = [
   {
     prtsNo: '59108730001-P400',
     spcfctNo: 'MIL-DTL-45932',
     itemNm: 'COLLAR,BREECH RING',
     dudtYmd: '2026-12-13',
-    unitNm: 'EA',
-    bscbgtQty: 10,
-    athrtQty: 10,
-    ltbndQty: 10,
+    unitCd: 'EA',
+    bscbgtQty: '10',
+    athrtQty: '10',
+    ltbndQty: '10',
     bscbgtDrctnAmt: 1_000.0,
-    athrtDrctnAmt: 1_000.0,
-    ltbndDrctnAmt: 1_000.0,
-    sumQty: 30,
+    athrtDrctnAmt: '1000.0',
+    ltbndDrctnAmt: '1000.0',
+    sumQty: '30',
     drctnUntprc: 100,
     drctnAmt: 3_000.0,
+    goalAmt: 3_000.0,
     aplcnEqpmntCd: '33100401',
     aplcnEqpmntNm: '발칸 20미리',
   },
@@ -61,16 +42,17 @@ const dl_resultListBase: Omit<OvsGoalPrcRlsItem, 'frcptlArtclNo' | 'invtNo'>[] =
     spcfctNo: 'MIL-B-46176B',
     itemNm: 'BARREL,GUN,20MM',
     dudtYmd: '2026-11-30',
-    unitNm: 'EA',
-    bscbgtQty: 6,
-    athrtQty: 4,
-    ltbndQty: 2,
+    unitCd: 'EA',
+    bscbgtQty: '6',
+    athrtQty: '4',
+    ltbndQty: '2',
     bscbgtDrctnAmt: 4_200.0,
-    athrtDrctnAmt: 2_800.0,
-    ltbndDrctnAmt: 1_400.0,
-    sumQty: 12,
+    athrtDrctnAmt: '2800.0',
+    ltbndDrctnAmt: '1400.0',
+    sumQty: '12',
     drctnUntprc: 700,
     drctnAmt: 8_400.0,
+    goalAmt: 8_400.0,
     aplcnEqpmntCd: '33100401',
     aplcnEqpmntNm: '발칸 20미리',
   },
@@ -79,16 +61,17 @@ const dl_resultListBase: Omit<OvsGoalPrcRlsItem, 'frcptlArtclNo' | 'invtNo'>[] =
     spcfctNo: 'MIL-P-45662A',
     itemNm: 'PIN,FIRING',
     dudtYmd: '2027-01-20',
-    unitNm: 'EA',
-    bscbgtQty: 50,
-    athrtQty: 30,
-    ltbndQty: 20,
+    unitCd: 'EA',
+    bscbgtQty: '50',
+    athrtQty: '30',
+    ltbndQty: '20',
     bscbgtDrctnAmt: 2_500.0,
-    athrtDrctnAmt: 1_500.0,
-    ltbndDrctnAmt: 1_000.0,
-    sumQty: 100,
+    athrtDrctnAmt: '1500.0',
+    ltbndDrctnAmt: '1000.0',
+    sumQty: '100',
     drctnUntprc: 50,
     drctnAmt: 5_000.0,
+    goalAmt: 5_000.0,
     aplcnEqpmntCd: '33100401',
     aplcnEqpmntNm: '발칸 20미리',
   },
@@ -97,16 +80,17 @@ const dl_resultListBase: Omit<OvsGoalPrcRlsItem, 'frcptlArtclNo' | 'invtNo'>[] =
     spcfctNo: 'MIL-H-46855',
     itemNm: 'HOUSING,RECOIL MECHANISM',
     dudtYmd: '2027-03-05',
-    unitNm: 'EA',
-    bscbgtQty: 3,
-    athrtQty: 2,
-    ltbndQty: 1,
+    unitCd: 'EA',
+    bscbgtQty: '3',
+    athrtQty: '2',
+    ltbndQty: '1',
     bscbgtDrctnAmt: 9_000.0,
-    athrtDrctnAmt: 6_000.0,
-    ltbndDrctnAmt: 3_000.0,
-    sumQty: 6,
+    athrtDrctnAmt: '6000.0',
+    ltbndDrctnAmt: '3000.0',
+    sumQty: '6',
     drctnUntprc: 3_000,
     drctnAmt: 18_000.0,
+    goalAmt: 18_000.0,
     aplcnEqpmntCd: '33200105',
     aplcnEqpmntNm: 'K-55 자주포',
   },
@@ -115,16 +99,17 @@ const dl_resultListBase: Omit<OvsGoalPrcRlsItem, 'frcptlArtclNo' | 'invtNo'>[] =
     spcfctNo: 'MIL-V-24578',
     itemNm: 'VALVE,SOLENOID',
     dudtYmd: '2026-10-15',
-    unitNm: 'EA',
-    bscbgtQty: 8,
-    athrtQty: 8,
-    ltbndQty: 4,
+    unitCd: 'EA',
+    bscbgtQty: '8',
+    athrtQty: '8',
+    ltbndQty: '4',
     bscbgtDrctnAmt: 1_600.0,
-    athrtDrctnAmt: 1_600.0,
-    ltbndDrctnAmt: 800.0,
-    sumQty: 20,
+    athrtDrctnAmt: '1600.0',
+    ltbndDrctnAmt: '800.0',
+    sumQty: '20',
     drctnUntprc: 200,
     drctnAmt: 4_000.0,
+    goalAmt: 4_000.0,
     aplcnEqpmntCd: '33200105',
     aplcnEqpmntNm: 'K-55 자주포',
   },
@@ -133,16 +118,17 @@ const dl_resultListBase: Omit<OvsGoalPrcRlsItem, 'frcptlArtclNo' | 'invtNo'>[] =
     spcfctNo: 'MIL-C-83488',
     itemNm: 'CABLE ASSEMBLY,SPECIAL PURPOSE',
     dudtYmd: '2026-09-28',
-    unitNm: 'EA',
-    bscbgtQty: 15,
-    athrtQty: 10,
-    ltbndQty: 5,
+    unitCd: 'EA',
+    bscbgtQty: '15',
+    athrtQty: '10',
+    ltbndQty: '5',
     bscbgtDrctnAmt: 3_750.0,
-    athrtDrctnAmt: 2_500.0,
-    ltbndDrctnAmt: 1_250.0,
-    sumQty: 30,
+    athrtDrctnAmt: '2500.0',
+    ltbndDrctnAmt: '1250.0',
+    sumQty: '30',
     drctnUntprc: 250,
     drctnAmt: 7_500.0,
+    goalAmt: 7_500.0,
     aplcnEqpmntCd: '35100207',
     aplcnEqpmntNm: 'TPS-830K 레이더',
   },
@@ -154,7 +140,7 @@ const MOCK_LIST: OvsGoalPrcRlsItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dl_resultListBase[i % dl_resultListBase.length]
   return {
     ...base,
-    frcptlArtclNo: String((i + 1) * 10).padStart(5, '0'), // 항목번호 — 10단위 채번(5자리)
+    artclNo: String((i + 1) * 10).padStart(5, '0'), // 항목번호 — 10단위 채번(5자리)
     invtNo: String(5295585 + i * 137).padStart(9, '0'), // 재고번호 — 9자리 고유
   }
 })
@@ -184,22 +170,23 @@ export function OvsGoalPrcRlsItemListPage() {
 
   // 목업 → Table rows 매핑 — 설계서 데이터영역(dl_resultList) 항목 순서 그대로 노출. 숫자/금액은 우측 정렬(type: number).
   const itemRows = (it: OvsGoalPrcRlsItem): TableRow[] => [
-    { label: '항목번호', value: it.frcptlArtclNo },
+    { label: '항목번호', value: it.artclNo },
     { label: '재고번호', value: it.invtNo },
     { label: '부품번호', value: it.prtsNo },
     { label: '규격번호', value: it.spcfctNo },
     { label: '품명', value: it.itemNm },
     { label: '납기기준일자', value: it.dudtYmd },
-    { label: '단위', value: it.unitNm },
-    { label: '본조수량', value: it.bscbgtQty.toLocaleString(), type: 'number' },
-    { label: '당국수량', value: it.athrtQty.toLocaleString(), type: 'number' },
-    { label: '장국수량', value: it.ltbndQty.toLocaleString(), type: 'number' },
+    { label: '단위', value: it.unitCd },
+    { label: '본조수량', value: Number(it.bscbgtQty).toLocaleString(), type: 'number' },
+    { label: '당국수량', value: Number(it.athrtQty).toLocaleString(), type: 'number' },
+    { label: '장국수량', value: Number(it.ltbndQty).toLocaleString(), type: 'number' },
     { label: '본조예산', value: formatAmt(it.bscbgtDrctnAmt), type: 'number' },
     { label: '당국예산', value: formatAmt(it.athrtDrctnAmt), type: 'number' },
     { label: '장국예산', value: formatAmt(it.ltbndDrctnAmt), type: 'number' },
-    { label: '수량합계', value: it.sumQty.toLocaleString(), type: 'number' },
+    { label: '수량합계', value: Number(it.sumQty).toLocaleString(), type: 'number' },
     { label: '지시단가', value: it.drctnUntprc.toLocaleString(), type: 'number' },
     { label: '지시금액', value: formatAmt(it.drctnAmt), type: 'number' },
+    { label: '목표가', value: formatAmt(it.goalAmt), type: 'number' },
     { label: '장비부호', value: it.aplcnEqpmntCd },
     { label: '장비명', value: it.aplcnEqpmntNm },
   ]
@@ -217,7 +204,7 @@ export function OvsGoalPrcRlsItemListPage() {
       {/* 조회결과 — 품목별 테이블 (px-4 인셋). 카드 → Table 전환(사용자 확정) */}
       <div className="flex flex-col gap-krds-7 px-4 pb-4 pt-krds-7">
         {visibleList.map((it) => (
-          <Table key={it.frcptlArtclNo} rows={itemRows(it)} />
+          <Table key={it.artclNo} rows={itemRows(it)} />
         ))}
       </div>
 

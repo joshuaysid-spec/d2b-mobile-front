@@ -5,51 +5,176 @@ import type { SearchFilterValue } from '@/types/search-filter'
 export type BidSearchFilter = SearchFilterValue
 
 /**
- * 입찰공고 통합목록 카드 1건 (MUI-BD-01-M01, 설계서 데이터영역 dlt_bidPbancIntgList) — 항목명 설계서 그대로.
+ * 입찰공고 통합목록 카드 1건 (MUI-BD-01-M01) — PC 실 인터페이스
+ * `TempbidPbancIntgList.IBidPbancList`(2026-08-24 판독본) 키/타입 그대로.
+ * 구 설계서 dlt_bidPbancIntgList 임시 키(g2BBidPbancNo/rprsItemNm/brprc 등) 전량 교체.
+ * 식별자는 pbancNo(+pbancOd) — 카드 key 는 rnum.
  */
 export interface BidPbancItem {
-  /** 카드 식별자 (상세 라우팅 키) */
-  id: string
-  /** 순번(rnum) */
-  rnum: number
-  /** 공고구분(pbancTpcd, 상위코드 ANTC) — 정상공고/정정공고/취소공고/긴급공고 등. 상태 뱃지 */
-  pbancTpcd: string
-  /** G2B 공고번호(g2BBidPbancNo) — 카드 subtitle */
-  g2BBidPbancNo: string
-  /** G2B 공고차수(g2BBidPbancCycl) */
-  g2BBidPbancCycl: string
-  /** 통합참조번호(rfrncNo) */
-  rfrncNo: string
-  /** 입찰건명/공고명(rprsItemNm) — 카드 title(2줄 말줄임) */
-  rprsItemNm: string
-  /** 공사명(csrtName) */
-  csrtName: string
-  /** 발주기관(orderInstNm) */
-  orderInstNm: string
-  /** 생산능력제출마감일시(prdcpIdntySmdocDdlnDt) */
-  prdcpIdntySmdocDdlnDt: string
-  /** 입찰참가등록마감일시(bidClrsDt) */
-  bidClrsDt: string
-  /** 입찰서제출마감일시(tndrSbmsnDdlnDt) */
+  /** 순번 (rnum) */
+  rnum: string
+  /** 조달번호 (prcmNo) */
+  prcmNo: string
+  /** 업무구분 (taskSeCd) */
+  taskSeCd: string
+  /** 업무구분명 (taskSeNm) — 물품/용역/공사/국외. 카드 클릭 시 국내/국외 상세 라우팅 분기 구동 */
+  taskSeNm: string
+  /** 사업영역코드 (bizRlmCd) */
+  bizRlmCd: string
+  /** 업무영역코드 (taskRlmCd) */
+  taskRlmCd: string
+  /** 입찰구분 (bidSeCd) */
+  bidSeCd: string
+  /** 입찰구분명 (bidSeNm) — 경쟁입찰/공개수의. 카드 뱃지 */
+  bidSeNm: string
+  /** g2b공고번호 (g2bPbancNoOd) — 카드 subtitle */
+  g2bPbancNoOd: string
+  /** 공고구분 (pbancSeCd) */
+  pbancSeCd: string
+  /** 공고구분명 (pbancSeNm) — 정상공고/정정공고/취소공고/긴급공고 등. 상태 뱃지 */
+  pbancSeNm: string
+  /** 공고년도 (drctnYr) */
+  drctnYr: string
+  /** 공고번호 (pbancNo) — 상세 조회 식별자 */
+  pbancNo: string
+  /** 공고차수 (pbancOd) */
+  pbancOd: string
+  /** 공고일자 (pbancYmd) */
+  pbancYmd: string
+  /** 기관입찰공고번호 (instBidPbancNo) */
+  instBidPbancNo: string
+  /** 입찰공고차수 (bidPbancOd) */
+  bidPbancOd: string
+  /** 통합참조번호 (intgRfrncNo) */
+  intgRfrncNo: string
+  /** 판단번호 (jdgmtNo) */
+  jdgmtNo: string
+  /** 공고/통합참조번호 (anmtNum) */
+  anmtNum: string
+  /** 입찰건명 (bizNm) — 카드 title(2줄 말줄임) */
+  bizNm: string
+  /** 발주기관코드 (deptCd) */
+  deptCd: string
+  /** 발주기관명 (deptNm) */
+  deptNm: string
+  /** 구매요청번호 (prchsDmndNo) */
+  prchsDmndNo: string
+  /** 계약방법코드 (ctrtMthdCd) */
+  ctrtMthdCd: string
+  /** 계약방법명 (ctrtMthdNm) */
+  ctrtMthdNm: string
+  /** 입찰방법 (bidMthdCd) */
+  bidMthdCd: string
+  /** 입찰방법명 (bidMthdNm) */
+  bidMthdNm: string
+  /** 입찰참가마감일시 (bidRegDdlnDt) */
+  bidRegDdlnDt: string
+  /** 입찰서제출마감일시 (tndrSbmsnDdlnDt) */
   tndrSbmsnDdlnDt: string
-  /** 기초예가금액(brprc, 원 정수) — 표시 시 천단위 콤마 + ' 원' */
-  brprc: number
+  /** 개찰일시 (bdopnDt) */
+  bdopnDt: string
+  /** 기초예가상태 (bsicStat) */
+  bsicStat: string
+  /** 기초예가적용여부 (bidPrtcpQlfcYn) */
+  bidPrtcpQlfcYn: string
+  /** 기초예가금액 (bsicExpt) — 표시 시 천단위 콤마 + ' 원' */
+  bsicExpt: string
+  /** 기초예가메세지 (bsicExptMsg) */
+  bsicExptMsg: string
+  /** 입찰구분형태코드 (bidShpSeCd) */
+  bidShpSeCd: string
+  /** 입찰구분형태명 (bidShpSeNm) */
+  bidShpSeNm: string
+  /** 공고취소여부 (pbancRtrcnYn) */
+  pbancRtrcnYn: string
+  /** 입찰구분Text (bidSeNmText) */
+  bidSeNmText: string
+  /** g2b공고번호차수Text (g2bPbancNoOdText) */
+  g2bPbancNoOdText: string
+  /** 입찰참가등록마감일시Text (bidRegDdlnDtText) */
+  bidRegDdlnDtText: string
+  /** 계약방법Text (ctrtMthdNmText) */
+  ctrtMthdNmText: string
+  /** 공고일자Text (pbancYmdText) */
+  pbancYmdText: string
   /**
    * 진행단계 — 단계표시기(StepBar) 구동값(조달/입찰/계약/이행/대금청구).
-   * ⚠️ 설계서 데이터영역 미정의(상세설계 예정) — 단계표시기 구동용 추가(사용자 승인).
+   * ⚠️ 실 인터페이스(IBidPbancList) 미존재 — 단계표시기 구동용 임시(사용자 승인 유지).
    */
   prgrsStg?: string
   /**
-   * 업무구분 (taskSeNm) — 물품/용역/공사/국외. 카드 클릭 시 국내(/bd/:id)·국외(/bd/ovs/:id) 상세 라우팅 분기 구동.
-   * ⚠️ 목록 데이터영역(dlt_bidPbancIntgList)엔 미정의 — 검색조건(dml_bidPbancSrchCnd)의 TaskSeNm ·
-   *   입찰진행 목록(BidPrgrsItem.taskSeNm) 항목명 재사용(BD 임시키 관례).
+   * 생산능력제출마감일시 (prdcpIdntySmdocDdlnDt) — 카드/상세 요약 표시행.
+   * ⚠️ 실 인터페이스(IBidPbancList) 미존재 — 구 설계서 항목명 유지(원본 대조 필요).
    */
-  taskSeNm?: string
-  /**
-   * 입찰구분명 — 경쟁입찰/공개수의. 카드 뱃지(업무구분·입찰구분·공고구분, 2026-08-06 추가) 표시용.
-   * ⚠️ 설계서 항목설명 표 미정의 — 검색필터 임시 키 bidSe(slide13 표시레이블 기준, 사용자 확정)의 표시명 짝(임시 키).
-   */
-  bidSeNm?: string
+  prdcpIdntySmdocDdlnDt?: string
+}
+
+/**
+ * 입찰공고 통합목록 검색 요청 (MUI-BD-01-M01/M02) — PC 실 인터페이스
+ * `TempbidPbancIntgList.ISrchMap`/`ISearchParam`(2026-08-24 판독본, 동일 필드 구성) 키 그대로.
+ * 현재 목록 화면은 클라이언트 필터라 미전송 — 서버 검색 전환 시 SearchFilterValue → 이 맵으로 변환.
+ */
+export interface BidPbancListSrchMap {
+  /** 탭구분 (tabSeCd) */
+  tabSeCd?: string
+  /** 업무구분 (taskSeCd) */
+  taskSeCd?: string
+  /** 검색일자구분 (srchYmdSe) */
+  srchYmdSe?: string
+  /** 검색시작일자 (srchBgngYmd) */
+  srchBgngYmd?: string
+  /** 검색종료일자 (srchEndYmd) */
+  srchEndYmd?: string
+  /** 발주기관명 (deptCdNm) */
+  deptCdNm?: string
+  /** 발주기관코드 (deptCd) */
+  deptCd?: string
+  /** 입찰건명 (bidPbancNm) */
+  bidPbancNm?: string
+  /** 검색번호구분 (srchNoSeCd) */
+  srchNoSeCd?: string
+  /** 검색번호 (srchNo) */
+  srchNo?: string
+  /** 공고구분 (pbancSeCd) */
+  pbancSeCd?: string
+  /** 입찰구분 (bidSeCd) */
+  bidSeCd?: string
+  /** 진행상태 (prgrsSttsCd — 판독본 한글명 '공고구분' 표기는 오기로 보임) */
+  prgrsSttsCd?: string
+  /** 지역명 (rgnNm) */
+  rgnNm?: string
+  /** 지역코드 (rgnCd) */
+  rgnCd?: string
+  /** 면허정보명 (lcnsInfoNm) */
+  lcnsInfoNm?: string
+  /** 면허정보코드 (lcnsInfoCd) */
+  lcnsInfoCd?: string
+  /** 품목명 (itemNm) */
+  itemNm?: string
+  /** 품목코드 (itemCd) */
+  itemCd?: string
+  /** 군구분 (miltSeCd) */
+  miltSeCd?: string
+  /** 기능 (fwkCd) */
+  fwkCd?: string
+  /** 조달요청기관코드 (prcmRqtInstCd — 판독본 한글명 '군구분') */
+  prcmRqtInstCd?: string
+  /** 입찰매체 (bidMediaCd) */
+  bidMediaCd?: string
+  /** 추정가격MIN (prsmpPrprcMin) */
+  prsmpPrprcMin?: string
+  /** 추정가격MAX (prsmpPrprcMax) */
+  prsmpPrprcMax?: string
+  /** 입찰형태구분코드 (bidShpSeCd) */
+  bidShpSeCd?: string
+  /** 계약방법 (ctrtMthdCd) */
+  ctrtMthdCd?: string
+  /** 낙찰방법 (scsbdMthdCd) */
+  scsbdMthdCd?: string
+  /** 신기술여부 (ntchYn) */
+  ntchYn?: string
+  /** 국외공고번호 (ovsPbancNo) */
+  ovsPbancNo?: string
 }
 
 /**
@@ -410,6 +535,8 @@ export interface OvsBidRsltGeneral {
 
 /**
  * 국외 입찰결과조회 - 입찰결과(단가제) 목록 1건 (MUI-BD-09-T72(구 M72 — v1.83 재편), 설계서 slide404 입찰결과 단가제 데이터영역).
+ * TODO(원본 대조): PC 실 인터페이스 판독본(ovsBidRslt.IResultUnitPrice)은 col1~col11 자리표시 키
+ * (지시단가/입찰단가/달러단가/달러금액/입찰결과)라 실키로 볼 수 없어 미반영 — PC 확정 시 교체.
  */
 export interface OvsBidRsltUnitPriceItem {
   /** 항목번호 (clsfNo) */
@@ -439,6 +566,7 @@ export interface OvsBidRsltUnitPriceItem {
 /**
  * 국외 입찰결과조회 - 입찰결과(총액제) 목록 1건 (MUI-BD-09-T73(구 M73 — v1.83 재편), 설계서 slide405 입찰결과 총액제 데이터영역).
  * 총액제는 업체별 결과(입찰업체/사업자번호/지시금액/입찰금액/달러금액/입찰결과). 현황 요약 없음.
+ * TODO(원본 대조): PC 판독본(ovsBidRsltDtl.IResultUnitPrice)도 col1~col9 자리표시 키라 미반영.
  */
 export interface OvsBidRsltTotalItem {
   /** 순번 (seq) — 목록 key. ⚠️ 설계서 미표기, React key 용 */
@@ -784,113 +912,125 @@ export interface AplyFlowState {
 
 // ── 국외 입찰공고 상세 (MUI-BD-01-M71 · T71~T73(구 M71~M73 — v1.83 재편), 설계서 slide289~296) ─────────────────
 
-/** 품목목록 1건 (dl_itemList, 설계서 slide295 1.4) — 품목 목록 탭(M72) */
+/**
+ * 품목목록 1건 — 품목 목록 탭(T72). PC 실 인터페이스 `ovsBidPbancDtl.IResultItem`
+ * (2026-08-24 판독본) 키/타입 그대로(chk 그리드 체크 열은 제외 — 선택 상태는 화면 로컬).
+ * 구 설계서 dl_itemList 키(frcptlArtclNo/unitNm/bscbgtQty 등) 교체.
+ */
 export interface OvsBidItem {
-  /** 항목번호 (frcptlArtclNo, 5) */
-  frcptlArtclNo: string
-  /** 품질등급 (inspShpNm, 100) */
-  inspShpNm: string
-  /** 첨부문서 (atchDocEn, 1) — 품목의 첨부 문서 유무(Y/N) */
-  atchDocEn: 'Y' | 'N'
-  /** 재고번호 (invtNo, 9) */
+  /** 항목번호 (artclNo) */
+  artclNo: string
+  /** 품질등급 (inspShpCd) */
+  inspShpCd: string
+  /** 첨부문서유무 (docYn) — Y/N */
+  docYn: string
+  /** 첨부문서id (docId) */
+  docId: string
+  /** 보관함여부 (lockerYn) — Y/N. 업체담당자인 경우에만 표시 */
+  lockerYn: string
+  /** 재고번호 (invtNo) */
   invtNo: string
-  /** 부품번호 (prtsNo, 32) */
+  /** 부품번호 (prtsNo) */
   prtsNo: string
-  /** 규격번호 (spcfctNo, 20) */
+  /** 규격번호 (spcfctNo) */
   spcfctNo: string
-  /** 품명 (itemNm, 200) */
+  /** 품명 (itemNm) */
   itemNm: string
-  /** 납기기준일자 (dudtYmd, 8) */
+  /** 납기기준일자 (dudtYmd) */
   dudtYmd: string
-  /** 단위 (unitNm, 2) */
-  unitNm: string
-  /** 본조수량 (bscbgtQty, 15) */
-  bscbgtQty: string
-  /** 당국수량 (athrtQty, 15) */
-  athrtQty: string
-  /** 장국수량 (ltbndQty, 15) */
-  ltbndQty: string
-  /** 본조예산 (bscbgtDrctnAmt, 25) */
-  bscbgtDrctnAmt: string
-  /** 당국예산 (athrtDrctnAmt, 25) */
-  athrtDrctnAmt: string
-  /** 장국예산 (ltbndDrctnAmt, 25) */
-  ltbndDrctnAmt: string
-  /** 수량합계 (sumQty, 15) — 본조수량+당국수량+장국수량 */
-  sumQty: string
-  /** 화폐단위 (drctnCrncNm, 100) */
-  drctnCrncNm: string
-  /** 지시단가 (drctnUntprc, 25) */
-  drctnUntprc: string
-  /** 지시금액 (drctnAmt, 25) */
-  drctnAmt: string
-  /** 장비부호 (aplcnEqpmntCd, 8) */
+  /** 단위 (bidUnitCd) */
+  bidUnitCd: string
+  /** 본조수량 (bonSumDrctnQty) */
+  bonSumDrctnQty: string
+  /** 당국수량 (dangSumDrctnQty) */
+  dangSumDrctnQty: string
+  /** 장국수량 (jangSumDrctnQty) */
+  jangSumDrctnQty: string
+  /** 본조예산 (bonSumDrctnUsdAmt) */
+  bonSumDrctnUsdAmt: string
+  /** 당국예산 (dangSumDrctnUsdAmt) */
+  dangSumDrctnUsdAmt: string
+  /** 장국예산 (jangSumDrctnUsdAmt) */
+  jangSumDrctnUsdAmt: string
+  /** 수량합계 (sumDrctnQty) */
+  sumDrctnQty: string
+  /** 화폐단위 (crncCd) */
+  crncCd: string
+  /** 지시단가 (drctnUntprc) */
+  drctnUntprc: number
+  /** 지시금액 (sumDrctnUsdAmt) */
+  sumDrctnUsdAmt: string
+  /** 장비부호 (aplcnEqpmntCd) */
   aplcnEqpmntCd: string
-  /** 장비명 (aplcnEqpmntNm, 100) */
+  /** 장비명 (aplcnEqpmntNm) */
   aplcnEqpmntNm: string
-  /** 보관함여부 (lockerYn, 1) — Y/N. 업체담당자인 경우에만 표시 */
-  lockerYn: 'Y' | 'N'
 }
 
-/** 첨부서류 1건 (dl_docList, 설계서 slide294 1.3) — 첨부파일 탭(M73) */
+/**
+ * 첨부서류 1건 — 첨부파일 탭(T73)·품목 첨부파일조회(P76). PC 실 인터페이스
+ * `ovsBidPbancDtl.IResultAttach`(2026-08-24 판독본) 키/타입 그대로(chk 제외).
+ * 구 no/atchDocNm/atchFileNm 키 교체 — 목록 key·다운로드 식별자는 fileId.
+ */
 export interface OvsAtchDoc {
-  /** 순번 (no, 15) */
-  no: number
-  /** 첨부서류명 (atchDocNm, 200) */
-  atchDocNm: string
-  /** 첨부파일명 (atchFileNm, 200) */
-  atchFileNm: string
-  /** 파일크기 (fileSz, 10) */
-  fileSz: string
+  /** 첨부서류명 (docTitl) */
+  docTitl: string
+  /** 첨부파일명 (fileNm) */
+  fileNm: string
+  /** 파일크기 (fileSz) — byte */
+  fileSz: number
+  /** 파일ID (fileId) — 다운로드/목록 key */
+  fileId: string
 }
 
 // ── 국외 보관함 목록 (MUI-CM-01-M71, 설계서 slide301·306·307) ───────────────────
 
 /**
- * 국외 보관함 공고 1건 (MUI-CM-01-M71, 설계서 slide306 1.2 검색결과 데이터영역 dl_resultList).
- * 항목명(영문)·자리수는 설계서 그대로.
+ * 국외 보관함 공고 1건 (MUI-CM-01-M71) — PC 실 인터페이스 `ovsLockerPbanList.IDataList1`
+ * (2026-08-24 판독본) 키/타입 그대로. 구 tmprBidCnEn/bidPrtcpAplyYn(Y/N)·pbancYr 교체.
  */
 export interface OvsLockerPbanItem {
   /** 라우팅 키 — 통합참조번호(intgRfrncNo) 사용 (직접 URL 진입 테스트 가능) */
   id: string
-  /** 통합참조번호 (intgRfrncNo, 30) */
+  /** 통합참조번호 (intgRfrncNo) */
   intgRfrncNo: string
-  /** 공고번호 (pbancNo, 7) */
+  /** 공고번호 (pbancNo) */
   pbancNo: string
-  /** 공고차수 (pbancOd, 2) */
+  /** 공고차수 (pbancOd) */
   pbancOd: string
-  /** 공고년도 (pbancYr, 4) */
-  pbancYr: string
-  /** 구매요청번호 (prchsDmndNo, 10) */
+  /** 구매요청번호 (prchsDmndNo) */
   prchsDmndNo: string
-  /** 사업명 (bizNm, 100) */
+  /** 사업명 (bizNm) */
   bizNm: string
-  /** 입찰내역작성여부 (tmprBidCnEn, 1) — 구분(Y,N) */
-  tmprBidCnEn: 'Y' | 'N'
-  /** 입찰업체명 (splyBzentyNm, 200) — 미작성 시 '미작성' 표기(설계서 slide301) */
+  /** 입찰내역 (tmprBidCn) — 구 tmprBidCnEn(Y/N). TODO(원본 대조): 값 도메인(Y/N vs 상태문자열) 미확정 */
+  tmprBidCn: string
+  /** 입찰업체명 (splyBzentyNm) — 미작성 시 '미작성' 표기(설계서 slide301) */
   splyBzentyNm: string
-  /** 입찰참가신청여부 (bidPrtcpAplyYn, 1) — 구분(Y,N) */
-  bidPrtcpAplyYn: 'Y' | 'N'
-  /** 입찰참가등록마감일시 (regDdlnDt, 14) */
+  /** 입찰참가신청 (bidPrtcpAply) — 구 bidPrtcpAplyYn(Y/N). TODO(원본 대조): 값 도메인 미확정 */
+  bidPrtcpAply: string
+  /** 부정당내역 (creditYn) */
+  creditYn: string
+  /** 입찰참가등록마감일시 (regDdlnDt) */
   regDdlnDt: string
-  /** 입찰서제출마감일시 (bdngDdlnDt, 14) */
+  /** 입찰서제출마감일시 (bdngDdlnDt) */
   bdngDdlnDt: string
-  /** 개찰일자 (bdopnYmd, 8) */
+  /** 개찰일자 (bdopnYmd) */
   bdopnYmd: string
-  /** 환율일자 (exchrtAplcnYmd, 8) */
+  /** 환율적용일자 (exchrtAplcnYmd) */
   exchrtAplcnYmd: string
-  /** 입찰방식 (bidMth, 100) — 경쟁입찰/공개수의/사전심사 */
+  /** 입찰방식 (bidMth) — 경쟁입찰/공개수의/사전심사 */
   bidMth: string
-  /** 보관품목수 (lockerItemQty, 15) */
-  lockerItemQty: number
-  // ── ⚠️ 설계서 데이터영역 미정의 임시 항목 (기존 승인 관례: 임시 영문키 + 주석) ──────────
+  /** 보관함품목수 (lockerItemQty) */
+  lockerItemQty: string
+  // ── ⚠️ 실 인터페이스(IDataList1) 미존재 임시 항목 (기존 승인 관례: 임시 영문키 + 주석) ──────────
+  /** 공고년도 (pbancYr) — ⚠️ 판독본 미존재. 상세(M72) 일반정보 표시용 잔존(원본 대조 필요) */
+  pbancYr?: string
   /** 입찰내역 작성상태 — 최종 와이어프레임(260709 M71)의 표시 레이블(입찰내역 작성/미작성/완료)·카드 버튼 분기 구동값.
-   *  데이터영역은 tmprBidCnEn(Y/N) 2단계뿐이라 '작성(저장)'과 '완료(제출)'를 구분 못 함 — 상세설계 확정 시 교체.
-   *  tmprBidCnEn 과의 정합: 미작성=N, 작성/완료=Y */
+   *  ⚠️ 판독본 미존재 — 실 tmprBidCn 의 값 도메인이 상태문자열로 확정되면 그쪽으로 통합.
+   *  tmprBidCn(Y/N 가정)과의 정합: 미작성=N, 작성/완료=Y */
   tmprBidCnStts: '미작성' | '작성' | '완료'
   /** 입찰참가신청 작성상태 — 카드 상태버튼 분기 구동값(260709 확정: 작성(저장)=[입찰참가신청 작성수정] ·
-   *  완료=[입찰진행 바로가기]). 데이터영역은 bidPrtcpAplyYn(Y/N)뿐이라 구분 불가 — 상세설계 확정 시 교체.
-   *  bidPrtcpAplyYn 과의 정합: 완료=Y, 미신청/작성=N */
+   *  완료=[입찰진행 바로가기]). ⚠️ 판독본 미존재 — 실 bidPrtcpAply 값 도메인 확정 시 통합.
+   *  bidPrtcpAply(Y/N 가정)와의 정합: 완료=Y, 미신청/작성=N */
   bidPrtcpAplyStts: '미신청' | '작성' | '완료'
   /** 입찰구분(단가제/총액제) — 카드 표시 레이블(slide301)·입찰내역 M77/M78 분기 구동값. 상세설계 확정 시 교체 */
   bidPrcSysNm: '단가제' | '총액제'
@@ -1021,56 +1161,62 @@ export interface AlonbsBidCnInfo {
 
 // ── 이전공고입찰내역등록 (MUI-BD-01-P79(구 M79 — v1.83 재편), 설계서 slide320·322·323) ────────────────
 
-/** 보관함 이전공고 1건 (1.1 보관함목록 데이터 영역 dl_pbancInfo, 설계서 slide322) */
+/**
+ * 보관함 이전공고 1건 — PC 실 인터페이스 이전공고입찰내역등록
+ * `ovsBfrTmprBidBidCnRegPopup.IDataList1`(2026-08-24 판독본) 키/타입 그대로.
+ */
 export interface BfrPbancInfoItem {
-  /** 순번 */
-  no: number
-  /** 공고번호 (공고의 공고번호) */
+  /** 순번 (no) */
+  no: string
+  /** 공고번호 (pbancNo) */
   pbancNo: string
-  /** 공고차수 (공고의 차수) */
+  /** 공고차수 (pbancOd) */
   pbancOd: string
-  /** 구매요청번호 (공고의 구매요청번호) */
+  /** 구매요청번호 (prchsDmndNo) */
   prchsDmndNo: string
-  /** 개찰일자 (공고의 개찰일자) */
+  /** 개찰일자 (bdopnYmd) */
   bdopnYmd: string
-  /** 참가품목수 (참가신청한 품목수) */
-  prtcpItemQty: number
-  /** ⚠️ 설계서 dl_pbancInfo 미정의 — 와이어프레임 카드 타이틀(RECOIL) 표기용 임시.
-   *  항목명은 BD 도메인 공통 '대표품명(rprsItemNm)' 재사용. 설계서 확정 시 정리. */
+  /** 참가품목수 (prtcpItemQty) */
+  prtcpItemQty: string
+  /** ⚠️ 판독본(IDataList1) 미존재 — 와이어프레임 카드 타이틀(RECOIL) 표기용 임시.
+   *  항목명은 BD 도메인 공통 '대표품명(rprsItemNm)' 재사용(원본 대조 필요). */
   rprsItemNm: string
 }
 
-/** 입찰내역 1건 (1.2 입찰내역목록 데이터 영역 dl_bidCnList, 설계서 slide322) */
+/**
+ * 입찰내역 1건 — PC 실 인터페이스 `ovsBfrTmprBidBidCnRegPopup.IDataList11`
+ * (2026-08-24 판독본) 키/타입 그대로(chk 제외).
+ */
 export interface BfrPbancBidCnItem {
-  /** 순번 */
-  no: number
-  /** 재고번호 */
+  /** 순번 (no) */
+  no: string
+  /** 재고번호 (invtNo) */
   invtNo: string
-  /** 부품번호 */
+  /** 부품번호 (prtsNo) */
   prtsNo: string
-  /** 품명 */
+  /** 품명 (itemNm) */
   itemNm: string
-  /** 품목대체구분 (Y/N) */
+  /** 품목대체구분 (itemSbstSe) */
   itemSbstSe: string
-  /** 품목대체첨부문서 (Y/N, 필수 아님) */
+  /** 품목대체첨부문서 (itemSbstDocEn) */
   itemSbstDocEn: string
-  /** 수정재고번호 (필수 아님) */
+  /** 수정재고번호 (mdfcnInvtNo) */
   mdfcnInvtNo: string
-  /** 수정부품번호 (필수 아님) */
+  /** 수정부품번호 (mdfcnPrtsNo) */
   mdfcnPrtsNo: string
-  /** MOQ구분 (Y/N) */
+  /** MOQ구분 (moqYn) */
   moqYn: string
-  /** MOQ수량 (필수 아님) */
-  moqQty: number | null
-  /** MOQ첨부문서 (Y/N, 필수 아님) */
+  /** MOQ수량 (moqQty) */
+  moqQty: string
+  /** MOQ첨부문서 (moqDocEn) */
   moqDocEn: string
-  /** 입찰업체 */
+  /** 입찰업체 (splyBzentyNm) */
   splyBzentyNm: string
-  /** 입찰단가 */
+  /** 입찰단가 (bdngTccrUntprc) */
   bdngTccrUntprc: number
-  /** 입찰금액 */
+  /** 입찰금액 (bdngTccrAmt) */
   bdngTccrAmt: number
-  /** 화폐단위 */
+  /** 화폐단위 (crncNm) */
   crncNm: string
 }
 
@@ -1824,139 +1970,183 @@ export interface CrncOption {
   usdExrt: number
 }
 
-/** 국외 환율정보 1건 (MUI-BD-01-M74). */
+/**
+ * 국외 환율정보 1건 (MUI-BD-01-M74) — PC 실 인터페이스 `ovsExchrtListPopup.IResult`
+ * (2026-08-24 판독본) 키/타입 그대로.
+ */
 export interface OvsExchrtItem {
-  no: number
-  /** 국가명 */
-  ntnNm: string
-  /** 화폐명 */
+  /** 순번 (rnum) */
+  rnum: string
+  /** 화폐 (crncNm) */
   crncNm: string
-  /** 전신환매도율(TTS) */
+  /** 국가 (ntnNm) */
+  ntnNm: string
+  /** 매도율 (ttsrt) */
   ttsrt: number
-  /** 매매기준율 */
+  /** 기준율 (trdStdrt) */
   trdStdrt: number
-  /** 달러환산율 */
+  /** 달러환산율 (usdExrt) */
   usdExrt: number
 }
 
-/** 국외 목표가공개품목 1건 (MUI-BD-01-M75, dl_resultList). */
+/**
+ * 국외 목표가공개품목 1건 (MUI-BD-01-M75) — PC 실 인터페이스
+ * `ovsGoalPrcRlsItemListPopup.IResult`(2026-08-24 판독본) 키/타입 그대로(goalAmt 추가·artclNo/unitCd 교체).
+ * 수량/예산 필드의 string·number 혼재는 판독본 원본 그대로.
+ */
 export interface OvsGoalPrcRlsItem {
-  /** 항목번호 (5) */
-  frcptlArtclNo: string
-  /** 재고번호 (9) */
+  /** 항목번호 (artclNo) */
+  artclNo: string
+  /** 재고번호 (invtNo) */
   invtNo: string
-  /** 부품번호 (32) */
+  /** 부품번호 (prtsNo) */
   prtsNo: string
-  /** 규격번호 (20) */
+  /** 규격번호 (spcfctNo) */
   spcfctNo: string
-  /** 품명 (200) */
+  /** 품명 (itemNm) */
   itemNm: string
-  /** 납기기준일자 (8) */
+  /** 납기기준일자 (dudtYmd) */
   dudtYmd: string
-  /** 단위 (2) */
-  unitNm: string
-  /** 본조수량 */
-  bscbgtQty: number
-  /** 당국수량 */
-  athrtQty: number
-  /** 장국수량 */
-  ltbndQty: number
-  /** 본조예산 */
+  /** 단위 (unitCd) */
+  unitCd: string
+  /** 본조수량 (bscbgtQty) */
+  bscbgtQty: string
+  /** 당국수량 (athrtQty) */
+  athrtQty: string
+  /** 장국수량 (ltbndQty) */
+  ltbndQty: string
+  /** 본조예산 (bscbgtDrctnAmt) */
   bscbgtDrctnAmt: number
-  /** 당국예산 */
-  athrtDrctnAmt: number
-  /** 장국예산 */
-  ltbndDrctnAmt: number
-  /** 수량합계 */
-  sumQty: number
-  /** 지시단가 */
+  /** 당국예산 (athrtDrctnAmt) */
+  athrtDrctnAmt: string
+  /** 장국예산 (ltbndDrctnAmt) */
+  ltbndDrctnAmt: string
+  /** 수량합계 (sumQty) */
+  sumQty: string
+  /** 지시단가 (drctnUntprc) */
   drctnUntprc: number
-  /** 지시금액 */
+  /** 지시금액 (drctnAmt) */
   drctnAmt: number
-  /** 장비부호 (8) */
+  /** 장비부호 (aplcnEqpmntCd) */
   aplcnEqpmntCd: string
-  /** 장비명 (100) */
+  /** 장비명 (aplcnEqpmntNm) */
   aplcnEqpmntNm: string
+  /** 목표가 (goalAmt) */
+  goalAmt: number
 }
 
-/** 국외 보관함 입찰품목 1건 (MUI-CM-01-M73, dl_resultList). */
+/**
+ * 국외 보관함 입찰품목 1건 (MUI-CM-01-M73) — PC 실 인터페이스 보관함품목관리
+ * `ovsLockerItemRegPopup.IDataList1`(2026-08-24 판독본) 키/타입 그대로(chk 제외).
+ */
 export interface OvsLockerBidItem {
-  /** 렌더 key — 통합참조번호+항목번호 조합 */
+  /** 렌더 key — 통합참조번호+항목번호 조합 (프론트 생성) */
   id: string
-  /** 공고번호 (7) */
+  /** 공고번호 (pbancNo) */
   pbancNo: string
-  /** 공고차수 (2) */
+  /** 공고차수 (pbancOd) */
   pbancOd: string
-  /** 통합참조번호 (30) */
+  /** 통합참조번호 (intgRfrncNo) */
   intgRfrncNo: string
-  /** 구매요청번호 (10) */
+  /** 구매요청번호 (prchsDmndNo) */
   prchsDmndNo: string
-  /** 항목번호 (5) */
+  /** 항목번호 (frcptlArtclNo) */
   frcptlArtclNo: string
-  /** 재고번호 (9) */
+  /** 재고번호 (invtNo) */
   invtNo: string
-  /** 부품번호 (32) */
+  /** 부품번호 (prtsNo) */
   prtsNo: string
-  /** 품명 (200) */
+  /** 품명 (itemNm) */
   itemNm: string
-  /** 단위 (2) */
+  /** 단위 (unitNm) */
   unitNm: string
-  /** 수량 (15) */
-  qty: number
-  /** 지시단가 (25) */
+  /** 수량 (qty) */
+  qty: string
+  /** 지시단가 (drctnUntprc) */
   drctnUntprc: number
-  /** 화폐단위 (100) — 예: 미달러 */
+  /** 화폐단위 (crncNm) — 예: 미달러 */
   crncNm: string
-  /** 보관함여부 (Y/N) */
+  /** 보관함여부 (lockerYn) — Y/N */
   lockerYn: 'Y' | 'N'
-  /** 입찰내역작성여부 (Y/N) */
+  /** 입찰내역작성여부 (tmprBidCnEn) — Y/N */
   tmprBidCnEn: 'Y' | 'N'
-  /** 화폐코드 — 지시단가 표기의 USD. ⚠️ 설계서 미정의 임시(상세설계 확정 시 교체) */
+  /** 화폐코드 — 지시단가 표기의 USD. ⚠️ 판독본(IDataList1) 미존재 임시(원본 대조 필요) */
   crncCd: string
 }
 
-/** 국외 입찰공고 상세 공고일반 (MUI-BD-01-T71(구 M71 — v1.83 재편), dm_bscPbancInfo). */
+/**
+ * 국외 입찰공고 상세 공고일반 (MUI-BD-01-T71(구 M71 — v1.83 재편)) — PC 실 인터페이스
+ * `ovsBidPbancDtl.IResultPbanc`(2026-08-24 판독본) 키/타입 그대로.
+ * 국외 입찰결과(no.168)·입찰참가신청조회(no.103)·입찰서제출(no.124)의 공고상세 응답도
+ * 이 타입을 공유 — 해당 컨트롤러 응답 판독본은 없어 no.45 기준(원본 대조 필요).
+ */
 export interface OvsBidPbancDetail {
-  /** 공고번호 (7) */
+  /** 공고번호 (pbancNo) */
   pbancNo: string
-  /** 공고차수 (2) */
+  /** 공고차수 (pbancOd) */
   pbancOd: string
-  /** 공고구분 (100) */
-  pbancType: string
-  /** 공고일자 (8) */
+  /** 공고번호-차수 (pbancNoOd) */
+  pbancNoOd: string
+  /** 공고구분 (pbancTypeNm) */
+  pbancTypeNm: string
+  /** 공고의뢰일자 (pbancRqstYmd) */
   pbancRqstYmd: string
-  /** 구매요청번호 (10) */
-  prchsDmndNo: string
-  /** 통합참조번호 (30) */
-  intgRfrncNo: string
-  /** 사업명 (100) */
-  bizNm: string
-  /** 입찰유형 (100) — 단가제/총액제 */
-  bidMthd: string
-  /** 입찰매체 (100) */
-  bidMedia: string
-  /** 계약방법 (100) */
-  ctrtMthdNm: string
-  /** 입찰방식 (100) */
-  bidMth: string
-  /** 총금액 (25) — 달러 */
-  sumDrctnAmt: string
-  /** 환율적용일자 (8) */
+  /** 환율적용일자 (exchrtAplcnYmd) */
   exchrtAplcnYmd: string
-  /** 공고품목수 (15) */
-  itemQty: string
-  /** 입찰참가등록마감일시 (14) */
-  regDdlnDt: string
-  /** 입찰서제출마감일시 (14) */
-  bdngDdlnDt: string
-  /** 개찰일시 (14) */
+  /** 구매요청번호 (prchsDmndNo) */
+  prchsDmndNo: string
+  /** 통합참조번호 (referNumb) */
+  referNumb: string
+  /** 사업명 (dtlBizNm) */
+  dtlBizNm: string
+  /** 개찰일시 (bdopnDt) */
   bdopnDt: string
-  /** 담당부서 (100) */
-  picDeptNm: string
-  /** 담당자 (200) */
+  /** 입찰참가등록마감일시 (bidRegDdlnDt) */
+  bidRegDdlnDt: string
+  /** 입찰서제출마감일시 (tndrSbmsnDdlnDt) */
+  tndrSbmsnDdlnDt: string
+  /** 입찰유형 (bidTypeNm) — 단가제/총액제 */
+  bidTypeNm: string
+  /** 입찰매체 (bidMediaNm) */
+  bidMediaNm: string
+  /** 계약방법 (ctrtMthdNm) */
+  ctrtMthdNm: string
+  /** 낙찰방법 (scsbdMthdNm) */
+  scsbdMthdNm: string
+  /** 공고품목수 (itemCnt) */
+  itemCnt: number
+  /** 담당부서 (deptNm) */
+  deptNm: string
+  /** 담당자 (picNm) */
   picNm: string
-  /** 연락처 (11) */
-  picTlno: string
+  /** 연락처 (tlno) */
+  tlno: string
+  /** 환율정보개수 (exrtCnt) */
+  exrtCnt: string
+  /** 인증서개수 (ecrtCnt) */
+  ecrtCnt: string
+  /** 입찰참가등록마감여부 (bidRegEndYn) */
+  bidRegEndYn: string
+  /** 첨부문서Id (docId) */
+  docId: string
+  /** 조달번호 (prcmNo) */
+  prcmNo: string
+  // ── ⚠️ 판독본(IResultPbanc) 미존재 임시 항목 — 화면 표시행 유지용(원본 대조 필요) ──
+  /** 입찰방식 (bidMth) — 예: 일반투찰. 구 설계서 표시행 */
+  bidMth?: string
+  /** 총금액 (sumDrctnAmt) — 달러 표기. 구 설계서 표시행 */
+  sumDrctnAmt?: string
+}
+
+/**
+ * 국외 입찰공고 공지사항 1건 — PC 실 인터페이스 `ovsBidPbancDtl.IResultNoti`
+ * (2026-08-24 판독본) 키 그대로. 상세(M71) 상단 공지 영역.
+ */
+export interface OvsBidPbancNtc {
+  /** 공지내용 (ntcCn) */
+  ntcCn: string
+  /** 공지일자 (ntcDt) */
+  ntcDt: string
 }
 
 /** 국외 입찰참가신청서 등록결과 1건 (MUI-BD-04-P83). */

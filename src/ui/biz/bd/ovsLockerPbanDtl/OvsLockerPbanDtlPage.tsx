@@ -24,17 +24,18 @@ const MOCK_OVS_LOCKER_PBAN_DETAIL: OvsLockerPbanItem = {
   pbancYr: '2025',
   prchsDmndNo: 'BDF01823-002',
   bizNm: 'T-80U/TBE-3',
-  tmprBidCnEn: 'N',
+  tmprBidCn: 'N',
   tmprBidCnStts: '미작성',
   splyBzentyNm: '미작성',
-  bidPrtcpAplyYn: 'N',
+  bidPrtcpAply: 'N',
+    creditYn: 'N',
   bidPrtcpAplyStts: '미신청',
   regDdlnDt: '2026-03-17 15:00',
   bdngDdlnDt: '2026-03-26 11:00',
   bdopnYmd: '2026-03-30',
   exchrtAplcnYmd: '2026-03-17',
   bidMth: '일반투찰',
-  lockerItemQty: 100,
+  lockerItemQty: '100',
   bidPrcSysNm: '단가제',
   ctrtMthdNm: '일반경쟁',
 }
@@ -67,19 +68,19 @@ export function OvsLockerPbanDtlPage() {
   const generalRows: TableRow[] = [
     { label: '통합참조번호', value: detail.intgRfrncNo },
     { label: '공고번호-차수', value: `${detail.pbancNo}-${detail.pbancOd}` },
-    { label: '공고년도', value: detail.pbancYr },
+    { label: '공고년도', value: detail.pbancYr ?? '-' },
     { label: '구매요청번호', value: detail.prchsDmndNo },
     { label: '사업명', value: detail.bizNm },
-    { label: '입찰내역작성여부', value: detail.tmprBidCnEn === 'Y' ? '작성' : '미작성' },
+    { label: '입찰내역작성여부', value: detail.tmprBidCn === 'Y' ? '작성' : '미작성' },
     { label: '입찰업체', value: detail.splyBzentyNm },
-    { label: '입찰참가신청여부', value: detail.bidPrtcpAplyYn === 'Y' ? '신청' : '미신청' },
+    { label: '입찰참가신청여부', value: detail.bidPrtcpAply === 'Y' ? '신청' : '미신청' },
     { label: '입찰참가등록마감일시', value: detail.regDdlnDt },
     { label: '입찰서제출마감일시', value: detail.bdngDdlnDt },
     { label: '개찰일자', value: detail.bdopnYmd },
     { label: '환율일자', value: detail.exchrtAplcnYmd },
     { label: '입찰방식', value: detail.bidMth },
     { label: '계약방식', value: detail.ctrtMthdNm },
-    { label: '보관품목수', value: detail.lockerItemQty.toLocaleString(), type: 'number' },
+    { label: '보관품목수', value: Number(detail.lockerItemQty).toLocaleString(), type: 'number' },
   ]
 
   // ── 액션 (설계서 slide307 이벤트) — 라우트 계획 경로로 이동. state 로 현재 항목 전달 ──
@@ -123,10 +124,10 @@ export function OvsLockerPbanDtlPage() {
           badges={[
             { key: 'bidMth', label: detail.bidMth },
             { key: 'bidPrcSysNm', label: detail.bidPrcSysNm },
-            detail.bidPrtcpAplyYn === 'Y'
+            detail.bidPrtcpAply === 'Y'
               ? { key: 'apply', label: '입찰참가 신청', type: 'solid' as const, color: 'blue' as const }
               : { key: 'apply', label: '입찰참가 미신청', color: 'red' as const },
-            detail.tmprBidCnEn === 'Y'
+            detail.tmprBidCn === 'Y'
               ? { key: 'bidCn', label: '입찰내역 완료', type: 'solid' as const, color: 'green' as const }
               : { key: 'bidCn', label: '입찰내역 미작성', color: 'yellow' as const },
           ]}
@@ -160,18 +161,18 @@ export function OvsLockerPbanDtlPage() {
             layout="vertical"
             items={[
               {
-                label: detail.tmprBidCnEn === 'Y' ? '입찰내역 수정' : '입찰내역 작성',
+                label: detail.tmprBidCn === 'Y' ? '입찰내역 수정' : '입찰내역 작성',
                 variant: 'primary',
                 onClick: handleBidCn,
               },
               {
                 label:
-                  detail.bidPrtcpAplyYn === 'Y' ? '입찰참가신청서 수정' : '입찰참가신청서 작성',
+                  detail.bidPrtcpAply === 'Y' ? '입찰참가신청서 수정' : '입찰참가신청서 작성',
                 variant: 'secondary',
                 onClick: handleApfr,
               },
               {
-                label: `보관함 품목 관리 (${detail.lockerItemQty.toLocaleString()}품목)`,
+                label: `보관함 품목 관리 (${Number(detail.lockerItemQty).toLocaleString()}품목)`,
                 variant: 'secondary',
                 onClick: handleItemMng,
               },

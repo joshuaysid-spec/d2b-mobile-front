@@ -8,11 +8,17 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { queryClient } from '@/lib/queryClient'
 import { bdService } from '@/services/bds/bd'
 import { bdKeys } from '@/queries/bds/bd/bdKeys'
-import type { BidListSearchRequest, BidPbancDetail, BdopnItem, TndrSavePayload } from '@/types/bd'
+import type {
+  BidListSearchRequest,
+  BidPbancDetail,
+  BidPbancListSrchMap,
+  BdopnItem,
+  TndrSavePayload,
+} from '@/types/bd'
 
 export const bdQueries = {
   /** 입찰공고 통합목록(no.28) — 목업은 전체 반환, 키워드/페이징은 페이지 클라이언트 로직 유지. */
-  useSelectBidPbancIntgList(req?: BidListSearchRequest) {
+  useSelectBidPbancIntgList(req?: BidPbancListSrchMap) {
     return useQuery({
       queryKey: bdKeys.selectBidPbancIntgList(req),
       queryFn: () => bdService.selectBidPbancIntgList(req),

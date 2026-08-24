@@ -9,130 +9,126 @@ import { Button } from '@/ui/common/base/Button'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { DateInput } from '@/ui/common/composites/DateInput'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
+// 조회결과 1건 — PC 실 인터페이스(ovsExchrtListPopup.IResult, 2026-08-24 판독본) 공유 타입.
+import type { OvsExchrtItem } from '@/types/bd'
 
-// 조회결과 1건 (dl_resultList, 설계서 slide58 데이터영역)
-interface OvsExchrtItem {
-  no: number // 순번
-  ntnNm: string // 국가 (예: 'US-미국')
-  crncNm: string // 화폐(화폐구분) (예: 'USD-미 달러')
-  ttsrt: string // 매도율
-  trdStdrt: string // 기준율 (KRW 고정 표기)
-  usdExrt: string // 달러환산율 (USD 고정 표기)
-}
+// 환율 표기 — 설계서 예시 '1,464.30' / '1.0000'.
+const fmtRate = (n: number, digits: number) =>
+  n.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits })
 
 // 목업 — 설계서 예시값 기반. US(미국환)이 기준이라 최상단 고정. 추후 API 로 대체.
 const MOCK_RATES: OvsExchrtItem[] = [
   {
-    no: 1,
+    rnum: '1',
     ntnNm: 'US-미국',
     crncNm: 'USD-미 달러',
-    ttsrt: '0.00',
-    trdStdrt: '1,464.30',
-    usdExrt: '1.0000',
+    ttsrt: 0.00,
+    trdStdrt: 1464.30,
+    usdExrt: 1.0000,
   },
   {
-    no: 2,
+    rnum: '2',
     ntnNm: 'NO-노르웨이',
     crncNm: 'NOK-노르웨이 크로네',
-    ttsrt: '0.00',
-    trdStdrt: '151.33',
-    usdExrt: '0.1033',
+    ttsrt: 0.00,
+    trdStdrt: 151.33,
+    usdExrt: 0.1033,
   },
   {
-    no: 3,
+    rnum: '3',
     ntnNm: 'NZ-뉴질랜드',
     crncNm: 'NZD-뉴질랜드 달러',
-    ttsrt: '0.00',
-    trdStdrt: '863.28',
-    usdExrt: '0.5896',
+    ttsrt: 0.00,
+    trdStdrt: 863.28,
+    usdExrt: 0.5896,
   },
   {
-    no: 4,
+    rnum: '4',
     ntnNm: 'TW-대만',
     crncNm: 'TWD-뉴 타이완 달러',
-    ttsrt: '0.00',
-    trdStdrt: '46.08',
-    usdExrt: '0.0315',
+    ttsrt: 0.00,
+    trdStdrt: 46.08,
+    usdExrt: 0.0315,
   },
   {
-    no: 5,
+    rnum: '5',
     ntnNm: 'DK-덴마크',
     crncNm: 'DKK-덴마크 크로네',
-    ttsrt: '0.00',
-    trdStdrt: '228.55',
-    usdExrt: '0.1561',
+    ttsrt: 0.00,
+    trdStdrt: 228.55,
+    usdExrt: 0.1561,
   },
   {
-    no: 6,
+    rnum: '6',
     ntnNm: 'DE-독일',
     crncNm: 'EUR-유로',
-    ttsrt: '0.00',
-    trdStdrt: '1,705.42',
-    usdExrt: '1.1651',
+    ttsrt: 0.00,
+    trdStdrt: 1705.42,
+    usdExrt: 1.1651,
   },
   {
-    no: 7,
+    rnum: '7',
     ntnNm: 'RU-러시아',
     crncNm: 'RUB-러시아 루블',
-    ttsrt: '0.00',
-    trdStdrt: '18.62',
-    usdExrt: '0.0127',
+    ttsrt: 0.00,
+    trdStdrt: 18.62,
+    usdExrt: 0.0127,
   },
   {
-    no: 8,
+    rnum: '8',
     ntnNm: 'MY-말레이시아',
     crncNm: 'MYR-말레이시아 링깃',
-    ttsrt: '0.00',
-    trdStdrt: '345.71',
-    usdExrt: '0.2362',
+    ttsrt: 0.00,
+    trdStdrt: 345.71,
+    usdExrt: 0.2362,
   },
   {
-    no: 9,
+    rnum: '9',
     ntnNm: 'MX-멕시코',
     crncNm: 'MXN-멕시코 페소',
-    ttsrt: '0.00',
-    trdStdrt: '79.34',
-    usdExrt: '0.0542',
+    ttsrt: 0.00,
+    trdStdrt: 79.34,
+    usdExrt: 0.0542,
   },
   {
-    no: 10,
+    rnum: '10',
     ntnNm: 'US-미국',
     crncNm: 'USD-미 달러(군납)',
-    ttsrt: '0.00',
-    trdStdrt: '1,464.30',
-    usdExrt: '1.0000',
+    ttsrt: 0.00,
+    trdStdrt: 1464.30,
+    usdExrt: 1.0000,
   },
   {
-    no: 11,
+    rnum: '11',
     ntnNm: 'GB-영국',
     crncNm: 'GBP-영국 파운드',
-    ttsrt: '0.00',
-    trdStdrt: '1,968.11',
-    usdExrt: '1.3441',
+    ttsrt: 0.00,
+    trdStdrt: 1968.11,
+    usdExrt: 1.3441,
   },
   {
-    no: 12,
+    rnum: '12',
     ntnNm: 'JP-일본',
     crncNm: 'JPY-일본 엔(100)',
-    ttsrt: '0.00',
-    trdStdrt: '973.55',
-    usdExrt: '0.6648',
+    ttsrt: 0.00,
+    trdStdrt: 973.55,
+    usdExrt: 0.6648,
   },
   {
-    no: 13,
+    rnum: '13',
     ntnNm: 'CN-중국',
     crncNm: 'CNY-위안화',
-    ttsrt: '0.00',
-    trdStdrt: '205.18',
-    usdExrt: '0.1401',
+    ttsrt: 0.00,
+    trdStdrt: 205.18,
+    usdExrt: 0.1401,
   },
   {
-    no: 14,
+    rnum: '14',
     ntnNm: 'CH-스위스',
     crncNm: 'CHF-스위스 프랑',
-    ttsrt: '0.00',
-    trdStdrt: '1,830.77',
-    usdExrt: '1.2503',
+    ttsrt: 0.00,
+    trdStdrt: 1830.77,
+    usdExrt: 1.2503,
   },
 ]
 
@@ -155,14 +151,14 @@ export function OvsExchrtListFullPopup({ open, onOpenChange }: OvsExchrtListFull
   const cardItems: CardListItem[] = useMemo(
     () =>
       list.slice(0, visible).map((it) => ({
-        id: String(it.no),
-        // subtitle: `순번 ${it.no}`,
+        id: it.rnum,
+        // subtitle: `순번 ${it.rnum}`,
         title: it.ntnNm,
         rows: [
           { label: '화폐', value: it.crncNm },
-          { label: '매도율', value: it.ttsrt },
-          { label: '기준율', value: `${it.trdStdrt} KRW` },
-          { label: '달러환산율', value: `${it.usdExrt} USD` },
+          { label: '매도율', value: fmtRate(it.ttsrt, 2) },
+          { label: '기준율', value: `${fmtRate(it.trdStdrt, 2)} KRW` },
+          { label: '달러환산율', value: `${fmtRate(it.usdExrt, 4)} USD` },
         ],
       })),
     [list, visible],

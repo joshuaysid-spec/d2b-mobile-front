@@ -20,7 +20,7 @@ import type { BfrPbancBidCnItem, BfrPbancInfoItem } from '@/types/bd'
 //    이전공고입찰내역목록조회 — 추후 API: bdService.selectBfrTmprBidCnList(pbancNo, pbancOd)
 const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
   {
-    no: 1,
+    no: '1',
     invtNo: 'A000-A0000',
     prtsNo: '0000T-80U',
     itemNm: 'RECOIL MECHANISM,TBE-3',
@@ -29,7 +29,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     mdfcnInvtNo: 'A000-A0001',
     mdfcnPrtsNo: '0000T-80U/TBE-3',
     moqYn: 'Y',
-    moqQty: 2,
+    moqQty: '2',
     moqDocEn: 'Y',
     splyBzentyNm: 'OA 업체',
     bdngTccrUntprc: 10_000,
@@ -37,7 +37,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     crncNm: 'USD',
   },
   {
-    no: 2,
+    no: '2',
     invtNo: 'A000-A0002',
     prtsNo: 'MS21245-6',
     itemNm: 'BEARING,BALL,ANNULAR',
@@ -46,7 +46,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     mdfcnInvtNo: '',
     mdfcnPrtsNo: '',
     moqYn: 'N',
-    moqQty: null,
+    moqQty: '',
     moqDocEn: 'N',
     splyBzentyNm: 'GD Ordnance Systems',
     bdngTccrUntprc: 1_250,
@@ -54,7 +54,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     crncNm: 'USD',
   },
   {
-    no: 3,
+    no: '3',
     invtNo: 'A000-A0003',
     prtsNo: 'AN6227B-14',
     itemNm: 'PACKING,PREFORMED',
@@ -63,7 +63,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     mdfcnInvtNo: 'A000-A0013',
     mdfcnPrtsNo: 'AN6227B-14A',
     moqYn: 'Y',
-    moqQty: 50,
+    moqQty: '50',
     moqDocEn: 'N',
     splyBzentyNm: 'Elbit Systems Ltd.',
     bdngTccrUntprc: 38.5,
@@ -71,7 +71,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     crncNm: 'USD',
   },
   {
-    no: 4,
+    no: '4',
     invtNo: 'A000-A0004',
     prtsNo: '12977837',
     itemNm: 'VALVE,SOLENOID',
@@ -80,7 +80,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     mdfcnInvtNo: '',
     mdfcnPrtsNo: '',
     moqYn: 'N',
-    moqQty: null,
+    moqQty: '',
     moqDocEn: 'N',
     splyBzentyNm: 'Moog Inc.',
     bdngTccrUntprc: 4_820,
@@ -88,7 +88,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     crncNm: 'USD',
   },
   {
-    no: 5,
+    no: '5',
     invtNo: 'A000-A0005',
     prtsNo: '74A400302-1001',
     itemNm: 'ACTUATOR,HYDRAULIC',
@@ -97,7 +97,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     mdfcnInvtNo: 'A000-A0015',
     mdfcnPrtsNo: '74A400302-1003',
     moqYn: 'Y',
-    moqQty: 1,
+    moqQty: '1',
     moqDocEn: 'Y',
     splyBzentyNm: 'Parker Hannifin Corp.',
     bdngTccrUntprc: 21_300,
@@ -105,7 +105,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     crncNm: 'USD',
   },
   {
-    no: 6,
+    no: '6',
     invtNo: 'A000-A0006',
     prtsNo: 'CCA1500-4',
     itemNm: 'FILTER ELEMENT,FLUID',
@@ -114,7 +114,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     mdfcnInvtNo: '',
     mdfcnPrtsNo: '',
     moqYn: 'N',
-    moqQty: null,
+    moqQty: '',
     moqDocEn: 'N',
     splyBzentyNm: 'Pall Aerospace',
     bdngTccrUntprc: 96,
@@ -122,7 +122,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     crncNm: 'EUR',
   },
   {
-    no: 7,
+    no: '7',
     invtNo: 'A000-A0007',
     prtsNo: '3040T78-2',
     itemNm: 'GASKET,METALLIC',
@@ -131,7 +131,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     mdfcnInvtNo: '',
     mdfcnPrtsNo: '',
     moqYn: 'Y',
-    moqQty: 20,
+    moqQty: '20',
     moqDocEn: 'N',
     splyBzentyNm: 'OA 업체',
     bdngTccrUntprc: 12.4,
@@ -139,7 +139,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     crncNm: 'USD',
   },
   {
-    no: 8,
+    no: '8',
     invtNo: 'A000-A0008',
     prtsNo: 'M83248/1-014',
     itemNm: 'O-RING',
@@ -148,7 +148,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     mdfcnInvtNo: 'A000-A0018',
     mdfcnPrtsNo: 'M83248/1-014A',
     moqYn: 'N',
-    moqQty: null,
+    moqQty: '',
     moqDocEn: 'N',
     splyBzentyNm: 'Trelleborg Sealing',
     bdngTccrUntprc: 3.2,
@@ -156,7 +156,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     crncNm: 'USD',
   },
   {
-    no: 9,
+    no: '9',
     invtNo: 'A000-A0009',
     prtsNo: '8TJ124GDM1',
     itemNm: 'GENERATOR,ALTERNATING CURRENT',
@@ -165,7 +165,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     mdfcnInvtNo: '',
     mdfcnPrtsNo: '',
     moqYn: 'N',
-    moqQty: null,
+    moqQty: '',
     moqDocEn: 'N',
     splyBzentyNm: 'GE Aviation',
     bdngTccrUntprc: 54_700,
@@ -173,7 +173,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     crncNm: 'USD',
   },
   {
-    no: 10,
+    no: '10',
     invtNo: 'A000-A0010',
     prtsNo: 'NAS1149F0432P',
     itemNm: 'WASHER,FLAT',
@@ -182,7 +182,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     mdfcnInvtNo: '',
     mdfcnPrtsNo: '',
     moqYn: 'Y',
-    moqQty: 100,
+    moqQty: '100',
     moqDocEn: 'Y',
     splyBzentyNm: 'OA 업체',
     bdngTccrUntprc: 0.85,
@@ -190,7 +190,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     crncNm: 'USD',
   },
   {
-    no: 11,
+    no: '11',
     invtNo: 'A000-A0011',
     prtsNo: 'MS28775-115',
     itemNm: 'PACKING,PREFORMED',
@@ -199,7 +199,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     mdfcnInvtNo: '',
     mdfcnPrtsNo: '',
     moqYn: 'N',
-    moqQty: null,
+    moqQty: '',
     moqDocEn: 'N',
     splyBzentyNm: 'Elbit Systems Ltd.',
     bdngTccrUntprc: 5.6,
@@ -207,7 +207,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     crncNm: 'USD',
   },
   {
-    no: 12,
+    no: '12',
     invtNo: 'A000-A0012',
     prtsNo: '145E4571-3',
     itemNm: 'HOSE ASSEMBLY,NONMETALLIC',
@@ -216,7 +216,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     mdfcnInvtNo: 'A000-A0022',
     mdfcnPrtsNo: '145E4571-5',
     moqYn: 'N',
-    moqQty: null,
+    moqQty: '',
     moqDocEn: 'N',
     splyBzentyNm: 'Eaton Aerospace',
     bdngTccrUntprc: 780,
@@ -224,7 +224,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     crncNm: 'EUR',
   },
   {
-    no: 13,
+    no: '13',
     invtNo: 'A000-A0013',
     prtsNo: '70400-08110-041',
     itemNm: 'BLADE,ROTARY WING',
@@ -233,7 +233,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     mdfcnInvtNo: '',
     mdfcnPrtsNo: '',
     moqYn: 'N',
-    moqQty: null,
+    moqQty: '',
     moqDocEn: 'N',
     splyBzentyNm: 'Sikorsky Aircraft',
     bdngTccrUntprc: 187_000,
@@ -241,7 +241,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     crncNm: 'USD',
   },
   {
-    no: 14,
+    no: '14',
     invtNo: 'A000-A0014',
     prtsNo: 'MS20470AD4-6',
     itemNm: 'RIVET,SOLID',
@@ -250,7 +250,7 @@ const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
     mdfcnInvtNo: '',
     mdfcnPrtsNo: '',
     moqYn: 'Y',
-    moqQty: 500,
+    moqQty: '500',
     moqDocEn: 'N',
     splyBzentyNm: 'OA 업체',
     bdngTccrUntprc: 0.12,
@@ -277,8 +277,8 @@ export function BfrPbancBidDsctnItemDtlFullPopup({
   pbanc,
 }: BfrPbancBidDsctnItemDtlFullPopupProps) {
   const [visible, setVisible] = useState(PAGE_STEP) // 더보기 노출 개수
-  const [checkedNos, setCheckedNos] = useState<number[]>([]) // 항목선택(불러올 품목 순번)
-  const [expandedNos, setExpandedNos] = useState<number[]>([]) // 내역 펼쳐보기 상태(순번)
+  const [checkedNos, setCheckedNos] = useState<string[]>([]) // 항목선택(불러올 품목 순번)
+  const [expandedNos, setExpandedNos] = useState<string[]>([]) // 내역 펼쳐보기 상태(순번)
 
   // 팝업이 열릴 때마다 상태 초기화 — 공고를 바꿔 다시 열어도 이전 선택/펼침이 남지 않게.
   useEffect(() => {
@@ -294,10 +294,10 @@ export function BfrPbancBidDsctnItemDtlFullPopup({
   const total = list.length
   const visibleList = useMemo(() => list.slice(0, visible), [list, visible])
 
-  const toggleChecked = (no: number, checked: boolean) => {
+  const toggleChecked = (no: string, checked: boolean) => {
     setCheckedNos((prev) => (checked ? [...prev, no] : prev.filter((n) => n !== no)))
   }
-  const toggleExpanded = (no: number) => {
+  const toggleExpanded = (no: string) => {
     setExpandedNos((prev) => (prev.includes(no) ? prev.filter((n) => n !== no) : [...prev, no]))
   }
 
@@ -323,7 +323,7 @@ export function BfrPbancBidDsctnItemDtlFullPopup({
   // 품목 1건 → Table rows. 접힘 = 요약 4개(순번/재고번호/부품번호/품명), 펼침 = dl_bidCnList 전체 필드.
   const buildRows = (it: BfrPbancBidCnItem, expanded: boolean): TableRow[] => {
     const summary: TableRow[] = [
-      { label: '순번', value: String(it.no), type: 'number' },
+      { label: '순번', value: it.no, type: 'number' },
       { label: '재고번호', value: it.invtNo },
       { label: '부품번호', value: it.prtsNo },
       { label: '품명', value: it.itemNm },
@@ -337,7 +337,7 @@ export function BfrPbancBidDsctnItemDtlFullPopup({
       { label: '수정재고번호', value: dash(it.mdfcnInvtNo) },
       { label: '수정부품번호', value: dash(it.mdfcnPrtsNo) },
       { label: 'MOQ구분', value: it.moqYn },
-      { label: 'MOQ수량', value: it.moqQty != null ? it.moqQty.toLocaleString() : '-', type: 'number' },
+      { label: 'MOQ수량', value: it.moqQty ? Number(it.moqQty).toLocaleString() : '-', type: 'number' },
       { label: 'MOQ첨부문서', value: dash(it.moqDocEn) },
       { label: '입찰업체', value: it.splyBzentyNm },
       { label: '입찰단가', value: it.bdngTccrUntprc.toLocaleString(), type: 'number' },

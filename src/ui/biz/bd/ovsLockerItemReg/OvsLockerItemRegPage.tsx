@@ -52,7 +52,7 @@ export interface OvsLockerBidItem {
   /** 단위 (unitNm, 2) */
   unitNm: string
   /** 수량 (qty, 15) */
-  qty: number
+  qty: string
   /** 지시단가 (drctnUntprc, 25) */
   drctnUntprc: number
   /** 화폐단위 (crncNm, 100) — 예: 미달러 */
@@ -156,10 +156,10 @@ function buildMockItems(pbanc: OvsLockerPbanItem | null): OvsLockerBidItem[] {
   const seeds: Array<
     Pick<OvsLockerBidItem, 'itemNm' | 'prtsNo' | 'unitNm' | 'qty' | 'drctnUntprc' | 'lockerYn' | 'tmprBidCnEn'>
   > = [
-    { itemNm: 'RECOIL', prtsNo: 'A46MSB0', unitNm: 'EA', qty: 2, drctnUntprc: 20767.85, lockerYn: 'Y', tmprBidCnEn: 'N' },
-    { itemNm: 'RECOIL', prtsNo: 'A46MSB1', unitNm: 'EA', qty: 2, drctnUntprc: 20767.85, lockerYn: 'N', tmprBidCnEn: 'N' },
-    { itemNm: 'BREECH ASSEMBLY', prtsNo: 'B12KTA7-01', unitNm: 'EA', qty: 16, drctnUntprc: 608000.0, lockerYn: 'Y', tmprBidCnEn: 'Y' },
-    { itemNm: 'SEAL RING KIT', prtsNo: 'C03QRS22', unitNm: 'SE', qty: 40, drctnUntprc: 132.5, lockerYn: 'N', tmprBidCnEn: 'N' },
+    { itemNm: 'RECOIL', prtsNo: 'A46MSB0', unitNm: 'EA', qty: '2', drctnUntprc: 20767.85, lockerYn: 'Y', tmprBidCnEn: 'N' },
+    { itemNm: 'RECOIL', prtsNo: 'A46MSB1', unitNm: 'EA', qty: '2', drctnUntprc: 20767.85, lockerYn: 'N', tmprBidCnEn: 'N' },
+    { itemNm: 'BREECH ASSEMBLY', prtsNo: 'B12KTA7-01', unitNm: 'EA', qty: '16', drctnUntprc: 608000.0, lockerYn: 'Y', tmprBidCnEn: 'Y' },
+    { itemNm: 'SEAL RING KIT', prtsNo: 'C03QRS22', unitNm: 'SE', qty: '40', drctnUntprc: 132.5, lockerYn: 'N', tmprBidCnEn: 'N' },
   ]
   return Array.from({ length: TOTAL }, (_, i) => {
     const seed = seeds[i % seeds.length]
@@ -311,7 +311,7 @@ export function OvsLockerItemRegPage() {
                   { label: '구매요청번호', value: it.prchsDmndNo },
                   { label: '재고번호', value: it.invtNo },
                   { label: '부품번호', value: it.prtsNo },
-                  { label: '수량 / 단위', value: `${it.qty.toLocaleString()} ${it.unitNm}` },
+                  { label: '수량 / 단위', value: `${Number(it.qty).toLocaleString()} ${it.unitNm}` },
                   { label: '지시단가 / 화폐단위', value: formatUntprc(it) },
                   { label: '보관함 여부', value: it.lockerYn === 'Y' ? 'O' : 'X' },
                   { label: '입찰내역 작성 여부', value: it.tmprBidCnEn === 'Y' ? 'O' : 'X' },

@@ -28,10 +28,10 @@ import type {
 } from '@/types/search-filter'
 import type { BidPbancItem } from '@/types/bd'
 
-// 빠른검색 대상 — 설계서 검색조건(공고명/공고번호).
+// 빠른검색 대상 — 설계서 검색조건(공고명/공고번호). 필드는 실 인터페이스(IBidPbancList) 키.
 const SEARCH_TARGETS = [
-  { value: 'rprsItemNm', label: '공고명' },
-  { value: 'g2BBidPbancNo', label: '공고번호' },
+  { value: 'bizNm', label: '공고명' },
+  { value: 'g2bPbancNoOd', label: '공고번호' },
 ]
 
 // ── 상세필터(MUI-BD-01-M02) schema — 공통 SearchFilter 셸이 받아 렌더. 설계서 slide14(와이어프레임)·
@@ -257,7 +257,7 @@ export function BidPbancIntgListPage() {
   const [open, setOpen] = useState(false) // 상세필터 풀팝업
   const [filter, setFilter] = useState<SearchFilterValue>(DEFAULT_FILTER)
   const [keyword, setKeyword] = useState('') // 빠른검색어(입력 중)
-  const [targets, setTargets] = useState<string[]>(['rprsItemNm']) // 빠른검색 대상(single — 1개만)
+  const [targets, setTargets] = useState<string[]>(['bizNm']) // 빠른검색 대상(single — 1개만)
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
   // 빠른검색 '적용' 상태 — 검색 버튼(또는 Enter) 실행 시에만 확정(입력 중에는 목록 안 걸러짐).
@@ -278,7 +278,7 @@ export function BidPbancIntgListPage() {
     // 서버 필터 전환 시: bdQueries.useSelectBidPbancIntgList req 에 filter(value)를 포함시켜 재조회한다.
   }
   const handleQuickSearch = () => {
-    const target = targets[0] ?? 'rprsItemNm'
+    const target = targets[0] ?? 'bizNm'
     setAppliedSearch({ keyword: keyword.trim(), target })
     setPage(1)
     // 서버 검색 전환 시: bdQueries.useSelectBidPbancIntgList req 에 keyword/searchTarget 포함(현재는 아래 filteredList 클라 필터).
@@ -302,14 +302,14 @@ export function BidPbancIntgListPage() {
   }
 
   // ── 키워드 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 이 블록 삭제) ──
-  //   filteredList: 조회 결과(data)를 검색대상(공고명→rprsItemNm · 공고번호→g2BBidPbancNo)으로 부분일치.
+  //   filteredList: 조회 결과(data)를 검색대상(공고명→bizNm · 공고번호→g2bPbancNoOd)으로 부분일치.
   //   visibleList: 더보기 누른 만큼(page*pageSize)만 노출.
   const filteredList = useMemo(() => {
     const list = data ?? []
     if (!appliedSearch || !appliedSearch.keyword) return list
     const kw = appliedSearch.keyword.toLowerCase()
     return list.filter((it) => {
-      const field = appliedSearch.target === 'g2BBidPbancNo' ? it.g2BBidPbancNo : it.rprsItemNm
+      const field = appliedSearch.target === 'g2bPbancNoOd' ? it.g2bPbancNoOd : it.bizNm
       return field.toLowerCase().includes(kw)
     })
   }, [appliedSearch, data])
@@ -322,19 +322,19 @@ export function BidPbancIntgListPage() {
   //   뱃지 최대 3개: 업무구분·입찰구분·공고구분(2026-08-06 요청). 마감일시류는 년-월-일까지만 표시.
   const toYmd = (dt: string) => dt.slice(0, 10)
   const cardItems: CardListItem[] = visibleList.map((it) => ({
-    id: it.id,
+    id: it.rnum,
     badges: [
       it.taskSeNm && <Badge key="taskSeNm">{it.taskSeNm}</Badge>,
       it.bidSeNm && <Badge key="bidSeNm">{it.bidSeNm}</Badge>,
-      <Badge key="pbancTpcd">{it.pbancTpcd}</Badge>,
+      <Badge key="pbancSeNm">{it.pbancSeNm}</Badge>,
     ].filter(Boolean),
-    subtitle: `공고번호 ${it.g2BBidPbancNo}-${it.g2BBidPbancCycl}`,
-    title: it.rprsItemNm,
+    subtitle: `공고번호 ${it.g2bPbancNoOd}`,
+    title: it.bizNm,
     rows: [
-      { label: '발주기관', value: it.orderInstNm },
-      { label: '기초예가금액', value: `${it.brprc.toLocaleString()} 원` },
-      { label: '생산능력 제출 마감일시', value: toYmd(it.prdcpIdntySmdocDdlnDt) },
-      { label: '입찰참가등록 마감일시', value: toYmd(it.bidClrsDt) },
+      { label: '발주기관', value: it.deptNm },
+      { label: '기초예가금액', value: `${Number(it.bsicExpt).toLocaleString()} 원` },
+      { label: '생산능력 제출 마감일시', value: toYmd(it.prdcpIdntySmdocDdlnDt ?? '-') },
+      { label: '입찰참가등록 마감일시', value: toYmd(it.bidRegDdlnDt) },
       { label: '입찰서제출 마감일시', value: toYmd(it.tndrSbmsnDdlnDt) },
     ],
     onClick: () => handleCardClick(it),

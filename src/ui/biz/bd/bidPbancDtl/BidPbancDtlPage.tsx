@@ -98,7 +98,7 @@ export function BidPbancDtlPage() {
   // 목록 → 상세 데이터 전달: navigate state 를 placeholder 로 즉시 렌더 + id 조회로 확정.
   //   URL 에 식별자를 두지 않으므로 state 없이 직접 진입하면 목록으로 되돌린다(아래 early return).
   const stateItem = useLocation().state as BidPbancItem | null
-  const id = stateItem?.id ?? ''
+  const id = stateItem?.pbancNo ?? ''
   const { data: detail } = bdQueries.useSelectPbancGnrlInfo(id, stateItem ?? undefined)
   const insertItrstPbanc = bdQueries.useInsertItrstPbanc()
 
@@ -140,19 +140,19 @@ export function BidPbancDtlPage() {
   ]
 
   // 신청서 화면들(사전심사/입찰서/참가신청서/포기·취소)은 입찰진행 아이템(BidPrgrsItem) 형태를 기대 —
-  // 공고 아이템을 매핑해 전달한다. 공고 아이템에 없는 필드(판단번호·연락처·계약/입찰방법·진행 플래그)는
+  // 공고 아이템을 매핑해 전달한다. 공고 아이템에 없는 필드(연락처·진행 플래그)는
   // 목업으로 보완(추후 API: bdService.selectBidPbancDtl 응답으로 교체).
   const prgrsDetail: BidPrgrsItem = {
-    rNum: detail.id,
+    rNum: detail.rnum,
     taskSeNm: detail.taskSeNm ?? '물품',
-    pbancNo: `${detail.g2BBidPbancNo}-${detail.g2BBidPbancCycl}`,
-    prcmNo: '-',
-    bidNm: detail.rprsItemNm,
-    rfrncNo: detail.rfrncNo,
+    pbancNo: detail.g2bPbancNoOd,
+    prcmNo: detail.prcmNo,
+    bidNm: detail.bizNm,
+    rfrncNo: detail.intgRfrncNo,
     orderInstTelno: '02-2079-5100',
-    ctrtMthdNm: '경쟁입찰',
-    bidMthdNm: '단가제',
-    bidClrsDt: detail.bidClrsDt,
+    ctrtMthdNm: detail.ctrtMthdNm,
+    bidMthdNm: detail.bidMthdNm,
+    bidClrsDt: detail.bidRegDdlnDt,
     tndrSbmsnDdlnDt: detail.tndrSbmsnDdlnDt,
     bzentySeNm: '대표',
     bfhdSrng: true,
@@ -202,10 +202,10 @@ export function BidPbancDtlPage() {
           badges={[
             ...(detail?.taskSeNm ? [{ key: 'taskSeNm', label: detail.taskSeNm }] : []),
             ...(detail?.bidSeNm ? [{ key: 'bidSeNm', label: detail.bidSeNm }] : []),
-            { key: 'pbancTpcd', label: detail?.pbancTpcd ?? '' },
+            { key: 'pbancSeNm', label: detail?.pbancSeNm ?? '' },
           ]}
-          subtitle={`공고번호 ${detail?.g2BBidPbancNo ?? ''}${detail?.g2BBidPbancCycl ? `-${detail.g2BBidPbancCycl}` : ''}`}
-          title={detail?.rprsItemNm ?? ''}
+          subtitle={`공고번호 ${detail?.g2bPbancNoOd ?? ''}`}
+          title={detail?.bizNm ?? ''}
           actions={
             <SummaryUtilButton
               icon="KidStar"
@@ -215,10 +215,10 @@ export function BidPbancDtlPage() {
             />
           }
           rows={[
-            { label: '발주기관', value: detail?.orderInstNm ?? '-' },
-            { label: '기초예가금액', value: detail ? `${detail.brprc.toLocaleString()} 원` : '-' },
+            { label: '발주기관', value: detail?.deptNm ?? '-' },
+            { label: '기초예가금액', value: detail ? `${Number(detail.bsicExpt).toLocaleString()} 원` : '-' },
             { label: '생산능력 제출 마감일시', value: detail?.prdcpIdntySmdocDdlnDt?.slice(0, 10) ?? '-' },
-            { label: '입찰참가등록 마감일시', value: detail?.bidClrsDt?.slice(0, 10) ?? '-' },
+            { label: '입찰참가등록 마감일시', value: detail?.bidRegDdlnDt?.slice(0, 10) ?? '-' },
             { label: '입찰서제출 마감일시', value: detail?.tndrSbmsnDdlnDt?.slice(0, 10) ?? '-' },
           ]}
         />

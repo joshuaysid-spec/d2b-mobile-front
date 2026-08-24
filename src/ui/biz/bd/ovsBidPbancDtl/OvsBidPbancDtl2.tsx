@@ -3,13 +3,14 @@
 // 데이터는 목업(추후 bdService.selectAtchDocList). 다운로드 클릭 = 파일다운로드 스텁.
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
+import { formatFileSize } from '@/utils/format'
 import type { OvsAtchDoc } from '@/types/bd'
 
-// 첨부서류(dl_docList) 목업 — 설계서 slide292 Layout(첨부서류명 + 첨부파일명.hwp [파일크기]) 기반.
+// 첨부서류 목업 — PC 실 인터페이스(ovsBidPbancDtl.IResultAttach) 키. 설계서 slide292 Layout 값 기반.
 const MOCK_DOC_LIST: OvsAtchDoc[] = [
-  { no: 1, atchDocNm: '입찰공고문', atchFileNm: '입찰공고문(EFD0007-2).hwp', fileSz: '786KB' },
-  { no: 2, atchDocNm: '입찰유의서', atchFileNm: '국외입찰유의서.hwp', fileSz: '1.2MB' },
-  { no: 3, atchDocNm: '계약특수조건', atchFileNm: '계약특수조건(500MD부품).pdf', fileSz: '2.4MB' },
+  { docTitl: '입찰공고문', fileNm: '입찰공고문(EFD0007-2).hwp', fileSz: 804_864, fileId: 'ATCH-1001' },
+  { docTitl: '입찰유의서', fileNm: '국외입찰유의서.hwp', fileSz: 1_258_291, fileId: 'ATCH-1002' },
+  { docTitl: '계약특수조건', fileNm: '계약특수조건(500MD부품).pdf', fileSz: 2_516_582, fileId: 'ATCH-1003' },
 ]
 
 export function OvsBidPbancDtl2() {
@@ -20,21 +21,21 @@ export function OvsBidPbancDtl2() {
         첨부서류
       </SectionTitle>
       <div className="flex flex-col gap-krds-7 px-4 pt-2 pb-4">
-        {MOCK_DOC_LIST.map((doc) => (
-          <div key={doc.no} className="flex flex-col gap-krds-3">
-            {/* 순번 · 첨부서류명(atchDocNm) */}
+        {MOCK_DOC_LIST.map((doc, i) => (
+          <div key={doc.fileId} className="flex flex-col gap-krds-3">
+            {/* 순번 · 첨부서류명(docTitl) */}
             <p className="text-krds-body-sm font-medium text-krds-text-muted">
-              {doc.no}. {doc.atchDocNm}
+              {i + 1}. {doc.docTitl}
             </p>
-            {/* 첨부파일명(atchFileNm) [파일크기(fileSz)] + 다운로드 */}
+            {/* 첨부파일명(fileNm) [파일크기(fileSz)] + 다운로드 */}
             <FileDownloadList
               files={[
                 {
-                  id: `doc-${doc.no}`,
-                  name: doc.atchFileNm,
-                  size: doc.fileSz,
-                  // 추후 API: bdService.downloadOvsBidAtchDoc(doc.no)
-                  onDownload: () => console.log('[M73] 첨부파일 다운로드', doc.atchFileNm),
+                  id: `doc-${doc.fileId}`,
+                  name: doc.fileNm,
+                  size: formatFileSize(doc.fileSz),
+                  // 추후 API: bdService.downloadOvsBidAtchDoc(doc.fileId)
+                  onDownload: () => console.log('[M73] 첨부파일 다운로드', doc.fileNm),
                 },
               ]}
             />

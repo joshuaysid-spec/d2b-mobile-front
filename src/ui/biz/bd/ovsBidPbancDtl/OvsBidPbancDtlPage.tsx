@@ -10,7 +10,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
-import type { BidPbancItem } from '@/types/bd'
+import type { BidPbancItem, OvsBidPbancDetail, OvsBidPbancNtc } from '@/types/bd'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
@@ -30,59 +30,8 @@ import { OvsBfrTmprBidBidCnRegFullPopup } from '@/ui/biz/bd/ovsBfrTmprBidBidCnRe
 import { OvsBidPbancDtl } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbancDtl'
 import { OvsBidPbancDtl2 } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbancDtl2'
 
-// ── 도메인 타입 (설계서 항목설명 1.1~1.2 항목명 그대로 · 품목/첨부서류 타입은 @/types/bd) ──
-
-/** 공지사항 1건 (dm_ntcInfo, 설계서 slide293 1.1) */
-export interface OvsNtcInfo {
-  /** 공지일자 (ntcYmd, 8) */
-  ntcYmd: string
-  /** 공지내용 (ntcCn, 200) */
-  ntcCn: string
-}
-
-/** 공고일반 데이터 영역 (dm_bscPbancInfo, 설계서 slide293 1.2) — 일반정보 탭 + 담당자 정보 */
-export interface OvsBidPbancDetail {
-  /** 공고번호 (pbancNo, 7) */
-  pbancNo: string
-  /** 공고차수 (pbancOd, 2) */
-  pbancOd: string
-  /** 공고구분 (pbancType, 100) */
-  pbancType: string
-  /** 공고일자 (pbancRqstYmd, 8) */
-  pbancRqstYmd: string
-  /** 구매요청번호 (prchsDmndNo, 10) */
-  prchsDmndNo: string
-  /** 통합참조번호 (intgRfrncNo, 30) */
-  intgRfrncNo: string
-  /** 사업명 (bizNm, 100) */
-  bizNm: string
-  /** 입찰유형 (bidMthd, 100) — 단가제/총액제 */
-  bidMthd: string
-  /** 입찰매체 (bidMedia, 100) */
-  bidMedia: string
-  /** 계약방법 (ctrtMthdNm, 100) */
-  ctrtMthdNm: string
-  /** 입찰방식 (bidMth, 100) */
-  bidMth: string
-  /** 총금액 (sumDrctnAmt, 25) — 달러 금액 */
-  sumDrctnAmt: string
-  /** 환율적용일자 (exchrtAplcnYmd, 8) */
-  exchrtAplcnYmd: string
-  /** 공고품목수 (itemQty, 15) */
-  itemQty: string
-  /** 입찰참가등록마감일시 (regDdlnDt, 14) */
-  regDdlnDt: string
-  /** 입찰서제출마감일시 (bdngDdlnDt, 14) */
-  bdngDdlnDt: string
-  /** 개찰일시 (bdopnDt, 14) */
-  bdopnDt: string
-  /** 담당부서 (picDeptNm, 100) */
-  picDeptNm: string
-  /** 담당자 (picNm, 200) */
-  picNm: string
-  /** 연락처 (picTlno, 11) */
-  picTlno: string
-}
+// ── 도메인 타입 — PC 실 인터페이스(ovsBidPbancDtl.IResultPbanc/IResultNoti) 공유 타입(@/types/bd) 사용.
+//    (구 페이지 로컬 중복 선언(OvsNtcInfo/OvsBidPbancDetail)은 2026-08-24 판독본 반영과 함께 제거.)
 
 // ── 탭 (설계서 slide289 — 일반정보 / 품목 목록 / 첨부서류) ─────────────────────────
 const TABS: TabItem[] = [
@@ -91,52 +40,89 @@ const TABS: TabItem[] = [
   { value: 'attach', label: '첨부서류' },
 ]
 
-// ── 페이지 fallback 목업 (직접 URL 진입 대비) — 설계서 slide289 예시값 기반 ─────────
+// ── 페이지 fallback 목업 (직접 URL 진입 대비) — 설계서 slide289 예시값 + 실 인터페이스(IBidPbancList) 키 ──
 const MOCK_OVS_LIST_ITEM: BidPbancItem = {
-  id: 'EFD0007',
-  rnum: 1,
-  pbancTpcd: '정상공고',
-  g2BBidPbancNo: 'EFD0007',
-  g2BBidPbancCycl: '2',
-  rfrncNo: 'BAD83990EFD',
-  rprsItemNm: '500MD부품',
-  csrtName: '-',
-  orderInstNm: '국제부품계약팀',
-  prdcpIdntySmdocDdlnDt: '-',
-  bidClrsDt: '2025-12-23 17:00',
+  rnum: '1',
+  prcmNo: 'BAD83990',
+  bizRlmCd: 'B01',
+  taskRlmCd: 'T01',
+  taskSeCd: '04',
+  taskSeNm: '국외',
+  bidSeCd: '01',
+  bidSeNm: '경쟁입찰',
+  g2bPbancNoOd: 'EFD0007-2',
+  pbancSeCd: '01',
+  pbancSeNm: '정상공고',
+  drctnYr: '2025',
+  pbancNo: 'EFD0007',
+  pbancOd: '2',
+  pbancYmd: '2025-11-22',
+  instBidPbancNo: '',
+  bidPbancOd: '2',
+  intgRfrncNo: 'BAD83990EFD',
+  jdgmtNo: '',
+  anmtNum: 'EFD0007-2',
+  bizNm: '500MD부품',
+  deptCd: 'D0101',
+  deptNm: '국제부품계약팀',
+  prchsDmndNo: 'BAD839380-001',
+  ctrtMthdCd: '01',
+  ctrtMthdNm: '일반경쟁',
+  bidMthdCd: '01',
+  bidMthdNm: '단가제',
+  bidRegDdlnDt: '2025-12-23 17:00',
   tndrSbmsnDdlnDt: '2025-12-24 10:00',
-  brprc: 184502064, // 총금액 $126,000.18 의 원화 환산 참고값(요약에는 미표시 — 국외는 USD 총금액 사용)
+  bdopnDt: '2025-12-24 10:30',
+  bsicStat: '',
+  bidPrtcpQlfcYn: 'N',
+  bsicExpt: '184502064', // 총금액 $126,000.18 의 원화 환산 참고값(요약에는 미표시 — 국외는 USD 총금액 사용)
+  bsicExptMsg: '',
+  bidShpSeCd: '01',
+  bidShpSeNm: '일반입찰',
+  pbancRtrcnYn: 'N',
+  bidSeNmText: '경쟁입찰',
+  g2bPbancNoOdText: 'EFD0007-2',
+  bidRegDdlnDtText: '2025-12-23 17:00',
+  ctrtMthdNmText: '일반경쟁',
+  pbancYmdText: '2025-11-22',
   prgrsStg: '입찰',
 }
 
-// 공고일반(dm_bscPbancInfo) 목업 — 설계서 slide290 데이터영역 예시값 그대로. 추후 bdService.selectOvsBidPbancDtl
+// 공고일반 목업 — 실 인터페이스(IResultPbanc) 키, 설계서 slide290 예시값. 추후 bdService.selectOvsBidPbancDtl
 const MOCK_OVS_BID_PBANC_DETAIL: OvsBidPbancDetail = {
   pbancNo: 'EFD0007',
   pbancOd: '2',
-  pbancType: '정상공고',
+  pbancNoOd: 'EFD0007-2',
+  pbancTypeNm: '정상공고',
   pbancRqstYmd: '2025-11-22',
+  exchrtAplcnYmd: '2025-11-13',
   prchsDmndNo: 'BAD839380-001',
-  intgRfrncNo: 'BAD83990EFD',
-  bizNm: '500MD부품',
-  bidMthd: '단가제',
-  bidMedia: '전자입찰',
+  referNumb: 'BAD83990EFD',
+  dtlBizNm: '500MD부품',
+  bdopnDt: '2025-12-24 10:30:00',
+  bidRegDdlnDt: '2025-12-23 17:00:00',
+  tndrSbmsnDdlnDt: '2025-12-24 10:00:00',
+  bidTypeNm: '단가제',
+  bidMediaNm: '전자입찰',
   ctrtMthdNm: '일반경쟁',
+  scsbdMthdNm: '최저가',
+  itemCnt: 12,
+  deptNm: '국제부품계약팀',
+  picNm: '정영금',
+  tlno: '02-1234-5678',
+  exrtCnt: '14',
+  ecrtCnt: '1',
+  bidRegEndYn: 'N',
+  docId: 'DOC-EFD0007',
+  prcmNo: 'BAD83990',
   bidMth: '일반투찰',
   sumDrctnAmt: '$ 126,000.18',
-  exchrtAplcnYmd: '2025-11-13',
-  itemQty: '12',
-  regDdlnDt: '2025-12-23 17:00:00',
-  bdngDdlnDt: '2025-12-24 10:00:00',
-  bdopnDt: '2025-12-24 10:30:00',
-  picDeptNm: '국제부품계약팀',
-  picNm: '정영금',
-  picTlno: '02-1234-5678',
 }
 
-// 공지사항(dm_ntcInfo) 목업 — 설계서 slide289 '국외경쟁입찰 공지사항' 영역.
-const MOCK_NTC_LIST: OvsNtcInfo[] = [
+// 공지사항(IResultNoti) 목업 — 설계서 slide289 '국외경쟁입찰 공지사항' 영역.
+const MOCK_NTC_LIST: OvsBidPbancNtc[] = [
   {
-    ntcYmd: '2025-12-22',
+    ntcDt: '2025-12-22',
     ntcCn: '본 공고는 국외경쟁입찰 공고입니다. 입찰참가등록 및 입찰서 제출 마감일시를 반드시 확인하시기 바랍니다.',
   },
 ]
@@ -161,19 +147,19 @@ function GeneralInfoTab({
   detail: OvsBidPbancDetail
   onOpenExchrt: () => void
 }) {
-  // 일반정보 (설계서 slide290 데이터영역 순서 그대로)
+  // 일반정보 (설계서 slide290 데이터영역 순서 그대로 — 키는 실 인터페이스 IResultPbanc)
   const generalRows: TableRow[] = [
-    { label: '공고번호-차수', value: `${detail.pbancNo}-${detail.pbancOd}` },
-    { label: '공고구분', value: detail.pbancType },
+    { label: '공고번호-차수', value: detail.pbancNoOd },
+    { label: '공고구분', value: detail.pbancTypeNm },
     { label: '공고일자', value: detail.pbancRqstYmd },
     { label: '구매요청번호', value: detail.prchsDmndNo },
-    { label: '통합참조번호', value: detail.intgRfrncNo },
-    { label: '사업명', value: detail.bizNm },
-    { label: '입찰유형', value: detail.bidMthd },
-    { label: '입찰매체', value: detail.bidMedia },
+    { label: '통합참조번호', value: detail.referNumb },
+    { label: '사업명', value: detail.dtlBizNm },
+    { label: '입찰유형', value: detail.bidTypeNm },
+    { label: '입찰매체', value: detail.bidMediaNm },
     { label: '계약방법', value: detail.ctrtMthdNm },
-    { label: '입찰방식', value: detail.bidMth },
-    { label: '총금액', value: detail.sumDrctnAmt, type: 'number' },
+    { label: '입찰방식', value: detail.bidMth ?? '-' },
+    { label: '총금액', value: detail.sumDrctnAmt ?? '-', type: 'number' },
     {
       label: '환율적용일자',
       value: (
@@ -186,17 +172,17 @@ function GeneralInfoTab({
       ),
       type: 'combination',
     },
-    { label: '공고품목수', value: detail.itemQty, type: 'number' },
-    { label: '입찰참가등록마감일시', value: detail.regDdlnDt },
-    { label: '입찰서제출마감일시', value: detail.bdngDdlnDt },
+    { label: '공고품목수', value: String(detail.itemCnt), type: 'number' },
+    { label: '입찰참가등록마감일시', value: detail.bidRegDdlnDt },
+    { label: '입찰서제출마감일시', value: detail.tndrSbmsnDdlnDt },
     { label: '개찰일시', value: detail.bdopnDt },
   ]
 
   // 담당자 정보 (설계서 slide290 우측)
   const contactRows: TableRow[] = [
-    { label: '담당 부서명', value: detail.picDeptNm },
+    { label: '담당 부서명', value: detail.deptNm },
     { label: '담당자', value: detail.picNm },
-    { label: '연락처', value: detail.picTlno },
+    { label: '연락처', value: detail.tlno },
   ]
 
   return (
@@ -205,7 +191,7 @@ function GeneralInfoTab({
       <div className="px-4 pb-2">
         <Infobox
           title="공지사항"
-          items={MOCK_NTC_LIST.map((n) => `[${n.ntcYmd}] ${n.ntcCn}`)}
+          items={MOCK_NTC_LIST.map((n) => `[${n.ntcDt}] ${n.ntcCn}`)}
         />
       </div>
       <Accordion type="multiple" defaultValue={['general', 'contact']} className="w-full">
@@ -239,7 +225,7 @@ export function OvsBidPbancDtlPage() {
   // 목록 → 상세 데이터 전달: 통합목록 국외 카드에서 navigate(state)로 넘어온 항목(BidPbancItem)으로 상단을 그린다.
   //   직접 URL 진입(state 없음)이면 페이지 목업(MOCK_OVS_LIST_ITEM)으로 대체. (백엔드 미연동)
   const passed = (useLocation().state as BidPbancItem | null) ?? MOCK_OVS_LIST_ITEM
-  const id = passed.id
+  const id = passed.pbancNo
   // 국외 전용 상세 필드(총금액 USD·환율적용일자·담당자 등)는 목록 아이템에 없어 페이지 목업으로 보완.
   const ovsDetail = MOCK_OVS_BID_PBANC_DETAIL
   // 진행단계(prgrsStg) — detail 기반. 미정 시 입찰공고이므로 '입찰' 기본.
@@ -325,9 +311,9 @@ export function OvsBidPbancDtlPage() {
       >
         <SummaryInfo
           collapsed={collapsed}
-          badges={[{ label: passed.pbancTpcd }, { label: '국외경쟁입찰' }]}
-          subtitle={`공고번호 ${ovsDetail.pbancNo}-${ovsDetail.pbancOd}`}
-          title={passed.rprsItemNm}
+          badges={[{ label: passed.pbancSeNm }, { label: '국외경쟁입찰' }]}
+          subtitle={`공고번호 ${ovsDetail.pbancNoOd}`}
+          title={passed.bizNm}
           actions={
             <SummaryUtilButton
               icon="KidStar"
@@ -338,7 +324,7 @@ export function OvsBidPbancDtlPage() {
           }
           rows={[
             { label: '공고일자', value: ovsDetail.pbancRqstYmd },
-            { label: '입찰참가등록 마감일시', value: passed.bidClrsDt },
+            { label: '입찰참가등록 마감일시', value: passed.bidRegDdlnDt },
             { label: '입찰서제출 마감일시', value: passed.tndrSbmsnDdlnDt },
             { label: '개찰일시', value: ovsDetail.bdopnDt },
           ]}
@@ -406,7 +392,7 @@ export function OvsBidPbancDtlPage() {
       <OvsBfrTmprBidBidCnRegFullPopup
         open={bfrBidOpen}
         onOpenChange={setBfrBidOpen}
-        lockerId={passed.rfrncNo}
+        lockerId={passed.intgRfrncNo}
       />
 
       {/* 로그인 안내 (MUI-MS-03-P15) — 업체담당자 전용 동작을 비로그인 사용자가 시도할 때. */}
