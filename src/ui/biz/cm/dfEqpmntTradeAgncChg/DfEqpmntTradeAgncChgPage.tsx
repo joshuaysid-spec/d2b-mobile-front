@@ -199,7 +199,7 @@ export function DfEqpmntTradeAgncChgPage() {
         { id: `${Date.now()}`, fileTtl: addTarget, fileNm: '첨부파일명.hwp', size: '786KB', regYmd: today },
       ]
     })
-    console.log('[M18] 파일첨부하기', addTarget) // 추후: 파일 선택기 오픈 → fileService.upload
+    console.log('[M18] 파일첨부하기', addTarget) // 추후: 파일 선택기 오픈 → fbService.upload
     setAddOpen(false)
   }
   const confirmDelete = () => {

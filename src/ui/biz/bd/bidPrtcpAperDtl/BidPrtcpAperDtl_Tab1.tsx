@@ -67,7 +67,7 @@ export function BidPrtcpAperDtl_Tab1({ detail }: { detail: BidPrgrsItem }) {
         <FileDownloadList
           files={PBANC_FILES.map((f) => ({
             ...f,
-            onDownload: () => console.log('[T01] 다운로드', f.name), // 추후 API: fileService.download
+            onDownload: () => console.log('[T01] 다운로드', f.name), // 추후 API: fbService.download
           }))}
         />
       </div>

@@ -83,7 +83,7 @@ export function DfEqpmntTradeAgncAplyDtlPage() {
     id: f.id,
     name: f.fileNm as string,
     size: f.size,
-    onDownload: () => console.log('[M16] 첨부파일 다운로드', f.fileNm), // 추후: fileService.download(fileGuid)
+    onDownload: () => console.log('[M16] 첨부파일 다운로드', f.fileNm), // 추후: fbService.download(fileGuid)
   }))
 
   // ── 액션 스텁 ──

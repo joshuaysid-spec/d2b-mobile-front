@@ -18,7 +18,7 @@ function AdocItem({ doc }: { doc: CtrtAdocFile }) {
             id: doc.id,
             name: doc.fileNm || '-',
             size: doc.fileSize ?? '-',
-            // 추후 API: fileService 다운로드 연동 + 성공/실패 토스트(slide42 4]).
+            // 추후 API: fbService 다운로드 연동 + 성공/실패 토스트(slide42 4]).
             onDownload: () => console.log('[CT-01-T12] 다운로드:', doc.ctrtAdocCd, doc.fileNm),
           },
         ]}

@@ -40,7 +40,7 @@ const ScrtyMsrmtPrsnlReg = forwardRef<ScrtyMsrmtPrsnlRegHandle, ScrtyMsrmtPrsnlR
     const handleAddFile = () => {
       const seq = files.length + 1
       setFiles((prev) => [...prev, { id: `f-${Date.now()}`, name: `증명서${seq}.pdf`, size: '256KB' }])
-      console.log('[P10] 첨부파일 추가(캐비닛/업로드 선택 팝업)') // 추후 API: fileService.pickFromCabinet
+      console.log('[P10] 첨부파일 추가(캐비닛/업로드 선택 팝업)') // 추후 API: fbService.pickFromCabinet
     }
     const handleRemove = (id: string | number) =>
       setFiles((prev) => prev.filter((f) => f.id !== id))

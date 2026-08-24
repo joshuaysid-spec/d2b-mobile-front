@@ -191,7 +191,7 @@ export function DfEqpmntTradeAgncAplyPage() {
     setAddTarget(DOC_TITLES[0])
     setAddOpen(true)
   }
-  // 파일첨부하기 — 선택 서류에 목업 파일 첨부(추후: 파일 선택기 + fileService.upload). 같은 서류명 슬롯 있으면 교체, 없으면 새 행.
+  // 파일첨부하기 — 선택 서류에 목업 파일 첨부(추후: 파일 선택기 + fbService.upload). 같은 서류명 슬롯 있으면 교체, 없으면 새 행.
   const handleAttach = () => {
     if (!addTarget) return
     setFiles((prev) => {
@@ -207,7 +207,7 @@ export function DfEqpmntTradeAgncAplyPage() {
         { id: `${Date.now()}`, fileTtl: addTarget, fileNm: '첨부파일명.hwp', size: '786KB', regYmd: today, required: addTarget !== '기타' },
       ]
     })
-    console.log('[M17] 파일첨부하기', addTarget) // 추후: 파일 선택기 오픈 → fileService.upload
+    console.log('[M17] 파일첨부하기', addTarget) // 추후: 파일 선택기 오픈 → fbService.upload
     setAddOpen(false)
   }
   // X 클릭 → 삭제 확인 모달(83442) → 삭제 확정.

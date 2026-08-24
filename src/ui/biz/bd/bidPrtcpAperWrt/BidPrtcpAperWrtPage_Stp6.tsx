@@ -2,10 +2,10 @@
 // 호스트 페이지(BidPrtcpAperWrtPage)의 '파일첨부' 탭 본문만 담당 — 요약/스텝/탭/하단 액션바는 페이지 소유.
 // SectionTitle(총 N건) + FileDownloadList(업로드 변형, onAddFile/onRemove) + 안내사항 Infobox(탭 최하단).
 //   onAddFile → 이 탭이 소유한 BottomSheet(파일첨부 방식 선택) + 콘텐츠 CabinetLink(P13).
-//   '직접 업로드' → 숨은 <input type=file multiple> 트리거 → fileService.upload → GUID 상태 보관.
+//   '직접 업로드' → 숨은 <input type=file multiple> 트리거 → fbService.upload → GUID 상태 보관.
 //   다건 선택 시에도 요청은 파일당 1건씩 순차 진행(모바일 망 품질 협의사항) — 대기/업로드중/실패
 //   건별 상태를 같은 FileDownloadList 행에 표시하고, 실패 건만 재업로드.
-// Design Ref: file-upload.design.md §2(Option C) — 업로드/검증은 fileService.
+// Design Ref: file-upload.design.md §2(Option C) — 업로드/검증은 fbService.
 //   ⚠️ files 상태는 호스트(BidPrtcpAperWrtPage)가 소유(제출 시 fileGuids 필요) → 이 탭은 controlled.
 import { useRef, useState, type ChangeEvent, type Dispatch, type SetStateAction } from 'react'
 
@@ -14,8 +14,8 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { CabinetLink, type CabinetLinkKind } from '@/ui/biz/bd/bidPrtcpAperWrt/CabinetLink'
-import { fileQueries } from '@/queries/tss/file/fileQueries'
-import { validateFile } from '@/services/tss/file'
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { validateFile } from '@/services/tss/fb'
 import { formatFileSize } from '@/utils/format'
 import type { UploadedFile } from '@/types/file'
 import type { BidPrgrsItem } from '@/types/bd'
@@ -50,8 +50,8 @@ export function BidPrtcpAperWrtPage_Stp6({ detail, files, onFilesChange }: Props
   const inputRef = useRef<HTMLInputElement>(null)
   // 순차 업로드 큐 — 프라미스 체인으로 항상 1건씩만 전송(추가 선택·재시도도 뒤에 이어붙음).
   const queueRef = useRef(Promise.resolve())
-  const uploadFile = fileQueries.useUploadFile()
-  const removeFile = fileQueries.useRemoveFile()
+  const uploadFile = fbQueries.useUploadFile()
+  const removeFile = fbQueries.useRemoveFile()
 
   const setStatus = (id: string, status: PendingFile['status']) =>
     setPending((prev) => prev.map((p) => (p.id === id ? { ...p, status } : p)))

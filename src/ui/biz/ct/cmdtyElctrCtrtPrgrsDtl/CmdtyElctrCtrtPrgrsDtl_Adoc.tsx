@@ -8,7 +8,7 @@
 import { useState } from 'react'
 
 import { ctQueries } from '@/queries/cts/ct/ctQueries'
-import { fileQueries } from '@/queries/tss/file/fileQueries'
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
 import { saveBlob } from '@/utils/download'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
@@ -40,7 +40,7 @@ export function CmdtyElctrCtrtPrgrsDtl_Adoc({ id }: { id: string }) {
   const refDocs = data?.refDocs ?? []
   const sbmsnDocs = data?.sbmsnDocs ?? []
 
-  const downloadFile = fileQueries.useDownloadFile()
+  const downloadFile = fbQueries.useDownloadFile()
   const [toast, setToast] = useState<string | null>(null) // 다운로드 실패/안내 토스트(null=닫힘)
 
   // 다운로드 — guid 로 Blob 수신 → 원본 파일명으로 저장. 실패는 토스트 안내.

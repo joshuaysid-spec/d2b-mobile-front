@@ -87,7 +87,7 @@ export function BidRsltDtl({ id }: BidRsltDtlProps) {
       type: 'combination',
     },
     {
-      // TODO(첨부파일): RaonK 연동 후 fileService 다운로드로 교체 (slide245 scwin.btn_atchFileNm_onclick)
+      // TODO(첨부파일): RaonK 연동 후 fbService 다운로드로 교체 (slide245 scwin.btn_atchFileNm_onclick)
       label: '첨부서류',
       value: actionCell('첨부서류', '다운로드', () =>
         console.log('[BidRsltDtl] 입찰결과 첨부서류 다운로드', it.id),

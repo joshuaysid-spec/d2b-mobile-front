@@ -17,14 +17,14 @@ src/queries/{대메뉴}/{도메인}/{도메인}Queries.ts  {도메인}Queries = 
 ```
 
 - **대메뉴 = 백엔드 URL 1단(시스템) · 도메인 = URL 2단** (2026-08-24 재편 — 구 "전부 `bds/`" 폐기).
-  현재 배치: `bds/{bd,op}` · `cbs/cm` · `cts/{ct,ex,wm,ts}` · `tss/file`. 새 도메인은 실 URL 1단을 따라 배치.
+  현재 배치: `bds/{bd,op}` · `cbs/cm` · `cts/{ct,ex,wm,ts}` · `tss/{bd,cm,fb}`. 새 도메인은 실 URL 1단을 따라 배치.
 - **auth 는 별도 도메인이 아니다** — URL 이 전부 `/cbs/cm/*`(login·userReg·userInfoMng)라 구
   `authService`/`authQueries`/`authKeys` 를 `cbs/cm` 의 `cmService`/`cmQueries`/`cmKeys` 로 흡수(쿼리키 1단도 `'cm'`).
 
 - **함수명 = 백엔드 메서드명** — 2026-08-20 실 API 목록(950건 중 모바일 대상 271건) 기준으로 전 도메인 배선 완료. URL 마지막 세그먼트(.do 제외)가 곧 함수명이며 백엔드 오타도 그대로 보존(`selctBidRsltInfo` 등, 추적 1:1). 국내/국외·컨트롤러 간 동명 충돌은 `Ovs`/컨트롤러명 접두. JSDoc 에 `no.{실목록 번호} {한글 API명}` 표기. 서비스·쿼리키·훅이 같은 이름을 공유해 어느 층에서든 grep 1:1 추적. 훅명은 `use` + 함수명(첫 글자 대문자).
 - 실목록에 없는 함수는 삭제하지 않고 `실목록 외` 주석, 실 API 인데 타입/목업이 없는 것(임의 작명 금지)은 각 서비스 파일 헤더 ⚠️ 블록에 no./URL 보존 — 화면 배선 시 채운다.
 - 쿼리키는 **`['{도메인}', 함수명, 파라미터]` 3단 유지** — 도메인 전체 무효화(`['op']`)와 함수 prefix 무효화가 모두 가능해야 함.
-- Keys 파일을 훅과 분리하는 이유: mutation 무효화가 파일 경계를 넘어도 순환 import 없이 키만 참조. (file 처럼 쿼리키가 0개인 도메인은 Keys 파일 생략)
+- Keys 파일을 훅과 분리하는 이유: mutation 무효화가 파일 경계를 넘어도 순환 import 없이 키만 참조. (fb(파일) 처럼 쿼리키가 0개인 도메인은 Keys 파일 생략)
 - 파일명 = export 객체명 동일(`cmQueries.ts` 안에 `cmQueries`) — 에디터 탭/검색에서 도메인 구분(2026-08-19, 구 `queries.ts`/`keys.ts` 공통 파일명 폐기).
 - 페이지 사용 형태: `import { opQueries } from '@/queries/bds/op/opQueries'` → `opQueries.useSelectPlanList(req)` (1단은 대메뉴 폴더).
 

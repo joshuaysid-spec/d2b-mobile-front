@@ -9,7 +9,7 @@
 
 /**
  * Blob 을 지정한 파일명으로 저장(다운로드 트리거).
- * @param blob     서버 응답 바이너리 (useDownloadFile 훅 / fileService.download 반환값)
+ * @param blob     서버 응답 바이너리 (useDownloadFile 훅 / fbService.download 반환값)
  * @param fileName 저장 파일명 — 조회 목록의 원본 파일명(orgnlFileNm/fileNm)을 그대로 넘긴다.
  *                 (Content-Disposition 헤더 파싱 대신 목록 파일명 사용 — 단순·충분)
  */

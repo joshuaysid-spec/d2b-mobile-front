@@ -1,6 +1,6 @@
 // 파일첨부(File) 서비스 — RaonK 백엔드 REST 연동(B안). 횡단 관심사(op·bd·ct 공통).
 // USE_MOCK=true(기본): 목업 반환 · false: apiClient 실호출.
-// 함수명 = 백엔드 메서드명(훅명과 통일: fileQueries.useUploadFile 등) — 실규격 확정 전 임시 명명.
+// 함수명 = 백엔드 메서드명(훅명과 통일: fbQueries.useUploadFile 등) — 실규격 확정 전 임시 명명.
 // URL 은 각 함수 안에 인라인(실백엔드 경로/요청필드/응답필드 확정 시 해당 함수만 수정).
 //    업로드 엔드포인트/요청필드/응답필드는 백엔드(eGovFrame + RaonK)와 협의 후 확정.
 import { apiClient } from '@/lib/apiClient'
@@ -27,7 +27,7 @@ export function validateFile(file: File): string | null {
   return null
 }
 
-export const fileService = {
+export const fbService = {
   /**
    * 파일 업로드(multipart) — RaonK 핸들러 래핑 실경로(260730 백엔드 확정).
    * 성공 시 서버가 발급한 UploadedFile(guid 등) 반환. 목업은 실제 GUID 형식 값을 생성(File 인자에서 계산).

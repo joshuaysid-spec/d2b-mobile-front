@@ -31,7 +31,7 @@ export function BidPrtcpAperDtl_Tab6() {
         <FileDownloadList
           files={ATTACHED_FILES.map((f) => ({
             ...f,
-            onDownload: () => console.log('[T06] 다운로드', f.name), // 추후 API: fileService.download
+            onDownload: () => console.log('[T06] 다운로드', f.name), // 추후 API: fbService.download
           }))}
         />
       </div>

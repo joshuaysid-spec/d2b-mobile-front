@@ -39,7 +39,7 @@ export function TndrInq_tab5() {
                   id: file.id,
                   name: file.fileNm,
                   size: file.fileSz,
-                  onDownload: () => console.log('[T05] 다운로드', file.fileNm), // 추후 API: fileQueries.useDownloadFile(GUID 확정 후)
+                  onDownload: () => console.log('[T05] 다운로드', file.fileNm), // 추후 API: fbQueries.useDownloadFile(GUID 확정 후)
                 },
               ]}
             />
