@@ -140,19 +140,8 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 // ── 일반정보 탭 (MUI-BD-01-T71(구 M71 — v1.83 재편)) — 페이지와 같은 화면 ID 라 이 파일이 소유 ────────────
-<<<<<<< HEAD
-function GeneralInfoTab({
-  detail,
-  onOpenExchrt,
-}: {
-  detail: OvsBidPbancDetail
-  onOpenExchrt: () => void
-}) {
-  // 일반정보 (설계서 slide290 데이터영역 순서 그대로 — 키는 실 인터페이스 IResultPbanc)
-=======
 function GeneralInfoTab({ detail }: { detail: OvsBidPbancDetail }) {
-  // 일반정보 (설계서 slide290 데이터영역 순서 그대로)
->>>>>>> jhlim
+  // 일반정보 (설계서 slide290 데이터영역 순서 그대로 — 키는 실 인터페이스 IResultPbanc)
   const generalRows: TableRow[] = [
     { label: '공고번호-차수', value: detail.pbancNoOd },
     { label: '공고구분', value: detail.pbancTypeNm },
@@ -163,33 +152,13 @@ function GeneralInfoTab({ detail }: { detail: OvsBidPbancDetail }) {
     { label: '입찰유형', value: detail.bidTypeNm },
     { label: '입찰매체', value: detail.bidMediaNm },
     { label: '계약방법', value: detail.ctrtMthdNm },
-<<<<<<< HEAD
     { label: '입찰방식', value: detail.bidMth ?? '-' },
     { label: '총금액', value: detail.sumDrctnAmt ?? '-', type: 'number' },
-    {
-      label: '환율적용일자',
-      value: (
-        <div className="flex items-center justify-between gap-2">
-          <span>{detail.exchrtAplcnYmd}</span>
-          <Button size="sm" variant="inner" onClick={onOpenExchrt}>
-            환율정보
-          </Button>
-        </div>
-      ),
-      type: 'combination',
-    },
+    // 환율적용일자 — [환율정보] 버튼 삭제(사용자 확정 2026-08-24). 환율정보조회(M74)는 바로가기 시트에서만 진입.
+    { label: '환율적용일자', value: detail.exchrtAplcnYmd },
     { label: '공고품목수', value: String(detail.itemCnt), type: 'number' },
     { label: '입찰참가등록마감일시', value: detail.bidRegDdlnDt },
     { label: '입찰서제출마감일시', value: detail.tndrSbmsnDdlnDt },
-=======
-    { label: '입찰방식', value: detail.bidMth },
-    { label: '총금액', value: detail.sumDrctnAmt, type: 'number' },
-    // 환율적용일자 — [환율정보] 버튼 삭제(사용자 확정 2026-08-24). 환율정보조회(M74)는 바로가기 시트에서만 진입.
-    { label: '환율적용일자', value: detail.exchrtAplcnYmd },
-    { label: '공고품목수', value: detail.itemQty, type: 'number' },
-    { label: '입찰참가등록마감일시', value: detail.regDdlnDt },
-    { label: '입찰서제출마감일시', value: detail.bdngDdlnDt },
->>>>>>> jhlim
     { label: '개찰일시', value: detail.bdopnDt },
   ]
 
@@ -327,16 +296,10 @@ export function OvsBidPbancDtlPage() {
       >
         <SummaryInfo
           collapsed={collapsed}
-<<<<<<< HEAD
-          badges={[{ label: passed.pbancSeNm }, { label: '국외경쟁입찰' }]}
+          // 국외 상세 전용 화면이라 '국외' 배지는 state 값과 무관하게 항상 노출(사용자 확정 2026-08-24).
+          badges={[{ label: '국외' }, { label: passed.pbancSeNm }, { label: '국외경쟁입찰' }]}
           subtitle={`공고번호 ${ovsDetail.pbancNoOd}`}
           title={passed.bizNm}
-=======
-          // 국외 상세 전용 화면이라 '국외' 배지는 state 값과 무관하게 항상 노출(사용자 확정 2026-08-24).
-          badges={[{ label: '국외' }, { label: passed.pbancTpcd }, { label: '국외경쟁입찰' }]}
-          subtitle={`공고번호 ${ovsDetail.pbancNo}-${ovsDetail.pbancOd}`}
-          title={passed.rprsItemNm}
->>>>>>> jhlim
           actions={
             <SummaryUtilButton
               icon="KidStar"
