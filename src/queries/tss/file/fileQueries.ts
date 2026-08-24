@@ -1,8 +1,8 @@
-// 파일첨부(File) Query 훅 — 횡단 관심사(op·bd·ct 공통), services/bds/file.ts 1:1.
+// 파일첨부(File) Query 훅 — 횡단 관심사(op·bd·ct 공통), services/tss/file.ts 1:1.
 // 3자 대칭: fileService · fileQueries. 쿼리키 없음(전부 사용자 액션 시점 useMutation) — keys.ts 없음.
 // (2026-07-30 확정 — 페이지의 서비스 직접 import 금지. validateFile 등 순수 유틸은 예외).
 import { useMutation } from '@tanstack/react-query'
-import { fileService } from '@/services/bds/file'
+import { fileService } from '@/services/tss/file'
 
 export const fileQueries = {
   /** 파일 업로드(multipart) — 성공 시 서버 발급 UploadedFile(guid 등) 반환. */

@@ -4,24 +4,29 @@
 
 ## API 연동 컨벤션 (2026-07-20 서비스 레이어 구축 — 구 "페이지 인라인 목업 + service 스텁 금지" 정책 폐기)
 
-> **서비스 레이어가 전 도메인에 존재한다**: `src/services/bds/{도메인}.ts` (~280 메서드).
+> **서비스 레이어가 전 도메인에 존재한다**: `src/services/{대메뉴}/{도메인}.ts` (~280 메서드).
 > 각 메서드 = `if (USE_MOCK) 목업(mocks/) : apiClient 실호출(URL 인라인)` 분기. 폐쇄망 반입 후 연동 절차는
 > `docs/closed-network-checklist.md` §4 (`.env` 2줄 + URL 대조 + 잔여 페이지 배선).
 
 **폴더 구조 · 3자 대칭 명명 (2026-08-19 재구성 — 구 `services/{도메인}.ts`·`queries/{도메인}.ts` 평면 구조 폐기):**
 
 ```
-src/services/bds/{도메인}.ts          {도메인}Service = { selectXxx, saveXxx, … }   ← URL 함수 인라인
-src/queries/bds/{도메인}/{도메인}Keys.ts     {도메인}Keys    = { selectXxx: … }       ← ['{도메인}', 함수명, 파라미터] 3단
-src/queries/bds/{도메인}/{도메인}Queries.ts  {도메인}Queries = { useSelectXxx, … }    ← use + 서비스 함수명
+src/services/{대메뉴}/{도메인}.ts          {도메인}Service = { selectXxx, saveXxx, … }   ← URL 함수 인라인
+src/queries/{대메뉴}/{도메인}/{도메인}Keys.ts     {도메인}Keys    = { selectXxx: … }       ← ['{도메인}', 함수명, 파라미터] 3단
+src/queries/{대메뉴}/{도메인}/{도메인}Queries.ts  {도메인}Queries = { useSelectXxx, … }    ← use + 서비스 함수명
 ```
+
+- **대메뉴 = 백엔드 URL 1단(시스템) · 도메인 = URL 2단** (2026-08-24 재편 — 구 "전부 `bds/`" 폐기).
+  현재 배치: `bds/{bd,op}` · `cbs/cm` · `cts/{ct,ex,wm,ts}` · `tss/file`. 새 도메인은 실 URL 1단을 따라 배치.
+- **auth 는 별도 도메인이 아니다** — URL 이 전부 `/cbs/cm/*`(login·userReg·userInfoMng)라 구
+  `authService`/`authQueries`/`authKeys` 를 `cbs/cm` 의 `cmService`/`cmQueries`/`cmKeys` 로 흡수(쿼리키 1단도 `'cm'`).
 
 - **함수명 = 백엔드 메서드명** — 2026-08-20 실 API 목록(950건 중 모바일 대상 271건) 기준으로 전 도메인 배선 완료. URL 마지막 세그먼트(.do 제외)가 곧 함수명이며 백엔드 오타도 그대로 보존(`selctBidRsltInfo` 등, 추적 1:1). 국내/국외·컨트롤러 간 동명 충돌은 `Ovs`/컨트롤러명 접두. JSDoc 에 `no.{실목록 번호} {한글 API명}` 표기. 서비스·쿼리키·훅이 같은 이름을 공유해 어느 층에서든 grep 1:1 추적. 훅명은 `use` + 함수명(첫 글자 대문자).
 - 실목록에 없는 함수는 삭제하지 않고 `실목록 외` 주석, 실 API 인데 타입/목업이 없는 것(임의 작명 금지)은 각 서비스 파일 헤더 ⚠️ 블록에 no./URL 보존 — 화면 배선 시 채운다.
 - 쿼리키는 **`['{도메인}', 함수명, 파라미터]` 3단 유지** — 도메인 전체 무효화(`['op']`)와 함수 prefix 무효화가 모두 가능해야 함.
 - Keys 파일을 훅과 분리하는 이유: mutation 무효화가 파일 경계를 넘어도 순환 import 없이 키만 참조. (file 처럼 쿼리키가 0개인 도메인은 Keys 파일 생략)
 - 파일명 = export 객체명 동일(`cmQueries.ts` 안에 `cmQueries`) — 에디터 탭/검색에서 도메인 구분(2026-08-19, 구 `queries.ts`/`keys.ts` 공통 파일명 폐기).
-- 페이지 사용 형태: `import { opQueries } from '@/queries/bds/op/opQueries'` → `opQueries.useSelectPlanList(req)`.
+- 페이지 사용 형태: `import { opQueries } from '@/queries/bds/op/opQueries'` → `opQueries.useSelectPlanList(req)` (1단은 대메뉴 폴더).
 
 **핵심 규칙:**
 1. **페이지는 서비스를 직접 import 하지 않는다 — 모든 API 호출은 `{도메인}Queries` 훅으로만** (2026-07-30 확정. 구 "제출은 서비스 직접 await" 정책 폐기 — 전 페이지 전환 완료).
@@ -33,7 +38,7 @@ src/queries/bds/{도메인}/{도메인}Queries.ts  {도메인}Queries = { useSel
 2. **엔드포인트 URL 은 서비스 함수 안에만** 인라인한다(구 `EP` 상수 맵 폐기 — 2026-08-19. 함수당 URL 1회 사용이라 맵은 오버헤드). JSDoc 에 화면 ID+소비 파일 유지. 페이지에 URL 문자열 금지. 반입 후 실경로 확정 시 해당 함수만 수정.
 3. **목업 데이터 위치**: 배선된 페이지의 목업은 `src/mocks/{도메인}.ts` (단일 소스, 페이지의 `MOCK_*` 상수를 이동). **미배선 페이지는 인라인 목업 유지** — 그 페이지를 배선할 때 이동한다. 서비스의 미배선 메서드 목업은 최소 대표값(1~3건).
 4. **실호출 타이핑 — 전 API POST 통일(2026-07-30 확정)**: 백엔드 규격상 조회/저장/삭제 전부 `apiClient.post<T, T>(url, body?)` 로 호출한다(get/put/delete 금지 — 구 GET 의 `{ params }` 는 POST body 로). 응답 인터셉터가 봉투를 벗기므로 axios 2번째 제네릭에 알맹이 타입 지정. 다운로드는 `post<Blob, Blob>(url, null, { responseType: 'blob' })`. `any` 금지.
-5. **인증**: 토큰 저장은 `authStore.setAccessToken`(localStorage 브리지 내장 — 직접 localStorage 만지지 말 것). 로그인 응답 매핑은 `services/bds/auth.ts` 의 `LoginResult` 로 격리.
+5. **인증**: 토큰 저장은 `authStore.setAccessToken`(localStorage 브리지 내장 — 직접 localStorage 만지지 말 것). 로그인 응답 매핑은 `services/cbs/cm.ts`(구 auth 흡수)의 `LoginResult` 로 격리.
 
 **목록 → 상세 데이터 전달 — URL 에 식별자 금지, navigate state 로만 (2026-08-12 전환 완료):**
 

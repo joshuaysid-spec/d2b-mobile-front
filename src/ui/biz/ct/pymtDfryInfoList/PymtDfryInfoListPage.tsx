@@ -5,7 +5,7 @@
 import { useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 
-import { ctQueries } from '@/queries/bds/ct/ctQueries'
+import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'

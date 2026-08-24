@@ -3,7 +3,7 @@
 // 처리 1건 = Table 반복(진행상태/처리일시/처리부대·업체/처리담당자 — dlt_pymtClmPrgrsSttList 순서).
 // ⚠️ 설계서 영문 화면 ID 는 PrcmPymtClmSttsPage 지만 탭 콘텐츠라 명명 규칙에 따라 Page 접미사 제외.
 // 지급상태(T23 PrpayDpsmnItrpyGiveStts)와는 별개 화면 — 두 탭을 섞어 쓰지 말 것.
-import { wmQueries } from '@/queries/bds/wm/wmQueries'
+import { wmQueries } from '@/queries/cts/wm/wmQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { PymtClmPrgrsSttItem } from '@/types/wm'

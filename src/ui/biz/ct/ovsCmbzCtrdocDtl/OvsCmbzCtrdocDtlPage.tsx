@@ -4,7 +4,7 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-import { ctQueries } from '@/queries/bds/ct/ctQueries'
+import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { Notice } from '@/ui/common/composites/Notice'

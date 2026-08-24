@@ -1,11 +1,11 @@
 // 업무지원(TS) 도메인 Query 훅 — frontend-architecture.md §7.2 (services 1:1).
-// 3자 대칭: tsService(services/bds/ts.ts) · tsQueries(이 파일) · tsKeys(keys.ts).
+// 3자 대칭: tsService(services/cts/ts.ts) · tsQueries(이 파일) · tsKeys(keys.ts).
 // 훅명 = use + 서비스 함수명 · 쿼리키 = keys.ts(함수명 동일).
 // 조회 = useQuery 훅 · 저장/제출 = useMutation 훅(핸들러에서 mutateAsync + try/catch).
 // 제출 성공 시 영향받는 조회 캐시 무효화는 mutation onSuccess 에서 중앙 처리(전역 staleTime 대응).
 import { useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query'
-import { tsService } from '@/services/bds/ts'
-import { tsKeys } from '@/queries/bds/ts/tsKeys'
+import { tsService } from '@/services/cts/ts'
+import { tsKeys } from '@/queries/cts/ts/tsKeys'
 import type {
   BfhdLoiListRequest,
   BfhdLoiOpnnRequest,

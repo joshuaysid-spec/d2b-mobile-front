@@ -94,7 +94,7 @@ export function AppAuthrtAgrePage() {
       '[AppAuthrtAgre] 필수 접근권한 동의 확인',
       REQUIRED_PERMISSIONS.map((p) => p.id),
     )
-    // 추후 API: authService.agreeAppPermission(REQUIRED_PERMISSIONS.map((p) => p.id))
+    // 추후 API: cmService.agreeAppPermission(REQUIRED_PERMISSIONS.map((p) => p.id))
     setStep('p03')
   }
 

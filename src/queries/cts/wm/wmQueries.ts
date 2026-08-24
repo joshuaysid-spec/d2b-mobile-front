@@ -1,9 +1,9 @@
 // 대금청구/사후(WM) 도메인 Query 훅 — frontend-architecture.md §7.2 (services 1:1).
-// 3자 대칭: wmService(services/bds/wm.ts) · wmQueries(이 파일) · wmKeys(keys.ts).
+// 3자 대칭: wmService(services/cts/wm.ts) · wmQueries(이 파일) · wmKeys(keys.ts).
 // 훅명 = use + 서비스 함수명 · 쿼리키 = keys.ts(함수명 동일).
 import { useQuery } from '@tanstack/react-query'
-import { wmService } from '@/services/bds/wm'
-import { wmKeys } from '@/queries/bds/wm/wmKeys'
+import { wmService } from '@/services/cts/wm'
+import { wmKeys } from '@/queries/cts/wm/wmKeys'
 import type {
   PymtClmIntgListRequest,
   PymtClmPrgrsPrstRequest,

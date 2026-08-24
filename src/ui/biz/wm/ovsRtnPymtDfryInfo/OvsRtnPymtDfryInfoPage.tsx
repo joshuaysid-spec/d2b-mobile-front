@@ -7,7 +7,7 @@
 import { useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 
-import { wmQueries } from '@/queries/bds/wm/wmQueries'
+import { wmQueries } from '@/queries/cts/wm/wmQueries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'

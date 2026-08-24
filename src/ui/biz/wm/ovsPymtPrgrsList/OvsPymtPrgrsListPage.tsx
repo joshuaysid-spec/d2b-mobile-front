@@ -7,7 +7,7 @@
 // 업무도움(slide103 1])은 '내역이 없으면 항목을 표시하지 않음' — 안내 내역 확정 전이라 미표시.
 import { useState } from 'react'
 
-import { wmQueries } from '@/queries/bds/wm/wmQueries'
+import { wmQueries } from '@/queries/cts/wm/wmQueries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'

@@ -1,4 +1,4 @@
-// 인증(auth) 도메인 목업 데이터 — USE_MOCK=true 일 때 authService 가 반환.
+// 인증(auth) 도메인 목업 데이터 — USE_MOCK=true 일 때 cmService 가 반환.
 // 어떤 자격증명이든 성공 처리(폐쇄망 반입 전 UX 확인용). bzentyList 2건 → 로그인업체선택 UX 노출.
 // ⚠️ 실백엔드 연동 시 이 파일은 사용되지 않는다(서비스가 apiClient 분기).
 import type {

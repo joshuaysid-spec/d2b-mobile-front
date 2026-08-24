@@ -12,14 +12,14 @@
 //     - 중복체크: 사용가능 "사용이 가능합니다." / 중복 "이미 사용중인 계정입니다." / 미입력 "통합 계정 아이디를 입력해주세요."
 //     - 도움말 + 기존 사용자 아이디 목록(업체에서 등록·생성한 기존 아이디) 표시.
 //
-// 데이터 연결: 본인인증 후 대상조회·중복확인·등록은 queries/bds/auth mutation 훅 실호출(USE_MOCK 분기).
+// 데이터 연결: 본인인증 후 대상조회·중복확인·등록은 cmQueries(queries/cbs/cm) mutation 훅 실호출(USE_MOCK 분기).
 //   성명·기존 아이디 목록은 selectIntgAcntTarget() 결과(목업 mocks/auth). 직접 URL 진입 시 성명은 목업 폴백.
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { authQueries } from '@/queries/bds/auth/authQueries'
+import { cmQueries } from '@/queries/cbs/cm/cmQueries'
 import { Button } from '@/ui/common/base/Button'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
@@ -60,9 +60,9 @@ export function NewIdPwReg() {
   const [target, setTarget] = useState<IntgAcntTarget | null>(null)
   // 통합계정 아이디 중복체크 결과.
   const [idCheck, setIdCheck] = useState<IdCheckState>('idle')
-  const intgAcntTarget = authQueries.useSelectIntgAcntTarget()
-  const checkIntgAcntId = authQueries.useCheckIntgAcntId()
-  const registerIntgAcnt = authQueries.useInsertIntgLoginInfo()
+  const intgAcntTarget = cmQueries.useSelectIntgAcntTarget()
+  const checkIntgAcntId = cmQueries.useCheckIntgAcntId()
+  const registerIntgAcnt = cmQueries.useInsertIntgLoginInfo()
 
   const {
     control,

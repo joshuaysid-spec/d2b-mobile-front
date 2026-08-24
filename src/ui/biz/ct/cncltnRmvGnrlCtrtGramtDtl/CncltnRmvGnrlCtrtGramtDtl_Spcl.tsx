@@ -1,6 +1,6 @@
 // 해지/해제 일반총액제계약 상세 - '특수조건' 탭 콘텐츠 (MUI-CT-03-T06). 설계서 slide118·121.
 // 특수조건(spclCnd) 본문 표시 — 세로 제한 없는 본문 박스. 데이터: ctQueries.useSelectCncltnRmvSpcl.
-import { ctQueries } from '@/queries/bds/ct/ctQueries'
+import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 
 export function CncltnRmvGnrlCtrtGramtDtl_Spcl({ id }: { id: string }) {

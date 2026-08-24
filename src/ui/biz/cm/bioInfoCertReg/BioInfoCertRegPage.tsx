@@ -49,7 +49,7 @@ export function BioInfoCertRegPage() {
   const runCert = (method: CertMethod) =>
     handleSubmit((data) => {
       console.log('[bioInfoCertReg] 본인확인', { method, ...data })
-      // 추후 API: authService.procAnyIdCert(method, data) → 성공 시 완료 화면, 실패 시 "회원정보가 없습니다." 토스트
+      // 추후 API: cmService.procAnyIdCert(method, data) → 성공 시 완료 화면, 실패 시 "회원정보가 없습니다." 토스트
       navigate('/login/biometric/register/result') // 생체인증등록완료(MUI-CM-03-M20)
     })
 

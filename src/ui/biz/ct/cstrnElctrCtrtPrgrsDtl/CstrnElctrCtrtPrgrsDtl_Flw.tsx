@@ -1,7 +1,7 @@
 // 공사전자계약진행상세 - '하자담보책임' 탭 콘텐츠 (MUI-CT-01-T11). 설계서 slide41·45(1.3).
 // 하자담보 책임 블록(공종명/공종별 계약금액/하자보수 보증율/하자담보책임기간) — 여러 건 반복,
 // 입력 데이터 출력 전용(등록/수정 불가). 데이터: ctQueries.useSelectCtrtFlws.
-import { ctQueries } from '@/queries/bds/ct/ctQueries'
+import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { CtrtCnstpFlw } from '@/types/ct'

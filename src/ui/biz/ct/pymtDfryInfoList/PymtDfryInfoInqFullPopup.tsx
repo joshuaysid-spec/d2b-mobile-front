@@ -1,7 +1,7 @@
 // 대금지불정보조회 풀팝업 — MUI-CT-01-P16 PymtDfryInfoInq. 설계서 slide102~103.
 // 대금지불정보목록(M15) 카드 클릭 → 해당 계약의 지불 상세 내역 조회.
 // 구성: 대금지불정보(총 N건, 반복 Table) + footer 닫기.
-import { ctQueries } from '@/queries/bds/ct/ctQueries'
+import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FullPopup } from '@/ui/common/composites/FullPopup'

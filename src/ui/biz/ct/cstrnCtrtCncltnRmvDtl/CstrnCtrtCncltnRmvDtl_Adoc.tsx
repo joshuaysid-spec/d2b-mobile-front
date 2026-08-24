@@ -1,7 +1,7 @@
 // 해지/해제 공사계약 상세 - '첨부서류' 탭 콘텐츠 (MUI-CT-03-T14). 설계서 slide142·143.
 // 해지해제 첨부서류/계약업체 첨부서류 2섹션(각 총 N건) — 계약서류명 라벨 + 파일행(파일명 [크기] + 다운로드).
 // 파일 크기·파일명 없으면 '-' 표시(slide142). 데이터: ctQueries.useSelectCstrnCncltnRmvAdocs(CtrtAdocResult 재사용).
-import { ctQueries } from '@/queries/bds/ct/ctQueries'
+import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import type { CtrtAdocFile } from '@/types/ct'

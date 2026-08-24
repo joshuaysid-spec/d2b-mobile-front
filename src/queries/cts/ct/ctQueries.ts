@@ -1,10 +1,10 @@
 // 계약(CT) 도메인 Query 훅 — frontend-architecture.md §7.2 (services 1:1).
-// 3자 대칭: ctService(services/bds/ct.ts) · ctQueries(이 파일) · ctKeys(keys.ts).
+// 3자 대칭: ctService(services/cts/ct.ts) · ctQueries(이 파일) · ctKeys(keys.ts).
 // 훅명 = use + 서비스 함수명 · 쿼리키 = keys.ts(함수명 동일).
 // 조회는 useQuery 훅, 저장/제출은 페이지 핸들러에서 서비스 직접 await(useMutation 미도입).
 import { useQuery } from '@tanstack/react-query'
-import { ctService } from '@/services/bds/ct'
-import { ctKeys } from '@/queries/bds/ct/ctKeys'
+import { ctService } from '@/services/cts/ct'
+import { ctKeys } from '@/queries/cts/ct/ctKeys'
 import type { CncltnRmvListRequest, CtCtrdocType, CtrtIntgListRequest } from '@/types/ct'
 
 export const ctQueries = {

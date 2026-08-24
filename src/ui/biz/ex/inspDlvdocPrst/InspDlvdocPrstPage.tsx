@@ -1,7 +1,7 @@
 // 검사및납품조서현황목록 — MUI-EX-01-M05 InspDlvdocPrst. 설계서 04.이행 v0.83 slide30~33.
 // 구성: 검색조건(SearchCondition) + 목록헤더(총건수·page size) + 카드 리스트 + 더보기 + FAB
 //      + 검색필터(SearchFilter schema 주입, MUI-EX-01-P09 — 조서발행번호는 P06 공통시트).
-// 데이터: exQueries.useSelectInspDlvdocPrstList(queries/bds/ex) — 목업/실연동은 exService(USE_MOCK)가 전환.
+// 데이터: exQueries.useSelectInspDlvdocPrstList(queries/cts/ex) — 목업/실연동은 exService(USE_MOCK)가 전환.
 // 카드 클릭(slide33 이벤트) 분기 — 조건 항목 미정의라 데이터 필드로 분기(⚠️ 임시, 상세설계 확정 시 대조):
 //   공사(taskSeNm) → M04 기성및준공검사상세 · 부대조달(sbsdPrcmYn) → M03 상세 · 그 외 → M07 결과상세.
 // 업무도움(slide30 1])은 '내역이 없으면 항목을 표시하지 않음' — 안내 내역 확정 전이라 미표시(M01 동일).
@@ -9,7 +9,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
-import { exQueries } from '@/queries/bds/ex/exQueries'
+import { exQueries } from '@/queries/cts/ex/exQueries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'

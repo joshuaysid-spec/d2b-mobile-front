@@ -1,7 +1,7 @@
 // 국외전자계약진행상세 - '인지세' 탭 콘텐츠 (MUI-CT-01-T74 ovsStmtxTab). 설계서 slide162~163.
 // 데이터영역은 인지세 확인팝업(M74)과 동일(dm_ctrtInfo + dl_stmtxPayInfo + dm_payAmt)하나
 // 실 API 는 국외 전용(no.345 인지세납부목록조회).
-import { ctQueries } from '@/queries/bds/ct/ctQueries'
+import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { Table, type TableRow } from '@/ui/common/composites/Table'

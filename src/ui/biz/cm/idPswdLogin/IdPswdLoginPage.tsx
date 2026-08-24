@@ -13,14 +13,14 @@
 //
 // 설계서 반영 메모:
 //   - '비밀번호 마스킹 - 비밀번호 입력 시 마스킹 보기 아이콘 표시'(설계서 콘텐츠영역) → 눈 아이콘 토글.
-//   - 로그인 = authService.procIdPswdLogin → 소속 업체 2건 이상이면 업체선택(P14) → loginWith 로 확정 →
+//   - 로그인 = cmService.procIdPswdLogin → 소속 업체 2건 이상이면 업체선택(P14) → loginWith 로 확정 →
 //     authStore(토큰+유저) 저장 → 홈 이동. 실패는 AlertModal 안내(ApiError.message).
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from 'react-router-dom'
 
-import { authQueries } from '@/queries/bds/auth/authQueries'
+import { cmQueries } from '@/queries/cbs/cm/cmQueries'
 import { useAuthStore } from '@/stores/authStore'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
@@ -96,8 +96,8 @@ export function IdPswdLoginPage() {
   const [loginError, setLoginError] = useState<string | null>(null)
   // 통합 로그인 계정등록안내(P21) 팝업 — 구버전 아이디 로그인 시 노출. null 이면 닫힘.
   const [newIdInfo, setNewIdInfo] = useState<{ userNm: string } | null>(null)
-  const login = authQueries.useProcIdPswdLogin()
-  const loginWith = authQueries.useLoginWith()
+  const login = cmQueries.useProcIdPswdLogin()
+  const loginWith = cmQueries.useLoginWith()
 
   const {
     register,

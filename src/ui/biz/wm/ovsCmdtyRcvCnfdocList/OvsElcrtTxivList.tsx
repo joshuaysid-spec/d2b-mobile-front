@@ -4,7 +4,7 @@
 // 카드 클릭 시 전자계산서상세(M74) 이동은 부모 콜백으로 위임(slide93 이벤트).
 import { useState } from 'react'
 
-import { wmQueries } from '@/queries/bds/wm/wmQueries'
+import { wmQueries } from '@/queries/cts/wm/wmQueries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'

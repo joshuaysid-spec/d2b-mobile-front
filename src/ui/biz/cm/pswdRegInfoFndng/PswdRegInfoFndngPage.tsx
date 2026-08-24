@@ -44,7 +44,7 @@ export function PswdRegInfoFndngPage() {
   })
 
   const onSubmit = (data: PswdRegInfoFndngForm) => {
-    console.log('[login] 등록정보로 비밀번호 찾기', data) // 추후 API: authService.selectPswdFndng
+    console.log('[login] 등록정보로 비밀번호 찾기', data) // 추후 API: cmService.selectPswdFndng
     navigate('/login/find-pw/result') // 결과화면(MUI-CM-03-M08)
   }
 

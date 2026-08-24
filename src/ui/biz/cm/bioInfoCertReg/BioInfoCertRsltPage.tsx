@@ -13,7 +13,7 @@
 //   - 타이틀 24px Bold · 안내 박스 bg-primary-faint(#ecf1fa) · radius 8 · p 20 · 텍스트 17 Medium ink.
 import { useNavigate } from 'react-router-dom'
 
-import { authQueries } from '@/queries/bds/auth/authQueries'
+import { cmQueries } from '@/queries/cbs/cm/cmQueries'
 import { useAuthStore } from '@/stores/authStore'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
@@ -23,7 +23,7 @@ export function BioInfoCertRsltPage() {
   const navigate = useNavigate()
   const setAccessToken = useAuthStore((s) => s.setAccessToken)
   const setUser = useAuthStore((s) => s.setUser)
-  const biometricLogin = authQueries.useProcCertLogin()
+  const biometricLogin = cmQueries.useProcCertLogin()
 
   // [생체인증 로그인] — 디바이스 생체인증 로그인 → 토큰/유저 저장(store) 후 메인 홈 이동.
   const handleBioLogin = async () => {

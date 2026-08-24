@@ -1,7 +1,7 @@
 // 물품총액/단가계약서상세 - '특수조건' 탭 콘텐츠 (MUI-CT-01-T15 총액제 / T18 단가제 공용). 설계서 slide54.
 // 특수조건(spclCnd) 본문 표시 — 세로 제한 없는 본문 박스(M06 수정계약서 특수조건과 동일 데이터영역).
 // 총액제(T15)와 단가제(T18)는 같은 spclCnd 조회결과를 쓰므로 공용 컴포넌트(gramt 페이지 type 무관).
-import { ctQueries } from '@/queries/bds/ct/ctQueries'
+import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 
 export function CmdtyGramtCtrdocDtl_Spcl({ id }: { id: string }) {

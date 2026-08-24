@@ -1,7 +1,7 @@
 // 물품전자계약진행상세 - '계약업체' 탭 콘텐츠 (MUI-CT-01-T02, Figma 10020-154708). 설계서 slide25·29~30.
 // 계약업체(총 N건 — 여러 업체 반복) Table + 생산공장(방위사업청 계약만, 여러 건) Table.
 // 데이터: ctQueries.useSelectCtrtBzentys(queries/ct) — 목업/실연동은 ctService(USE_MOCK)가 전환.
-import { ctQueries } from '@/queries/bds/ct/ctQueries'
+import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { CtrtBzenty, CtrtFctry } from '@/types/ct'

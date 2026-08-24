@@ -4,7 +4,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { exQueries } from '@/queries/bds/ex/exQueries'
+import { exQueries } from '@/queries/cts/ex/exQueries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'

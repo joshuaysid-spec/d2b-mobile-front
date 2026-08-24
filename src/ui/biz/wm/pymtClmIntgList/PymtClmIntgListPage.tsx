@@ -2,7 +2,7 @@
 // 구성: 검색조건(SearchCondition, 대상칩 계약명/계약번호 + 필터버튼→풀팝업) + 안내문 버튼
 //      + 목록헤더(총건수·page size) + 카드 리스트 + 더보기 + FAB
 //      + 검색필터(SearchFilter schema 주입, MUI-WM-01-P12) + 신청목록 바텀시트(MUI-WM-01-P13).
-// 데이터: wmQueries.useSelectPymtClmIntgList(queries/bds/wm) — 목업/실연동은 wmService(USE_MOCK)가 전환. 목업은 mocks/wm.ts.
+// 데이터: wmQueries.useSelectPymtClmIntgList(queries/cts/wm) — 목업/실연동은 wmService(USE_MOCK)가 전환. 목업은 mocks/wm.ts.
 // 카드 클릭(slide17): 진행중 청구 있으면 P13 바텀시트 · 없으면 토스트("진행중인 대금청구건이 없는...").
 // 신청 카드 클릭(slide21): 청구서 종류별 상세 분기(M02/M03/M05~M08/M13) — 상세 구현 그룹에서 배선.
 // 안내문(P09 대금청구 안내문)은 그룹 3(중앙조달 상세)에서 구현 후 배선 — 현재 콘솔 스텁.
@@ -11,7 +11,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
-import { wmQueries } from '@/queries/bds/wm/wmQueries'
+import { wmQueries } from '@/queries/cts/wm/wmQueries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'

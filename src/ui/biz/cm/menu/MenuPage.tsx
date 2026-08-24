@@ -20,7 +20,7 @@ import {
   MenuAccordion,
   type MenuItem as MenuAccordionItem,
 } from '@/ui/common/composites/MenuAccordion'
-import { cmQueries } from '@/queries/bds/cm/cmQueries'
+import { cmQueries } from '@/queries/cbs/cm/cmQueries'
 import chatbotImage from '@/assets/images/chatbot.png'
 
 export interface MenuPageProps {
@@ -337,7 +337,7 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
                   <span>{user?.name ?? '사용자'}</span>
                   <span className="font-medium"> 님</span>
                 </p>
-                {/* 최근 로그인 — lastLoginAt 주입 시에만 표시(없으면 숨김). 추후 API: authService 가 User 에 채움 */}
+                {/* 최근 로그인 — lastLoginAt 주입 시에만 표시(없으면 숨김). 추후 API: cmService 가 User 에 채움 */}
                 {user?.lastLoginAt && (
                   <p className="text-[14px] font-medium leading-normal text-krds-text-muted">
                     최근 로그인 {user.lastLoginAt}

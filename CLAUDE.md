@@ -38,7 +38,7 @@
 - 색상/수치 하드코딩 (KRDS 토큰만 — `tokens.css` → `tailwind.css @theme`)
 - CDN `@import`/외부 리소스 (폐쇄망 — self-host)
 - `window.scrollTo` (스크롤 주체는 `main#app-scroll`)
-- 페이지에서 서비스 직접 import·URL 문자열 (API 는 `queries/bds/{도메인}/{도메인}Queries.ts` 의 `{도메인}Queries` 훅으로만, URL 은 서비스 함수 안에만 — EP 맵 폐기)
+- 페이지에서 서비스 직접 import·URL 문자열 (API 는 `queries/{대메뉴}/{도메인}/{도메인}Queries.ts` 의 `{도메인}Queries` 훅으로만, URL 은 서비스 함수 안에만 — EP 맵 폐기. 대메뉴 = URL 1단: bds/cbs/cts/tss)
 - 검증 로직 useState 수작업·제3의 검증 방식 (RHF+zod 2레인만: 입력 폼=직접 스키마, 검색필터=셸 자동 생성)
 - 목록 `key={i}` (안정적 고유 id 사용)
 - 상세 이동 URL 에 식별자(path 변수·쿼리) — 상세 라우트는 고정 경로 + `navigate(state)` 전달(`api.md`)

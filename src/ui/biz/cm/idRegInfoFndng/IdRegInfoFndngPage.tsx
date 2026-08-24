@@ -47,7 +47,7 @@ export function IdRegInfoFndngPage() {
   })
 
   const onSubmit = (data: IdRegInfoFndngForm) => {
-    console.log('[login] ID 등록정보로 찾기', { ...data, userSe: USER_SE_LABEL }) // 추후 API: authService.selectIdFndngByRegInfo
+    console.log('[login] ID 등록정보로 찾기', { ...data, userSe: USER_SE_LABEL }) // 추후 API: cmService.selectIdFndngByRegInfo
     navigate('/login/find-id/result') // 결과화면(MUI-CM-03-M05)
   }
 

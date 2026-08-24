@@ -7,7 +7,7 @@ export interface User {
 }
 
 // ── 인증(auth) API 타입(추정 — TODO(백엔드 확정)) ──
-// authService(services/auth.ts) 의 요청/응답 도메인 타입. 로그인 API 스펙 미확정이라 필드는 잠정.
+// cmService(services/cbs/cm.ts) 의 요청/응답 도메인 타입. 로그인 API 스펙 미확정이라 필드는 잠정.
 // 폐쇄망 반입 후 실백엔드 응답 확정 시 이 섹션 + services/auth.ts 매핑만 교체한다.
 
 /**

@@ -1,6 +1,6 @@
 // 국외전자계약진행상세 - '첨부서류' 탭 콘텐츠 (MUI-CT-01-T76 ovsElctrCtrtPrgrsDtlTab_Adoc).
 // 설계서 slide167~169 — 국내(T04)와 동일한 첨부서류 화면 + 직인등록정보(dl_ofslReg) 추가.
-import { ctQueries } from '@/queries/bds/ct/ctQueries'
+import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { Table } from '@/ui/common/composites/Table'

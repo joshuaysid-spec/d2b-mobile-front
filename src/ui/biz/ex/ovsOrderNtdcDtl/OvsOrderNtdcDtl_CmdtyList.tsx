@@ -2,7 +2,7 @@
 // 요약 정보(발주/수락/거부 품목수 + 발주/수락금액, dm_itemCntInfo) + 품목 Table 반복(dl_orderNtdcItem) + 더보기.
 import { useState } from 'react'
 
-import { exQueries } from '@/queries/bds/ex/exQueries'
+import { exQueries } from '@/queries/cts/ex/exQueries'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'

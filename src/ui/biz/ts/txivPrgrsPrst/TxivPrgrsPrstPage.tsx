@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
-import { tsQueries } from '@/queries/bds/ts/tsQueries'
+import { tsQueries } from '@/queries/cts/ts/tsQueries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'

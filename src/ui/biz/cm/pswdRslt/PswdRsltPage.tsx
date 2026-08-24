@@ -74,7 +74,7 @@ export function PswdRsltPage() {
   })
 
   const onSubmit = (data: PswdRsltForm) => {
-    console.log('[pw-result] 비밀번호 변경', { userId: AUTHED_USER_ID, ...data }) // 추후 API: authService.procPswdStng
+    console.log('[pw-result] 비밀번호 변경', { userId: AUTHED_USER_ID, ...data }) // 추후 API: cmService.procPswdStng
     navigate('/login/id-pw') // 변경 완료 → 새 비밀번호로 로그인(MUI-CM-03-M02)
   }
 

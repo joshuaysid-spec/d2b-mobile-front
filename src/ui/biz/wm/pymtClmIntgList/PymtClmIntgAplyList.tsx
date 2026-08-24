@@ -4,7 +4,7 @@
 // 카드 클릭 시 청구서 종류별 상세 분기(M02/M03/M05~M08/M13, slide21 이벤트)는 부모 콜백으로 위임.
 import { useState } from 'react'
 
-import { wmQueries } from '@/queries/bds/wm/wmQueries'
+import { wmQueries } from '@/queries/cts/wm/wmQueries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'

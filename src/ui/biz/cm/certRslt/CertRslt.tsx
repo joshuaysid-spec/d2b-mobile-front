@@ -35,7 +35,7 @@ export function CertRslt({
   const handleConfirm = () => {
     console.log('[CertRslt] 확인', status)
     onConfirm?.()
-    // 추후 API: 성공 시 authService 세션 반영 후 메인 이동 / 실패 시 로그인 화면 유지
+    // 추후 API: 성공 시 cmService 세션 반영 후 메인 이동 / 실패 시 로그인 화면 유지
   }
 
   return (

@@ -77,7 +77,7 @@ export function IdFndngPage() {
       navigate(method.path)
       return
     }
-    console.log('[idFndng] 본인인증', method.label) // 추후 API: authService.selectIdFndng
+    console.log('[idFndng] 본인인증', method.label) // 추후 API: cmService.selectIdFndng
     navigate('/login/find-id/result')
   }
 

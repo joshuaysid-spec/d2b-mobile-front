@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
-import { cmQueries } from '@/queries/bds/cm/cmQueries'
+import { cmQueries } from '@/queries/cbs/cm/cmQueries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { Button } from '@/ui/common/base/Button'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'

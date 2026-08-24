@@ -1,10 +1,10 @@
 // 이행(EX) 도메인 Query 훅 — frontend-architecture.md §7.2 (services 1:1).
-// 3자 대칭: exService(services/bds/ex.ts) · exQueries(이 파일) · exKeys(keys.ts).
+// 3자 대칭: exService(services/cts/ex.ts) · exQueries(이 파일) · exKeys(keys.ts).
 // 훅명 = use + 서비스 함수명 · 쿼리키 = keys.ts(함수명 동일).
 // 소비처 없는 서비스 함수(no.376 검사관·no.377 감독관)는 훅을 만들지 않는다.
 import { useQuery } from '@tanstack/react-query'
-import { exService } from '@/services/bds/ex'
-import { exKeys } from '@/queries/bds/ex/exKeys'
+import { exService } from '@/services/cts/ex'
+import { exKeys } from '@/queries/cts/ex/exKeys'
 import type {
   InspDlvdocPrstRequest,
   InspIntgListRequest,

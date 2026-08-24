@@ -24,7 +24,7 @@ export function LgoInfo({
   const handleConfirm = () => {
     console.log('[LgoInfo] 확인')
     onConfirm?.()
-    // 추후 API: authService 세션 정리 후 메인/로그인 화면 이동
+    // 추후 API: cmService 세션 정리 후 메인/로그인 화면 이동
   }
 
   return (
