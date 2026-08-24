@@ -313,6 +313,20 @@ export function BdopnListPage() {
     setPage(page + 1)
   }
   const handleCardClick = (it: BdopnItem) => {
+    // 업무구분(taskSeNm) 데이터 필드로 국내/국외 상세 분기(입찰공고 통합목록과 동일 패턴).
+    if (it.taskSeNm === '국외') {
+      // 국외 입찰결과조회 상세(MUI-BD-09-M71) — BdopnItem 에 없는 요약 필드는 M71 요약 목업으로
+      // 채우고, 카드 표시값(공고번호/건명/입찰방식/개찰일시)은 카드와 동일하게 덮는다.
+      const summary: OvsBidRsltSummary = {
+        ...OVS_BDOPN_SUMMARY,
+        pbancNo: it.bidPbancNo,
+        bizNm: it.bidPbancNm,
+        bidMthdNm: it.bidMthdNm,
+        bdopnDt: it.opbidDt,
+      }
+      navigate('/bd/ovsBidRsltDtl', { state: summary })
+      return
+    }
     // 입찰결과상세(개찰상세, MUI-BD-09-M01) 이동. URL 에 식별자를 두지 않으므로 카드 항목을 state 로 넘겨
     // 상단(뱃지/공고번호/타이틀/공고일자/개찰일시)을 즉시 그리고, 상세가 그 id 로 재조회해 확정한다.
     navigate('/bd/bidRsltDtl', { state: it })

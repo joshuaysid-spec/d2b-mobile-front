@@ -1,6 +1,6 @@
 // 국외 입찰공고 상세 - '품목 목록' 탭 (MUI-BD-01-T72(구 M72 — v1.83 재편), 설계서 slide291·295).
 // 품목별 아코디언(항목번호·품명) + 필드 테이블(dl_itemList 항목 그대로) + 보관함 추가/삭제(업체담당자).
-// 첨부문서 '보기' = 파일다운로드, 재고번호 '보기' = 목록정보조회 팝업(UI-OP-01-P75, 추후 연결).
+// 첨부문서 '보기' = 첨부파일조회(P76) 바텀시트, 재고번호 '보기' = 목록정보조회(WarSplList_Inq) 바텀시트.
 // 10개 노출 후 더보기 버튼으로 10개씩 추가 로드(설계서). 데이터는 목업(추후 bdService.selectBidItemList).
 import { useState } from 'react'
 
@@ -11,6 +11,7 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { Toast } from '@/ui/common/composites/Toast'
 import { OvsBidPbanc_AtchFileInq } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbanc_AtchFileInq'
+import { WarSplList_Inq } from '@/ui/biz/op/warSplList_Inq/WarSplList_Inq'
 import type { OvsAtchDoc, OvsBidItem } from '@/types/bd'
 
 // 품목목록(dl_itemList) 목업 — 설계서 slide291 예시값(수량 1+1+1=3, 예산 608,000.00 USD) 기반.
@@ -90,10 +91,11 @@ export function OvsBidPbancDtl() {
     console.log('[M72] 첨부파일조회(P76) 열기', item.frcptlArtclNo) // 추후 API: bdService.selectOvsItemAtchFileList
   }
 
-  // 재고번호 클릭 (scwin.grd_list_oncellclick) — 목록정보조회 팝업(UI-OP-01-P75) 호출.
-  const handleOpenInvtNo = (item: OvsBidItem) => {
-    console.log('[M72] 재고번호 목록정보조회', item.invtNo) // 추후: 목록정보조회 팝업(UI-OP-01-P75)
-  }
+  // 재고번호 [보기] (scwin.grd_list_oncellclick) — 목록정보조회(WarSplList_Inq) 바텀시트 호출(2026-08-24 요청).
+  // 컨테이너(BottomSheet)는 이 컴포넌트 소유, 콘텐츠는 op 공용 WarSplList_Inq(형상/식별/참고자료 탭) 재사용.
+  // planId 에는 클릭 품목의 재고번호(invtNo)를 전달 — 실 조회 파라미터는 백엔드 연동 시 확정(현재 목업).
+  const [warSplInvtNo, setWarSplInvtNo] = useState<string | null>(null)
+  const handleOpenInvtNo = (item: OvsBidItem) => setWarSplInvtNo(item.invtNo)
 
   const itemRows = (it: OvsBidItem): TableRow[] => [
     { label: '항목번호', value: it.frcptlArtclNo, type: 'number' },
@@ -142,13 +144,26 @@ export function OvsBidPbancDtl() {
     { label: '지시금액', value: `${it.drctnAmt} USD`, type: 'number' },
     { label: '장비부호', value: it.aplcnEqpmntCd },
     { label: '장비명', value: it.aplcnEqpmntNm },
-    { label: '보관함 여부', value: it.lockerYn },
+    {
+      // 보관함 여부 — 값(Y/N) + 추가/삭제 버튼을 같은 칸에(2026-08-24 요청, 구 테이블 하단 풀폭 버튼 대체).
+      label: '보관함 여부',
+      value: (
+        <div className="flex items-center justify-between gap-2">
+          <span>{it.lockerYn}</span>
+          <Button size="sm" variant="inner" onClick={() => handleToggleLocker(it)}>
+            {it.lockerYn === 'Y' ? '보관함 삭제' : '보관함 추가'}
+          </Button>
+        </div>
+      ),
+      type: 'combination',
+    },
   ]
 
   return (
     <>
-      {/* 타이틀 + 건수 — Figma m_section title(9973-131169) 우측 건수 슬롯(총 N건). 배경은 흰색(사용자 확정 — info 기본 블루 강조 제거) */}
-      <SectionTitle topDivider info={`총 ${total}건`} className="bg-white">
+      {/* 타이틀 + 건수 — Figma m_section title(9973-131169) 우측 건수 슬롯(총 N건). 배경은 흰색(사용자 확정 — info 기본 블루 강조 제거)
+          topDivider 없음 — 탭(TabList) 바로 아래 붙는 라인 제거(사용자 확정 2026-08-24) */}
+      <SectionTitle info={`총 ${total}건`} className="bg-white">
         품목 목록
       </SectionTitle>
       <Accordion type="multiple" defaultValue={['item-1']} className="w-full">
@@ -159,15 +174,8 @@ export function OvsBidPbancDtl() {
             title={`항목번호 ${it.frcptlArtclNo} · ${it.itemNm}`}
             borderTop={it.frcptlArtclNo !== '1'}
           >
+            {/* 보관함 추가/삭제는 '보관함 여부' 행 안의 버튼으로 이동(2026-08-24 요청) — 업체담당자 노출(추후 권한 연동) */}
             <Table rows={itemRows(it)} />
-            {/* 보관함 추가/삭제 — 업체담당자인 경우에만 노출(추후 권한 연동) */}
-            <Button
-              variant={it.lockerYn === 'Y' ? 'secondary' : 'primary'}
-              className="mt-3 w-full"
-              onClick={() => handleToggleLocker(it)}
-            >
-              {it.lockerYn === 'Y' ? '보관함 삭제' : '보관함 추가'}
-            </Button>
           </AccordionSection>
         ))}
       </Accordion>
@@ -196,6 +204,19 @@ export function OvsBidPbancDtl() {
         confirmLabel="닫기"
       >
         {atchItem && <OvsBidPbanc_AtchFileInq docs={buildAtchDocs(atchItem)} />}
+      </BottomSheet>
+
+      {/* 목록정보 조회 — 재고번호 [보기] 진입. 컨테이너는 여기 소유(*Sheet 래퍼 금지), 콘텐츠는 WarSplList_Inq */}
+      <BottomSheet
+        open={warSplInvtNo !== null}
+        onOpenChange={(o) => {
+          if (!o) setWarSplInvtNo(null)
+        }}
+        title="목록정보 조회"
+        onConfirm={() => setWarSplInvtNo(null)}
+        confirmLabel="닫기"
+      >
+        {warSplInvtNo !== null && <WarSplList_Inq planId={warSplInvtNo} />}
       </BottomSheet>
 
       {/* 보관함 추가/삭제 토스트 */}
