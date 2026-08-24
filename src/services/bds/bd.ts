@@ -444,6 +444,12 @@ export const bdService = {
     return apiClient.post<void, void>('/bds/bd/bidPrgrs/procBdngLmt.do', { pbancNo })
   },
 
+  /** no.79 모의투찰조회(TBD — Y 동급 선생성, 2026-08-24). 요청/응답 미확정 — unknown 잠정, 소비 화면 대기. */
+  async selectSimtBdngList(req: unknown = {}): Promise<unknown> {
+    if (USE_MOCK) return mockDelay([])
+    return apiClient.post<unknown, unknown>('/bds/bd/bidPrgrs/selectSimtBdngList.do', req)
+  },
+
   /** no.119 입찰포기신청서제출 — MUI-BD-03-P03 (bidPrgsDtlInq/BidAbndAperWrt). 구 `submitBidAbandon`. */
   async insertBidAbndApfrSbmsn(pbancNo: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
@@ -1008,6 +1014,12 @@ export const bdService = {
     )
   },
 
+  /** no.98 모의입찰참가신청(OvsBidPrtcpAplyController, TBD — Y 동급 선생성). 요청/응답 미확정 — unknown 잠정, 소비 화면 대기. */
+  async insertSimtBidPrtcpAply(req: unknown = {}): Promise<void> {
+    if (USE_MOCK) return mockDelay(undefined)
+    return apiClient.post<void, void>('/bds/bd/ovsBidPrtcpAply/insertSimtBidPrtcpAply.do', req)
+  },
+
   /**
    * no.102 입찰보증서정보조회(OvsBidPrtcpAplyController) — MUI-BD-04-P76
    * (ovsBidPrtcpAply/OvsBidWtgrDtlFullPopup). 구 `selectOvsBidWtgrDtl`.
@@ -1516,6 +1528,18 @@ export const bdService = {
       '/bds/bd/ovsTndrSbmsn/insertTndrSbmsn.do',
       { pbancNo, pbancOd },
     )
+  },
+
+  /** no.127 모의입찰서제출(OvsTndrSbmsnController, TBD — Y 동급 선생성). 요청/응답 미확정 — unknown 잠정, 소비 화면 대기. */
+  async insertSimtTndrSbmsn(req: unknown = {}): Promise<void> {
+    if (USE_MOCK) return mockDelay(undefined)
+    return apiClient.post<void, void>('/bds/bd/ovsTndrSbmsn/insertSimtTndrSbmsn.do', req)
+  },
+
+  /** no.132 모의최저가투찰(OvsTndrSbmsnController, TBD — Y 동급 선생성). 요청/응답 미확정 — unknown 잠정, 소비 화면 대기. */
+  async insertSimtLwprcTndrSbmsn(req: unknown = {}): Promise<void> {
+    if (USE_MOCK) return mockDelay(undefined)
+    return apiClient.post<void, void>('/bds/bd/ovsTndrSbmsn/insertSimtLwprcTndrSbmsn.do', req)
   },
 
   /**
