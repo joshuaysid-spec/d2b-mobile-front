@@ -1,7 +1,8 @@
 // 국외 입찰공고 상세 (MUI-BD-01-M71(컨테이너) · 탭 T71~T73(구 M71~M73 — v1.83 재편), 설계서 slide289~296). 목록 국외 카드 클릭 → /bd/ovsBidPbancDtl 진입.
 // 레퍼런스: 국내 입찰공고 상세 BidPbancDtlPage (요약정보+스텝바+탭+탭콘텐츠 동일 패턴).
 // 구성: 요약정보(SummaryInfo) + 스텝바(StepBar) + 탭 3개(일반정보 M71 / 품목 목록 M72 / 첨부서류 M73)
-//   + 플로팅 버튼(맨위로 / + → 바로가기 바텀시트: 보관함·이전공고입찰내역·목표가공개품목·환율정보·입찰결과).
+//   + 플로팅 버튼(맨위로 / + → 바로가기 바텀시트 — 설계서 v1.88 slide396 디렉션 기반, 입찰취소는 삭제(사용자 확정 2026-08-24):
+//     입찰결과 상세조회·보관함·목표가공개품목조회·이전공고입찰내역 불러오기·환율정보(국외) 바로가기).
 // 일반정보 탭(M71)은 페이지 컨테이너와 같은 화면 ID 라 이 파일이 함께 소유(로컬 컴포넌트).
 // 데이터는 목업(상단=목록에서 넘어온 항목, 없으면 페이지 fallback 목업). 백엔드 미연동.
 // 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당.
@@ -12,7 +13,6 @@ import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
 import type { BidPbancItem, OvsBidPbancDetail, OvsBidPbancNtc } from '@/types/bd'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
-import { Button } from '@/ui/common/base/Button'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
@@ -140,13 +140,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 // ── 일반정보 탭 (MUI-BD-01-T71(구 M71 — v1.83 재편)) — 페이지와 같은 화면 ID 라 이 파일이 소유 ────────────
-function GeneralInfoTab({
-  detail,
-  onOpenExchrt,
-}: {
-  detail: OvsBidPbancDetail
-  onOpenExchrt: () => void
-}) {
+function GeneralInfoTab({ detail }: { detail: OvsBidPbancDetail }) {
   // 일반정보 (설계서 slide290 데이터영역 순서 그대로 — 키는 실 인터페이스 IResultPbanc)
   const generalRows: TableRow[] = [
     { label: '공고번호-차수', value: detail.pbancNoOd },
@@ -160,18 +154,8 @@ function GeneralInfoTab({
     { label: '계약방법', value: detail.ctrtMthdNm },
     { label: '입찰방식', value: detail.bidMth ?? '-' },
     { label: '총금액', value: detail.sumDrctnAmt ?? '-', type: 'number' },
-    {
-      label: '환율적용일자',
-      value: (
-        <div className="flex items-center justify-between gap-2">
-          <span>{detail.exchrtAplcnYmd}</span>
-          <Button size="sm" variant="inner" onClick={onOpenExchrt}>
-            환율정보
-          </Button>
-        </div>
-      ),
-      type: 'combination',
-    },
+    // 환율적용일자 — [환율정보] 버튼 삭제(사용자 확정 2026-08-24). 환율정보조회(M74)는 바로가기 시트에서만 진입.
+    { label: '환율적용일자', value: detail.exchrtAplcnYmd },
     { label: '공고품목수', value: String(detail.itemCnt), type: 'number' },
     { label: '입찰참가등록마감일시', value: detail.bidRegDdlnDt },
     { label: '입찰서제출마감일시', value: detail.tndrSbmsnDdlnDt },
@@ -187,8 +171,8 @@ function GeneralInfoTab({
 
   return (
     <>
-      {/* 공지사항 (dm_ntcInfo) — 국외경쟁입찰 공지 영역 */}
-      <div className="px-4 pb-2">
+      {/* 공지사항 (dm_ntcInfo) — 국외경쟁입찰 공지 영역. 탭 경계와 붙지 않게 상단 여백(2026-08-24 요청) */}
+      <div className="px-4 pb-2 pt-4">
         <Infobox
           title="공지사항"
           items={MOCK_NTC_LIST.map((n) => `[${n.ntcDt}] ${n.ntcCn}`)}
@@ -246,7 +230,7 @@ export function OvsBidPbancDtlPage() {
     console.log('[M71] 관심공고', next ? '등록' : '제외', id) // 추후 API: bdService.insertItrstPbanc
   }
 
-  // 바로가기 바텀시트 항목 — 설계서 이벤트 설명(slide296) 기반.
+  // 바로가기 바텀시트 항목 — 설계서 v1.88 slide396 디렉션 기반. 입찰취소는 삭제(사용자 확정 2026-08-24).
   //   보관함/이전공고입찰내역 = 업체담당자(로그인) 전용 → 비로그인 시 로그인 안내(P15).
   const shortcutItems: {
     id: string
@@ -254,11 +238,11 @@ export function OvsBidPbancDtlPage() {
     variant: 'primary' | 'secondary' | 'tertiary'
     needLogin?: boolean
   }[] = [
-    { id: 'locker', label: '국외 보관함 바로가기', variant: 'primary', needLogin: true },
-    { id: 'prevBid', label: '이전공고입찰내역 불러오기', variant: 'primary', needLogin: true },
+    { id: 'bidResult', label: '입찰결과 상세조회', variant: 'primary' },
+    { id: 'locker', label: '보관함', variant: 'primary', needLogin: true },
     { id: 'goalPrc', label: '목표가공개품목조회', variant: 'secondary' },
-    { id: 'bidResult', label: '입찰결과 조회', variant: 'secondary' },
-    { id: 'fx', label: '환율정보 바로가기', variant: 'tertiary' },
+    { id: 'prevBid', label: '이전공고입찰내역 불러오기', variant: 'secondary', needLogin: true },
+    { id: 'fx', label: '환율정보(국외) 바로가기', variant: 'tertiary' },
   ]
 
   const handleShortcut = (itemId: string) => {
@@ -269,18 +253,19 @@ export function OvsBidPbancDtlPage() {
       return
     }
     switch (itemId) {
+      case 'bidResult':
+        // 국외 입찰결과조회 상세(MUI-BD-09-M71). state 미전달 — 상세의 fallback 목업으로 렌더
+        // (이 공고의 입찰결과 식별 연계는 백엔드 연동 시 확정).
+        navigate('/bd/ovsBidRsltDtl')
+        break
       case 'locker':
         navigate('/bd/ovs/locker') // 국외 보관함 목록(MUI-CM-01-M71)
-        break
-      case 'prevBid':
-        setBfrBidOpen(true) // 이전공고입찰내역등록(MUI-BD-01-P79) — 풀페이지 팝업
         break
       case 'goalPrc':
         navigate('/bd/ovs/goal-prc-items') // 목표가공개품목조회(MUI-BD-01-M75)
         break
-      case 'bidResult':
-        // 국외 입찰결과상세(UI-BD-09-M71) 미구축 — 라우트 등록 후 연결.
-        console.log('[M71] 입찰결과 조회 이동', id) // 추후: navigate(국외 입찰결과상세)
+      case 'prevBid':
+        setBfrBidOpen(true) // 이전공고입찰내역등록(MUI-BD-01-P79) — 풀페이지 팝업
         break
       case 'fx':
         setExchrtOpen(true) // 환율정보조회 풀팝업(M74)
@@ -291,7 +276,7 @@ export function OvsBidPbancDtlPage() {
   function renderTabContent(current: string) {
     switch (current) {
       case 'general':
-        return <GeneralInfoTab detail={ovsDetail} onOpenExchrt={() => setExchrtOpen(true)} />
+        return <GeneralInfoTab detail={ovsDetail} />
       case 'items':
         return <OvsBidPbancDtl />
       case 'attach':
@@ -311,7 +296,8 @@ export function OvsBidPbancDtlPage() {
       >
         <SummaryInfo
           collapsed={collapsed}
-          badges={[{ label: passed.pbancSeNm }, { label: '국외경쟁입찰' }]}
+          // 국외 상세 전용 화면이라 '국외' 배지는 state 값과 무관하게 항상 노출(사용자 확정 2026-08-24).
+          badges={[{ label: '국외' }, { label: passed.pbancSeNm }, { label: '국외경쟁입찰' }]}
           subtitle={`공고번호 ${ovsDetail.pbancNoOd}`}
           title={passed.bizNm}
           actions={
@@ -394,6 +380,7 @@ export function OvsBidPbancDtlPage() {
         onOpenChange={setBfrBidOpen}
         lockerId={passed.intgRfrncNo}
       />
+
 
       {/* 로그인 안내 (MUI-MS-03-P15) — 업체담당자 전용 동작을 비로그인 사용자가 시도할 때. */}
       <AlertModal

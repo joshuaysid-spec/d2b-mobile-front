@@ -2,19 +2,20 @@
 // 레퍼런스: 입찰공고 통합목록 BidPbancIntgListPage (구성·상태·페이징 동일 패턴).
 // 구성: 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더(총건수·page size) + 카드 리스트 + 더보기 + FAB.
 // 데이터/페이징/검색은 페이지 소유. 목록은 목업(dl_resultList, 항목명 설계서 그대로) — 추후 API: bdService.selectLockerPbancList.
-// 카드 하단 버튼(260709 확정 — 상태 버튼 1개 + 보관함 품목 관리 1개, 총 2개. 260706 보관함상세 삭제로 '상세보기' 없음):
-//   - 상태 버튼(우선순위 분기, 1개만):
-//     ① 입찰참가신청 완료 → [입찰진행 바로가기](해당 공고 진행 상세 직행)
-//     ② 입찰참가신청 작성(저장) → [입찰참가신청 작성수정]
-//     ③ 입찰내역 제출 완료 → [입찰내역 완료](비활성 표시)
-//     ④ 그 외(내역 미작성/작성) → [입찰내역 작성수정]
-//   - 보관함 품목 관리: 항시 노출
+// 카드 하단(2026-08-24 확정 — 설계서 slide409 "공고 신청 버튼으로 팝업 버튼 일원화(260709 개정)"):
+//   [+ 공고 신청] 버튼 1개 → 바텀시트 호출. 시트 버튼 = 상태 버튼 1개 + 보관함 품목 관리(항시).
+//   상태 버튼은 입찰내역작성여부(tmprBidCnStts)로만 분기(사용자 확정 2026-08-24 — 구 참가신청 우선순위 분기 대체):
+//     작성(금액 작성/저장) → [입찰내역 작성수정] · 미작성(품목만 보관) → [입찰진행 바로가기]
+//     완료(제출 완료) → [입찰내역 완료](비활성)
+// 카드 배지 = 표시 레이블(slide409 ⑤) 중 입찰내역작성여부·입찰참가신청여부 2종만(사용자 확정 2026-08-24 — 입찰구분·가격제 제거).
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
+import { Icon } from '@/ui/common/base/Icon'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
@@ -290,11 +291,6 @@ export function OvsLockerPbanListPage() {
     console.log('[OvsLockerList] 입찰내역 작성수정 이동', it.intgRfrncNo)
     navigate('/bd/ovsTmprBidCnReg', { state: it })
   }
-  // 입찰참가신청 작성수정 (국외 입찰참가신청서 작성 MUI-BD-04-M71)
-  const goPrtcpAply = (it: OvsLockerPbanItem) => {
-    console.log('[OvsLockerList] 입찰참가신청 작성수정 이동', it.intgRfrncNo)
-    navigate('/bd/ovsBidPrtcpAply', { state: toPrgrsItem(it) })
-  }
   // 입찰진행 바로가기 — 해당 공고 입찰진행 상세(/bd/bidPrgsDtlInq) 직행(260709 확정).
   const goBidPrgrs = (it: OvsLockerPbanItem) => {
     console.log('[OvsLockerList] 입찰진행 바로가기', it.intgRfrncNo)
@@ -320,61 +316,70 @@ export function OvsLockerPbanListPage() {
   const loaded = Math.min(page * pageSize, total)
   const visibleList = filteredList.slice(0, loaded)
 
-  // 목업 → Card props 매핑. 표시 레이블(최종 와이어프레임 ⑤ 순서 그대로):
-  //   입찰내역작성여부(작성/미작성/완료) · 입찰참가신청여부(신청/미신청) · 입찰구분(경쟁입찰/공개수의/사전심사) · 가격제(단가제/총액제).
-  const cardItems: CardListItem[] = visibleList.map((it) => {
-    // 상태 버튼 1개 (260709 확정 — 우선순위 분기):
-    //   ① 참가신청 완료 → [입찰진행 바로가기] ② 참가신청 작성(저장) → [입찰참가신청 작성수정]
-    //   ③ 내역 제출완료 → [입찰내역 완료](비활성 표시) ④ 그 외(내역 미작성/작성) → [입찰내역 작성수정]
-    const statusBtn: ButtonGroupItem =
-      it.bidPrtcpAplyStts === '완료'
-        ? { label: '입찰진행 바로가기', variant: 'primary', onClick: () => goBidPrgrs(it) }
-        : it.bidPrtcpAplyStts === '작성'
-          ? { label: '입찰참가신청 작성수정', variant: 'primary', onClick: () => goPrtcpAply(it) }
-          : it.tmprBidCnStts === '완료'
-            ? { label: '입찰내역 완료', variant: 'primary', disabled: true }
-            : { label: '입찰내역 작성수정', variant: 'primary', onClick: () => goBidCn(it) }
-    return {
-      id: it.id,
-      badges: (
-        <>
-          {it.tmprBidCnStts === '완료' ? (
-            <Badge type="solid" color="green">입찰내역 완료</Badge>
-          ) : it.tmprBidCnStts === '작성' ? (
-            <Badge type="pastel" color="blue">입찰내역 작성</Badge>
-          ) : (
-            <Badge type="pastel" color="yellow">입찰내역 미작성</Badge>
-          )}
-          {it.bidPrtcpAply === 'Y' ? (
-            <Badge type="solid" color="blue">입찰참가 신청</Badge>
-          ) : (
-            <Badge type="pastel" color="red">입찰참가 미신청</Badge>
-          )}
-          <Badge>{it.bidMth}</Badge>
-          <Badge>{it.bidPrcSysNm}</Badge>
-        </>
-      ),
-      subtitle: `통합참조번호 ${it.intgRfrncNo} / 공고번호 ${it.pbancNo}-${it.pbancOd}`,
-      title: it.bizNm,
-      rows: [
-        { label: '입찰업체', value: it.splyBzentyNm },
-        { label: '구매요청번호', value: it.prchsDmndNo },
-        { label: '입찰참가등록마감일시', value: it.regDdlnDt },
-        { label: '입찰서제출마감일시', value: it.bdngDdlnDt },
-        { label: '개찰일자', value: it.bdopnYmd },
-      ],
-      footer: (
-        // 총 2개 버튼(260709 확정): 상태 버튼 1개 + 보관함 품목 관리(항시)
-        <ButtonGroup
-          layout="vertical"
-          items={[
-            statusBtn,
-            { label: '보관함 품목 관리', variant: 'secondary', onClick: () => goItemMng(it) },
-          ]}
-        />
-      ),
-    }
-  })
+
+  // [+ 공고 신청] 바텀시트 — 카드별 버튼 팝업(설계서 slide409 "공고 신청 버튼으로 팝업 버튼 일원화").
+  // 컨테이너는 페이지 소유(*Sheet 래퍼 금지), null 이면 닫힘.
+  const [sheetItem, setSheetItem] = useState<OvsLockerPbanItem | null>(null)
+  // 시트 상태 버튼 — 입찰내역작성여부(tmprBidCnStts)로만 분기(사용자 확정 2026-08-24):
+  //   작성 → [입찰내역 작성수정] · 미작성 → [입찰진행 바로가기] · 완료 → [입찰내역 완료](비활성)
+  const statusBtnFor = (it: OvsLockerPbanItem): ButtonGroupItem =>
+    it.tmprBidCnStts === '완료'
+      ? { label: '입찰내역 완료', variant: 'primary', disabled: true }
+      : it.tmprBidCnStts === '작성'
+        ? {
+            label: '입찰내역 작성수정',
+            variant: 'primary',
+            onClick: () => {
+              setSheetItem(null)
+              goBidCn(it)
+            },
+          }
+        : {
+            label: '입찰진행 바로가기',
+            variant: 'primary',
+            onClick: () => {
+              setSheetItem(null)
+              goBidPrgrs(it)
+            },
+          }
+
+  // 목업 → Card props 매핑. 배지 = 표시 레이블(slide409 ⑤) 중
+  //   입찰내역작성여부(작성/미작성/완료) · 입찰참가신청여부(신청/미신청) 2종만(사용자 확정 2026-08-24).
+  const cardItems: CardListItem[] = visibleList.map((it) => ({
+    id: it.id,
+    badges: (
+      <>
+        {it.tmprBidCnStts === '완료' ? (
+          <Badge type="solid" color="green">입찰내역 완료</Badge>
+        ) : it.tmprBidCnStts === '작성' ? (
+          <Badge type="pastel" color="blue">입찰내역 작성</Badge>
+        ) : (
+          <Badge type="pastel" color="yellow">입찰내역 미작성</Badge>
+        )}
+        {it.bidPrtcpAply === 'Y' ? (
+          <Badge type="solid" color="blue">입찰참가 신청</Badge>
+        ) : (
+          <Badge type="pastel" color="red">입찰참가 미신청</Badge>
+        )}
+      </>
+    ),
+    subtitle: `통합참조번호 ${it.intgRfrncNo} / 공고번호 ${it.pbancNo}-${it.pbancOd}`,
+    title: it.bizNm,
+    rows: [
+      { label: '입찰업체', value: it.splyBzentyNm },
+      { label: '구매요청번호', value: it.prchsDmndNo },
+      { label: '입찰참가등록마감일시', value: it.regDdlnDt },
+      { label: '입찰서제출마감일시', value: it.bdngDdlnDt },
+      { label: '개찰일자', value: it.bdopnYmd },
+    ],
+    footer: (
+      // 구 버튼 2개 자리 → [+ 공고 신청] 버튼 1개(바텀시트 호출, 설계서 slide409 260709 개정)
+      <Button variant="secondary" className="w-full" onClick={() => setSheetItem(it)}>
+        <Icon name="Add" size={20} aria-hidden />
+        공고 신청
+      </Button>
+    ),
+  }))
 
   return (
     <div className="flex w-full flex-col">
@@ -423,6 +428,32 @@ export function OvsLockerPbanListPage() {
           document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
         }
       />
+
+      {/* [+ 공고 신청] 바텀시트 — 상태 버튼(입찰내역작성여부 분기) + 보관함 품목 관리(항시). 컨테이너는 페이지 소유 */}
+      <BottomSheet
+        open={sheetItem !== null}
+        onOpenChange={(o) => {
+          if (!o) setSheetItem(null)
+        }}
+        title="공고 신청"
+      >
+        {sheetItem && (
+          <ButtonGroup
+            layout="vertical"
+            items={[
+              statusBtnFor(sheetItem),
+              {
+                label: '보관함 품목 관리',
+                variant: 'secondary',
+                onClick: () => {
+                  setSheetItem(null)
+                  goItemMng(sheetItem)
+                },
+              },
+            ]}
+          />
+        )}
+      </BottomSheet>
 
       {/* 상세필터 풀팝업 — 공통 SearchFilter 셸(설계서 slide302 검색필터) */}
       <SearchFilter

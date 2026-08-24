@@ -4,20 +4,32 @@
 // 받은/보낸/임시저장/반려 문서를 하나의 목록으로 합쳐 표시하되, 상단 분기 탭(4구분)으로 필터한다.
 //   (설계서는 검색필터 '문서 구분'으로 필터하나, 마이페이지 문서함 하위 메뉴(받은/보낸/반려/임시저장)와
 //    동일하게 탭으로 노출 — 진입 시 마이페이지에서 넘어온 docType 으로 초기 탭 선택.)
-// 구성(위→아래): 분기 탭(TabList button) → 상단바(총건수+표시개수) → 카드 리스트 → 더보기 → 맨위로 FAB.
+// 구성(위→아래): 분기 탭(TabList button) → 상단바(검색필터 버튼+표시개수, slide95 — 좌측 leftSlot 은 관심입찰공고
+//   M05 와 동일 패턴) → 카드 리스트 → 더보기 → 맨위로 FAB → 검색필터 풀팝업(공통 SearchFilter 셸).
+// 검색필터(slide96, 2026-08-24 추가): 첨언·첨부 여부(셀렉트) → 기간 설정(dateRange+빠른칩 1/3/6개월) → 문서 구분(셀렉트).
+//   초기값 = 문서구분 전체 · 첨언첨부 전체 · 기간 최근 1개월. 검색 실행 시 문서구분은 상단 분기 탭에 동기화
+//   (반려 받은/반려한 → 반려 탭), 나머지 조건은 API 경계 스텁(서버 조회 파라미터 — 백엔드 연동 시 배선).
 //   카드 클릭 → 문서함 상세(M11)로 navigate(state 전달, CLAUDE.md "목록 → 상세 데이터 전달").
 // 데이터=파일 내 목업(설계서 항목명/형식), 동작=API 경계 스텁(console.log + '// 추후: cmService.selectRcvDocBoxList/selectTrsmDocBoxList/selectTmprDocBoxList').
 import { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import dayjs from 'dayjs'
 
 import { Badge } from '@/ui/common/base/Badge'
+import { Icon } from '@/ui/common/base/Icon'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Button } from '@/ui/common/base/Button'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { ROUTES } from '@/constants/routes'
 import { docBadges, docOrgLine, docDateRows } from '@/ui/biz/cm/docBox/docBoxView'
+import type {
+  DateRangePresetDef,
+  SearchFilterSchema,
+  SearchFilterValue,
+} from '@/types/search-filter'
 import type { DocBoxItem, DocBoxSeCd } from '@/types/cm'
 
 // 상단 분기 탭 — 문서구분 4가지(받은/보낸/반려/임시저장). docSeCd 로 목록 필터.
@@ -27,6 +39,74 @@ const DOC_TABS: TabItem[] = [
   { value: 'rejected', label: '반려 문서' },
   { value: 'temp', label: '임시저장' },
 ]
+
+// ── 검색필터 (MUI-CM-06-M10 검색필터, 설계서 slide96) — 공통 SearchFilter 셸 schema ──
+// 섹션 순서·항목은 설계서 와이어프레임 그대로: 첨언·첨부 여부 → 기간 설정 → 문서 구분.
+const DATE_PRESETS: DateRangePresetDef[] = [
+  { label: '최근 1개월', months: 1 },
+  { label: '최근 3개월', months: 3 },
+  { label: '최근 6개월', months: 6 },
+]
+const DOCBOX_FILTER_SCHEMA: SearchFilterSchema = {
+  title: '검색필터',
+  sections: [
+    {
+      key: 'addAtch',
+      title: '첨언, 첨부 여부',
+      fields: [
+        {
+          type: 'select',
+          key: 'addAtchSe',
+          options: [
+            { value: 'all', label: '전체' },
+            { value: 'add', label: '첨언' },
+            { value: 'atch', label: '첨부' },
+          ],
+        },
+      ],
+    },
+    {
+      key: 'date',
+      title: '기간 설정',
+      fields: [{ type: 'dateRange', key: 'date', presets: DATE_PRESETS }],
+    },
+    {
+      key: 'docSe',
+      title: '문서 구분',
+      fields: [
+        {
+          type: 'select',
+          key: 'docSe',
+          options: [
+            { value: 'all', label: '전체' },
+            { value: 'received', label: '받은 문서' },
+            { value: 'sent', label: '보낸 문서' },
+            { value: 'rejectedReceived', label: '반려 받은 문서' },
+            { value: 'rejectedSent', label: '반려한 문서' },
+            { value: 'temp', label: '임시 저장' },
+          ],
+        },
+      ],
+    },
+  ],
+}
+// 초기값(설계서 slide96): 문서구분 전체 · 첨언첨부 여부 전체 · 기간 최근 1개월.
+const DEFAULT_FILTER: SearchFilterValue = {
+  addAtchSe: 'all',
+  date: {
+    start: dayjs().subtract(1, 'month').format('YYYY-MM-DD'),
+    end: dayjs().format('YYYY-MM-DD'),
+  },
+  docSe: 'all',
+}
+// 필터 문서구분 → 상단 분기 탭 매핑(반려 받은/반려한 → 반려 탭).
+const TAB_BY_DOC_SE: Record<string, DocBoxSeCd> = {
+  received: 'received',
+  sent: 'sent',
+  rejectedReceived: 'rejected',
+  rejectedSent: 'rejected',
+  temp: 'temp',
+}
 
 // ── 목업 (설계서 slide90 카드 예시 + 각 데이터영역 항목명/형식) ────────────────
 // 문서구분별 대표 샘플. 아래 replicate 로 페이징용 목록을 만든다(id 재부여).
@@ -128,6 +208,8 @@ export function DocBoxPage() {
   const [tab, setTab] = useState<DocBoxSeCd>(initTab)
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
+  const [filterOpen, setFilterOpen] = useState(false) // 검색필터 풀팝업(slide96)
+  const [filter, setFilter] = useState<SearchFilterValue>(DEFAULT_FILTER)
 
   // 탭(문서구분) 필터 → 페이징.
   const filtered = useMemo(() => MOCK_DOCS.filter((it) => it.docSeCd === tab), [tab])
@@ -149,6 +231,14 @@ export function DocBoxPage() {
   const handleLoadMore = () => {
     setPage((p) => p + 1)
     console.log('[DocBox] loadMore')
+  }
+  // 검색필터 실행 — 문서구분은 상단 분기 탭 동기화, 나머지 조건은 API 경계 스텁.
+  const handleFilterSearch = (value: SearchFilterValue) => {
+    setFilter(value)
+    setPage(1)
+    const nextTab = TAB_BY_DOC_SE[value.docSe as string]
+    if (nextTab) setTab(nextTab)
+    console.log('[DocBox] 검색필터', value) // 추후 API: cmService.selectRcvDocBoxList(toRequest(value))
   }
   const handleCardClick = (it: DocBoxItem) => {
     // 클릭한 항목을 state 로 전달 — 문서함 상세(M11) 상단 즉시표시.
@@ -177,12 +267,17 @@ export function DocBoxPage() {
       {/* 상단 분기 탭 — 4구분(받은/보낸/반려/임시저장). 라벨이 360px 폭에 안 들어가면 가로 스크롤. */}
       <TabList variant="button" value={tab} onChange={handleTab} items={DOC_TABS} scrollButtons="auto" />
 
-      {/* 상단바 — 총건수 + 표시개수 셀렉트. */}
+      {/* 상단바(slide95) — 좌: 검색필터 버튼(leftSlot, 관심입찰공고 M05 패턴) / 우: 표시개수 셀렉트. */}
       <ListSectionHeader
         className="px-4 pt-4"
-        total={total}
         pageSize={pageSize}
         onPageSizeChange={handlePageSize}
+        leftSlot={
+          <Button variant="secondary" onClick={() => setFilterOpen(true)}>
+            <Icon name="Tune" aria-hidden />
+            검색필터
+          </Button>
+        }
       />
 
       {/* 카드 리스트 — px16, 카드 간 16(krds-8). */}
@@ -203,6 +298,16 @@ export function DocBoxPage() {
       <FloatingActionButton
         className="fixed bottom-0 right-4 z-40"
         onTop={() => document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })}
+      />
+
+      {/* 검색필터 풀팝업(slide96) — 공통 SearchFilter 셸. 첨언·첨부 여부 → 기간 설정 → 문서 구분. */}
+      <SearchFilter
+        open={filterOpen}
+        onOpenChange={setFilterOpen}
+        schema={DOCBOX_FILTER_SCHEMA}
+        value={filter}
+        defaultValue={DEFAULT_FILTER}
+        onSearch={handleFilterSearch}
       />
     </div>
   )
