@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { opQueries } from '@/queries/bds/op/opQueries'
-import type { MockOpPlanItem } from '@/types/mock/op'
+import type { OpPlanItem } from '@/types/mock/op'
 import type { ApiError } from '@/types/api'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
@@ -85,7 +85,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 export function PrcmPlanDtlPage() {
   const navigate = useNavigate()
   // 목록 → 상세 데이터 전달: 클릭 항목이 곧 식별자 소스이자 placeholder(재조회 없이 즉시 렌더).
-  const stateItem = useLocation().state as MockOpPlanItem | null
+  const stateItem = useLocation().state as OpPlanItem | null
   const id = stateItem?.id ?? ''
   const [tab, setTab] = useState('detail')
   // 스크롤 시 상단 블록(요약+스텝+탭) 축소 + sticky 동작 — 로직은 훅에서. (overflow-anchor 진동방지 포함)

@@ -21,7 +21,7 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { ExmptnYnDtl } from '@/ui/biz/bd/bidPrtcpAperWrt/ExmptnYnDtl'
-import type { MockBidGrnteInfo } from '@/types/mock/bd'
+import type { BidGrnteInfo } from '@/types/mock/bd'
 
 // 보증금 납부방법(depsPayMthdCd, 상위코드 GMCB) — 실제 코드값은 상세설계 예정이라 의미값으로 임시 표기.
 const PAY_METHODS = [
@@ -39,7 +39,7 @@ const EXEMPT_REASONS = [
 ]
 
 // 입찰보증금 조회결과 목업(dmt_bidGrnte R 항목) — 증권번호 2건이라 셀렉트박스 분기.
-const MOCK_BID_GRNTE: MockBidGrnteInfo = {
+const MOCK_BID_GRNTE: BidGrnteInfo = {
   scrtNoList: ['EG-2025-0012345', 'EG-2025-0012346'],
   bidYmd: '2025-11-25 13:00',
   grnteAmt: '619,520,000 원',

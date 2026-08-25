@@ -15,13 +15,13 @@ import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type {
-  MockDfEqpmntTradeAgncAplyInfo,
-  MockDfEqpmntTradeAgncAplyItem,
-  MockDfEqpmntTradeAgncAtchFile,
+  DfEqpmntTradeAgncAplyInfo,
+  DfEqpmntTradeAgncAplyItem,
+  DfEqpmntTradeAgncAtchFile,
 } from '@/types/mock/cm'
 
 // ── 페이지 fallback 목업(직접 URL 진입 시) — 목록 카드(dl_dfEqpmntTradAgncAplyList) 1건 형식. ──
-const FALLBACK_ITEM: MockDfEqpmntTradeAgncAplyItem = {
+const FALLBACK_ITEM: DfEqpmntTradeAgncAplyItem = {
   id: '0',
   regAplySecd: '신규',
   rcptNo: '2026-0020',
@@ -33,7 +33,7 @@ const FALLBACK_ITEM: MockDfEqpmntTradeAgncAplyItem = {
 }
 
 // ── 신청 접수·업체 정보(dm_dfEqpmntTradAgncAplyInfo, Figma 10020:83224 예시값) — 추후 API. ──
-const MOCK_INFO: MockDfEqpmntTradeAgncAplyInfo = {
+const MOCK_INFO: DfEqpmntTradeAgncAplyInfo = {
   rcptNo: '2026-0020',
   rcptYmd: '2026-05-01',
   atrzYmd: '2026-05-22',
@@ -53,7 +53,7 @@ const MOCK_INFO: MockDfEqpmntTradeAgncAplyInfo = {
 
 
 // ── 첨부서류(dl_dfEqpmntTradAgncAplyAtchFileList, 설계서 slide184 예시 5종) — 첨부서류명(fileTtl)+첨부파일명(fileNm). ──
-const MOCK_FILES: MockDfEqpmntTradeAgncAtchFile[] = [
+const MOCK_FILES: DfEqpmntTradeAgncAtchFile[] = [
   { id: '1', fileTtl: '등록신청서', fileNm: '등록신청서.hwp', size: '786KB', regYmd: '2026-05-01' },
   { id: '2', fileTtl: '이력서', fileNm: '이력서(홍길동).hwp', size: '512KB', regYmd: '2026-05-01' },
   { id: '3', fileTtl: '청렴서약서', fileNm: '청렴서약서.hwp', size: '324KB', regYmd: '2026-05-01' },
@@ -63,8 +63,8 @@ const MOCK_FILES: MockDfEqpmntTradeAgncAtchFile[] = [
 
 // 접수정보(설계서 slide184 ① — 접수번호/신청일시/처리일시/처리구분)
 function rcptRows(
-  item: MockDfEqpmntTradeAgncAplyItem,
-  info: MockDfEqpmntTradeAgncAplyInfo,
+  item: DfEqpmntTradeAgncAplyItem,
+  info: DfEqpmntTradeAgncAplyInfo,
 ): TableRow[] {
   return [
     { label: '접수번호', value: item.rcptNo || info.rcptNo },
@@ -74,7 +74,7 @@ function rcptRows(
   ]
 }
 // 업체정보(설계서 slide184 — 업태~주소 + 반려사유(반려 사유가 있는 경우 내역 표시))
-function bzentyRows(info: MockDfEqpmntTradeAgncAplyInfo): TableRow[] {
+function bzentyRows(info: DfEqpmntTradeAgncAplyInfo): TableRow[] {
   return [
     { label: '업태', value: info.bzstatCdNm },
     { label: '상호', value: info.bzentyNm },
@@ -91,7 +91,7 @@ function bzentyRows(info: MockDfEqpmntTradeAgncAplyInfo): TableRow[] {
 
 export function DfEqpmntTradeAgncAplyDtlPage() {
   // 목록에서 넘어온 항목으로 상단을 그린다. 직접 진입(state 없음)이면 페이지 fallback 목업.
-  const item = (useLocation().state as MockDfEqpmntTradeAgncAplyItem | null) ?? FALLBACK_ITEM
+  const item = (useLocation().state as DfEqpmntTradeAgncAplyItem | null) ?? FALLBACK_ITEM
 
   const downloadFiles: FileDownloadItem[] = MOCK_FILES.map((f) => ({
     id: f.id,

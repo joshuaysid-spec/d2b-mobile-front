@@ -8,7 +8,7 @@ import { wmQueries } from '@/queries/cts/wm/wmQueries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
-import type { MockPymtClmAplyItem } from '@/types/mock/wm'
+import type { PymtClmAplyItem } from '@/types/mock/wm'
 
 export interface PymtClmIntgAplyListProps {
   /** 조회 대상 계약번호 — M01 목록 카드에서 주입. */
@@ -20,7 +20,7 @@ export interface PymtClmIntgAplyListProps {
   /** 바텀시트 열림 여부 — 열릴 때만 조회(enabled). */
   open: boolean
   /** 신청 카드 클릭 — 청구서 종류별 상세 분기는 부모가 담당. */
-  onItemClick: (item: MockPymtClmAplyItem) => void
+  onItemClick: (item: PymtClmAplyItem) => void
 }
 
 export function PymtClmIntgAplyList({

@@ -14,7 +14,7 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { InspDlvdocList } from '@/ui/biz/ex/inspIntgListInq/InspDlvdocList'
-import type { MockInspDlvdocItem } from '@/types/mock/ex'
+import type { InspDlvdocItem } from '@/types/mock/ex'
 
 export interface DlvgdsAvtsmtListFullPopupProps {
   open: boolean
@@ -54,7 +54,7 @@ export function DlvgdsAvtsmtListFullPopup({
   const visibleList = items.slice(0, loaded)
 
   // 조서 카드 클릭(P11) — 중앙조달(M02)/부대조달(M03) 상세 분기(slide16 이벤트, sbsdPrcmYn 임시 키).
-  const handleDlvdocClick = (item: MockInspDlvdocItem) => {
+  const handleDlvdocClick = (item: InspDlvdocItem) => {
     // 식별자는 URL 이 아니라 state 로만 전달(상세가 item.id 로 조회).
     if (item.sbsdPrcmYn === 'Y') {
       navigate('/ex/inspDlvdocDtlSbsdPrcm', { state: item })

@@ -4,7 +4,7 @@
 import { exQueries } from '@/queries/cts/ex/exQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockInspDlvdocCmdtyItem } from '@/types/mock/ex'
+import type { InspDlvdocCmdtyItem } from '@/types/mock/ex'
 
 export interface InspDlvdocDtl_CmdtyListProps {
   /** 조회 대상 조서 식별자 — 페이지(navigate state id)가 주입. */
@@ -12,7 +12,7 @@ export interface InspDlvdocDtl_CmdtyListProps {
 }
 
 // 물품 1건 → 표 행 (dlt_CmdtyList, slide20 1.2 순서).
-function cmdtyRows(it: MockInspDlvdocCmdtyItem): TableRow[] {
+function cmdtyRows(it: InspDlvdocCmdtyItem): TableRow[] {
   return [
     { label: '조달요구번호', value: it.prcmRqtNo },
     { label: '재고번호', value: it.invtNo },

@@ -12,13 +12,13 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { DateInput } from '@/ui/common/composites/DateInput'
 import { YearInput } from '@/ui/common/composites/YearInput'
-import type { MockPrfmncPrdocAplyInptInfo } from '@/types/mock/cm'
+import type { PrfmncPrdocAplyInptInfo } from '@/types/mock/cm'
 
 // 금액 콤마 포맷(InputBox numeric 필터 뒤 적용)
 const fmtComma = (filtered: string) => (filtered ? Number(filtered).toLocaleString() : '')
 
 // 목업 초기값 — slide289 표시값(불러온 정보 기반). API 연동 시 조회값으로 교체.
-const MOCK_PRFMNC: MockPrfmncPrdocAplyInptInfo = {
+const MOCK_PRFMNC: PrfmncPrdocAplyInptInfo = {
   entlno: '',
   dmndQty: '',
   submOrgn: '',

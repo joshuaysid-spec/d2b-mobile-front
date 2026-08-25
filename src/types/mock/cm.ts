@@ -9,7 +9,7 @@ import type { DateRangeValue } from '@/types/search-filter'
 //    아래 필드명은 화면 표기(발급기관/타이틀명/유효기간) 기준의 잠정 명칭 — 항목명 확정 시 교체 필요.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export interface MockCertItem {
+export interface CertItem {
   /** 로컬 식별자(목록 key·삭제 대상 식별). */
   id: string
   /** 발급기관 (예: 한국정보인증, 코스콤). */
@@ -26,7 +26,7 @@ export interface MockCertItem {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 자주묻는질문 목록 데이터영역(dl_resultList) 1건. */
-export interface MockFaqListItem {
+export interface FaqListItem {
   /** 순번(no). */
   no: number
   /** 자주묻는질문 ID(bbsId) — 아코디언 key. 설계서 6자리·Hidden. */
@@ -52,7 +52,7 @@ export interface MockFaqListItem {
  * 공지사항 목록 데이터영역(dl_resultList) 1건 — 설계서 항목명(영문) 준수.
  * (담당부서/작성자/조회 등은 데이터엔 있으나 카드에는 Figma 기준 제목·긴급·날짜·첨부만 노출)
  */
-export interface MockNoticeListItem {
+export interface NoticeListItem {
   /** 순번(no) — 목록 순번. */
   no: number
   /** 공지사항 ID(contsNo) — 상세(MUI-CM-04-M02) 조회 키. 설계서 6자리·Hidden. */
@@ -81,7 +81,7 @@ export interface MockNoticeListItem {
  * 공지사항 검색조건(dm_searchInfo) — 설계서 항목명(영문) 준수.
  * 작성일자는 FROM/TO(둘 다 regDt) 범위이므로 DateRangeValue 로 표현한다.
  */
-export interface MockNoticeSearchFilter {
+export interface NoticeSearchFilter {
   /** 작성일자 범위(regDt FROM~TO). */
   regDt: DateRangeValue
   /**
@@ -98,7 +98,7 @@ export interface MockNoticeSearchFilter {
 }
 
 /** 공지사항 상세 첨부파일 1건 — dm_noticeInfo fileSn(첨부파일). fileName/fileSize 는 파일조회 표시용. */
-export interface MockNoticeAttachment {
+export interface NoticeAttachment {
   /** 첨부파일 일련번호(fileSn). */
   fileSn: string
   /** 파일명(표시용). */
@@ -109,9 +109,9 @@ export interface MockNoticeAttachment {
 
 /**
  * 공지사항 상세 데이터영역(dm_noticeInfo) — MUI-CM-04-M02 일반공지사항상세(설계서 slide225).
- * 항목명(영문) 준수. 목록 아이템(MockNoticeListItem)에 없는 상세 필드(게시기간·내용·첨부)를 포함한다.
+ * 항목명(영문) 준수. 목록 아이템(NoticeListItem)에 없는 상세 필드(게시기간·내용·첨부)를 포함한다.
  */
-export interface MockNoticeDetail {
+export interface NoticeDetail {
   /** 공지사항 ID(contsNo). */
   contsNo: string
   /** 제목(bbsTtl). */
@@ -133,7 +133,7 @@ export interface MockNoticeDetail {
   /** 내용(bbsCn). */
   bbsCn: string
   /** 첨부파일(fileSn) 목록. */
-  files: MockNoticeAttachment[]
+  files: NoticeAttachment[]
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -145,7 +145,7 @@ export interface MockNoticeDetail {
  * 자료실 상세 데이터영역(dm_rpstrInfo) — MUI-CM-04-M26/M28/M30(일반/수요부대별/계약관련서식자료실 상세, slide228~230).
  * 공지 상세와 달리 긴급·상위고정·게시기간 없음. 담당부서=deptNm(≠공지 tkcgDeptNm)·제목=rpstrTtl.
  */
-export interface MockRpstrDetail {
+export interface RpstrDetail {
   /** 자료실 ID(contsNo). */
   contsNo: string
   /** 제목(rpstrTtl). */
@@ -159,14 +159,14 @@ export interface MockRpstrDetail {
   /** 내용(contsCn). */
   contsCn: string
   /** 첨부파일(fileSn) 목록. */
-  files: MockNoticeAttachment[]
+  files: NoticeAttachment[]
 }
 
 /**
  * 시스템개선안내 상세 데이터영역(dm_rpstrInfo) — MUI-CM-04-M32(slide231).
  * 자료실 그룹이나 항목명은 공지형(bbsTtl/tkcgDeptNm) + 게시기간 있음. 긴급·상위고정 없음.
  */
-export interface MockSysImpvDetail {
+export interface SysImpvDetail {
   /** 게시판 ID(contsNo). */
   contsNo: string
   /** 제목(bbsTtl). */
@@ -184,7 +184,7 @@ export interface MockSysImpvDetail {
   /** 내용(bbsCn). */
   bbsCn: string
   /** 첨부파일(fileSn) 목록. */
-  files: MockNoticeAttachment[]
+  files: NoticeAttachment[]
 }
 
 /**
@@ -192,7 +192,7 @@ export interface MockSysImpvDetail {
  * 설계서 slide220~222 항목명(영문) 준수. 공지사항과 달리 긴급(emrg)·상위고정(upFix)·담당부서(tkcgDeptNm) 없음.
  * 작성자=rgtrId(≠공지 wrtrNm)·조회=inqNocs(≠공지 inqCnt)·제목=rpstrTtl.
  */
-export interface MockRpstrListItem {
+export interface RpstrListItem {
   /** 순번(no). */
   no: number
   /** 자료실 ID(contsNo) — 상세 조회 키. */
@@ -215,7 +215,7 @@ export interface MockRpstrListItem {
  * 자료실 검색조건(dm_searchInfo) — 설계서 slide230 항목명(영문) 준수.
  * 구분(bizFldCd)은 데이터영역엔 있으나 자료실 검색필터엔 미노출(요청, 2026-07-27) — 공지사항만 노출.
  */
-export interface MockRpstrSearchFilter {
+export interface RpstrSearchFilter {
   /** 작성일자 범위(regDt FROM~TO). */
   regDt: DateRangeValue
   /** 제목(rpstrTtl). */
@@ -229,9 +229,9 @@ export interface MockRpstrSearchFilter {
 /**
  * 시스템개선안내 목록 데이터영역(dl_resultList) 1건 — MUI-CM-04-M31.
  * 자료실 그룹이나 항목명은 공지사항형(bbsTtl/wrtrNm/inqCnt). 긴급·상위고정·담당부서 없음.
- * 검색조건은 공지사항과 동일(bbsTtl/bbsCn/wrtrNm)이라 MockNoticeSearchFilter 를 재사용한다.
+ * 검색조건은 공지사항과 동일(bbsTtl/bbsCn/wrtrNm)이라 NoticeSearchFilter 를 재사용한다.
  */
-export interface MockSysImpvListItem {
+export interface SysImpvListItem {
   /** 순번(no). */
   no: number
   /** 게시판 ID(contsNo). */
@@ -255,7 +255,7 @@ export interface MockSysImpvListItem {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 실적증명서 신청 목록 항목(dl_resultList) — 항목명(영문)은 설계서 그대로. */
-export interface MockPrfmncPrdocItem {
+export interface PrfmncPrdocItem {
   /** 접수번호 (R, 11) — 목록 key. */
   prfmncRcptNo: string
   /** 계약번호(차수) (R, 11) */
@@ -289,7 +289,7 @@ export interface MockPrfmncPrdocItem {
  * 실적증명서 신청 목록 검색조건(dm_searchInfo) — 설계서 항목명(영문) 준수.
  * 기간은 FROM/TO(aplyYmdFrom/aplyYmdTo) 범위이므로 DateRangeValue 1키로 표현한다(regDt 컨벤션).
  */
-export interface MockPrfmncPrdocSearchFilter {
+export interface PrfmncPrdocSearchFilter {
   /** 기간(aplyYmdFrom~aplyYmdTo). */
   aplyYmd: DateRangeValue
   /** 계약번호(ctrtNo). */
@@ -304,7 +304,7 @@ export interface MockPrfmncPrdocSearchFilter {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 실적증명서 신청 접수(dm_prfmncPrdocAplyInfo). */
-export interface MockPrfmncPrdocAplyInfo {
+export interface PrfmncPrdocAplyInfo {
   /** 접수번호 (R, 11) */
   prfmncRcptNo: string
   /**
@@ -317,20 +317,20 @@ export interface MockPrfmncPrdocAplyInfo {
 }
 
 /** 제출 상태(sttsVl) — slide336 1.3 "전송중, 송신완료, 실패, 제출취소". */
-export type MockSbmsnSttsVl = '전송중' | '송신완료' | '실패' | '제출취소'
+export type SbmsnSttsVl = '전송중' | '송신완료' | '실패' | '제출취소'
 
 /** 제출 협회(dl_sbmsnAsctnList) — 실적증명서 제출(MUI-CM-04-P20, slide336 1.3). */
-export interface MockSbmsnAsctnItem {
+export interface SbmsnAsctnItem {
   /** 제출협회명 (R, 100) */
   sbmsnSttsNm: string
   /** 상태 (R, 2) — 전송중/송신완료/실패/제출취소. 미제출이면 없음(레이블 미표시). */
-  sttsVl?: MockSbmsnSttsVl
+  sttsVl?: SbmsnSttsVl
   /** 비고 (E, 4000) — 제출취소 시 취소사유. 송신완료 시 입력/버튼 활성화. */
   rmrkCn?: string
 }
 
 /** 계약정보(dm_ctrtInfo) — T01 계약정보 탭. */
-export interface MockPrfmncPrdocCtrtInfo {
+export interface PrfmncPrdocCtrtInfo {
   /** 계약번호 (R, 35) — 설계서 항목명 "ctrtNo/CtrtOd"(계약번호+차수 조합 표시). */
   ctrtNo: string
   /** 차수 — 설계서 표기 그대로 CtrtOd(대문자 C). 표시: `${ctrtNo}(${CtrtOd})`. */
@@ -359,7 +359,7 @@ export interface MockPrfmncPrdocCtrtInfo {
 }
 
 /** 신청정보 입력(dm_prfmncPrdocAplyInptInfo 1.3 + 1.4) — 신청정보 탭 공통. */
-export interface MockPrfmncPrdocAplyInptInfo {
+export interface PrfmncPrdocAplyInptInfo {
   /** 신청인 연락처 (R, 100) */
   entlno: string
   /** 발급수량 (R, 10) */
@@ -391,7 +391,7 @@ export interface MockPrfmncPrdocAplyInptInfo {
 }
 
 /** 시공자(대표)(dm_prfmncPrdocAplyRprsInfo) — T03. */
-export interface MockPrfmncPrdocAplyRprsInfo {
+export interface PrfmncPrdocAplyRprsInfo {
   /** 회사명 (R, 100) */
   bzentyNm: string
   /** 면허번호 (R, 100) */
@@ -405,7 +405,7 @@ export interface MockPrfmncPrdocAplyRprsInfo {
 }
 
 /** 계약 및 준공(총공사 기준)(dm_prfmncPrdocAplyWholCstrnInfo) — T03. */
-export interface MockPrfmncPrdocAplyWholCstrnInfo {
+export interface PrfmncPrdocAplyWholCstrnInfo {
   /** 계약일자 (R, 8) */
   ctrtYmd: string
   /** 착공일자 (R, 8) */
@@ -421,7 +421,7 @@ export interface MockPrfmncPrdocAplyWholCstrnInfo {
 }
 
 /** 계약 및 준공(금차공사 기준)(dm_prfmncPrdocAplyCstrnInfo) — T03. 항목명 접미 `2`. */
-export interface MockPrfmncPrdocAplyCstrnInfo {
+export interface PrfmncPrdocAplyCstrnInfo {
   ctrtYmd2?: string
   bgncstYmd2?: string
   cmcnYmd2?: string
@@ -431,7 +431,7 @@ export interface MockPrfmncPrdocAplyCstrnInfo {
 }
 
 /** 공사설정(dm_prfmncPrdocAplyCstrnTypeInfo) — T03 공사성질. 다중 선택 값의 조합 문자열 표시. */
-export interface MockPrfmncPrdocAplyCstrnTypeInfo {
+export interface PrfmncPrdocAplyCstrnTypeInfo {
   /** 건설공사 — cnstrNewCstrnYn/cnstrExpnCstrnYn/cnstrRmdlCstrnYn 값(신규/확장/개보수, 다중) */
   cnstrDivs?: string
   /** 전기/그 밖의 — eltyNewCstrnYn/eltyEpxnCstrnYn/eltyRlocatCstrnYn/eltyEstblCstrnYn/eltyRprwrkYn 값(다중) */
@@ -439,7 +439,7 @@ export interface MockPrfmncPrdocAplyCstrnTypeInfo {
 }
 
 /** 공동도급 여부(dm_prfmncPrdocAplyJntCtrcInfo) — T03. */
-export interface MockPrfmncPrdocAplyJntCtrcInfo {
+export interface PrfmncPrdocAplyJntCtrcInfo {
   /** 건설공사 (R, 1) — 공동이행방식/분담이행방식/단독도급 */
   jntCtrcCd?: string
 }
@@ -448,7 +448,7 @@ export interface MockPrfmncPrdocAplyJntCtrcInfo {
  * 실적의 종류·시공자 카드·세부정보(dm_prfmncPrdocAplyprfmncTypeInfo) — T03.
  * 시공자(대표)/시공자 1/시공자 2 카드가 같은 영역을 반복 사용.
  */
-export interface MockPrfmncPrdocAplyPrfmncTypeInfo {
+export interface PrfmncPrdocAplyPrfmncTypeInfo {
   /** 실적의종류 — prfmncCncptDesignYn/…/prfmncEtcYn 값(다중 선택) */
   rsltDivs?: string
   /** 회사명 (E/R, 200) */
@@ -478,7 +478,7 @@ export interface MockPrfmncPrdocAplyPrfmncTypeInfo {
 }
 
 /** 하도급 내용(dm_prfmncPrdocAplySbctrInfo) — T03. 최대 3건, 정보 없으면 숨김. */
-export interface MockPrfmncPrdocAplySbctrInfo {
+export interface PrfmncPrdocAplySbctrInfo {
   /** 하도급자 (E, 100) */
   sbctrSeNm?: string
   /** 하도급공사규모 및 내용 (E, 100) */
@@ -488,7 +488,7 @@ export interface MockPrfmncPrdocAplySbctrInfo {
 }
 
 /** 최저가 적정성심사관련 시공실적자료(dm_prfmncPrdocAplyLwprcInfo) — T03. */
-export interface MockPrfmncPrdocAplyLwprcInfo {
+export interface PrfmncPrdocAplyLwprcInfo {
   /** 구분 (R, 100) — 화면 표기 '시공내용' */
   cnstCn?: string
   /** 사용장비명 (R, 100) */
@@ -519,7 +519,7 @@ export interface MockPrfmncPrdocAplyLwprcInfo {
  * 신청인(dm_prfmncPrdocAplyAplcntInfo) — unitC~I 공통 표시(항목 설명 1.13/1.15/1.18/1.20/1.24/1.30/1.32).
  * unit 별로 노출 항목이 조금씩 달라(증명서용도·전화번호·등록번호 유무) 필드를 합집합으로 선택 사용.
  */
-export interface MockPrfmncPrdocAplcntInfo {
+export interface PrfmncPrdocAplcntInfo {
   /** 상호 (R, 200) */
   bzentyNm?: string
   /** 대표자 (R, 200) */
@@ -539,7 +539,7 @@ export interface MockPrfmncPrdocAplcntInfo {
 }
 
 /** 공사내역(dm_prfmncPrdocAplyCstrnDsctnInfo 1.14) — unitC(T04/T14). */
-export interface MockPrfmncPrdocCstrnDsctnInfoC {
+export interface PrfmncPrdocCstrnDsctnInfoC {
   /** 공사명 (R, 300) */
   cstrnNm?: string
   /** 총공사금액 (R, 22) */
@@ -585,7 +585,7 @@ export interface MockPrfmncPrdocCstrnDsctnInfoC {
 }
 
 /** 건설폐기물 수집/운반용역 이행실적(dm_prfmncPrdocAplyClctCnvncInfo 1.16) — unitD(T05/T15). */
-export interface MockPrfmncPrdocClctCnvncInfo {
+export interface PrfmncPrdocClctCnvncInfo {
   /** 용역명 (R, 100) */
   clctCnvncLbsvcNm?: string
   /** 계약일자 (R, 8) */
@@ -605,7 +605,7 @@ export interface MockPrfmncPrdocClctCnvncInfo {
 }
 
 /** 건설폐기물 중간처리용역 이행실적(dm_prfmncPrdocAplyMdPrcsLbsvcInfo 1.17) — unitD(T05/T15). */
-export interface MockPrfmncPrdocMdPrcsLbsvcInfo {
+export interface PrfmncPrdocMdPrcsLbsvcInfo {
   /** 용역명 (R, 100) */
   mdPrcsLbsvcNm?: string
   /** 계약일자 (R, 8) */
@@ -625,7 +625,7 @@ export interface MockPrfmncPrdocMdPrcsLbsvcInfo {
 }
 
 /** 공사내역(dm_prfmncPrdocAplyCstrnDsctnInfo 1.19) — unitE(T06/T16) 정보통신공사. */
-export interface MockPrfmncPrdocCstrnDsctnInfoE {
+export interface PrfmncPrdocCstrnDsctnInfoE {
   /** 공사명 (R, 300) */
   cstrnNm?: string
   /** 계약연월 (R, 8) */
@@ -647,7 +647,7 @@ export interface MockPrfmncPrdocCstrnDsctnInfoE {
 }
 
 /** 소방시설 공사내역(dm_prfmncPrdocAplyFrsvcCstrnDsctnInfo 1.21) — unitF(T07/T17). */
-export interface MockPrfmncPrdocFrsvcCstrnDsctnInfo {
+export interface PrfmncPrdocFrsvcCstrnDsctnInfo {
   /** 공사명 (R, 300) */
   cstrnNm?: string
   /** 업종 (R, 50) */
@@ -675,7 +675,7 @@ export interface MockPrfmncPrdocFrsvcCstrnDsctnInfo {
 }
 
 /** 소방시설 공사실적 금액(dm_prfmncPrdocAplyFrsvcCstrnPrfmncInfo 1.22) — unitF(T07/T17). */
-export interface MockPrfmncPrdocFrsvcCstrnPrfmncInfo {
+export interface PrfmncPrdocFrsvcCstrnPrfmncInfo {
   /** 총 도급계약금액 (R, 25,3) */
   ctrcTctrtAmt?: number
   /** 전년까지의 누계 기성액 (R, 22) */
@@ -697,7 +697,7 @@ export interface MockPrfmncPrdocFrsvcCstrnPrfmncInfo {
 }
 
 /** 전기공사 내역(dm_prfmncPrdocAplyEltyCstrnDsctnInfo 1.25) — unitG(T08/T18). */
-export interface MockPrfmncPrdocEltyCstrnDsctnInfo {
+export interface PrfmncPrdocEltyCstrnDsctnInfo {
   /** 공사명 (R, 300) */
   cstrnNm?: string
   /** 공사종류 (R, 50) */
@@ -725,7 +725,7 @@ export interface MockPrfmncPrdocEltyCstrnDsctnInfo {
 }
 
 /** 전기공사실적 금액(dm_prfmncPrdocAplyEltyCstrnPrfmncInfo 1.26) — unitG(T08/T18). */
-export interface MockPrfmncPrdocEltyCstrnPrfmncInfo {
+export interface PrfmncPrdocEltyCstrnPrfmncInfo {
   /** 총 도급계약금액 (R, 25,3) */
   ctrcTctrtAmt?: number
   /** 전년까지의 누계 기성액 (R, 22) */
@@ -747,7 +747,7 @@ export interface MockPrfmncPrdocEltyCstrnPrfmncInfo {
 }
 
 /** 하도급내역(dm_prfmncPrdocAplySbctrInfo 1.27) — unitG(T08/T18). 최대 2건(설계서 접미 2). */
-export interface MockPrfmncPrdocSbctrDsctnInfo {
+export interface PrfmncPrdocSbctrDsctnInfo {
   /** 하도급업체명 (R, 200) */
   sbctrBzentyNm?: string
   /** 하도금액 (R, 25,3) */
@@ -763,7 +763,7 @@ export interface MockPrfmncPrdocSbctrDsctnInfo {
  * 설계서 1.29 는 공사종류별 접두(elty/frsvc/mcwk/pbwks/arch/comm/etc)로 필드를 flat 정의하나,
  * 화면은 공사(종)명 반복 테이블이라 행 모델로 표현. 열 항목명은 공통 항목명(영문) 재사용.
  */
-export interface MockPrfmncPrdocMltCstrnRow {
+export interface PrfmncPrdocMltCstrnRow {
   /** 공사(종)명 (R) */
   cstrnKndNm?: string
   /** 계약액 (R, 25,3) */
@@ -783,13 +783,13 @@ export interface MockPrfmncPrdocMltCstrnRow {
 }
 
 /** 시공규모(dm_prfmncPrdocAplyCnstSclInfo 1.28) — unitG(T08/T18). */
-export interface MockPrfmncPrdocCnstSclInfo {
+export interface PrfmncPrdocCnstSclInfo {
   /** 시공규모 (R, 4000) */
   cnstSclExpln?: string
 }
 
 /** 공사내역(dm_prfmncPrdocAplyCstrnDsctnInfo 1.31) — unitH(T09/T19) 세부공종(전문). */
-export interface MockPrfmncPrdocCstrnDsctnInfoH {
+export interface PrfmncPrdocCstrnDsctnInfoH {
   /** 공사명 (R, 300) */
   cstrnNm?: string
   /** 총공사금액 (R, 22) */
@@ -829,7 +829,7 @@ export interface MockPrfmncPrdocCstrnDsctnInfoH {
 }
 
 /** 공사내역(dm_prfmncPrdocAplyCstrnDsctnInfo 1.33) — unitI(T10/T20) 직접시공분. */
-export interface MockPrfmncPrdocCstrnDsctnInfoI {
+export interface PrfmncPrdocCstrnDsctnInfoI {
   /** 공사명 (R, 300) */
   cstrnNm?: string
   /** 총공사금액 (R, 22) */
@@ -859,7 +859,7 @@ export interface MockPrfmncPrdocCstrnDsctnInfoI {
 }
 
 /** 추가사항(dm_prfmncPrdocAplyAddMttrInfo 1.34) — AplyInfo(T11/T21) 부대+비시설공사. */
-export interface MockPrfmncPrdocAddMttrInfo {
+export interface PrfmncPrdocAddMttrInfo {
   /** 실적년도(F) (R, 4) */
   prfmncYr1?: string
   /** 실적년도(T) (R, 4) */
@@ -893,16 +893,16 @@ export interface MockPrfmncPrdocAddMttrInfo {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 진행상태(prcsStcd) 코드 — 신청(P)/반려(R)/승인(A). */
-export type MockOvsSosPrcsStcd = 'P' | 'R' | 'A'
+export type OvsSosPrcsStcd = 'P' | 'R' | 'A'
 
 /** 국외조달원 신청 목록 항목(dl_resultList + 카드 표시용 상세 항목) — 항목명(영문) 설계서 그대로. */
-export interface MockOvsSosCnfdocItem {
+export interface OvsSosCnfdocItem {
   /** 접수번호 (R, 12) — 목록 key. */
   aplyRcptNo: string
   /** 발급대상 업체 (R, 100) */
   trgtBzentyCdNm: string
   /** 진행상태 (R, 1) — P신청/R반려/A승인 */
-  prcsStcd: MockOvsSosPrcsStcd
+  prcsStcd: OvsSosPrcsStcd
   /** 신청일자 (R, 8) */
   aplyYmd: string
   /** 승인일자 (R, 8, 선택) */
@@ -920,7 +920,7 @@ export interface MockOvsSosCnfdocItem {
 }
 
 /** 국외조달원 신청 목록 검색조건(dm_searchInfo) — 기간 FROM/TO 는 DateRangeValue 1키(regDt 컨벤션). */
-export interface MockOvsSosCnfdocSearchFilter {
+export interface OvsSosCnfdocSearchFilter {
   /** 기간(aplyYmdFrom~aplyYmdTo). */
   aplyYmd: DateRangeValue
   /** 진행상태(prcsStcd) — 전체/신청(P)/반려(R)/승인(A). */
@@ -933,7 +933,7 @@ export interface MockOvsSosCnfdocSearchFilter {
  * 국외조달원등록증신청 — 신청인(dm_ovsSosAplyInfo). 설계서 slide335. MUI-CM-04-P22.
  * 회사명·성명은 자동완성(readonly), 직위·연락처는 편집(비어 있으면 빈 상태).
  */
-export interface MockOvsSosAplyInfo {
+export interface OvsSosAplyInfo {
   /** 성명 (R, 100) */
   empNm: string
   /** 회사명 (R, 100) */
@@ -945,7 +945,7 @@ export interface MockOvsSosAplyInfo {
 }
 
 /** 국외조달원등록증신청 — 조달원 등록증(dm_ovsSosAplyDataInfo). 설계서 slide335. */
-export interface MockOvsSosAplyDataInfo {
+export interface OvsSosAplyDataInfo {
   /** 업체명1 (E, 100) — 조달업체선택(P23)으로 선택 */
   bzentyNm1: string
   /** 업체명2 (E, 100) */
@@ -959,7 +959,7 @@ export interface MockOvsSosAplyDataInfo {
  * 국외조달원등록증신청(M22)의 [업체선택] 바텀시트 검색 결과. 설계서 00.공통 v0.84 slide343.
  * 항목명(영문)은 설계서 dl_resultList 그대로.
  */
-export interface MockOvsSosBzentyChcItem {
+export interface OvsSosBzentyChcItem {
   /** 업체코드 (R, 5) — 목록 key */
   bzentyCd: string
   /** 업체명 (R, 100) */
@@ -976,7 +976,7 @@ export interface MockOvsSosBzentyChcItem {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 업체정보 — 항목명(영문)은 설계서 dm_bzentyInfo 그대로. */
-export interface MockBzentyInfo {
+export interface BzentyInfo {
   /** 업체명 (R, 100) */
   bzentyNm: string
   /** 사업자등록번호 (R, 10) */
@@ -998,14 +998,14 @@ export interface MockBzentyInfo {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 캘린더 이벤트 구분 — 배지(물품/공사=관심 입찰공고, 개인=작성 스케줄). */
-export type MockMyPageSchdlSeCd = 'goods' | 'construction' | 'personal'
+export type MyPageSchdlSeCd = 'goods' | 'construction' | 'personal'
 
 /** 업무 캘린더 항목(관심 입찰공고 + 개인 스케줄 통합). */
-export interface MockMyPageSchedule {
+export interface MyPageSchedule {
   /** 로컬 식별자(고유). */
   id: string
   /** 구분 — goods(물품)·construction(공사)=관심 입찰공고 / personal(개인)=작성 스케줄. */
-  schdlSeCd: MockMyPageSchdlSeCd
+  schdlSeCd: MyPageSchdlSeCd
   /** 일정 일자 'YYYY-MM-DD' — 캘린더 표식·정렬 기준. */
   schdlDt: string
   /** 공고번호(pbancNo) — 관심 입찰공고 항목에만. 클릭 시 해당 입찰공고로 이동. */
@@ -1016,7 +1016,7 @@ export interface MockMyPageSchedule {
   schdlCn?: string
   /**
    * 작성일자(wrtYmd) 'YYYY-MM-DD' — 같은 일자 항목이 3건을 넘을 때 '최신순' 정렬 기준
-   * (설계서 slide81 "날짜 선택 시 하단 6번항에 3개까지 표시"). 항목명은 업무캘린더(MockTaskCldrItem)와 동일.
+   * (설계서 slide81 "날짜 선택 시 하단 6번항에 3개까지 표시"). 항목명은 업무캘린더(TaskCldrItem)와 동일.
    */
   wrtYmd?: string
 }
@@ -1033,7 +1033,7 @@ export interface MockMyPageSchedule {
  * 관심입찰공고 목록 데이터영역(dl_itrstBidPbancList) 1건 — 설계서 항목명(영문) 준수.
  * 목록엔 관심(찜) 항목만 노출되므로 itrst 기본 true. 별 토글 해제 시 false(페이지 유지 중엔 목록에 남음).
  */
-export interface MockItrstBidPbancItem {
+export interface ItrstBidPbancItem {
   /** 카드 식별자(상세 라우팅 키·목록 key). */
   id: string
   /** 관심 여부 — 별 하이라이트 on/off. 해제해도 페이지 유지 중엔 목록에 남고 별만 off(설계서 slide81). */
@@ -1065,15 +1065,15 @@ export interface MockItrstBidPbancItem {
 //   데이터영역(dl_taskCldrList): 제목 schdlTtl(100·R) · 작성일자 wrtYmd(8·R).
 //   ⚠️ schdlDt(일정 일자)·schdlCn(내용)은 데이터영역에 없으나 화면(P07/P08)에 존재해 잠정 영문키 부여.
 //      (schdlDt = 캘린더 표식·선택 기준, schdlCn = P07/P08 '내용' 필드) — API 연동 시 실제 매핑 확인.
-//   구분(schdlSeCd)·공고번호(pbancNo)·공고명(pbancNm)은 마이페이지 캘린더(MockMyPageSchedule)와 동일 관례.
+//   구분(schdlSeCd)·공고번호(pbancNo)·공고명(pbancNm)은 마이페이지 캘린더(MyPageSchedule)와 동일 관례.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 업무캘린더 항목(관심 입찰공고 + 개인 일정 통합) — 마이페이지 캘린더 구분 코드 재사용. */
-export interface MockTaskCldrItem {
+export interface TaskCldrItem {
   /** 로컬 식별자(목록 key·상세/삭제 대상 식별). */
   id: string
   /** 구분 — goods(물품)·construction(공사)=관심 입찰공고 / personal(개인)=작성 일정. */
-  schdlSeCd: MockMyPageSchdlSeCd
+  schdlSeCd: MyPageSchdlSeCd
   /** 일정 일자 'YYYY-MM-DD' — 캘린더 표식·날짜 선택 기준. ⚠️ 데이터영역 미정의(wrtYmd만 존재) — 잠정. */
   schdlDt: string
   /** 제목(schdlTtl) — 개인 일정 제목(P07/P08). 관심 공고는 공고명(pbancNm) 사용. */
@@ -1089,7 +1089,7 @@ export interface MockTaskCldrItem {
 }
 
 /** P08 등록/수정 폼 값 — 선택 날짜·제목(필수) + 내용(선택). (스키마: TaskCldrReg.schema.ts) */
-export interface MockTaskCldrRegValues {
+export interface TaskCldrRegValues {
   /** 선택 날짜(schdlDt) 'YYYY-MM-DD' — 필수. */
   schdlDt: string
   /** 제목(schdlTtl) — 필수. */
@@ -1106,7 +1106,7 @@ export interface MockTaskCldrRegValues {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 나의진행업무현황 목록(진행중) 1건 — 설계서 slide78 카드 표기 기준. */
-export interface MockMyPrgrsHstryItem {
+export interface MyPrgrsHstryItem {
   /** 카드 식별자(목록 key·상세 라우팅). */
   id: string
   /** 판단번호(prcmNo) — subtitle. 예 '6000A' / '2026-00590'. */
@@ -1136,7 +1136,7 @@ export interface MockMyPrgrsHstryItem {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 나의업무이력현황 목록(종료) 1건 — 설계서 slide80 카드 표기 기준. */
-export interface MockMyTaskHstryItem {
+export interface MyTaskHstryItem {
   /** 카드 식별자(목록 key·상세 라우팅). */
   id: string
   /** 현황 구분(taskSttsNm) — 입찰참가신청/입찰서제출/공개수의협상/계약. 상단 탭·뱃지. ⚠️ 잠정. */
@@ -1165,7 +1165,7 @@ export interface MockMyTaskHstryItem {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 개인별수신처 목록(dl_indvRcofcList) 1건 — 설계서 항목명(영문) 준수. */
-export interface MockIndvRcofcItem {
+export interface IndvRcofcItem {
   /** 목록 key(로컬 식별). */
   id: string
   /** 전자문서(eldocNm) — 전자문서명(예: '물량배정서'). 100자. 전자문서코드 XSTORECATE. */
@@ -1188,7 +1188,7 @@ export interface MockIndvRcofcItem {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 관심법령 목록(dl_itrstSttList) 1건 — 설계서 항목명(영문) 준수. */
-export interface MockItrstSttItem {
+export interface ItrstSttItem {
   /** 목록 key(로컬 식별). */
   id: string
   /** 관심(별) 여부 — 하이라이트 on/off. 해제해도 페이지 유지 중엔 목록에 남음(설계서 slide105). */
@@ -1209,11 +1209,11 @@ export interface MockItrstSttItem {
 // 법령조회 = 법령정보 (MUI-CM-04-M24 SttInfoListPage). 설계서 00.공통 v0.84 slide344·345.
 //   고객센터 > 법령조회. 법령구분(싱글 셀렉트)·법령명으로 조회, 카드 클릭 시 외부 브라우저로
 //   법령 원문(sttUrl) 이동, 즐겨찾기(sttItrst) 토글. 항목명(영문)은 slide345 dl_resultList 정본 그대로.
-//   ⚠️ 관심법령(MockItrstSttItem)은 slide106 오기로 법령구분을 sttSeNm 으로 뒀으나, M24 는 정본대로 sttType.
+//   ⚠️ 관심법령(ItrstSttItem)은 slide106 오기로 법령구분을 sttSeNm 으로 뒀으나, M24 는 정본대로 sttType.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 법령구분(sttType) 코드값 — GTSC0017. '전체'는 필터 전용(데이터값 아님). */
-export const MockSTT_TYPES = [
+export const STT_TYPES = [
   '법령',
   '대통령령',
   '부령',
@@ -1226,22 +1226,22 @@ export const MockSTT_TYPES = [
   '공고',
   '임의법령',
 ] as const
-export type MockSttType = (typeof MockSTT_TYPES)[number]
+export type SttType = (typeof STT_TYPES)[number]
 
 /** 법령정보조회 검색조건(dm_searchInfo) — 설계서 slide345. */
-export interface MockSttInfoSearchFilter {
+export interface SttInfoSearchFilter {
   /** 법령구분(sttType) — 전체/11종. '전체'는 필터 전용. */
-  sttType: MockSttType | '전체'
+  sttType: SttType | '전체'
   /** 법령명(sttNm) — Like 검색어. */
   sttNm: string
 }
 
 /** 법령정보조회 목록(dl_resultList) 1건 — 설계서 slide345 항목명(영문) 그대로. */
-export interface MockSttInfoItem {
+export interface SttInfoItem {
   /** 목록 key(로컬 식별) — 설계서 순번(no)은 표시순서라 안정 key 용 id 로 대체. */
   id: string
   /** 법령구분(sttType) — 200자. 코드 GTSC0017. */
-  sttType: MockSttType
+  sttType: SttType
   /** 법령약어(sttAbbrNm) — 200자. */
   sttAbbrNm: string
   /** 법령명(sttNm) — 300자. */
@@ -1265,7 +1265,7 @@ export interface MockSttInfoItem {
  * 나의 게시물 목록 1건 — 설계서 slide107 화면 표기 기준(잠정 영문키).
  * ⚠️ 상세 화면 진입 키(게시판 구분·게시글 번호)는 상세 페이지 제작 후 추가한다(2026-08-03 보류).
  */
-export interface MockMyPstItem {
+export interface MyPstItem {
   /** 목록 key(로컬 식별). */
   id: string
   /** 작성 제목(pstTtl) — 카드 제목(2줄까지, 넘치면 말줄임). ⚠️ 잠정. */
@@ -1282,20 +1282,20 @@ export interface MockMyPstItem {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 폴더 접근권한(authrtSe) — 접근권한코드 GTSC0009(쓰기/읽기/없음). ⚠️ 실제 코드값은 API 연동 시 확인. */
-export type MockDigitalCabinetAuthrtSe = 'write' | 'read' | 'none'
+export type DigitalCabinetAuthrtSe = 'write' | 'read' | 'none'
 
 /** 폴더 사용자 권한(dl_digitalCabinetAuthrtList) 1건 — 설계서 항목명(영문) 준수. */
-export interface MockDigitalCabinetAuthrt {
+export interface DigitalCabinetAuthrt {
   /** 사용자(userNm). 200자. */
   userNm: string
   /** 권한(authrtSe) — 쓰기/읽기/없음. 접근권한코드 GTSC0009. */
-  authrtSe: MockDigitalCabinetAuthrtSe
+  authrtSe: DigitalCabinetAuthrtSe
   /** 수정일시(mdfcnDt) — 'YYYY-MM-DD HH:mm'. 14자. */
   mdfcnDt?: string
 }
 
 /** 디지털캐비닛 폴더(dl_digitalCabinetFldrList) 1건 — 설계서 항목명(영문) 준수. */
-export interface MockDigitalCabinetFldr {
+export interface DigitalCabinetFldr {
   /** 폴더ID(fldrSn) — Hidden. 10자. 파일목록/권한 조회 키. */
   fldrSn: string
   /** 폴더명(fldrNm). 50자. */
@@ -1309,11 +1309,11 @@ export interface MockDigitalCabinetFldr {
   /** 수정일시(mdfcnDt) — 'YYYY-MM-DD HH:mm'. 14자. */
   mdfcnDt?: string
   /** 폴더 권한 목록(P15 권한 설정). */
-  authrtList?: MockDigitalCabinetAuthrt[]
+  authrtList?: DigitalCabinetAuthrt[]
 }
 
 /** 디지털캐비닛 폴더 내 파일(dl_digitalCabinetFileList) 1건 — 설계서 항목명(영문) 준수. */
-export interface MockDigitalCabinetFile {
+export interface DigitalCabinetFile {
   /** 파일ID(fileId) — Hidden. 38자. */
   fileId: string
   /** 파일명(fileNm). 255자. */
@@ -1340,18 +1340,18 @@ export interface MockDigitalCabinetFile {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 문서구분 — 목록 탭 그룹(받은/보낸/반려/임시저장). ⚠️ 설계서 데이터영역 미정의(파생키). */
-export type MockDocBoxSeCd = 'received' | 'sent' | 'rejected' | 'temp'
+export type DocBoxSeCd = 'received' | 'sent' | 'rejected' | 'temp'
 
 /**
  * 문서함 목록(합산) 1건 — 4개 데이터영역(받은/보낸/임시/반려)을 합친 통합 아이템.
  * 타입별로 채워지는 필드가 달라(날짜/기관 라벨) 공통 필드는 모두 optional 로 둔다.
  * 상세(M11) 상단은 이 항목(navigate state)으로 그리고, 본문(문서내용/첨부목록)은 상세 목업으로 보완.
  */
-export interface MockDocBoxItem {
+export interface DocBoxItem {
   /** 카드 식별자(목록 key·상세 라우팅). */
   id: string
   /** 문서구분(파생) — 탭 그룹. ⚠️ 데이터영역 미정의(검색필터 문서구분 표기 기반). */
-  docSeCd: MockDocBoxSeCd
+  docSeCd: DocBoxSeCd
   /** 카드 상단 레이블(받은 문서/보낸 문서/임시저장/반려받은 문서/반려한 문서). ⚠️ 잠정(문서구분 표기). */
   docSeNm: string
   /** 문서명(docNm) — 카드 제목. 200자. */
@@ -1384,7 +1384,7 @@ export interface MockDocBoxItem {
  * 문서함 상세 첨부파일 1건 — 첨부문서다운로드 데이터영역(dl_atchDocList), MUI-CM-06-T03.
  * 설계서 slide95·98 항목명(영문) 준수.
  */
-export interface MockDocBoxAtchFile {
+export interface DocBoxAtchFile {
   /** 첨부문서명(fileTtl) — 255자. */
   fileTtl: string
   /** 파일명(fileNm) — 실제 다운로드 파일명(예: '첨부파일명.hwp'). 255자. */
@@ -1406,7 +1406,7 @@ export interface MockDocBoxAtchFile {
  * 업체일반 데이터영역(dm_bzentyGnrlInfo) — MUI-CM-01-T01. 설계서 slide118 항목명(영문) 준수.
  * 사업구분(bizCd)은 여러 개 노출될 수 있어 배열로 둔다(설계서 "사업구분은 여러 개 노출될 수 있음").
  */
-export interface MockBzentyGnrlInfo {
+export interface BzentyGnrlInfo {
   /** 업체코드(bzentyCd) — 5자. 예 '100F'. */
   bzentyCd: string
   /** 상호명(bzentyNm) — 100자. */
@@ -1454,7 +1454,7 @@ export interface MockBzentyGnrlInfo {
 }
 
 /** 상태/부정당 데이터영역(dl_bzentySttsList) 1건 — MUI-CM-01-T01. 설계서 slide118 항목명(영문) 준수. */
-export interface MockBzentyStts {
+export interface BzentyStts {
   /** 상태코드(bzentyStcd) — 2자. */
   bzentyStcd: string
   /** 상태명(bzentyStNm) — 20자. 상태구분코드로 상태명 조회. 예 '양도,양수'. */
@@ -1473,7 +1473,7 @@ export interface MockBzentyStts {
  * 수의계약배제 데이터영역(dl_bzentyRlsVltrnsRstricList) 1건 — MUI-CM-01-T01.
  * 설계서 slide119 항목명(영문) 준수. 기본 3개월 필터/전체 조회(dm_bzentyRlsVltrnsRstric 이벤트).
  */
-export interface MockBzentyRlsVltrnsRstric {
+export interface BzentyRlsVltrnsRstric {
   /** 공고번호(pbancNo) — 7자. */
   pbancNo: string
   /** 판단번호(prcmNo) — 38자. */
@@ -1493,7 +1493,7 @@ export interface MockBzentyRlsVltrnsRstric {
 }
 
 /** 대표자 데이터영역(dl_bzentyRprsvList) 1건 — MUI-CM-01-T01. 설계서 slide119 항목명(영문) 준수. */
-export interface MockBzentyRprsv {
+export interface BzentyRprsv {
   /** 대표대표자여부(rprsvYn) — 1자 'Y'/'N' → '대대표'/'대표'. */
   rprsvYn: string
   /** 대표자명(rprsvNm) — 100자. */
@@ -1505,7 +1505,7 @@ export interface MockBzentyRprsv {
 }
 
 /** 입찰대리인 데이터영역(dl_bzentyBidAgtList) 1건 — MUI-CM-01-T01. 설계서 slide120 항목명(영문) 준수. */
-export interface MockBzentyBidAgt {
+export interface BzentyBidAgt {
   /** 직위(agtJbpsNm) — 100자. */
   agtJbpsNm: string
   /** 성명(agtNm) — 100자. */
@@ -1515,7 +1515,7 @@ export interface MockBzentyBidAgt {
 }
 
 /** 등록품목명세 데이터영역(dl_regTrgtItemList) 1건 — MUI-CM-01-T02. 설계서 slide123 항목명(영문) 준수. */
-export interface MockRegTrgtItem {
+export interface RegTrgtItem {
   /** 품목코드(itemCd) — 10자. */
   itemCd: string
   /** 품류코드(knditmCd) — 2자. */
@@ -1533,7 +1533,7 @@ export interface MockRegTrgtItem {
 }
 
 /** 담당자정보 데이터영역(dm_picInfo) — MUI-CM-01-T02. 설계서 slide123 항목명(영문) 준수. */
-export interface MockPicInfo {
+export interface PicInfo {
   /** 담당자명(picNm) — 100자. */
   picNm: string
   /** 전화번호(picEntlno) — 88자. */
@@ -1548,7 +1548,7 @@ export interface MockPicInfo {
  * 대표품류및조합/단체 데이터영역(dm_knditmListAsctGrpList) 1건 — MUI-CM-01-T02.
  * 설계서 slide123 항목명(영문) 준수. (설계서 대표품류코드 항목명이 knditmCdNm 로 중복 표기돼 코드는 knditmCd 로 둔다.)
  */
-export interface MockKnditmAsctGrp {
+export interface KnditmAsctGrp {
   /** 대표품류코드(knditmCd) — 2자. */
   knditmCd: string
   /** 대표품류(knditmCdNm) — 300자. 예 '05 / 피복'. */
@@ -1562,7 +1562,7 @@ export interface MockKnditmAsctGrp {
 }
 
 /** 시설정보 데이터영역(dm_bzentyFcltInfo) — MUI-CM-01-T03. 설계서 slide125 항목명(영문) 준수. */
-export interface MockBzentyFcltInfo {
+export interface BzentyFcltInfo {
   /** 대표업태(bzstatCdNm) — 100자. 예 '제조'. */
   bzstatCdNm: string
   /** 연락소(전화번호)(lcofcTelno) — 20자. */
@@ -1570,7 +1570,7 @@ export interface MockBzentyFcltInfo {
 }
 
 /** 시설면허정보 데이터영역(dl_bzentyFcltLcnsList) 1건 — MUI-CM-01-T03. 설계서 slide125 항목명(영문) 준수. */
-export interface MockBzentyFcltLcns {
+export interface BzentyFcltLcns {
   /** 공종(cnstpCdNm) — 100자. 예 '소방공사업'. */
   cnstpCdNm: string
   /** 업종코드(cnstpCd) — 4자. 예 '0001'. */
@@ -1591,7 +1591,7 @@ export interface MockBzentyFcltLcns {
  * 주력분야 데이터영역(dl_bzentyFcltMfrcFldList) 1건 — MUI-CM-01-T03. 설계서 slide125 항목명(영문) 준수.
  * (설계서 업종코드 항목명이 cnstpCdNm 로 중복 표기돼 코드는 cnstpCd 로 둔다 — 공종명과 키 충돌 방지.)
  */
-export interface MockBzentyFcltMfrcFld {
+export interface BzentyFcltMfrcFld {
   /** 공종명(cnstpCdNm) — 100자. */
   cnstpCdNm: string
   /** 업종코드(cnstpCd) — 4자. */
@@ -1619,7 +1619,7 @@ export interface MockBzentyFcltMfrcFld {
 //    화면 표기(영업정보/FSC/법인개인구분/해외관련) 기준 잠정 영문키 — API 연동 시 실제 데이터영역 매핑 확인 필요.
 
 /** 국내소재상사 영업정보 — MUI-CM-01-T04. ⚠️ 설계서 데이터영역 미정의(화면 표기 기준 잠정 영문키). */
-export interface MockDmsAgtSaleInfo {
+export interface DmsAgtSaleInfo {
   /** 연간매출액(anlSaleAmt) — 천원 단위 정수. ⚠️ 잠정. */
   anlSaleAmt: number
   /** 자산규모(astScl) — 천원 단위 정수. ⚠️ 잠정. */
@@ -1641,7 +1641,7 @@ export interface MockDmsAgtSaleInfo {
 }
 
 /** 국내소재상사 FSC(Federal Supply Classification) 코드 1건 — MUI-CM-01-T04. ⚠️ 설계서 데이터영역 미정의(잠정). */
-export interface MockDmsAgtFscCode {
+export interface DmsAgtFscCode {
   /** FSC 코드(fscCd) — 예 '1111'. ⚠️ 잠정. */
   fscCd: string
   /** 군급명(gunGrdNm) — 예 '기타 항공기 부수품'. ⚠️ 잠정. */
@@ -1649,7 +1649,7 @@ export interface MockDmsAgtFscCode {
 }
 
 /** 국내소재상사 법인/개인 구분 정보 — MUI-CM-01-T04. ⚠️ 설계서 데이터영역 미정의(잠정 영문키). */
-export interface MockDmsAgtCorpInfo {
+export interface DmsAgtCorpInfo {
   /** 법인/개인 구분(corpIndvSe) — 'corp'(법인)/'indv'(개인). ⚠️ 잠정. */
   corpIndvSe: 'corp' | 'indv'
   /** 법인등기기관(corpRgstOrgnNm) — 예 '방위사업청'. ⚠️ 잠정. */
@@ -1673,7 +1673,7 @@ export interface MockDmsAgtCorpInfo {
 }
 
 /** 국내소재상사 해외관련 업체정보 1건 — MUI-CM-01-T04. ⚠️ 설계서 데이터영역 미정의(잠정 영문키). */
-export interface MockDmsAgtOvsBzenty {
+export interface DmsAgtOvsBzenty {
   /** 업체코드(ovsBzentyCd) — 예 '1111'. ⚠️ 잠정. */
   ovsBzentyCd: string
   /** 업체명(ovsBzentyNm) — 예 'Test Corp'. ⚠️ 잠정. */
@@ -1694,7 +1694,7 @@ export interface MockDmsAgtOvsBzenty {
  * 조달원확인서 신청 목록 데이터영역(dl_resultList) 1건 — MUI-CM-01-M19. 설계서 slide134 항목명(영문) 준수.
  * 상태(aplyRcptStts)는 '발급'으로 고정된다(신청 시 바로 발급, slide134 비고).
  */
-export interface MockDmstSosCnfdocItem {
+export interface DmstSosCnfdocItem {
   /** 목록 key(로컬 식별). 접수번호가 고유하나 key 안정성 위해 별도 id 부여. */
   id: string
   /** 접수번호(aplyRcptNo) — 12자. 예 '2026051812'. */
@@ -1712,7 +1712,7 @@ export interface MockDmstSosCnfdocItem {
 }
 
 /** 조달원확인서 신청 검색조건(dm_searchInfo) — MUI-CM-01-M19. 설계서 slide134 항목명(영문) 준수. */
-export interface MockDmstSosCnfdocSearch {
+export interface DmstSosCnfdocSearch {
   /** 신청날짜(F)(edpPrcsYmdFrom) — 기간 시작 'YYYY-MM-DD'. 8자. */
   edpPrcsYmdFrom: string
   /** 신청날짜(T)(edpPrcsYmdTo) — 기간 종료 'YYYY-MM-DD'. 8자. */
@@ -1726,7 +1726,7 @@ export interface MockDmstSosCnfdocSearch {
  * 신청인 성명(aplcntNm)·연락처(aplcntTelno)는 ReadOnly(자동완성), 신청사유(aplyRsn)만 Editable·필수.
  * (폼 검증 스키마는 신청사유만 다룬다 — DmstSosCnfdocAply.schema.ts)
  */
-export interface MockDmstSosCnfdocAplyInfo {
+export interface DmstSosCnfdocAplyInfo {
   /** 신청인 성명(aplcntNm) — 100자. 자동완성(read-only). */
   aplcntNm: string
   /** 신청인 연락처(aplcntTelno) — 25자. 자동완성(read-only). */
@@ -1745,7 +1745,7 @@ export interface MockDmstSosCnfdocAplyInfo {
  * 추가등록정보 신청 목록 데이터영역(dl_resultList) 1건 — MUI-CM-01-M03. 설계서 slide139 항목명(영문) 준수.
  * 카드 클릭 시 처리상태(prgrsSttsNm) 무관하게 상세(T05 물품(내자)신청 / T06 국내소재상사신청) 진입.
  */
-export interface MockAddRegInfoAplyItem {
+export interface AddRegInfoAplyItem {
   /** 목록 key(로컬 식별). 접수번호가 고유하나 key 안정성 위해 별도 id 부여. */
   id: string
   /** 접수번호(rcptNo) — 12자. 예 '2020101010'. */
@@ -1766,7 +1766,7 @@ export interface MockAddRegInfoAplyItem {
  * 추가등록정보 신청 목록 검색조건(dm_searchInfo) — MUI-CM-01-M03/P24. 설계서 slide139 항목명(영문) 준수.
  * 기간·처리상태·품명은 데이터영역 표에 정의됨. 구분(bizCdNm)은 P24 '구분 설정' 화면 표기 기준 잠정 검색키(⚠️ dm_searchInfo 미정의).
  */
-export interface MockAddRegInfoAplySearch {
+export interface AddRegInfoAplySearch {
   /** 기간(F)(aplyYmdFrom) — 기간 시작 'YYYY-MM-DD'. 8자. 선택. */
   aplyYmdFrom: string
   /** 기간(T)(aplyYmdTo) — 기간 종료 'YYYY-MM-DD'. 8자. 선택. */
@@ -1788,7 +1788,7 @@ export interface MockAddRegInfoAplySearch {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 군수품무역대리업 신청 목록(dl_dfEqpmntTradAgncAplyList) 1건 — MUI-CM-01-M15. 설계서 slide180. */
-export interface MockDfEqpmntTradeAgncAplyItem {
+export interface DfEqpmntTradeAgncAplyItem {
   /** 목록 key(로컬 식별). 접수번호가 고유하나 key 안정성 위해 별도 id 부여. */
   id: string
   /** 구분(regAplySecd) — 신규/갱신/변경. 1자. */
@@ -1811,7 +1811,7 @@ export interface MockDfEqpmntTradeAgncAplyItem {
  * 군수품무역대리업 신청 접수·업체 정보(dm_dfEqpmntTradAgncAplyInfo) — MUI-CM-01-M16/M17/M18 공용.
  * 설계서 slide180·184·188. 조회결과(ReadOnly). 반려사유(atrzRjctRsn)는 반려 시에만.
  */
-export interface MockDfEqpmntTradeAgncAplyInfo {
+export interface DfEqpmntTradeAgncAplyInfo {
   /** 접수번호(rcptNo) — 8자. */
   rcptNo: string
   /** 신청일시(rcptYmd) — 'YYYY-MM-DD'. 8자. */
@@ -1848,7 +1848,7 @@ export interface MockDfEqpmntTradeAgncAplyInfo {
  * 군수품무역대리업 첨부서류(dl_dfEqpmntTradAgncAplyAtchFileList) 1건 — MUI-CM-01-M16/M17/M18.
  * 설계서 slide180·184·188. fileTtl(첨부서류명, 고정) + fileNm(첨부파일명, 선택). size/required 는 UI 표시용.
  */
-export interface MockDfEqpmntTradeAgncAtchFile {
+export interface DfEqpmntTradeAgncAtchFile {
   /** 첨부 슬롯 식별자(고유). */
   id: string
   /** 첨부서류명(fileTtl) — 200자. 등록신청서/이력서/청렴서약서/고용현황/기타 등. */
@@ -1866,7 +1866,7 @@ export interface MockDfEqpmntTradeAgncAtchFile {
 /**
  * 군수품무역대리업 보안측정인원(dl_scrtyMsrmtPrsnlList) 1건 — MUI-CM-01-M17/M18. 설계서 slide184·188.
  */
-export interface MockDfEqpmntScrtyMsrmtPrsnl {
+export interface DfEqpmntScrtyMsrmtPrsnl {
   /** 목록 key(로컬 식별). */
   id: string
   /** 성명(taskHdlrNm) — 100자. */
@@ -1888,11 +1888,11 @@ export interface MockDfEqpmntScrtyMsrmtPrsnl {
 //   설계서 00.공통 v0.84 slide149~177(문서 P148~176). 웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 업체정보 추가 등록.
 //   폼 입력값 타입은 각 폼 옆 *.schema.ts(z.infer)에 두고, 여기엔 목록/선택 팝업 아이템·폼 내 표 행 타입만 둔다.
 //   ⚠️ 국내소재상사(M23/T06)·등록품목명세 상태 컬럼 등은 설계서 데이터영역(항목명 영문) 표가 없어 화면 표기 기준 잠정 영문키.
-//      (FSC 는 상세 MockDmsAgtFscCode 재사용 — fscCd/gunGrdNm.)
+//      (FSC 는 상세 DmsAgtFscCode 재사용 — fscCd/gunGrdNm.)
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** P06 품류선택(KnditmChc) 1건 — 설계서 slide161(품류코드/품류명). */
-export interface MockKnditmChcItem {
+export interface KnditmChcItem {
   /** 품류코드(knditmCd) — 예 '11740'. */
   knditmCd: string
   /** 품류명(knditmCdNm) — 예 '피복'. */
@@ -1900,7 +1900,7 @@ export interface MockKnditmChcItem {
 }
 
 /** P07 조합/단체선택(AsctGrpChc) 1건 — 설계서 slide163(조합코드/단체명). */
-export interface MockAsctGrpChcItem {
+export interface AsctGrpChcItem {
   /** 조합/단체코드(asctCd) — 예 '11000'. */
   asctCd: string
   /** 조합/단체명(asctCdNm) — 예 '한국피복공업협동조합'. */
@@ -1908,7 +1908,7 @@ export interface MockAsctGrpChcItem {
 }
 
 /** P12 주거래은행선택(BankChc) 1건 — 설계서 slide173(코드/은행명). */
-export interface MockBankChcItem {
+export interface BankChcItem {
   /** 은행코드(bankCd) — 예 '00500000'. */
   bankCd: string
   /** 은행명(bankNm) — 예 '농협은행'. */
@@ -1917,9 +1917,9 @@ export interface MockBankChcItem {
 
 /**
  * P08 등록대상품목선택(RegTrgtItemChc) 결과 1건 — 설계서 slide165.
- * 항목명(영문)은 업체정보 상세 등록품목명세(MockRegTrgtItem) 관례 준수. 삭제여부(delYn)는 slide165 표 컬럼.
+ * 항목명(영문)은 업체정보 상세 등록품목명세(RegTrgtItem) 관례 준수. 삭제여부(delYn)는 slide165 표 컬럼.
  */
-export interface MockRegTrgtItemChcItem {
+export interface RegTrgtItemChcItem {
   /** 품목코드(itemCd) — 예 '1234567890'. */
   itemCd: string
   /** 품명(itemCdNm) — 예 '물컵'. */
@@ -1938,7 +1938,7 @@ export interface MockRegTrgtItemChcItem {
  * P09 품목조회(ItemInq, 품목상세정보) — Figma 10020:85135 / 설계서 slide167.
  * 품목코드 + 업종코드/업종명. ⚠️ 업종코드/명은 slide167 화면 표기(업종코드 12345 / 업종명 기타) 기준 잠정 영문키.
  */
-export interface MockItemInqDetail {
+export interface ItemInqDetail {
   /** 품목코드(itemCd) — 예 '1234567890'. */
   itemCd: string
   /** 업종코드(bzstatCd) — 예 '1234'. ⚠️ 잠정. */
@@ -1948,11 +1948,11 @@ export interface MockItemInqDetail {
 }
 
 /**
- * M05 등록품목명세 폼 표 행(MockAddRegItemRow) — 설계서 slide151 표 컬럼.
- * 등록품목명세(MockRegTrgtItem) 항목명 + 상태 컬럼(승인/만료/갱신요청/접수상태).
+ * M05 등록품목명세 폼 표 행(AddRegItemRow) — 설계서 slide151 표 컬럼.
+ * 등록품목명세(RegTrgtItem) 항목명 + 상태 컬럼(승인/만료/갱신요청/접수상태).
  * ⚠️ 승인일자/만료일자/갱신요청일/접수상태 항목명은 slide151 화면 표기 기준 잠정 영문키.
  */
-export interface MockAddRegItemRow {
+export interface AddRegItemRow {
   /** 로컬 식별자(목록 key·선택/삭제 대상). */
   id: string
   /** 품목코드(itemCd). */
@@ -1980,11 +1980,11 @@ export interface MockAddRegItemRow {
 }
 
 /**
- * M23/P10 보안측정인원(MockScrtyMsrmtPrsn) — 설계서 slide156·169.
+ * M23/P10 보안측정인원(ScrtyMsrmtPrsn) — 설계서 slide156·169.
  * ⚠️ 설계서에 데이터영역(항목명 영문) 표가 없어 화면 표기 기준 잠정 영문키(성명/적격여부/보안측정일/첨부파일).
  *    인원 정보(성명/적격/측정일)는 필수 아님, 첨부파일만 필수(slide169). (2026-07-01 개정: 주민등록번호 삭제)
  */
-export interface MockScrtyMsrmtPrsn {
+export interface ScrtyMsrmtPrsn {
   /** 로컬 식별자(목록 key·선택/삭제 대상). */
   id: string
   /** 성명(prsnNm) — ⚠️ 잠정. */
@@ -2006,7 +2006,7 @@ export interface MockScrtyMsrmtPrsn {
 
 // ── 통합검색 (MUI-MS-01-M09/M10 IntgSrch, MenuPage) ──
 /** 통합검색 결과 1건(스텁) — 추후 카테고리별 결과 봉투로 확장. */
-export interface MockSearchResult {
+export interface SearchResult {
   /** 안정적 고유 식별자. */
   id: string
   /** 검색 결과 제목. */
@@ -2014,7 +2014,7 @@ export interface MockSearchResult {
 }
 
 /** 최근 검색어 1건(IntgSrch dm_recentSearch) — 태그로 표시(삭제 가능). */
-export interface MockRecentSearch {
+export interface RecentSearch {
   /** 삭제 식별 키. */
   id: string
   /** 검색어. */
@@ -2022,7 +2022,7 @@ export interface MockRecentSearch {
 }
 
 /** 자주 찾는/연관 서비스 링크 1건 — NavigationItemList 로 표시. */
-export interface MockSearchServiceLink {
+export interface SearchServiceLink {
   /** 안정적 고유 식별자. */
   id: string
   /** 서비스(메뉴)명. */
@@ -2031,7 +2031,7 @@ export interface MockSearchServiceLink {
 
 // ── 연관진행현황 (MUI-CM 연관 건 조회, AnlPrgrsListPage) ──
 /** 연관진행현황 1건 — ⚠️ 설계서 데이터영역 미정의(화면 표기 기준 잠정). */
-export interface MockAnlPrgrsItem {
+export interface AnlPrgrsItem {
   /** 목록 key. */
   id: string
   /** 업무구분(taskSeNm) — 물품/용역/공사/국외. 뱃지. */
@@ -2046,7 +2046,7 @@ export interface MockAnlPrgrsItem {
 
 // ── 알림현황 (MUI-MS-01-M13 NotiPrstPage) ──
 /** 알림 1건 — ⚠️ 페이지 로컬 타입에서 이관(설계서 데이터영역 미정의, 잠정). */
-export interface MockNotiItem {
+export interface NotiItem {
   /** 목록 key. */
   id: string
   /** 알림 구분(카테고리) — 입찰/계약/공지 등. */
@@ -2061,10 +2061,10 @@ export interface MockNotiItem {
 
 // ── 조달업체 사용자 관리 (MUI-CM PrcmBzentyUserMngPage) ──
 /** 사용자 상태코드 — 정상('Y')/임시('T')/해지('N')/수정('M'). ⚠️ 코드값 백엔드 확정 필요. */
-export type MockUserSttsCd = 'Y' | 'T' | 'N' | 'M'
+export type UserSttsCd = 'Y' | 'T' | 'N' | 'M'
 
 /** 조달업체 소속 사용자 1건 — ⚠️ 페이지 로컬 타입에서 이관(설계서 데이터영역 미정의, 잠정). */
-export interface MockBzentyUser {
+export interface BzentyUser {
   /** 목록 key. */
   id: string
   /** 사용자ID(userId). */
@@ -2082,13 +2082,13 @@ export interface MockBzentyUser {
   /** 사용자유형명(userTyNm) — 관리자/일반 등. */
   userTyNm: string
   /** 상태코드(userSttsCd). */
-  userSttsCd: MockUserSttsCd
+  userSttsCd: UserSttsCd
   /** 상태명(userSttsNm) — 정상/임시/해지 등. */
   userSttsNm: string
 }
 
 /** 조달업체 사용자 검색 요청 — criteria(항목) + keyword. */
-export interface MockBzentyUserSearch {
+export interface BzentyUserSearch {
   /** 검색 기준 — 'userNm' | 'userId' | 'deptNm'. */
   criteria: string
   /** 검색어. */
@@ -2101,7 +2101,7 @@ export interface MockBzentyUserSearch {
 
 // ── 만족도 조사 (introduce/SatisfactionSurvey) ──
 /** 만족도 조사 제출 요청. */
-export interface MockSatisfactionPayload {
+export interface SatisfactionPayload {
   /** 만족도 — 'veryGood' | 'good' | 'normal' | 'bad' | 'veryBad'. */
   satisfaction: string
   /** 의견(자유 입력, 선택). */
@@ -2110,7 +2110,7 @@ export interface MockSatisfactionPayload {
 
 // ── FAQ / 게시판 (FaqListPage, BoardListView) ──
 /** FAQ 목록 조회 요청 — 검색어(제목/내용)·구분·페이징. */
-export interface MockFaqListRequest {
+export interface FaqListRequest {
   /** 제목(qstnTtl) 부분검색(선택). */
   qstnTtl?: string
   /** 내용(contsCn) 부분검색(선택). */
@@ -2124,13 +2124,13 @@ export interface MockFaqListRequest {
 }
 
 /** 게시판 종류 — 공지사항/자료실/시스템개선안내(엔드포인트 분기용). */
-export type MockBoardKind = 'notice' | 'rpstr' | 'sysImpv'
+export type BoardKind = 'notice' | 'rpstr' | 'sysImpv'
 
 /** 게시판 목록 아이템(종류별 유니온) — getBoardList 반환 원소. */
-export type MockBoardListItem = MockNoticeListItem | MockRpstrListItem | MockSysImpvListItem
+export type BoardListItem = NoticeListItem | RpstrListItem | SysImpvListItem
 
 /** 게시판 목록 조회 요청 — 종류별 검색조건을 optional 로 합친 봉투. */
-export interface MockBoardListRequest {
+export interface BoardListRequest {
   /** 제목(bbsTtl/rpstrTtl) 부분검색(선택). */
   bbsTtl?: string
   /** 제목(자료실 rpstrTtl) 부분검색(선택). */
@@ -2151,9 +2151,9 @@ export interface MockBoardListRequest {
 
 // ── 문서함 (DocBoxPage, DocBoxDtlPage) ──
 /** 문서함 목록 조회 요청 — 문서구분(탭)·페이징. */
-export interface MockDocBoxListRequest {
+export interface DocBoxListRequest {
   /** 문서구분(docSeCd) — 받은/보낸/반려/임시저장. */
-  docSeCd: MockDocBoxSeCd
+  docSeCd: DocBoxSeCd
   /** 페이지(1-base, 선택). */
   page?: number
   /** 페이지 크기(선택). */
@@ -2161,16 +2161,16 @@ export interface MockDocBoxListRequest {
 }
 
 /** 문서함 상세(M11) 응답 — 문서내용 + 첨부목록(상단 요약은 목록 아이템 재사용). */
-export interface MockDocBoxDetail {
+export interface DocBoxDetail {
   /** 문서내용(docCn). */
   docCn: string
   /** 첨부파일 목록(T03). */
-  atchList: MockDocBoxAtchFile[]
+  atchList: DocBoxAtchFile[]
 }
 
 // ── 관심입찰공고 (ItrstBidPbancPage) ──
 /** 관심입찰공고 목록 조회 요청 — 검색필터에서 파생. */
-export interface MockItrstBidListRequest {
+export interface ItrstBidListRequest {
   /** 개찰일자 범위(bdopnYmd FROM~TO, 선택). */
   bdopnYmd?: DateRangeValue
   /** 통합참조번호(intgRfrncNo, 선택). */
@@ -2187,7 +2187,7 @@ export interface MockItrstBidListRequest {
 
 // ── 업체정보 추가등록 (dmstLctnColInfoAddReg) ──
 /** P08 등록대상 품목 검색 요청 — 품류/품명/업종. */
-export interface MockRegTrgtItemSearch {
+export interface RegTrgtItemSearch {
   /** 품류코드(knditmCd). */
   knditmCd: string
   /** 품명(itemNm) 부분검색. */
@@ -2197,7 +2197,7 @@ export interface MockRegTrgtItemSearch {
 }
 
 /** M05 물품(내자) 추가등록 신청 요청 — 화면 입력값 취합. */
-export interface MockAddRegPayload {
+export interface AddRegPayload {
   /** 본/지사(bplcSecd). */
   bplcSecd: string
   /** ISO 여부(isoYn). */
@@ -2207,19 +2207,19 @@ export interface MockAddRegPayload {
   /** 영문주소(addrEng). */
   addrEng: string
   /** 선택 품류(P06). */
-  knditm: MockKnditmChcItem | null
+  knditm: KnditmChcItem | null
   /** 업태(bzstat). */
   bzstat: string
   /** 선택 조합/단체(P07). */
-  asctGrp: MockAsctGrpChcItem | null
+  asctGrp: AsctGrpChcItem | null
   /** 등록품목명세 행. */
-  items: MockAddRegItemRow[]
+  items: AddRegItemRow[]
   /** 약관 동의. */
   agreed: boolean
 }
 
 /** M23 국내소재상사 추가등록 신청 요청 — 화면 입력값 취합. */
-export interface MockAddRegDmsAgtPayload {
+export interface AddRegDmsAgtPayload {
   /** 본/지사(bplcSecd). */
   bplcSecd: string
   /** ISO 여부(isoYn). */
@@ -2249,9 +2249,9 @@ export interface MockAddRegDmsAgtPayload {
   /** 보안측정결과(scrtMsrRslt). */
   scrtMsrRslt: string
   /** 보안측정인원. */
-  persons: MockScrtyMsrmtPrsn[]
+  persons: ScrtyMsrmtPrsn[]
   /** FSC 코드 목록. */
-  fscList: MockDmsAgtFscCode[]
+  fscList: DmsAgtFscCode[]
   /** 연간매출액(anlSaleAmt). */
   anlSaleAmt: string
   /** 자산규모(astScl). */
@@ -2259,7 +2259,7 @@ export interface MockAddRegDmsAgtPayload {
   /** 여신한도(lncLmt). */
   lncLmt: string
   /** 선택 주거래은행(P12). */
-  bank: MockBankChcItem | null
+  bank: BankChcItem | null
   /** 지점(brnchNm). */
   brnchNm: string
   /** 군납최초참여일(mlsplyFrstPtcpYmd). */
@@ -2275,65 +2275,65 @@ export interface MockAddRegDmsAgtPayload {
 }
 
 /** 추가정보 신청 상세(T05 물품(내자)/T06 국내소재상사) 응답 — 구분별로 채워지는 필드가 달라 optional. */
-export interface MockAddRegInfoAplyDetail {
+export interface AddRegInfoAplyDetail {
   /** T05 등록품목명세. */
-  regTrgtItemList?: MockRegTrgtItem[]
+  regTrgtItemList?: RegTrgtItem[]
   /** T05 담당자정보. */
-  picInfo?: MockPicInfo
+  picInfo?: PicInfo
   /** T05 대표품류/조합·단체. */
-  knditmAsctGrpList?: MockKnditmAsctGrp[]
+  knditmAsctGrpList?: KnditmAsctGrp[]
   /** T06 보안측정인원. */
-  scrtyMsrmtPrsnlList?: MockScrtyMsrmtPrsn[]
+  scrtyMsrmtPrsnlList?: ScrtyMsrmtPrsn[]
   /** T06 FSC 코드. */
-  fscList?: MockDmsAgtFscCode[]
+  fscList?: DmsAgtFscCode[]
 }
 
 // ── 군수품무역대리업 (dfEqpmntTradeAgnc) ──
 /** M17 신규/갱신 신청 요청 — 구분(mode) + 첨부. */
-export interface MockDfEqpmntTradeAgncAplyPayload {
+export interface DfEqpmntTradeAgncAplyPayload {
   /** 신청 구분 — 'new'(신규) | 'renew'(갱신). */
   mode: 'new' | 'renew'
   /** 첨부서류. */
-  files: MockDfEqpmntTradeAgncAtchFile[]
+  files: DfEqpmntTradeAgncAtchFile[]
 }
 
 /** M18 변경 신청 요청 — 첨부(구분 없음). */
-export interface MockDfEqpmntTradeAgncChgPayload {
+export interface DfEqpmntTradeAgncChgPayload {
   /** 첨부서류. */
-  files: MockDfEqpmntTradeAgncAtchFile[]
+  files: DfEqpmntTradeAgncAtchFile[]
 }
 
 // ── 업체정보관리 상세 (cmService.selectBzenty*, MUI-CM-01-M02) ──
 /** 업체일반(T01) 상세 응답 — 일반 + 상태/수배/대표자/입찰대리인. */
-export interface MockBzentyGnrlDetail {
+export interface BzentyGnrlDetail {
   /** 업체일반. */
-  gnrlInfo: MockBzentyGnrlInfo
+  gnrlInfo: BzentyGnrlInfo
   /** 상태/부정당. */
-  sttsList: MockBzentyStts[]
+  sttsList: BzentyStts[]
   /** 수의계약배제. */
-  rlsVltrnsList: MockBzentyRlsVltrnsRstric[]
+  rlsVltrnsList: BzentyRlsVltrnsRstric[]
   /** 대표자. */
-  rprsvList: MockBzentyRprsv[]
+  rprsvList: BzentyRprsv[]
   /** 입찰대리인. */
-  bidAgtList: MockBzentyBidAgt[]
+  bidAgtList: BzentyBidAgt[]
 }
 
 /** 물품(내자)(T02) 상세 응답 — 등록품목명세 + 담당자 + 대표품류/조합. */
-export interface MockBzentyCmdtyInfo {
+export interface BzentyCmdtyInfo {
   /** 등록품목명세. */
-  regTrgtItemList: MockRegTrgtItem[]
+  regTrgtItemList: RegTrgtItem[]
   /** 담당자정보. */
-  picInfo: MockPicInfo
+  picInfo: PicInfo
   /** 대표품류/조합·단체. */
-  knditmAsctGrpList: MockKnditmAsctGrp[]
+  knditmAsctGrpList: KnditmAsctGrp[]
 }
 
 /** 시설(T03) 상세 응답 — 시설정보 + 면허 + 주력분야. */
-export interface MockBzentyFcltDetail {
+export interface BzentyFcltDetail {
   /** 시설정보. */
-  fcltInfo: MockBzentyFcltInfo
+  fcltInfo: BzentyFcltInfo
   /** 시설면허. */
-  lcnsList: MockBzentyFcltLcns[]
+  lcnsList: BzentyFcltLcns[]
   /** 주력분야. */
-  mfrcList: MockBzentyFcltMfrcFld[]
+  mfrcList: BzentyFcltMfrcFld[]
 }

@@ -11,10 +11,10 @@ import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
-import type { MockOvsRlsVltrnsSrngRsltItem } from '@/types/mock/bd'
+import type { OvsRlsVltrnsSrngRsltItem } from '@/types/mock/bd'
 
 // 조회결과 목업 — 설계서 slide443 값. 첫 건 낙찰(+계약포기), 이후 탈락. 추후 bdService.selectOvsRlsVltrnsSrngRslt 매핑.
-const ITEM_BASE: Omit<MockOvsRlsVltrnsSrngRsltItem, 'no' | 'rnk' | 'scsbdYn' | 'rsn' | 'abndDt' | 'abndRsn'> = {
+const ITEM_BASE: Omit<OvsRlsVltrnsSrngRsltItem, 'no' | 'rnk' | 'scsbdYn' | 'rsn' | 'abndDt' | 'abndRsn'> = {
   sbtBzentyCd: '7001F',
   sbtBzentyNm: 'A 무역대리점',
   splyBzentyCd: '7004F',
@@ -24,7 +24,7 @@ const ITEM_BASE: Omit<MockOvsRlsVltrnsSrngRsltItem, 'no' | 'rnk' | 'scsbdYn' | '
   crncNm: 'USD',
 }
 const TOTAL = 258
-const MOCK_ITEMS: MockOvsRlsVltrnsSrngRsltItem[] = Array.from({ length: TOTAL }, (_, i) => {
+const MOCK_ITEMS: OvsRlsVltrnsSrngRsltItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const win = i === 0 // 첫 건 낙찰(설계서 slide443 예시)
   return {
     ...ITEM_BASE,
@@ -52,7 +52,7 @@ const BidRsltItemCard = memo(function BidRsltItemCard({
   item,
   onViewDocs,
 }: {
-  item: MockOvsRlsVltrnsSrngRsltItem
+  item: OvsRlsVltrnsSrngRsltItem
   onViewDocs: () => void
 }) {
   const [expanded, setExpanded] = useState(false)

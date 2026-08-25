@@ -25,7 +25,7 @@ import type {
   SearchFilterValue,
   DateRangePresetDef,
 } from '@/types/search-filter'
-import type { MockPrfmncPrdocItem, MockPrfmncPrdocSearchFilter } from '@/types/mock/cm'
+import type { PrfmncPrdocItem, PrfmncPrdocSearchFilter } from '@/types/mock/cm'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
@@ -91,7 +91,7 @@ const SEARCH_SCHEMA: SearchFilterSchema = {
 }
 
 // 초기/초기화 기준값 — 기간은 최근 1개월(slide240 목업 범위도 1개월).
-function buildDefaultValue(): MockPrfmncPrdocSearchFilter {
+function buildDefaultValue(): PrfmncPrdocSearchFilter {
   return {
     aplyYmd: {
       start: dayjs().subtract(1, 'month').format(DATE_FORMAT),
@@ -107,7 +107,7 @@ const SEARCH_TARGETS = [{ value: 'ctrtNo', label: '계약번호' }]
 
 // ── 목업 (dl_resultList, slide240·241 형식 그대로 — API 연동 시 교체) ─────────
 // 시드 2건 = slide240 표시값. 나머지는 처리상태/계약구분 변형(항목 형식 유지).
-const dl_resultList: MockPrfmncPrdocItem[] = [
+const dl_resultList: PrfmncPrdocItem[] = [
   {
     prfmncRcptNo: '2025NC00179',
     ctrtNo: '2025093455',
@@ -185,7 +185,7 @@ const dl_resultList: MockPrfmncPrdocItem[] = [
 // ⚠️ 임시 목업 — API 연동 시 MOCK_LIST·filteredList·visibleList 블록을 통째로 삭제하고
 //   서버 조회(page/pageSize/keyword 파라미터) 누적 로직으로 재작성한다(PrcmPlanIntgListPage 동일).
 const TOTAL = 40
-const MOCK_LIST: MockPrfmncPrdocItem[] = Array.from({ length: TOTAL }, (_, i) => {
+const MOCK_LIST: PrfmncPrdocItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dl_resultList[i % dl_resultList.length]
   // 접수번호는 목록 key 라 고유해야 함 — 인덱스 접미로 구분(형식 유지).
   return {
@@ -198,7 +198,7 @@ export function PrfmncPrdocPage() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false) // 검색필터 풀팝업
   const [aplySheetOpen, setAplySheetOpen] = useState(false) // (+) 실적증명서 신청 바텀시트
-  // 스프레드 — 인터페이스(MockPrfmncPrdocSearchFilter)를 SearchFilterValue(Record)로 넘기기 위함(BoardListView 동일).
+  // 스프레드 — 인터페이스(PrfmncPrdocSearchFilter)를 SearchFilterValue(Record)로 넘기기 위함(BoardListView 동일).
   const [filter, setFilter] = useState<SearchFilterValue>(() => ({ ...buildDefaultValue() }))
   const [keyword, setKeyword] = useState('') // 빠른검색어(입력 중)
   const [targets, setTargets] = useState<string[]>(['ctrtNo'])
@@ -235,7 +235,7 @@ export function PrfmncPrdocPage() {
     setPage(page + 1)
     console.log('[PrfmncPrdoc] loadMore → page', page + 1)
   }
-  const handleCardClick = (item: MockPrfmncPrdocItem) => {
+  const handleCardClick = (item: PrfmncPrdocItem) => {
     // 실적증명서확인(상세, MUI-CM-04-M07) — 클릭 항목을 state 로 전달(목록→상세 표준).
     navigate(ROUTES.SUPPORT_PRFMNC_PRDOC_DTL, { state: item })
   }

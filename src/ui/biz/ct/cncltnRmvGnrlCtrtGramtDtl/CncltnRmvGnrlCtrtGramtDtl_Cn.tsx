@@ -2,10 +2,10 @@
 // 아코디언 4개(계약 상세정보 · 계약금액 · 업체정보 · 담당자 정보).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockCncltnRmvGnrlCtrtDtl } from '@/types/mock/ct'
+import type { CncltnRmvGnrlCtrtDtl } from '@/types/mock/ct'
 
 export interface CncltnRmvGnrlCtrtGramtDtl_CnProps {
-  detail: MockCncltnRmvGnrlCtrtDtl
+  detail: CncltnRmvGnrlCtrtDtl
 }
 
 export function CncltnRmvGnrlCtrtGramtDtl_Cn({ detail }: CncltnRmvGnrlCtrtGramtDtl_CnProps) {

@@ -6,82 +6,82 @@
 // src/ui/** 를 import 하지 않는다(순수 데이터).
 import type {
   // 통합검색
-  MockSearchResult,
-  MockRecentSearch,
-  MockSearchServiceLink,
+  SearchResult,
+  RecentSearch,
+  SearchServiceLink,
   // FAQ / 게시판
-  MockFaqListItem,
-  MockNoticeListItem,
-  MockRpstrListItem,
-  MockSysImpvListItem,
-  MockNoticeDetail,
-  MockRpstrDetail,
+  FaqListItem,
+  NoticeListItem,
+  RpstrListItem,
+  SysImpvListItem,
+  NoticeDetail,
+  RpstrDetail,
   // 업체정보 추가등록 선택 팝업
-  MockAddRegItemRow,
-  MockAsctGrpChcItem,
-  MockBankChcItem,
-  MockDmsAgtFscCode,
-  MockItemInqDetail,
-  MockKnditmChcItem,
-  MockRegTrgtItemChcItem,
+  AddRegItemRow,
+  AsctGrpChcItem,
+  BankChcItem,
+  DmsAgtFscCode,
+  ItemInqDetail,
+  KnditmChcItem,
+  RegTrgtItemChcItem,
   // 추가정보 신청
-  MockAddRegInfoAplyItem,
-  MockAddRegInfoAplyDetail,
+  AddRegInfoAplyItem,
+  AddRegInfoAplyDetail,
   // 조달원확인서
-  MockDmstSosCnfdocItem,
-  MockDmstSosCnfdocAplyInfo,
+  DmstSosCnfdocItem,
+  DmstSosCnfdocAplyInfo,
   // 군수품무역대리업
-  MockDfEqpmntTradeAgncAplyItem,
+  DfEqpmntTradeAgncAplyItem,
   // 연관진행현황
-  MockAnlPrgrsItem,
+  AnlPrgrsItem,
   // 업체정보관리 상세
-  MockBzentyInfo,
-  MockBzentyGnrlDetail,
-  MockBzentyCmdtyInfo,
-  MockBzentyFcltDetail,
-  MockBzentyRlsVltrnsRstric,
+  BzentyInfo,
+  BzentyGnrlDetail,
+  BzentyCmdtyInfo,
+  BzentyFcltDetail,
+  BzentyRlsVltrnsRstric,
   // 문서함
-  MockDocBoxItem,
-  MockDocBoxDetail,
-  MockIndvRcofcItem,
+  DocBoxItem,
+  DocBoxDetail,
+  IndvRcofcItem,
   // 업무캘린더
-  MockTaskCldrItem,
+  TaskCldrItem,
   // 관심입찰공고 / 관심법령
-  MockItrstBidPbancItem,
-  MockItrstSttItem,
+  ItrstBidPbancItem,
+  ItrstSttItem,
   // 나의업무
-  MockMyPrgrsHstryItem,
-  MockMyTaskHstryItem,
+  MyPrgrsHstryItem,
+  MyTaskHstryItem,
   // 알림 / 사용자 / 게시물
-  MockNotiItem,
-  MockBzentyUser,
-  MockMyPstItem,
+  NotiItem,
+  BzentyUser,
+  MyPstItem,
   // 실적증명서 제출
-  MockSbmsnAsctnItem,
+  SbmsnAsctnItem,
 } from '@/types/mock/cm'
 
 // ── 통합검색 (IntgSrch·MenuPage) ──
-const SEARCH_RESULTS: MockSearchResult[] = [
+const SEARCH_RESULTS: SearchResult[] = [
   { id: '1', title: "'26년 K5방독면 구매 입찰공고" },
   { id: '2', title: "'26년 정보화 유지보수 사업 사전규격" },
 ]
-const RECENT_SEARCHES: MockRecentSearch[] = [
+const RECENT_SEARCHES: RecentSearch[] = [
   { id: 'r1', keyword: '방독면' },
   { id: 'r2', keyword: '통신장비' },
 ]
-const FREQUENT_SERVICES: MockSearchServiceLink[] = [
+const FREQUENT_SERVICES: SearchServiceLink[] = [
   { id: 'f1', label: '입찰공고' },
   { id: 'f2', label: '조달계획' },
   { id: 'f3', label: '계약통합목록' },
 ]
-const RELATED_SERVICES: MockSearchServiceLink[] = [
+const RELATED_SERVICES: SearchServiceLink[] = [
   { id: 'rs1', label: '입찰진행현황' },
   { id: 'rs2', label: '개찰결과' },
 ]
 const AUTOCOMPLETE: string[] = ['입찰공고', '입찰진행', '입찰결과']
 
 // ── FAQ / 게시판 ──
-const FAQ_LIST: MockFaqListItem[] = [
+const FAQ_LIST: FaqListItem[] = [
   {
     no: 1,
     bbsId: '000123',
@@ -101,7 +101,7 @@ const FAQ_LIST: MockFaqListItem[] = [
     contsCn: '인증센터 > 인증서 가져오기에서 인증서를 등록해 주세요.',
   },
 ]
-const NOTICE_LIST: MockNoticeListItem[] = [
+const NOTICE_LIST: NoticeListItem[] = [
   {
     no: 1,
     contsNo: '000301',
@@ -129,7 +129,7 @@ const NOTICE_LIST: MockNoticeListItem[] = [
     inqCnt: 120,
   },
 ]
-const RPSTR_LIST: MockRpstrListItem[] = [
+const RPSTR_LIST: RpstrListItem[] = [
   {
     no: 1,
     contsNo: '000401',
@@ -141,7 +141,7 @@ const RPSTR_LIST: MockRpstrListItem[] = [
     inqNocs: 210,
   },
 ]
-const SYS_IMPV_LIST: MockSysImpvListItem[] = [
+const SYS_IMPV_LIST: SysImpvListItem[] = [
   {
     no: 1,
     contsNo: '000501',
@@ -153,7 +153,7 @@ const SYS_IMPV_LIST: MockSysImpvListItem[] = [
     inqCnt: 75,
   },
 ]
-const NOTICE_DETAIL: MockNoticeDetail = {
+const NOTICE_DETAIL: NoticeDetail = {
   contsNo: '000301',
   bbsTtl: "'26년 상반기 전자입찰 시스템 점검 안내",
   emrg: '긴급',
@@ -166,7 +166,7 @@ const NOTICE_DETAIL: MockNoticeDetail = {
   bbsCn: '3월 15일(토) 00:00~06:00 시스템 점검이 예정되어 있습니다. 이용에 참고 바랍니다.',
   files: [{ fileSn: '1', fileName: '점검안내.hwp', fileSize: '786KB' }],
 }
-const RPSTR_DETAIL: MockRpstrDetail = {
+const RPSTR_DETAIL: RpstrDetail = {
   contsNo: '000401',
   rpstrTtl: '입찰참가신청서 서식 (2026 개정)',
   wrtrNm: '관리자',
@@ -180,7 +180,7 @@ const RPSTR_DETAIL: MockRpstrDetail = {
 }
 
 // ── 업체정보 추가등록 선택 팝업 ──
-const REG_ITEM_LIST: MockAddRegItemRow[] = [
+const REG_ITEM_LIST: AddRegItemRow[] = [
   {
     id: '1',
     itemCd: '1234567890',
@@ -196,23 +196,23 @@ const REG_ITEM_LIST: MockAddRegItemRow[] = [
     rcptSttsNm: '승인',
   },
 ]
-const ASCT_GRP_LIST: MockAsctGrpChcItem[] = [
+const ASCT_GRP_LIST: AsctGrpChcItem[] = [
   { asctCd: '11000', asctCdNm: '한국피복공업협동조합' },
   { asctCd: '11001', asctCdNm: '한국정밀화학공업진흥회' },
 ]
-const BANK_LIST: MockBankChcItem[] = [
+const BANK_LIST: BankChcItem[] = [
   { bankCd: '00500000', bankNm: '농협은행' },
   { bankCd: '00400000', bankNm: '우리은행' },
 ]
-const FSC_LIST: MockDmsAgtFscCode[] = [
+const FSC_LIST: DmsAgtFscCode[] = [
   { fscCd: '1111', gunGrdNm: '기타 항공기 부수품' },
   { fscCd: '8415', gunGrdNm: '개인 피복류' },
 ]
-const KNDITM_LIST: MockKnditmChcItem[] = [
+const KNDITM_LIST: KnditmChcItem[] = [
   { knditmCd: '05', knditmCdNm: '피복' },
   { knditmCd: '11', knditmCdNm: '화학물질' },
 ]
-const REG_TRGT_ITEMS: MockRegTrgtItemChcItem[] = [
+const REG_TRGT_ITEMS: RegTrgtItemChcItem[] = [
   {
     itemCd: '1234567890',
     itemCdNm: '물컵',
@@ -224,7 +224,7 @@ const REG_TRGT_ITEMS: MockRegTrgtItemChcItem[] = [
 ]
 
 // ── 추가정보 신청 (MUI-CM-01-M03) ──
-const ADD_REG_INFO_APLY_LIST: MockAddRegInfoAplyItem[] = [
+const ADD_REG_INFO_APLY_LIST: AddRegInfoAplyItem[] = [
   {
     id: '1',
     rcptNo: '2026051801',
@@ -244,7 +244,7 @@ const ADD_REG_INFO_APLY_LIST: MockAddRegInfoAplyItem[] = [
     prgrsSttsNm: '접수',
   },
 ]
-const ADD_REG_INFO_APLY_DETAIL: MockAddRegInfoAplyDetail = {
+const ADD_REG_INFO_APLY_DETAIL: AddRegInfoAplyDetail = {
   regTrgtItemList: [
     {
       itemCd: '1234567890',
@@ -274,7 +274,7 @@ const ADD_REG_INFO_APLY_DETAIL: MockAddRegInfoAplyDetail = {
 }
 
 // ── 조달원확인서 (MUI-CM-01-M19) ──
-const DMST_SOS_CNFDOC_LIST: MockDmstSosCnfdocItem[] = [
+const DMST_SOS_CNFDOC_LIST: DmstSosCnfdocItem[] = [
   {
     id: '1',
     aplyRcptNo: '2026051812',
@@ -287,7 +287,7 @@ const DMST_SOS_CNFDOC_LIST: MockDmstSosCnfdocItem[] = [
 ]
 
 // ── 군수품무역대리업 (MUI-CM-01-M15) ──
-const DF_EQPMNT_TRADE_AGNC_APLY_LIST: MockDfEqpmntTradeAgncAplyItem[] = [
+const DF_EQPMNT_TRADE_AGNC_APLY_LIST: DfEqpmntTradeAgncAplyItem[] = [
   {
     id: '1',
     regAplySecd: '신규',
@@ -301,7 +301,7 @@ const DF_EQPMNT_TRADE_AGNC_APLY_LIST: MockDfEqpmntTradeAgncAplyItem[] = [
 ]
 
 // ── 연관진행현황 ──
-const ANL_PRGRS_LIST: MockAnlPrgrsItem[] = [
+const ANL_PRGRS_LIST: AnlPrgrsItem[] = [
   {
     id: '1',
     taskSeNm: '물품',
@@ -315,7 +315,7 @@ const ANL_PRGRS_LIST: MockAnlPrgrsItem[] = [
 ]
 
 // ── 업체정보관리 상세 (MUI-CM-01-M02) ──
-const BZENTY_GNRL_DETAIL: MockBzentyGnrlDetail = {
+const BZENTY_GNRL_DETAIL: BzentyGnrlDetail = {
   gnrlInfo: {
     bzentyCd: '100F',
     bzentyNm: '한국방산㈜',
@@ -360,7 +360,7 @@ const BZENTY_GNRL_DETAIL: MockBzentyGnrlDetail = {
   ],
   bidAgtList: [{ agtJbpsNm: '과장', agtNm: '이대리', agtEntlno: '02-1234-5680' }],
 }
-const BZENTY_CMDTY_INFO: MockBzentyCmdtyInfo = {
+const BZENTY_CMDTY_INFO: BzentyCmdtyInfo = {
   regTrgtItemList: [
     {
       itemCd: '1234567890',
@@ -388,7 +388,7 @@ const BZENTY_CMDTY_INFO: MockBzentyCmdtyInfo = {
     },
   ],
 }
-const BZENTY_FCLT_DETAIL: MockBzentyFcltDetail = {
+const BZENTY_FCLT_DETAIL: BzentyFcltDetail = {
   fcltInfo: { bzstatCdNm: '제조', lcofcTelno: '02-1234-5678' },
   lcnsList: [
     {
@@ -416,7 +416,7 @@ const BZENTY_FCLT_DETAIL: MockBzentyFcltDetail = {
     },
   ],
 }
-const RLS_VLTRNS_RSTRIC: MockBzentyRlsVltrnsRstric[] = [
+const RLS_VLTRNS_RSTRIC: BzentyRlsVltrnsRstric[] = [
   {
     pbancNo: '2026001',
     prcmNo: '2026-00590',
@@ -430,7 +430,7 @@ const RLS_VLTRNS_RSTRIC: MockBzentyRlsVltrnsRstric[] = [
 ]
 
 // ── 문서함 (MUI-CM-06-M10/M11) + 개인별수신처(M12) ──
-const DOC_BOX_LIST: MockDocBoxItem[] = [
+const DOC_BOX_LIST: DocBoxItem[] = [
   {
     id: 'received-1',
     docSeCd: 'received',
@@ -452,13 +452,13 @@ const DOC_BOX_LIST: MockDocBoxItem[] = [
     rcptIdntyDt: '2026-03-08',
   },
 ]
-const DOC_BOX_DETAIL: MockDocBoxDetail = {
+const DOC_BOX_DETAIL: DocBoxDetail = {
   docCn: '2026년 K5방독면 구매 계약 체결을 통보합니다. 상세 내용은 첨부문서를 확인해 주세요.',
   atchList: [
     { fileTtl: '계약통보서', fileNm: '계약통보서.hwp', fileSize: '786KB', edmsDocId: 'EDMS20260310001' },
   ],
 }
-const INDV_RCOFC_LIST: MockIndvRcofcItem[] = [
+const INDV_RCOFC_LIST: IndvRcofcItem[] = [
   {
     id: '1',
     eldocNm: '물량배정서',
@@ -470,7 +470,7 @@ const INDV_RCOFC_LIST: MockIndvRcofcItem[] = [
 ]
 
 // ── 업무캘린더 (MUI-CM-06-M06) ──
-const TASK_CLDR_LIST: MockTaskCldrItem[] = [
+const TASK_CLDR_LIST: TaskCldrItem[] = [
   {
     id: '1',
     schdlSeCd: 'goods',
@@ -489,7 +489,7 @@ const TASK_CLDR_LIST: MockTaskCldrItem[] = [
 ]
 
 // ── 관심입찰공고 (MUI-CM-06-M05) ──
-const ITRST_BID_LIST: MockItrstBidPbancItem[] = [
+const ITRST_BID_LIST: ItrstBidPbancItem[] = [
   {
     id: '1',
     itrst: true,
@@ -506,7 +506,7 @@ const ITRST_BID_LIST: MockItrstBidPbancItem[] = [
 ]
 
 // ── 관심법령 (MUI-CM-06-M13) ──
-const ITRST_STT_LIST: MockItrstSttItem[] = [
+const ITRST_STT_LIST: ItrstSttItem[] = [
   {
     id: '1',
     itrst: true,
@@ -519,7 +519,7 @@ const ITRST_STT_LIST: MockItrstSttItem[] = [
 ]
 
 // ── 나의업무 (MUI-CM-06-M02/M04) ──
-const MY_PRGRS_LIST: MockMyPrgrsHstryItem[] = [
+const MY_PRGRS_LIST: MyPrgrsHstryItem[] = [
   {
     id: '1',
     prcmNo: '2026-00590',
@@ -531,7 +531,7 @@ const MY_PRGRS_LIST: MockMyPrgrsHstryItem[] = [
     currentStage: '입찰',
   },
 ]
-const MY_TASK_HSTRY_LIST: MockMyTaskHstryItem[] = [
+const MY_TASK_HSTRY_LIST: MyTaskHstryItem[] = [
   {
     id: '1',
     taskSttsNm: '입찰참가신청',
@@ -547,7 +547,7 @@ const MY_TASK_HSTRY_LIST: MockMyTaskHstryItem[] = [
 ]
 
 // ── 알림현황 (MUI-MS-01-M13) ──
-const NOTIFICATIONS: MockNotiItem[] = [
+const NOTIFICATIONS: NotiItem[] = [
   {
     id: '1',
     category: '입찰',
@@ -565,7 +565,7 @@ const NOTIFICATIONS: MockNotiItem[] = [
 ]
 
 // ── 조달업체 사용자 관리 ──
-const BZENTY_USER_LIST: MockBzentyUser[] = [
+const BZENTY_USER_LIST: BzentyUser[] = [
   {
     id: '1',
     userId: 'kdefense01',
@@ -593,7 +593,7 @@ const BZENTY_USER_LIST: MockBzentyUser[] = [
 ]
 
 // ── 나의 게시물 (MUI-CM-06-M17) ──
-const MY_PST_LIST: MockMyPstItem[] = [
+const MY_PST_LIST: MyPstItem[] = [
   { id: '1', pstTtl: '입찰 관련 문의드립니다.', wrtYmd: '2026-03-12' },
   { id: '2', pstTtl: '전자입찰 오류 신고', wrtYmd: '2026-03-08' },
 ]
@@ -602,7 +602,7 @@ const MY_PST_LIST: MockMyPstItem[] = [
 // 온라인 제출 대상 협회 7곳은 slide335 고정 목록. 상태(sttsVl)는 Figma 현행 표시값
 //   (대한건설협회=송신완료 · 건설산업정보원/대한전문건설협회=제출취소 · 나머지 미제출),
 //   비고(rmrkCn)는 slide335 표기값("계약 금액이 다름")을 취소사유로 사용.
-const SBMSN_ASCTN_LIST: MockSbmsnAsctnItem[] = [
+const SBMSN_ASCTN_LIST: SbmsnAsctnItem[] = [
   { sbmsnSttsNm: '대한건설협회', sttsVl: '송신완료' },
   { sbmsnSttsNm: '건설산업정보원', sttsVl: '제출취소', rmrkCn: '계약 금액이 다름' },
   { sbmsnSttsNm: '대한전문건설협회', sttsVl: '제출취소' },
@@ -614,7 +614,7 @@ const SBMSN_ASCTN_LIST: MockSbmsnAsctnItem[] = [
 
 // ── 업체 기본정보 / 품목상세 / 국내조달원확인서 신청인 (실 API 배선분, 소비 화면 대기) ──
 // no.677 업체기본정보조회 · no.644 조달업체목록조회 응답 1건. 다른 목업(BZENTY_GNRL_DETAIL)과 같은 업체.
-const BZENTY_BSC_INFO: MockBzentyInfo = {
+const BZENTY_BSC_INFO: BzentyInfo = {
   bzentyNm: '(주)대한방산',
   brno: '1234567890',
   bzentyCd: 'BZ001',
@@ -624,14 +624,14 @@ const BZENTY_BSC_INFO: MockBzentyInfo = {
 }
 
 // no.632 품목상세조회 — 등록대상품목 선택(P08) 후 품목코드/업종 확정값.
-const ITEM_DTL_INFO: MockItemInqDetail = {
+const ITEM_DTL_INFO: ItemInqDetail = {
   itemCd: '8415101234',
   bzstatCd: '2822',
   bzstatNm: '제조업',
 }
 
 // no.624 국내조달원확인서조회 — 신청인 정보(자동완성 read-only 2건 + 신청사유).
-const DMST_SOS_CNFDOC_INFO: MockDmstSosCnfdocAplyInfo = {
+const DMST_SOS_CNFDOC_INFO: DmstSosCnfdocAplyInfo = {
   aplcntNm: '홍길동',
   aplcntTelno: '02-1234-5678',
   aplyRsn: '군수품 납품을 위한 국내조달원 확인서 발급을 신청합니다.',

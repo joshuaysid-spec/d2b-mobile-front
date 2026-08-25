@@ -23,7 +23,7 @@ import { MyPageCalendar } from '@/ui/biz/cm/myPage/MyPage_Calendar'
 import { useAuthStore } from '@/stores/authStore'
 import { ROUTES } from '@/constants/routes'
 import { cn } from '@/utils/cn'
-import type { MockMyPageSchedule } from '@/types/mock/cm'
+import type { MyPageSchedule } from '@/types/mock/cm'
 
 // ── 목업 (설계서 데이터영역 형식 — API 연동 시 교체) ─────────────────────────
 const MOCK_BZENTY_NM = '가온산업' // 추후: 업체 정보 API(로그인 업체)
@@ -50,7 +50,7 @@ const DOC_TOTAL = 35
 //    (설계서 slide81 "날짜 선택 시 하단 6번항에 3개까지 표시").
 // 날짜는 '오늘' 기준 상대값(목업) — 캘린더 기본 노출 월에 표식이 보이도록. API 연동 시 실제 일자로 교체.
 const schdlDt = (offset: number) => dayjs().add(offset, 'day').format('YYYY-MM-DD')
-const MOCK_SCHEDULES: MockMyPageSchedule[] = [
+const MOCK_SCHEDULES: MyPageSchedule[] = [
   // 오늘 — 3건 초과(4건) 배치로 '최신순 3건까지' 동작 확인.
   {
     id: 'sc1',
@@ -215,7 +215,7 @@ export function MyPage() {
   const userNm = user?.name ?? ''
 
   // 6~7) 개인 스케줄 상세 바텀시트 — 페이지가 컨테이너 소유.
-  const [detail, setDetail] = useState<MockMyPageSchedule | null>(null)
+  const [detail, setDetail] = useState<MyPageSchedule | null>(null)
 
   // ── 동작 스텁 (백엔드/하위 화면 연동 시 교체) ──
   // ⚙(settings) — 사용자 정보관리 허브(MUI-CM-02-M01)로 이동(2026-08-03 배선).
@@ -261,7 +261,7 @@ export function MyPage() {
     navigate(ROUTES.TASK_CLDR, { state: { schdlDt } })
   }
   // 일정 카드 — 입찰공고면 해당 공고 이동, 개인 스케줄이면 바텀시트 상세.
-  const onSelectSchedule = (s: MockMyPageSchedule) => {
+  const onSelectSchedule = (s: MyPageSchedule) => {
     if (s.schdlSeCd === 'personal') {
       setDetail(s)
       return

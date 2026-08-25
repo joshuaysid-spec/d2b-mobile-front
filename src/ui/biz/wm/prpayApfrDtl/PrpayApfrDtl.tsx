@@ -3,7 +3,7 @@
 // 항목 순서는 slide23 화면 목업 그대로.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockPrpayApfrDtl as ApfrDtl } from '@/types/mock/wm'
+import type { PrpayApfrDtl as ApfrDtl } from '@/types/mock/wm'
 
 export interface PrpayApfrDtlProps {
   detail: ApfrDtl

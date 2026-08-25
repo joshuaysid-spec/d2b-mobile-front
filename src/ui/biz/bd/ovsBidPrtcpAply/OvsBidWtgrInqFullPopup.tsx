@@ -9,10 +9,10 @@ import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { OvsBidWtgrDtlFullPopup } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidWtgrDtlFullPopup'
-import type { MockOvsBidWtgrItem } from '@/types/mock/bd'
+import type { OvsBidWtgrItem } from '@/types/mock/bd'
 
 // 입찰보증서 목록 목업(dl_resultList) — 설계서 slide342 예시값(총 5건) 그대로.
-const MOCK_WTGR_LIST: MockOvsBidWtgrItem[] = [
+const MOCK_WTGR_LIST: OvsBidWtgrItem[] = [
   {
     wtgrNo: '00800107204AA2003BJ00011150000',
     bdopnYmd: '2003-09-08',
@@ -64,19 +64,19 @@ export interface OvsBidWtgrInqFullPopupProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   /** 보증서 적용 — 선택한 입찰보증서를 부모화면(M74 해당 사업)에 적용. */
-  onApply: (item: MockOvsBidWtgrItem) => void
+  onApply: (item: OvsBidWtgrItem) => void
 }
 
 export function OvsBidWtgrInqFullPopup({ open, onOpenChange, onApply }: OvsBidWtgrInqFullPopupProps) {
   // 보증서정보조회(P76) 대상 — null=닫힘.
-  const [dtlFor, setDtlFor] = useState<MockOvsBidWtgrItem | null>(null)
+  const [dtlFor, setDtlFor] = useState<OvsBidWtgrItem | null>(null)
 
   // On-Load 입찰보증서 목록 조회(scwin.onpageload) — 목업.
   // 추후 API: bdService.selectBidWtgrList
   const list = MOCK_WTGR_LIST
 
   // 보증서 적용(scwin.btn_confirm_onclick) — P75 카드 또는 P76 footer 공통.
-  const applyWtgr = (item: MockOvsBidWtgrItem) => {
+  const applyWtgr = (item: OvsBidWtgrItem) => {
     console.log('[P75] 보증서 적용', item.wtgrNo)
     setDtlFor(null)
     onApply(item)

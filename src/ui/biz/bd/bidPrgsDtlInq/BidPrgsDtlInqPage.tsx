@@ -24,10 +24,10 @@ import { BidAbndAperWrt, type BidAbndAperWrtHandle } from '@/ui/biz/bd/bidPrgsDt
 import { BidAbndAperDtl } from '@/ui/biz/bd/bidPrgsDtlInq/BidAbndAperDtl'
 import { BidRtrcnAperInq, type BidRtrcnAperInqHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidRtrcnAperInq'
 import { BidRtrcnAperInqDtl } from '@/ui/biz/bd/bidPrgsDtlInq/BidRtrcnAperInqDtl'
-import type { MockBidPrgrsItem, MockBidPrgrsDetail } from '@/types/mock/bd'
+import type { BidPrgrsItem, BidPrgrsDetail } from '@/types/mock/bd'
 
 // 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — 설계서 dlt_bidPrgrsList 항목명/형식 그대로.
-const MOCK_BID_PRGRS_DETAIL: MockBidPrgrsDetail = {
+const MOCK_BID_PRGRS_DETAIL: BidPrgrsDetail = {
   rNum: '0',
   taskSeNm: '물품',
   pbancNo: '2026LGM000604191-01',
@@ -57,14 +57,14 @@ const MOCK_BID_PRGRS_DETAIL: MockBidPrgrsDetail = {
 // 입찰참가신청서 [내용 보기] 목적지 판정(설계서 slide66 상태값) — 제출은 끝났고 등록심사 전/동의 단계면
 // 신청서 자체를 읽기전용 조회(M22), 등록확정·반려 등 심사 결과가 나온 건은 결과조회(M05).
 const APFR_SUBMITTED_STATS = ['신청완료', '미동의', '동의완료']
-function isApfrSubmitted(it: MockBidPrgrsDetail) {
+function isApfrSubmitted(it: BidPrgrsDetail) {
   if (it.bidRegCfmtnYn === 'Y' || it.regRjctYn) return false
   return Boolean(it.apfrStatNm && APFR_SUBMITTED_STATS.includes(it.apfrStatNm))
 }
 
 // 진행상태 배지(요약 헤더에서 상태를 알 수 있게) — 목록 카드와 동일 규칙.
 function statusBadge(
-  it: MockBidPrgrsItem,
+  it: BidPrgrsItem,
 ): { label: string; color: 'blue' | 'green' | 'red' } | null {
   if (it.regRjctYn) return { label: '입찰참가등록반려', color: 'red' }
   if (it.tndrStatNm === '완료') return { label: '입찰서 완료', color: 'green' }
@@ -75,7 +75,7 @@ function statusBadge(
 }
 
 // 구분/내용 표(설계서 slide66) — 일부 행은 상태텍스트 + 보기 버튼(combination). 대상 아닌 항목 행은 숨김.
-function buildRows(it: MockBidPrgrsDetail, onView: (key: string) => void): TableRow[] {
+function buildRows(it: BidPrgrsDetail, onView: (key: string) => void): TableRow[] {
   // 상태 + 버튼 셀("신청/미동의/등록확정" 위, [내용 보기] 아래)
   const statusCell = (status: string, btnLabel: string, key: string) => (
     <div className="flex flex-col items-start gap-krds-3">
@@ -166,9 +166,9 @@ function buildRows(it: MockBidPrgrsDetail, onView: (key: string) => void): Table
   return rows
 }
 
-// 진입 유형별 state — 입찰진행 목록(M01)=MockBidPrgrsItem 전체 / 나의 업무이력(CM-06-M04)=카드 매핑 값
+// 진입 유형별 state — 입찰진행 목록(M01)=BidPrgrsItem 전체 / 나의 업무이력(CM-06-M04)=카드 매핑 값
 //   (+현황명 taskSttsNm — 카드 1번 뱃지 그대로 노출, 공고번호 등 카드에 없는 항목은 ''/'-').
-type BidPrgsDtlState = MockBidPrgrsDetail & { taskSttsNm?: string }
+type BidPrgsDtlState = BidPrgrsDetail & { taskSttsNm?: string }
 
 export function BidPrgsDtlInqPage() {
   const navigate = useNavigate()
@@ -203,7 +203,7 @@ export function BidPrgsDtlInqPage() {
       else navigate('/bd/reg-rslt', { state: detail })
     } else if (key === 'tndr') {
       // 국외 입찰서 상세(MUI-BD-06-M75, /bd/ovsTndrDtl) — state 미전달(페이지가 OvsTndrDtlItem 전체를
-      // 기대하므로 MockBidPrgrsItem 을 넘기면 상단이 깨짐 → fallback 목업으로 렌더. API 연동 시 조회로 대체).
+      // 기대하므로 BidPrgrsItem 을 넘기면 상단이 깨짐 → fallback 목업으로 렌더. API 연동 시 조회로 대체).
       // 국내: 제출 완료된 입찰서를 읽기전용 조회(MUI-BD-06-M09, /bd/tndrInq). 미제출 건은 위 buildRows 에서
       //   [내용 보기] 자체를 노출하지 않는다.
       if (isOvs) navigate('/bd/ovsTndrDtl')

@@ -27,7 +27,7 @@ import { InputMessage } from '@/ui/common/base/InputMessage'
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { newIdPwRegSchema, type NewIdPwRegForm } from '@/ui/biz/cm/newId/NewIdPwReg.schema'
-import type { MockIntgAcntTarget } from '@/types/mock/domain'
+import type { IntgAcntTarget } from '@/types/mock/domain'
 
 // 도움말 문구(설계서 slide34 그대로). 안정적 key = 문구 자체(고정 상수).
 const HELP_ITEMS = [
@@ -57,7 +57,7 @@ export function NewIdPwReg() {
   // 본인인증 완료 여부 — 완료 시 계정 아이디/비밀번호 입력 폼 노출 + 주민번호 마스킹.
   const [verified, setVerified] = useState(false)
   // 본인인증 후 조회한 대상 정보(성명 + 기존 사용자 아이디 목록).
-  const [target, setTarget] = useState<MockIntgAcntTarget | null>(null)
+  const [target, setTarget] = useState<IntgAcntTarget | null>(null)
   // 통합계정 아이디 중복체크 결과.
   const [idCheck, setIdCheck] = useState<IdCheckState>('idle')
   const intgAcntTarget = cmQueries.useSelectIntgAcntTarget()

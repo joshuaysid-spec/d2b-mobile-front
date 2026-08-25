@@ -31,11 +31,11 @@ import { PrfmncPrdocDtl_UnitH } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_
 import { PrfmncPrdocDtl_UnitI } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_UnitI'
 import { PrfmncPrdocDtl_AplyInfo } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocDtl_AplyInfo'
 import { PrfmncPrdocSbmsn } from '@/ui/biz/cm/prfmncPrdocDtl/PrfmncPrdocSbmsn'
-import type { MockPrfmncPrdocItem, MockSbmsnAsctnItem } from '@/types/mock/cm'
+import type { PrfmncPrdocItem, SbmsnAsctnItem } from '@/types/mock/cm'
 import type { ApiError } from '@/types/api'
 
 // 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — dl_resultList 항목명/형식 그대로(slide240).
-const MOCK_PRFMNC_DETAIL: MockPrfmncPrdocItem = {
+const MOCK_PRFMNC_DETAIL: PrfmncPrdocItem = {
   prfmncRcptNo: '2025NC00179',
   ctrtNo: '2025093455',
   ctrtSe: '물품',
@@ -60,7 +60,7 @@ const TABS: TabItem[] = [
 // ⚠️ 2026-07-30 요청: 퍼블 확인용으로 신청정보 탭은 데이터와 무관하게 항상 unitB(MUI-CM-04-T03)
 //   내용 전체를 표시한다. API 연동 시 FORCE_UNITB 를 false 로 되돌려 설계서 분기를 복원할 것.
 const FORCE_UNITB = true
-function resolveAplyBranch(detail: MockPrfmncPrdocItem) {
+function resolveAplyBranch(detail: PrfmncPrdocItem) {
   if (FORCE_UNITB) return 'unitB'
   if (detail.orderInst === '방위사업청') return 'd2b'
   if (detail.ctrtSe !== '공사') return 'aplyInfo' // 부대+비시설공사
@@ -84,7 +84,7 @@ function resolveAplyBranch(detail: MockPrfmncPrdocItem) {
   }
 }
 
-function renderAplyTab(detail: MockPrfmncPrdocItem) {
+function renderAplyTab(detail: PrfmncPrdocItem) {
   switch (resolveAplyBranch(detail)) {
     case 'd2b':
       return <PrfmncPrdocDtl_D2b />
@@ -109,7 +109,7 @@ function renderAplyTab(detail: MockPrfmncPrdocItem) {
   }
 }
 
-function renderTabContent(tab: string, detail: MockPrfmncPrdocItem) {
+function renderTabContent(tab: string, detail: PrfmncPrdocItem) {
   switch (tab) {
     case 'ctrt':
       return <PrfmncPrdocDtl_Cn />
@@ -128,13 +128,13 @@ export function PrfmncPrdocDtlPage() {
   const [deleteOpen, setDeleteOpen] = useState(false) // 삭제 확인 팝업
 
   // 목록 → 상세 데이터 전달: navigate(state)로 넘어온 항목으로 상단을 그린다(표준).
-  const detail = (useLocation().state as MockPrfmncPrdocItem | null) ?? MOCK_PRFMNC_DETAIL
+  const detail = (useLocation().state as PrfmncPrdocItem | null) ?? MOCK_PRFMNC_DETAIL
 
   // ── 실적증명서 제출(MUI-CM-04-P20) — 컨테이너/상태는 부모가 소유(전용 래퍼 없음) ──
   const [sbmsnOpen, setSbmsnOpen] = useState(false) // 제출 바텀시트
   const [sbmsnConfirmOpen, setSbmsnConfirmOpen] = useState(false) // 제출 확인 모달
   const [sbmsnError, setSbmsnError] = useState<string | null>(null)
-  const [sbmsnItems, setSbmsnItems] = useState<MockSbmsnAsctnItem[]>([])
+  const [sbmsnItems, setSbmsnItems] = useState<SbmsnAsctnItem[]>([])
   const [sbmsnSelected, setSbmsnSelected] = useState<string[]>([]) // 선택 협회명(멀티)
 
   // On-Load(slide336 scwin.onpageload) — 시트가 열릴 때만 조회.

@@ -18,7 +18,7 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { PymtClmGdntcFullPopup } from '@/ui/biz/wm/centerPrcmPymtClmDtl/PymtClmGdntcFullPopup'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
-import type { MockPymtClmPrgrsPrstItem } from '@/types/mock/wm'
+import type { PymtClmPrgrsPrstItem } from '@/types/mock/wm'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
@@ -122,7 +122,7 @@ export function PymtClmPrgrsPrstPage() {
     setPage(1)
   }
   // 카드 클릭(slide81) — 대금청구상세 유형 분기(M05~M08).
-  const handleCardClick = (item: MockPymtClmPrgrsPrstItem) => {
+  const handleCardClick = (item: PymtClmPrgrsPrstItem) => {
     const path =
       item.prcmSeNm === '부대'
         ? '/wm/sbsdPrcmPymtClmDtl'

@@ -8,11 +8,11 @@ import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { OathBox } from '@/ui/biz/bd/OathBox'
-import type { MockBidPrgrsItem } from '@/types/mock/bd'
+import type { BidPrgrsItem } from '@/types/mock/bd'
 
 export interface BidAbndAperDtlProps {
   /** 상세에서 넘어온 항목(navigate state) — 요약/공고일반을 이 항목으로 그린다. */
-  detail: MockBidPrgrsItem
+  detail: BidPrgrsItem
 }
 
 // 업체내역 (설계서 dmt_bidPbancInfo 중 업체 항목) — 로그인 업체 정보라 목록 항목에 없어 목업 유지.

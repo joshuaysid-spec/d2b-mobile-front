@@ -9,7 +9,7 @@ import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
-import type { MockInspDlvdocItem } from '@/types/mock/ex'
+import type { InspDlvdocItem } from '@/types/mock/ex'
 
 export interface InspDlvdocListProps {
   /** 조회 대상 계약번호 — P10 에서 주입. */
@@ -19,7 +19,7 @@ export interface InspDlvdocListProps {
   /** 바텀시트 열림 여부 — 열릴 때만 조회(enabled). */
   open: boolean
   /** 조서 카드 클릭 — 중앙/부대 상세 분기는 부모가 담당(slide16 이벤트). */
-  onItemClick: (item: MockInspDlvdocItem) => void
+  onItemClick: (item: InspDlvdocItem) => void
 }
 
 export function InspDlvdocList({ ctrtNo, avtsmtNo, open, onItemClick }: InspDlvdocListProps) {

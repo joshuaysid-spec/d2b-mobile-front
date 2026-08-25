@@ -6,7 +6,7 @@
 // 레이아웃: 요약(SummaryInfo) → 안내 영역(아이콘+안내문구) → [전자서명 하기] 주 버튼 → 맨위로 FAB.
 //        + [전자서명 하기] → 전자서명 BottomSheet(인증서 목록 'cert' → 비밀번호 입력 'pwd' 2단계).
 // 가상키패드/인증서 행은 biz/bd/elsgn 도메인 전용 조립이라 본 파일 내 작은 컴포넌트로 인라인.
-// 목록→상세 표준: useLocation().state(MockAplyFlowState) ?? MOCK_DETAIL. 항목명/형식은 설계서 데이터영역 그대로.
+// 목록→상세 표준: useLocation().state(AplyFlowState) ?? MOCK_DETAIL. 항목명/형식은 설계서 데이터영역 그대로.
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -20,10 +20,10 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { cn } from '@/utils/cn'
 import type { ApiError } from '@/types/api'
-import type { MockAplyFlowState, MockBidPrgrsItem, MockElsgnCert } from '@/types/mock/bd'
+import type { AplyFlowState, BidPrgrsItem, ElsgnCert } from '@/types/mock/bd'
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 항목명/형식 그대로.
-const MOCK_DETAIL: MockBidPrgrsItem = {
+const MOCK_DETAIL: BidPrgrsItem = {
   rNum: '0',
   taskSeNm: '물품',
   pbancNo: '긴급공고 LDG0097-1',
@@ -51,7 +51,7 @@ const PWD_MAX = 8
 
 export function ElsgnPage() {
   const navigate = useNavigate()
-  const state = useLocation().state as MockAplyFlowState | null
+  const state = useLocation().state as AplyFlowState | null
   const detail = state?.detail ?? MOCK_DETAIL
   const aplyType = state?.aplyType ?? 'tndr'
 
@@ -110,7 +110,7 @@ export function ElsgnPage() {
           aplyType,
           rcptNo: receipt.rcptNo,
           rcptDt: receipt.rcptDt,
-        } satisfies MockAplyFlowState,
+        } satisfies AplyFlowState,
       })
     } catch (err) {
       setSheetOpen(false)
@@ -224,7 +224,7 @@ ElsgnPage.displayName = 'ElsgnPage'
 
 // ─── 전자서명 인증서 목록(라디오형 선택) — 도메인 전용 조립 ────────────────────
 interface ElsgnCertListProps {
-  certs: MockElsgnCert[]
+  certs: ElsgnCert[]
   selectedId: string | null
   onSelect: (id: string) => void
 }

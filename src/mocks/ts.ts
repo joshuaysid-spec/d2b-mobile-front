@@ -2,20 +2,20 @@
 // 설계서(06.업무지원 v0.82) 항목설명 항목·형식·slide9/12/14 목업값을 반영(임의 더미 금지).
 // ⚠️ 폐쇄망 반입 후 실백엔드 연동 시 이 파일은 사용되지 않는다(서비스가 apiClient 분기).
 import type {
-  MockBfhdLoiDtl,
-  MockBfhdLoiItem,
-  MockBfhdLoiSpcfctItem,
-  MockTxivCtrtItem,
-  MockTxivDtl,
-  MockTxivItem,
-  MockTxivPrgrsPrstItem,
+  BfhdLoiDtl,
+  BfhdLoiItem,
+  BfhdLoiSpcfctItem,
+  TxivCtrtItem,
+  TxivDtl,
+  TxivItem,
+  TxivPrgrsPrstItem,
 } from '@/types/mock/ts'
 
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-TS-01-M01 사전의향서목록 — slide9 목업(변속기 부품 2025-05-01~2025-08-15 총괄계약팀 홍길동 제출 /
 // 장갑차 부품 2025-07-01~2025-10-30 운영계약팀 홍길순 미제출). 진행상태 빈값 케이스 포함.
 // ────────────────────────────────────────────────────────────────────────────
-const BFHD_LOI_LIST: MockBfhdLoiItem[] = [
+const BFHD_LOI_LIST: BfhdLoiItem[] = [
   {
     id: '20250000000001',
     no: 1,
@@ -49,7 +49,7 @@ const BFHD_LOI_LIST: MockBfhdLoiItem[] = [
 // MUI-TS-01-M02 사전의향서상세 — slide12~13 목업(변속기 부품 · 접수 2025-05-01~2025-08-15 ·
 // 문의처 총괄계약팀/홍길동/02-1234-5678, 010-1234-5678).
 // ────────────────────────────────────────────────────────────────────────────
-const BFHD_LOI_DTL: MockBfhdLoiDtl = {
+const BFHD_LOI_DTL: BfhdLoiDtl = {
   bfhdLoiNo: '20250000000001',
   bfhdLoiTtl: '변속기 부품',
   rcptBgngYmd: '2025-05-01',
@@ -63,7 +63,7 @@ const BFHD_LOI_DTL: MockBfhdLoiDtl = {
 
 // MUI-TS-01-T02 품목명세서 — slide14 목업(제조/의견 123 · A7005265 · 4240-3753116870 · AA · EA ·
 // 총괄계약팀 · 최초조달원 2025-08).
-const BFHD_LOI_SPCFCT_LIST: MockBfhdLoiSpcfctItem[] = [
+const BFHD_LOI_SPCFCT_LIST: BfhdLoiSpcfctItem[] = [
   {
     id: 'A7005265-1',
     no: 1,
@@ -114,7 +114,7 @@ const BFHD_LOI_SPCFCT_LIST: MockBfhdLoiSpcfctItem[] = [
 // MUI-TS-04-M01 세금계산서계약목록 — slide22 목업(계약번호 2025 000 000-01 · 변속기 부품 계약의 건 ·
 // A 업체 · 홍길동 · 계약종류 bidxMtnm).
 // ────────────────────────────────────────────────────────────────────────────
-const TXIV_CTRT_LIST: MockTxivCtrtItem[] = [
+const TXIV_CTRT_LIST: TxivCtrtItem[] = [
   {
     id: '20250000001',
     ctrtNo: '20250000001',
@@ -139,7 +139,7 @@ const TXIV_CTRT_LIST: MockTxivCtrtItem[] = [
 
 // MUI-TS-04-P02 세금계산서목록 — slide23 목업(발행번호 2118F-0000-0000 · 일반/국세청승인 ·
 // 수정/저장/기재사항 착오정정 조합).
-const TXIV_LIST: MockTxivItem[] = [
+const TXIV_LIST: TxivItem[] = [
   {
     id: '2118F-0000-0001',
     reqDivsNm: '일반',
@@ -170,7 +170,7 @@ const TXIV_LIST: MockTxivItem[] = [
 
 // MUI-TS-04-M03 세금계산서상세 — slide28 목업(책번호/일련번호 · 공급자/공급받는자 123-45-67890 ·
 // 세액구분 과세 · 신고구분 확정 · 품목 변속기 부품).
-const TXIV_DTL: MockTxivDtl = {
+const TXIV_DTL: TxivDtl = {
   ctrtNo: '20250000001',
   pblcnNo: '2118F-0000-0001',
   bookNo: '00',
@@ -209,7 +209,7 @@ const TXIV_DTL: MockTxivDtl = {
 }
 
 // MUI-TS-04-M04 세금계산서진행현황 — slide31 목업(제출일시 2025-10-15 · 국세청결과 '-').
-const TXIV_PRGRS_PRST_LIST: MockTxivPrgrsPrstItem[] = [
+const TXIV_PRGRS_PRST_LIST: TxivPrgrsPrstItem[] = [
   {
     id: '2118F-0000-0001',
     reqDivsNm: '일반',

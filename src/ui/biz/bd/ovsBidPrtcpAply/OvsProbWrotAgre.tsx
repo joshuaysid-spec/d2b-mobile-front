@@ -5,7 +5,7 @@
 //   동의 선택(동의안함/동의함, 기본 동의안함)을 부모로 끌어올려 저장 버튼 활성화(동의함 체크 시)를 구동한다(설계서 slide332).
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { WROTS } from '@/ui/biz/bd/wrotAgrePage/WrotAgreForm'
-import type { MockOvsProbWrotAgreResultInfo } from '@/types/mock/bd'
+import type { OvsProbWrotAgreResultInfo } from '@/types/mock/bd'
 
 // 동의 선택 옵션 — 기본값 동의안함(설계서 slide331).
 const AGREE_OPTIONS = [
@@ -15,7 +15,7 @@ const AGREE_OPTIONS = [
 
 interface OvsProbWrotAgreProps {
   /** 서약서 데이터 영역(dl_resultInfo) — 서약일자·담당자명·업체명·발주기관명 */
-  resultInfo: MockOvsProbWrotAgreResultInfo
+  resultInfo: OvsProbWrotAgreResultInfo
   /** 동의 선택 값(부모 소유) — '동의안함' | '동의함' */
   choice: string
   /** 동의 선택 변경 — 부모가 저장 버튼 활성화에 사용 */

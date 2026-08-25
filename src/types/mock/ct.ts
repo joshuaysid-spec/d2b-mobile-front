@@ -7,10 +7,10 @@ import type { SearchFilterValue } from '@/types/search-filter'
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 계약통합목록 검색필터 값 — 키는 설계서 검색조건 항목명(slide20 1.1) 그대로. */
-export type MockCtSearchFilter = SearchFilterValue
+export type CtSearchFilter = SearchFilterValue
 
 /** 계약통합목록 카드 1건 — 설계서 데이터영역(slide20~21 1.2) 항목명 그대로. */
-export interface MockCtrtIntgListItem {
+export interface CtrtIntgListItem {
   /** 목록 key/상세 라우팅용 고유 식별자 — `${ctrtNo}-${ctrtCycl}` (클라 생성, 배열 인덱스 key 금지). */
   id: string
   /** 번호 — 조회결과 자료 순번. */
@@ -60,13 +60,13 @@ export interface MockCtrtIntgListItem {
 }
 
 /** 계약통합목록 조회 요청 — 서버 필터/페이징 전환 시 filter·page 를 여기로 이행. */
-export interface MockCtrtIntgListRequest {
-  filter?: MockCtSearchFilter
+export interface CtrtIntgListRequest {
+  filter?: CtSearchFilter
 }
 
 /** 계약통합목록 조회 결과. */
-export interface MockCtrtIntgListResult {
-  list: MockCtrtIntgListItem[]
+export interface CtrtIntgListResult {
+  list: CtrtIntgListItem[]
   total: number
 }
 
@@ -76,7 +76,7 @@ export interface MockCtrtIntgListResult {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 계약 상세정보(T01 상세내용) — slide28 계약상세정보 데이터영역. */
-export interface MockCmdtyElctrCtrtPrgrsDtl {
+export interface CmdtyElctrCtrtPrgrsDtl {
   /** 계약번호 (11). */
   ctrtNo: string
   /** 계약번호차수 — 문서정보 표기(계약번호 (차수)). */
@@ -163,7 +163,7 @@ export interface MockCmdtyElctrCtrtPrgrsDtl {
 }
 
 /** 계약업체(T02/T10) 1건 — slide29 1.3(물품) + slide44 1.2(공사 확장 필드). */
-export interface MockCtrtBzenty extends MockCtrtBzentyCstrnExt {
+export interface CtrtBzenty extends CtrtBzentyCstrnExt {
   /** 목록 key(사업자등록번호 기반 — 배열 인덱스 key 금지). */
   id: string
   /** 계약업체명 (100). */
@@ -189,7 +189,7 @@ export interface MockCtrtBzenty extends MockCtrtBzentyCstrnExt {
 }
 
 // 공사(T10) 확장 필드 — slide44 1.2 계약업체 데이터영역(물품 대비 추가 항목).
-export interface MockCtrtBzentyCstrnExt {
+export interface CtrtBzentyCstrnExt {
   /** 업체구분 표시(레이블 '계약유형': 대표/구성) — 항목표 미정의 임시(M73 bzentySeCd 재사용). */
   bzentySeCd?: string
   /** 전자서명여부 (1) — Y/N. */
@@ -203,7 +203,7 @@ export interface MockCtrtBzentyCstrnExt {
 }
 
 /** 생산공장(T02 하단, 방위사업청 계약만) 1건 — slide30 1.5 생산공장 데이터영역. */
-export interface MockCtrtFctry {
+export interface CtrtFctry {
   id: string
   /** 생산공장 (200) — 명칭. */
   fctryAddr: string
@@ -214,7 +214,7 @@ export interface MockCtrtFctry {
 }
 
 /** 반송/취소 사유(T03) 1건 — slide29 1.4 + 단계별 타이틀(slide26/32). */
-export interface MockCtrtRjctRsn {
+export interface CtrtRjctRsn {
   id: string
   /** 사유 타이틀 — 낙찰단가반송사유/제출서류반송사유/계약서 반송 사유/계약 취소 사유. */
   title: string
@@ -223,7 +223,7 @@ export interface MockCtrtRjctRsn {
 }
 
 /** 첨부서류(T04) 1건 — slide30 1.6(계약관 제공)/1.7(계약업체 등록) 데이터영역. */
-export interface MockCtrtAdocFile {
+export interface CtrtAdocFile {
   id: string
   /** 계약 서류명 (상위코드: UA26) — 표시명(물품제조구매계약서/계약명세서 등). */
   ctrtAdocCd: string
@@ -234,11 +234,11 @@ export interface MockCtrtAdocFile {
 }
 
 /** 첨부서류 탭 조회 결과 — 계약관 제공/계약업체 등록 2섹션. */
-export interface MockCtrtAdocResult {
+export interface CtrtAdocResult {
   /** 계약관 첨부서류(계약참조서류, slide30 1.6). */
-  refDocs: MockCtrtAdocFile[]
+  refDocs: CtrtAdocFile[]
   /** 계약업체 첨부서류(계약제출서류, slide30 1.7). */
-  sbmsnDocs: MockCtrtAdocFile[]
+  sbmsnDocs: CtrtAdocFile[]
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -247,7 +247,7 @@ export interface MockCtrtAdocResult {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 공사 계약 상세정보(T09) — slide43~44 데이터영역. */
-export interface MockCstrnElctrCtrtPrgrsDtl {
+export interface CstrnElctrCtrtPrgrsDtl {
   /** 계약번호 (11). */
   ctrtNo: string
   /** 계약번호차수 — 문서정보 표기(계약번호+계약회차). */
@@ -325,7 +325,7 @@ export interface MockCstrnElctrCtrtPrgrsDtl {
 }
 
 /** 하자담보책임(T11) 1건 — slide45 1.3 데이터영역(여러 건 반복). */
-export interface MockCtrtCnstpFlw {
+export interface CtrtCnstpFlw {
   id: string
   /** 공종명 (200). */
   cnstpNm: string
@@ -343,7 +343,7 @@ export interface MockCtrtCnstpFlw {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 물품일반계약서 상세 — slide66~67 데이터영역. */
-export interface MockCmdtyGnrlCtrdocDtl {
+export interface CmdtyGnrlCtrdocDtl {
   /** 계약번호 (11). */
   ctrtNo: string
   /** 계약번호차수 — 문서정보 표기. */
@@ -412,7 +412,7 @@ export interface MockCmdtyGnrlCtrdocDtl {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 물품수정계약서 상세(T22) — slide80 데이터영역. */
-export interface MockCmdtyMdfcnCtrdocDtl {
+export interface CmdtyMdfcnCtrdocDtl {
   /** 계약번호 (11). */
   ctrtNo: string
   /** 계약번호차수. */
@@ -467,7 +467,7 @@ export interface MockCmdtyMdfcnCtrdocDtl {
 }
 
 /** 수정계약명세서 품목(T23·P13 공용) 1건 — slide81·96 데이터영역. */
-export interface MockCtrtMdfcnDtstItem {
+export interface CtrtMdfcnDtstItem {
   id: string
   /** 순번. */
   rnum: number
@@ -514,7 +514,7 @@ export interface MockCtrtMdfcnDtstItem {
 }
 
 /** 물품수정계약명세서(P13) 조회 결과 — 계약정보 + 수정항목 + 품목(반복) + 합계(slide95~96). */
-export interface MockCmdtyMdfcnCtrdocDtstResult {
+export interface CmdtyMdfcnCtrdocDtstResult {
   ctrtInfo: {
     ctrtNo: string
     /** 수정계약차수 (7). */
@@ -524,7 +524,7 @@ export interface MockCmdtyMdfcnCtrdocDtstResult {
   }
   /** 수정항목 (mdfcnArtclNm — 단위/단가/납기/품목추가 등). */
   mdfcnArtclNm: string
-  items: MockCtrtMdfcnDtstItem[]
+  items: CtrtMdfcnDtstItem[]
   /** 계약품목 합계 — 수량/금액/증감내역(수량)/증감내역(금액). */
   sums: {
     sumCtrtQty: number
@@ -535,7 +535,7 @@ export interface MockCmdtyMdfcnCtrdocDtstResult {
 }
 
 /** 물품최종계약명세서(P12) 품목 1건 — slide92 데이터영역. */
-export interface MockCtrtLastDtstItem {
+export interface CtrtLastDtstItem {
   id: string
   /** 계약번호 (11). */
   ctrtNo: string
@@ -560,17 +560,17 @@ export interface MockCtrtLastDtstItem {
 }
 
 /** 특수조건(T24) — slide82: spclCnd (512). */
-export interface MockCtrtSpclCnd {
+export interface CtrtSpclCnd {
   spclCnd: string
 }
 
 // ────────────────────────────────────────────────────────────────────────────
-// MUI-CT-01-M10 공사계약서상세 (slide69~75) — 탭: T19 상세정보 · T20 하자담보책임(MockCtrtCnstpFlw
+// MUI-CT-01-M10 공사계약서상세 (slide69~75) — 탭: T19 상세정보 · T20 하자담보책임(CtrtCnstpFlw
 //   재사용) · T21 연대보증. 항목명 slide73~74 그대로.
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 공사계약서 상세(T19) — slide73~74 데이터영역. */
-export interface MockCstrnCtrdocDtl {
+export interface CstrnCtrdocDtl {
   /** 계약번호 (11). */
   ctrtNo: string
   /** 계약번호차수. */
@@ -631,7 +631,7 @@ export interface MockCstrnCtrdocDtl {
 }
 
 /** 연대보증(T21) 1건 — slide74 1.3 데이터영역(여러 건 반복). */
-export interface MockCtrtJntGrnte {
+export interface CtrtJntGrnte {
   id: string
   /** 순번. */
   rnum: number
@@ -656,14 +656,14 @@ export interface MockCtrtJntGrnte {
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-CT-01-M07 물품총액계약서상세 · M08 물품단가계약서상세 (slide48~62)
 // — 같은 3탭 구조(상세정보/계약명세서/특수조건), 단가제만 부서명·조달판단번호 추가(slide57)
-//   → 1페이지 + type 파라미터(MockCtCtrdocType). 항목명 slide52~54·60~61 그대로.
+//   → 1페이지 + type 파라미터(CtCtrdocType). 항목명 slide52~54·60~61 그대로.
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 총액제(M07, gramt) / 단가제(M08, untprc) 구분. */
-export type MockCtCtrdocType = 'gramt' | 'untprc'
+export type CtCtrdocType = 'gramt' | 'untprc'
 
 /** 물품총액/단가계약서 상세(T13/T16 공용) — slide52·60 데이터영역. */
-export interface MockCmdtyCtrdocDtl {
+export interface CmdtyCtrdocDtl {
   /** 물품명 (200). */
   rprsItemNm: string
   /** 계약번호 (11). */
@@ -726,7 +726,7 @@ export interface MockCmdtyCtrdocDtl {
 
 /** 계약 명세정보(T14/T17 공용) — 예산구분 그룹 내 품목 1건. 총액제/단가제 항목 세트가 다름
  *  (slide53·61 1.2) — 값 있는 필드만 렌더. */
-export interface MockCtrtDtstGroupItem {
+export interface CtrtDtstGroupItem {
   id: string
   /** 공동계약업체 (100) — 총액제(T14). */
   bzentyNm?: string
@@ -769,18 +769,18 @@ export interface MockCtrtDtstGroupItem {
 }
 
 /** 계약 명세정보 — 예산구분(장기국채/총계/예산별 소계) 그룹 반복(slide50·58). */
-export interface MockCtrtDtstGroup {
+export interface CtrtDtstGroup {
   id: string
   /** 예산구분 그룹 라벨 — 장기국채/총계/예산별 소계 등. */
   bgtCd: string
-  items: MockCtrtDtstGroupItem[]
+  items: CtrtDtstGroupItem[]
 }
 
 /** 계약명세서 탭(T14/T17) 조회 결과 — 부서명/조달판단번호 헤더 + 예산구분 그룹. */
-export interface MockCmdtyCtrdocDtstResult {
+export interface CmdtyCtrdocDtstResult {
   deptCd: string
   prcmNo: string
-  groups: MockCtrtDtstGroup[]
+  groups: CtrtDtstGroup[]
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -789,7 +789,7 @@ export interface MockCmdtyCtrdocDtstResult {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 보증서 정보(dm_wtgrInfo) 1건. */
-export interface MockCtrtGrnteInfo {
+export interface CtrtGrnteInfo {
   id: string
   /** 계약업체 (5) — 표시명. */
   ctrtBzentyCd: string
@@ -816,9 +816,9 @@ export interface MockCtrtGrnteInfo {
 }
 
 /** 보증서 확인팝업 조회 결과 — 계약정보(dm_ctrtInfo) + 보증서정보(dm_wtgrInfo, 반복). */
-export interface MockCtrtGrnteResult {
+export interface CtrtGrnteResult {
   ctrtInfo: { ctrtNo: string; ctrtYmd: string }
-  wtgrInfos: MockCtrtGrnteInfo[]
+  wtgrInfos: CtrtGrnteInfo[]
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -827,7 +827,7 @@ export interface MockCtrtGrnteResult {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 인지세 납부정보(dl_stmtxPayInfo) 1건. */
-export interface MockCtrtStmtxPayInfo {
+export interface CtrtStmtxPayInfo {
   id: string
   /** 계약번호 (35). */
   ctrtNo: string
@@ -850,9 +850,9 @@ export interface MockCtrtStmtxPayInfo {
 }
 
 /** 인지세 확인팝업 조회 결과 — 계약정보 + 납부정보(반복) + 납부액(dm_payAmt). */
-export interface MockCtrtStmtxResult {
+export interface CtrtStmtxResult {
   ctrtInfo: { ctrtYr: string; ctrtNo: string; ctrtOd: string }
-  payInfos: MockCtrtStmtxPayInfo[]
+  payInfos: CtrtStmtxPayInfo[]
   payAmt: {
     /** 납부대상액 (25,3). */
     payTrgtAmt: number
@@ -869,7 +869,7 @@ export interface MockCtrtStmtxResult {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 계약 품목정보 1건 — slide88 1.2(+slide89 계속, 260623 군급-재고번호 등 추가분 포함). */
-export interface MockCtrtDtstItem {
+export interface CtrtDtstItem {
   id: string
   /** 순번. */
   rnum: number
@@ -910,7 +910,7 @@ export interface MockCtrtDtstItem {
 }
 
 /** 물품계약명세서 조회 결과 — 계약정보(slide88 1.1) + 품목(반복). */
-export interface MockCmdtyCtrtDtstResult {
+export interface CmdtyCtrtDtstResult {
   ctrtInfo: {
     /** 계약번호 (11). */
     ctrtNo: string
@@ -931,7 +931,7 @@ export interface MockCmdtyCtrtDtstResult {
     /** 국채금액 (17,2). */
     govbndCtrtAmt: number
   }
-  items: MockCtrtDtstItem[]
+  items: CtrtDtstItem[]
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -940,7 +940,7 @@ export interface MockCmdtyCtrtDtstResult {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 대금지불정보 목록(M15) 1건 — slide101 1.2 데이터영역. */
-export interface MockPymtDfryInfoItem {
+export interface PymtDfryInfoItem {
   /** 목록 key — 증빙번호 기반(클라 생성). */
   id: string
   /** 순번. */
@@ -966,7 +966,7 @@ export interface MockPymtDfryInfoItem {
 }
 
 /** 대금지불정보조회(P16) 결과 1건 — slide103 1.2 데이터영역. */
-export interface MockPymtDfryInfoInqItem {
+export interface PymtDfryInfoInqItem {
   id: string
   /** 지출일자 (yyyy-mm-dd). */
   expndYmd: string
@@ -983,7 +983,7 @@ export interface MockPymtDfryInfoInqItem {
 }
 
 /** 계약진행상태(P17) 이력 1건 — slide85(국내)·86(국외 추가필드) 데이터영역. */
-export interface MockCtrtPrgrsStts {
+export interface CtrtPrgrsStts {
   id: string
   /** 처리상태 (상위코드: UA22 — 국외는 prcsStts 표시명). */
   ctrtPrgrsStcd: string
@@ -1004,7 +1004,7 @@ export interface MockCtrtPrgrsStts {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 국외 계약 일반현황(T71) — dm_ctrtInfo(slide152~153) + 계약금액/구매형태/업체/담당자. */
-export interface MockOvsElctrCtrtDtl {
+export interface OvsElctrCtrtDtl {
   /** 계약번호 (35). */
   ctrtNo: string
   /** 계약차수 표기(문서정보 'KD… (00)'). */
@@ -1138,7 +1138,7 @@ export interface MockOvsElctrCtrtDtl {
 }
 
 /** 국외 계좌정보(T72) — slide156~158 (dm_ctrtInfo/dm_ctrtBzentyInfo/dm_bacntInfo/dm_dsgnPtr/dm_mkrPtr). */
-export interface MockOvsBacntInfo {
+export interface OvsBacntInfo {
   ctrtInfo: { ctrtNo: string; orderInstNm: string; crtrNm: string; bizTypeCd: string }
   bzentyInfo: {
     ctrtBzentyNm: string
@@ -1161,7 +1161,7 @@ export interface MockOvsBacntInfo {
 }
 
 /** 국외 계약명세서(T75) 품목 1건 — dl_ctrtItemList(slide165). */
-export interface MockOvsCtrtDtstItem {
+export interface OvsCtrtDtstItem {
   id: string
   /** 순번. */
   regSn: number
@@ -1194,7 +1194,7 @@ export interface MockOvsCtrtDtstItem {
 }
 
 /** 국외 계약명세서(T75) 조회 결과 — 계약정보(dm_ctrtInfo) + 품목 + 단가합계. */
-export interface MockOvsCtrtDtstResult {
+export interface OvsCtrtDtstResult {
   ctrtInfo: {
     ctrtNo: string
     /** 판단번호 (38). */
@@ -1207,13 +1207,13 @@ export interface MockOvsCtrtDtstResult {
     ctrtAmt: string
     ctrtUsdAmt: string
   }
-  items: MockOvsCtrtDtstItem[]
+  items: OvsCtrtDtstItem[]
   /** 품목 단가 합계 금액 (25,3). */
   sumAmt: number
 }
 
 /** 국외 첨부서류(T76) — 국내 구조 + 직인등록정보(dl_ofslReg) 추가(slide167~168). */
-export interface MockOvsCtrtAdocResult {
+export interface OvsCtrtAdocResult {
   /** 계약관 첨부서류(dl_ctrtRfrncDcmnt) — ctrtDcmntNm/ctrtDcmntFile. */
   refDocs: { id: string; ctrtDcmntNm: string; ctrtDcmntFile: string; fileSize?: string }[]
   /** 계약업체 첨부서류(dl_ctrtSbmsnDcmnt). */
@@ -1228,7 +1228,7 @@ export interface MockOvsCtrtAdocResult {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 상업계약서 계약현황(T77) — dm_ctrtDtlInfo(slide182). 통화 표기 포함 값은 표시 문자열. */
-export interface MockOvsCmbzCtrdocDtl {
+export interface OvsCmbzCtrdocDtl {
   /** 계약담당부서 (100). */
   ofcctrDeptNm: string
   /** 담당자성명 (200). */
@@ -1296,7 +1296,7 @@ export interface MockOvsCmbzCtrdocDtl {
 }
 
 /** 상업계약서 계약명세서(T78) — dl_ctrtDtst(slide183) + GRAND-TOTAL(dm_gramt). */
-export interface MockOvsCmbzDtstResult {
+export interface OvsCmbzDtstResult {
   /** GRAND-TOTAL — 표시(예: '100.00 USD'). */
   gramt: string
   /** 명세서 목록 — 번호/PR.No./Group No./SUB-TOTAL. */
@@ -1304,7 +1304,7 @@ export interface MockOvsCmbzDtstResult {
 }
 
 /** 상업계약서 계약대상(T79) — dm_ctrtRlt(slide183). */
-export interface MockOvsCmbzTrgt {
+export interface OvsCmbzTrgt {
   /** 계약담당 공무원 — 표시(방위사업청 계약관). */
   ofcctrNm: string
   /** 계약 상대자. */
@@ -1323,7 +1323,7 @@ export interface MockOvsCmbzTrgt {
 }
 
 /** 상업계약서명세서(P78) — dm_ctrtInfo + dl_ctrtDtst(slide186). */
-export interface MockOvsCmbzCtrtDtstResult {
+export interface OvsCmbzCtrtDtstResult {
   ctrtInfo: {
     ctrtNo: string
     prchsDmndNo: string
@@ -1364,10 +1364,10 @@ export interface MockOvsCmbzCtrtDtstResult {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 해지/해제 상세 라우팅 구분 — 카드 클릭 분기(M02~M06). ⚠️ 설계서 미정의 임시 키. */
-export type MockCncltnRmvRouteCd = 'gnrl' | 'gramt' | 'untprc' | 'mdfcn' | 'cstrn'
+export type CncltnRmvRouteCd = 'gnrl' | 'gramt' | 'untprc' | 'mdfcn' | 'cstrn'
 
 /** 해지/해제 목록(M01) 카드 1건 — slide106 1.2 데이터영역 항목명 그대로. */
-export interface MockCncltnRmvListItem {
+export interface CncltnRmvListItem {
   /** 목록 key/상세 라우팅용 고유 식별자 — `${ctrtNo}-${ctrtCycl}` (배열 인덱스 key 금지). */
   id: string
   /** 번호 — 조회결과 자료 순번. */
@@ -1403,22 +1403,22 @@ export interface MockCncltnRmvListItem {
   /** 계약담당 (상위코드: PCC + 담당관명). */
   fcltPicNm: string
   /** 상세 라우팅 구분 — 카드 클릭 분기(slide107). ⚠️ 설계서 미정의 임시 키. */
-  dtlRouteCd: MockCncltnRmvRouteCd
+  dtlRouteCd: CncltnRmvRouteCd
 }
 
 /** 해지/해제 목록 조회 요청 — 서버 필터/페이징 전환 시 filter·page 를 여기로 이행. */
-export interface MockCncltnRmvListRequest {
+export interface CncltnRmvListRequest {
   filter?: SearchFilterValue
 }
 
 /** 해지/해제 목록 조회 결과. */
-export interface MockCncltnRmvListResult {
-  list: MockCncltnRmvListItem[]
+export interface CncltnRmvListResult {
+  list: CncltnRmvListItem[]
   total: number
 }
 
 /** 물품 해지/해제 상세정보(M02 T01) — slide109·112 데이터영역. */
-export interface MockCmdtyCncltnRmvDtl {
+export interface CmdtyCncltnRmvDtl {
   /** 계약번호 (11). */
   ctrtNo: string
   /** 차수 — 문서정보 표기. */
@@ -1473,7 +1473,7 @@ export interface MockCmdtyCncltnRmvDtl {
 }
 
 /** 해지해제 통보내용(M02 T03) 1건 — slide113 1.5 데이터영역. */
-export interface MockCncltnRmvNoti {
+export interface CncltnRmvNoti {
   id: string
   /** 통보차수 (7). */
   ctrtCycl: string
@@ -1484,14 +1484,14 @@ export interface MockCncltnRmvNoti {
 }
 
 /** 해지해제 정보(M02 T03) 조회 결과 — 통보내용(반복) + 참조서류(slide111·113 1.4). */
-export interface MockCncltnRmvNotiResult {
-  notis: MockCncltnRmvNoti[]
-  /** 해지해제 참조서류 — cncltnRmvDmndAdocNm(서류명)/fileNm(첨부파일명). MockCtrtAdocFile 재사용. */
-  adocs: MockCtrtAdocFile[]
+export interface CncltnRmvNotiResult {
+  notis: CncltnRmvNoti[]
+  /** 해지해제 참조서류 — cncltnRmvDmndAdocNm(서류명)/fileNm(첨부파일명). CtrtAdocFile 재사용. */
+  adocs: CtrtAdocFile[]
 }
 
 /** 해지/해제 일반계약(총액제 M03/단가제 M04) 상세정보(T04/T07) — slide119~120·127~128. */
-export interface MockCncltnRmvGnrlCtrtDtl {
+export interface CncltnRmvGnrlCtrtDtl {
   /** 물품명 (200). */
   rprsItemNm: string
   /** 계약번호 (11). */
@@ -1552,8 +1552,8 @@ export interface MockCncltnRmvGnrlCtrtDtl {
   ctrtAmt: number
 }
 
-/** 해지/해제 수정계약 상세정보(M05 T10) — slide135 데이터영역(MockCmdtyMdfcnCtrdocDtl + 해지해제). */
-export interface MockCncltnRmvMdfcnCtrtDtl {
+/** 해지/해제 수정계약 상세정보(M05 T10) — slide135 데이터영역(CmdtyMdfcnCtrdocDtl + 해지해제). */
+export interface CncltnRmvMdfcnCtrtDtl {
   /** 계약번호 (11). */
   ctrtNo: string
   /** 차수. */
@@ -1607,7 +1607,7 @@ export interface MockCncltnRmvMdfcnCtrtDtl {
 }
 
 /** 해지/해제 공사계약 상세정보(M06 T13) — slide141·143 데이터영역. */
-export interface MockCstrnCncltnRmvDtl {
+export interface CstrnCncltnRmvDtl {
   /** 계약번호 (11). */
   ctrtNo: string
   /** 차수. */
@@ -1664,7 +1664,7 @@ export interface MockCstrnCncltnRmvDtl {
 // - 검색조건 mdfcnCtrtDmndrcofc(수정계약요청수신)·mdfcnRncd(수정계약사유): 설계서에 '항목 확인 불가.
 //   항목명과 코드 전달'(slide18 4-2) — 코드 확정 시 검색필터 UI 추가.
 // - ctrtPrgrsStcd/ctrtMthdCd/bidMthdCd 코드값: 목업은 표시명 문자열(공통코드 확정 시 코드+명 매핑 전환).
-// - M03 상세: ctrdocTpNm(계약서유형 표시명)·acnutNo(계좌번호 분리)·MockCtrtRjctRsn.title/MockCtrtAdocFile.fileSize 등
+// - M03 상세: ctrdocTpNm(계약서유형 표시명)·acnutNo(계좌번호 분리)·CtrtRjctRsn.title/CtrtAdocFile.fileSize 등
 //   표시 보조 필드는 설계서 항목표에 없는 파생 항목 — 백엔드 응답 확정 시 정리.
 // - P11 품목정보: 납지별수량(dlvQty)·금액(itemAmt)은 설계서상 수량(ctrtQty)·계약금액(ctrtAmt)과 동일
 //   항목명이라 충돌 회피용 임시 분리 키 — 응답 구조 확정 시 정리.

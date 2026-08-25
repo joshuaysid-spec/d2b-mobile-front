@@ -8,10 +8,10 @@ import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockOvsBidWtgrInfo, MockOvsBidWtgrItem } from '@/types/mock/bd'
+import type { OvsBidWtgrInfo, OvsBidWtgrItem } from '@/types/mock/bd'
 
 // 보증서정보 상세 목업(dl_wtgrInfo + dl_IsrInfo + dl_ctrtInfo) — 설계서 slide344~345 예시값 그대로.
-const MOCK_WTGR_INFO: MockOvsBidWtgrInfo = {
+const MOCK_WTGR_INFO: OvsBidWtgrInfo = {
   wtgrNo: '0010011053320031100675611100',
   grnteAmt: '2,700,000 원',
   grnteBgngPrd: '2003-09-08 부터 2003-10-09 까지',
@@ -42,7 +42,7 @@ const MOCK_WTGR_INFO: MockOvsBidWtgrInfo = {
 }
 
 // 섹션(SectionTitle + Table) 데이터 — 설계서 slide344~345 데이터영역별 그룹.
-const buildSections = (info: MockOvsBidWtgrInfo): { title: string; rows: TableRow[] }[] => [
+const buildSections = (info: OvsBidWtgrInfo): { title: string; rows: TableRow[] }[] => [
   {
     title: '보증서 정보', // dl_wtgrInfo
     rows: [
@@ -103,9 +103,9 @@ export interface OvsBidWtgrDtlFullPopupProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   /** 조회 대상 보증서(P75 목록에서 선택). null 이면 렌더 생략. */
-  item: MockOvsBidWtgrItem | null
+  item: OvsBidWtgrItem | null
   /** 보증서 적용 클릭 — 선택 보증서를 부모화면(M74)에 적용. */
-  onApply: (item: MockOvsBidWtgrItem) => void
+  onApply: (item: OvsBidWtgrItem) => void
 }
 
 export function OvsBidWtgrDtlFullPopup({
@@ -116,7 +116,7 @@ export function OvsBidWtgrDtlFullPopup({
 }: OvsBidWtgrDtlFullPopupProps) {
   // On-Load 보증서 정보 상세 조회 — 선택 보증서 값 병합(목업).
   // 추후 API: bdService.selectOvsBidWtgrInfo(item.wtgrNo)
-  const info: MockOvsBidWtgrInfo = {
+  const info: OvsBidWtgrInfo = {
     ...MOCK_WTGR_INFO,
     ...(item && {
       wtgrNo: item.wtgrNo,

@@ -2,13 +2,13 @@
 // 아코디언(등록품목명세·담당자정보·대표품류및조합/단체) with 테이블 + 제출서류 안내(Infobox).
 //   - 등록품목명세(dl_regTrgtItemList)는 목록형 → 항목별 Table 반복.
 // 데이터는 목업(설계서 데이터영역 항목명·형식 그대로) — 추후 API(cmService.selectBzentyDmscptInfo)로 대체.
-import type { MockRegTrgtItem, MockPicInfo, MockKnditmAsctGrp } from '@/types/mock/cm'
+import type { RegTrgtItem, PicInfo, KnditmAsctGrp } from '@/types/mock/cm'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 
 // ── 등록품목명세 (dl_regTrgtItemList) — 설계서 slide122/123 예시값 ────────────
-const REG_ITEMS: MockRegTrgtItem[] = [
+const REG_ITEMS: RegTrgtItem[] = [
   {
     itemCd: '1001100001',
     knditmCd: '60',
@@ -21,7 +21,7 @@ const REG_ITEMS: MockRegTrgtItem[] = [
 ]
 
 // ── 담당자정보 (dm_picInfo) — 설계서 slide122/123 예시값 ─────────────────────
-const PIC_INFO: MockPicInfo = {
+const PIC_INFO: PicInfo = {
   picNm: '김길동',
   picEntlno: '02-1234-5678',
   picFxno: '02-2345-6789',
@@ -29,7 +29,7 @@ const PIC_INFO: MockPicInfo = {
 }
 
 // ── 대표품류 및 조합/단체 (dm_knditmListAsctGrpList) — 설계서 slide122/123 예시값 ──
-const ASCT_GRP_LIST: MockKnditmAsctGrp[] = [
+const ASCT_GRP_LIST: KnditmAsctGrp[] = [
   {
     knditmCd: '05',
     knditmCdNm: '05 / 피복',
@@ -39,7 +39,7 @@ const ASCT_GRP_LIST: MockKnditmAsctGrp[] = [
   },
 ]
 
-function regItemRows(d: MockRegTrgtItem): TableRow[] {
+function regItemRows(d: RegTrgtItem): TableRow[] {
   return [
     { label: '품목코드', value: d.itemCd },
     { label: '품류코드/명', value: `${d.knditmCd} / ${d.knditmCdNm}` },
@@ -50,7 +50,7 @@ function regItemRows(d: MockRegTrgtItem): TableRow[] {
   ]
 }
 
-function picRows(d: MockPicInfo): TableRow[] {
+function picRows(d: PicInfo): TableRow[] {
   return [
     { label: '담당자명', value: d.picNm },
     { label: '전화번호', value: d.picEntlno },
@@ -59,7 +59,7 @@ function picRows(d: MockPicInfo): TableRow[] {
   ]
 }
 
-function asctRows(d: MockKnditmAsctGrp): TableRow[] {
+function asctRows(d: KnditmAsctGrp): TableRow[] {
   return [
     { label: '대표품류', value: d.knditmCdNm },
     { label: '업태', value: d.bzstatCdNm },

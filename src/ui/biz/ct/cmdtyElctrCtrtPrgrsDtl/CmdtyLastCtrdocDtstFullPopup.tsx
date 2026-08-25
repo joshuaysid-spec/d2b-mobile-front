@@ -6,7 +6,7 @@ import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockCtrtLastDtstItem } from '@/types/mock/ct'
+import type { CtrtLastDtstItem } from '@/types/mock/ct'
 
 export interface CmdtyLastCtrdocDtstFullPopupProps {
   /** 계약 식별자 — 부모 상세 페이지가 navigate state 에서 받아 전달. */
@@ -16,7 +16,7 @@ export interface CmdtyLastCtrdocDtstFullPopupProps {
 }
 
 // 품목 1건 → 표 행(slide92 계약품목정보 순서).
-function itemRows(it: MockCtrtLastDtstItem): TableRow[] {
+function itemRows(it: CtrtLastDtstItem): TableRow[] {
   return [
     { label: '계약번호', value: it.ctrtNo },
     { label: '조달요구번호', value: it.prcmRqtNo },

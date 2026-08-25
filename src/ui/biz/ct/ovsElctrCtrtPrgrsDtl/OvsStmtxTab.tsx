@@ -5,10 +5,10 @@ import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockCtrtStmtxPayInfo } from '@/types/mock/ct'
+import type { CtrtStmtxPayInfo } from '@/types/mock/ct'
 
 // 납부정보 1건 → 표 행(slide163 dl_stmtxPayInfo 순서 — M74 팝업과 동일).
-function payInfoRows(p: MockCtrtStmtxPayInfo): TableRow[] {
+function payInfoRows(p: CtrtStmtxPayInfo): TableRow[] {
   return [
     { label: '계약번호', value: p.ctrtNo },
     { label: '사용여부', value: p.useYn },

@@ -19,18 +19,18 @@ import { Badge } from '@/ui/common/base/Badge'
 import { Icon } from '@/ui/common/base/Icon'
 import { Calendar } from '@/ui/common/base/Calendar'
 import { cn } from '@/utils/cn'
-import type { MockMyPageSchedule, MockMyPageSchdlSeCd } from '@/types/mock/cm'
+import type { MyPageSchedule, MyPageSchdlSeCd } from '@/types/mock/cm'
 
 // 구분별 배지 라벨. Figma(10020:84091 m_label badge)는 물품/공사/개인 모두 동일한 중립
 // pastel-blue(bg #f5f9ff / border #c1d1ee / text #0f316e) → 색을 구분별로 가르지 않고 전부 blue.
-const SCHDL_BADGE: Record<MockMyPageSchdlSeCd, { label: string; color: 'blue' }> = {
+const SCHDL_BADGE: Record<MyPageSchdlSeCd, { label: string; color: 'blue' }> = {
   goods: { label: '물품', color: 'blue' },
   construction: { label: '공사', color: 'blue' },
   personal: { label: '개인', color: 'blue' },
 }
 
 interface ScheduleCardProps {
-  schedule: MockMyPageSchedule
+  schedule: MyPageSchedule
   onClick: () => void
 }
 
@@ -71,13 +71,13 @@ function ScheduleCard({ schedule, onClick }: ScheduleCardProps) {
 
 interface MyPageCalendarProps {
   /** 관심 입찰공고 + 개인 스케줄(합쳐 최대 3건 표시). */
-  schedules: MockMyPageSchedule[]
+  schedules: MyPageSchedule[]
   /** 초기 표시 월 'YYYY-MM' (선택) — 미지정 시 이번 달. */
   initialMonth?: string
   /** [더보기] — 업무 캘린더 전체 화면 이동. */
   onMore: () => void
   /** 일정 카드 클릭 — 부모가 입찰공고 이동/바텀시트 분기. */
-  onSelectSchedule: (schedule: MockMyPageSchedule) => void
+  onSelectSchedule: (schedule: MyPageSchedule) => void
   /** 날짜 클릭 'YYYY-MM-DD' — 부모가 업무캘린더(M06)로 그 날짜 선택 상태로 이동. */
   onSelectDate: (schdlDt: string) => void
 }
@@ -103,7 +103,7 @@ export function MyPageCalendar({
   //   정렬: ① 관심(찜) 공고(물품·공사) 먼저 → 개인 스케줄 맨 뒤, ② 같은 구분 안에서는 최신순
   //   (작성일 wrtYmd 내림차순). wrtYmd 없는 항목은 그 구분의 뒤로 — 정렬 기준 확정 시 그 항목명으로 교체.
   const visible = useMemo(() => {
-    const seRank = (s: MockMyPageSchedule) => (s.schdlSeCd === 'personal' ? 1 : 0)
+    const seRank = (s: MyPageSchedule) => (s.schdlSeCd === 'personal' ? 1 : 0)
     return [...schedules]
       .sort(
         (a, b) => seRank(a) - seRank(b) || (b.wrtYmd ?? '').localeCompare(a.wrtYmd ?? ''),

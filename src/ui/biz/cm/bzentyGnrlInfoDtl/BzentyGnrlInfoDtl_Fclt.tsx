@@ -2,19 +2,19 @@
 // 아코디언(시설정보·시설면허정보·주력분야) with 테이블 + 시공능력평가액 안내(Infobox).
 //   - 시설면허정보(dl_bzentyFcltLcnsList)·주력분야(dl_bzentyFcltMfrcFldList)는 목록형 → 항목별 Table 반복.
 // 데이터는 목업(설계서 데이터영역 항목명·형식 그대로) — 추후 API(cmService.selectBzentyFcltInfo)로 대체.
-import type { MockBzentyFcltInfo, MockBzentyFcltLcns, MockBzentyFcltMfrcFld } from '@/types/mock/cm'
+import type { BzentyFcltInfo, BzentyFcltLcns, BzentyFcltMfrcFld } from '@/types/mock/cm'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 
 // ── 시설정보 (dm_bzentyFcltInfo) — 설계서 slide124/125 예시값 ────────────────
-const FCLT_INFO: MockBzentyFcltInfo = {
+const FCLT_INFO: BzentyFcltInfo = {
   bzstatCdNm: '제조',
   lcofcTelno: '02-1234-5678',
 }
 
 // ── 시설면허정보 (dl_bzentyFcltLcnsList) — 설계서 slide124/125 예시값 ─────────
-const LCNS_LIST: MockBzentyFcltLcns[] = [
+const LCNS_LIST: BzentyFcltLcns[] = [
   {
     cnstpCdNm: '소방공사업',
     cnstpCd: '0001',
@@ -27,7 +27,7 @@ const LCNS_LIST: MockBzentyFcltLcns[] = [
 ]
 
 // ── 주력분야 (dl_bzentyFcltMfrcFldList) — 설계서 slide124/125 예시값 ──────────
-const MFRC_LIST: MockBzentyFcltMfrcFld[] = [
+const MFRC_LIST: BzentyFcltMfrcFld[] = [
   {
     cnstpCdNm: '총탄',
     cnstpCd: '60',
@@ -42,7 +42,7 @@ const MFRC_LIST: MockBzentyFcltMfrcFld[] = [
   },
 ]
 
-function lcnsRows(d: MockBzentyFcltLcns): TableRow[] {
+function lcnsRows(d: BzentyFcltLcns): TableRow[] {
   return [
     { label: '공종[업종코드]', value: `${d.cnstpCdNm} [${d.cnstpCd}]` },
     { label: '면허번호', value: d.lcnsNo },
@@ -52,7 +52,7 @@ function lcnsRows(d: MockBzentyFcltLcns): TableRow[] {
   ]
 }
 
-function mfrcRows(d: MockBzentyFcltMfrcFld): TableRow[] {
+function mfrcRows(d: BzentyFcltMfrcFld): TableRow[] {
   return [
     { label: '공종명[업종코드]', value: `${d.cnstpCdNm} [${d.cnstpCd}]` },
     { label: '주력분야[코드]', value: `${d.mfrcFldNm} [${d.mfrcFldCd}]` },

@@ -4,17 +4,17 @@
 //             rprsItemNm · deptCd · userNm · implPrgrsStcd · inspShcd · bidSecd · ctrtMthdCd
 import type { SearchFilterValue } from '@/types/search-filter'
 
-export type MockOpSearchFilter = SearchFilterValue
+export type OpSearchFilter = SearchFilterValue
 
 /**
  * 검색유형 — 기획서 srchType. 조달계획/사전규격/연간조달계획.
  * 카드 클릭 라우팅 분기에 사용: 'spec' → 사전규격상세(/op/spec/:id), 그 외 → 조달계획상세(/op/:id).
  */
-export type MockOpSrchType = 'plan' | 'spec' | 'annual'
+export type OpSrchType = 'plan' | 'spec' | 'annual'
 
 // 조달계획 통합목록 데이터(설계서 dlt_prcmPlanList) 카드 1건 — 항목명 설계서 그대로.
-// 연간조달계획(annual)은 데이터영역이 아예 다르다(dlt_anlPrcmPlanList → MockOpAnlPrcmPlanItem).
-export interface MockOpPlanItem {
+// 연간조달계획(annual)은 데이터영역이 아예 다르다(dlt_anlPrcmPlanList → OpAnlPrcmPlanItem).
+export interface OpPlanItem {
   /** 카드 식별자 (상세 라우팅 키) */
   id: string
   /** 검색유형(srchType) — 'spec'(사전규격)이면 사전규격상세로 라우팅. */
@@ -50,18 +50,18 @@ export interface MockOpPlanItem {
 
 /**
  * 조달계획 상세 응답 — 목록→상세 표준(navigate state + id 조회, CLAUDE.md "목록 → 상세 데이터 전달").
- * 헤더/요약은 목록 아이템(MockOpPlanItem)과 동일 필드. 상세 전용 섹션(집행계획·판단내역 등)은
+ * 헤더/요약은 목록 아이템(OpPlanItem)과 동일 필드. 상세 전용 섹션(집행계획·판단내역 등)은
  * 추후 설계서 데이터영역 기준으로 확장한다.
  */
-export type MockOpPlanDetail = MockOpPlanItem
+export type OpPlanDetail = OpPlanItem
 
 // ── OP 서비스(services/op.ts) 요청/응답 타입(추정 — TODO(백엔드 확정)) ──
 // 페이지는 아직 목업 구동(services 미소비)이라 아래 형태는 잠정. 실백엔드 확정 시 이 섹션 + 매핑만 교체.
 
 /** 조달계획 통합목록 조회 요청 — MUI-OP-01-M02 (getList). */
-export interface MockOpListRequest {
+export interface OpListRequest {
   /** 검색유형(srchType) — 조달계획/사전규격/연간조달계획. */
-  srchType: MockOpSrchType
+  srchType: OpSrchType
   /** 빠른검색어(keyword) — 입력 시에만. */
   keyword?: string
   /** 빠른검색 대상(searchTarget) — prcmPlanNm/prcmNo/stockNo/prcmReqNo. */
@@ -71,25 +71,25 @@ export interface MockOpListRequest {
   /** 페이지 크기(10/30/50) — 생략 시 전체 반환. */
   pageSize?: number
   /** 상세필터 확정값(SearchFilter) — 선택. */
-  filter?: MockOpSearchFilter
+  filter?: OpSearchFilter
 }
 
 /**
  * 통합목록 카드 1건 — 검색유형(srchType)으로 판별하는 유니온.
  * 조달계획/사전규격(dlt_prcmPlanList)과 연간조달계획(dlt_anlPrcmPlanList)은 표시 항목이 완전히 다르다.
  */
-export type MockOpListItem = MockOpPlanItem | MockOpAnlPrcmPlanItem
+export type OpListItem = OpPlanItem | OpAnlPrcmPlanItem
 
 /** 목록 조회 결과 — 카드 목록 + 총건수(더보기/페이징 구동). */
-export interface MockOpListResult {
+export interface OpListResult {
   /** 현재 페이지 카드 목록. */
-  list: MockOpListItem[]
+  list: OpListItem[]
   /** 전체 건수(총 N건 표시·더보기 종료 판정). */
   total: number
 }
 
 /** 입찰공고 알림신청 요청 — 조달계획상세 알림신청(MUI-OP-01-P10). */
-export interface MockOpNotifyRequest {
+export interface OpNotifyRequest {
   /** 대상 조달계획 식별자(id). */
   id: string
   /** 휴대번호(phone) — 하이픈 제거 숫자. */
@@ -102,7 +102,7 @@ export interface MockOpNotifyRequest {
  * 품목명세서 1건 — 품목명세서 탭(MUI-OP-01-M04, getItemSpecs).
  * 필드는 설계서 slide25 항목 기준(잠정) — 단가/금액은 비공개('- 원').
  */
-export interface MockOpItemSpec {
+export interface OpItemSpec {
   /** 순번(no). */
   no: number
   /** 재고번호(invtNo) — 목록정보조회(P75/P76) 참조 키. */
@@ -121,7 +121,7 @@ export interface MockOpItemSpec {
  * 업체의견 1건 — 업체의견 탭(MUI-OP-01-M05, getOpinions). 답변(reply)은 선택.
  * 필드는 설계서 slide26 예시 기준(잠정).
  */
-export interface MockOpOpinion {
+export interface OpOpinion {
   /** 안정 고유 식별자(id). */
   id: string
   /** 공개여부(isPublic) — 비공개는 작성자만 열람. */
@@ -140,7 +140,7 @@ export interface MockOpOpinion {
  * 업체의견 등록/수정 요청 — MUI-OP-01-P07 (insert/updateBzentyOpnn, 실 API no.9·no.10).
  * ⚠️ 항목명 잠정 — 화면 미배선(등록 팝업은 아직 목업). 상세설계 확정 시 교체.
  */
-export interface MockOpOpnnRequest {
+export interface OpOpnnRequest {
   /** 대상 조달계획/사전규격 식별자 — 판단번호(prcmNo). */
   prcmNo: string
   /** 업체의견 식별자 — 수정(no.10) 시에만. */
@@ -160,10 +160,10 @@ export interface MockOpOpnnRequest {
 //    연관조달계획상세(P12, AnlPrcmPlanDtl)와 철자가 같지만 다른 화면이니 혼동하지 말 것.
 
 /** 연간조달계획 1건(dlt_anlPrcmPlanList) — 목록 카드 표시분 + 상세 전체 항목. */
-export interface MockOpAnlPrcmPlanItem {
+export interface OpAnlPrcmPlanItem {
   /** 카드 식별자(상세 조회 키) — 설계서 데이터영역 미정의, 프론트 목록 key 용. */
   id: string
-  /** 검색유형(srchType) — 연간조달계획 고정. MockOpPlanItem 과의 판별자. */
+  /** 검색유형(srchType) — 연간조달계획 고정. OpPlanItem 과의 판별자. */
   srchType: 'annual'
   /** 순번(no). */
   no: number
@@ -221,7 +221,7 @@ export interface MockOpAnlPrcmPlanItem {
 }
 
 /** 품목별 검색 요청 — 품목별 검색(MUI-OP-01-P71, searchItems). */
-export interface MockOpItemSearchRequest {
+export interface OpItemSearchRequest {
   /** 요구년도(year, 필수). */
   year: string
   /** 품명(itemNm) — 부분일치. */
@@ -233,7 +233,7 @@ export interface MockOpItemSearchRequest {
 }
 
 /** 품목별 검색 결과 1건(dl_resultList). */
-export interface MockOpItemSearchResult {
+export interface OpItemSearchResult {
   /** 재고번호(invtNo). */
   invtNo: string
   /** 부품번호(prtsNo). */
@@ -243,13 +243,13 @@ export interface MockOpItemSearchResult {
 }
 
 /** 생산자 검색 요청 — 생산자 검색(MUI-OP-01-P72, searchProducers). */
-export interface MockOpProducerSearchRequest {
+export interface OpProducerSearchRequest {
   /** 생산자명(prdctnNm) — 부분일치. */
   prdctnNm?: string
 }
 
 /** 생산자 검색 결과 1건(dl_resultList). */
-export interface MockOpProducerSearchResult {
+export interface OpProducerSearchResult {
   /** 생산자코드(CAGE). */
   cage: string
   /** 생산자명(prdctnNm). */
@@ -257,13 +257,13 @@ export interface MockOpProducerSearchResult {
 }
 
 /** 발주부서(기관) 검색 요청 — 발주부서 검색(MUI-BD-01-P04, searchDepts). */
-export interface MockOpDeptSearchRequest {
+export interface OpDeptSearchRequest {
   /** 발주기관명(keyword) — 부분일치. */
   keyword?: string
 }
 
 /** 발주부서(기관) 검색 결과 1건(dl_resultList). */
-export interface MockOpDeptSearchResult {
+export interface OpDeptSearchResult {
   /** 발주기관(부서)명(instNm). */
   instNm: string
   /** 기관구분(instSe) — 육군/군수사/교육사/학교/경리단 등. */
@@ -281,7 +281,7 @@ export interface MockOpDeptSearchResult {
  * TODO(백엔드 확정): 설계서 검색조건(dm_searchInfo)에는 재고번호(invtNo)만 정의돼 있어
  *   계획 식별자 파라미터명이 미정이다. 반입 시 planId 키를 실제 규격에 맞춘다.
  */
-export interface MockWarSplInqRequest {
+export interface WarSplInqRequest {
   /** 연간조달계획 식별자 — 디폴트 값 조회 기준. */
   planId: string
   /** 검색 NIIN(국가품목 식별번호). 비면 디폴트 조회. */
@@ -289,7 +289,7 @@ export interface MockWarSplInqRequest {
 }
 
 /** 식별정보 데이터 영역(dm_itemInfo) — 형상자료(T73) 상단. */
-export interface MockWarSplItemInfo {
+export interface WarSplItemInfo {
   /** 재고번호(invtNo). */
   invtNo: string
   /** 영문품명(itemNmEng). */
@@ -301,7 +301,7 @@ export interface MockWarSplItemInfo {
 }
 
 /** 참조번호 데이터 영역(dl_refList) 1건 — 형상자료(T73) 하단. */
-export interface MockWarSplRefNo {
+export interface WarSplRefNo {
   /** 목록 key 용 식별자 — 설계서 미정의(참조번호 중복 가능). */
   id: string
   /** 참조번호(rfrncNo). */
@@ -315,13 +315,13 @@ export interface MockWarSplRefNo {
 }
 
 /** 형상자료(MUI-OP-01-T73 WarSplList_Cnfg) 조회 결과. */
-export interface MockWarSplCnfg {
-  itemInfo: MockWarSplItemInfo
-  refList: MockWarSplRefNo[]
+export interface WarSplCnfg {
+  itemInfo: WarSplItemInfo
+  refList: WarSplRefNo[]
 }
 
 /** 식별자료 데이터 영역(dm_idntfInfo) — 식별자료(MUI-OP-01-T74 WarSplList_Idntf). */
-export interface MockWarSplIdntf {
+export interface WarSplIdntf {
   /** 군급분류(fsc). */
   fsc: string
   /** 영문품명(itemNmEng). */
@@ -371,7 +371,7 @@ export interface MockWarSplIdntf {
 }
 
 /** 참고자료 데이터 영역(dl_refList) 1건 — 참고자료(MUI-OP-01-T75 WarSplList_Ref). */
-export interface MockWarSplRef {
+export interface WarSplRef {
   /** 목록 key 용 식별자 — 설계서 미정의(참고번호 중복 가능). */
   id: string
   /** 참고번호 R/N(refNo). */
@@ -397,7 +397,7 @@ export interface MockWarSplRef {
 }
 
 /** 업체정보 데이터 영역(dm_bzentyInfo) — 업체정보(MUI-OP-01-P77 WarSplList_BzEnty). */
-export interface MockWarSplBzEnty {
+export interface WarSplBzEnty {
   /** 업체명(bzentyNm). */
   bzentyNm: string
   /** 대표자(rprsvNm). */
@@ -421,7 +421,7 @@ export interface MockWarSplBzEnty {
  * TODO(백엔드 확정): 획득구분 코드값(acqstnTypeCd, 자리수 8)은 설계서에 라벨만 정의
  *   (상업실적사/FMS실적가/BOA청구가/CSP구매가/업체공표(견적)가/무관정보가) — 코드 미정.
  */
-export interface MockPrcDataSearchRequest {
+export interface PrcDataSearchRequest {
   /** 획득구분(acqstnTypeCd) — '전체' 선택 시 생략. */
   acqstnTypeCd?: string
   /** 군급(fsc). */
@@ -435,7 +435,7 @@ export interface MockPrcDataSearchRequest {
 }
 
 /** 품목별 가격자료 검색결과 1건(dl_resultList, slide74 — 22항목). */
-export interface MockPrcDataItem {
+export interface PrcDataItem {
   /** 순번(no). */
   no: number
   /** 획득구분(acqstnTypeCd). */
@@ -483,7 +483,7 @@ export interface MockPrcDataItem {
 }
 
 /** 품목별 가격자료 조회 결과 — 결과 목록 + 총건수('총 N건' 표시). */
-export interface MockPrcDataResult {
-  list: MockPrcDataItem[]
+export interface PrcDataResult {
+  list: PrcDataItem[]
   total: number
 }

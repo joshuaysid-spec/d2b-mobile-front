@@ -13,7 +13,7 @@ import { TextArea } from '@/ui/common/base/TextArea'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockOvsTndrDtlItem } from '@/types/mock/bd'
+import type { OvsTndrDtlItem } from '@/types/mock/bd'
 
 export interface OvsBidRtrcnAplyHandle {
   /** 부모 BottomSheet footer '제출하기' 가 호출 — 제출확인 모달을 띄운다 */
@@ -22,7 +22,7 @@ export interface OvsBidRtrcnAplyHandle {
 
 export interface OvsBidRtrcnAplyProps {
   /** 상세에서 넘어온 항목 — 취소신청내역(공고 식별값)을 이 항목으로 그린다. */
-  detail: MockOvsTndrDtlItem
+  detail: OvsTndrDtlItem
   /** 제출 완료(확인) 시 호출(부모가 BottomSheet 를 닫음) */
   onSubmitted: () => void
 }

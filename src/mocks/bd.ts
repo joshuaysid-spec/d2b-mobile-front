@@ -3,57 +3,57 @@
 //    페이지의 목업 상수를 이 파일로 이동해 단일 소스로 만든다(현재는 최소 대표값 → 실데이터 교체).
 // 값은 설계서 데이터영역/예시(공고번호 형식·코드값·자릿수)를 최대한 반영 — 의미 없는 더미 금지.
 import type {
-  MockAgreementDoc,
-  MockBdopnItem,
-  MockBidAplyReceipt,
-  MockBidItemListRow,
-  MockBidPbancDetail,
-  MockBidPbancItem,
-  MockBidProgressRow,
-  MockBidPrgrsItem,
-  MockBidRegResultResponse,
-  MockBidRsltProductItem,
-  MockBidRsltRow,
-  MockBfrPbancBidCnItem,
-  MockBfrPbancInfoItem,
-  MockCabinetFile,
-  MockCnstwkLcnsRow,
-  MockCrncOption,
-  MockElsgnCert,
-  MockEvlMbcmtTechEvlScrItem,
-  MockLicenseResult,
-  MockNegoRsltRow,
-  MockOvsAtchDoc,
-  MockOvsBidBizExmptnItem,
-  MockOvsBidBizItem,
-  MockOvsBidItem,
-  MockOvsBidPbancDetail,
-  MockOvsBidPrtcpBizItem,
-  MockOvsBidRegRsltItem,
-  MockOvsBidRsltTotalItem,
-  MockOvsBidRsltUnitPriceItem,
-  MockOvsBidWtgrInfo,
-  MockOvsBidWtgrItem,
-  MockOvsExchrtItem,
-  MockOvsGoalPrcRlsItem,
-  MockOvsLockerBidItem,
-  MockOvsLockerPbanItem,
-  MockOvsProbWrotAgreResultInfo,
-  MockOvsRlsVltrnsAtchDoc,
-  MockOvsRlsVltrnsEtdcItem,
-  MockOvsRlsVltrnsItem,
-  MockOvsRlsVltrnsSrngRsltItem,
-  MockOvsSplyInfo,
-  MockOvsTndrDoc,
-  MockOvsTndrDtlItem,
-  MockOvsTndrItitbItem,
-  MockBidSelectOption,
-  MockPlrlRsrvPrcInfo,
-  MockPqResultResponse,
-  MockSmprcScsbdRsltInfo,
-  MockRegBzentyRow,
-  MockRegionResult,
-  MockWrotDoc,
+  AgreementDoc,
+  BdopnItem,
+  BidAplyReceipt,
+  BidItemListRow,
+  BidPbancDetail,
+  BidPbancItem,
+  BidProgressRow,
+  BidPrgrsItem,
+  BidRegResultResponse,
+  BidRsltProductItem,
+  BidRsltRow,
+  BfrPbancBidCnItem,
+  BfrPbancInfoItem,
+  CabinetFile,
+  CnstwkLcnsRow,
+  CrncOption,
+  ElsgnCert,
+  EvlMbcmtTechEvlScrItem,
+  LicenseResult,
+  NegoRsltRow,
+  OvsAtchDoc,
+  OvsBidBizExmptnItem,
+  OvsBidBizItem,
+  OvsBidItem,
+  OvsBidPbancDetail,
+  OvsBidPrtcpBizItem,
+  OvsBidRegRsltItem,
+  OvsBidRsltTotalItem,
+  OvsBidRsltUnitPriceItem,
+  OvsBidWtgrInfo,
+  OvsBidWtgrItem,
+  OvsExchrtItem,
+  OvsGoalPrcRlsItem,
+  OvsLockerBidItem,
+  OvsLockerPbanItem,
+  OvsProbWrotAgreResultInfo,
+  OvsRlsVltrnsAtchDoc,
+  OvsRlsVltrnsEtdcItem,
+  OvsRlsVltrnsItem,
+  OvsRlsVltrnsSrngRsltItem,
+  OvsSplyInfo,
+  OvsTndrDoc,
+  OvsTndrDtlItem,
+  OvsTndrItitbItem,
+  BidSelectOption,
+  PlrlRsrvPrcInfo,
+  PqResultResponse,
+  SmprcScsbdRsltInfo,
+  RegBzentyRow,
+  RegionResult,
+  WrotDoc,
 } from '@/types/mock/bd'
 
 // ── 입찰공고 (MUI-BD-01) ──────────────────────────────────────────────────
@@ -74,7 +74,7 @@ const pbancCommon = {
   pbancRtrcnYn: 'N',
 } as const
 
-const pbancListBase: MockBidPbancItem[] = [
+const pbancListBase: BidPbancItem[] = [
   {
     ...pbancCommon,
     rnum: '1',
@@ -223,7 +223,7 @@ const pbancListBase: MockBidPbancItem[] = [
 
 // 목업 확장 — 보유 4건을 인덱스로 복제해 총건수(더보기 데모)만큼 구성(공고번호·순번 고유).
 const PBANC_TOTAL = 258
-const pbancList: MockBidPbancItem[] = Array.from({ length: PBANC_TOTAL }, (_, i) => {
+const pbancList: BidPbancItem[] = Array.from({ length: PBANC_TOTAL }, (_, i) => {
   const base = pbancListBase[i % pbancListBase.length]
   const pbancNo = `LDG${String(97 + i).padStart(4, '0')}`
   return {
@@ -235,10 +235,10 @@ const pbancList: MockBidPbancItem[] = Array.from({ length: PBANC_TOTAL }, (_, i)
   }
 })
 
-const pbancDetail: MockBidPbancDetail = pbancList[0]
+const pbancDetail: BidPbancDetail = pbancList[0]
 
 /** getBidPbancDtl 반환 — 공고 상세에 없는 필드(연락처·계약/입찰방법·진행 플래그) 보완. */
-const prgrsDetail: MockBidPrgrsItem = {
+const prgrsDetail: BidPrgrsItem = {
   rNum: '1',
   taskSeNm: '물품',
   pbancNo: '2024L0M',
@@ -262,7 +262,7 @@ const prgrsDetail: MockBidPrgrsItem = {
   tndrStatNm: '미제출',
 }
 
-const progressList: MockBidProgressRow[] = [
+const progressList: BidProgressRow[] = [
   {
     id: 'prg-1',
     pbancNo: '2024L0M',
@@ -277,7 +277,7 @@ const progressList: MockBidProgressRow[] = [
 
 // ── 개찰목록 · 입찰결과 (MUI-BD-08 · MUI-BD-09) ─────────────────────────────
 // 개찰목록(MUI-BD-08-M01) 데이터영역(설계서 slide144) — 구 BdopnListPage 인라인 dlt_bdopnList 이관.
-const bdopnListBase: MockBdopnItem[] = [
+const bdopnListBase: BdopnItem[] = [
   {
     id: '1',
     bidPbancNo: '2026LGM000604191-01',
@@ -322,7 +322,7 @@ const bdopnListBase: MockBdopnItem[] = [
 
 // 목업 확장 — 보유 4건을 인덱스로 복제해 총건수(더보기 데모)만큼 구성(공고번호·id 고유).
 const BDOPN_TOTAL = 258
-const bdopnList: MockBdopnItem[] = Array.from({ length: BDOPN_TOTAL }, (_, i) => {
+const bdopnList: BdopnItem[] = Array.from({ length: BDOPN_TOTAL }, (_, i) => {
   const base = bdopnListBase[i % bdopnListBase.length]
   return { ...base, id: String(i + 1), bidPbancNo: `${base.bidPbancNo.slice(0, -3)}-${i + 1}` }
 })
@@ -331,12 +331,12 @@ const bdopnList: MockBdopnItem[] = Array.from({ length: BDOPN_TOTAL }, (_, i) =>
  * id 로 개찰목록 1건 조회 — 입찰결과상세(BidRsltDtlPage)가 URL 의 :id 로 상단을 채우는 용도.
  * getBidRsltDetail 목업 분기가 이 lookup 을 사용(직접진입/새로고침에도 값 유지).
  */
-export function getBdopnById(id: string | undefined): MockBdopnItem | undefined {
+export function getBdopnById(id: string | undefined): BdopnItem | undefined {
   if (!id) return undefined
   return bdopnList.find((it) => it.id === id)
 }
 
-const bidRsltList: MockBidRsltRow[] = [
+const bidRsltList: BidRsltRow[] = [
   {
     id: 'rslt-1',
     seq: '1',
@@ -349,7 +349,7 @@ const bidRsltList: MockBidRsltRow[] = [
   },
 ]
 
-const negoList: MockNegoRsltRow[] = [
+const negoList: NegoRsltRow[] = [
   {
     id: 'nego-1',
     cycle: '1',
@@ -362,7 +362,7 @@ const negoList: MockNegoRsltRow[] = [
   },
 ]
 
-const bidRsltItems: MockBidRsltProductItem[] = [
+const bidRsltItems: BidRsltProductItem[] = [
   {
     id: 'ritem-1',
     itemNo: '001',
@@ -377,7 +377,7 @@ const bidRsltItems: MockBidRsltProductItem[] = [
 ]
 
 // 복수예비가격 (MUI-BD-09-P02, slide246 예시값 그대로 — 15개 생성 + 업체 선택번호 8건).
-const plrlRsrvPrcInfo: MockPlrlRsrvPrcInfo = {
+const plrlRsrvPrcInfo: PlrlRsrvPrcInfo = {
   plrlRsrvPrc: [
     { regSn: '1', prprc: 97813420, chcNmtm: 0 },
     { regSn: '2', prprc: 102547340, chcNmtm: 7 },
@@ -408,7 +408,7 @@ const plrlRsrvPrcInfo: MockPlrlRsrvPrcInfo = {
 }
 
 // 동가낙찰결과 (MUI-BD-09-P03, slide249 예시값 그대로 — 자동추첨 2건 + 가위바위보 5차).
-const smprcScsbdRsltInfo: MockSmprcScsbdRsltInfo = {
+const smprcScsbdRsltInfo: SmprcScsbdRsltInfo = {
   smprcScsbdRslt: [
     {
       no: '0',
@@ -448,7 +448,7 @@ const smprcScsbdRsltInfo: MockSmprcScsbdRsltInfo = {
 }
 
 // 평가위원별 기술평가점수 (MUI-BD-09-P04, slide251 예시값 — 공개 3건 + 비공개 1건).
-const evlMbcmtTechEvlScrList: MockEvlMbcmtTechEvlScrItem[] = [
+const evlMbcmtTechEvlScrList: EvlMbcmtTechEvlScrItem[] = [
   { bzentyNm: '테스트업체1', evlMbcmtNm: '평가위원1', evlScr: 99 },
   { bzentyNm: '테스트업체1', evlMbcmtNm: '평가위원2', evlScr: 91 },
   { bzentyNm: '테스트업체1', evlMbcmtNm: '평가위원3', evlScr: 89 },
@@ -456,7 +456,7 @@ const evlMbcmtTechEvlScrList: MockEvlMbcmtTechEvlScrItem[] = [
 ]
 
 // ── 사전심사 (MUI-BD-02) ───────────────────────────────────────────────────
-const pqResult: MockPqResultResponse = {
+const pqResult: PqResultResponse = {
   pbancInfo: [
     { label: '공고번호', value: '2024L0M' },
     { label: '판단번호', value: '2024L0M0030' },
@@ -483,7 +483,7 @@ const pqResult: MockPqResultResponse = {
 // ⚠️ pbancYmd(공고일자)·bdopnDt(개찰일시)는 카드 표시 항목(slide69) — 7건 모두 공고일자가 과거 + 신청유형
 //    플래그 보유라 목업에서는 상세 진입 제한(토스트)이 걸리지 않는다(상세 버튼분기 데모 유지 목적).
 // 각 아이템 = (업무구분 + 진행상태 + 실데이터)를 담은 완결 객체 → 그대로 상세(navigate state)로 넘겨 버튼 분기 구동.
-const prgrsListBase: MockBidPrgrsItem[] = [
+const prgrsListBase: BidPrgrsItem[] = [
   // 1) 사전심사 대상·결과 없음 + 입찰참가 신청전 → [사전심사 신청하기]·[입찰참가신청서 작성하기]·[등록반려]
   {
     rNum: '1',
@@ -698,13 +698,13 @@ const prgrsListBase: MockBidPrgrsItem[] = [
 // 목업 확장 — 보유 8건을 인덱스로 복제해 총건수(더보기 데모)만큼 구성.
 // 국외 공고번호(EFD0007-2500)는 '-차수' 재접미사 규칙이 안 맞으므로 원형 유지(설계서 형식 보존).
 const PRGRS_TOTAL = 2010
-const prgrsList: MockBidPrgrsItem[] = Array.from({ length: PRGRS_TOTAL }, (_, i) => {
+const prgrsList: BidPrgrsItem[] = Array.from({ length: PRGRS_TOTAL }, (_, i) => {
   const base = prgrsListBase[i % prgrsListBase.length]
   const pbancNo = base.taskSeNm === '국외' ? base.pbancNo : `${base.pbancNo.slice(0, -3)}-${i + 1}`
   return { ...base, rNum: String(i + 1), pbancNo }
 })
 
-const bidRegResult: MockBidRegResultResponse = {
+const bidRegResult: BidRegResultResponse = {
   pbancInfo: [
     { label: '공고번호', value: '2024L0M' },
     { label: '입찰건명', value: '(24-물품-30) 전투복 상·하의 제조 및 납품' },
@@ -725,18 +725,18 @@ const bidRegResult: MockBidRegResultResponse = {
 }
 
 // ── 전자서명 (MUI-BD-04-M21) ───────────────────────────────────────────────
-const elsgnCerts: MockElsgnCert[] = [
+const elsgnCerts: ElsgnCert[] = [
   { id: 'cert-1', certNm: '가나다물산 (사업자범용)', vldPdEndDt: '2026-12-31' },
   { id: 'cert-2', certNm: '홍길동 (개인범용)', vldPdEndDt: '2026-08-15' },
 ]
 
 /** 전자서명/제출 후 접수결과 — signElsgn·registerOvsBidPrtcpAply·submitOvsTndr 공용. */
-const receipt: MockBidAplyReceipt = { rcptNo: '2024 001 0030', rcptDt: '2024-05-28 12:30' }
+const receipt: BidAplyReceipt = { rcptNo: '2024 001 0030', rcptDt: '2024-05-28 12:30' }
 
 // ── 입찰참가신청 / 입찰서 품목 (MUI-BD-04-M06 · MUI-BD-06-M02) ──────────────
 // 품목내역(dlt_itemList, 설계서 slide99·129) — 구 BidPrtcpAperWrtPage_Stp2 · TndrWrt_Stp2 인라인 이관.
 // getBidItemList(M06) · getBidTndrItemList(M02) 공용.
-const itemList: MockBidItemListRow[] = [
+const itemList: BidItemListRow[] = [
   {
     rNum: '1',
     clsfNo: '001',
@@ -849,7 +849,7 @@ const itemList: MockBidItemListRow[] = [
   },
 ]
 
-const cnstwkList: MockCnstwkLcnsRow[] = [
+const cnstwkList: CnstwkLcnsRow[] = [
   {
     id: 'cw-1',
     no: '1',
@@ -862,24 +862,24 @@ const cnstwkList: MockCnstwkLcnsRow[] = [
   },
 ]
 
-const regBzentyList: MockRegBzentyRow[] = [
+const regBzentyList: RegBzentyRow[] = [
   { id: 'rb-1', bizRegNo: '123-45-67890', bizNm: '가나다물산' },
   { id: 'rb-2', bizRegNo: '234-56-78901', bizNm: '라마바산업' },
 ]
 
-const cabinetFiles: MockCabinetFile[] = [
+const cabinetFiles: CabinetFile[] = [
   { id: 'cab-1', fileNm: '사업자등록증.pdf', fileSz: 128_000 },
   { id: 'cab-2', fileNm: '공동수급협정서.pdf', fileSz: 256_000 },
 ]
 
-const agreement: MockAgreementDoc = {
+const agreement: AgreementDoc = {
   id: 'depsPayCert',
   title: '입찰보증금 지급각서',
   body: ['본인은 입찰보증금 납부에 갈음하여 입찰보증금 지급을 확약합니다.'],
   variant: 'agree',
 }
 
-const wrot: MockWrotDoc = {
+const wrot: WrotDoc = {
   id: 'w_p02',
   title: '청렴서약서',
   body: ['본인은 공정한 입찰 참여를 서약합니다.'],
@@ -887,12 +887,12 @@ const wrot: MockWrotDoc = {
 }
 
 // ── 공통 검색(면허·지역) (MUI-BD-01-P05 · P03) ─────────────────────────────
-const licenses: MockLicenseResult[] = [
+const licenses: LicenseResult[] = [
   { lcnsCd: '0201', lcnsNm: '전기공사업' },
   { lcnsCd: '0202', lcnsNm: '정보통신공사업' },
 ]
 
-const regions: MockRegionResult[] = [
+const regions: RegionResult[] = [
   { sido: '서울특별시', sigungu: '중구' },
   { sido: '경기도', sigungu: '성남시 분당구' },
 ]
@@ -902,7 +902,7 @@ const regions: MockRegionResult[] = [
 // ══════════════════════════════════════════════════════════════════════════
 
 // ── 국외 입찰공고 상세 (MUI-BD-01-M71 · T71~T73(구 M71~M73 — v1.83 재편)) ─────────────────────────────────
-const ovsBidPbancDetail: MockOvsBidPbancDetail = {
+const ovsBidPbancDetail: OvsBidPbancDetail = {
   pbancNo: 'EFD0007',
   pbancOd: '2',
   pbancNoOd: 'EFD0007-2',
@@ -932,7 +932,7 @@ const ovsBidPbancDetail: MockOvsBidPbancDetail = {
   sumDrctnAmt: '$ 126,000.18',
 }
 
-const ovsBidItemList: MockOvsBidItem[] = [
+const ovsBidItemList: OvsBidItem[] = [
   {
     artclNo: '1',
     inspShpCd: 'A',
@@ -960,17 +960,17 @@ const ovsBidItemList: MockOvsBidItem[] = [
   },
 ]
 
-const ovsAtchDocList: MockOvsAtchDoc[] = [
+const ovsAtchDocList: OvsAtchDoc[] = [
   { docTitl: '공고문안', fileNm: 'notice.pdf', fileSz: 262_144, fileId: 'ATCH-0001' },
   { docTitl: '일반조건', fileNm: 'general.pdf', fileSz: 131_072, fileId: 'ATCH-0002' },
 ]
 
 // ── 국외 입찰참가신청서 (MUI-BD-04-M71·M78 컨테이너 · T71~T79 · P75/P76/P82/P83(구 M72~M81 — v1.83 재편)) ────────────────────────────────
-const ovsBidRegRsltList: MockOvsBidRegRsltItem[] = [
+const ovsBidRegRsltList: OvsBidRegRsltItem[] = [
   { no: '1', prchsDmndNo: 'BAD839380-001', bizNm: '500MD부품', cfmtnRslt: '적격', cfmtnYmd: '2025-12-24' },
 ]
 
-const ovsBidBizList: MockOvsBidBizItem[] = [
+const ovsBidBizList: OvsBidBizItem[] = [
   {
     prchsDmndNo: 'BAD839380-001',
     bizNm: '500MD부품',
@@ -984,7 +984,7 @@ const ovsBidBizList: MockOvsBidBizItem[] = [
   },
 ]
 
-const ovsBidBizExmptnList: MockOvsBidBizExmptnItem[] = [
+const ovsBidBizExmptnList: OvsBidBizExmptnItem[] = [
   {
     prchsDmndNo: 'BAD839380-002',
     bizNm: 'MD부품 추가',
@@ -997,7 +997,7 @@ const ovsBidBizExmptnList: MockOvsBidBizExmptnItem[] = [
   },
 ]
 
-const ovsBidPrtcpBizList: MockOvsBidPrtcpBizItem[] = [
+const ovsBidPrtcpBizList: OvsBidPrtcpBizItem[] = [
   {
     prchsDmndNo: 'BAD839380-001',
     bizNm: '500MD부품',
@@ -1007,14 +1007,14 @@ const ovsBidPrtcpBizList: MockOvsBidPrtcpBizItem[] = [
   },
 ]
 
-const ovsProbWrotAgre: MockOvsProbWrotAgreResultInfo = {
+const ovsProbWrotAgre: OvsProbWrotAgreResultInfo = {
   wrotAgreYmd: '2025-12-20',
   picNm: '정영금',
   sbtBzentyNm: 'A 해외업체',
   prcmRqtInstNm: '방위사업청',
 }
 
-const ovsSplyInfo: MockOvsSplyInfo = {
+const ovsSplyInfo: OvsSplyInfo = {
   splyBzentyCd: 'S0001',
   splyBzentyNm: 'A 해외업체',
   splyRprsvNm: 'John Doe',
@@ -1025,7 +1025,7 @@ const ovsSplyInfo: MockOvsSplyInfo = {
   splyAddr: '1 Defense Ave, Seoul',
 }
 
-const ovsBidWtgrList: MockOvsBidWtgrItem[] = [
+const ovsBidWtgrList: OvsBidWtgrItem[] = [
   {
     wtgrNo: 'WTGR-0001',
     bdopnYmd: '2025-12-24',
@@ -1037,7 +1037,7 @@ const ovsBidWtgrList: MockOvsBidWtgrItem[] = [
   },
 ]
 
-const ovsBidWtgrInfo: MockOvsBidWtgrInfo = {
+const ovsBidWtgrInfo: OvsBidWtgrInfo = {
   wtgrNo: 'WTGR-0001',
   grnteAmt: '6,300.00',
   grnteBgngPrd: '2025-12-24 ~ 2026-03-24',
@@ -1065,7 +1065,7 @@ const ovsBidWtgrInfo: MockOvsBidWtgrInfo = {
 }
 
 // ── 국외 입찰결과 (MUI-BD-09-M71 · T71~T73(구 M71~M73 — v1.83 재편)) ──────────────────────────────────────
-const ovsBidRsltUnitPriceItems: MockOvsBidRsltUnitPriceItem[] = [
+const ovsBidRsltUnitPriceItems: OvsBidRsltUnitPriceItem[] = [
   {
     clsfNo: '1',
     prdctNm: '500MD',
@@ -1081,7 +1081,7 @@ const ovsBidRsltUnitPriceItems: MockOvsBidRsltUnitPriceItem[] = [
   },
 ]
 
-const ovsBidRsltTotalItems: MockOvsBidRsltTotalItem[] = [
+const ovsBidRsltTotalItems: OvsBidRsltTotalItem[] = [
   {
     seq: '1',
     bidBzentyNm: 'A 국외업체',
@@ -1094,12 +1094,12 @@ const ovsBidRsltTotalItems: MockOvsBidRsltTotalItem[] = [
 ]
 
 // ── 국외 환율/목표가/보관함 (MUI-BD-01-M74·M75 · MUI-CM-01-M71~M73) ─────────
-const exchrtList: MockOvsExchrtItem[] = [
+const exchrtList: OvsExchrtItem[] = [
   { rnum: '1', crncNm: 'USD', ntnNm: '미국', ttsrt: 1_320.5, trdStdrt: 1_310.0, usdExrt: 1.0 },
   { rnum: '2', crncNm: 'EUR', ntnNm: '유럽연합', ttsrt: 1_430.2, trdStdrt: 1_420.0, usdExrt: 1.08 },
 ]
 
-const ovsGoalPrcRlsList: MockOvsGoalPrcRlsItem[] = [
+const ovsGoalPrcRlsList: OvsGoalPrcRlsItem[] = [
   {
     artclNo: '1',
     invtNo: '101537518',
@@ -1123,7 +1123,7 @@ const ovsGoalPrcRlsList: MockOvsGoalPrcRlsItem[] = [
   },
 ]
 
-const ovsLockerBidItemList: MockOvsLockerBidItem[] = [
+const ovsLockerBidItemList: OvsLockerBidItem[] = [
   {
     id: 'BAD83990EFD-1',
     pbancNo: 'EFD0007',
@@ -1144,7 +1144,7 @@ const ovsLockerBidItemList: MockOvsLockerBidItem[] = [
   },
 ]
 
-const ovsLockerPbanList: MockOvsLockerPbanItem[] = [
+const ovsLockerPbanList: OvsLockerPbanItem[] = [
   {
     id: 'BAD83990EFD',
     intgRfrncNo: 'BAD83990EFD',
@@ -1171,7 +1171,7 @@ const ovsLockerPbanList: MockOvsLockerPbanItem[] = [
 ]
 
 // ── 국외 공개수의협상 (MUI-BD-12) ──────────────────────────────────────────
-const ovsRlsVltrnsItems: MockOvsRlsVltrnsItem[] = [
+const ovsRlsVltrnsItems: OvsRlsVltrnsItem[] = [
   {
     clsfNo: '1',
     qltyGrd: 'A',
@@ -1197,11 +1197,11 @@ const ovsRlsVltrnsItems: MockOvsRlsVltrnsItem[] = [
   },
 ]
 
-const ovsRlsVltrnsAtchDocs: MockOvsRlsVltrnsAtchDoc[] = [
+const ovsRlsVltrnsAtchDocs: OvsRlsVltrnsAtchDoc[] = [
   { id: 'rvd-1', docSeNm: '공고문안', fileNm: 'notice.pdf', fileSz: '256 KB' },
 ]
 
-const ovsRlsVltrnsEtdcItems: MockOvsRlsVltrnsEtdcItem[] = [
+const ovsRlsVltrnsEtdcItems: OvsRlsVltrnsEtdcItem[] = [
   {
     frcptlArtclNo: '1',
     invtNo: '101537518',
@@ -1218,7 +1218,7 @@ const ovsRlsVltrnsEtdcItems: MockOvsRlsVltrnsEtdcItem[] = [
   },
 ]
 
-const ovsRlsVltrnsSrngRslt: MockOvsRlsVltrnsSrngRsltItem[] = [
+const ovsRlsVltrnsSrngRslt: OvsRlsVltrnsSrngRsltItem[] = [
   {
     no: '1',
     sbtBzentyCd: 'S0001',
@@ -1237,7 +1237,7 @@ const ovsRlsVltrnsSrngRslt: MockOvsRlsVltrnsSrngRsltItem[] = [
 ]
 
 // ── 국외 입찰서 상세/제출 (MUI-BD-06) ──────────────────────────────────────
-const ovsTndrDetail: MockOvsTndrDtlItem = {
+const ovsTndrDetail: OvsTndrDtlItem = {
   pbancNo: 'EFD0007',
   pbancOd: '2',
   prchsDmndNo: 'BAD839380-001',
@@ -1258,7 +1258,7 @@ const ovsTndrDetail: MockOvsTndrDtlItem = {
   picMblTelno: '010-1234-5678',
 }
 
-const ovsTndrItitbItems: MockOvsTndrItitbItem[] = [
+const ovsTndrItitbItems: OvsTndrItitbItem[] = [
   {
     frcptlArtclNo: '1',
     invtNo: '101537518',
@@ -1287,12 +1287,12 @@ const ovsTndrItitbItems: MockOvsTndrItitbItem[] = [
   },
 ]
 
-const ovsTndrDocList: MockOvsTndrDoc[] = [
+const ovsTndrDocList: OvsTndrDoc[] = [
   { id: 'otd-1', atchDocNm: '입찰서', atchFileNm: 'tender.pdf', fileSz: '256 KB' },
 ]
 
 // ── 국외 이전공고 입찰내역 (MUI-BD-01-M76 · P79(구 M79 — v1.83 재편)) ─────────────────────────────
-const bfrPbancLockerList: MockBfrPbancInfoItem[] = [
+const bfrPbancLockerList: BfrPbancInfoItem[] = [
   {
     no: '1',
     pbancNo: 'EFD0006',
@@ -1304,7 +1304,7 @@ const bfrPbancLockerList: MockBfrPbancInfoItem[] = [
   },
 ]
 
-const bfrPbancBidCnList: MockBfrPbancBidCnItem[] = [
+const bfrPbancBidCnList: BfrPbancBidCnItem[] = [
   {
     no: '1',
     invtNo: '101537518',
@@ -1325,12 +1325,12 @@ const bfrPbancBidCnList: MockBfrPbancBidCnItem[] = [
 ]
 
 // ── 셀렉트 옵션 (통화·입찰업체) ────────────────────────────────────────────
-const crncOptions: MockCrncOption[] = [
+const crncOptions: CrncOption[] = [
   { value: 'USD', label: '미 달러', usdExrt: 1.0 },
   { value: 'EUR', label: '유로', usdExrt: 1.08 },
 ]
 
-const ovsBidBzentyOptions: MockBidSelectOption[] = [
+const ovsBidBzentyOptions: BidSelectOption[] = [
   { value: 'S0001', label: 'A 해외업체' },
   { value: 'S0002', label: 'B 해외업체' },
 ]

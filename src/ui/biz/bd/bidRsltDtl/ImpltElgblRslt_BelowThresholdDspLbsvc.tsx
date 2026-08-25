@@ -2,9 +2,9 @@
 // C군 공사/용역 평점 grid(항목/배점/평점 + 이행실적 수집운반·중간처리·최종처리 하위표) — 렌더는 공용 [[ImpltElgblRsltRubric]].
 // ⚠️ 심사항목 영문 항목명 미표기(한글 라벨). 배점 ±(상세설계 재확인). 심사평점은 내 업체 목업.
 import { ImpltElgblRsltRubric } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRsltRubric'
-import type { MockImpltElgbSrngRubric } from '@/types/mock/bd'
+import type { ImpltElgbSrngRubric } from '@/types/mock/bd'
 
-const RUBRIC: MockImpltElgbSrngRubric = {
+const RUBRIC: ImpltElgbSrngRubric = {
   sections: [
     {
       field: '당해공사 수행능력',

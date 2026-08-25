@@ -18,7 +18,7 @@ import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import type { MockBidPrgrsItem } from '@/types/mock/bd'
+import type { BidPrgrsItem } from '@/types/mock/bd'
 
 /** 진입 모드 — 'aply'=신청조회(M03) / 'rslt'=결과조회(M02). */
 export type BfhdSrngInqMode = 'aply' | 'rslt'
@@ -109,7 +109,7 @@ const FALLBACK_TASK_SE_NM = '공사'
 
 export function BfhdSrngRsltInqPage({ mode = 'rslt' }: { mode?: BfhdSrngInqMode }) {
   // 입찰진행 상세(M02)에서 넘어온 항목 — 업무구분 분기용(없으면 fallback).
-  const detail = useLocation().state as MockBidPrgrsItem | null
+  const detail = useLocation().state as BidPrgrsItem | null
   const taskSeNm = detail?.taskSeNm ?? FALLBACK_TASK_SE_NM
   const isLbsvc = taskSeNm === '용역'
   // ① 업무도움은 용역·공사인 경우에만 노출(설계서 주석 1).

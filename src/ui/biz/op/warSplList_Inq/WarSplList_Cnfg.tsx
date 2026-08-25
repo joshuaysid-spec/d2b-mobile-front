@@ -9,7 +9,7 @@
 //   ⚠️ 재검색 시 이어붙은 블록은 마지막 검색 결과로 교체된다(검색마다 무한 누적하지 않음).
 // 시트 본문(px-16) 안이라 AccordionSection 은 flush(콘텐츠 좌우 패딩 제거 — 2중 패딩 방지).
 import { opQueries } from '@/queries/bds/op/opQueries'
-import type { MockWarSplItemInfo } from '@/types/mock/op'
+import type { WarSplItemInfo } from '@/types/mock/op'
 import { cn } from '@/utils/cn'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -29,7 +29,7 @@ export interface WarSplList_CnfgProps {
 }
 
 // 식별정보(dm_itemInfo) 1건 → 테이블 행 4개.
-function toItemRows(info: MockWarSplItemInfo): TableRow[] {
+function toItemRows(info: WarSplItemInfo): TableRow[] {
   return [
     { label: '재고번호', value: info.invtNo },
     { label: '영문품명', value: info.itemNmEng },
@@ -53,8 +53,8 @@ export function WarSplList_Cnfg({
   )
 
   // 영역별로 [디폴트, 검색] 순서 concat. 검색 전이면 디폴트만.
-  const itemInfoList: MockWarSplItemInfo[] = [base?.itemInfo, found?.itemInfo].filter(
-    (v): v is MockWarSplItemInfo => Boolean(v),
+  const itemInfoList: WarSplItemInfo[] = [base?.itemInfo, found?.itemInfo].filter(
+    (v): v is WarSplItemInfo => Boolean(v),
   )
   const refList = [...(base?.refList ?? []), ...(found?.refList ?? [])]
 

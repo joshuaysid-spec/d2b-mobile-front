@@ -18,7 +18,7 @@ import { fbQueries } from '@/queries/tss/fb/fbQueries'
 import { validateFile } from '@/services/tss/fb'
 import { formatFileSize } from '@/utils/format'
 import type { UploadedFile } from '@/types/file'
-import type { MockBidPrgrsItem } from '@/types/mock/bd'
+import type { BidPrgrsItem } from '@/types/mock/bd'
 
 // 첨부서류 안내사항(설계서 slide107 파일첨부 유의사항).
 const NOTICES = [
@@ -30,7 +30,7 @@ const NOTICES = [
 ]
 
 interface Props {
-  detail: MockBidPrgrsItem
+  detail: BidPrgrsItem
   /** 업로드 목록 — 호스트가 소유(제출 시 fileGuids). */
   files: UploadedFile[]
   /** 업로드 목록 갱신 — 호스트 setState. */

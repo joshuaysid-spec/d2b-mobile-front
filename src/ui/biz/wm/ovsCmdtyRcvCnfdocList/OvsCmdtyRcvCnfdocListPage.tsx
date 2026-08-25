@@ -18,7 +18,7 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { OvsElcrtTxivList } from '@/ui/biz/wm/ovsCmdtyRcvCnfdocList/OvsElcrtTxivList'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
-import type { MockOvsCmdtyRcvCnfdocItem, MockOvsElcrtTxivItem } from '@/types/mock/wm'
+import type { OvsCmdtyRcvCnfdocItem, OvsElcrtTxivItem } from '@/types/mock/wm'
 
 /** 외화 금액 표기 — 소수 2자리 고정(설계서 000,000,000,000.00). */
 const fmtAmt = (n: number) =>
@@ -64,7 +64,7 @@ export function OvsCmdtyRcvCnfdocListPage() {
   const [filterApplied, setFilterApplied] = useState(false)
   const [appliedCtrtNo, setAppliedCtrtNo] = useState<string | null>(null)
   // P73 전자계산서목록 바텀시트 — 선택한 물품수령확인서. null=닫힘.
-  const [picked, setPicked] = useState<MockOvsCmdtyRcvCnfdocItem | null>(null)
+  const [picked, setPicked] = useState<OvsCmdtyRcvCnfdocItem | null>(null)
 
   // 검색 조건 — 빠른검색(계약번호)이 있으면 우선, 없으면 상세필터 값.
   const req = useMemo(
@@ -114,7 +114,7 @@ export function OvsCmdtyRcvCnfdocListPage() {
   }))
 
   // 전자계산서 카드 클릭(slide93) → 전자계산서상세(M74). 식별자는 navigate state.
-  const handleTxivClick = (item: MockOvsElcrtTxivItem) => {
+  const handleTxivClick = (item: OvsElcrtTxivItem) => {
     navigate('/wm/ovsElcrtTxivDtl', { state: item })
   }
 

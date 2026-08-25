@@ -17,10 +17,10 @@ import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { OvsBfrTmprBidBidCnRegFullPopup } from '@/ui/biz/bd/ovsBfrTmprBidBidCnReg/OvsBfrTmprBidBidCnRegFullPopup'
 import { BidDsctn } from '@/ui/biz/bd/ovsTmprBidCnReg/BidDsctn'
 import { BidDsctn2 } from '@/ui/biz/bd/ovsTmprBidCnReg/BidDsctn2'
-import type { MockBscPbancInfo } from '@/types/mock/bd'
+import type { BscPbancInfo } from '@/types/mock/bd'
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 slide312~313 예시값 그대로.
-const MOCK_BSC_PBANC_INFO: MockBscPbancInfo = {
+const MOCK_BSC_PBANC_INFO: BscPbancInfo = {
   pbancNo: 'EFD0007',
   pbancOd: '2',
   prchsDmndNo: 'BAD839380-001',
@@ -43,9 +43,9 @@ export function OvsTmprBidCnRegPage() {
 
   // 보관함 상세에서 navigate state 로 넘어온 항목 — 다른 유닛 화면에서 부분 필드만 넘어올 수 있어
   // fallback 목업 위에 병합해 직접 URL 진입/새로고침에도 화면이 완전히 그려지게 한다.
-  const stateItem = useLocation().state as Partial<MockBscPbancInfo> | null
+  const stateItem = useLocation().state as Partial<BscPbancInfo> | null
   const modeOverride = searchParams.get('bidMthdNm') // 테스트용: ?bidMthdNm=총액제
-  const detail: MockBscPbancInfo = {
+  const detail: BscPbancInfo = {
     ...MOCK_BSC_PBANC_INFO,
     ...(stateItem ?? {}),
     ...(modeOverride === '총액제' || modeOverride === '단가제'

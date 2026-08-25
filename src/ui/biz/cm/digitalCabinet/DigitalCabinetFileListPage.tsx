@@ -23,10 +23,10 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { CabinetHelpDisclosure } from '@/ui/biz/cm/digitalCabinet/CabinetHelpDisclosure'
 import { ROUTES } from '@/constants/routes'
 import { cn } from '@/utils/cn'
-import type { MockDigitalCabinetFile } from '@/types/mock/cm'
+import type { DigitalCabinetFile } from '@/types/mock/cm'
 
 // ── 목업 (설계서 slide117 예시 + 데이터영역 dl_digitalCabinetFileList 항목명/형식) ────
-const MOCK_FILES: MockDigitalCabinetFile[] = [
+const MOCK_FILES: DigitalCabinetFile[] = [
   { fileId: 'f1', fileNm: '사업자등록증.pdf', fileSz: '369KB', vldPrdEndYmd: '2025-01-31', eldocYn: 'N' },
   {
     fileId: 'f2',
@@ -56,7 +56,7 @@ export function DigitalCabinetFileListPage() {
     navigate(ROUTES.DIGITAL_CABINET)
   }
   // 파일 행 클릭 = 선택 토글(행 하이라이트 + 좌측 체크박스 표시).
-  const handleFileClick = (file: MockDigitalCabinetFile) => {
+  const handleFileClick = (file: DigitalCabinetFile) => {
     setSelectedIds((prev) =>
       prev.includes(file.fileId) ? prev.filter((id) => id !== file.fileId) : [...prev, file.fileId],
     )

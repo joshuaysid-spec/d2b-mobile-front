@@ -4,10 +4,10 @@
 import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockCtrtBzenty } from '@/types/mock/ct'
+import type { CtrtBzenty } from '@/types/mock/ct'
 
 // 업체 1건 → 표 행(slide113 1.3 항목 순서).
-function bzentyRows(b: MockCtrtBzenty): TableRow[] {
+function bzentyRows(b: CtrtBzenty): TableRow[] {
   return [
     { label: '계약업체명', value: b.bzentyNm },
     { label: '사업자등록번호', value: b.brno },

@@ -1,10 +1,10 @@
 // 대금청구상세(부대조달) - '대금신청업체 정보' 탭 콘텐츠 (MUI-WM-01-T10). 설계서 slide48, 52.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockSbsdPrcmPymtClmDtl } from '@/types/mock/wm'
+import type { SbsdPrcmPymtClmDtl } from '@/types/mock/wm'
 
 export interface SbsdPrcmPymtClmDtl_PymtBzentyProps {
-  detail: MockSbsdPrcmPymtClmDtl
+  detail: SbsdPrcmPymtClmDtl
 }
 
 export function SbsdPrcmPymtClmDtl_PymtBzenty({ detail }: SbsdPrcmPymtClmDtl_PymtBzentyProps) {

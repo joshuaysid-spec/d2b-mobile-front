@@ -4,9 +4,9 @@
 // 항목명/형식은 데이터영역(slide128 dmt_bidPbancInfo·dmt_bzentyInfo) 그대로 — 공고 식별값은 상세 항목, 나머지 목업(slide121 예시값).
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockBidPrgrsItem } from '@/types/mock/bd'
+import type { BidPrgrsItem } from '@/types/mock/bd'
 
-export function TndrWrt_Stp1({ detail }: { detail: MockBidPrgrsItem }) {
+export function TndrWrt_Stp1({ detail }: { detail: BidPrgrsItem }) {
   // 공고 일반정보(slide128 dmt_bidPbancInfo) — 공고 식별값은 상세 항목, 나머지 slide121 예시값 목업.
   // 조건부 항목(목업 생략):
   //   - 낙찰자기준: 입찰방법(bidMthdNm)이 'H(내역입찰(설계시공일괄입찰))'인 경우만 표시.

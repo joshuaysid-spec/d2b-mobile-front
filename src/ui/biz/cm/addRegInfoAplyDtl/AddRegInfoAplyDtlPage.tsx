@@ -9,10 +9,10 @@ import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Badge } from '@/ui/common/base/Badge'
 import { AddRegInfoAplyDtl_Cmdty } from '@/ui/biz/cm/addRegInfoAplyDtl/AddRegInfoAplyDtl_Cmdty'
 import { AddRegInfoAplyDtl_DmsAgt } from '@/ui/biz/cm/addRegInfoAplyDtl/AddRegInfoAplyDtl_DmsAgt'
-import type { MockAddRegInfoAplyItem } from '@/types/mock/cm'
+import type { AddRegInfoAplyItem } from '@/types/mock/cm'
 
 // 직접 URL 진입·새로고침(state 없음) 대비 fallback 목업(설계서 slide139/140 예시값, 항목명 영문 준수).
-const MOCK_ITEM: MockAddRegInfoAplyItem = {
+const MOCK_ITEM: AddRegInfoAplyItem = {
   id: '1',
   rcptNo: '202602027888',
   aplyYmd: '2026-02-02',
@@ -26,7 +26,7 @@ const BZENTY = { bzentyNm: '주식회사 국방전자조달', bzentyCd: '7004F',
 
 export function AddRegInfoAplyDtlPage() {
   // 목록에서 넘어온 항목으로 상단(접수정보)을 그린다. 직접 진입(state 없음)이면 페이지 목업.
-  const detail = (useLocation().state as MockAddRegInfoAplyItem | null) ?? MOCK_ITEM
+  const detail = (useLocation().state as AddRegInfoAplyItem | null) ?? MOCK_ITEM
   // 추가정보구분으로 콘텐츠 분기 — 국내소재상사면 T06, 그 외(물품(내자))는 T05.
   const isDmsAgt = detail.addInfoCdNm.includes('국내소재상사')
 

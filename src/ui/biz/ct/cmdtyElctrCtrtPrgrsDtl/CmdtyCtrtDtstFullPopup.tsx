@@ -7,7 +7,7 @@ import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockCtrtDtstItem } from '@/types/mock/ct'
+import type { CtrtDtstItem } from '@/types/mock/ct'
 
 export interface CmdtyCtrtDtstFullPopupProps {
   /** 계약 식별자 — 부모 상세 페이지가 navigate state 에서 받아 전달. */
@@ -24,7 +24,7 @@ function optionalRow(label: string, value?: string): TableRow[] {
 }
 
 // 품목 1건 → 표 행(slide88~89 계약 품목정보 순서).
-function itemRows(it: MockCtrtDtstItem): TableRow[] {
+function itemRows(it: CtrtDtstItem): TableRow[] {
   return [
     { label: '순번', value: String(it.rnum), type: 'number' },
     { label: '항목번호', value: it.clsfNo },

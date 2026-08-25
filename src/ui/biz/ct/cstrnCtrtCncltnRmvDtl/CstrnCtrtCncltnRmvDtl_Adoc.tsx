@@ -4,9 +4,9 @@
 import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import type { MockCtrtAdocFile } from '@/types/mock/ct'
+import type { CtrtAdocFile } from '@/types/mock/ct'
 
-function AdocItem({ doc }: { doc: MockCtrtAdocFile }) {
+function AdocItem({ doc }: { doc: CtrtAdocFile }) {
   return (
     <div className="flex flex-col gap-krds-5">
       <p className="text-krds-body-md font-bold text-krds-text-ink">{doc.ctrtAdocCd}</p>

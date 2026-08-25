@@ -27,10 +27,10 @@ import { OvsBidRegRslt } from '@/ui/biz/bd/ovsTndrDtl/OvsBidRegRslt'
 import { OvsTechEvlRslt } from '@/ui/biz/bd/ovsTndrDtl/OvsTechEvlRslt'
 import { OvsBidRtrcnAply, type OvsBidRtrcnAplyHandle } from '@/ui/biz/bd/ovsTndrDtl/OvsBidRtrcnAply'
 
-import type { MockOvsTndrDtlItem } from '@/types/mock/bd'
+import type { OvsTndrDtlItem } from '@/types/mock/bd'
 
 // 직접 URL 진입(state 없음) 대비 페이지 fallback 목업 — 설계서 slide375 예시값 그대로.
-const MOCK_OVS_TNDR_DETAIL: MockOvsTndrDtlItem = {
+const MOCK_OVS_TNDR_DETAIL: OvsTndrDtlItem = {
   pbancNo: 'EFD0007',
   pbancOd: '2',
   prchsDmndNo: 'BAD839380-001',
@@ -70,7 +70,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 // ── 탭1 일반정보 (M75) — 공고일반(dm_bscPbancInfo) + 담당자 정보 ──────────────────
-function GeneralInfo({ detail }: { detail: MockOvsTndrDtlItem }) {
+function GeneralInfo({ detail }: { detail: OvsTndrDtlItem }) {
   const generalRows: TableRow[] = [
     { label: '공고번호-차수', value: `${detail.pbancNo}-${detail.pbancOd}` },
     { label: '구매요청번호', value: detail.prchsDmndNo },
@@ -118,8 +118,8 @@ export function OvsTndrDtlPage() {
   // 국외 입찰진행에서 넘어온 항목으로 상단(요약)을 그린다. 직접 URL 진입(state 없음)이면 페이지 목업.
   //   단가제(M77)/총액제(M78) 분기 확인용: 직접 진입 시 ?alonbsYn=Y 로 총액제 확인 가능.
   const [searchParams] = useSearchParams()
-  const state = useLocation().state as MockOvsTndrDtlItem | null
-  const detail: MockOvsTndrDtlItem =
+  const state = useLocation().state as OvsTndrDtlItem | null
+  const detail: OvsTndrDtlItem =
     state ?? { ...MOCK_OVS_TNDR_DETAIL, alonbsYn: searchParams.get('alonbsYn') === 'Y' ? 'Y' : 'N' }
 
   const [tab, setTab] = useState('general')

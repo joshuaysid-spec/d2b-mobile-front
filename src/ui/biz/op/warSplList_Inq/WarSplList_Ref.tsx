@@ -7,13 +7,13 @@
 //   ⚠️ '설계(SADC)' 는 항목설명 1.7 에만 있고 화면 목업 컬럼에는 없다 — 데이터영역 기준으로 표시.
 // 시트 본문(px-16) 안이라 AccordionSection 은 flush(콘텐츠 좌우 패딩 제거 — 2중 패딩 방지).
 import { opQueries } from '@/queries/bds/op/opQueries'
-import type { MockWarSplRef } from '@/types/mock/op'
+import type { WarSplRef } from '@/types/mock/op'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { WarSplList_NiinSrch } from '@/ui/biz/op/warSplList_Inq/WarSplList_NiinSrch'
 
 // 라벨(한글 + 부호명) ↔ 항목명(영문) — 설계서 "항목 설명 1.7 참고자료 데이터 영역" 순서 그대로.
-const REF_FIELDS: { label: string; key: keyof MockWarSplRef }[] = [
+const REF_FIELDS: { label: string; key: keyof WarSplRef }[] = [
   { label: '참고번호 R/N', key: 'refNo' },
   { label: '생산자 NSCM', key: 'nscm' },
   { label: '형태 RNFC', key: 'rnfc' },

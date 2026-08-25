@@ -2,12 +2,12 @@
 //   웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 추가정보 신청 목록 > 상세.
 //   접수한 신청 데이터를 읽기전용으로 표시(아코디언 + Table). 구성: 일반정보 · 담당자정보 · 대표품류및조합/단체 · 등록품목명세.
 //   데이터=목업(설계서 slide140 예시값, 항목명 영문 준수) — 추후 API: cmService.selectBzentyInfoAddRegAplyDtl.
-import type { MockRegTrgtItem, MockPicInfo, MockKnditmAsctGrp } from '@/types/mock/cm'
+import type { RegTrgtItem, PicInfo, KnditmAsctGrp } from '@/types/mock/cm'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 
 // 등록품목명세(dl_regTrgtItemList) — slide140 예시값.
-const REG_ITEMS: MockRegTrgtItem[] = [
+const REG_ITEMS: RegTrgtItem[] = [
   {
     itemCd: '1001100001',
     knditmCd: '60',
@@ -19,14 +19,14 @@ const REG_ITEMS: MockRegTrgtItem[] = [
   },
 ]
 // 담당자정보(dm_picInfo) — slide140 예시값.
-const PIC_INFO: MockPicInfo = {
+const PIC_INFO: PicInfo = {
   picNm: '김길동',
   picEntlno: '02-1234-5678',
   picFxno: '02-2345-6789',
   picEmlAddr: 'abcde@dapa.go.kr',
 }
 // 대표품류 및 조합/단체(dm_knditmListAsctGrpList) — slide140 예시값.
-const ASCT_GRP: MockKnditmAsctGrp = {
+const ASCT_GRP: KnditmAsctGrp = {
   knditmCd: '05',
   knditmCdNm: '05 / 피복',
   bzstatCdNm: '제조',
@@ -42,7 +42,7 @@ const GNRL = {
   addrEng: '102, 11st, jonglo-gu, seoul, korea',
 }
 
-function regItemRows(d: MockRegTrgtItem): TableRow[] {
+function regItemRows(d: RegTrgtItem): TableRow[] {
   return [
     { label: '품목코드', value: d.itemCd },
     { label: '품류코드/명', value: `${d.knditmCd} / ${d.knditmCdNm}` },

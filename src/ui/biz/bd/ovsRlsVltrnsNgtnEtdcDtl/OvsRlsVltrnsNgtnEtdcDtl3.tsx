@@ -7,10 +7,10 @@ import { Icon } from '@/ui/common/base/Icon'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
-import type { MockOvsRlsVltrnsEtdcDtlItem } from '@/types/mock/bd'
+import type { OvsRlsVltrnsEtdcDtlItem } from '@/types/mock/bd'
 
 // 입찰참여품목 목업 — 설계서 slide432 값 그대로. 항목명 = 설계서 데이터영역 영문(dl_bidItemList).
-const ITEM_BASE: Omit<MockOvsRlsVltrnsEtdcDtlItem, 'frcptlArtclNo'> = {
+const ITEM_BASE: Omit<OvsRlsVltrnsEtdcDtlItem, 'frcptlArtclNo'> = {
   invtNo: '1015375183975',
   prtsNo: '000-A0000 0000',
   itemNm: 'T-80U/TBE-3',
@@ -26,7 +26,7 @@ const ITEM_BASE: Omit<MockOvsRlsVltrnsEtdcDtlItem, 'frcptlArtclNo'> = {
   crncNm: 'USD (미 달러)',
 }
 const TOTAL = 100
-const MOCK_ITEMS: MockOvsRlsVltrnsEtdcDtlItem[] = Array.from({ length: TOTAL }, (_, i) => ({
+const MOCK_ITEMS: OvsRlsVltrnsEtdcDtlItem[] = Array.from({ length: TOTAL }, (_, i) => ({
   ...ITEM_BASE,
   frcptlArtclNo: String(i + 1),
 }))
@@ -34,7 +34,7 @@ const MOCK_ITEMS: MockOvsRlsVltrnsEtdcDtlItem[] = Array.from({ length: TOTAL }, 
 // 접힘 시 노출 행수 — 항목번호/재고번호/부품번호/품명 4행(slide432).
 const DEFAULT_VISIBLE = 4
 
-const ItemCard = memo(function ItemCard({ item }: { item: MockOvsRlsVltrnsEtdcDtlItem }) {
+const ItemCard = memo(function ItemCard({ item }: { item: OvsRlsVltrnsEtdcDtlItem }) {
   const [expanded, setExpanded] = useState(false)
 
   const rows = useMemo<TableRow[]>(() => {

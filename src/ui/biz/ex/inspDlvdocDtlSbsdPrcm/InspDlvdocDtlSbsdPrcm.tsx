@@ -4,7 +4,7 @@
 // 이행: 개시일자~출납관 전화번호).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockInspDlvdocDtlSbsdPrcm as SbsdDtl } from '@/types/mock/ex'
+import type { InspDlvdocDtlSbsdPrcm as SbsdDtl } from '@/types/mock/ex'
 
 export interface InspDlvdocDtlSbsdPrcmProps {
   detail: SbsdDtl

@@ -29,7 +29,7 @@ import { BidPrtcpAperDtl_Tab4 } from '@/ui/biz/bd/bidPrtcpAperDtl/BidPrtcpAperDt
 import { BidPrtcpAperDtl_Tab5 } from '@/ui/biz/bd/bidPrtcpAperDtl/BidPrtcpAperDtl_Tab5'
 import { BidPrtcpAperDtl_Tab6 } from '@/ui/biz/bd/bidPrtcpAperDtl/BidPrtcpAperDtl_Tab6'
 import { BidPrtcpAperDtl_Tab7 } from '@/ui/biz/bd/bidPrtcpAperDtl/BidPrtcpAperDtl_Tab7'
-import type { MockBidPrgrsItem } from '@/types/mock/bd'
+import type { BidPrgrsItem } from '@/types/mock/bd'
 
 // 신청서 내역 탭(설계서 slide181 탭 버튼) — 0.서약서 + T01~T07.
 const TABS: TabItem[] = [
@@ -63,7 +63,7 @@ const NOTICE_ITEMS = [
 
 export function BidPrtcpAperDtlPage() {
   // 훅은 state 가드보다 위에서 무조건 호출(hooks-order).
-  const stateItem = useLocation().state as MockBidPrgrsItem | null
+  const stateItem = useLocation().state as BidPrgrsItem | null
   const [tab, setTab] = useState('wrot')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [selected, setSelected] = useState<WrotData | null>(null) // 열람 중인 서약서(바텀시트)

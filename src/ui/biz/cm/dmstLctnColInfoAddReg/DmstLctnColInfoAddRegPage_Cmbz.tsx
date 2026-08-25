@@ -23,7 +23,7 @@ import { Toast } from '@/ui/common/composites/Toast'
 import { ScrtyMsrmtPrsnlReg, type ScrtyMsrmtPrsnlRegHandle } from '@/ui/biz/cm/dmstLctnColInfoAddReg/ScrtyMsrmtPrsnlReg'
 import { FSCChc, type FSCChcHandle } from '@/ui/biz/cm/dmstLctnColInfoAddReg/FSCChc'
 import { BankChc } from '@/ui/biz/cm/dmstLctnColInfoAddReg/BankChc'
-import type { MockScrtyMsrmtPrsn, MockDmsAgtFscCode, MockBankChcItem } from '@/types/mock/cm'
+import type { ScrtyMsrmtPrsn, DmsAgtFscCode, BankChcItem } from '@/types/mock/cm'
 
 const BPLC_OPTIONS = [
   { value: '1', label: '본사' },
@@ -36,11 +36,11 @@ const BZSTAT_OPTIONS = [
 ]
 
 // 보안측정인원 초기 목업 (slide156 예시 — 홍길동/적격/2022-02-02/증명서.pdf). 추후 API.
-const INITIAL_PERSONS: MockScrtyMsrmtPrsn[] = [
+const INITIAL_PERSONS: ScrtyMsrmtPrsn[] = [
   { id: '1', prsnNm: '홍길동', qualYn: '적격', scrtMsrYmd: '2022-02-02', fileName: '증명서.pdf' },
 ]
 // FSC 초기 목업 (slide157 예시 — 0001/테스트). 추후 API.
-const INITIAL_FSC: MockDmsAgtFscCode[] = [{ fscCd: '0001', gunGrdNm: '테스트' }]
+const INITIAL_FSC: DmsAgtFscCode[] = [{ fscCd: '0001', gunGrdNm: '테스트' }]
 
 type SheetKind = 'scrt' | 'fsc' | 'bank' | null
 
@@ -69,18 +69,18 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
   const [scrtMsrRslt, setScrtMsrRslt] = useState('') // 보안측정결과*
 
   // ── 보안측정인원 ──
-  const [persons, setPersons] = useState<MockScrtyMsrmtPrsn[]>(INITIAL_PERSONS)
+  const [persons, setPersons] = useState<ScrtyMsrmtPrsn[]>(INITIAL_PERSONS)
   const [selectedPrsnIds, setSelectedPrsnIds] = useState<string[]>([])
 
   // ── FSC ──
-  const [fscList, setFscList] = useState<MockDmsAgtFscCode[]>(INITIAL_FSC)
+  const [fscList, setFscList] = useState<DmsAgtFscCode[]>(INITIAL_FSC)
   const [selectedFscCds, setSelectedFscCds] = useState<string[]>([])
 
   // ── 영업정보 (slide157) ──
   const [anlSaleAmt, setAnlSaleAmt] = useState('') // 연간매출액(천원)
   const [astScl, setAstScl] = useState('') // 자산규모*(천원)
   const [lncLmt, setLncLmt] = useState('') // 여신한도(천원)
-  const [bank, setBank] = useState<MockBankChcItem | null>(null) // 주거래은행*(P12)
+  const [bank, setBank] = useState<BankChcItem | null>(null) // 주거래은행*(P12)
   const [brnchNm, setBrnchNm] = useState('') // 지점
   const [mlsplyFrstPtcpYmd, setMlsplyFrstPtcpYmd] = useState('') // 군납최초참여일
   const [trnsPrdFrom, setTrnsPrdFrom] = useState('') // 거래기간 시작
@@ -102,7 +102,7 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
     setSelectedFscCds((p) => (p.includes(cd) ? p.filter((x) => x !== cd) : [...p, cd]))
 
   // 보안측정인원 버튼(slide156)
-  const handleAddPerson = (person: MockScrtyMsrmtPrsn) => {
+  const handleAddPerson = (person: ScrtyMsrmtPrsn) => {
     setPersons((prev) => [...prev, person])
     setSheet(null)
     console.log('[M23] 보안측정인원 추가', person)
@@ -119,7 +119,7 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
   }
 
   // FSC 버튼(slide157)
-  const handleAddFsc = (picked: MockDmsAgtFscCode[]) => {
+  const handleAddFsc = (picked: DmsAgtFscCode[]) => {
     setFscList((prev) => {
       const existing = new Set(prev.map((f) => f.fscCd))
       return [...prev, ...picked.filter((p) => !existing.has(p.fscCd))]
@@ -150,13 +150,13 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
     window.setTimeout(() => navigate(-1), 1200)
   }
 
-  const personRows = (d: MockScrtyMsrmtPrsn): TableRow[] => [
+  const personRows = (d: ScrtyMsrmtPrsn): TableRow[] => [
     { label: '성명', value: d.prsnNm || '-' },
     { label: '적격여부', value: d.qualYn || '-' },
     { label: '보안측정일', value: d.scrtMsrYmd || '-' },
     { label: '첨부파일', value: d.fileName || '-' },
   ]
-  const fscRows = (d: MockDmsAgtFscCode): TableRow[] => [
+  const fscRows = (d: DmsAgtFscCode): TableRow[] => [
     { label: 'FSC', value: d.fscCd },
     { label: '군급명', value: d.gunGrdNm },
   ]

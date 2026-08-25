@@ -10,7 +10,7 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockBidPrgrsItem } from '@/types/mock/bd'
+import type { BidPrgrsItem } from '@/types/mock/bd'
 
 export interface PrdctnAbltDcmntSbmsnHandle {
   /** 부모 BottomSheet footer '제출하기' 가 호출 — 제출 처리 후 onSubmitted() 로 시트 닫힘 알림 */
@@ -19,7 +19,7 @@ export interface PrdctnAbltDcmntSbmsnHandle {
 
 interface PrdctnAbltDcmntSbmsnProps {
   /** 상세에서 넘어온 항목 — 공고 식별/표시값 시드. */
-  detail: MockBidPrgrsItem
+  detail: BidPrgrsItem
   /** 제출 완료 시 호출(부모가 BottomSheet 를 닫음) */
   onSubmitted: () => void
 }

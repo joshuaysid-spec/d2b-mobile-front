@@ -32,11 +32,11 @@ import { RegTrgtItemChc, type RegTrgtItemChcHandle } from '@/ui/biz/cm/dmstLctnC
 import { ItemInq } from '@/ui/biz/cm/dmstLctnColInfoAddReg/ItemInq'
 import { PbamdsInfoJntUtztnBfhdWtcs } from '@/ui/biz/cm/dmstLctnColInfoAddReg/PbamdsInfoJntUtztnBfhdWtcs'
 import type {
-  MockAddRegItemRow,
-  MockKnditmChcItem,
-  MockAsctGrpChcItem,
-  MockRegTrgtItemChcItem,
-  MockItemInqDetail,
+  AddRegItemRow,
+  KnditmChcItem,
+  AsctGrpChcItem,
+  RegTrgtItemChcItem,
+  ItemInqDetail,
 } from '@/types/mock/cm'
 
 // 본/지사(bplcSecd) 코드 — 설계서 상세(BzentyGnrlInfo bplcSecd '1-본사') 관례.
@@ -56,7 +56,7 @@ const BZSTAT_OPTIONS = [
 ]
 
 // 등록품목명세 초기 목업 (설계서 slide151 예시 — 항목명/형식 그대로). 추후 API: cmService.selectRegItemList.
-const INITIAL_ITEMS: MockAddRegItemRow[] = [
+const INITIAL_ITEMS: AddRegItemRow[] = [
   {
     id: '1',
     itemCd: '1001100001',
@@ -100,19 +100,19 @@ export function DmstLctnColInfoAddRegPage() {
   const [addrEng, setAddrEng] = useState('') // 주소(영문)
 
   // ── 대표품류 및 조합/단체 (slide150) ──
-  const [knditm, setKnditm] = useState<MockKnditmChcItem | null>(null) // 대표품류(P06)
+  const [knditm, setKnditm] = useState<KnditmChcItem | null>(null) // 대표품류(P06)
   const [bzstat, setBzstat] = useState('') // 업태
-  const [asctGrp, setAsctGrp] = useState<MockAsctGrpChcItem | null>(null) // 조합/단체(P07)
+  const [asctGrp, setAsctGrp] = useState<AsctGrpChcItem | null>(null) // 조합/단체(P07)
 
   // ── 등록품목명세 (slide157) ──
-  const [items, setItems] = useState<MockAddRegItemRow[]>(INITIAL_ITEMS)
+  const [items, setItems] = useState<AddRegItemRow[]>(INITIAL_ITEMS)
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [itemKeyword, setItemKeyword] = useState('') // 품목 코드 검색
   const [rvwRslt, setRvwRslt] = useState('all') // 적격상태(전체/적격/부적격)
 
   // ── 팝업/상태 ──
   const [sheet, setSheet] = useState<SheetKind>(null)
-  const [itemInqDetail, setItemInqDetail] = useState<MockItemInqDetail | null>(null)
+  const [itemInqDetail, setItemInqDetail] = useState<ItemInqDetail | null>(null)
   const [agreeOpen, setAgreeOpen] = useState(false) // P13 사전동의서
   const [agreed, setAgreed] = useState(false) // 조회 동의여부
   const [warnOpen, setWarnOpen] = useState(false) // 미동의 경고 모달
@@ -134,7 +134,7 @@ export function DmstLctnColInfoAddRegPage() {
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
 
   // 등록품목명세 버튼 동작(설계서 slide151) — 목업 상태 변경.
-  const handleAddItems = (picked: MockRegTrgtItemChcItem[]) => {
+  const handleAddItems = (picked: RegTrgtItemChcItem[]) => {
     setItems((prev) => [
       ...prev,
       ...picked.map((p, i) => ({
@@ -183,7 +183,7 @@ export function DmstLctnColInfoAddRegPage() {
     console.log('[M05] 등록품목명세 초기화')
   }
   // 품목코드 클릭 → 품목 조회(P09) 시트. 업종코드/명은 잠정 목업(설계서 slide167 표기).
-  const openItemInq = (row: MockAddRegItemRow) => {
+  const openItemInq = (row: AddRegItemRow) => {
     setItemInqDetail({ itemCd: row.itemCd, bzstatCd: '1234', bzstatNm: '제조업' })
     setSheet('itemInq')
   }
@@ -214,7 +214,7 @@ export function DmstLctnColInfoAddRegPage() {
   }
 
   // 표 행 — 설계서 slide157 컬럼 순서(순번 → 품목코드 → … → 접수상태). rnum 은 목록 표시 순번.
-  function itemRows(d: MockAddRegItemRow, rnum: number): TableRow[] {
+  function itemRows(d: AddRegItemRow, rnum: number): TableRow[] {
     return [
       { label: '순번', value: String(rnum) },
       {

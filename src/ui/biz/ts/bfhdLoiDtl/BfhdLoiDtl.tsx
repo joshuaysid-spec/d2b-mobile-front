@@ -2,7 +2,7 @@
 // 아코디언 2개(집행계획 · 문의처) + Table — 데이터(detail)는 페이지가 조회해 주입.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockBfhdLoiDtl as LoiDtl } from '@/types/mock/ts'
+import type { BfhdLoiDtl as LoiDtl } from '@/types/mock/ts'
 
 export interface BfhdLoiDtlProps {
   detail: LoiDtl

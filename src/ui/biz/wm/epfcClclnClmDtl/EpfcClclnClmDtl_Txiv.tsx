@@ -1,14 +1,14 @@
 // 사후정산청구상세 - '세금계산서' 탭 콘텐츠 (MUI-WM-01-T22). 설계서 slide76, 78 — M05 T08 과 동일 구성.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockEpfcClclnClmDtl, MockTxBllItem } from '@/types/mock/wm'
+import type { EpfcClclnClmDtl, TxBllItem } from '@/types/mock/wm'
 
 export interface EpfcClclnClmDtl_TxivProps {
-  detail: MockEpfcClclnClmDtl
+  detail: EpfcClclnClmDtl
 }
 
 // 품목 1건 → 표 행 (dlt_txivList, slide78 1.6 순서).
-function bllRows(it: MockTxBllItem): TableRow[] {
+function bllRows(it: TxBllItem): TableRow[] {
   return [
     { label: '월일', value: it.bllPblcnYmd },
     { label: '품목', value: it.itemNm || '-' },

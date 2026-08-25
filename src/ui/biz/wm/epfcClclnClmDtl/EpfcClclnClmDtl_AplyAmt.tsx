@@ -2,14 +2,14 @@
 // 신청정보(차수/수신자/신청일자) + 금액구분별 신청내역 반복 + 신청금액(일금/일금 한글/지출원인금액).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockEpfcAplyDsctnItem, MockEpfcClclnClmDtl } from '@/types/mock/wm'
+import type { EpfcAplyDsctnItem, EpfcClclnClmDtl } from '@/types/mock/wm'
 
 export interface EpfcClclnClmDtl_AplyAmtProps {
-  detail: MockEpfcClclnClmDtl
+  detail: EpfcClclnClmDtl
 }
 
 // 구분 1건 → 표 행 (dmt_aplyDsctnInfo, slide74 목업 순서).
-function dsctnRows(it: MockEpfcAplyDsctnItem): TableRow[] {
+function dsctnRows(it: EpfcAplyDsctnItem): TableRow[] {
   return [
     { label: '대상금액', value: `${it.trgtAmt.toLocaleString()} 원`, type: 'number' },
     { label: '신청금액 - 기사용', value: `${it.arusAplyAmt.toLocaleString()} 원`, type: 'number' },

@@ -30,7 +30,7 @@ import type {
   SearchFilterSchema,
   SearchFilterValue,
 } from '@/types/search-filter'
-import type { MockDocBoxItem, MockDocBoxSeCd } from '@/types/mock/cm'
+import type { DocBoxItem, DocBoxSeCd } from '@/types/mock/cm'
 
 // 상단 분기 탭 — 문서구분 4가지(받은/보낸/반려/임시저장). docSeCd 로 목록 필터.
 const DOC_TABS: TabItem[] = [
@@ -100,7 +100,7 @@ const DEFAULT_FILTER: SearchFilterValue = {
   docSe: 'all',
 }
 // 필터 문서구분 → 상단 분기 탭 매핑(반려 받은/반려한 → 반려 탭).
-const TAB_BY_DOC_SE: Record<string, MockDocBoxSeCd> = {
+const TAB_BY_DOC_SE: Record<string, DocBoxSeCd> = {
   received: 'received',
   sent: 'sent',
   rejectedReceived: 'rejected',
@@ -110,7 +110,7 @@ const TAB_BY_DOC_SE: Record<string, MockDocBoxSeCd> = {
 
 // ── 목업 (설계서 slide90 카드 예시 + 각 데이터영역 항목명/형식) ────────────────
 // 문서구분별 대표 샘플. 아래 replicate 로 페이징용 목록을 만든다(id 재부여).
-const DOC_SAMPLES: Record<MockDocBoxSeCd, Omit<MockDocBoxItem, 'id'>[]> = {
+const DOC_SAMPLES: Record<DocBoxSeCd, Omit<DocBoxItem, 'id'>[]> = {
   received: [
     {
       docSeCd: 'received',
@@ -185,7 +185,7 @@ const DOC_SAMPLES: Record<MockDocBoxSeCd, Omit<MockDocBoxItem, 'id'>[]> = {
 }
 
 // 문서구분별 총 건수(목업 — slide91 '더보기 10/258' 반영). API 연동 시 실제 total 로 교체.
-const DOC_TOTALS: Record<MockDocBoxSeCd, number> = {
+const DOC_TOTALS: Record<DocBoxSeCd, number> = {
   received: 258,
   sent: 42,
   rejected: 13,
@@ -193,7 +193,7 @@ const DOC_TOTALS: Record<MockDocBoxSeCd, number> = {
 }
 
 // ⚠️ 임시 목업 — API 연동 시 이 상수·페이징 로직을 통째로 교체(cmService.selectRcvDocBoxList).
-const MOCK_DOCS: MockDocBoxItem[] = (Object.keys(DOC_SAMPLES) as MockDocBoxSeCd[]).flatMap((se) => {
+const MOCK_DOCS: DocBoxItem[] = (Object.keys(DOC_SAMPLES) as DocBoxSeCd[]).flatMap((se) => {
   const samples = DOC_SAMPLES[se]
   return Array.from({ length: DOC_TOTALS[se] }, (_, i) => ({
     ...samples[i % samples.length],
@@ -204,8 +204,8 @@ const MOCK_DOCS: MockDocBoxItem[] = (Object.keys(DOC_SAMPLES) as MockDocBoxSeCd[
 export function DocBoxPage() {
   const navigate = useNavigate()
   // 마이페이지에서 넘어온 초기 문서구분(받은/보낸/반려/임시저장). 없으면 '받은 문서'.
-  const initTab = (useLocation().state as { docType?: MockDocBoxSeCd } | null)?.docType ?? 'received'
-  const [tab, setTab] = useState<MockDocBoxSeCd>(initTab)
+  const initTab = (useLocation().state as { docType?: DocBoxSeCd } | null)?.docType ?? 'received'
+  const [tab, setTab] = useState<DocBoxSeCd>(initTab)
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
   const [filterOpen, setFilterOpen] = useState(false) // 검색필터 풀팝업(slide96)
@@ -219,7 +219,7 @@ export function DocBoxPage() {
 
   // ── 동작 스텁 ──
   const handleTab = (next: string) => {
-    setTab(next as MockDocBoxSeCd)
+    setTab(next as DocBoxSeCd)
     setPage(1)
     console.log('[DocBox] 탭', next) // 추후: cmService.selectRcvDocBoxList({ docSeCd: next })
   }
@@ -240,7 +240,7 @@ export function DocBoxPage() {
     if (nextTab) setTab(nextTab)
     console.log('[DocBox] 검색필터', value) // 추후 API: cmService.selectRcvDocBoxList(toRequest(value))
   }
-  const handleCardClick = (it: MockDocBoxItem) => {
+  const handleCardClick = (it: DocBoxItem) => {
     // 클릭한 항목을 state 로 전달 — 문서함 상세(M11) 상단 즉시표시.
     navigate(ROUTES.DOC_BOX_DETAIL, { state: it })
   }

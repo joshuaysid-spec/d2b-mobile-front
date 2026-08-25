@@ -14,7 +14,7 @@ import { CertCard } from '@/ui/biz/cm/crtfMng/CertCard'
 import { CertInfoBox } from '@/ui/biz/cm/crtfMng/CertInfoBox'
 import { MOCK_CERTS } from '@/ui/biz/cm/crtfMng/certMock'
 import { CrtfPswd } from '@/ui/biz/cm/crtfSend/CrtfPswd'
-import type { MockCertItem } from '@/types/mock/cm'
+import type { CertItem } from '@/types/mock/cm'
 
 // 데모용 인증서 비밀번호 — 실제 검증은 스마트PKI 솔루션(2026-07-31 임시값 12345 요청).
 const MOCK_PASSWORD = '12345'
@@ -27,8 +27,8 @@ const GUIDE = [
 ]
 
 export function CrtfSendPage() {
-  const [selected, setSelected] = useState<MockCertItem | null>(null) // 선택 확정 인증서 = 인증번호 풀바텀시트 열림
-  const [pendingCert, setPendingCert] = useState<MockCertItem | null>(null) // P18 열림 = 비밀번호 확인 대기 인증서
+  const [selected, setSelected] = useState<CertItem | null>(null) // 선택 확정 인증서 = 인증번호 풀바텀시트 열림
+  const [pendingCert, setPendingCert] = useState<CertItem | null>(null) // P18 열림 = 비밀번호 확인 대기 인증서
   const [password, setPassword] = useState('')
   const [pswdError, setPswdError] = useState<string | null>(null)
   const [toast, setToast] = useState<{ open: boolean; message: string }>({
@@ -37,7 +37,7 @@ export function CrtfSendPage() {
   })
 
   // ① 인증서 클릭 → 비밀번호 확인 시트(P18) 열기.
-  const openPswd = (cert: MockCertItem) => {
+  const openPswd = (cert: CertItem) => {
     setPassword('')
     setPswdError(null)
     setPendingCert(cert)

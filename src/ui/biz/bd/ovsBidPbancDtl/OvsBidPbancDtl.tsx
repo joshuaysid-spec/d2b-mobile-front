@@ -12,12 +12,12 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { Toast } from '@/ui/common/composites/Toast'
 import { OvsBidPbanc_AtchFileInq } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbanc_AtchFileInq'
 import { WarSplList_Inq } from '@/ui/biz/op/warSplList_Inq/WarSplList_Inq'
-import type { MockOvsAtchDoc, MockOvsBidItem } from '@/types/mock/bd'
+import type { OvsAtchDoc, OvsBidItem } from '@/types/mock/bd'
 
 // 품목목록 목업 — PC 실 인터페이스(ovsBidPbancDtl.IResultItem) 키. 설계서 slide291 예시값 기반.
 // 항목번호별로 재고·부품·규격번호와 품명만 달리해 실제 응답처럼 구성. 추후 bdService.selectBidItemList
 type OvsBidItemBase = Pick<
-  MockOvsBidItem,
+  OvsBidItem,
   'artclNo' | 'itemNm' | 'invtNo' | 'prtsNo' | 'spcfctNo' | 'lockerYn' | 'docYn' | 'inspShpCd'
 >
 const MOCK_ITEM_BASE: OvsBidItemBase[] = [
@@ -34,7 +34,7 @@ const MOCK_ITEM_BASE: OvsBidItemBase[] = [
   { artclNo: '11', itemNm: 'CABLE ASSY, POWER', invtNo: '614500379', prtsNo: 'A2093-211122', spcfctNo: '369A2103', lockerYn: 'N', docYn: 'Y', inspShpCd: '일반' },
   { artclNo: '12', itemNm: 'SWITCH, TOGGLE', invtNo: '593000380', prtsNo: 'A2093-211123', spcfctNo: '369A2104', lockerYn: 'N', docYn: 'N', inspShpCd: '일반' },
 ]
-const MOCK_ITEM_LIST: MockOvsBidItem[] = MOCK_ITEM_BASE.map((it) => ({
+const MOCK_ITEM_LIST: OvsBidItem[] = MOCK_ITEM_BASE.map((it) => ({
   ...it,
   docId: `DOC-EFD0007-${it.artclNo}`,
   dudtYmd: '2026-11-25',
@@ -57,14 +57,14 @@ const PAGE_STEP = 10 // 더보기 10개씩(설계서)
 
 // 첨부파일조회(MUI-BD-01-P76) 목업 — 선택 품목의 첨부서류 목록(IResultAttach 형태).
 // 설계서 slide15 Layout(순번·첨부서류명 + 첨부파일명.hwp [파일크기]) 그대로. 추후 API: bdService.selectOvsItemAtchFileList
-const buildAtchDocs = (item: MockOvsBidItem): MockOvsAtchDoc[] => [
+const buildAtchDocs = (item: OvsBidItem): OvsAtchDoc[] => [
   { docTitl: '규격서', fileNm: `규격서(${item.spcfctNo}).hwp`, fileSz: 804_864, fileId: `${item.docId}-1` },
   { docTitl: '도면', fileNm: `도면(${item.prtsNo}).pdf`, fileSz: 1_258_291, fileId: `${item.docId}-2` },
 ]
 
 export function OvsBidPbancDtl() {
   // 보관함 추가/삭제 로컬 토글 — 추후 API 연동 시 서버 상태로 교체.
-  const [items, setItems] = useState<MockOvsBidItem[]>(MOCK_ITEM_LIST)
+  const [items, setItems] = useState<OvsBidItem[]>(MOCK_ITEM_LIST)
   const [visible, setVisible] = useState(PAGE_STEP)
   const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
 
@@ -72,7 +72,7 @@ export function OvsBidPbancDtl() {
   const visibleItems = items.slice(0, visible)
 
   // 보관함 추가/삭제 (scnwin.btn_addItem_onclick / btn_deleteItem_onclick) — 업체담당자인 경우 노출.
-  const handleToggleLocker = (item: MockOvsBidItem) => {
+  const handleToggleLocker = (item: OvsBidItem) => {
     const next = item.lockerYn === 'Y' ? 'N' : 'Y'
     setItems((prev) =>
       prev.map((it) => (it.artclNo === item.artclNo ? { ...it, lockerYn: next } : it)),
@@ -86,8 +86,8 @@ export function OvsBidPbancDtl() {
   }
 
   // 첨부문서 보기 (scwin.btn_openAtchDoc_onlick) — 첨부파일조회(MUI-BD-01-P76) 바텀시트 호출(국외 설계서 slide14·20).
-  const [atchItem, setAtchItem] = useState<MockOvsBidItem | null>(null)
-  const handleOpenAtchDoc = (item: MockOvsBidItem) => {
+  const [atchItem, setAtchItem] = useState<OvsBidItem | null>(null)
+  const handleOpenAtchDoc = (item: OvsBidItem) => {
     setAtchItem(item)
     console.log('[M72] 첨부파일조회(P76) 열기', item.artclNo) // 추후 API: bdService.selectOvsItemAtchFileList
   }
@@ -96,9 +96,9 @@ export function OvsBidPbancDtl() {
   // 컨테이너(BottomSheet)는 이 컴포넌트 소유, 콘텐츠는 op 공용 WarSplList_Inq(형상/식별/참고자료 탭) 재사용.
   // planId 에는 클릭 품목의 재고번호(invtNo)를 전달 — 실 조회 파라미터는 백엔드 연동 시 확정(현재 목업).
   const [warSplInvtNo, setWarSplInvtNo] = useState<string | null>(null)
-  const handleOpenInvtNo = (item: MockOvsBidItem) => setWarSplInvtNo(item.invtNo)
+  const handleOpenInvtNo = (item: OvsBidItem) => setWarSplInvtNo(item.invtNo)
 
-  const itemRows = (it: MockOvsBidItem): TableRow[] => [
+  const itemRows = (it: OvsBidItem): TableRow[] => [
     { label: '항목번호', value: it.artclNo, type: 'number' },
     { label: '품질등급', value: it.inspShpCd },
     {

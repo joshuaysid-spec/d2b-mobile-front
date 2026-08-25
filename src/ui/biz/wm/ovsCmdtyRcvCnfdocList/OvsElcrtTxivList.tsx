@@ -8,7 +8,7 @@ import { wmQueries } from '@/queries/cts/wm/wmQueries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
-import type { MockOvsElcrtTxivItem } from '@/types/mock/wm'
+import type { OvsElcrtTxivItem } from '@/types/mock/wm'
 
 /** 외화 금액 표기 — 소수 2자리 고정(설계서 000,000,000,000.00). */
 const fmtAmt = (n: number) =>
@@ -22,7 +22,7 @@ export interface OvsElcrtTxivListProps {
   /** 바텀시트 열림 여부 — 열릴 때만 조회(enabled). */
   open: boolean
   /** 카드 클릭 — 전자계산서상세(M74) 이동은 부모가 담당. */
-  onItemClick: (item: MockOvsElcrtTxivItem) => void
+  onItemClick: (item: OvsElcrtTxivItem) => void
 }
 
 export function OvsElcrtTxivList({ ctrtNo, ctrtCycl, open, onItemClick }: OvsElcrtTxivListProps) {

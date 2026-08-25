@@ -3,10 +3,10 @@
 // 공사(Cstrn)는 데이터영역 srngScr1~8 = 표시 순서 그대로(시공경험~시공여부). A군 flat 표 — 레퍼런스 [[Implt]].
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockImpltElgbSrngScoreSet } from '@/types/mock/bd'
+import type { ImpltElgbSrngScoreSet } from '@/types/mock/bd'
 
 // 심사결과 목업 (설계서 slide263 값·slide264 항목명 srngScr1~8) — 추후 API 매핑.
-const MOCK_RESULT: MockImpltElgbSrngScoreSet = {
+const MOCK_RESULT: ImpltElgbSrngScoreSet = {
   srngScr1: '00',
   srngScr2: '000',
   srngScr3: '0000 0000',
@@ -19,7 +19,7 @@ const MOCK_RESULT: MockImpltElgbSrngScoreSet = {
   jgmtRsltNm: '적격',
 }
 
-const resultRows = (it: MockImpltElgbSrngScoreSet): TableRow[] => [
+const resultRows = (it: ImpltElgbSrngScoreSet): TableRow[] => [
   { label: '시공경험', value: it.srngScr1, type: 'number' },
   { label: '기술능력', value: it.srngScr2, type: 'number' },
   { label: '경영상태', value: it.srngScr3 },

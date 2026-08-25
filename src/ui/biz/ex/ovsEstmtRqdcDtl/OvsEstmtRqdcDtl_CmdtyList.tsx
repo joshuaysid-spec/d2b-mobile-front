@@ -6,7 +6,7 @@ import { exQueries } from '@/queries/cts/ex/exQueries'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockOvsEstmtRqdcItemRow } from '@/types/mock/ex'
+import type { OvsEstmtRqdcItemRow } from '@/types/mock/ex'
 
 export interface OvsEstmtRqdcDtl_CmdtyListProps {
   /** 조회 대상 견적의뢰서 식별자 — 페이지(navigate state id)가 주입. */
@@ -14,7 +14,7 @@ export interface OvsEstmtRqdcDtl_CmdtyListProps {
 }
 
 // 품목 1건 → 표 행 (dl_estmtRqdcItem, slide52 1.2 순서).
-function itemRows(it: MockOvsEstmtRqdcItemRow): TableRow[] {
+function itemRows(it: OvsEstmtRqdcItemRow): TableRow[] {
   return [
     { label: '번호', value: String(it.no) },
     { label: '재고번호', value: it.invtNo },

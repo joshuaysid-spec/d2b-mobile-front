@@ -2,7 +2,7 @@
 // 검색조건 value 는 검색필터 공통 value 타입(SearchFilterValue)을 그대로 alias (캐스팅 불필요).
 import type { SearchFilterValue } from '@/types/search-filter'
 
-export type MockBidSearchFilter = SearchFilterValue
+export type BidSearchFilter = SearchFilterValue
 
 /**
  * 입찰공고 통합목록 카드 1건 (MUI-BD-01-M01) — PC 실 인터페이스
@@ -10,7 +10,7 @@ export type MockBidSearchFilter = SearchFilterValue
  * 구 설계서 dlt_bidPbancIntgList 임시 키(g2BBidPbancNo/rprsItemNm/brprc 등) 전량 교체.
  * 식별자는 pbancNo(+pbancOd) — 카드 key 는 rnum.
  */
-export interface MockBidPbancItem {
+export interface BidPbancItem {
   /** 순번 (rnum) */
   rnum: string
   /** 조달번호 (prcmNo) */
@@ -114,7 +114,7 @@ export interface MockBidPbancItem {
  * `TempbidPbancIntgList.ISrchMap`/`ISearchParam`(2026-08-24 판독본, 동일 필드 구성) 키 그대로.
  * 현재 목록 화면은 클라이언트 필터라 미전송 — 서버 검색 전환 시 SearchFilterValue → 이 맵으로 변환.
  */
-export interface MockBidPbancListSrchMap {
+export interface BidPbancListSrchMap {
   /** 탭구분 (tabSeCd) */
   tabSeCd?: string
   /** 업무구분 (taskSeCd) */
@@ -183,7 +183,7 @@ export interface MockBidPbancListSrchMap {
  * 카드 표시는 입찰공고 목록과 동일 스타일이나, 정보행은 설계서대로 공고일자·개찰일시 2행만 사용.
  * 필드명·코드값·형식은 설계서 그대로 — 목업이지만 실제 API 응답처럼 구성(추후 bdService.selectBdopnList 매핑).
  */
-export interface MockBdopnItem {
+export interface BdopnItem {
   /** 카드 식별자 (상세 라우팅 키) */
   id: string
   /** 입찰공고번호 (예: '2026LGM000604191-01') — 카드 subtitle */
@@ -201,11 +201,11 @@ export interface MockBdopnItem {
   /** 개찰일시 (예: '2026-03-26 11:00') — 카드 2행 */
   opbidDt: string
   /**
-   * 이행/적격심사결과 탭 유형 판별 임시 키 ([[MockImpltElgbSrngTyCd]]).
+   * 이행/적격심사결과 탭 유형 판별 임시 키 ([[ImpltElgbSrngTyCd]]).
    * ⚠️ TODO(설계서 영문ID 미확인 — 임시 확정, BD 선례): 설계서(02입찰 v1.83)에 유형 판별용 코드 항목이
    *   정의돼 있지 않아 신 화면ID 소문자('t04'~'t21')로 임시 부여. 값 없으면 심사결과 탭은 물품(t05) 기본.
    */
-  srngTyCd?: MockImpltElgbSrngTyCd
+  srngTyCd?: ImpltElgbSrngTyCd
   /**
    * 이행/적격심사 상태 ('심사포기' 등) — 포기신청 팝업의 작성(P02)/조회(P03) 분기용.
    * ⚠️ TODO(설계서 영문ID 미확인 — 임시 키, BD 상태필드 선례): slide274 비고 "이행/적격심사 상태가
@@ -217,7 +217,7 @@ export interface MockBdopnItem {
  * 입찰진행 목록 카드 1건 (MUI-BD-03-M01, 설계서 02입찰 v1.83 slide69 화면 · slide71 데이터영역 dlt_bidPrgrsList).
  * "조달업체가 신청한 입찰 내역" — 항목명/코드값 설계서 그대로(추후 bdService.selectBidPrgrsListForBzenty 매핑).
  */
-export interface MockBidPrgrsItem {
+export interface BidPrgrsItem {
   /** 번호 (rNum) — 조회 번호. 카드 식별자/상세 라우팅 키 */
   rNum: string
   /** 업무구분 (taskSeNm) — 물품/용역/공사/국외 */
@@ -293,21 +293,21 @@ export interface MockBidPrgrsItem {
 }
 
 /**
- * 입찰공고 상세 응답 — 목록→상세 표준. 헤더/요약은 목록 아이템(MockBidPbancItem)과 동일 필드.
+ * 입찰공고 상세 응답 — 목록→상세 표준. 헤더/요약은 목록 아이템(BidPbancItem)과 동일 필드.
  * 상세 전용 섹션(일반정보/기초예비가격/품목명세서 등)은 추후 설계서 데이터영역 기준 확장.
  */
-export type MockBidPbancDetail = MockBidPbancItem
+export type BidPbancDetail = BidPbancItem
 
 /**
- * 입찰진행 상세 응답 — 목록→상세 표준. 목록 아이템(MockBidPrgrsItem) + 상세 전용(항목번호 clsfNo 등).
+ * 입찰진행 상세 응답 — 목록→상세 표준. 목록 아이템(BidPrgrsItem) + 상세 전용(항목번호 clsfNo 등).
  */
-export type MockBidPrgrsDetail = MockBidPrgrsItem & { clsfNo?: string }
+export type BidPrgrsDetail = BidPrgrsItem & { clsfNo?: string }
 
 /**
  * 이행/적격심사상세 – 일반정보 공고정보 (MUI-BD-10-T01(구 M01 — v1.83 재편), 설계서 slide166 데이터영역 dmt_pbancInfo).
  * 항목명(영문)·자리수는 설계서 그대로. 대표품명/비고는 콘텐츠 표시 항목(데이터영역 외).
  */
-export interface MockImpltElgbSrngPbancInfo {
+export interface ImpltElgbSrngPbancInfo {
   /** 입찰건명 (bidNm, 200) */
   bidNm: string
   /** 대표품명 — 콘텐츠 표시(데이터영역 외) */
@@ -341,7 +341,7 @@ export interface MockImpltElgbSrngPbancInfo {
 /**
  * 이행/적격심사상세 – 입찰결과 (MUI-BD-10-T02(구 M02 — v1.83 재편), 설계서 slide166 데이터영역 dmt_bidRslt).
  */
-export interface MockImpltElgbSrngBidRslt {
+export interface ImpltElgbSrngBidRslt {
   /** 낙찰순위 (scsbdRnk, 10) */
   scsbdRnk: string
   /** 투찰금액 (bdngAmt, 17,2) — 표시 시 콤마 + ' 원' */
@@ -358,7 +358,7 @@ export interface MockImpltElgbSrngBidRslt {
  * 이행/적격심사결과상세 – 심사결과 (MUI-BD-10-T05(구 M04 — v1.83 재편) 물품, 설계서 slide170 데이터영역 dmt_srngRslt).
  * 물품(Cmdty) 라벨 기준(제조능력=srngScr2, 재무상태=srngScr4). 용역/공사 등은 라벨만 상이.
  */
-export interface MockImpltElgbSrngResult {
+export interface ImpltElgbSrngResult {
   /** 이행실적 (srngScr1, 5,2) */
   srngScr1: string
   /** 제조능력 (srngScr2, 5,2) — 물품 라벨 */
@@ -393,17 +393,17 @@ export interface MockImpltElgbSrngResult {
  * - t07~t16 중기청 계열(10억미만 물품/제조/구매 연·고시금액) · t17 공사 · t18 기술용역
  * - t19 3억미만공사 · t20 고시금액미만용역 · t21 고시금액미만폐기물용역
  */
-export type MockImpltElgbSrngTyCd =
+export type ImpltElgbSrngTyCd =
   | 't04' | 't05' | 't06' | 't07' | 't08' | 't09' | 't10' | 't11' | 't12'
   | 't13' | 't14' | 't15' | 't16' | 't17' | 't18' | 't19' | 't20' | 't21'
 
 /**
  * A군(물품/용역/공사/기술용역) 심사결과 값 — 데이터영역 dmt_srngRslt(srngScr1~8 + 총계/판정).
  * 8개 심사항목의 라벨은 유형별로 다르나(용역/공사/기술용역은 srngScr1~8 = 표시 순서) 값 형식은 공통.
- * 물품(T05)만 표시 라벨이 데이터영역과 달라 기존 [[MockImpltElgbSrngResult]]를 그대로 사용(재작성 금지).
+ * 물품(T05)만 표시 라벨이 데이터영역과 달라 기존 [[ImpltElgbSrngResult]]를 그대로 사용(재작성 금지).
  * 값 형식: srngScr* = 5,2 · 입찰가격 열은 콤마+' 원' · tscr = 15,2(' 점') · jgmtRsltNm = 판정명.
  */
-export interface MockImpltElgbSrngScoreSet {
+export interface ImpltElgbSrngScoreSet {
   srngScr1: string
   srngScr2: string
   srngScr3: string
@@ -423,7 +423,7 @@ export interface MockImpltElgbSrngScoreSet {
  * ⚠️ 심사항목은 설계서에 영문 항목명 미표기(한글 라벨만) → 표시 전용 문자열로 둔다(신규 키 신설 안 함).
  * 배점/평점 미확정은 undefined → 화면에서 '-'.
  */
-export interface MockImpltElgbSrngRubricRow {
+export interface ImpltElgbSrngRubricRow {
   /** 심사항목 라벨 (설계서 한글 그대로) */
   item: string
   /** 배점(만점) — 설계서 표기(예: '30', '+3 ~ -2') */
@@ -436,20 +436,20 @@ export interface MockImpltElgbSrngRubricRow {
  * B/C군 심사분야(대분류) 단위 섹션 — 예: 'I. 당해물품납품이행능력' / '(가) 당해물품 납품이행능력'.
  * 하위 심사항목 rows 를 아코디언 1섹션 + 표 1개로 렌더.
  */
-export interface MockImpltElgbSrngRubricSection {
+export interface ImpltElgbSrngRubricSection {
   /** 심사분야명 */
   field: string
   /** 분야 소계 배점(있으면 타이틀 우측 표기) */
   allot?: string
-  rows: MockImpltElgbSrngRubricRow[]
+  rows: ImpltElgbSrngRubricRow[]
 }
 
 /**
  * 유형별 심사 루브릭 (B/C군) — 심사분야 섹션들 + 총계/판정.
  * 공용 렌더러 [[ImpltElgblRsltRubric]]가 이 데이터를 아코디언+표로 렌더한다.
  */
-export interface MockImpltElgbSrngRubric {
-  sections: MockImpltElgbSrngRubricSection[]
+export interface ImpltElgbSrngRubric {
+  sections: ImpltElgbSrngRubricSection[]
   /** 점수총계(심사평점 계) */
   tscr?: string
   /** 판정결과(적격/부적격 등) */
@@ -460,7 +460,7 @@ export interface MockImpltElgbSrngRubric {
  * 국외 입찰결과조회 요약(카드=상세 상단 공통, MUI-BD-09-M71 slide402 m_summary info).
  * 개찰목록 국외(단가제) 카드와 상세 상단이 동일 값을 공유 — 카드 클릭 시 navigate state 로 전달.
  */
-export interface MockOvsBidRsltSummary {
+export interface OvsBidRsltSummary {
   /** 업무구분 배지 (taskSeNm) — 국외 */
   taskSeNm: string
   /** 입찰유형 배지 (bidTypeNm) — 단가제 */
@@ -487,10 +487,10 @@ export interface MockOvsBidRsltSummary {
 
 /**
  * 국외 입찰결과조회 - 일반정보 (MUI-BD-09-T71(구 M71 — v1.83 재편), 설계서 slide403 일반 데이터 영역).
- * ⚠️ M71 데이터영역에 영문 항목명 미표기 → 국외 입찰서 상세(MockOvsTndrDtlItem) 관례 차용.
+ * ⚠️ M71 데이터영역에 영문 항목명 미표기 → 국외 입찰서 상세(OvsTndrDtlItem) 관례 차용.
  * 개찰목록 국외(단가제) 카드 → 이 화면 진입. navigate state / 페이지 fallback 목업 타입.
  */
-export interface MockOvsBidRsltGeneral {
+export interface OvsBidRsltGeneral {
   /** 공고번호 (pbancNo) — 예: 'EFD0007-2' */
   pbancNo: string
   /** 공고구분 (pbancSeNm) — 정상공고 등 */
@@ -538,7 +538,7 @@ export interface MockOvsBidRsltGeneral {
  * TODO(원본 대조): PC 실 인터페이스 판독본(ovsBidRslt.IResultUnitPrice)은 col1~col11 자리표시 키
  * (지시단가/입찰단가/달러단가/달러금액/입찰결과)라 실키로 볼 수 없어 미반영 — PC 확정 시 교체.
  */
-export interface MockOvsBidRsltUnitPriceItem {
+export interface OvsBidRsltUnitPriceItem {
   /** 항목번호 (clsfNo) */
   clsfNo: string
   /** 품명 (prdctNm) — 예: '500MD' */
@@ -568,7 +568,7 @@ export interface MockOvsBidRsltUnitPriceItem {
  * 총액제는 업체별 결과(입찰업체/사업자번호/지시금액/입찰금액/달러금액/입찰결과). 현황 요약 없음.
  * TODO(원본 대조): PC 판독본(ovsBidRsltDtl.IResultUnitPrice)도 col1~col9 자리표시 키라 미반영.
  */
-export interface MockOvsBidRsltTotalItem {
+export interface OvsBidRsltTotalItem {
   /** 순번 (seq) — 목록 key. ⚠️ 설계서 미표기, React key 용 */
   seq: string
   /** 입찰업체 (bidBzentyNm) — 예: 'A 국외업체' */
@@ -589,7 +589,7 @@ export interface MockOvsBidRsltTotalItem {
  * 국외 입찰결과현황(단가제) 요약 (MUI-BD-09-T72(구 M72 — v1.83 재편), 설계서 slide404 입찰결과현황 데이터영역).
  * 결과품목 소계(건수) + 원/달러 금액 소계 — 낙찰/조건부/동가낙찰/소계.
  */
-export interface MockOvsBidRsltUnitPriceStatus {
+export interface OvsBidRsltUnitPriceStatus {
   /** 총 참여품목수 (totItemCnt) */
   totItemCnt: string
   /** 총 낙찰 (totScsbdCnt) */
@@ -607,7 +607,7 @@ export interface MockOvsBidRsltUnitPriceStatus {
  * 개찰목록 국외·수의계약 카드 → 이 화면 진입(수의계약 배지 조건일 때만). navigate state.
  * ⚠️ 영문 항목명 = 국외 상세(OvsTndrDtl/OvsBidRslt) 관례 차용(설계서 데이터영역 영문 미표기).
  */
-export interface MockOvsRlsVltrnsSummary {
+export interface OvsRlsVltrnsSummary {
   /** 업무구분 배지 (taskSeNm) — 국외. UI 배지값(설계서 데이터영역 항목 아님) */
   taskSeNm: string
   /** 계약방법 배지 (ctrtMthdNm) — 수의계약 */
@@ -629,7 +629,7 @@ export interface MockOvsRlsVltrnsSummary {
 }
 
 /** 국외 공개수의협상계획상세 - 일반정보 (MUI-BD-12-T71(구 M71 — v1.83 재편), slide412 공고일반). */
-export interface MockOvsRlsVltrnsGeneral {
+export interface OvsRlsVltrnsGeneral {
   pbancNo: string
   /** 공고구분 (pbancType) */
   pbancType: string
@@ -662,7 +662,7 @@ export interface MockOvsRlsVltrnsGeneral {
 }
 
 /** 국외 공개수의협상계획상세 - 품목정보 목록 1건 (MUI-BD-12-T72(구 M72 — v1.83 재편), slide413 품목목록). */
-export interface MockOvsRlsVltrnsItem {
+export interface OvsRlsVltrnsItem {
   /** 항목번호 (clsfNo) */
   clsfNo: string
   /** 품질등급 (qltyGrd) — 예: 'A' */
@@ -711,7 +711,7 @@ export interface MockOvsRlsVltrnsItem {
  * 국외 공개수의협상 견적서 업체정보 (작성 M75/slide421 · 조회 M79/slide431·434~435).
  * 항목명 = 설계서 데이터영역 영문(dm_aplyBzenty / dm_bidBzenty).
  */
-export interface MockOvsRlsVltrnsEtdcBzenty {
+export interface OvsRlsVltrnsEtdcBzenty {
   /** 신청업체 (dm_aplyBzenty) */
   aply: {
     /** 업체코드 (sbtBzentyCd) */
@@ -751,7 +751,7 @@ export interface MockOvsRlsVltrnsEtdcBzenty {
 }
 
 /** 국외 공개수의협상견적서제출 - 스탭3 입찰참여품목(단가제) 1건 (MUI-BD-12-T76(구 M76 — v1.83 재편), slide422·435). 항목명 = 설계서 데이터영역 영문(dl_bidItemList). */
-export interface MockOvsRlsVltrnsEtdcItem {
+export interface OvsRlsVltrnsEtdcItem {
   /** 항목번호 (frcptlArtclNo) */
   frcptlArtclNo: string
   /** 재고번호 (invtNo) */
@@ -783,7 +783,7 @@ export interface MockOvsRlsVltrnsEtdcItem {
  * 국외 공개수의협상견적서상세(조회) - 입찰품목 1건 (MUI-BD-12-T80(구 M80 — v1.83 재편), slide432·435).
  * 항목명 = 설계서 데이터영역 영문(dl_bidItemList). 읽기전용 표시값. itemSbstSe='Y' 시 품목대체첨부문서·수정재고/부품번호 노출.
  */
-export interface MockOvsRlsVltrnsEtdcDtlItem {
+export interface OvsRlsVltrnsEtdcDtlItem {
   /** 항목번호 (frcptlArtclNo) */
   frcptlArtclNo: string
   /** 재고번호 (invtNo) */
@@ -815,7 +815,7 @@ export interface MockOvsRlsVltrnsEtdcDtlItem {
 }
 
 /** 국외 공개수의협상계획상세 - 첨부서류 1건 (MUI-BD-12-T73(구 M73 — v1.83 재편), slide414 첨부파일). */
-export interface MockOvsRlsVltrnsAtchDoc {
+export interface OvsRlsVltrnsAtchDoc {
   /** 식별자 (id) — 목록 key */
   id: string
   /** 구분 (docSeNm) — 공고문안/일반조건/특수조건/기타첨부 */
@@ -830,7 +830,7 @@ export interface MockOvsRlsVltrnsAtchDoc {
  * 국외 공개수의협상결과조회 - 상단 요약 (MUI-BD-12-M83, slide441).
  * 배지 국외/수의계약/입찰유형 + subtitle(통합참조번호·공고번호) + title(사업명) + 요약행(입찰업체·구매요청번호·공고일자·개찰일자).
  */
-export interface MockOvsRlsVltrnsSrngRsltSummary {
+export interface OvsRlsVltrnsSrngRsltSummary {
   /** 업무구분 배지 (taskSeNm) — 국외. UI 배지값 */
   taskSeNm: string
   /** 계약방법 배지 (ctrtMthdNm) — 수의계약 */
@@ -857,7 +857,7 @@ export interface MockOvsRlsVltrnsSrngRsltSummary {
  * 국외 공개수의협상결과조회 - 조회결과 1건 (MUI-BD-12-T83(구 M83 — v1.83 재편), slide443·445).
  * 항목명 = 설계서 데이터영역 영문(dl_bidRsltList).
  */
-export interface MockOvsRlsVltrnsSrngRsltItem {
+export interface OvsRlsVltrnsSrngRsltItem {
   /** 순번 (no) */
   no: string
   /** 신청업체코드 (sbtBzentyCd) */
@@ -890,17 +890,17 @@ export interface MockOvsRlsVltrnsSrngRsltItem {
  * 신청서 작성 플로우 종류 — 전자서명(M21)/신청완료(M08)의 표시 텍스트 분기 구동값.
  * 설계서 slide132·133: "사전심사(PQ), 입찰참가신청, 입찰서에 따라 표시 텍스트 변경".
  */
-export type MockAplyFlowType = 'pq' | 'apfr' | 'tndr'
+export type AplyFlowType = 'pq' | 'apfr' | 'tndr'
 
 /**
  * 전자서명(MUI-BD-04-M21)·신청완료(MUI-BD-06-M08) 진입 시 navigate state.
  * 견적서작성하기/입찰참가신청서 제출 → 전자서명(Elsgn) → 신청완료(AplyCmptn) 로 흐른다.
  */
-export interface MockAplyFlowState {
+export interface AplyFlowState {
   /** 요약 헤더 구동용 입찰진행 항목 */
-  detail: MockBidPrgrsItem
+  detail: BidPrgrsItem
   /** 작성 유형 — 사전심사(PQ)/입찰참가신청/입찰서. 표시 텍스트 분기 */
-  aplyType: MockAplyFlowType
+  aplyType: AplyFlowType
   // ── 신청완료(M08) 표시 항목 ───────────────────────────────────────────────
   // ⚠️ 설계서 데이터영역 미정의(상세설계 예정) — 신청완료 표시용 임시 항목(사용자 승인 rcptNo/rcptDt).
   //    상세설계에서 영문 항목명이 확정되면 그 이름으로 교체한다.
@@ -917,7 +917,7 @@ export interface MockAplyFlowState {
  * (2026-08-24 판독본) 키/타입 그대로(chk 그리드 체크 열은 제외 — 선택 상태는 화면 로컬).
  * 구 설계서 dl_itemList 키(frcptlArtclNo/unitNm/bscbgtQty 등) 교체.
  */
-export interface MockOvsBidItem {
+export interface OvsBidItem {
   /** 항목번호 (artclNo) */
   artclNo: string
   /** 품질등급 (inspShpCd) */
@@ -971,7 +971,7 @@ export interface MockOvsBidItem {
  * `ovsBidPbancDtl.IResultAttach`(2026-08-24 판독본) 키/타입 그대로(chk 제외).
  * 구 no/atchDocNm/atchFileNm 키 교체 — 목록 key·다운로드 식별자는 fileId.
  */
-export interface MockOvsAtchDoc {
+export interface OvsAtchDoc {
   /** 첨부서류명 (docTitl) */
   docTitl: string
   /** 첨부파일명 (fileNm) */
@@ -988,7 +988,7 @@ export interface MockOvsAtchDoc {
  * 국외 보관함 공고 1건 (MUI-CM-01-M71) — PC 실 인터페이스 `ovsLockerPbanList.IDataList1`
  * (2026-08-24 판독본) 키/타입 그대로. 구 tmprBidCnEn/bidPrtcpAplyYn(Y/N)·pbancYr 교체.
  */
-export interface MockOvsLockerPbanItem {
+export interface OvsLockerPbanItem {
   /** 라우팅 키 — 통합참조번호(intgRfrncNo) 사용 (직접 URL 진입 테스트 가능) */
   id: string
   /** 통합참조번호 (intgRfrncNo) */
@@ -1041,7 +1041,7 @@ export interface MockOvsLockerPbanItem {
 // ── 입찰내역 작성 (MUI-BD-01-M76 · T74~T76(구 M76~M78 — v1.83 재편), 설계서 slide312~319) ─────────────────────
 
 /** 공고일반 데이터 영역 (dm_bscPbancInfo, 설계서 slide316) */
-export interface MockBscPbancInfo {
+export interface BscPbancInfo {
   /** 공고번호 (7자리) */
   pbancNo: string
   /** 공고차수 (2자리) */
@@ -1078,7 +1078,7 @@ export interface MockBscPbancInfo {
 }
 
 /** 입찰내역(단가제) 데이터 영역 (dl_ititbBidCnList, 설계서 slide317) */
-export interface MockItitbBidCnItem {
+export interface ItitbBidCnItem {
   /** 항목번호 (5자리) */
   frcptlArtclNo: string
   /** 재고번호 (9자리) */
@@ -1130,7 +1130,7 @@ export interface MockItitbBidCnItem {
 }
 
 /** 입찰품목(총액제) 데이터 영역 (dl_alonbsItemList, 설계서 slide318) */
-export interface MockAlonbsItem {
+export interface AlonbsItem {
   /** 항목번호 */
   frcptlArtclNo: string
   /** 재고번호 */
@@ -1146,7 +1146,7 @@ export interface MockAlonbsItem {
 }
 
 /** 입찰내역(총액제) 데이터 영역 (dl_alonbsBidCnInfo, 설계서 slide318) */
-export interface MockAlonbsBidCnInfo {
+export interface AlonbsBidCnInfo {
   /** 입찰업체 */
   splyBzentyNm: string
   /** 화폐단위 */
@@ -1165,7 +1165,7 @@ export interface MockAlonbsBidCnInfo {
  * 보관함 이전공고 1건 — PC 실 인터페이스 이전공고입찰내역등록
  * `ovsBfrTmprBidBidCnRegPopup.IDataList1`(2026-08-24 판독본) 키/타입 그대로.
  */
-export interface MockBfrPbancInfoItem {
+export interface BfrPbancInfoItem {
   /** 순번 (no) */
   no: string
   /** 공고번호 (pbancNo) */
@@ -1187,7 +1187,7 @@ export interface MockBfrPbancInfoItem {
  * 입찰내역 1건 — PC 실 인터페이스 `ovsBfrTmprBidBidCnRegPopup.IDataList11`
  * (2026-08-24 판독본) 키/타입 그대로(chk 제외).
  */
-export interface MockBfrPbancBidCnItem {
+export interface BfrPbancBidCnItem {
   /** 순번 (no) */
   no: string
   /** 재고번호 (invtNo) */
@@ -1223,7 +1223,7 @@ export interface MockBfrPbancBidCnItem {
 // ── 국외 입찰참가신청서 작성 (MUI-BD-04-M71 · T71~T75 · P75·P76(구 M71~M77 — v1.83 재편), 설계서 slide324~347) ────
 
 /** 서약서 데이터 영역 (MUI-BD-04-P03, 설계서 slide332 dl_resultInfo). */
-export interface MockOvsProbWrotAgreResultInfo {
+export interface OvsProbWrotAgreResultInfo {
   /** 서약일자 (wrotAgreYmd, 8) — 당일일자를 표시 */
   wrotAgreYmd: string
   /** 담당자명 (picNm, 200) — 로그인한 조달업체사용자의 명 */
@@ -1235,7 +1235,7 @@ export interface MockOvsProbWrotAgreResultInfo {
 }
 
 /** 공고일반 데이터 영역 (MUI-BD-04-T72(구 M72 — v1.83 재편), 설계서 slide338 dm_bscPbancInfo). */
-export interface MockOvsBscPbancInfo {
+export interface OvsBscPbancInfo {
   /** 공고번호 (pbancNo, 7) */
   pbancNo: string
   /** 공고차수 (pbancOd, 2) */
@@ -1250,7 +1250,7 @@ export interface MockOvsBscPbancInfo {
  * 신청업체 데이터 영역 (dm_sbtInfo — 작성 MUI-BD-04-T72(구 M72 — v1.83 재편) slide338 · 상세 MUI-BD-04-M78 slide353 공용).
  * 두 화면의 설계서 정의(항목명·자리수)가 동일해 하나로 통합.
  */
-export interface MockOvsSbtInfo {
+export interface OvsSbtInfo {
   /** 신청업체 업체코드 (sbtBzentyCd, 5) */
   sbtBzentyCd: string
   /** 신청업체 업체명 (sbtBzentyNm, 200) */
@@ -1271,7 +1271,7 @@ export interface MockOvsSbtInfo {
  * 입찰업체 데이터 영역 (dm_splyInfo — 작성 MUI-BD-04-T73(구 M73 — v1.83 재편) slide338 · 상세 MUI-BD-04-M78 slide353 공용).
  * 두 화면의 설계서 정의(항목명·자리수)가 동일해 하나로 통합.
  */
-export interface MockOvsSplyInfo {
+export interface OvsSplyInfo {
   /** 입찰업체 업체코드 (splyBzentyCd, 5) — 속성 E */
   splyBzentyCd: string
   /** 입찰업체 업체명 (splyBzentyNm, 200) */
@@ -1294,7 +1294,7 @@ export interface MockOvsSplyInfo {
  * 입찰참가사업 및 입찰보증금 1건 (MUI-BD-04-T74(구 M74 — v1.83 재편), 설계서 slide339 dl_bizList·dl_bizExmptnList 공통 R 필드).
  * 편집(E) 필드(chckBidGrnteAmt·grntePayMth·wtgrNo·grnteInstNm·grntePyslDocNo)는 Stp3 의 입력 상태로 관리.
  */
-export interface MockOvsBidPrtcpBizItem {
+export interface OvsBidPrtcpBizItem {
   /** 구매요청번호 (prchsDmndNo, 10) — 목록 key */
   prchsDmndNo: string
   /** 사업명 (bizNm, 100) */
@@ -1312,7 +1312,7 @@ export interface MockOvsBidPrtcpBizItem {
 }
 
 /** 입찰보증서 1건 (MUI-BD-04-P75, 설계서 slide343 dl_resultList). */
-export interface MockOvsBidWtgrItem {
+export interface OvsBidWtgrItem {
   /** 보증서번호 (wtgrNo, 30) — 목록 key */
   wtgrNo: string
   /** 개찰일자 (bdopnYmd, 8) */
@@ -1330,7 +1330,7 @@ export interface MockOvsBidWtgrItem {
 }
 
 /** 보증서정보 상세 (MUI-BD-04-P76, 설계서 slide346~347 dl_wtgrInfo + dl_IsrInfo + dl_ctrtInfo). */
-export interface MockOvsBidWtgrInfo {
+export interface OvsBidWtgrInfo {
   /** 증권번호 (wtgrNo, 30) */
   wtgrNo: string
   /** 보증금액 (grnteAmt, 25) */
@@ -1386,7 +1386,7 @@ export interface MockOvsBidWtgrInfo {
 // ── 국외 입찰참가신청서 상세 (MUI-BD-04-M78·P82, 설계서 slide349~358) ────────────
 
 /** 공고일반 (dm_bscPbancInfo, slide353) + 화면 식별값 */
-export interface MockOvsBidPrtcpApfrDetail {
+export interface OvsBidPrtcpApfrDetail {
   pbancNo: string // 공고번호 (7)
   pbancOd: string // 공고차수 (2)
   bdopnYmd: string // 개찰일자 — 화면표기는 '개찰일시'(slide349) 라 일시 형식으로 목업
@@ -1397,7 +1397,7 @@ export interface MockOvsBidPrtcpApfrDetail {
 }
 
 /** 입찰참가사업 및 입찰보증금 - 보증금비면제 (dl_bizList, slide354) */
-export interface MockOvsBidBizItem {
+export interface OvsBidBizItem {
   prchsDmndNo: string // 구매요청번호 (고유 — 목록 key)
   bizNm: string // 사업명
   bdngItemQty: number // 입찰품목수
@@ -1411,7 +1411,7 @@ export interface MockOvsBidBizItem {
 }
 
 /** 입찰참가사업 및 입찰보증금 - 보증금면제 (dl_bizExmptnList, slide354) */
-export interface MockOvsBidBizExmptnItem {
+export interface OvsBidBizExmptnItem {
   prchsDmndNo: string // 구매요청번호 (고유 — 목록 key)
   bizNm: string // 사업명
   bdngItemQty: number // 입찰품목수
@@ -1423,7 +1423,7 @@ export interface MockOvsBidBizExmptnItem {
 }
 
 /** 입찰참가신청서취소(P82) 대상 사업 — dl_resultInfo(slide358)의 사업 식별 부분집합 */
-export interface MockOvsRtrcnTarget {
+export interface OvsRtrcnTarget {
   prchsDmndNo: string // 구매요청번호
   bizNm: string // 사업명
   rtrcnItemQty: number // 취소신청품목수(대상 사업의 입찰품목수)
@@ -1432,7 +1432,7 @@ export interface MockOvsRtrcnTarget {
 // ── 국외 입찰서제출 (MUI-BD-06-M71, 설계서 slide366·370) ────────────────────────
 
 /** 공고일반 데이터 영역 (dm_bscPbancInfo, 설계서 slide370) */
-export interface MockOvsTndrSbmsnDetail {
+export interface OvsTndrSbmsnDetail {
   /** 공고번호 (pbancNo, 7) */
   pbancNo: string
   /** 공고차수 (pbancOd, 2) */
@@ -1462,7 +1462,7 @@ export interface MockOvsTndrSbmsnDetail {
   /** 연락처 (picTlno, 11) */
   picTlno: string
   /** 입찰방법 (bidMthdNm) — 스탭2 단가제(M72)/총액제(M73) 분기.
-   *  ⚠️ 설계서 dm_bscPbancInfo 미정의(상세설계 예정) — 국내 MockBidPrgrsItem.bidMthdNm 관례를 따른 임시 항목. */
+   *  ⚠️ 설계서 dm_bscPbancInfo 미정의(상세설계 예정) — 국내 BidPrgrsItem.bidMthdNm 관례를 따른 임시 항목. */
   bidMthdNm?: '단가제' | '총액제'
 }
 
@@ -1472,7 +1472,7 @@ export interface MockOvsTndrSbmsnDetail {
  * 국외 입찰서 상세 공고일반 항목 (설계서 slide380 데이터영역 dm_bscPbancInfo) — 항목명(영문) 설계서 그대로.
  * 국외 입찰진행 상세 → 이 화면 진입 시 navigate state 로 전달되는 항목 타입.
  */
-export interface MockOvsTndrDtlItem {
+export interface OvsTndrDtlItem {
   /** 공고번호 (pbancNo, 7) */
   pbancNo: string
   /** 공고차수 (pbancOd, 2) — 표시는 '공고번호-차수' */
@@ -1527,7 +1527,7 @@ export interface MockOvsTndrDtlItem {
  * 목록 페이지가 빠른검색(keyword/searchTarget)·상세필터(filter)·더보기(page)를 매핑해 전달.
  * (현 목업 단계는 페이지가 클라 필터/페이징을 소유 — 파라미터는 실연동 대비 형태만 확정)
  */
-export interface MockBidListSearchRequest {
+export interface BidListSearchRequest {
   /** 빠른검색어 */
   keyword?: string
   /** 빠른검색 대상 필드(예: rprsItemNm/bidPbancNm) */
@@ -1541,7 +1541,7 @@ export interface MockBidListSearchRequest {
 }
 
 /** 등록업체 검색 요청 (MUI-BD-04-P11). */
-export interface MockRegBzentySrchRequest {
+export interface RegBzentySrchRequest {
   /** 검색유형 — '업체명' | '사업자번호' */
   srchType: string
   /** 검색어 */
@@ -1552,7 +1552,7 @@ export interface MockRegBzentySrchRequest {
  * 입찰서 저장 페이로드 (MUI-BD-06 tndrWrt) — 스탭별 부분 저장 → 제출 시 전체.
  * 모든 필드 옵셔널(스탭마다 일부만 전송). 항목명은 설계서 데이터영역 기준.
  */
-export interface MockTndrSavePayload {
+export interface TndrSavePayload {
   /** 공고번호(식별) */
   pbancNo?: string
   /** 입찰금액(₩) */
@@ -1583,13 +1583,13 @@ export interface MockTndrSavePayload {
  * 라벨/값 표시행 — 조회성 화면(공고정보/업체정보/보증/심사결과 등)의 표 공용 표현.
  * 백엔드 확정 시 화면별 데이터영역 타입(dm_*)으로 분해 예정.
  */
-export interface MockBidLabeledRow {
+export interface BidLabeledRow {
   label: string
   value: string
 }
 
 /** 접수결과 — 전자서명/제출 후 접수번호·일시 (MUI-BD-04-M21 → M08 신청완료). */
-export interface MockBidAplyReceipt {
+export interface BidAplyReceipt {
   /** 접수번호 (rcptNo) — 예: '0000 000 0000' */
   rcptNo: string
   /** 접수일시 (rcptDt) — 예: '2025-10-31 12:30' */
@@ -1597,14 +1597,14 @@ export interface MockBidAplyReceipt {
 }
 
 /** 첨부파일 1건(다운로드 목록 표현) — guid 발급 전 목업은 파일명/크기만. */
-export interface MockBidAtchFileInfo {
+export interface BidAtchFileInfo {
   id: string
   fileNm: string
   fileSz: string
 }
 
 /** 입찰진행 현황 1건 (MUI-BD-01-T06(구 M12 — v1.83 재편) 입찰진행 탭). */
-export interface MockBidProgressRow {
+export interface BidProgressRow {
   id: string
   /** 공고번호 */
   pbancNo: string
@@ -1623,7 +1623,7 @@ export interface MockBidProgressRow {
 }
 
 /** 입찰결과(내 업체) 1건 (MUI-BD-09-T03(구 M03 — v1.83 재편)). */
-export interface MockBidRsltRow {
+export interface BidRsltRow {
   id: string
   /** 순번 */
   seq: string
@@ -1642,7 +1642,7 @@ export interface MockBidRsltRow {
 }
 
 /** 협상결과 1건 (MUI-BD-09-T04(구 M04 — v1.83 재편)). */
-export interface MockNegoRsltRow {
+export interface NegoRsltRow {
   id: string
   /** 차수 */
   cycle: string
@@ -1661,7 +1661,7 @@ export interface MockNegoRsltRow {
 }
 
 /** 입찰결과 품목정보 1건 (MUI-BD-09-T02(구 M02 — v1.83 재편)). */
-export interface MockBidRsltProductItem {
+export interface BidRsltProductItem {
   id: string
   /** 항목번호 */
   itemNo: string
@@ -1687,7 +1687,7 @@ export interface MockBidRsltProductItem {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 생성된 복수예비가격 1건 (dmt_plrlRsrvPrc, slide247 1.1). */
-export interface MockPlrlRsrvPrcItem {
+export interface PlrlRsrvPrcItem {
   /** 번호 (regSn, 10) */
   regSn: string
   /** 금액 (prprc, 17,2) */
@@ -1697,7 +1697,7 @@ export interface MockPlrlRsrvPrcItem {
 }
 
 /** 업체가 선택한 번호 1건 (dmt_chcNo, slide247 1.2). */
-export interface MockPlrlRsrvPrcChcNoItem {
+export interface PlrlRsrvPrcChcNoItem {
   /** 번호 (regSn, 10) */
   regSn: string
   /** 금액 (prprc, 17,2) */
@@ -1707,9 +1707,9 @@ export interface MockPlrlRsrvPrcChcNoItem {
 }
 
 /** 복수예비가격 조회 응답 (scwin.getPlrlRsrvPrcInfo, slide248). */
-export interface MockPlrlRsrvPrcInfo {
-  plrlRsrvPrc: MockPlrlRsrvPrcItem[]
-  chcNo: MockPlrlRsrvPrcChcNoItem[]
+export interface PlrlRsrvPrcInfo {
+  plrlRsrvPrc: PlrlRsrvPrcItem[]
+  chcNo: PlrlRsrvPrcChcNoItem[]
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -1718,7 +1718,7 @@ export interface MockPlrlRsrvPrcInfo {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 동가낙찰결과(자동추첨) 1건 (dlt_smprcScsbdRslt, slide250 1.1). */
-export interface MockSmprcScsbdRsltItem {
+export interface SmprcScsbdRsltItem {
   /** 번호 (no, 10) — 입찰서 제출 순서 */
   no: string
   /** 사업자등록번호 (brno, 10) */
@@ -1732,7 +1732,7 @@ export interface MockSmprcScsbdRsltItem {
 }
 
 /** 동가낙찰결과(가위바위보) 1건 (dlt_smprcScsbdRslt, slide250 1.2). */
-export interface MockSmprcScsbdRpsItem {
+export interface SmprcScsbdRpsItem {
   /** 업체코드 (bzentyCd, 5) */
   bzentyCd: string
   /** 업체명 (bzentyNm, 100) */
@@ -1750,11 +1750,11 @@ export interface MockSmprcScsbdRpsItem {
 }
 
 /** 동가낙찰결과 조회 응답 (scwin.getSmprcScsbdRsltInfo, slide250). */
-export interface MockSmprcScsbdRsltInfo {
+export interface SmprcScsbdRsltInfo {
   /** 업체정보(자동추첨) */
-  smprcScsbdRslt: MockSmprcScsbdRsltItem[]
+  smprcScsbdRslt: SmprcScsbdRsltItem[]
   /** 가위바위보 결과 — 없으면 빈 배열 */
-  rps: MockSmprcScsbdRpsItem[]
+  rps: SmprcScsbdRpsItem[]
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -1763,7 +1763,7 @@ export interface MockSmprcScsbdRsltInfo {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 평가위원별 기술평가점수 1건 (dlt_evlMbcmtTechEvlScrInfo, slide252 1.1). */
-export interface MockEvlMbcmtTechEvlScrItem {
+export interface EvlMbcmtTechEvlScrItem {
   /** 업체명 (bzentyNm, 100) */
   bzentyNm: string
   /** 평가위원 (evlMbcmtNm, 100) — 비공개인 경우 제공하지 않음 */
@@ -1775,15 +1775,15 @@ export interface MockEvlMbcmtTechEvlScrItem {
 }
 
 /** 사전심사(PQ) 결과 (MUI-BD-02-M02) — 공고/업체/심사 요약 + 첨부. */
-export interface MockPqResultResponse {
-  pbancInfo: MockBidLabeledRow[]
-  bzentyInfo: MockBidLabeledRow[]
-  srngRslt: MockBidLabeledRow[]
-  atchFiles: MockBidAtchFileInfo[]
+export interface PqResultResponse {
+  pbancInfo: BidLabeledRow[]
+  bzentyInfo: BidLabeledRow[]
+  srngRslt: BidLabeledRow[]
+  atchFiles: BidAtchFileInfo[]
 }
 
 /** 공동수급(JSD) 투자자 업체 1건 (MUI-BD-03-M05). */
-export interface MockJsdBzenty {
+export interface JsdBzenty {
   /** 공동수급업체명 */
   jsdBzentyNm: string
   /** 업체명 */
@@ -1797,9 +1797,9 @@ export interface MockJsdBzenty {
 /**
  * 입찰참가신청 공동수급업체 1건 (MUI-BD-04-M10, 설계서 slide121 데이터영역 dlt_jsdBzentyList).
  * 편집(E) 항목은 bzentyNm·invstRt 둘뿐이고 나머지는 조회결과 표시(R).
- * (MUI-BD-03-M05 입찰등록결과의 MockJsdBzenty 와는 다른 데이터영역 — 항목 구성이 다르다.)
+ * (MUI-BD-03-M05 입찰등록결과의 JsdBzenty 와는 다른 데이터영역 — 항목 구성이 다르다.)
  */
-export interface MockJsdBzentyAply {
+export interface JsdBzentyAply {
   id: string
   /** 구분 (jsdBzentyNm, 100) — 대표/구성 */
   jsdBzentyNm: string
@@ -1822,16 +1822,16 @@ export interface MockJsdBzentyAply {
 }
 
 /** 입찰등록결과 (MUI-BD-03-M05). */
-export interface MockBidRegResultResponse {
-  pbancInfo: MockBidLabeledRow[]
-  bzentyInfo: MockBidLabeledRow[]
-  bidGrnte: MockBidLabeledRow[]
-  jsdBzentyList: MockJsdBzenty[]
-  regSrngRslt: MockBidLabeledRow[]
+export interface BidRegResultResponse {
+  pbancInfo: BidLabeledRow[]
+  bzentyInfo: BidLabeledRow[]
+  bidGrnte: BidLabeledRow[]
+  jsdBzentyList: JsdBzenty[]
+  regSrngRslt: BidLabeledRow[]
 }
 
 /** 전자서명 인증서 1건 (MUI-BD-04-M21). */
-export interface MockElsgnCert {
+export interface ElsgnCert {
   id: string
   /** 인증서명 */
   certNm: string
@@ -1840,7 +1840,7 @@ export interface MockElsgnCert {
 }
 
 /** 입찰 품목 1건 (MUI-BD-04-M06 입찰참가신청 · MUI-BD-06-M02 입찰서, dl 품목목록). */
-export interface MockBidItemListRow {
+export interface BidItemListRow {
   rNum: string
   /** 항목번호 */
   clsfNo: string
@@ -1861,7 +1861,7 @@ export interface MockBidItemListRow {
 }
 
 /** 공사실적/면허 1건 (MUI-BD-04-M07). */
-export interface MockCnstwkLcnsRow {
+export interface CnstwkLcnsRow {
   id: string
   no: string
   /** 공사명 */
@@ -1883,7 +1883,7 @@ export interface MockCnstwkLcnsRow {
  * 편집(E) 항목(depsPayMthdCd·depsExmptnRncd·bidGrnteAmt)은 화면 입력 상태로 관리하고,
  * 투찰가능금액(bdngPsbltyAmt)은 입찰보증금 입력 시 계산된다.
  */
-export interface MockBidGrnteInfo {
+export interface BidGrnteInfo {
   /**
    * 증권번호 조회결과 (scrtNo, 30) — 1개면 자동입력 · 2개 이상이면 셀렉트박스 선택 · 없으면 직접입력.
    * 1개 이상인 경우에만 개찰일자/보증금액/계약자/발행자를 노출한다.
@@ -1900,7 +1900,7 @@ export interface MockBidGrnteInfo {
 }
 
 /** 등록업체 검색결과 1건 (MUI-BD-04-P11) — getRegBzentyDetail 반환에도 사용. */
-export interface MockRegBzentyRow {
+export interface RegBzentyRow {
   id: string
   /** 사업자등록번호 */
   bizRegNo: string
@@ -1909,14 +1909,14 @@ export interface MockRegBzentyRow {
 }
 
 /** 캐비닛(디지털 문서함) 파일 1건 (MUI-BD-04-P13). */
-export interface MockCabinetFile {
+export interface CabinetFile {
   id: string
   fileNm: string
   fileSz: number
 }
 
 /** 동의서 1건 (MUI-BD-04-M14 입찰참가신청 · MUI-BD-06-M07 입찰서). */
-export interface MockAgreementDoc {
+export interface AgreementDoc {
   id: string
   title: string
   body: string[]
@@ -1931,7 +1931,7 @@ export interface MockAgreementDoc {
 }
 
 /** 서약서 1건 (MUI-BD-04-M01). */
-export interface MockWrotDoc {
+export interface WrotDoc {
   id: string
   title: string
   body: string[]
@@ -1941,7 +1941,7 @@ export interface MockWrotDoc {
 }
 
 /** 면허정보 검색결과 1건 (MUI-BD-01-P05). */
-export interface MockLicenseResult {
+export interface LicenseResult {
   /** 면허코드 */
   lcnsCd: string
   /** 면허명 */
@@ -1949,7 +1949,7 @@ export interface MockLicenseResult {
 }
 
 /** 지역 검색결과 1건 (MUI-BD-01-P03). */
-export interface MockRegionResult {
+export interface RegionResult {
   /** 시/도 */
   sido: string
   /** 시/군/구 */
@@ -1957,13 +1957,13 @@ export interface MockRegionResult {
 }
 
 /** 셀렉트 옵션 공용 (국외 입찰업체 목록 등). */
-export interface MockBidSelectOption {
+export interface BidSelectOption {
   value: string
   label: string
 }
 
 /** 환율정보 통화 옵션 (MUI-BD-01-T75/T76(구 M77/M78 — v1.83 재편)) — 달러환산율 포함. */
-export interface MockCrncOption {
+export interface CrncOption {
   value: string
   label: string
   /** 달러환산율 */
@@ -1974,7 +1974,7 @@ export interface MockCrncOption {
  * 국외 환율정보 1건 (MUI-BD-01-M74) — PC 실 인터페이스 `ovsExchrtListPopup.IResult`
  * (2026-08-24 판독본) 키/타입 그대로.
  */
-export interface MockOvsExchrtItem {
+export interface OvsExchrtItem {
   /** 순번 (rnum) */
   rnum: string
   /** 화폐 (crncNm) */
@@ -1994,7 +1994,7 @@ export interface MockOvsExchrtItem {
  * `ovsGoalPrcRlsItemListPopup.IResult`(2026-08-24 판독본) 키/타입 그대로(goalAmt 추가·artclNo/unitCd 교체).
  * 수량/예산 필드의 string·number 혼재는 판독본 원본 그대로.
  */
-export interface MockOvsGoalPrcRlsItem {
+export interface OvsGoalPrcRlsItem {
   /** 항목번호 (artclNo) */
   artclNo: string
   /** 재고번호 (invtNo) */
@@ -2039,7 +2039,7 @@ export interface MockOvsGoalPrcRlsItem {
  * 국외 보관함 입찰품목 1건 (MUI-CM-01-M73) — PC 실 인터페이스 보관함품목관리
  * `ovsLockerItemRegPopup.IDataList1`(2026-08-24 판독본) 키/타입 그대로(chk 제외).
  */
-export interface MockOvsLockerBidItem {
+export interface OvsLockerBidItem {
   /** 렌더 key — 통합참조번호+항목번호 조합 (프론트 생성) */
   id: string
   /** 공고번호 (pbancNo) */
@@ -2080,7 +2080,7 @@ export interface MockOvsLockerBidItem {
  * 국외 입찰결과(no.168)·입찰참가신청조회(no.103)·입찰서제출(no.124)의 공고상세 응답도
  * 이 타입을 공유 — 해당 컨트롤러 응답 판독본은 없어 no.45 기준(원본 대조 필요).
  */
-export interface MockOvsBidPbancDetail {
+export interface OvsBidPbancDetail {
   /** 공고번호 (pbancNo) */
   pbancNo: string
   /** 공고차수 (pbancOd) */
@@ -2142,7 +2142,7 @@ export interface MockOvsBidPbancDetail {
  * 국외 입찰공고 공지사항 1건 — PC 실 인터페이스 `ovsBidPbancDtl.IResultNoti`
  * (2026-08-24 판독본) 키 그대로. 상세(M71) 상단 공지 영역.
  */
-export interface MockOvsBidPbancNtc {
+export interface OvsBidPbancNtc {
   /** 공지내용 (ntcCn) */
   ntcCn: string
   /** 공지일자 (ntcDt) */
@@ -2150,7 +2150,7 @@ export interface MockOvsBidPbancNtc {
 }
 
 /** 국외 입찰참가신청서 등록결과 1건 (MUI-BD-04-P83). */
-export interface MockOvsBidRegRsltItem {
+export interface OvsBidRegRsltItem {
   no: string
   /** 구매요청번호 */
   prchsDmndNo: string
@@ -2165,7 +2165,7 @@ export interface MockOvsBidRegRsltItem {
 }
 
 /** 국외 입찰서 첨부문서 1건 (MUI-BD-06-T79(구 M79 — v1.83 재편)). */
-export interface MockOvsTndrDoc {
+export interface OvsTndrDoc {
   id: string
   /** 첨부서류명 */
   atchDocNm: string
@@ -2179,7 +2179,7 @@ export interface MockOvsTndrDoc {
  * 국외 입찰서 입찰참여품목(단가제) 1건 (MUI-BD-06-T72(구 M72 — v1.83 재편) 작성 · MUI-BD-06-T77(구 M77 — v1.83 재편) 상세 공용 superset).
  * 작성(M72) 화면은 splyBzentyNm 를, 상세(M77) 화면은 입찰단가/금액·달러 필드를 추가로 표시.
  */
-export interface MockOvsTndrItitbItem {
+export interface OvsTndrItitbItem {
   /** 항목번호 (5) */
   frcptlArtclNo: string
   /** 재고번호 (9) */

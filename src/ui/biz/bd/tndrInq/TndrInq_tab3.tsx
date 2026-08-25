@@ -5,7 +5,7 @@
 // 항목명은 데이터영역(slide129 dmt_bdngAmt) 그대로. 입찰단가/입찰수량은 단가제인 경우에만 노출(slide123·129).
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockBidPrgrsItem } from '@/types/mock/bd'
+import type { BidPrgrsItem } from '@/types/mock/bd'
 
 // 제출된 투찰내역(dmt_bdngAmt) 목업 — 설계서 slide174 예시값 그대로.
 const BDNG = {
@@ -21,7 +21,7 @@ const BDNG = {
   bdngQty: '1',
 }
 
-export function TndrInq_tab3({ detail }: { detail: MockBidPrgrsItem }) {
+export function TndrInq_tab3({ detail }: { detail: BidPrgrsItem }) {
   const isUntprc = detail.bidMthdNm?.includes('단가제')
 
   const rows: TableRow[] = [

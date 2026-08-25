@@ -11,13 +11,13 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockOvsRlsVltrnsSummary } from '@/types/mock/bd'
+import type { OvsRlsVltrnsSummary } from '@/types/mock/bd'
 
 export interface OvsRlsVltrnsNgtnEtdcRtrcnApfrWrtProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   /** 견적서 상세에서 넘어온 요약 — 취소신청내역(공고 식별값)을 이 값으로 그린다. */
-  detail: MockOvsRlsVltrnsSummary
+  detail: OvsRlsVltrnsSummary
 }
 
 // 취소사유(rsn) — 필수, 자리수 4000 (설계서 slide439 dm_rtrcnAplyDsctn).

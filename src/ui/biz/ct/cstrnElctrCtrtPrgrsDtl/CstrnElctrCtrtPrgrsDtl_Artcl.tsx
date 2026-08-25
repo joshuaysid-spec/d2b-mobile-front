@@ -4,10 +4,10 @@
 import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockCtrtBzenty } from '@/types/mock/ct'
+import type { CtrtBzenty } from '@/types/mock/ct'
 
 // 업체 1건 → 표 행(slide40 목업 순서).
-function bzentyRows(b: MockCtrtBzenty): TableRow[] {
+function bzentyRows(b: CtrtBzenty): TableRow[] {
   return [
     // '계약유형'(대표/구성) — 항목표 미정의 임시 키(bzentySeCd, M73 재사용). slide40 첫 행.
     { label: '계약유형', value: b.bzentySeCd ?? '-' },

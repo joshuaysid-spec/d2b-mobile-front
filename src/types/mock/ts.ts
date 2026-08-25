@@ -7,7 +7,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 사전의향서목록 검색조건 (slide11 1.1) — On-Load: 접수기간 현재일자. */
-export interface MockBfhdLoiListRequest {
+export interface BfhdLoiListRequest {
   /** 접수기간(FROM) (rcptYmdFr, 8). */
   rcptYmdFr?: string
   /** 접수기간(TO) (rcptYmdTo, 8). */
@@ -23,7 +23,7 @@ export interface MockBfhdLoiListRequest {
 }
 
 /** 사전의향서목록 1건 (slide11 1.2). */
-export interface MockBfhdLoiItem {
+export interface BfhdLoiItem {
   /** 목록 key/상세 라우팅용 고유 식별자 — 사전의향서 번호(bfhdLoiNo, slide16 1.1) 사용. */
   id: string
   /** 순번 (no, 20). */
@@ -43,18 +43,18 @@ export interface MockBfhdLoiItem {
   userNm: string
 }
 
-export interface MockBfhdLoiListResult {
-  list: MockBfhdLoiItem[]
+export interface BfhdLoiListResult {
+  list: BfhdLoiItem[]
   total: number
 }
 
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-TS-01-M02 사전의향서상세 (slide12~17) — bfhdLoiDtl/BfhdLoiDtlPage
-//   탭: T01 상세내용(MockBfhdLoiDtl) · T02 품목명세서(BfhdLoiDtl_ItemList) · P03 의견작성(BfhdLoiWrt).
+//   탭: T01 상세내용(BfhdLoiDtl) · T02 품목명세서(BfhdLoiDtl_ItemList) · P03 의견작성(BfhdLoiWrt).
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 사전의향서상세 — 집행계획(slide16 1.2) + 문의처(1.3) + 요약 표시항목. */
-export interface MockBfhdLoiDtl {
+export interface BfhdLoiDtl {
   /** 사전의향서 번호 (bfhdLoiNo, 14). */
   bfhdLoiNo: string
   // ── 집행계획 (slide16 1.2) ──
@@ -82,7 +82,7 @@ export interface MockBfhdLoiDtl {
 }
 
 /** 품목명세서 1건 (물품명세서 목록, slide17 1.4). */
-export interface MockBfhdLoiSpcfctItem {
+export interface BfhdLoiSpcfctItem {
   /** 목록 key — `${prcmRqtNo}-${no}` (클라 생성). */
   id: string
   /** 순번 (no, 20). */
@@ -129,7 +129,7 @@ export interface MockBfhdLoiSpcfctItem {
  * 의견작성(P03) 저장/제출 요청 (slide15) — 제조/구매 선택(mnftrPrchsSecd) + 의견(etcOpnnCn).
  * mode: 'save'=임시저장(진행상태 미제출) · 'submit'=제출(수정 불가).
  */
-export interface MockBfhdLoiOpnnRequest {
+export interface BfhdLoiOpnnRequest {
   /** 사전의향서 번호 (bfhdLoiNo). */
   bfhdLoiNo: string
   /** 품목 식별자 — 조달요구번호(prcmRqtNo). */
@@ -148,7 +148,7 @@ export interface MockBfhdLoiOpnnRequest {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 계약목록 검색조건 (dml_SrchCtrtList, slide25 1.1) — 계약년도 like 'yyyy%'. */
-export interface MockTxivCtrtListRequest {
+export interface TxivCtrtListRequest {
   /** 계약년도 (ctrtYmd, like 'yyyy%') — 기본 현재 연도. */
   ctrtYmd?: string
   /** 계약번호 (ctrtNo, 11). */
@@ -156,7 +156,7 @@ export interface MockTxivCtrtListRequest {
 }
 
 /** 계약목록 1건 (dlt_CtrtList, slide25 1.2). */
-export interface MockTxivCtrtItem {
+export interface TxivCtrtItem {
   /** 목록 key — 계약번호(ctrtNo) 사용. */
   id: string
   /** 계약번호 (ctrtNo, 11). */
@@ -175,8 +175,8 @@ export interface MockTxivCtrtItem {
   userNm: string
 }
 
-export interface MockTxivCtrtListResult {
-  list: MockTxivCtrtItem[]
+export interface TxivCtrtListResult {
+  list: TxivCtrtItem[]
   total: number
 }
 
@@ -185,7 +185,7 @@ export interface MockTxivCtrtListResult {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 세금계산서목록 1건 (dlt_TxivList, slide26 1.3). */
-export interface MockTxivItem {
+export interface TxivItem {
   /** 목록 key/상세 라우팅용 고유 식별자 — 계산서발행번호(pblcnNo) 사용. */
   id: string
   /** 구분 (reqDivsNm) — 일반/수정 (reqDivs 'R'·'U':일반 / 'UR':수정 alias). */
@@ -216,7 +216,7 @@ export interface MockTxivItem {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 세금계산서상세 (dmt_TxivWrtInfo, slide29~30 1.1). */
-export interface MockTxivDtl {
+export interface TxivDtl {
   /**
    * 계약번호 (ctrtNo, 11) — ⚠️ 항목명(한글)은 조달구분(sOption)에 따라
    * 계약번호(부대/중앙)·재무관증빙번호(FMS)·청구번호(상업조달)로 변경(slide29) — 라벨 분기는 상세설계 확정 시.
@@ -295,7 +295,7 @@ export interface MockTxivDtl {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 진행현황 검색조건 (dmt_SrchTxivPrgrsPrst, slide33 1.1). */
-export interface MockTxivPrgrsPrstRequest {
+export interface TxivPrgrsPrstRequest {
   /** 발행일자 시작일 (bllPblcnYmd). */
   bllPblcnYmdFr?: string
   /** 발행일자 종료일 (bllPblcnYmd). */
@@ -307,7 +307,7 @@ export interface MockTxivPrgrsPrstRequest {
 }
 
 /** 진행현황 1건 (dlt_TxivPrgrsPrst, slide33 1.2) — 세금계산서목록 + 제출일시/국세청결과. */
-export interface MockTxivPrgrsPrstItem {
+export interface TxivPrgrsPrstItem {
   /** 목록 key/상세 라우팅용 고유 식별자 — 계산서발행번호(pblcnNo) 사용. */
   id: string
   reqDivsNm: string
@@ -327,7 +327,7 @@ export interface MockTxivPrgrsPrstItem {
   elsgnRsltCd: string
 }
 
-export interface MockTxivPrgrsPrstResult {
-  list: MockTxivPrgrsPrstItem[]
+export interface TxivPrgrsPrstResult {
+  list: TxivPrgrsPrstItem[]
   total: number
 }

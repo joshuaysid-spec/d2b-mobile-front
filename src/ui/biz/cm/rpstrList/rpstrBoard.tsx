@@ -10,7 +10,7 @@ import type {
   DateRangePresetDef,
   DateRangeValue,
 } from '@/types/search-filter'
-import type { MockRpstrListItem, MockRpstrSearchFilter } from '@/types/mock/cm'
+import type { RpstrListItem, RpstrSearchFilter } from '@/types/mock/cm'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
@@ -54,7 +54,7 @@ export const RECENT_1M = (): DateRangeValue => ({
   start: dayjs().subtract(1, 'month').format(DATE_FORMAT),
   end: dayjs().format(DATE_FORMAT),
 })
-export const RPSTR_DEFAULT: MockRpstrSearchFilter = {
+export const RPSTR_DEFAULT: RpstrSearchFilter = {
   regDt: RECENT_1M(),
   rpstrTtl: '',
   contsCn: '',
@@ -68,7 +68,7 @@ export const RPSTR_SEARCH_TARGETS = [
 ]
 
 // 카드 매핑: 배지 구분(bizFldCd) + 제목(rpstrTtl) + 작성자(rgtrId)/작성일자(regDt)/첨부. (긴급·담당부서 없음)
-export const rpstrToCard = (it: MockRpstrListItem): Omit<CardListItem, 'id' | 'onClick'> => ({
+export const rpstrToCard = (it: RpstrListItem): Omit<CardListItem, 'id' | 'onClick'> => ({
   badges: (
     <Badge type="pastel" color="blue">
       {it.bizFldCd}
@@ -82,11 +82,11 @@ export const rpstrToCard = (it: MockRpstrListItem): Omit<CardListItem, 'id' | 'o
 })
 
 // 상단 검색어 필터 — 제목(rpstrTtl). 내용(contsCn)은 목록 목업에 본문이 없어 제목으로 대체.
-export const rpstrMatchKeyword = (it: MockRpstrListItem, keyword: string) =>
+export const rpstrMatchKeyword = (it: RpstrListItem, keyword: string) =>
   it.rpstrTtl.toLowerCase().includes(keyword.toLowerCase())
 
 // 목업 부풀리기 — 보유 seed 를 total 건으로. contsNo/no 고유화.
-export function inflateRpstr(seeds: MockRpstrListItem[], total: number): MockRpstrListItem[] {
+export function inflateRpstr(seeds: RpstrListItem[], total: number): RpstrListItem[] {
   return Array.from({ length: total }, (_, i) => {
     const base = seeds[i % seeds.length]
     return { ...base, no: i + 1, contsNo: String(101 + i).padStart(6, '0') }

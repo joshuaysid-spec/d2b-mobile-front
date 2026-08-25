@@ -2,7 +2,7 @@
 // 계약 정보(dm_ctrtInfo — 발주의뢰서(T75)와 유사, 신용장번호 없음) 아코디언 + Table.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockOvsOrderNtdcDtl as NtdcDtl } from '@/types/mock/ex'
+import type { OvsOrderNtdcDtl as NtdcDtl } from '@/types/mock/ex'
 
 export interface OvsOrderNtdcDtlProps {
   detail: NtdcDtl

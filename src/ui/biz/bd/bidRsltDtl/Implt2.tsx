@@ -3,10 +3,10 @@
 import { TextArea } from '@/ui/common/base/TextArea'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockImpltElgbSrngBidRslt } from '@/types/mock/bd'
+import type { ImpltElgbSrngBidRslt } from '@/types/mock/bd'
 
 // 입찰결과·반려사유 목업 (설계서 slide164 값·slide166 항목명) — 추후 API 매핑.
-const MOCK_BID_RSLT: MockImpltElgbSrngBidRslt = {
+const MOCK_BID_RSLT: ImpltElgbSrngBidRslt = {
   scsbdRnk: '1순위',
   bdngAmt: '89,000,000 원',
   scbrt: '89.8 %',
@@ -14,7 +14,7 @@ const MOCK_BID_RSLT: MockImpltElgbSrngBidRslt = {
   rjctRsn: '',
 }
 
-const bidRsltRows = (it: MockImpltElgbSrngBidRslt): TableRow[] => [
+const bidRsltRows = (it: ImpltElgbSrngBidRslt): TableRow[] => [
   { label: '낙찰순위', value: it.scsbdRnk },
   { label: '투찰금액', value: it.bdngAmt, type: 'number' },
   { label: '투찰률', value: it.scbrt, type: 'number' },

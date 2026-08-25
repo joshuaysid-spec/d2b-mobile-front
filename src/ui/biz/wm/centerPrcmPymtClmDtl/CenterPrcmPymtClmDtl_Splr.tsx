@@ -2,10 +2,10 @@
 // 공급자 정보 Table + SMS 수신번호 안내문구.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockCenterPrcmPymtClmDtl } from '@/types/mock/wm'
+import type { CenterPrcmPymtClmDtl } from '@/types/mock/wm'
 
 export interface CenterPrcmPymtClmDtl_SplrProps {
-  detail: MockCenterPrcmPymtClmDtl
+  detail: CenterPrcmPymtClmDtl
 }
 
 export function CenterPrcmPymtClmDtl_Splr({ detail }: CenterPrcmPymtClmDtl_SplrProps) {

@@ -5,9 +5,9 @@
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type {
-  MockPrfmncPrdocAplcntInfo,
-  MockPrfmncPrdocClctCnvncInfo,
-  MockPrfmncPrdocMdPrcsLbsvcInfo,
+  PrfmncPrdocAplcntInfo,
+  PrfmncPrdocClctCnvncInfo,
+  PrfmncPrdocMdPrcsLbsvcInfo,
 } from '@/types/mock/cm'
 
 // 계약금액·기성실적 단위는 설계서 표기 그대로 천원
@@ -16,7 +16,7 @@ const SBMSN_TYPE =
   '4. 건설폐기물처리용역이행 실적증명서 [건설폐기물처리용역 적격업체 평가기준/환경부]'
 
 // ── 목업 (설계서 표시값 그대로 — API 연동 시 교체) ───────────────────────────
-const APLCNT: MockPrfmncPrdocAplcntInfo = {
+const APLCNT: PrfmncPrdocAplcntInfo = {
   bzentyNm: 'A 업체',
   lcnsNoVl: '11111 11111',
   rprsvNm: '홍길동',
@@ -24,7 +24,7 @@ const APLCNT: MockPrfmncPrdocAplcntInfo = {
   prdocUsgCn: '은행 제출용',
 }
 
-const CLCT: MockPrfmncPrdocClctCnvncInfo = {
+const CLCT: PrfmncPrdocClctCnvncInfo = {
   clctCnvncLbsvcNm: '국방 건설',
   clctCnvncCtrtYmd: '2010-01-10',
   clctCnvncCtrtBgngYmd: '2012-01-10',
@@ -35,7 +35,7 @@ const CLCT: MockPrfmncPrdocClctCnvncInfo = {
   clctCnvncRmrkCn: '-',
 }
 
-const MDPRCS: MockPrfmncPrdocMdPrcsLbsvcInfo = {
+const MDPRCS: PrfmncPrdocMdPrcsLbsvcInfo = {
   mdPrcsLbsvcNm: '국방 건설',
   mdPrcsCtrtYmd: '2010-01-10',
   mdPrcsCtprCn: '2012-01-10',

@@ -3,9 +3,9 @@
 // 설계서 화면명(영문ID)이 기본형 T08과 동일(ImpltElgblRslt_ManufacturingofItemsUnderKrw1B)이나, 명명 규칙(파일 1:1)상
 //   연도 변형은 _2015 접미로 구분(명명 규칙 > 설계서). ⚠️ 배점 일부 ±(상세설계 재확인). 심사평점은 내 업체 목업.
 import { ImpltElgblRsltRubric } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRsltRubric'
-import type { MockImpltElgbSrngRubric } from '@/types/mock/bd'
+import type { ImpltElgbSrngRubric } from '@/types/mock/bd'
 
-const RUBRIC: MockImpltElgbSrngRubric = {
+const RUBRIC: ImpltElgbSrngRubric = {
   sections: [
     {
       field: '(가) 당해물품 납품이행능력',

@@ -3,12 +3,12 @@
 // 표/필드는 데이터 구동. 신청정보는 공통 사항(사용목적·연락처·제출처·발급수량) 모두 표시.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockPrfmncPrdocAddMttrInfo } from '@/types/mock/cm'
+import type { PrfmncPrdocAddMttrInfo } from '@/types/mock/cm'
 
 const won = (v?: number) => (v == null ? '-' : `${v.toLocaleString()} 원`)
 
 // ── 목업 (설계서 표시값 그대로 — API 연동 시 교체) ───────────────────────────
-const ADD: MockPrfmncPrdocAddMttrInfo = {
+const ADD: PrfmncPrdocAddMttrInfo = {
   prfmncYr1: '2021',
   prfmncYr2: '2023',
   prfmncSeCd: '계약목적과 동등이상물품',

@@ -3,9 +3,9 @@
 // ⚠️ 심사항목은 설계서에 영문 항목명 미표기(한글 라벨만). 배점은 콘텐츠 슬라이드 값(일부 ± — 상세설계 시 재확인).
 // 심사평점(score)은 "내 업체 점수" 목업(추후 scwin.getImpltElgbSrngRsltDtlInfo).
 import { ImpltElgblRsltRubric } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRsltRubric'
-import type { MockImpltElgbSrngRubric } from '@/types/mock/bd'
+import type { ImpltElgbSrngRubric } from '@/types/mock/bd'
 
-const RUBRIC: MockImpltElgbSrngRubric = {
+const RUBRIC: ImpltElgbSrngRubric = {
   sections: [
     {
       field: 'I. 당해물품납품이행능력',

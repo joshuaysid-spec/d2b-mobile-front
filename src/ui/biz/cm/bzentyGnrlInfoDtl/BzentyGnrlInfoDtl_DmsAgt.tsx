@@ -3,17 +3,17 @@
 // ⚠️ 설계서에 T04 데이터영역(항목명 영문) 표가 없다 → 필드명은 화면 표기 기준 잠정 영문키(types/cm.ts DmsAgt* ⚠️).
 //    API 연동 시 실제 데이터영역 매핑 확인 필요. 데이터는 목업(설계서 화면 예시값 그대로).
 import type {
-  MockDmsAgtSaleInfo,
-  MockDmsAgtFscCode,
-  MockDmsAgtCorpInfo,
-  MockDmsAgtOvsBzenty,
+  DmsAgtSaleInfo,
+  DmsAgtFscCode,
+  DmsAgtCorpInfo,
+  DmsAgtOvsBzenty,
 } from '@/types/mock/cm'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 
 // ── 영업정보 — 설계서 slide127 예시값 (⚠️ 잠정 영문키) ────────────────────────
-const SALE_INFO: MockDmsAgtSaleInfo = {
+const SALE_INFO: DmsAgtSaleInfo = {
   anlSaleAmt: 300000000,
   astScl: 0,
   lncLmt: 0,
@@ -26,10 +26,10 @@ const SALE_INFO: MockDmsAgtSaleInfo = {
 }
 
 // ── FSC Codes — 설계서 slide127 예시값 (⚠️ 잠정) ──────────────────────────────
-const FSC_CODES: MockDmsAgtFscCode[] = [{ fscCd: '1111', gunGrdNm: '기타 항공기 부수품' }]
+const FSC_CODES: DmsAgtFscCode[] = [{ fscCd: '1111', gunGrdNm: '기타 항공기 부수품' }]
 
 // ── 법인/개인 구분 — 설계서 slide127 예시값 (⚠️ 잠정 영문키) ──────────────────
-const CORP_INFO: MockDmsAgtCorpInfo = {
+const CORP_INFO: DmsAgtCorpInfo = {
   corpIndvSe: 'corp',
   corpRgstOrgnNm: '방위사업청',
   corpRgstYmd: '2020-01-01',
@@ -43,14 +43,14 @@ const CORP_INFO: MockDmsAgtCorpInfo = {
 }
 
 // ── 해외관련 업체정보 — 설계서 slide128 예시값 (⚠️ 잠정) ──────────────────────
-const OVS_BZENTY_LIST: MockDmsAgtOvsBzenty[] = [
+const OVS_BZENTY_LIST: DmsAgtOvsBzenty[] = [
   { ovsBzentyCd: '1111', ovsBzentyNm: 'Test Corp', ovsNtnNm: '프랑스', ovsTelno: '+33-1-34-88-30-00' },
 ]
 
 // 천원 단위 금액 표기 — 천단위 콤마 + ' 천원'.
 const won1000 = (v: number) => `${v.toLocaleString()} 천원`
 
-function saleRows(d: MockDmsAgtSaleInfo): TableRow[] {
+function saleRows(d: DmsAgtSaleInfo): TableRow[] {
   return [
     { label: '연간매출액', value: won1000(d.anlSaleAmt), type: 'number' },
     { label: '자산규모', value: won1000(d.astScl), type: 'number' },
@@ -64,14 +64,14 @@ function saleRows(d: MockDmsAgtSaleInfo): TableRow[] {
   ]
 }
 
-function fscRows(d: MockDmsAgtFscCode): TableRow[] {
+function fscRows(d: DmsAgtFscCode): TableRow[] {
   return [
     { label: 'FSC', value: d.fscCd },
     { label: '군급명', value: d.gunGrdNm },
   ]
 }
 
-function corpRows(d: MockDmsAgtCorpInfo): TableRow[] {
+function corpRows(d: DmsAgtCorpInfo): TableRow[] {
   return [
     { label: '법인/개인 구분', value: d.corpIndvSe === 'corp' ? '법인' : '개인' },
     { label: '법인등기기관', value: d.corpRgstOrgnNm },
@@ -86,7 +86,7 @@ function corpRows(d: MockDmsAgtCorpInfo): TableRow[] {
   ]
 }
 
-function ovsRows(d: MockDmsAgtOvsBzenty): TableRow[] {
+function ovsRows(d: DmsAgtOvsBzenty): TableRow[] {
   return [
     { label: '업체코드', value: d.ovsBzentyCd },
     { label: '업체명', value: d.ovsBzentyNm },

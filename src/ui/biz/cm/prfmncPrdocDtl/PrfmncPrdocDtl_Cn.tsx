@@ -2,10 +2,10 @@
 // 항목 설명 slide266 1.2(dm_ctrtInfo). 표/필드는 데이터(rows) 구동 — API 연동 시 목업만 교체.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockPrfmncPrdocCtrtInfo } from '@/types/mock/cm'
+import type { PrfmncPrdocCtrtInfo } from '@/types/mock/cm'
 
 // 목업 — slide244 표시값 그대로 (추후 API: 상세 조회 dm_ctrtInfo)
-const CTRT_INFO: MockPrfmncPrdocCtrtInfo = {
+const CTRT_INFO: PrfmncPrdocCtrtInfo = {
   ctrtNo: '98765432101',
   CtrtOd: '00',
   ctrtCnNm: '물품',

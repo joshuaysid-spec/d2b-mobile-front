@@ -15,7 +15,7 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsRlsVltrnsNgtnEtdcSbmsn2 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcSbmsnPage/OvsRlsVltrnsNgtnEtdcSbmsn2'
 import { OvsRlsVltrnsNgtnEtdcSbmsn3 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcSbmsnPage/OvsRlsVltrnsNgtnEtdcSbmsn3'
 import { OvsRlsVltrnsNgtnEtdcSbmsn4 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcSbmsnPage/OvsRlsVltrnsNgtnEtdcSbmsn4'
-import type { MockOvsRlsVltrnsGeneral, MockOvsRlsVltrnsSummary } from '@/types/mock/bd'
+import type { OvsRlsVltrnsGeneral, OvsRlsVltrnsSummary } from '@/types/mock/bd'
 
 // 진행단계(설계서 slide419): 신청서 → 서명 → 제출. 견적서 작성은 '신청서' 단계.
 const STEPS: StepItem[] = [
@@ -33,7 +33,7 @@ const TABS: TabItem[] = [
 ]
 
 // 상단 요약 fallback — 계획상세와 동일 값(설계서 slide411/419).
-const MOCK_SUMMARY: MockOvsRlsVltrnsSummary = {
+const MOCK_SUMMARY: OvsRlsVltrnsSummary = {
   taskSeNm: '국외',
   ctrtMthdNm: '수의계약',
   intgRfrncNo: 'BAD83990EFD',
@@ -46,7 +46,7 @@ const MOCK_SUMMARY: MockOvsRlsVltrnsSummary = {
 }
 
 // 스탭1 일반정보 데이터 — 설계서 slide420 공고일반 값·형식 그대로.
-const MOCK_GENERAL: MockOvsRlsVltrnsGeneral = {
+const MOCK_GENERAL: OvsRlsVltrnsGeneral = {
   pbancNo: 'EFD0007-2',
   pbancType: '정상공고',
   pbancRqstYmd: '2022-11-12',
@@ -69,7 +69,7 @@ const scrollTop = () => document.getElementById('app-scroll')?.scrollTo({ top: 0
 
 export function OvsRlsVltrnsNgtnEtdcSbmsnPage() {
   const navigate = useNavigate()
-  const summary = (useLocation().state as MockOvsRlsVltrnsSummary | null) ?? MOCK_SUMMARY
+  const summary = (useLocation().state as OvsRlsVltrnsSummary | null) ?? MOCK_SUMMARY
   const [tab, setTab] = useState('general')
 
   const tabOrder = TABS.map((t) => t.value)

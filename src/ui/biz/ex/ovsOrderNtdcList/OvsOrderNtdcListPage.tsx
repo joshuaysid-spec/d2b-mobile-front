@@ -15,7 +15,7 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
-import type { MockOvsEstmtNtdcCtrtInfo } from '@/types/mock/ex'
+import type { OvsEstmtNtdcCtrtInfo } from '@/types/mock/ex'
 
 // ── 검색필터 schema — 검색조건(slide76 1.1): 계약번호 단일(P79 공통시트) ──
 const EX_ORDER_NTDC_SEARCH_SCHEMA: SearchFilterSchema = {
@@ -44,7 +44,7 @@ function buildDefaultValue(): SearchFilterValue {
 const SEARCH_TARGETS = [{ value: 'ctrtNo', label: '계약번호' }]
 
 // 상단 계약정보 (slide76 1.2 — 견적통보서와 동일 구성) → 표 행.
-function ctrtInfoRows(info: MockOvsEstmtNtdcCtrtInfo): TableRow[] {
+function ctrtInfoRows(info: OvsEstmtNtdcCtrtInfo): TableRow[] {
   return [
     { label: '계약업체', value: info.ctrtBzentyCd },
     { label: '계약일자', value: info.ctrtYmd },

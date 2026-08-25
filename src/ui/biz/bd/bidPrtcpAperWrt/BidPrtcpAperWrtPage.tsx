@@ -29,11 +29,11 @@ import { BidPrtcpAperWrtPage_Stp4 } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAp
 import { BidPrtcpAperWrtPage_Stp5 } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage_Stp5'
 import { BidPrtcpAperWrtPage_Stp6 } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage_Stp6'
 import { BidPrtcpAperWrtPage_Stp7 } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage_Stp7'
-import type { MockBidPrgrsItem } from '@/types/mock/bd'
+import type { BidPrgrsItem } from '@/types/mock/bd'
 import type { UploadedFile } from '@/types/file'
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 항목명/형식 그대로.
-const MOCK_DETAIL: MockBidPrgrsItem = {
+const MOCK_DETAIL: BidPrgrsItem = {
   rNum: '0',
   taskSeNm: '물품',
   pbancNo: '긴급공고 LDG0097-1',
@@ -93,7 +93,7 @@ const INITIAL_ATTACHED_FILES: UploadedFile[] = [
 
 export function BidPrtcpAperWrtPage() {
   const navigate = useNavigate()
-  const detail = (useLocation().state as MockBidPrgrsItem | null) ?? MOCK_DETAIL
+  const detail = (useLocation().state as BidPrgrsItem | null) ?? MOCK_DETAIL
   const [tab, setTab] = useState('일반정보')
   const [shortcutOpen, setShortcutOpen] = useState(false) // 플로팅 바로가기 시트
   const [rjctOpen, setRjctOpen] = useState(false) // 입찰참가등록반려 바텀시트(P07)

@@ -9,11 +9,11 @@ import { Button } from '@/ui/common/base/Button'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { BfrPbancBidDsctnItemDtlFullPopup } from '@/ui/biz/bd/ovsBfrTmprBidBidCnReg/BfrPbancBidDsctnItemDtlFullPopup'
-import type { MockBfrPbancInfoItem } from '@/types/mock/bd'
+import type { BfrPbancInfoItem } from '@/types/mock/bd'
 
 // ── 목업 — 보관함 이전공고 목록(dl_pbancInfo). 설계서 와이어프레임 '총 5건' + 예시값(VDW2523-03 등).
 //    On-Load 보관함이전공고목록조회 — 추후 API: bdService.selectLockerBfrPbancList(lockerId)
-const MOCK_BFR_PBANC_LIST: MockBfrPbancInfoItem[] = [
+const MOCK_BFR_PBANC_LIST: BfrPbancInfoItem[] = [
   {
     no: '1',
     pbancNo: 'VDW2523-03',
@@ -74,7 +74,7 @@ export function OvsBfrTmprBidBidCnRegFullPopup({
   lockerId,
 }: OvsBfrTmprBidBidCnRegFullPopupProps) {
   // 이전공고입찰내역품목상세(P80) — 열려 있는 대상 공고(행 클릭 시 설정). null = 닫힘.
-  const [openPbanc, setOpenPbanc] = useState<MockBfrPbancInfoItem | null>(null)
+  const [openPbanc, setOpenPbanc] = useState<BfrPbancInfoItem | null>(null)
 
   // 팝업이 다시 열릴 때 중첩 팝업 상태 초기화 — 공고를 바꿔 재진입해도 이전 상태가 남지 않게.
   useEffect(() => {
@@ -86,7 +86,7 @@ export function OvsBfrTmprBidBidCnRegFullPopup({
   const total = list.length
 
   // 보관함목록행 클릭(grd_list_oncecllclick) — 클릭한 공고의 입찰내역 목록 조회(P80 팝업).
-  const handlePbancClick = (item: MockBfrPbancInfoItem) => {
+  const handlePbancClick = (item: BfrPbancInfoItem) => {
     console.log('[P79] 이전공고입찰내역목록조회', { lockerId, pbancNo: item.pbancNo, pbancOd: item.pbancOd })
     // 추후 API: bdService.selectBfrTmprBidCnList(item.pbancNo, item.pbancOd)
     setOpenPbanc(item)

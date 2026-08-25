@@ -7,7 +7,7 @@
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockBidPrgrsItem } from '@/types/mock/bd'
+import type { BidPrgrsItem } from '@/types/mock/bd'
 
 // 입찰공고 첨부서류(설계서 slide183) — 다운로드 전용.
 const PBANC_FILES: FileDownloadItem[] = [
@@ -15,7 +15,7 @@ const PBANC_FILES: FileDownloadItem[] = [
   { id: 'f2', name: '공고문.hwp', size: '786KB' },
 ]
 
-export function BidPrtcpAperDtl_Tab1({ detail }: { detail: MockBidPrgrsItem }) {
+export function BidPrtcpAperDtl_Tab1({ detail }: { detail: BidPrgrsItem }) {
   // 일반정보(dmt_bidPbancInfo) — 공고 식별값은 상세 항목, 나머지는 설계서 slide182 예시 형식 목업.
   const pbancRows: TableRow[] = [
     { label: '공고번호', value: detail.pbancNo },

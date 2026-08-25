@@ -6,7 +6,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 대금청구통합목록 검색조건 (dmt_PymtClmIntgSrch, slide20 1.1) — 서버 필터 전환 시 사용. */
-export interface MockPymtClmIntgListRequest {
+export interface PymtClmIntgListRequest {
   /** 계약시작일자 (ctrtBgngYmd, 8). */
   ctrtBgngYmd?: string
   /** 계약종료일자 (ctrtEndYmd, 8). */
@@ -20,7 +20,7 @@ export interface MockPymtClmIntgListRequest {
 }
 
 /** 대금청구목록 1건 (dlt_pymtClmList, slide20 1.2 — 0701 개정 업체명/입찰방법/계약종류/계약일자 포함). */
-export interface MockPymtClmListItem {
+export interface PymtClmListItem {
   /** 목록 key 용 고유 식별자 — `${ctrtNo}-${ctrtCycl}` (클라 생성, 배열 인덱스 key 금지). */
   id: string
   /** 번호 (no) — 그리드 rownum. */
@@ -54,8 +54,8 @@ export interface MockPymtClmListItem {
   pymtClmExstYn: 'Y' | 'N'
 }
 
-export interface MockPymtClmIntgListResult {
-  list: MockPymtClmListItem[]
+export interface PymtClmIntgListResult {
+  list: PymtClmListItem[]
   total: number
 }
 
@@ -68,7 +68,7 @@ export interface MockPymtClmIntgListResult {
  * 복사돼 있어 화면 목업(slide19: 청구번호/청구서종류/청구금액/확정구분/세액여부/작성일자/청구일자/진행상태)
  * 기준 임시 항목명으로 정의(BD 선례) — 상세설계 확정 시 대조.
  */
-export interface MockPymtClmAplyItem {
+export interface PymtClmAplyItem {
   /** 목록 key/상세 라우팅용 고유 식별자 — `${clmNo}-${clmOdr}` (클라 생성). */
   id: string
   /** 번호 (no). */
@@ -109,7 +109,7 @@ export interface MockPymtClmAplyItem {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 대금/사후 상세 요약 표시항목 — M02/M03 페이지 상단 SummaryInfo 구동. */
-export interface MockWmDtlSummary {
+export interface WmDtlSummary {
   taskSeCd: string
   ctrtMthdCd: string
   ctrtNo: string
@@ -122,12 +122,12 @@ export interface MockWmDtlSummary {
 
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-WM-01-M02 선금신청서상세 (slide22~28) — prpayApfrDtl/PrpayApfrDtlPage
-//   탭: T01 신청정보(MockPrpayApfrDtl) · T02 세부신청내역(PrpayApfrDtl_AplyDtsm) · T23 지급상태(공용)
+//   탭: T01 신청정보(PrpayApfrDtl) · T02 세부신청내역(PrpayApfrDtl_AplyDtsm) · T23 지급상태(공용)
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 선금신청서상세 — 차수(dmt_prpayApfrCyclInfo) + 계약내용(dmt_ctrtCnInfo) + 신청금액(dmt_aplyAmtInfo)
  *  + 공급자(dmt_splrInfo, slide27 1.5) + 요약. */
-export interface MockPrpayApfrDtl extends MockWmDtlSummary {
+export interface PrpayApfrDtl extends WmDtlSummary {
   // ── 공급자 정보 (dmt_splrInfo) ──
   /** 작성자명 (wrtrNm, 100). */
   wrtrNm: string
@@ -157,7 +157,7 @@ export interface MockPrpayApfrDtl extends MockWmDtlSummary {
 
 /** 선금 세부신청내역 1건 (dmt_aplyDsctnInfo, slide26 1.4) — 구분별 반복(재료비 수입/국내/간접 · 노무비 직접/간접 ·
  *  경비 직접/간접 · 일반관리비 · 기타 · 합계). */
-export interface MockPrpayAplyDsctnItem {
+export interface PrpayAplyDsctnItem {
   /** 목록 key — 구분명(고유). */
   id: string
   /** 구분 (prpayAplyDsctnAmtSeNm) — 금액구분명. */
@@ -176,11 +176,11 @@ export interface MockPrpayAplyDsctnItem {
 
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-WM-01-M03 착·중도금신청서상세 (slide29~35) — dpsmnItrpyApfrDtl/DpsmnItrpyApfrDtlPage
-//   탭: T03 신청정보(MockDpsmnItrpyApfrDtl) · T04 세부신청내역(DpsmnItrpyApfrDtl_AplyDtsm) · T23 지급상태(공용)
+//   탭: T03 신청정보(DpsmnItrpyApfrDtl) · T04 세부신청내역(DpsmnItrpyApfrDtl_AplyDtsm) · T23 지급상태(공용)
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 착·중도금신청서상세 — dmt_dpsmnItrpyApfrInfo + 계약내용 + 신청금액 + 공급자 + 요약 (slide33). */
-export interface MockDpsmnItrpyApfrDtl extends MockWmDtlSummary {
+export interface DpsmnItrpyApfrDtl extends WmDtlSummary {
   // ── 공급자 정보 (dmt_splrInfo) ──
   wrtrNm: string
   wrtrJbttlNm: string
@@ -209,7 +209,7 @@ export interface MockDpsmnItrpyApfrDtl extends MockWmDtlSummary {
 
 /** 착·중도금 세부신청내역 1건 (dmt_aplyDsctnInfo, slide33 1.4) — 선금과 달리 기사용/사용예정 대신
  *  신청금액·승인된 전 차수 수령금액의 합계. */
-export interface MockDpsmnItrpyAplyDsctnItem {
+export interface DpsmnItrpyAplyDsctnItem {
   /** 목록 key — 구분명(고유). */
   id: string
   /** 구분 (dpsmnItrpyAplyDsctnSeNm). */
@@ -230,7 +230,7 @@ export interface MockDpsmnItrpyAplyDsctnItem {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 지급상태 1건 (dlt_prgrsSttsList, slide37 1.1). */
-export interface MockGiveSttsItem {
+export interface GiveSttsItem {
   /** 목록 key — `${ctrtNo}-${ctrtCycl}` (클라 생성). */
   id: string
   /** 신청년도 (rqstYr, 4). */
@@ -251,7 +251,7 @@ export interface MockGiveSttsItem {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 진행상태 1건 (dlt_pymtClmPrgrsSttList, slide81 1.1). */
-export interface MockPymtClmPrgrsSttItem {
+export interface PymtClmPrgrsSttItem {
   /** 번호 (no, 10) — 목록 key */
   no: string
   /** 진행상태 (dlvdocPrgrsSt, 2, 상위코드 UA34/UB58) — 표시명. */
@@ -271,7 +271,7 @@ export interface MockPymtClmPrgrsSttItem {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 대금신청대상 1건 (dlt_pymtAplyTrgtList, slide43 1.2). */
-export interface MockPymtAplyTrgtItem {
+export interface PymtAplyTrgtItem {
   /** 목록 key — `${avtsmtNo}-${dlvdocNo}` (클라 생성). */
   id: string
   /** 통지번호 (avtsmtNo, 3). */
@@ -293,7 +293,7 @@ export interface MockPymtAplyTrgtItem {
 }
 
 /** 세금계산서 품목 1건 (dlt_txBllList, slide44 1.5). */
-export interface MockTxBllItem {
+export interface TxBllItem {
   /** 목록 key — `${bllPblcnYmd}-${itemNm}` (클라 생성). */
   id: string
   /** 월일 (bllPblcnYmd, 8). */
@@ -312,14 +312,14 @@ export interface MockTxBllItem {
 
 /** 대금청구 상세(중앙조달) — 계약정보(dmt_ctrtInfo) + 대금신청대상 + 공급자(dmt_splrInfo)
  *  + 대금신청금액(dmt_pymtAplyAmtInfo) + 세금계산서 + 요약 (slide43~44). */
-export interface MockCenterPrcmPymtClmDtl extends MockWmDtlSummary {
+export interface CenterPrcmPymtClmDtl extends WmDtlSummary {
   // ── 계약정보 (dmt_ctrtInfo, slide43 1.1) ──
   /** 일자구분(계약일자 표시, regDt, 8). */
   regDt: string
   /** 청구번호 (birqNo, 15). */
   birqNo: string
   /** 대금신청대상 목록 (dlt_pymtAplyTrgtList). */
-  pymtAplyTrgts: MockPymtAplyTrgtItem[]
+  pymtAplyTrgts: PymtAplyTrgtItem[]
   // ── 공급자정보 (dmt_splrInfo, slide43 1.3) ──
   /** 상호(업체명) (bzentyNm, 100). */
   bzentyNm: string
@@ -368,7 +368,7 @@ export interface MockCenterPrcmPymtClmDtl extends MockWmDtlSummary {
   /** 세금계산서번호 — 화면 표시항목(slide42). ⚠️ 항목설명은 txivChcYn 과 병기(오기로 판단), 임시(txivNo). */
   txivNo: string
   /** 세금계산서 품목 목록 (dlt_txBllList). */
-  txBlls: MockTxBllItem[]
+  txBlls: TxBllItem[]
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -376,7 +376,7 @@ export interface MockCenterPrcmPymtClmDtl extends MockWmDtlSummary {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 첨부서류 1건 (dlt_adocList). */
-export interface MockWmAdocItem {
+export interface WmAdocItem {
   /** 목록 key — 등록 순번 등 고유값(클라 생성). */
   id: string
   /** 첨부서류명 (docNm, 200). */
@@ -393,7 +393,7 @@ export interface MockWmAdocItem {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 부대조달 대금신청대상 1건 (dlt_pymtAplyTrgtList, slide52 1.2 — 중앙과 항목명 상이). */
-export interface MockSbsdPymtAplyTrgtItem {
+export interface SbsdPymtAplyTrgtItem {
   /** 목록 key — `${avtsmtNo}-${recrdPblcnNo}` (클라 생성). */
   id: string
   /** 통지번호 (avtsmtNo, 3). */
@@ -416,14 +416,14 @@ export interface MockSbsdPymtAplyTrgtItem {
 
 /** 대금청구상세(부대조달) — 계약정보(dmt_ctrtInfo) + 신청대상 + 업체정보(dmt_pymtAplyBzentyInfo)
  *  + 대금신청금액(dmt_pymtAplyAmtInfo) + 첨부(dlt_adocList) + 요약 (slide52~53). */
-export interface MockSbsdPrcmPymtClmDtl extends MockWmDtlSummary {
+export interface SbsdPrcmPymtClmDtl extends WmDtlSummary {
   // ── 계약정보 (slide52 1.1) ──
   /** 신청일자 (aplyYmd, 8). */
   aplyYmd: string
   /** 대금신청번호 (birqNo, 15). */
   birqNo: string
   /** 대금신청대상 목록. */
-  pymtAplyTrgts: MockSbsdPymtAplyTrgtItem[]
+  pymtAplyTrgts: SbsdPymtAplyTrgtItem[]
   // ── 대금신청업체정보 (slide52 1.3) ──
   /** 상호 (bzentyNm, 100). */
   bzentyNm: string
@@ -461,7 +461,7 @@ export interface MockSbsdPrcmPymtClmDtl extends MockWmDtlSummary {
   /** 비고 (birqRmrkCn, 100). */
   birqRmrkCn: string
   /** 첨부서류 목록 (dlt_adocList). */
-  adocs: MockWmAdocItem[]
+  adocs: WmAdocItem[]
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -470,7 +470,7 @@ export interface MockSbsdPrcmPymtClmDtl extends MockWmDtlSummary {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 대가지급업체 1건 (dlt_giveBzentyList, slide59 1.2). */
-export interface MockGiveBzentyItem {
+export interface GiveBzentyItem {
   /** 목록 key — `${bzentyNm}-${enacno}` (클라 생성). */
   id: string
   /** 업체유형 (fbctnSecd, 상위코드 UB54) — 표시명, 없으면 '-'. */
@@ -490,7 +490,7 @@ export interface MockGiveBzentyItem {
 }
 
 /** 대금청구상세(공사) — 계약정보(dmt_ctrtInfo) + 비고(dmt_birqRmrkCnInfo) + 대가지급업체 + 첨부 + 요약 (slide59). */
-export interface MockCstrnPymtClmDtl extends MockWmDtlSummary {
+export interface CstrnPymtClmDtl extends WmDtlSummary {
   /** 공사기간 (bgncstYmd, 8) — 화면은 기간 표기(slide56). */
   bgncstYmd: string
   /** 업체명(대표) (rprsvNm, 100). */
@@ -506,9 +506,9 @@ export interface MockCstrnPymtClmDtl extends MockWmDtlSummary {
   /** 비고 (birqRmrkCn, 100, dmt_birqRmrkCnInfo) — 변경내역 표시(slide56). */
   birqRmrkCn: string
   /** 대가지급업체 목록 (dlt_giveBzentyList). */
-  giveBzentys: MockGiveBzentyItem[]
+  giveBzentys: GiveBzentyItem[]
   /** 첨부서류 목록 (dlt_adocList). */
-  adocs: MockWmAdocItem[]
+  adocs: WmAdocItem[]
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -518,7 +518,7 @@ export interface MockCstrnPymtClmDtl extends MockWmDtlSummary {
 
 /** 대금청구상세(기성대가) — 계약정보 + 대금신청업체(dmt_pymtAplyBzentyInfo) + 기성대가 신청금액
  *  (dmt_PxcndCstAplyAmtInfo) + 세금계산서(dlt_txivList) + 첨부 + 요약 (slide67~68). */
-export interface MockPxcndCstPymtClmDtl extends MockWmDtlSummary {
+export interface PxcndCstPymtClmDtl extends WmDtlSummary {
   // ── 대금신청 업체정보 (slide67 1.2) ──
   /** 상호 (bzentyNm, 100). */
   bzentyNm: string
@@ -569,9 +569,9 @@ export interface MockPxcndCstPymtClmDtl extends MockWmDtlSummary {
   /** 세금계산서번호 — ⚠️ M05 와 동일 사유 임시 키(txivNo). */
   txivNo: string
   /** 세금계산서 품목 목록. */
-  txBlls: MockTxBllItem[]
+  txBlls: TxBllItem[]
   /** 첨부서류 목록 (dlt_adocList). */
-  adocs: MockWmAdocItem[]
+  adocs: WmAdocItem[]
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -580,7 +580,7 @@ export interface MockPxcndCstPymtClmDtl extends MockWmDtlSummary {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 사후정산 신청내역 1건 (dmt_aplyDsctnInfo, slide77 1.4 — 선금(T02)과 동형, 구분 키만 aplySeCd). */
-export interface MockEpfcAplyDsctnItem {
+export interface EpfcAplyDsctnItem {
   /** 목록 key — 구분명(고유). */
   id: string
   /** 구분 (aplySeCd) — 금액구분명. */
@@ -599,7 +599,7 @@ export interface MockEpfcAplyDsctnItem {
 
 /** 사후정산청구상세 — 차수(dmt_epfcClclnClmDocCyclInfo) + 계약내용(dmt_ctrtCnInfo) + 신청금액
  *  (dmt_aplyAmtInfo) + 신청내역 + 공급자 + 세금계산서(dlt_txivList) + 요약 (slide77~78). */
-export interface MockEpfcClclnClmDtl extends MockWmDtlSummary {
+export interface EpfcClclnClmDtl extends WmDtlSummary {
   // ── 공급자 정보 — ⚠️ dmt_splrInfo(slide78 1.5) 항목설명이 차수정보로 복사돼 있어(오타)
   //    화면(slide73: 상호/작성자 성명/직책/연락처/주소) 기준 M02·M05 항목명 재사용.
   bzentyNm: string
@@ -626,14 +626,14 @@ export interface MockEpfcClclnClmDtl extends MockWmDtlSummary {
   /** 지출원인금액 (expndCsAmt, 17). */
   expndCsAmt: number
   /** 신청내역 목록 (dmt_aplyDsctnInfo). */
-  aplyDsctns: MockEpfcAplyDsctnItem[]
+  aplyDsctns: EpfcAplyDsctnItem[]
   // ── 세금계산서 (dlt_txivList, slide78 1.6 — M05/M08 과 동일 구성) ──
   /** 세금계산서 선택여부 (txivChcYn). */
   txivChcYn: 'Y' | 'N'
   /** 세금계산서번호 — ⚠️ M05 와 동일 사유 임시 키(txivNo). */
   txivNo: string
   /** 세금계산서 품목 목록. */
-  txBlls: MockTxBllItem[]
+  txBlls: TxBllItem[]
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -641,7 +641,7 @@ export interface MockEpfcClclnClmDtl extends MockWmDtlSummary {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 대금청구진행현황 검색조건 (dmt_pymtClmPrgrsPrstSrch, slide81 1.1). */
-export interface MockPymtClmPrgrsPrstRequest {
+export interface PymtClmPrgrsPrstRequest {
   /** 계약시작일자 (ctrtBngnYmd — 설계서 표기 그대로). */
   ctrtBngnYmd?: string
   /** 계약종료일자 (ctrtEndYmd). */
@@ -659,7 +659,7 @@ export interface MockPymtClmPrgrsPrstRequest {
 }
 
 /** 대금청구진행현황 1건 (dlt_pymtClmList, slide81 1.2 — 0706 계약일자/청구일자/수령금액 보완). */
-export interface MockPymtClmPrgrsPrstItem {
+export interface PymtClmPrgrsPrstItem {
   /** 목록 key/상세 라우팅용 고유 식별자 — `${birqNo}-${ctrtCycl}` (클라 생성). */
   id: string
   /** 번호 (no). */
@@ -689,8 +689,8 @@ export interface MockPymtClmPrgrsPrstItem {
   prcmSeNm: '중앙' | '부대' | '공사' | '기성대가'
 }
 
-export interface MockPymtClmPrgrsPrstResult {
-  list: MockPymtClmPrgrsPrstItem[]
+export interface PymtClmPrgrsPrstResult {
+  list: PymtClmPrgrsPrstItem[]
   total: number
 }
 
@@ -699,7 +699,7 @@ export interface MockPymtClmPrgrsPrstResult {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 대금지불정보(반납) 검색조건 (dmt_pymtDfryInfoSrch, slide83 1.1). */
-export interface MockRtnPymtDfryInfoRequest {
+export interface RtnPymtDfryInfoRequest {
   /** 계약시작일자 (ctrtBgngYmd). */
   ctrtBgngYmd?: string
   /** 계약종료일자 (ctrtEndYmd). */
@@ -713,7 +713,7 @@ export interface MockRtnPymtDfryInfoRequest {
 }
 
 /** 대금지불정보(반납) 1건 (dlt_pymtDfryInfoList, slide83 1.2). */
-export interface MockRtnPymtDfryInfoItem {
+export interface RtnPymtDfryInfoItem {
   /** 목록 key — `${birqNo}-${ctrtCycl}` (클라 생성). */
   id: string
   /** 번호 (no). */
@@ -738,8 +738,8 @@ export interface MockRtnPymtDfryInfoItem {
   bidMthdNm: string
 }
 
-export interface MockRtnPymtDfryInfoResult {
-  list: MockRtnPymtDfryInfoItem[]
+export interface RtnPymtDfryInfoResult {
+  list: RtnPymtDfryInfoItem[]
   total: number
 }
 
@@ -750,7 +750,7 @@ export interface MockRtnPymtDfryInfoResult {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 물품수령확인서목록 검색조건 (dm_search, slide92 1.1 + P72). */
-export interface MockOvsCmdtyRcvCnfdocRequest {
+export interface OvsCmdtyRcvCnfdocRequest {
   /** 계약번호 (ctrtNo, 35) — 필수(slide93 이벤트). 계약번호조회 공통시트(MUI-EX-02-P79). */
   ctrtNo?: string
   /** B/L번호 (blNo, 30). */
@@ -758,7 +758,7 @@ export interface MockOvsCmdtyRcvCnfdocRequest {
 }
 
 /** 물품수령확인서 1건 (dl_goodsConfirmInfo, slide92 1.2). */
-export interface MockOvsCmdtyRcvCnfdocItem {
+export interface OvsCmdtyRcvCnfdocItem {
   /** 목록 key — `${blNo}-${invcNo}` (클라 생성). */
   id: string
   /** INVOICE (invcNo, 22). */
@@ -785,13 +785,13 @@ export interface MockOvsCmdtyRcvCnfdocItem {
   ctrtCycl: string
 }
 
-export interface MockOvsCmdtyRcvCnfdocResult {
-  list: MockOvsCmdtyRcvCnfdocItem[]
+export interface OvsCmdtyRcvCnfdocResult {
+  list: OvsCmdtyRcvCnfdocItem[]
   total: number
 }
 
 /** 전자계산서 1건 (dl_billInfo, slide92 1.3) — P73 목록 카드 · M74 상세 요약 공용. */
-export interface MockOvsElcrtTxivItem {
+export interface OvsElcrtTxivItem {
   /** 목록 key — 계산서발행번호(bilPblcnNo). */
   id: string
   /** 구분 (billSe, 2) — 일반/수정. */
@@ -818,7 +818,7 @@ export interface MockOvsElcrtTxivItem {
  * 전자계산서 공급자/공급받는자 정보 (dm_billInfo, slide97 1.3).
  * 설계서가 공급자·공급받는자에 같은 항목명을 쓰므로 한 타입을 두 번 사용한다.
  */
-export interface MockOvsElcrtTxivPrtyInfo {
+export interface OvsElcrtTxivPrtyInfo {
   /** 사업자번호 (brno, 10). */
   brno: string
   /** 대표명 (rprsvNm, 100). */
@@ -840,7 +840,7 @@ export interface MockOvsElcrtTxivPrtyInfo {
 }
 
 /** 전자계산서 품목 1건 (slide96 1.1 품목정보). */
-export interface MockOvsElcrtTxivItemRow {
+export interface OvsElcrtTxivItemRow {
   /** 목록 key — `${issuNo}-${순번}` (클라 생성). */
   id: string
   /** 월일 (wrtYmd, 8) — yyyy-mm-dd. */
@@ -864,7 +864,7 @@ export interface MockOvsElcrtTxivItemRow {
 }
 
 /** 전자계산서상세 (MUI-WM-01-M74, slide94~97). */
-export interface MockOvsElcrtTxivDtl extends MockOvsElcrtTxivItem {
+export interface OvsElcrtTxivDtl extends OvsElcrtTxivItem {
   /** 일반정보 — 책번호 (bookNo, 3). */
   bookNo: string
   /** 일반정보 — 일련번호 (regSn, 10). */
@@ -876,13 +876,13 @@ export interface MockOvsElcrtTxivDtl extends MockOvsElcrtTxivItem {
   /** 일반정보 — 확정구분 (cfmtnYn, 1) — Y 확정 / N 미확정. */
   cfmtnYn: string
   /** 세금계산서 공급자정보. */
-  splr: MockOvsElcrtTxivPrtyInfo
+  splr: OvsElcrtTxivPrtyInfo
   /** 세금계산서 공급받는자정보. */
-  splrcp: MockOvsElcrtTxivPrtyInfo
+  splrcp: OvsElcrtTxivPrtyInfo
 }
 
 /** 대금지불정보 검색조건 (dm_search, slide101 1.1). */
-export interface MockOvsRtnPymtDfryInfoRequest {
+export interface OvsRtnPymtDfryInfoRequest {
   /** 심사일자(From) (srngYmdFrom, 8). */
   srngYmdFrom?: string
   /** 심사일자(To) (srngYmdTo, 8). */
@@ -896,7 +896,7 @@ export interface MockOvsRtnPymtDfryInfoRequest {
 }
 
 /** 대금지불정보 1건 (dl_paymentInfo, slide101 1.2). */
-export interface MockOvsRtnPymtDfryInfoItem {
+export interface OvsRtnPymtDfryInfoItem {
   /** 목록 key — `${blNo}-${invcNo}` (클라 생성). */
   id: string
   /** 지불일자 (dfryYmd, 8). */
@@ -927,27 +927,27 @@ export interface MockOvsRtnPymtDfryInfoItem {
   invcNo: string
 }
 
-export interface MockOvsRtnPymtDfryInfoResult {
-  list: MockOvsRtnPymtDfryInfoItem[]
+export interface OvsRtnPymtDfryInfoResult {
+  list: OvsRtnPymtDfryInfoItem[]
   total: number
 }
 
 /** 대금지급현황 검색조건 (dm_statSearch, slide105 1.1) — 계약번호 필수. */
-export interface MockOvsPymtPrgrsRequest {
+export interface OvsPymtPrgrsRequest {
   /** 계약번호 (ctrtNo, 35) — 필수. 계약번호조회 공통시트(MUI-EX-02-P79). */
   ctrtNo?: string
 }
 
 /** 대금지급현황 1건 — 카드/항목이 대금지불정보(M75)와 동일(slide103). */
-export type MockOvsPymtPrgrsItem = MockOvsRtnPymtDfryInfoItem
+export type OvsPymtPrgrsItem = OvsRtnPymtDfryInfoItem
 
-export interface MockOvsPymtPrgrsResult {
-  list: MockOvsPymtPrgrsItem[]
+export interface OvsPymtPrgrsResult {
+  list: OvsPymtPrgrsItem[]
   total: number
 }
 
 /** 선적품목내역 1건 (dl_shipItemInfo, slide105 1.3). */
-export interface MockOvsShpgItemDsctnItem {
+export interface OvsShpgItemDsctnItem {
   /** 목록 key — `${blNo}-${invtNo}` (클라 생성). */
   id: string
   /** 계약번호 (ctrtNo, 35). */

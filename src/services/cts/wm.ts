@@ -27,35 +27,35 @@ import { apiClient } from '@/lib/apiClient'
 import { USE_MOCK, mockDelay } from '@/lib/env'
 import { MOCK_WM } from '@/mocks/wm'
 import type {
-  MockCenterPrcmPymtClmDtl,
-  MockCstrnPymtClmDtl,
-  MockDpsmnItrpyAplyDsctnItem,
-  MockDpsmnItrpyApfrDtl,
-  MockEpfcClclnClmDtl,
-  MockGiveSttsItem,
-  MockPxcndCstPymtClmDtl,
-  MockSbsdPrcmPymtClmDtl,
-  MockPrpayAplyDsctnItem,
-  MockPrpayApfrDtl,
-  MockPymtClmAplyItem,
-  MockPymtClmIntgListRequest,
-  MockPymtClmIntgListResult,
-  MockPymtClmPrgrsPrstRequest,
-  MockPymtClmPrgrsPrstResult,
-  MockPymtClmPrgrsSttItem,
-  MockRtnPymtDfryInfoRequest,
-  MockRtnPymtDfryInfoResult,
-  MockTxBllItem,
-  MockOvsCmdtyRcvCnfdocRequest,
-  MockOvsCmdtyRcvCnfdocResult,
-  MockOvsElcrtTxivDtl,
-  MockOvsElcrtTxivItem,
-  MockOvsElcrtTxivItemRow,
-  MockOvsPymtPrgrsRequest,
-  MockOvsPymtPrgrsResult,
-  MockOvsRtnPymtDfryInfoRequest,
-  MockOvsRtnPymtDfryInfoResult,
-  MockOvsShpgItemDsctnItem,
+  CenterPrcmPymtClmDtl,
+  CstrnPymtClmDtl,
+  DpsmnItrpyAplyDsctnItem,
+  DpsmnItrpyApfrDtl,
+  EpfcClclnClmDtl,
+  GiveSttsItem,
+  PxcndCstPymtClmDtl,
+  SbsdPrcmPymtClmDtl,
+  PrpayAplyDsctnItem,
+  PrpayApfrDtl,
+  PymtClmAplyItem,
+  PymtClmIntgListRequest,
+  PymtClmIntgListResult,
+  PymtClmPrgrsPrstRequest,
+  PymtClmPrgrsPrstResult,
+  PymtClmPrgrsSttItem,
+  RtnPymtDfryInfoRequest,
+  RtnPymtDfryInfoResult,
+  TxBllItem,
+  OvsCmdtyRcvCnfdocRequest,
+  OvsCmdtyRcvCnfdocResult,
+  OvsElcrtTxivDtl,
+  OvsElcrtTxivItem,
+  OvsElcrtTxivItemRow,
+  OvsPymtPrgrsRequest,
+  OvsPymtPrgrsResult,
+  OvsRtnPymtDfryInfoRequest,
+  OvsRtnPymtDfryInfoResult,
+  OvsShpgItemDsctnItem,
 } from '@/types/mock/wm'
 
 export const wmService = {
@@ -65,12 +65,12 @@ export const wmService = {
    * no.407 대금청구통합목록 조회 — MUI-WM-01-M01 (pymtClmIntgList/PymtClmIntgListPage).
    * 키워드 필터/더보기 페이징은 페이지 클라이언트 로직(서버 전환 시 req 로 이행).
    */
-  async selectPymtClmIntgList(req: MockPymtClmIntgListRequest = {}): Promise<MockPymtClmIntgListResult> {
+  async selectPymtClmIntgList(req: PymtClmIntgListRequest = {}): Promise<PymtClmIntgListResult> {
     if (USE_MOCK) {
       const list = MOCK_WM.pymtClmIntgList
       return mockDelay({ list, total: list.length })
     }
-    return apiClient.post<MockPymtClmIntgListResult, MockPymtClmIntgListResult>(
+    return apiClient.post<PymtClmIntgListResult, PymtClmIntgListResult>(
       '/cts/wm/birq/selectPymtClmIntgList.do',
       req,
     )
@@ -84,9 +84,9 @@ export const wmService = {
    * 실목록(no.407~444) 에 대응 API 없음 — URL 임시. 통합목록(no.407)의 계약별 하위 목록이라
    * 별도 번호가 모바일 Y 로 누락됐을 가능성 있어 반입 전 확인 필요.
    */
-  async selectPymtClmAplyList(ctrtNo: string): Promise<MockPymtClmAplyItem[]> {
+  async selectPymtClmAplyList(ctrtNo: string): Promise<PymtClmAplyItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.pymtClmAplyList)
-    return apiClient.post<MockPymtClmAplyItem[], MockPymtClmAplyItem[]>(
+    return apiClient.post<PymtClmAplyItem[], PymtClmAplyItem[]>(
       `/v1/wms/contracts/${ctrtNo}/payment-claim-applications`,
     )
   },
@@ -98,9 +98,9 @@ export const wmService = {
    * (prpayApfrDtl/PrpayApfrDtlPage). 차수·계약내용·신청금액·공급자. On-Load(slide28).
    * 구 `selectPrpayApfrDtl`.
    */
-  async selectPrpayClmAplyDtl(id: string): Promise<MockPrpayApfrDtl> {
+  async selectPrpayClmAplyDtl(id: string): Promise<PrpayApfrDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.prpayApfrDtl)
-    return apiClient.post<MockPrpayApfrDtl, MockPrpayApfrDtl>('/cts/wm/birq/selectPrpayClmAplyDtl.do', {
+    return apiClient.post<PrpayApfrDtl, PrpayApfrDtl>('/cts/wm/birq/selectPrpayClmAplyDtl.do', {
       birqNo: id,
     })
   },
@@ -110,9 +110,9 @@ export const wmService = {
    * 실목록 외 — URL 임시. 설계서상 세부신청내역(dmt_aplyDsctnInfo)은 M02 데이터영역에 속하므로
    * 상세조회(no.408) 응답에 포함될 가능성이 높다(사후정산 M13 은 실제로 상세에 포함) — 반입 전 확인.
    */
-  async selectPrpayAplyDsctns(id: string): Promise<MockPrpayAplyDsctnItem[]> {
+  async selectPrpayAplyDsctns(id: string): Promise<PrpayAplyDsctnItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.prpayAplyDsctns)
-    return apiClient.post<MockPrpayAplyDsctnItem[], MockPrpayAplyDsctnItem[]>(
+    return apiClient.post<PrpayAplyDsctnItem[], PrpayAplyDsctnItem[]>(
       `/v1/wms/prepayment-applications/${id}/details`,
     )
   },
@@ -123,9 +123,9 @@ export const wmService = {
    * no.421 착·중도금 신청상세 내역 조회 — MUI-WM-01-M03/T03
    * (dpsmnItrpyApfrDtl/DpsmnItrpyApfrDtlPage). 구 `selectDpsmnItrpyApfrDtl`.
    */
-  async selectDpsmnItrpyAplyDtlDsctn(id: string): Promise<MockDpsmnItrpyApfrDtl> {
+  async selectDpsmnItrpyAplyDtlDsctn(id: string): Promise<DpsmnItrpyApfrDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.dpsmnItrpyApfrDtl)
-    return apiClient.post<MockDpsmnItrpyApfrDtl, MockDpsmnItrpyApfrDtl>(
+    return apiClient.post<DpsmnItrpyApfrDtl, DpsmnItrpyApfrDtl>(
       '/cts/wm/birq/selectDpsmnItrpyAplyDtlDsctn.do',
       { birqNo: id },
     )
@@ -135,9 +135,9 @@ export const wmService = {
    * 착·중도금 세부신청내역 조회 — MUI-WM-01-T04 (dpsmnItrpyApfrDtl/DpsmnItrpyApfrDtl_AplyDtsm).
    * 실목록 외 — URL 임시(선금 T02 과 동일 사유: no.421 응답 포함 가능성).
    */
-  async selectDpsmnItrpyAplyDsctns(id: string): Promise<MockDpsmnItrpyAplyDsctnItem[]> {
+  async selectDpsmnItrpyAplyDsctns(id: string): Promise<DpsmnItrpyAplyDsctnItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.dpsmnItrpyAplyDsctns)
-    return apiClient.post<MockDpsmnItrpyAplyDsctnItem[], MockDpsmnItrpyAplyDsctnItem[]>(
+    return apiClient.post<DpsmnItrpyAplyDsctnItem[], DpsmnItrpyAplyDsctnItem[]>(
       `/v1/wms/interim-payment-applications/${id}/details`,
     )
   },
@@ -148,9 +148,9 @@ export const wmService = {
    * no.433 지급상태조회 — MUI-WM-01-T23
    * (prpayDpsmnItrpyGiveStts/PrpayDpsmnItrpyGiveStts, 상세 공용 탭). 구 `selectGiveSttsList`.
    */
-  async selectGiveStts(id: string): Promise<MockGiveSttsItem[]> {
+  async selectGiveStts(id: string): Promise<GiveSttsItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.giveSttsList)
-    return apiClient.post<MockGiveSttsItem[], MockGiveSttsItem[]>('/cts/wm/birq/selectGiveStts.do', {
+    return apiClient.post<GiveSttsItem[], GiveSttsItem[]>('/cts/wm/birq/selectGiveStts.do', {
       birqNo: id,
     })
   },
@@ -162,9 +162,9 @@ export const wmService = {
    * 대금청구 상세 M05·사후정산청구상세 M13 공용 탭). On-Load(slide81).
    * 구 `selectPymtClmPrgrsSttList` — 진행현황 목록(no.432, M11)과 다른 API 다.
    */
-  async selectPymtClmPrgrsStts(id: string): Promise<MockPymtClmPrgrsSttItem[]> {
+  async selectPymtClmPrgrsStts(id: string): Promise<PymtClmPrgrsSttItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.pymtClmPrgrsSttList)
-    return apiClient.post<MockPymtClmPrgrsSttItem[], MockPymtClmPrgrsSttItem[]>(
+    return apiClient.post<PymtClmPrgrsSttItem[], PymtClmPrgrsSttItem[]>(
       '/cts/wm/birq/selectPymtClmPrgrsStts.do',
       { birqNo: id },
     )
@@ -181,9 +181,9 @@ export const wmService = {
    *   단일 엔드포인트로 판단해 4개 함수에 같은 URL 을 인라인했다(유형 분기는 요청 파라미터 추정,
    *   응답 구조가 유형별로 달라 함수·타입은 화면별로 유지). 유형별 별도 API 로 확인되면 해당 함수만 수정.
    */
-  async selectCenterPrcmPymtClmDtl(id: string): Promise<MockCenterPrcmPymtClmDtl> {
+  async selectCenterPrcmPymtClmDtl(id: string): Promise<CenterPrcmPymtClmDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.centerPrcmPymtClmDtl)
-    return apiClient.post<MockCenterPrcmPymtClmDtl, MockCenterPrcmPymtClmDtl>(
+    return apiClient.post<CenterPrcmPymtClmDtl, CenterPrcmPymtClmDtl>(
       '/cts/wm/birq/selectPymtClmAplyDtlDsctn.do',
       { birqNo: id },
     )
@@ -196,9 +196,9 @@ export const wmService = {
    * (sbsdPrcmPymtClmDtl/SbsdPrcmPymtClmDtlPage). 계약정보+신청대상+업체+신청금액+첨부.
    * 엔드포인트 공유 사유는 `selectCenterPrcmPymtClmDtl` 주석 참고.
    */
-  async selectSbsdPrcmPymtClmDtl(id: string): Promise<MockSbsdPrcmPymtClmDtl> {
+  async selectSbsdPrcmPymtClmDtl(id: string): Promise<SbsdPrcmPymtClmDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.sbsdPrcmPymtClmDtl)
-    return apiClient.post<MockSbsdPrcmPymtClmDtl, MockSbsdPrcmPymtClmDtl>(
+    return apiClient.post<SbsdPrcmPymtClmDtl, SbsdPrcmPymtClmDtl>(
       '/cts/wm/birq/selectPymtClmAplyDtlDsctn.do',
       { birqNo: id },
     )
@@ -211,9 +211,9 @@ export const wmService = {
    * (cstrnPymtClmDtl/CstrnPymtClmDtlPage). 계약정보+비고+대가지급업체+첨부.
    * 엔드포인트 공유 사유는 `selectCenterPrcmPymtClmDtl` 주석 참고.
    */
-  async selectCstrnPymtClmDtl(id: string): Promise<MockCstrnPymtClmDtl> {
+  async selectCstrnPymtClmDtl(id: string): Promise<CstrnPymtClmDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.cstrnPymtClmDtl)
-    return apiClient.post<MockCstrnPymtClmDtl, MockCstrnPymtClmDtl>(
+    return apiClient.post<CstrnPymtClmDtl, CstrnPymtClmDtl>(
       '/cts/wm/birq/selectPymtClmAplyDtlDsctn.do',
       { birqNo: id },
     )
@@ -226,9 +226,9 @@ export const wmService = {
    * (pxcndCstPymtClmDtl/PxcndCstPymtClmDtlPage). 계약정보+업체+기성대가 신청금액+세금계산서+첨부.
    * 엔드포인트 공유 사유는 `selectCenterPrcmPymtClmDtl` 주석 참고.
    */
-  async selectPxcndCstPymtClmDtl(id: string): Promise<MockPxcndCstPymtClmDtl> {
+  async selectPxcndCstPymtClmDtl(id: string): Promise<PxcndCstPymtClmDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.pxcndCstPymtClmDtl)
-    return apiClient.post<MockPxcndCstPymtClmDtl, MockPxcndCstPymtClmDtl>(
+    return apiClient.post<PxcndCstPymtClmDtl, PxcndCstPymtClmDtl>(
       '/cts/wm/birq/selectPymtClmAplyDtlDsctn.do',
       { birqNo: id },
     )
@@ -241,9 +241,9 @@ export const wmService = {
    * (epfcClclnClmDtl/EpfcClclnClmDtlPage). 차수+계약내용+신청금액+신청내역+공급자+세금계산서.
    * 구 `selectEpfcClclnClmDtl`.
    */
-  async selectEpfcClcInAplyDtlDtsm(id: string): Promise<MockEpfcClclnClmDtl> {
+  async selectEpfcClcInAplyDtlDtsm(id: string): Promise<EpfcClclnClmDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.epfcClclnClmDtl)
-    return apiClient.post<MockEpfcClclnClmDtl, MockEpfcClclnClmDtl>(
+    return apiClient.post<EpfcClclnClmDtl, EpfcClclnClmDtl>(
       '/cts/wm/birq/selectEpfcClcInAplyDtlDtsm.do',
       { birqNo: id },
     )
@@ -255,9 +255,9 @@ export const wmService = {
    * no.438 세금계산서 목록 조회 — 대금청구 상세의 세금계산서 탭(dlt_txBllList).
    * 현재 화면은 상세 응답(txBlls)으로 렌더하므로 훅 없이 함수만 둔다(소비처 생기면 훅 추가).
    */
-  async selectTxivList(id: string): Promise<MockTxBllItem[]> {
+  async selectTxivList(id: string): Promise<TxBllItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.centerPrcmPymtClmDtl.txBlls)
-    return apiClient.post<MockTxBllItem[], MockTxBllItem[]>('/cts/wm/birq/selectTxivList.do', {
+    return apiClient.post<TxBllItem[], TxBllItem[]>('/cts/wm/birq/selectTxivList.do', {
       birqNo: id,
     })
   },
@@ -269,13 +269,13 @@ export const wmService = {
    * 키워드 필터/더보기 페이징은 페이지 클라이언트 로직. 구 `selectPymtClmPrgrsPrstList`.
    */
   async selectPymtClmPrgrsList(
-    req: MockPymtClmPrgrsPrstRequest = {},
-  ): Promise<MockPymtClmPrgrsPrstResult> {
+    req: PymtClmPrgrsPrstRequest = {},
+  ): Promise<PymtClmPrgrsPrstResult> {
     if (USE_MOCK) {
       const list = MOCK_WM.pymtClmPrgrsPrstList
       return mockDelay({ list, total: list.length })
     }
-    return apiClient.post<MockPymtClmPrgrsPrstResult, MockPymtClmPrgrsPrstResult>(
+    return apiClient.post<PymtClmPrgrsPrstResult, PymtClmPrgrsPrstResult>(
       '/cts/wm/birq/selectPymtClmPrgrsList.do',
       req,
     )
@@ -288,13 +288,13 @@ export const wmService = {
    * 키워드 필터/더보기 페이징은 페이지 클라이언트 로직. 구 `selectRtnPymtDfryInfoList`.
    */
   async selectPymtDfryInfoRtnList(
-    req: MockRtnPymtDfryInfoRequest = {},
-  ): Promise<MockRtnPymtDfryInfoResult> {
+    req: RtnPymtDfryInfoRequest = {},
+  ): Promise<RtnPymtDfryInfoResult> {
     if (USE_MOCK) {
       const list = MOCK_WM.rtnPymtDfryInfoList
       return mockDelay({ list, total: list.length })
     }
-    return apiClient.post<MockRtnPymtDfryInfoResult, MockRtnPymtDfryInfoResult>(
+    return apiClient.post<RtnPymtDfryInfoResult, RtnPymtDfryInfoResult>(
       '/cts/wm/birq/selectPymtDfryInfoRtnList.do',
       req,
     )
@@ -310,13 +310,13 @@ export const wmService = {
    * 구 `selectOvsCmdtyRcvCnfdocList`.
    */
   async selectGoodsReceiveConfirmList(
-    req: MockOvsCmdtyRcvCnfdocRequest = {},
-  ): Promise<MockOvsCmdtyRcvCnfdocResult> {
+    req: OvsCmdtyRcvCnfdocRequest = {},
+  ): Promise<OvsCmdtyRcvCnfdocResult> {
     if (USE_MOCK) {
       const list = MOCK_WM.ovsCmdtyRcvCnfdocList
       return mockDelay({ list, total: list.length })
     }
-    return apiClient.post<MockOvsCmdtyRcvCnfdocResult, MockOvsCmdtyRcvCnfdocResult>(
+    return apiClient.post<OvsCmdtyRcvCnfdocResult, OvsCmdtyRcvCnfdocResult>(
       '/cts/wm/ovsPymtClm/selectGoodsReceiveConfirmList.do',
       req,
     )
@@ -332,9 +332,9 @@ export const wmService = {
    *   물품수령확인서목록(dl_goodsConfirmInfo)과 전자계산서목록(dl_billInfo)을 같은 화면(M71)에
    *   묶어 두어 한 응답에 실릴 가능성이 높다. 확인되면 이 함수를 지우고 446 응답에서 꺼내 쓸 것.
    */
-  async selectOvsElcrtTxivList(ctrtNo: string): Promise<MockOvsElcrtTxivItem[]> {
+  async selectOvsElcrtTxivList(ctrtNo: string): Promise<OvsElcrtTxivItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.ovsElcrtTxivList)
-    return apiClient.post<MockOvsElcrtTxivItem[], MockOvsElcrtTxivItem[]>(
+    return apiClient.post<OvsElcrtTxivItem[], OvsElcrtTxivItem[]>(
       '/cts/wm/ovsPymtClm/selectGoodsReceiveConfirmList.do',
       { ctrtNo },
     )
@@ -344,9 +344,9 @@ export const wmService = {
    * no.449 전자계산서상세조회 — MUI-WM-01-M74 (ovsElcrtTxivDtl/OvsElcrtTxivDtlPage).
    * 구 `selectOvsElcrtTxivDtl`.
    */
-  async selectElectronicBill(bilPblcnNo: string): Promise<MockOvsElcrtTxivDtl> {
+  async selectElectronicBill(bilPblcnNo: string): Promise<OvsElcrtTxivDtl> {
     if (USE_MOCK) return mockDelay(MOCK_WM.ovsElcrtTxivDtl)
-    return apiClient.post<MockOvsElcrtTxivDtl, MockOvsElcrtTxivDtl>(
+    return apiClient.post<OvsElcrtTxivDtl, OvsElcrtTxivDtl>(
       '/cts/wm/ovsPymtClm/selectElectronicBill.do',
       { bilPblcnNo },
     )
@@ -357,9 +357,9 @@ export const wmService = {
    * ⚠️ 전용 API 없음 — 품목정보(slide96 1.1)가 M74 데이터영역이라 상세(no.449) 응답 포함 가능성이
    *   높아 같은 URL 을 공유한다. 확인되면 이 함수를 지우고 449 응답에서 꺼내 쓸 것.
    */
-  async selectOvsElcrtTxivItems(bilPblcnNo: string): Promise<MockOvsElcrtTxivItemRow[]> {
+  async selectOvsElcrtTxivItems(bilPblcnNo: string): Promise<OvsElcrtTxivItemRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.ovsElcrtTxivItems)
-    return apiClient.post<MockOvsElcrtTxivItemRow[], MockOvsElcrtTxivItemRow[]>(
+    return apiClient.post<OvsElcrtTxivItemRow[], OvsElcrtTxivItemRow[]>(
       '/cts/wm/ovsPymtClm/selectElectronicBill.do',
       { bilPblcnNo },
     )
@@ -371,12 +371,12 @@ export const wmService = {
    * no.452 대금지불정보 조회 — MUI-WM-01-M75 (ovsRtnPymtDfryInfo/OvsRtnPymtDfryInfoPage).
    * On-Load 심사일자 = 1개월 전 ~ 현재일(slide102). 구 `selectOvsRtnPymtDfryInfoList`.
    */
-  async selectPaymentList(req: MockOvsRtnPymtDfryInfoRequest = {}): Promise<MockOvsRtnPymtDfryInfoResult> {
+  async selectPaymentList(req: OvsRtnPymtDfryInfoRequest = {}): Promise<OvsRtnPymtDfryInfoResult> {
     if (USE_MOCK) {
       const list = MOCK_WM.ovsRtnPymtDfryInfoList
       return mockDelay({ list, total: list.length })
     }
-    return apiClient.post<MockOvsRtnPymtDfryInfoResult, MockOvsRtnPymtDfryInfoResult>(
+    return apiClient.post<OvsRtnPymtDfryInfoResult, OvsRtnPymtDfryInfoResult>(
       '/cts/wm/ovsPymtClm/selectPaymentList.do',
       req,
     )
@@ -388,12 +388,12 @@ export const wmService = {
    * no.454 대금지급현황 조회 — MUI-WM-01-M77 (ovsPymtPrgrsList/OvsPymtPrgrsListPage).
    * 계약번호 필수 — 없으면 목록 미표시(slide103 2-2]). 구 `selectOvsPymtPrgrsList`.
    */
-  async selectPaymentStatusList(req: MockOvsPymtPrgrsRequest = {}): Promise<MockOvsPymtPrgrsResult> {
+  async selectPaymentStatusList(req: OvsPymtPrgrsRequest = {}): Promise<OvsPymtPrgrsResult> {
     if (USE_MOCK) {
       const list = MOCK_WM.ovsPymtPrgrsList
       return mockDelay({ list, total: list.length })
     }
-    return apiClient.post<MockOvsPymtPrgrsResult, MockOvsPymtPrgrsResult>(
+    return apiClient.post<OvsPymtPrgrsResult, OvsPymtPrgrsResult>(
       '/cts/wm/ovsPymtClm/selectPaymentStatusList.do',
       req,
     )
@@ -403,9 +403,9 @@ export const wmService = {
    * no.455 선적품목내역조회 — MUI-WM-01-P78 (ovsPymtPrgrsList/OvsShpgItemDsctn, 바텀시트 콘텐츠).
    * 구 `selectOvsShpgItemDsctns`.
    */
-  async selectPackingItemList(blNo: string): Promise<MockOvsShpgItemDsctnItem[]> {
+  async selectPackingItemList(blNo: string): Promise<OvsShpgItemDsctnItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_WM.ovsShpgItemDsctns)
-    return apiClient.post<MockOvsShpgItemDsctnItem[], MockOvsShpgItemDsctnItem[]>(
+    return apiClient.post<OvsShpgItemDsctnItem[], OvsShpgItemDsctnItem[]>(
       '/cts/wm/ovsPymtClm/selectPackingItemList.do',
       { blNo },
     )

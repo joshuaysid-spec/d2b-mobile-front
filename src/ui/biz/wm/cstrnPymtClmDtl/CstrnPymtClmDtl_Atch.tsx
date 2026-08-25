@@ -2,10 +2,10 @@
 // TODO(파일 다운로드 배선): 문서 GUID 확정 시 useDownloadFile 훅 연결(현재 콘솔 스텁).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import type { MockWmAdocItem } from '@/types/mock/wm'
+import type { WmAdocItem } from '@/types/mock/wm'
 
 export interface CstrnPymtClmDtl_AtchProps {
-  adocs: MockWmAdocItem[]
+  adocs: WmAdocItem[]
 }
 
 export function CstrnPymtClmDtl_Atch({ adocs }: CstrnPymtClmDtl_AtchProps) {

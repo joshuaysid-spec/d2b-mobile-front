@@ -9,7 +9,7 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { cn } from '@/utils/cn'
-import type { MockBidPrgrsItem } from '@/types/mock/bd'
+import type { BidPrgrsItem } from '@/types/mock/bd'
 
 // 차수 = 데이터영역 항목명(1차~5차). field 를 아코디언 식별자 겸 상태 키로 사용.
 const ROUNDS = [
@@ -48,7 +48,7 @@ function ChoiceButton({
   )
 }
 
-export function TndrWrt_Stp6({ detail }: { detail: MockBidPrgrsItem }) {
+export function TndrWrt_Stp6({ detail }: { detail: BidPrgrsItem }) {
   void detail // 상단 요약은 컨테이너 소유 — 본 탭은 동가낙찰 선추첨 선택만 담당.
 
   // 1차~5차 선추첨 선택값(설계서 slide130 dmt_smprcScsbdChc) — 미선택 = ''.

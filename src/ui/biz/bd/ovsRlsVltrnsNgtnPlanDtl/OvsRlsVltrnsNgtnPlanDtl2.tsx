@@ -9,10 +9,10 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
-import type { MockOvsRlsVltrnsItem } from '@/types/mock/bd'
+import type { OvsRlsVltrnsItem } from '@/types/mock/bd'
 
 // 품목 목록 목업 — 설계서 slide413 값 그대로. 추후 bdService.selectRlsVltrnsNgtnDtl 매핑.
-const ITEM_BASE: Omit<MockOvsRlsVltrnsItem, 'clsfNo'> = {
+const ITEM_BASE: Omit<OvsRlsVltrnsItem, 'clsfNo'> = {
   qltyGrd: 'A',
   atchDocYn: 'O',
   stckNo: '156037A017759',
@@ -35,7 +35,7 @@ const ITEM_BASE: Omit<MockOvsRlsVltrnsItem, 'clsfNo'> = {
   equipNm: '특수 추진기',
 }
 const TOTAL = 258
-const MOCK_ITEMS: MockOvsRlsVltrnsItem[] = Array.from({ length: TOTAL }, (_, i) => ({
+const MOCK_ITEMS: OvsRlsVltrnsItem[] = Array.from({ length: TOTAL }, (_, i) => ({
   ...ITEM_BASE,
   clsfNo: String(i + 1),
 }))
@@ -49,7 +49,7 @@ const MOCK_DOC_FILES: FileDownloadItem[] = [
   { id: 'doc-2', name: '도면.pdf', size: '1.2MB', onDownload: () => console.log('[M72] 첨부문서 다운로드: 도면') },
 ]
 
-function itemRows(it: MockOvsRlsVltrnsItem, onViewDoc: () => void): TableRow[] {
+function itemRows(it: OvsRlsVltrnsItem, onViewDoc: () => void): TableRow[] {
   return [
     { label: '항목번호', value: it.clsfNo },
     { label: '품질등급', value: it.qltyGrd },
@@ -91,8 +91,8 @@ const ItemCard = memo(function ItemCard({
   item,
   onViewDoc,
 }: {
-  item: MockOvsRlsVltrnsItem
-  onViewDoc: (item: MockOvsRlsVltrnsItem) => void
+  item: OvsRlsVltrnsItem
+  onViewDoc: (item: OvsRlsVltrnsItem) => void
 }) {
   const [expanded, setExpanded] = useState(false)
   const allRows = useMemo(() => itemRows(item, () => onViewDoc(item)), [item, onViewDoc])
@@ -127,7 +127,7 @@ export function OvsRlsVltrnsNgtnPlanDtl2() {
   const visible = MOCK_ITEMS.slice(0, loaded)
 
   // onViewDoc — 안정 참조(ItemCard memo 유지). 클릭 품목의 첨부문서 바텀시트 오픈.
-  const handleViewDoc = useCallback((item: MockOvsRlsVltrnsItem) => {
+  const handleViewDoc = useCallback((item: OvsRlsVltrnsItem) => {
     setDocSheet({ open: true, clsfNo: item.clsfNo })
     console.log('[M72] 첨부문서 보기', item.clsfNo) // 추후 API: 품목 첨부문서 조회
   }, [])

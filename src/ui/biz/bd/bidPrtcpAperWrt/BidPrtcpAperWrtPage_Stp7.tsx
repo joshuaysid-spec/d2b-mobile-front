@@ -14,7 +14,7 @@ import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { AgreementForm, AGREEMENTS, type AgreementData } from '@/ui/biz/bd/bidPrtcpAperWrt/AgreementForm'
 import type { ApiError } from '@/types/api'
-import type { MockBidPrgrsItem } from '@/types/mock/bd'
+import type { BidPrgrsItem } from '@/types/mock/bd'
 
 // 문의처 — 설계서 '문의처 담당자 연락처 정보 표시'(slide112). 담당자 1건 = 기관/성명·직급 + 전화/이메일.
 // 설계서는 담당자·연락처 2열 카드가 담당자 수만큼 반복되는 형태 → 담당자 1건당 Table 1개로 반복 렌더.
@@ -59,7 +59,7 @@ const contactRows = (c: (typeof CONTACTS)[number]): TableRow[] => [
   },
 ]
 
-export function BidPrtcpAperWrtPage_Stp7({ detail }: { detail: MockBidPrgrsItem }) {
+export function BidPrtcpAperWrtPage_Stp7({ detail }: { detail: BidPrgrsItem }) {
   void detail // 공고 식별값 표시에 사용 가능(현재 미사용)
   const [checked, setChecked] = useState<string[]>([]) // 동의 완료된 동의서 id
   const [selected, setSelected] = useState<AgreementData | null>(null) // 현재 열람 중인 동의서

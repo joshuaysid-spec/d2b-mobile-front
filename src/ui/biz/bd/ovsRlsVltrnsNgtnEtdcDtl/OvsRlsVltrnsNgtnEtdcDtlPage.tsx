@@ -17,7 +17,7 @@ import { OvsRlsVltrnsNgtnEtdcDtl2 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcDtl/Ov
 import { OvsRlsVltrnsNgtnEtdcDtl3 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcDtl/OvsRlsVltrnsNgtnEtdcDtl3'
 import { OvsRlsVltrnsNgtnEtdcDtl4 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcDtl/OvsRlsVltrnsNgtnEtdcDtl4'
 import { OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcDtl/OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt'
-import type { MockOvsRlsVltrnsGeneral, MockOvsRlsVltrnsSummary } from '@/types/mock/bd'
+import type { OvsRlsVltrnsGeneral, OvsRlsVltrnsSummary } from '@/types/mock/bd'
 
 // 진행단계(설계서 slide429 "신청서 전체 진행단계 표시"): 신청서 → 서명 → 제출.
 // 이미 제출된 견적서 조회이므로 전부 완료(done).
@@ -36,7 +36,7 @@ const TABS: TabItem[] = [
 ]
 
 // 상단 요약 fallback (직접 URL 진입/새로고침) — 계획상세와 동일 값(설계서 slide411/429).
-const MOCK_SUMMARY: MockOvsRlsVltrnsSummary = {
+const MOCK_SUMMARY: OvsRlsVltrnsSummary = {
   taskSeNm: '국외',
   ctrtMthdNm: '수의계약',
   intgRfrncNo: 'BAD83990EFD',
@@ -49,7 +49,7 @@ const MOCK_SUMMARY: MockOvsRlsVltrnsSummary = {
 }
 
 // 스탭1 일반정보 데이터 — 설계서 slide430 공고일반 값·형식 그대로.
-const MOCK_GENERAL: MockOvsRlsVltrnsGeneral = {
+const MOCK_GENERAL: OvsRlsVltrnsGeneral = {
   pbancNo: 'EFD0007-2',
   pbancType: '정상공고',
   pbancRqstYmd: '2022-11-12',
@@ -72,7 +72,7 @@ const scrollTop = () => document.getElementById('app-scroll')?.scrollTo({ top: 0
 
 export function OvsRlsVltrnsNgtnEtdcDtlPage() {
   const navigate = useNavigate()
-  const summary = (useLocation().state as MockOvsRlsVltrnsSummary | null) ?? MOCK_SUMMARY
+  const summary = (useLocation().state as OvsRlsVltrnsSummary | null) ?? MOCK_SUMMARY
   const [tab, setTab] = useState('general')
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기 바텀시트
   const [rtrcnOpen, setRtrcnOpen] = useState(false) // 견적서 취소신청서작성(P82) 풀팝업

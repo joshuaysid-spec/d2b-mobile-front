@@ -1,4 +1,4 @@
 // domain tobe 타입 — 폐쇄망 실응답을 확인한 것만 여기 정의한다(임의/설계서 추정 정의 금지).
-// 더미(설계서 기반) 타입은 types/mock/domain.ts (Mock 접두) — 페이지를 실 API 로 전환할 때
+// 더미(설계서 기반) 타입은 types/mock/domain.ts  — 페이지를 실 API 로 전환할 때
 // 그 페이지·서비스·훅만 Mock→여기 타입으로 교체하고, 전 화면 전환 완료 시 mock 폴더째 삭제.
 export {}

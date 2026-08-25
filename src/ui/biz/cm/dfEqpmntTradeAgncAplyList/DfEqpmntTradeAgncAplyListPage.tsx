@@ -20,7 +20,7 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { BzentyRegGuide } from '@/ui/biz/cm/dfEqpmntTradeAgncAplyList/BzentyRegGuide'
-import type { MockDfEqpmntTradeAgncAplyItem } from '@/types/mock/cm'
+import type { DfEqpmntTradeAgncAplyItem } from '@/types/mock/cm'
 
 // 구분(regAplySecd)별 배지 색 — 신규=yellow / 갱신=green / 변경=blue(Figma 10020:83161).
 function kindColor(kind: string): 'blue' | 'green' | 'yellow' {
@@ -46,7 +46,7 @@ const HELP_ITEMS = [
 
 // ── 목록 목업(dl_dfEqpmntTradAgncAplyList, 설계서 slide178·180 항목명 영문) ─────────────────
 // 진행상황(aprvSecdNm): 말소/실효/승인/제출/반려/저장. 최신순(신청일자 desc).
-const dl_dfEqpmntTradAgncAplyList: MockDfEqpmntTradeAgncAplyItem[] = [
+const dl_dfEqpmntTradAgncAplyList: DfEqpmntTradeAgncAplyItem[] = [
   { id: '1', regAplySecd: '신규', rcptNo: '2026-0020', rcptYmd: '2026-05-01', aprvYmd: '2026-05-22', ersrYmd: '2026-05-22', expryYmd: '2026-05-22', aprvSecdNm: '저장' },
   { id: '2', regAplySecd: '갱신', rcptNo: '2026-0021', rcptYmd: '2026-05-01', aprvYmd: '2026-05-22', ersrYmd: '2026-05-22', expryYmd: '2026-05-22', aprvSecdNm: '승인' },
   { id: '3', regAplySecd: '신규', rcptNo: '2026-0018', rcptYmd: '2026-04-01', aprvYmd: '2026-04-10', ersrYmd: '', expryYmd: '2029-04-10', aprvSecdNm: '제출' },
@@ -57,7 +57,7 @@ const dl_dfEqpmntTradAgncAplyList: MockDfEqpmntTradeAgncAplyItem[] = [
 // ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 페이징 로직을 통째로 교체(cmService.selectDfEqpmntTradeAgncAplyList).
 //   설계서 slide178 '더보기 (10/258)' 시연 위해 5건을 258건으로 부풀린다.
 const TOTAL = 258
-const MOCK_LIST: MockDfEqpmntTradeAgncAplyItem[] = Array.from({ length: TOTAL }, (_, i) => {
+const MOCK_LIST: DfEqpmntTradeAgncAplyItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dl_dfEqpmntTradAgncAplyList[i % dl_dfEqpmntTradAgncAplyList.length]
   return { ...base, id: String(i + 1) }
 })
@@ -89,7 +89,7 @@ export function DfEqpmntTradeAgncAplyListPage() {
     console.log('[DfEqpmntTradeAgnc] pageSize →', size)
   }
   // 카드 클릭 → 신청 내역 상세(M16). 클릭 항목을 state 로 전달해 상단 즉시표시(service 없이 목업 fallback).
-  const handleCardClick = (item: MockDfEqpmntTradeAgncAplyItem) => {
+  const handleCardClick = (item: DfEqpmntTradeAgncAplyItem) => {
     navigate(ROUTES.DF_EQPMNT_TRADE_AGNC_DTL, { state: item })
   }
   // 신청 선택([신규(갱신)] → M17 / [변경] → M18). 신규·갱신 버튼 통합(사용자 확정 2026-08-25) —

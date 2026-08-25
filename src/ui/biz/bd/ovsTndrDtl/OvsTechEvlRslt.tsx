@@ -8,11 +8,11 @@
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockOvsTndrDtlItem } from '@/types/mock/bd'
+import type { OvsTndrDtlItem } from '@/types/mock/bd'
 
 export interface OvsTechEvlRsltProps {
   /** 상세에서 넘어온 항목 — 공고 식별/표시값 시드. */
-  detail: MockOvsTndrDtlItem
+  detail: OvsTndrDtlItem
 }
 
 // 신청업체 (dm_sbtInfo, 설계서 slide393) — 로그인 업체 정보라 목업.

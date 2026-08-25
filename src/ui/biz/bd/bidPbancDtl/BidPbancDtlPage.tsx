@@ -11,7 +11,7 @@ import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
-import type { MockBidPbancItem, MockBidPrgrsItem } from '@/types/mock/bd'
+import type { BidPbancItem, BidPrgrsItem } from '@/types/mock/bd'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
@@ -97,7 +97,7 @@ export function BidPbancDtlPage() {
 
   // 목록 → 상세 데이터 전달: navigate state 를 placeholder 로 즉시 렌더 + id 조회로 확정.
   //   URL 에 식별자를 두지 않으므로 state 없이 직접 진입하면 목록으로 되돌린다(아래 early return).
-  const stateItem = useLocation().state as MockBidPbancItem | null
+  const stateItem = useLocation().state as BidPbancItem | null
   const id = stateItem?.pbancNo ?? ''
   const { data: detail } = bdQueries.useSelectPbancGnrlInfo(id, stateItem ?? undefined)
   const insertItrstPbanc = bdQueries.useInsertItrstPbanc()
@@ -139,10 +139,10 @@ export function BidPbancDtlPage() {
     { id: 'fx', label: '환율정보 조회', variant: 'tertiary' },
   ]
 
-  // 신청서 화면들(사전심사/입찰서/참가신청서/포기·취소)은 입찰진행 아이템(MockBidPrgrsItem) 형태를 기대 —
+  // 신청서 화면들(사전심사/입찰서/참가신청서/포기·취소)은 입찰진행 아이템(BidPrgrsItem) 형태를 기대 —
   // 공고 아이템을 매핑해 전달한다. 공고 아이템에 없는 필드(연락처·진행 플래그)는
   // 목업으로 보완(추후 API: bdService.selectBidPbancDtl 응답으로 교체).
-  const prgrsDetail: MockBidPrgrsItem = {
+  const prgrsDetail: BidPrgrsItem = {
     rNum: detail.rnum,
     taskSeNm: detail.taskSeNm ?? '물품',
     pbancNo: detail.g2bPbancNoOd,

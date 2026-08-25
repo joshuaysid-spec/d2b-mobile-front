@@ -3,7 +3,7 @@
 // 계약 상세정보 순서는 slide27 화면 목업(계약번호~검사일자 + 기성금액~준공내용) 그대로.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockPxcndCmcnInspDtl as InspDtl } from '@/types/mock/ex'
+import type { PxcndCmcnInspDtl as InspDtl } from '@/types/mock/ex'
 
 export interface PxcndCmcnInspDtlProps {
   detail: InspDtl

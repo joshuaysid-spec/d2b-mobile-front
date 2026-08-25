@@ -12,7 +12,7 @@ import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/Summary
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsRlsVltrnsNgtnSrngRsltInq2 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnSrngRsltInq/OvsRlsVltrnsNgtnSrngRsltInq2'
-import type { MockOvsRlsVltrnsGeneral, MockOvsRlsVltrnsSrngRsltSummary, MockOvsRlsVltrnsSummary } from '@/types/mock/bd'
+import type { OvsRlsVltrnsGeneral, OvsRlsVltrnsSrngRsltSummary, OvsRlsVltrnsSummary } from '@/types/mock/bd'
 
 // 탭 (설계서 slide441: 일반정보 / 조회 결과)
 const TABS: TabItem[] = [
@@ -21,7 +21,7 @@ const TABS: TabItem[] = [
 ]
 
 // 상단 요약 fallback (직접 URL 진입/새로고침) — 설계서 slide441 값.
-const MOCK_SUMMARY: MockOvsRlsVltrnsSrngRsltSummary = {
+const MOCK_SUMMARY: OvsRlsVltrnsSrngRsltSummary = {
   taskSeNm: '국외',
   ctrtMthdNm: '수의계약',
   bidTypeNm: '단가제',
@@ -35,7 +35,7 @@ const MOCK_SUMMARY: MockOvsRlsVltrnsSrngRsltSummary = {
 }
 
 // 일반정보 탭 데이터 — 설계서 slide442 공고일반 값·형식 그대로.
-const MOCK_GENERAL: MockOvsRlsVltrnsGeneral = {
+const MOCK_GENERAL: OvsRlsVltrnsGeneral = {
   pbancNo: 'EFD0007-2',
   pbancType: '정상공고',
   pbancRqstYmd: '2022-11-12',
@@ -55,7 +55,7 @@ const MOCK_GENERAL: MockOvsRlsVltrnsGeneral = {
 }
 
 // ── 일반정보 탭 (slide442) — 일반정보 표 + 담당자 정보 표 ───────────────
-function GeneralInfo({ detail }: { detail: MockOvsRlsVltrnsGeneral }) {
+function GeneralInfo({ detail }: { detail: OvsRlsVltrnsGeneral }) {
   const generalRows: TableRow[] = [
     { label: '공고번호', value: detail.pbancNo },
     { label: '공고구분', value: detail.pbancType },
@@ -102,8 +102,8 @@ export function OvsRlsVltrnsNgtnSrngRsltInqPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
   // 상단 요약 — 넘어온 값(navigate state = 견적서 상세 요약)으로 공통 식별필드 override, 나머지는 결과조회 목업.
-  const passed = useLocation().state as MockOvsRlsVltrnsSummary | null
-  const summary: MockOvsRlsVltrnsSrngRsltSummary = passed
+  const passed = useLocation().state as OvsRlsVltrnsSummary | null
+  const summary: OvsRlsVltrnsSrngRsltSummary = passed
     ? {
         ...MOCK_SUMMARY,
         taskSeNm: passed.taskSeNm,

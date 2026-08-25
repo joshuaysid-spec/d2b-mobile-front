@@ -1,14 +1,14 @@
 // 대금청구상세(기성대가) - '세금계산서' 탭 콘텐츠 (MUI-WM-01-T18). 설계서 slide65, 68 — M05 T08 과 동일 구성.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockPxcndCstPymtClmDtl, MockTxBllItem } from '@/types/mock/wm'
+import type { PxcndCstPymtClmDtl, TxBllItem } from '@/types/mock/wm'
 
 export interface PxcndCstPymtClmDtl_TxivProps {
-  detail: MockPxcndCstPymtClmDtl
+  detail: PxcndCstPymtClmDtl
 }
 
 // 품목 1건 → 표 행 (dlt_txivList, slide68 1.5 순서).
-function bllRows(it: MockTxBllItem): TableRow[] {
+function bllRows(it: TxBllItem): TableRow[] {
   return [
     { label: '월일', value: it.bllPblcnYmd },
     { label: '품목', value: it.itemNm || '-' },

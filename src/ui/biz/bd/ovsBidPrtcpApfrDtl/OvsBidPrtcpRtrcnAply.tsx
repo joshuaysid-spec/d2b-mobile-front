@@ -11,10 +11,10 @@ import { TextArea } from '@/ui/common/base/TextArea'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type {
-  MockOvsBidPrtcpApfrDetail,
-  MockOvsRtrcnTarget,
-  MockOvsSbtInfo,
-  MockOvsSplyInfo,
+  OvsBidPrtcpApfrDetail,
+  OvsRtrcnTarget,
+  OvsSbtInfo,
+  OvsSplyInfo,
 } from '@/types/mock/bd'
 
 export interface OvsBidPrtcpRtrcnAplyHandle {
@@ -24,13 +24,13 @@ export interface OvsBidPrtcpRtrcnAplyHandle {
 
 interface OvsBidPrtcpRtrcnAplyProps {
   /** 공고일반 — 페이지 detail 로 취소신청내역 상단(공고 식별값)을 그린다 */
-  detail: MockOvsBidPrtcpApfrDetail
+  detail: OvsBidPrtcpApfrDetail
   /** 신청업체(dm_sbtInfo) */
-  sbtInfo: MockOvsSbtInfo
+  sbtInfo: OvsSbtInfo
   /** 입찰업체(dm_splyInfo) */
-  splyInfo: MockOvsSplyInfo
+  splyInfo: OvsSplyInfo
   /** 취소 대상 사업(개별 1건 또는 전체 건) — 사업명/구매요청번호/취소신청품목수 산출 */
-  targets: MockOvsRtrcnTarget[]
+  targets: OvsRtrcnTarget[]
   /** 제출 완료(확인) 시 호출(부모가 BottomSheet 를 닫음) */
   onSubmitted: () => void
 }

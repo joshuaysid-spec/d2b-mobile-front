@@ -40,7 +40,7 @@ import {
   type IdPswdLoginForm,
 } from '@/ui/biz/cm/idPswdLogin/IdPswdLoginPage.schema'
 import type { ApiError } from '@/types/api'
-import type { MockBzentyChcItem, MockLoginResult } from '@/types/mock/domain'
+import type { BzentyChcItem, LoginResult } from '@/types/mock/domain'
 
 // 로그인 대상 구분(설계서 2026-06-22 개정: 업체·기관 선택 추가).
 // 기관 선택 시 아이디/비밀번호 찾기 섹션 숨김.
@@ -90,7 +90,7 @@ export function IdPswdLoginPage() {
   const [loginTarget, setLoginTarget] = useState<string>('bzenty')
   // 로그인 성공 후 소속 업체 선택(P14) 바텀시트 — 목록은 로그인 응답(bzentyList)으로 채움.
   const [bzentyOpen, setBzentyOpen] = useState(false)
-  const [bzentyList, setBzentyList] = useState<MockBzentyChcItem[]>([])
+  const [bzentyList, setBzentyList] = useState<BzentyChcItem[]>([])
   const [bzentyCd, setBzentyCd] = useState('')
   // 로그인 실패 안내(AlertModal) — null 이면 닫힘.
   const [loginError, setLoginError] = useState<string | null>(null)
@@ -112,7 +112,7 @@ export function IdPswdLoginPage() {
   })
 
   // 로그인 확정 — 토큰/유저를 authStore 에 저장(store 가 localStorage 브리지 소유) 후 홈 이동.
-  const finalizeLogin = (result: MockLoginResult) => {
+  const finalizeLogin = (result: LoginResult) => {
     setAccessToken(result.accessToken)
     setUser(result.user)
     setBzentyOpen(false)

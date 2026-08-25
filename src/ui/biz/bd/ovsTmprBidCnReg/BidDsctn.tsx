@@ -23,7 +23,7 @@ import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockBscPbancInfo, MockItitbBidCnItem } from '@/types/mock/bd'
+import type { BscPbancInfo, ItitbBidCnItem } from '@/types/mock/bd'
 
 // ── 목업 코드값 — On-Load 입찰업체목록/화폐단위 조회 결과(설계서 slide319) ──
 // 추후 API: bdService.selectOvsBidBzentyList / bdService.selectCrncUnitList
@@ -48,7 +48,7 @@ const fmtAmt = (n: number) =>
 const fmtComma = (raw: string) => (raw ? Number(raw).toLocaleString('en-US') : '')
 
 // 입찰단가/화폐단위 변경 시 파생값 재계산 (설계서 slide319 이벤트)
-function recalcBidCn(row: MockItitbBidCnItem): MockItitbBidCnItem {
+function recalcBidCn(row: ItitbBidCnItem): ItitbBidCnItem {
   const exrt = USD_EXRT_BY_CRNC[row.crncNm]
   const untprc = Number(row.bdngTccrUntprc.replace(/,/g, '')) || 0
   if (!exrt || !untprc) {
@@ -89,7 +89,7 @@ const EMPTY_BID_FIELDS = {
   bdngUsdUntprc: '',
   bdngUsdAmt: '',
 }
-const MOCK_ITITB_BID_CN_LIST: MockItitbBidCnItem[] = [
+const MOCK_ITITB_BID_CN_LIST: ItitbBidCnItem[] = [
   {
     frcptlArtclNo: '1',
     invtNo: 'A000-A0001',
@@ -197,8 +197,8 @@ interface NoticeModal {
   description?: string
 }
 
-export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
-  const [rows, setRows] = useState<MockItitbBidCnItem[]>(MOCK_ITITB_BID_CN_LIST)
+export function BidDsctn({ detail }: { detail: BscPbancInfo }) {
+  const [rows, setRows] = useState<ItitbBidCnItem[]>(MOCK_ITITB_BID_CN_LIST)
   // 항목선택 체크 상태 — key 는 항목번호(frcptlArtclNo)
   const [checkedNos, setCheckedNos] = useState<string[]>([])
   // 내역 펼쳐보기/접기 상태
@@ -215,7 +215,7 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
   const visibleRows = rows.slice(0, visibleCount)
   const hasMore = visibleCount < rows.length
 
-  const updateRow = (frcptlArtclNo: string, patch: Partial<MockItitbBidCnItem>) =>
+  const updateRow = (frcptlArtclNo: string, patch: Partial<ItitbBidCnItem>) =>
     setRows((prev) =>
       prev.map((r) => (r.frcptlArtclNo === frcptlArtclNo ? recalcBidCn({ ...r, ...patch }) : r)),
     )
@@ -262,7 +262,7 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
     // 추후 API: bdService.uploadOvsBidCnDoc(...)
     updateRow(frcptlArtclNo, {
       [field]: field === 'itemSbstDocEn' ? '품목대체증빙.pdf' : 'MOQ증빙.pdf',
-    } as Partial<MockItitbBidCnItem>)
+    } as Partial<ItitbBidCnItem>)
   }
 
   // ── 입찰내역 저장 — 조건부 필수(Replace/MOQ=Y) 검증 후 저장(암호화) ──

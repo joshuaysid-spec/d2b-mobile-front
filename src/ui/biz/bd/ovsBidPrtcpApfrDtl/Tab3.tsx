@@ -12,9 +12,9 @@ import { InputLabel } from '@/ui/common/base/InputLabel'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type {
-  MockOvsBidBizExmptnItem,
-  MockOvsBidBizItem,
-  MockOvsRtrcnTarget,
+  OvsBidBizExmptnItem,
+  OvsBidBizItem,
+  OvsRtrcnTarget,
 } from '@/types/mock/bd'
 
 // 달러 금액 표기 — 설계서 '000,000,000,000.00' 형식(소수 2자리).
@@ -42,7 +42,7 @@ function fileCell(docNo: string | undefined, label: string) {
 }
 
 // 보증금비면제(dl_bizList) 사업 1건 → Table rows
-function bizRows(item: MockOvsBidBizItem, no: number): TableRow[] {
+function bizRows(item: OvsBidBizItem, no: number): TableRow[] {
   return [
     { label: '순번', value: String(no), type: 'number' },
     { label: '구매요청번호', value: item.prchsDmndNo },
@@ -59,7 +59,7 @@ function bizRows(item: MockOvsBidBizItem, no: number): TableRow[] {
 }
 
 // 보증금면제(dl_bizExmptnList) 사업 1건 → Table rows
-function bizExmptnRows(item: MockOvsBidBizExmptnItem, no: number): TableRow[] {
+function bizExmptnRows(item: OvsBidBizExmptnItem, no: number): TableRow[] {
   return [
     { label: '순번', value: String(no), type: 'number' },
     { label: '구매요청번호', value: item.prchsDmndNo },
@@ -75,11 +75,11 @@ function bizExmptnRows(item: MockOvsBidBizExmptnItem, no: number): TableRow[] {
 
 interface OvsBidPrtcpApfrDtlPage_Tab3Props {
   /** 입찰참가사업 및 입찰보증금 — 보증금비면제(dl_bizList) */
-  bizList: MockOvsBidBizItem[]
+  bizList: OvsBidBizItem[]
   /** 입찰참가사업 및 입찰보증금 — 보증금면제(dl_bizExmptnList) */
-  bizExmptnList: MockOvsBidBizExmptnItem[]
+  bizExmptnList: OvsBidBizExmptnItem[]
   /** 개별 입찰참가취소 클릭 → 입찰참가신청서취소(P82) 호출(컨테이너는 페이지 소유) */
-  onRtrcn: (target: MockOvsRtrcnTarget) => void
+  onRtrcn: (target: OvsRtrcnTarget) => void
 }
 
 export function OvsBidPrtcpApfrDtlPage_Tab3({
@@ -130,8 +130,8 @@ export function OvsBidPrtcpApfrDtlPage_Tab3({
             <Table
               rows={
                 isExmptn
-                  ? bizExmptnRows(item as MockOvsBidBizExmptnItem, i + 1)
-                  : bizRows(item as MockOvsBidBizItem, i + 1)
+                  ? bizExmptnRows(item as OvsBidBizExmptnItem, i + 1)
+                  : bizRows(item as OvsBidBizItem, i + 1)
               }
             />
             {/* 개별 건 입찰참가 취소(slide350) — 입찰참가신청서취소 팝업(P82) 호출 */}
