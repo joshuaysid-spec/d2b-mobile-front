@@ -1,7 +1,6 @@
 // 문서함 상세 - '첨부파일' 탭 콘텐츠 (MUI-CM-06-T03). 설계서 00.공통 v0.84 slide95·98.
 // 첨부문서다운로드 목록(dl_atchDocList) — 파일명 + [파일크기] + 개별 다운로드 버튼(FileDownloadList 재사용).
 // 첨부가 있는 문서에서만 탭이 노출된다(페이지가 분기). 데이터는 페이지 목업 → 추후 API 로 대체.
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import type { DocBoxAtchFile } from '@/types/mock/cm'
 
@@ -16,8 +15,7 @@ export function DocBoxDtl_Atch({ files }: { files: DocBoxAtchFile[] }) {
 
   return (
     <div className="flex w-full flex-col">
-      <PageTitle>첨부파일</PageTitle>
-      <div className="px-4 pb-6">
+      <div className="px-4 pt-4 pb-6">
         <FileDownloadList files={items} />
       </div>
     </div>

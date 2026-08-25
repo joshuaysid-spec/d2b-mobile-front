@@ -11,7 +11,6 @@ import { useLocation } from 'react-router-dom'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { DocBoxDtl_Info } from '@/ui/biz/cm/docBoxDtl/DocBoxDtl_Info'
 import { DocBoxDtl_AtchOpnn } from '@/ui/biz/cm/docBoxDtl/DocBoxDtl_AtchOpnn'
@@ -72,8 +71,7 @@ export function DocBoxDtlPage() {
         // 반려사유(rjctRsn) — 별도 화면 ID 없어 페이지 인라인(도메인 전용 조립물).
         return (
           <div className="flex w-full flex-col">
-            <PageTitle>반려사유</PageTitle>
-            <div className="px-4 pb-6">
+            <div className="px-4 pt-4 pb-6">
               <p className="whitespace-pre-line text-krds-body-md leading-relaxed text-krds-text-ink">
                 {detail.rjctRsn}
               </p>
