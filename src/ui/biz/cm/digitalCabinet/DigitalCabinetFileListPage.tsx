@@ -10,11 +10,14 @@
 //      · 파일 행 좌측 세로중앙에 **체크박스**(선택 여부 확인) + 선택 시 행 하이라이트 — 여러 건 선택 가능
 //      · 제일 하단 [선택 파일 첨부] — 선택 0건이면 비활성, 체크하면 활성
 //      · 첨부 시 신청서 등의 첨부항목에 선택 자료 업로드 후 **이전 화면으로 복귀**
-//    설계서는 이 UI 를 '파일첨부·파일업로드 > 디지털캐비닛 선택' 진입 케이스로 그리고 있으나, 상위 첨부 화면의
-//    진입점이 아직 없어 **항상 노출**한다(2026-08-03 사용자 지시). 진입 경로별 분기가 필요해지면 그때 나눈다.
+//    첨부 UI(체크박스+[선택 파일 첨부])는 '파일첨부·파일업로드 > 디지털캐비닛 선택' 진입 케이스 전용(설계서) —
+//    **navigate state 의 mode: 'attach'** 로 분기한다(2026-08-25 사용자 확정, 구 '항상 노출' 폐기).
+//    · 첨부 플로우 진입: navigate(ROUTES.DIGITAL_CABINET_FILES, { state: { mode: 'attach' } })
+//    · 디지털캐비닛(M14) 탐색 진입: state 에 mode 없음 → 조회 전용(체크박스/첨부 버튼 미노출)
+//    · 새로고침 등으로 state 유실 시 조회 모드 폴백(첨부 플로우는 복귀 전제라 무해).
 // 데이터=파일 내 목업(데이터영역 dl_digitalCabinetFileList 항목명/형식), 동작=경계 스텁.
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { Icon } from '@/ui/common/base/Icon'
 import { Button } from '@/ui/common/base/Button'
@@ -47,6 +50,9 @@ const MOCK_FILES: DigitalCabinetFile[] = [
 
 export function DigitalCabinetFileListPage() {
   const navigate = useNavigate()
+  // 진입 모드 — 파일첨부 플로우에서 왔을 때만 첨부 UI 노출(state.mode === 'attach'). 그 외 = 조회 전용.
+  const attachMode =
+    (useLocation().state as { mode?: 'attach' } | null)?.mode === 'attach'
   // 선택한 파일 id 집합(체크박스 — 여러 건 선택). [선택 파일 첨부] 활성 조건도 이 값으로 판정.
   const [selectedIds, setSelectedIds] = useState<string[]>([])
 
@@ -97,28 +103,32 @@ export function DigitalCabinetFileListPage() {
             <li key={file.fileId}>
               <button
                 type="button"
-                onClick={() => handleFileClick(file)}
-                // 행 자체가 선택 토글 — 체크박스는 시각 표시(버튼 안 중첩 상호작용 방지).
-                role="checkbox"
-                aria-checked={selected}
+                onClick={attachMode ? () => handleFileClick(file) : undefined}
+                // 첨부 모드: 행 자체가 선택 토글(체크박스는 시각 표시) / 조회 모드: 상호작용 없음.
+                role={attachMode ? 'checkbox' : undefined}
+                aria-checked={attachMode ? selected : undefined}
+                disabled={!attachMode}
                 className={cn(
                   'flex w-full items-center gap-krds-7 rounded-[12px] border bg-background p-krds-8 text-left shadow-[0px_0px_5px_0px_rgba(23,43,77,0.1)]',
                   'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
+                  !attachMode && 'cursor-default',
                   selected
                     ? 'border-krds-border-primary bg-krds-bg-primary-faint'
                     : 'border-krds-border-divider',
                 )}
               >
-                {/* 선택 여부 확인용 체크박스(설계서 2026-07-29 개정) — 좌측 세로중앙. */}
-                <Icon
-                  name={selected ? 'CheckBox' : 'CheckBoxOutlineBlank'}
-                  size={24}
-                  aria-hidden
-                  className={cn(
-                    'shrink-0',
-                    selected ? 'text-krds-text-primary' : 'text-krds-text-muted',
-                  )}
-                />
+                {/* 선택 체크박스(설계서 2026-07-29 개정) — 첨부 모드에서만 노출. */}
+                {attachMode && (
+                  <Icon
+                    name={selected ? 'CheckBox' : 'CheckBoxOutlineBlank'}
+                    size={24}
+                    aria-hidden
+                    className={cn(
+                      'shrink-0',
+                      selected ? 'text-krds-text-primary' : 'text-krds-text-muted',
+                    )}
+                  />
+                )}
                 {/* 파일 정보 — 체크박스 영역과 분리된 본문 컬럼. */}
                 <div className="flex min-w-px flex-1 items-center gap-krds-7">
                   <Icon
@@ -143,18 +153,20 @@ export function DigitalCabinetFileListPage() {
         })}
       </ul>
 
-      {/* [선택 파일 첨부] — 화면 제일 하단. 선택 0건이면 비활성, 체크하면 활성(설계서 slide117). */}
-      <div className="px-4 pb-6">
-        <Button
-          variant="primary"
-          className="w-full"
-          onClick={handleAttach}
-          disabled={selectedIds.length === 0}
-        >
-          <Icon name="Upload" size={20} aria-hidden />
-          선택 파일 첨부
-        </Button>
-      </div>
+      {/* [선택 파일 첨부] — 첨부 모드에서만 노출. 선택 0건이면 비활성(설계서 slide117). */}
+      {attachMode && (
+        <div className="px-4 pb-6">
+          <Button
+            variant="primary"
+            className="w-full"
+            onClick={handleAttach}
+            disabled={selectedIds.length === 0}
+          >
+            <Icon name="Upload" size={20} aria-hidden />
+            선택 파일 첨부
+          </Button>
+        </div>
+      )}
 
       {/* 맨 위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main). */}
       <FloatingActionButton
