@@ -30,17 +30,19 @@ import {
 } from '@/ui/biz/cm/indvInfoDtl/IndvInfoDtl.schema'
 
 // ── Dim 항목(수정 불가 — 설계서 slide200 'Dim 항목은 수정불가'. 예시값 slide199) ──
-const DIM_FIELDS: { id: string; label: string; value: string }[] = [
+// 순서는 설계서 slide199 와이어프레임 그대로(사용자 확정 2026-08-25):
+//   사용자 유형 → 아이디 → 사용자명 → 업체명 → [부서명(수정 가능)] → 실명인증여부 → 전화번호~팩스번호(수정 가능).
+const DIM_FIELDS_TOP: { id: string; label: string; value: string }[] = [
+  { id: 'userTy', label: '사용자 유형', value: '일반사용자' },
   { id: 'userId', label: '아이디', value: 'Test1' },
   { id: 'userNm', label: '사용자명', value: '홍길동' },
-  { id: 'userTy', label: '사용자 유형', value: '일반사용자' },
-  { id: 'rnmCert', label: '실명인증여부', value: '실명인증이 필요합니다.' },
-  { id: 'deptNm', label: '부서명', value: '총무팀' },
+  { id: 'bzentyNm', label: '업체명', value: '조달테스트' },
 ]
-const DIM_BZENTY = { id: 'bzentyNm', label: '업체명', value: '조달테스트' }
+const DIM_RNM_CERT = { id: 'rnmCert', label: '실명인증여부', value: '실명인증이 필요합니다.' }
 
-// 수정 가능 항목 초기값(설계서 slide199 예시 — 추후 회원정보 API)
+// 수정 가능 항목 초기값(설계서 slide199 예시 — 추후 회원정보 API). 부서명 포함(사용자 확정 2026-08-25).
 const INITIAL_EDITABLE: IndvInfoMdfcnForm = {
+  deptNm: '총무팀',
   emlAddr: 'abcde@dapa.go.kr',
   mblTelno: '010-1234-5678',
   telno: '02-1234-5678',
@@ -132,23 +134,26 @@ export function IndvInfoDtlPage() {
       {/* 기본정보 — 설계서 slide199/200 순서 그대로 input 형태(사용자 확정 2026-08-25, 구 Table 대체). */}
       <SectionTitle>기본정보</SectionTitle>
       <div className="flex flex-col gap-krds-7 px-4 pt-2">
-        {DIM_FIELDS.map((f) => (
+        {DIM_FIELDS_TOP.map((f) => (
           <div key={f.id} className="flex flex-col gap-krds-3">
             <InputLabel htmlFor={`indv-${f.id}`}>{f.label}</InputLabel>
             <InputBox id={`indv-${f.id}`} disabled value={f.value} readOnly />
           </div>
         ))}
-        {editableField('emlAddr', '이메일 주소', '이메일 주소를 입력해주세요', { required: true })}
+        {/* 부서명 — 수정 가능(사용자 확정 2026-08-25). 설계서 위치(업체명 다음) 유지 */}
+        {editableField('deptNm', '부서명', '부서명을 입력해주세요')}
+        <div className="flex flex-col gap-krds-3">
+          <InputLabel htmlFor={`indv-${DIM_RNM_CERT.id}`}>{DIM_RNM_CERT.label}</InputLabel>
+          <InputBox id={`indv-${DIM_RNM_CERT.id}`} disabled value={DIM_RNM_CERT.value} readOnly />
+        </div>
+        {/* 수정 가능 항목 — 설계서 slide199 순서: 전화번호 → 휴대전화번호 → 이메일 주소 → 팩스번호 */}
+        {editableField('telno', '전화번호', '전화번호를 입력해주세요', { required: true })}
         {editableField('mblTelno', '휴대전화번호', '휴대전화번호를 입력해주세요', {
           required: true,
           tel: true,
         })}
-        {editableField('telno', '전화번호', '전화번호를 입력해주세요', { required: true })}
+        {editableField('emlAddr', '이메일 주소', '이메일 주소를 입력해주세요', { required: true })}
         {editableField('fxno', '팩스번호', '팩스번호를 입력해주세요')}
-        <div className="flex flex-col gap-krds-3">
-          <InputLabel htmlFor={`indv-${DIM_BZENTY.id}`}>{DIM_BZENTY.label}</InputLabel>
-          <InputBox id={`indv-${DIM_BZENTY.id}`} disabled value={DIM_BZENTY.value} readOnly />
-        </div>
       </div>
 
       {/* 수신 설정 — 마이페이지 진입 시에만 표시(목록 진입 시 숨김) */}
