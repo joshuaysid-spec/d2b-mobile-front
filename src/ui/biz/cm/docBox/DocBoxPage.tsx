@@ -6,7 +6,7 @@
 //    동일하게 탭으로 노출 — 진입 시 마이페이지에서 넘어온 docType 으로 초기 탭 선택.)
 // 구성(위→아래): 분기 탭(TabList button) → 상단바(검색필터 버튼+표시개수, slide95 — 좌측 leftSlot 은 관심입찰공고
 //   M05 와 동일 패턴) → 카드 리스트 → 더보기 → 맨위로 FAB → 검색필터 풀팝업(공통 SearchFilter 셸).
-// 검색필터(slide96, 2026-08-24 추가): 첨언·첨부 여부(셀렉트) → 기간 설정(dateRange+빠른칩 1/3/6개월) → 문서 구분(셀렉트).
+// 검색필터(slide96, 2026-08-24 추가): 문서 구분(셀렉트) → 첨언·첨부 여부(셀렉트) → 기간 설정(dateRange+빠른칩 1/3/6개월).
 //   초기값 = 문서구분 전체 · 첨언첨부 전체 · 기간 최근 1개월. 검색 실행 시 문서구분은 상단 분기 탭에 동기화
 //   (반려 받은/반려한 → 반려 탭), 나머지 조건은 API 경계 스텁(서버 조회 파라미터 — 백엔드 연동 시 배선).
 //   카드 클릭 → 문서함 상세(M11)로 navigate(state 전달, CLAUDE.md "목록 → 상세 데이터 전달").
@@ -41,7 +41,6 @@ const DOC_TABS: TabItem[] = [
 ]
 
 // ── 검색필터 (MUI-CM-06-M10 검색필터, 설계서 slide96) — 공통 SearchFilter 셸 schema ──
-// 섹션 순서·항목은 설계서 와이어프레임 그대로: 첨언·첨부 여부 → 기간 설정 → 문서 구분.
 const DATE_PRESETS: DateRangePresetDef[] = [
   { label: '최근 1개월', months: 1 },
   { label: '최근 3개월', months: 3 },
@@ -50,6 +49,25 @@ const DATE_PRESETS: DateRangePresetDef[] = [
 const DOCBOX_FILTER_SCHEMA: SearchFilterSchema = {
   title: '검색필터',
   sections: [
+    // 섹션 순서 = 설계서 slide96 항목 순서(사용자 확정 2026-08-24): 문서 구분 → 첨언·첨부 여부 → 기간 설정.
+    {
+      key: 'docSe',
+      title: '문서 구분',
+      fields: [
+        {
+          type: 'select',
+          key: 'docSe',
+          options: [
+            { value: 'all', label: '전체' },
+            { value: 'received', label: '받은 문서' },
+            { value: 'sent', label: '보낸 문서' },
+            { value: 'rejectedReceived', label: '반려 받은 문서' },
+            { value: 'rejectedSent', label: '반려한 문서' },
+            { value: 'temp', label: '임시 저장' },
+          ],
+        },
+      ],
+    },
     {
       key: 'addAtch',
       title: '첨언, 첨부 여부',
@@ -69,24 +87,6 @@ const DOCBOX_FILTER_SCHEMA: SearchFilterSchema = {
       key: 'date',
       title: '기간 설정',
       fields: [{ type: 'dateRange', key: 'date', presets: DATE_PRESETS }],
-    },
-    {
-      key: 'docSe',
-      title: '문서 구분',
-      fields: [
-        {
-          type: 'select',
-          key: 'docSe',
-          options: [
-            { value: 'all', label: '전체' },
-            { value: 'received', label: '받은 문서' },
-            { value: 'sent', label: '보낸 문서' },
-            { value: 'rejectedReceived', label: '반려 받은 문서' },
-            { value: 'rejectedSent', label: '반려한 문서' },
-            { value: 'temp', label: '임시 저장' },
-          ],
-        },
-      ],
     },
   ],
 }

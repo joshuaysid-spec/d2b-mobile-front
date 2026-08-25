@@ -10,27 +10,34 @@ import { Icon } from '@/ui/common/base/Icon'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { ROUTES } from '@/constants/routes'
 
-// ⚠️ 현재 로그인 사용자 요약(설계서 slide194 예시) — 추후: 회원정보 API 로 교체.
-const MOCK_USER = {
-  userNm: '홍길동',
-  userId: 'Test1',
-  deptNm: '총무팀',
-  bzentyNm: '조달테스트',
+// ⚠️ 업체정보(dm_bzentyInfo, 설계서 v0.86 slide195·196 예시값 그대로) — 추후: 회원정보 API 로 교체.
+//   구 사용자 요약 카드(홍길동 님/아이디/부서명)는 설계서 미표기라 제거(사용자 확정 2026-08-25 — 설계서와 동일 구성).
+const MOCK_BZENTY = {
+  bzentyNm: '주식회사 국방전자조달', // 업체명
+  brno: '123-45-67890', // 사업자등록번호
+  bzentyCd: '7004F', // 업체코드
+  rprsvNm: '홍길동', // 대표자명
+  bzentyRgstrtYmd: '2026-02-02', // 등록일
+  crno: '123456-7890123', // 법인등록번호
 }
 
-const SUMMARY: { label: string; value: string }[] = [
-  { label: '아이디', value: MOCK_USER.userId },
-  { label: '부서명', value: MOCK_USER.deptNm },
-  { label: '업체명', value: MOCK_USER.bzentyNm },
+// 업체정보 행 — 설계서 slide196 항목설명(dm_bzentyInfo) 순서 그대로.
+const BZENTY_ROWS: { label: string; value: string }[] = [
+  { label: '업체명', value: MOCK_BZENTY.bzentyNm },
+  { label: '사업자등록번호', value: MOCK_BZENTY.brno },
+  { label: '업체코드', value: MOCK_BZENTY.bzentyCd },
+  { label: '대표자명', value: MOCK_BZENTY.rprsvNm },
+  { label: '등록일', value: MOCK_BZENTY.bzentyRgstrtYmd },
+  { label: '법인등록번호', value: MOCK_BZENTY.crno },
 ]
 
-// 진입 버튼 목록(CM-02 클러스터). 개인정보는 본인 인증(M02) 게이트를 거쳐 상세(M03)로 진입.
+// 진입 버튼 목록(설계서 v0.86 slide195 메뉴 구성). 개인정보는 본인 인증(M02) 게이트를 거쳐 상세(M03)로 진입.
+// '알림 서비스 신청 및 해지'(M09)는 이 화면에서 제외(사용자 확정 2026-08-25) — 마이페이지/앱 설정에서 진입.
 const MENU: { label: string; to: string }[] = [
-  { label: '개인정보 조회 및 수정', to: ROUTES.INDV_CERT }, // M02 인증 → M03 상세 → M04 수정
+  { label: '개인정보 상세', to: ROUTES.INDV_CERT }, // M02 인증 → M03 상세 → M04 수정 (메뉴명 설계서 slide195 표기)
   { label: '비밀번호 변경', to: ROUTES.PSWD_CHG }, // M05
   { label: '개인 신원 확인', to: ROUTES.INDV_IDNT_IDNTY }, // M06
   { label: '소속 사용자 목록', to: ROUTES.PRCM_BZENTY_USER_MNG }, // M07
-  { label: '알림 서비스 신청 및 해지', to: ROUTES.NOTI_SRVC_APLY }, // M09
   { label: '회원탈퇴', to: ROUTES.MB_WITHDRAWAL }, // P10
 ]
 
@@ -38,13 +45,11 @@ export function IndvInfoMngPage() {
   const navigate = useNavigate()
   return (
     <div className="flex w-full flex-col">
-      {/* 현재 사용자 정보 요약 */}
+      {/* 업체정보(dm_bzentyInfo) — 상단 배치(사용자 확정 2026-08-25). 항목·예시값은 설계서 slide195·196 그대로. */}
       <div className="mx-4 mt-4 flex flex-col gap-krds-5 rounded-krds-8 bg-krds-bg-primary-faint p-krds-8">
-        <span className="text-krds-body-lg font-bold leading-normal text-krds-text-ink">
-          {MOCK_USER.userNm} 님
-        </span>
+        <span className="text-krds-body-lg font-bold leading-normal text-krds-text-ink">업체정보</span>
         <dl className="flex flex-col gap-krds-3">
-          {SUMMARY.map((r) => (
+          {BZENTY_ROWS.map((r) => (
             <div key={r.label} className="flex items-start gap-krds-5 text-krds-body-md leading-normal">
               <dt className="w-28 shrink-0 text-krds-text-muted">{r.label}</dt>
               <dd className="min-w-px flex-1 wrap-break-word text-krds-text-ink">{r.value}</dd>

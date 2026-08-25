@@ -1,15 +1,15 @@
 // 군수품무역대리업 신청 내역 상세 (MUI-CM-01-M16, DfEqpmntTradeAgncAplyDtlPage).
-// Figma 정본 10020:83224 1:1. 설계서 00.공통 v0.84 slide179~181 항목명 준수.
-// 구성(위→아래, Figma): 요약(SummaryInfo: 구분 배지 + 접수번호 + 신청일자/처리일시) → 기본정보(SectionTitle+Table)
-//   → 연락처/이메일(SectionTitle+Table) → 반려사유(SectionTitle+TextArea) → 첨부파일(SectionTitle 총N건 + FileDownloadList)
-//   → footer [군수품무역대리업 등록증 발급](primary) / [군수품무역대리업 신청하기](secondary).
+// 설계서 00.공통 v0.86 slide184(레이아웃)·185(항목설명 dm_dfEqpmntTradAgncAplyInfo) 준수.
+// 구성(위→아래, 설계서 그대로 — 아코디언, 사용자 확정 2026-08-24):
+//   요약(SummaryInfo: 구분·진행상황 배지 + 접수번호)
+//   → Accordion [접수정보(접수번호/신청일시/처리일시/처리구분) / 업체정보(업태~주소 + 반려사유(있는 경우만)) /
+//      첨부파일 - 총 N건(등록신청서·이력서·청렴서약서·고용현황·기타 + 다운로드)]
+//   → footer [군수품무역대리업 등록증 발급](primary). ([신청하기] 버튼은 삭제 — 사용자 확정 2026-08-24.)
 // 상단은 목록에서 넘어온 항목(navigate state)으로 그리고(service 스텁 없음), 본문/첨부는 페이지 목업(설계서 항목명 준수).
 //   직접 URL 진입(state 없음) 대비 페이지 fallback 목업. 데이터 연동 시 목업만 실제 조회로 교체.
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
-import { ROUTES } from '@/constants/routes'
-import { SectionTitle } from '@/ui/common/base/SectionTitle'
-import { TextArea } from '@/ui/common/base/TextArea'
+import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
@@ -51,31 +51,41 @@ const MOCK_INFO: DfEqpmntTradeAgncAplyInfo = {
   atrzRjctRsn: '', // 반려 시에만 값(설계서 slide179 '반려 사유가 있는 경우 내역 표시')
 }
 
-// ── 첨부서류(dl_dfEqpmntTradAgncAplyAtchFileList, Figma 총 1건) — 첨부서류명(fileTtl)+첨부파일명(fileNm)+첨부일자. ──
+// ── 첨부서류(dl_dfEqpmntTradAgncAplyAtchFileList, 설계서 slide184 예시 5종) — 첨부서류명(fileTtl)+첨부파일명(fileNm). ──
 const MOCK_FILES: DfEqpmntTradeAgncAtchFile[] = [
-  { id: '1', fileTtl: '이력서', fileNm: '신분증.jpg', size: '2.01MB', regYmd: '2026-01-01' },
+  { id: '1', fileTtl: '등록신청서', fileNm: '등록신청서.hwp', size: '786KB', regYmd: '2026-05-01' },
+  { id: '2', fileTtl: '이력서', fileNm: '이력서(홍길동).hwp', size: '512KB', regYmd: '2026-05-01' },
+  { id: '3', fileTtl: '청렴서약서', fileNm: '청렴서약서.hwp', size: '324KB', regYmd: '2026-05-01' },
+  { id: '4', fileTtl: '고용현황', fileNm: '고용현황.hwp', size: '1.02MB', regYmd: '2026-05-01' },
+  { id: '5', fileTtl: '기타', fileNm: '기타증빙.hwp', size: '2.01MB', regYmd: '2026-05-01' },
 ]
 
-function baseRows(info: DfEqpmntTradeAgncAplyInfo): TableRow[] {
+// 접수정보(설계서 slide184 ① — 접수번호/신청일시/처리일시/처리구분)
+function rcptRows(item: DfEqpmntTradeAgncAplyItem, info: DfEqpmntTradeAgncAplyInfo): TableRow[] {
+  return [
+    { label: '접수번호', value: item.rcptNo || info.rcptNo },
+    { label: '신청일시', value: item.rcptYmd || info.rcptYmd },
+    { label: '처리일시', value: info.atrzYmd || '-' },
+    { label: '처리구분', value: info.atrzStcd || '-' },
+  ]
+}
+// 업체정보(설계서 slide184 — 업태~주소 + 반려사유(반려 사유가 있는 경우 내역 표시))
+function bzentyRows(info: DfEqpmntTradeAgncAplyInfo): TableRow[] {
   return [
     { label: '업태', value: info.bzstatCdNm },
     { label: '상호', value: info.bzentyNm },
     { label: '대표자성명', value: info.rprsvNm },
+    { label: '전화번호', value: info.bzentyTelno },
+    { label: '팩스번호', value: info.bzentyFxno },
+    { label: 'E-mail', value: info.bzentyEmlAddr },
     { label: '사업자번호', value: info.brno },
     { label: '설립일자', value: info.fndnYmd },
     { label: '주소', value: info.bzentyAddr },
-  ]
-}
-function contactRows(info: DfEqpmntTradeAgncAplyInfo): TableRow[] {
-  return [
-    { label: '연락처', value: info.bzentyTelno },
-    { label: '팩스', value: info.bzentyFxno },
-    { label: '이메일', value: info.bzentyEmlAddr },
+    ...(info.atrzRjctRsn ? [{ label: '반려사유', value: info.atrzRjctRsn }] : []),
   ]
 }
 
 export function DfEqpmntTradeAgncAplyDtlPage() {
-  const navigate = useNavigate()
   // 목록에서 넘어온 항목으로 상단을 그린다. 직접 진입(state 없음)이면 페이지 fallback 목업.
   const item = (useLocation().state as DfEqpmntTradeAgncAplyItem | null) ?? FALLBACK_ITEM
 
@@ -88,71 +98,50 @@ export function DfEqpmntTradeAgncAplyDtlPage() {
 
   // ── 액션 스텁 ──
   const handleIssue = () => console.log('[M16] 군수품무역대리업 등록증 발급(OZPrint PVB021)') // 추후: 등록증 발급(승인 시)
-  const goApply = () => navigate(ROUTES.DF_EQPMNT_TRADE_AGNC) // 신청하기 → 목록(신규/갱신/변경 선택)
 
   return (
     <div className="flex w-full flex-col">
-      {/* 상단 요약 — 구분 배지 + 접수번호 title + 신청일자/처리일시. */}
+      {/* 상단 요약 — 구분·진행상황 배지 + 접수번호 title(설계서 slide184 상단 카드). */}
       <SummaryInfo
-        badges={[{ label: item.regAplySecd }]}
+        badges={[{ label: item.regAplySecd }, { label: item.aprvSecdNm }]}
         title={`접수번호 ${item.rcptNo}`}
-        rows={[
-          { label: '신청일자', value: item.rcptYmd || MOCK_INFO.rcptYmd },
-          { label: '처리일시', value: MOCK_INFO.atrzYmd || '-' },
-        ]}
       />
 
-      {/* 기본정보 */}
-      <SectionTitle topDivider>기본정보</SectionTitle>
-      <div className="px-4 py-krds-7">
-        <Table rows={baseRows(MOCK_INFO)} />
-      </div>
-
-      {/* 연락처 / 이메일 */}
-      <SectionTitle topDivider>연락처 / 이메일</SectionTitle>
-      <div className="px-4 py-krds-7">
-        <Table rows={contactRows(MOCK_INFO)} />
-      </div>
-
-      {/* 반려사유 — 조회 전용(disabled TextArea). 반려 사유가 있으면 표시(설계서 slide179). */}
-      <SectionTitle topDivider>반려사유</SectionTitle>
-      <div className="px-4 py-krds-7">
-        <TextArea
-          disabled
-          value={MOCK_INFO.atrzRjctRsn ?? ''}
-          placeholder="내용을 입력하세요."
-          aria-label="반려사유"
-        />
-      </div>
-
-      {/* 첨부파일 — 총 N건 + 다운로드. */}
-      <SectionTitle topDivider info={`총 ${MOCK_FILES.length}건`}>
-        첨부파일
-      </SectionTitle>
-      <div className="flex flex-col gap-krds-8 px-4 py-krds-7">
-        {MOCK_FILES.map((f) => (
-          <div key={f.id} className="flex flex-col gap-krds-3">
-            <div className="flex items-center justify-between gap-krds-5">
-              <span className="text-[17px] font-medium leading-normal text-krds-text-ink">{f.fileTtl}</span>
-              <span className="shrink-0 text-[15px] leading-normal text-krds-text-muted">{f.regYmd}</span>
-            </div>
-            <FileDownloadList files={downloadFiles.filter((d) => d.id === f.id)} />
+      {/* 본문 — 설계서 slide184 섹션 순서 그대로, 아코디언(사용자 확정 2026-08-24). */}
+      <Accordion type="multiple" defaultValue={['rcpt', 'bzenty', 'atch']} className="w-full">
+        {/* 접수정보 — 접수번호/신청일시/처리일시/처리구분 */}
+        <AccordionSection value="rcpt" title="접수정보" borderTop={false}>
+          <Table rows={rcptRows(item, MOCK_INFO)} />
+        </AccordionSection>
+        {/* 업체정보 — 업태~주소 + 반려사유(반려 사유가 있는 경우 내역 표시) */}
+        <AccordionSection value="bzenty" title="업체정보">
+          <Table rows={bzentyRows(MOCK_INFO)} />
+        </AccordionSection>
+        {/* 첨부파일 — 총 N건(설계서 5종: 등록신청서·이력서·청렴서약서·고용현황·기타) + 다운로드 */}
+        <AccordionSection value="atch" title={`첨부파일 - 총 ${MOCK_FILES.length}건`}>
+          <div className="flex flex-col gap-krds-8">
+            {MOCK_FILES.map((f) => (
+              <div key={f.id} className="flex flex-col gap-krds-3">
+                <div className="flex items-center justify-between gap-krds-5">
+                  <span className="text-[17px] font-medium leading-normal text-krds-text-ink">{f.fileTtl}</span>
+                  <span className="shrink-0 text-[15px] leading-normal text-krds-text-muted">{f.regYmd}</span>
+                </div>
+                <FileDownloadList files={downloadFiles.filter((d) => d.id === f.id)} />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </AccordionSection>
+      </Accordion>
 
-      {/* 하단 액션 — [등록증 발급](primary) / [신청하기](secondary). Figma 10020:83224 세로 2버튼.
-          ※ Figma 는 두 버튼 모두 표시. 설계서/이전 지시는 등록증 발급을 '승인 시' 조건 — 조건 배선은 추후. */}
+      {/* 하단 액션 — [등록증 발급](primary) 단독. [신청하기] 삭제(사용자 확정 2026-08-24).
+          ※ 설계서/이전 지시는 등록증 발급을 '승인 시' 조건 — 조건 배선은 추후. */}
       <div
         className="sticky bottom-0 z-30 border-t border-krds-border-divider bg-background px-4 pt-3"
         style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
       >
         <ButtonGroup
           layout="vertical"
-          items={[
-            { label: '군수품무역대리업 등록증 발급', variant: 'primary', onClick: handleIssue },
-            { label: '군수품무역대리업 신청하기', variant: 'secondary', onClick: goApply },
-          ]}
+          items={[{ label: '군수품무역대리업 등록증 발급', variant: 'primary', onClick: handleIssue }]}
         />
       </div>
     </div>

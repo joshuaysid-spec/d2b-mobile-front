@@ -14,6 +14,7 @@ import dayjs from 'dayjs'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
+import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
@@ -160,6 +161,8 @@ export function DmstSosCnfdocListPage() {
   // P20 신청 팝업(BottomSheet) — 컨테이너/폼은 페이지가 소유(설계서 slide133).
   const [aplyOpen, setAplyOpen] = useState(false)
   const [toastOpen, setToastOpen] = useState(false)
+  // 서류 출력 확인(MUI-BD-01-P14) — 신청 제출 성공 시 호출(사용자 확정 2026-08-25, 신청 즉시 발급이라 출력 확인으로 이어짐).
+  const [outputOpen, setOutputOpen] = useState(false)
   const {
     control,
     handleSubmit,
@@ -200,10 +203,12 @@ export function DmstSosCnfdocListPage() {
     resetForm({ aplyRsn: '' })
     setAplyOpen(true)
   }
-  // P20 [신청하기] 제출 성공 → 팝업 닫기 > 완료 토스트 > 목록 리프래시(발급 가능 상태)(설계서 slide133).
+  // P20 [신청하기] 제출 성공 → 팝업 닫기 > 완료 토스트 > 서류 출력 확인 팝업(MUI-BD-01-P14) 호출
+  // (사용자 확정 2026-08-25 — 신청 시 바로 발급(설계서 slide134 비고)이라 출력 확인으로 이어짐).
   const onAplySubmit = (values: DmstSosCnfdocAplyForm) => {
     setAplyOpen(false)
     setToastOpen(true)
+    setOutputOpen(true)
     console.log('[DmstSosCnfdoc] 신청', { ...APPLICANT, aplyRsn: values.aplyRsn })
     // cmService.insertDmstSosCnfdocAply({ aplcntNm, aplcntTelno, aplyRsn }) → 성공 시 목록 재조회
   }
@@ -346,6 +351,22 @@ export function DmstSosCnfdocListPage() {
         value={filter}
         defaultValue={defaultValue}
         onSearch={handleFilterSearch}
+      />
+
+      {/* 서류 출력 확인 (MUI-BD-01-P14) — 신청 제출 성공 시 호출. 확인=OZ 리포트 조달원 확인서 출력(스텁).
+          국외 조달원등록증 목록(OvsSosCnfdocListPage)의 P14 인라인 AlertModal 패턴과 동일. */}
+      <AlertModal
+        open={outputOpen}
+        onOpenChange={setOutputOpen}
+        variant="info"
+        title="서류 출력 확인"
+        description="OZ 리포트가 실행되며, 로딩에 약간의 시간이 소요됩니다. 서류 출력을 진행할까요?"
+        secondaryAction={{ label: '취소' }}
+        primaryAction={{
+          label: '확인',
+          onClick: () =>
+            console.log('[DmstSosCnfdoc] 조달원 확인서 출력 — OZ 리포트 호출(스텁)'),
+        }}
       />
 
       {/* 신청 완료 토스트(설계서 slide139 '신청 되었습니다.') */}
