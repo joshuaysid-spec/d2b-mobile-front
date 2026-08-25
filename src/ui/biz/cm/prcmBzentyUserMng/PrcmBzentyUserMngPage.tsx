@@ -79,9 +79,10 @@ const MOCK_USERS: BzentyUser[] = Array.from({ length: TOTAL }, (_, i) => {
   return { ...base, id: String(i + 1), userId: `test${i + 1}` }
 })
 
-// 업무도움(HelpDisclosure) — 퇴사자 계정 즉시 삭제 안내(설계서 slide203).
+// 업무도움(HelpDisclosure) — 퇴사자 계정 즉시 삭제 안내(설계서 v0.86 slide208 문구 전문, 2026-08-25 수정).
 const HELP_ITEMS = [
-  '퇴사자 계정 즉시 삭제 요망 — 퇴사자의 계정을 방치할 경우, 타사 이직 후 기존 ID를 통한 입찰/계약 정보 무단 열람 및 영업비밀 유출 사고가 발생할 수 있습니다.',
+  '퇴사자 계정 즉시 삭제 요망',
+  '퇴사자의 계정을 방치할 경우, 타사 이직 후 기존 ID를 통한 입찰/계약 정보 무단 열람 및 영업비밀 유출사고가 발생할 수 있습니다. 계정 관리 소홀로 인해 야기되는 모든 법적 문제와 손해배상 책임은 해당 업체(대표자)에 귀속되므로, 퇴사 직원의 계정은 즉시 퇴사(탈퇴)해 주시기 바랍니다.',
 ]
 
 export function PrcmBzentyUserMngPage() {
@@ -156,8 +157,8 @@ export function PrcmBzentyUserMngPage() {
 
   return (
     <div className="flex w-full flex-col">
-      {/* 업무도움 — 퇴사자 계정 즉시 삭제 안내(기본 접힘, 2026-08-05 요청). */}
-      <HelpDisclosure title="소속 사용자 관리 안내" items={HELP_ITEMS} />
+      {/* 업무도움 — 퇴사자 계정 즉시 삭제 안내(기본 접힘, 2026-08-05 요청). 타이틀·문구 설계서 slide208 그대로(2026-08-25). */}
+      <HelpDisclosure title="업무도움" items={HELP_ITEMS} />
 
       {/* 검색바 — 검색기준 셀렉트(기본 사용자명) + 입력(placeholder, X 초기화 → 즉시 목록 초기화). */}
       <div className="flex items-center gap-krds-5 px-4 pt-4">
@@ -275,13 +276,13 @@ function UserCard({
 
       {/* 콘텐츠 — pointer-events-none 로 클릭을 뒤의 nav 버튼으로 통과, 상태변경만 pointer-events-auto. */}
       <div className="pointer-events-none relative z-10 flex flex-col gap-krds-5">
-        {/* 배지 — 사용자유형 + 상태 */}
+        {/* 배지 — 상태 + 사용자유형(설계서 slide208 카드: 상태 코드가 앞, 사용자 확정 2026-08-25) */}
         <div className="flex flex-wrap items-center gap-krds-5">
-          <Badge type="pastel" color={userTyColor(user.userTyNm)}>
-            {user.userTyNm}
-          </Badge>
           <Badge type="pastel" color={sttsColor(user.userSttsNm)}>
             {user.userSttsNm}
+          </Badge>
+          <Badge type="pastel" color={userTyColor(user.userTyNm)}>
+            {user.userTyNm}
           </Badge>
         </div>
 
