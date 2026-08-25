@@ -170,10 +170,9 @@ export function MyTaskHstryPage() {
 
   return (
     <div className="flex w-full flex-col">
-      {/* 상단 분기 탭 — 4가지 현황(입찰참가신청/입찰서제출/공개수의협상/계약).
-          line 탭 + fitted(4등분 균등 폭, 스크롤 없음) — 구 button 칩·가로 스크롤에서 전환(사용자 확정).
-          ⚠️ 6글자 라벨이 좁은 기기(360px)에서 빠듯할 수 있음 — 잘리면 scrollButtons 복귀 검토. */}
-      <TabList fitted value={tab} onChange={handleTab} items={STTS_TABS} />
+      {/* 상단 분기 탭 — 4가지 현황(입찰참가신청/입찰서제출/공개수의협상/계약). line 탭(구 button 칩에서 전환).
+          fitted(4등분 균등)는 360px 에서 6글자 라벨이 잘려 불가 확인(260825) — 가로 스크롤로 노출. */}
+      <TabList value={tab} onChange={handleTab} items={STTS_TABS} scrollButtons="auto" />
 
       {/* 상단바 — 총건수 + 표시개수 셀렉트. */}
       <ListSectionHeader
