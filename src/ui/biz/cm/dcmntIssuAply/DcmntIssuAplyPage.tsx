@@ -9,10 +9,10 @@ import { ROUTES } from '@/constants/routes'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Icon } from '@/ui/common/base/Icon'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { BzentyInfo } from '@/types/cm'
+import type { MockBzentyInfo } from '@/types/mock/cm'
 
 // 업체정보 목업 — 설계서 slide238 표시값 그대로 (추후: 로그인 업체 정보 API)
-const MOCK_BZENTY_INFO: BzentyInfo = {
+const MOCK_BZENTY_INFO: MockBzentyInfo = {
   bzentyNm: '주식회사 국방전자조달',
   brno: '123-45-67890',
   bzentyCd: '7004F',

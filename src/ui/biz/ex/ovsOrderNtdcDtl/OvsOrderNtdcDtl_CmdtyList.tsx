@@ -6,17 +6,17 @@ import { exQueries } from '@/queries/cts/ex/exQueries'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsOrderNtdcDtl, OvsOrderNtdcItemRow } from '@/types/ex'
+import type { MockOvsOrderNtdcDtl, MockOvsOrderNtdcItemRow } from '@/types/mock/ex'
 
 export interface OvsOrderNtdcDtl_CmdtyListProps {
   /** 조회 대상 발주통보서 식별자 — 페이지(navigate state id)가 주입. */
   id: string
   /** 요약 정보(품목수/금액) — 페이지 조회(detail)에서 주입. */
-  detail: OvsOrderNtdcDtl
+  detail: MockOvsOrderNtdcDtl
 }
 
 // 품목 1건 → 표 행 (dl_orderNtdcItem, slide81~82 1.2 순서).
-function itemRows(it: OvsOrderNtdcItemRow): TableRow[] {
+function itemRows(it: MockOvsOrderNtdcItemRow): TableRow[] {
   return [
     { label: '번호', value: String(it.no) },
     { label: '재고번호', value: it.invtNo },

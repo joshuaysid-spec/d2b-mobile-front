@@ -3,13 +3,13 @@
 //   접수한 신청 데이터를 읽기전용으로 표시(아코디언 + Table). 구성: 일반정보 · 법인/개인 구분 · 보안측정인원 · FSC · 영업정보.
 //   ⚠️ 국내소재상사(T06)는 설계서에 데이터영역(항목명 영문) 표가 없어 화면 표기 기준 잠정 영문키(types/cm 참고).
 //   데이터=목업(설계서 slide144·145 예시값) — 추후 API: cmService.selectBzentyInfoAddRegAplyDtl. (2026-07-01 개정: 주민등록번호 삭제)
-import type { ScrtyMsrmtPrsn, DmsAgtFscCode } from '@/types/cm'
+import type { MockScrtyMsrmtPrsn, MockDmsAgtFscCode } from '@/types/mock/cm'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 
 // 보안측정인원 — slide144 예시값(홍길동/적격/2022-02-02/증명서.pdf).
-const PERSONS: ScrtyMsrmtPrsn[] = [
+const PERSONS: MockScrtyMsrmtPrsn[] = [
   { id: '1', prsnNm: '홍길동', qualYn: '적격', scrtMsrYmd: '2022-02-02', fileName: '증명서.pdf' },
 ]
 // 법인/개인 구분 — slide144 예시값.
@@ -26,7 +26,7 @@ const CORP = {
   scrtMsrRslt: '적격',
 }
 // FSC — slide145 예시값(0001/테스트).
-const FSC_LIST: DmsAgtFscCode[] = [{ fscCd: '0001', gunGrdNm: '테스트' }]
+const FSC_LIST: MockDmsAgtFscCode[] = [{ fscCd: '0001', gunGrdNm: '테스트' }]
 // 영업정보 — slide145 예시값.
 const SALE = {
   anlSaleAmt: '0 천원',
@@ -47,7 +47,7 @@ const GNRL = {
   addrEng: '102, 11st, jonglo-gu, seoul, korea',
 }
 
-function personRows(d: ScrtyMsrmtPrsn): TableRow[] {
+function personRows(d: MockScrtyMsrmtPrsn): TableRow[] {
   return [
     { label: '성명', value: d.prsnNm },
     { label: '적격여부', value: d.qualYn },

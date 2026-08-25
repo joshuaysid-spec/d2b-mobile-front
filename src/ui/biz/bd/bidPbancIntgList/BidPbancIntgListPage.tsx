@@ -26,7 +26,7 @@ import type {
   SearchFilterSchema,
   SearchFilterValue,
 } from '@/types/search-filter'
-import type { BidPbancItem } from '@/types/bd'
+import type { MockBidPbancItem } from '@/types/mock/bd'
 
 // 빠른검색 대상 — 설계서 검색조건(공고명/공고번호). 필드는 실 인터페이스(IBidPbancList) 키.
 const SEARCH_TARGETS = [
@@ -290,7 +290,7 @@ export function BidPbancIntgListPage() {
   const handleLoadMore = () => {
     setPage(page + 1)
   }
-  const handleCardClick = (it: BidPbancItem) => {
+  const handleCardClick = (it: MockBidPbancItem) => {
     // 업무구분(taskSeNm) 데이터 필드로 국내/국외 상세 분기 — 목록 아이템을 state 로 전달(즉시표시 초기값).
     if (it.taskSeNm === '국외') {
       // 국외 입찰공고 상세(MUI-BD-01-M71 · 탭 T71~T73(구 M71~M73 — v1.83 재편), /bd/ovsBidPbancDtl)

@@ -20,10 +20,10 @@ import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsTndrSbmsnPage_Stp2 } from '@/ui/biz/bd/ovsTndrSbmsn/Stp2'
 import { OvsTndrSbmsnPage_Stp3 } from '@/ui/biz/bd/ovsTndrSbmsn/Stp3'
-import type { BidPrgrsItem, OvsTndrSbmsnDetail } from '@/types/bd'
+import type { MockBidPrgrsItem, MockOvsTndrSbmsnDetail } from '@/types/mock/bd'
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 slide366 예시값 그대로.
-const MOCK_OVS_TNDR_DETAIL: OvsTndrSbmsnDetail = {
+const MOCK_OVS_TNDR_DETAIL: MockOvsTndrSbmsnDetail = {
   pbancNo: 'EFD0007',
   pbancOd: '2',
   prchsDmndNo: 'BAD839380-001',
@@ -62,10 +62,10 @@ export function OvsTndrSbmsnPage() {
   // 목록(국외 입찰진행)에서 넘어온 항목으로 상단을 그린다 — 넘어온 항목에 없는 항목(담당자 등)은 목업 보완.
   // 직접 URL 진입(새로고침) 시에도 화면이 완전히 그려지도록 목업과 병합.
   //   rNum(진행 항목 번호)은 URL 미포함 — 진입 화면이 state 로 함께 넘긴다(신청완료 요약 구동용).
-  const stateItem = (location.state ?? null) as (Partial<OvsTndrSbmsnDetail> & { rNum?: string }) | null
+  const stateItem = (location.state ?? null) as (Partial<MockOvsTndrSbmsnDetail> & { rNum?: string }) | null
   // 테스트용 입찰방법 오버라이드 — ?bidMthdNm=총액제 로 직접 진입해 M73(총액제) 확인 가능.
   const bidMthdParam = new URLSearchParams(location.search).get('bidMthdNm')
-  const detail: OvsTndrSbmsnDetail = {
+  const detail: MockOvsTndrSbmsnDetail = {
     ...MOCK_OVS_TNDR_DETAIL,
     ...stateItem,
     ...(bidMthdParam === '단가제' || bidMthdParam === '총액제'
@@ -113,8 +113,8 @@ export function OvsTndrSbmsnPage() {
     // 신청하기(설계서 slide369·373 투찰 클릭) — 입찰 작성내역 암호화 저장(모의입찰 상태면 모의투찰).
     console.log('[M74] 국외 입찰서 제출(투찰)', detail.pbancNo, detail.pbancOd)
     // 추후 API: bdService.insertOvsTndrSbmsn(pbancNo, pbancOd, ...)
-    // 신청완료(M08) 요약 헤더 구동용 — 기존 AplyCmptnPage(BidPrgrsItem 기반) 재사용을 위한 매핑.
-    const aplyDetail: BidPrgrsItem = {
+    // 신청완료(M08) 요약 헤더 구동용 — 기존 AplyCmptnPage(MockBidPrgrsItem 기반) 재사용을 위한 매핑.
+    const aplyDetail: MockBidPrgrsItem = {
       rNum: stateItem?.rNum ?? '0',
       taskSeNm: '국외',
       pbancNo: `${detail.pbancNo}-${detail.pbancOd}`,

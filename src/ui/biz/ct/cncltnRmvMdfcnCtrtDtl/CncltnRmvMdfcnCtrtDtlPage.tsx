@@ -19,7 +19,7 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { CncltnRmvMdfcnCtrtDtl_Cn } from '@/ui/biz/ct/cncltnRmvMdfcnCtrtDtl/CncltnRmvMdfcnCtrtDtl_Cn'
 import { CncltnRmvMdfcnCtrtDtl_Ctrt } from '@/ui/biz/ct/cncltnRmvMdfcnCtrtDtl/CncltnRmvMdfcnCtrtDtl_Ctrt'
 import { CncltnRmvMdfcnCtrtDtl_Spcl } from '@/ui/biz/ct/cncltnRmvMdfcnCtrtDtl/CncltnRmvMdfcnCtrtDtl_Spcl'
-import type { CncltnRmvListItem } from '@/types/ct'
+import type { MockCncltnRmvListItem } from '@/types/mock/ct'
 
 // ── 탭 (slide131 탭바: 상세정보/수정계약명세서/특수조건) ──────────────────────
 const TABS: TabItem[] = [
@@ -39,7 +39,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CncltnRmvMdfcnCtrtDtlPage() {
-  const stateItem = useLocation().state as CncltnRmvListItem | null
+  const stateItem = useLocation().state as MockCncltnRmvListItem | null
   const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')

@@ -26,7 +26,7 @@ import { OvsWtgrTab } from '@/ui/biz/ct/ovsElctrCtrtPrgrsDtl/OvsWtgrTab'
 import { OvsStmtxTab } from '@/ui/biz/ct/ovsElctrCtrtPrgrsDtl/OvsStmtxTab'
 import { OvsCtrtDtstTab } from '@/ui/biz/ct/ovsElctrCtrtPrgrsDtl/OvsCtrtDtstTab'
 import { OvsElctrCtrtPrgrsDtlTab_Adoc } from '@/ui/biz/ct/ovsElctrCtrtPrgrsDtl/OvsElctrCtrtPrgrsDtlTab_Adoc'
-import type { CtrtIntgListItem } from '@/types/ct'
+import type { MockCtrtIntgListItem } from '@/types/mock/ct'
 
 // ── 탭 (slide149 탭바 + slide155 탭 이벤트: 일반현황~계약명세서 + 첨부서류) ────
 const TABS: TabItem[] = [
@@ -50,7 +50,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 
 export function OvsElctrCtrtPrgrsDtlPage() {
   const navigate = useNavigate()
-  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const stateItem = useLocation().state as MockCtrtIntgListItem | null
   const id = stateItem?.id ?? ''
   const [tab, setTab] = useState('gnrl')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()

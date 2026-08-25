@@ -2,7 +2,7 @@
 // 아코디언 3개(계약 상세정보 · 계약금액 · 담당자 정보) — M03 상세정보(_Cn)와 동일 구조, 필드 세트만 공사용.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CstrnElctrCtrtPrgrsDtl as CstrnDtl } from '@/types/ct'
+import type { MockCstrnElctrCtrtPrgrsDtl as CstrnDtl } from '@/types/mock/ct'
 
 export interface CstrnElctrCtrtPrgrsDtl_CnProps {
   detail: CstrnDtl

@@ -15,7 +15,7 @@ import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
-import type { OvsTndrSbmsnDetail } from '@/types/bd'
+import type { MockOvsTndrSbmsnDetail } from '@/types/mock/bd'
 
 // ── 입찰참여품목(단가제) 데이터 영역(dl_ititbBidCnList, 설계서 slide371) ──
 export interface OvsItitbBidCnItem {
@@ -354,7 +354,7 @@ function ItitbItemCard({
   )
 }
 
-export function OvsTndrSbmsnPage_Stp2({ detail }: { detail: OvsTndrSbmsnDetail }) {
+export function OvsTndrSbmsnPage_Stp2({ detail }: { detail: MockOvsTndrSbmsnDetail }) {
   // 단가제(M72)/총액제(M73) 데이터 모드 분기 — 임시 항목 bidMthdNm(페이지 타입 주석 참고).
   const isUntprc = (detail.bidMthdNm ?? '단가제') === '단가제'
 

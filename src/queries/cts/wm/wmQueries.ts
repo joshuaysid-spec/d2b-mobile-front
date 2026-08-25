@@ -5,17 +5,17 @@ import { useQuery } from '@tanstack/react-query'
 import { wmService } from '@/services/cts/wm'
 import { wmKeys } from '@/queries/cts/wm/wmKeys'
 import type {
-  PymtClmIntgListRequest,
-  PymtClmPrgrsPrstRequest,
-  RtnPymtDfryInfoRequest,
-  OvsCmdtyRcvCnfdocRequest,
-  OvsPymtPrgrsRequest,
-  OvsRtnPymtDfryInfoRequest,
-} from '@/types/wm'
+  MockPymtClmIntgListRequest,
+  MockPymtClmPrgrsPrstRequest,
+  MockRtnPymtDfryInfoRequest,
+  MockOvsCmdtyRcvCnfdocRequest,
+  MockOvsPymtPrgrsRequest,
+  MockOvsRtnPymtDfryInfoRequest,
+} from '@/types/mock/wm'
 
 export const wmQueries = {
   /** 대금청구통합목록(M01) — 키워드 세부 필터/더보기 페이징은 페이지 클라이언트 로직 유지(서버 전환 시 req 로 이행). */
-  useSelectPymtClmIntgList(req: PymtClmIntgListRequest = {}) {
+  useSelectPymtClmIntgList(req: MockPymtClmIntgListRequest = {}) {
     return useQuery({
       queryKey: wmKeys.selectPymtClmIntgList(req),
       queryFn: () => wmService.selectPymtClmIntgList(req),
@@ -131,7 +131,7 @@ export const wmQueries = {
   },
 
   /** 대금청구진행현황(M11). */
-  useSelectPymtClmPrgrsList(req: PymtClmPrgrsPrstRequest = {}) {
+  useSelectPymtClmPrgrsList(req: MockPymtClmPrgrsPrstRequest = {}) {
     return useQuery({
       queryKey: wmKeys.selectPymtClmPrgrsList(req),
       queryFn: () => wmService.selectPymtClmPrgrsList(req),
@@ -139,7 +139,7 @@ export const wmQueries = {
   },
 
   /** 대금지불정보(반납)(M10). */
-  useSelectPymtDfryInfoRtnList(req: RtnPymtDfryInfoRequest = {}) {
+  useSelectPymtDfryInfoRtnList(req: MockRtnPymtDfryInfoRequest = {}) {
     return useQuery({
       queryKey: wmKeys.selectPymtDfryInfoRtnList(req),
       queryFn: () => wmService.selectPymtDfryInfoRtnList(req),
@@ -147,7 +147,7 @@ export const wmQueries = {
   },
 
   /** 물품수령확인서목록(M71, 국외) — 계약번호 필수라 값이 있을 때만 조회. */
-  useSelectGoodsReceiveConfirmList(req: OvsCmdtyRcvCnfdocRequest = {}) {
+  useSelectGoodsReceiveConfirmList(req: MockOvsCmdtyRcvCnfdocRequest = {}) {
     return useQuery({
       queryKey: wmKeys.selectGoodsReceiveConfirmList(req),
       queryFn: () => wmService.selectGoodsReceiveConfirmList(req),
@@ -183,7 +183,7 @@ export const wmQueries = {
   },
 
   /** 대금지불정보(M75, 국외). */
-  useSelectPaymentList(req: OvsRtnPymtDfryInfoRequest = {}) {
+  useSelectPaymentList(req: MockOvsRtnPymtDfryInfoRequest = {}) {
     return useQuery({
       queryKey: wmKeys.selectPaymentList(req),
       queryFn: () => wmService.selectPaymentList(req),
@@ -191,7 +191,7 @@ export const wmQueries = {
   },
 
   /** 대금지급현황(M77, 국외) — 계약번호 필수라 값이 있을 때만 조회(slide103 2-2]). */
-  useSelectPaymentStatusList(req: OvsPymtPrgrsRequest = {}) {
+  useSelectPaymentStatusList(req: MockOvsPymtPrgrsRequest = {}) {
     return useQuery({
       queryKey: wmKeys.selectPaymentStatusList(req),
       queryFn: () => wmService.selectPaymentStatusList(req),

@@ -22,7 +22,7 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { CmdtyCtrtDtstFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyCtrtDtstFullPopup'
-import type { CtrtIntgListItem } from '@/types/ct'
+import type { MockCtrtIntgListItem } from '@/types/mock/ct'
 
 const STEP_LABELS = ['조달', '입찰', '계약', '이행', '대금청구'] as const
 
@@ -35,7 +35,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CmdtyGnrlCtrdocDtlPage() {
-  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const stateItem = useLocation().state as MockCtrtIntgListItem | null
   const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const { collapsed, rootRef, scrollToTop } = useCollapsibleHeader()

@@ -17,14 +17,14 @@ import { Notice } from '@/ui/common/composites/Notice'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsElcrtTxivItem, OvsElcrtTxivItemRow } from '@/types/wm'
+import type { MockOvsElcrtTxivItem, MockOvsElcrtTxivItemRow } from '@/types/mock/wm'
 
 /** 외화 금액 표기 — 소수 2자리 고정(설계서 000,000,000,000.00). */
 const fmtAmt = (n: number) =>
   n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 // 품목 1건 → 표 행(slide95). 세액은 영세/면세(0 리턴)면 하이픈으로 표시.
-function itemRows(it: OvsElcrtTxivItemRow): TableRow[] {
+function itemRows(it: MockOvsElcrtTxivItemRow): TableRow[] {
   return [
     { label: '월일', value: it.wrtYmd },
     { label: '계산서번호', value: it.issuNo },
@@ -40,7 +40,7 @@ function itemRows(it: OvsElcrtTxivItemRow): TableRow[] {
 
 export function OvsElcrtTxivDtlPage() {
   // 식별자(계산서발행번호)는 목록에서 navigate state 로 전달(URL 노출 금지).
-  const stateItem = useLocation().state as OvsElcrtTxivItem | null
+  const stateItem = useLocation().state as MockOvsElcrtTxivItem | null
   const { collapsed, rootRef, scrollToTop } = useCollapsibleHeader()
   const [page, setPage] = useState(1)
   const pageSize = 10

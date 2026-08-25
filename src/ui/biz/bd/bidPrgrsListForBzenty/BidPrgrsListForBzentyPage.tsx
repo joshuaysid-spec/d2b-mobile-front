@@ -26,7 +26,7 @@ import type {
   SearchFilterSchema,
   SearchFilterValue,
 } from '@/types/search-filter'
-import type { BidPrgrsItem } from '@/types/bd'
+import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 빠른검색 대상 — 설계서 검색조건(공고명/공고번호).
 const SEARCH_TARGETS = [
@@ -90,7 +90,7 @@ const DEFAULT_FILTER: SearchFilterValue = {
 //  를 담은 완결 객체라 그대로 상세 navigate state 로 넘기면 상세가 상태값으로 버튼을 분기해 굴러간다.)
 
 // 신청유형 배지(설계서 slide69: 사전심사/입찰참가/견적서) — 해당 플래그가 true 인 것만.
-function aplyBadges(it: BidPrgrsItem): string[] {
+function aplyBadges(it: MockBidPrgrsItem): string[] {
   const out: string[] = []
   if (it.bfhdSrng) out.push('사전심사')
   if (it.bidPrgrsApfr) out.push('입찰참가')
@@ -101,7 +101,7 @@ function aplyBadges(it: BidPrgrsItem): string[] {
 // 상세 진입 제한(설계서 slide69 주석 ②) — 막을 사유가 있으면 토스트 문구, 없으면 null.
 //   ① 입찰 진행 일시 미도래 = 공고일자(pbancYmd)가 아직 오지 않음(사용자 확정 판정 기준).
 //   ② 입찰 진행 이력 없음 = 신청유형 플래그(입찰참가/입찰서/사전심사/기술평가/생산능력서류)가 모두 false.
-function entryBlockMessage(it: BidPrgrsItem): string | null {
+function entryBlockMessage(it: MockBidPrgrsItem): string | null {
   if (it.pbancYmd && dayjs(it.pbancYmd).isAfter(dayjs(), 'day')) return '입찰 진행 일이 아닙니다.'
   const hasHistory =
     it.bidPrgrsApfr || it.tndr || it.bfhdSrng || it.techEvl || it.prdcpDcmntSbms
@@ -111,7 +111,7 @@ function entryBlockMessage(it: BidPrgrsItem): string | null {
 
 // 진행상태 배지(타이틀 영역에서 상태를 알 수 있게) — 색으로 상태 강조.
 //   반려신청(미동의/반려후)=red · 등록확정/완료=green · 그 외(신청/제출)=blue.
-function statusBadge(it: BidPrgrsItem): { label: string; color: 'blue' | 'green' | 'red' } | null {
+function statusBadge(it: MockBidPrgrsItem): { label: string; color: 'blue' | 'green' | 'red' } | null {
   if (it.regRjctYn) return { label: '입찰참가등록반려', color: 'red' }
   if (it.tndrStatNm === '완료') return { label: '입찰서 완료', color: 'green' }
   if (it.tndrStatNm === '제출') return { label: '입찰서 제출', color: 'blue' }
@@ -156,7 +156,7 @@ export function BidPrgrsListForBzentyPage() {
     setPage(page + 1)
   }
   // 카드 클릭 → 진입 제한 검사 후 입찰진행 상세(MUI-BD-03-M02). 결과/작성 화면은 상세의 보기 버튼에서 연계.
-  const handleCardClick = (it: BidPrgrsItem) => {
+  const handleCardClick = (it: MockBidPrgrsItem) => {
     const blocked = entryBlockMessage(it)
     if (blocked) {
       setToastMsg(blocked)

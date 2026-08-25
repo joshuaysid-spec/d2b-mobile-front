@@ -3,7 +3,7 @@
 // 항목 순서는 slide18 화면 목업(계약번호/통지번호/예산구분/납기/납지/납품요구일시) 그대로.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { InspDlvdocDtl as DlvdocDtl } from '@/types/ex'
+import type { MockInspDlvdocDtl as DlvdocDtl } from '@/types/mock/ex'
 
 export interface InspDlvdocDtlProps {
   detail: DlvdocDtl

@@ -2,9 +2,9 @@
 // B군 채점 루브릭 — 유형 데이터만 소유, 렌더는 공용 [[ImpltElgblRsltRubric]]. (T15와 유사하나 기술평가등급 10·입찰가격 55)
 // ⚠️ 심사항목 영문 항목명 미표기(한글 라벨). 배점 일부 ±(상세설계 재확인). 심사평점은 내 업체 목업.
 import { ImpltElgblRsltRubric } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRsltRubric'
-import type { ImpltElgbSrngRubric } from '@/types/bd'
+import type { MockImpltElgbSrngRubric } from '@/types/mock/bd'
 
-const RUBRIC: ImpltElgbSrngRubric = {
+const RUBRIC: MockImpltElgbSrngRubric = {
   sections: [
     {
       field: 'I. 당해물품납품이행능력',

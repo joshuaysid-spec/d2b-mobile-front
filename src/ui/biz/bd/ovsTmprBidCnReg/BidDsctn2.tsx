@@ -15,7 +15,7 @@ import { SelectBox } from '@/ui/common/base/SelectBox'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { AlonbsBidCnInfo, AlonbsItem, BscPbancInfo } from '@/types/bd'
+import type { MockAlonbsBidCnInfo, MockAlonbsItem, MockBscPbancInfo } from '@/types/mock/bd'
 
 // ── 목업 코드값 — On-Load 입찰업체목록/화폐단위 조회 결과(설계서 slide319) ──
 // 추후 API: bdService.selectOvsBidBzentyList / bdService.selectCrncUnitList
@@ -38,7 +38,7 @@ const fmtAmt = (n: number) =>
 const fmtComma = (raw: string) => (raw ? Number(raw).toLocaleString('en-US') : '')
 
 // 입찰금액/화폐단위 변경 시 달러금액·달러환산율 재계산 (설계서 slide319 이벤트)
-function recalcBidCn(info: AlonbsBidCnInfo): AlonbsBidCnInfo {
+function recalcBidCn(info: MockAlonbsBidCnInfo): MockAlonbsBidCnInfo {
   const exrt = USD_EXRT_BY_CRNC[info.crncNm]
   const amt = Number(info.bdngTccrAmt.replace(/,/g, '')) || 0
   return {
@@ -51,7 +51,7 @@ function recalcBidCn(info: AlonbsBidCnInfo): AlonbsBidCnInfo {
 const PAGE_SIZE = 5
 
 // ── 입찰품목(총액제) 목업 (dl_alonbsItemList, 설계서 slide315 예시값 형식) ──
-const MOCK_ALONBS_ITEM_LIST: AlonbsItem[] = [
+const MOCK_ALONBS_ITEM_LIST: MockAlonbsItem[] = [
   { frcptlArtclNo: '1', invtNo: 'A000-A0001', prtsNo: '369A1234-5', itemNm: 'T-80U/TBE-3', unitNm: 'EA', qty: '1' },
   { frcptlArtclNo: '2', invtNo: 'A000-A0002', prtsNo: '369A5501-3', itemNm: 'MAIN ROTOR BLADE ASSY', unitNm: 'EA', qty: '2' },
   { frcptlArtclNo: '3', invtNo: 'A000-A0003', prtsNo: '369D2210-11', itemNm: 'TAIL ROTOR ASSY', unitNm: 'EA', qty: '1' },
@@ -62,7 +62,7 @@ const MOCK_ALONBS_ITEM_LIST: AlonbsItem[] = [
 ]
 
 // 입찰내역(총액제) 초기값 — 설계서 slide315 예시(입찰금액 608,000.00 · USD 1.0000). 입찰업체는 미선택.
-const INITIAL_ALONBS_BID_CN: AlonbsBidCnInfo = {
+const INITIAL_ALONBS_BID_CN: MockAlonbsBidCnInfo = {
   splyBzentyNm: '',
   crncNm: 'USD',
   bdngTccrAmt: '608000',
@@ -95,19 +95,19 @@ interface NoticeModal {
   description?: string
 }
 
-export function BidDsctn2({ detail }: { detail: BscPbancInfo }) {
+export function BidDsctn2({ detail }: { detail: MockBscPbancInfo }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
-  const [bidCn, setBidCn] = useState<AlonbsBidCnInfo>(INITIAL_ALONBS_BID_CN)
+  const [bidCn, setBidCn] = useState<MockAlonbsBidCnInfo>(INITIAL_ALONBS_BID_CN)
   const [notice, setNotice] = useState<NoticeModal>({ open: false, variant: 'info', title: '' })
   const [deleteOpen, setDeleteOpen] = useState(false)
 
   const visibleItems = MOCK_ALONBS_ITEM_LIST.slice(0, visibleCount)
   const hasMore = visibleCount < MOCK_ALONBS_ITEM_LIST.length
 
-  const updateBidCn = (patch: Partial<AlonbsBidCnInfo>) =>
+  const updateBidCn = (patch: Partial<MockAlonbsBidCnInfo>) =>
     setBidCn((prev) => recalcBidCn({ ...prev, ...patch }))
 
-  const itemRows = (item: AlonbsItem): TableRow[] => [
+  const itemRows = (item: MockAlonbsItem): TableRow[] => [
     { label: '항목번호', value: item.frcptlArtclNo },
     { label: '재고번호', value: item.invtNo },
     { label: '부품번호', value: item.prtsNo },

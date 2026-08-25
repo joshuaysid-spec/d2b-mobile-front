@@ -26,11 +26,11 @@ import {
 } from '@/ui/biz/cm/ovsSosCnfdocReg/OvsSosCnfdocReg.schema'
 import { ROUTES } from '@/constants/routes'
 import { formatPhoneInput } from '@/utils/format'
-import type { OvsSosAplyInfo, OvsSosBzentyChcItem } from '@/types/cm'
+import type { MockOvsSosAplyInfo, MockOvsSosBzentyChcItem } from '@/types/mock/cm'
 
 // 신청인 자동완성(dm_ovsSosAplyInfo) — 회사명·성명은 개인정보에서 자동완성(readonly).
 //   직위·연락처는 비어 있으면 빈 상태로 자동완성(편집 가능) — slide340. API 연동 시 조회로 교체.
-const MOCK_APLY_INFO: OvsSosAplyInfo = {
+const MOCK_APLY_INFO: MockOvsSosAplyInfo = {
   empNm: '홍길동',
   bzentyNm: '조달테스트 업체',
   aplcntJbgdNm: '',
@@ -66,7 +66,7 @@ export function OvsSosCnfdocRegPage() {
   }
 
   // 조달업체선택(P23) 결과 반영 — 선택 업체명을 활성 필드에 반영 후 시트 닫힘.
-  const handleSelectCompany = (item: OvsSosBzentyChcItem) => {
+  const handleSelectCompany = (item: MockOvsSosBzentyChcItem) => {
     setValue(activeField, item.bzentyNm, { shouldValidate: true, shouldDirty: true })
     setSheetOpen(false)
   }

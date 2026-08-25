@@ -28,7 +28,7 @@ import type {
   SearchFilterSchema,
   SearchFilterValue,
 } from '@/types/search-filter'
-import type { BdopnItem, OvsBidRsltSummary, OvsRlsVltrnsSummary } from '@/types/bd'
+import type { MockBdopnItem, MockOvsBidRsltSummary, MockOvsRlsVltrnsSummary } from '@/types/mock/bd'
 
 // 빠른검색 대상 — 설계서 검색조건(공고명/공고번호).
 const SEARCH_TARGETS = [
@@ -205,7 +205,7 @@ const DEFAULT_FILTER: SearchFilterValue = {
 
 // 국외 개찰 카드 = 상세 상단 요약 공통 데이터 (MUI-BD-09-M71 slide402) — 목록 최상단 고정.
 // 카드 클릭 시 이 값을 navigate state 로 넘겨 상세 상단(배지/번호/사업명/요약행)을 카드와 동일하게 표시.
-const OVS_BDOPN_SUMMARY: OvsBidRsltSummary = {
+const OVS_BDOPN_SUMMARY: MockOvsBidRsltSummary = {
   taskSeNm: '국외',
   bidTypeNm: '단가제',
   bidMthdNm: '경쟁입찰',
@@ -219,10 +219,10 @@ const OVS_BDOPN_SUMMARY: OvsBidRsltSummary = {
   bdopnDt: '2026-03-30',
 }
 // 총액제 카드 — 단가제 카드 복사 후 입찰유형만 총액제로. (상세는 추후 제작 — MUI-BD-09-T73(구 M73 — v1.83 재편))
-const OVS_BDOPN_SUMMARY_TOTAL: OvsBidRsltSummary = { ...OVS_BDOPN_SUMMARY, bidTypeNm: '총액제' }
+const OVS_BDOPN_SUMMARY_TOTAL: MockOvsBidRsltSummary = { ...OVS_BDOPN_SUMMARY, bidTypeNm: '총액제' }
 
 // 요약 데이터 → 국외 개찰 카드. 배지 순서: 업무구분(국외) 먼저, 입찰방식(경쟁입찰) 맨 마지막, 사이 입찰유형(단가제/총액제).
-function buildOvsBdopnCard(id: string, s: OvsBidRsltSummary): CardListItem {
+function buildOvsBdopnCard(id: string, s: MockOvsBidRsltSummary): CardListItem {
   return {
     id,
     badges: (
@@ -247,7 +247,7 @@ const OVS_BDOPN_CARD = buildOvsBdopnCard('ovs-m71', OVS_BDOPN_SUMMARY)
 const OVS_BDOPN_CARD_TOTAL = buildOvsBdopnCard('ovs-m73', OVS_BDOPN_SUMMARY_TOTAL)
 
 // 국외 공개수의협상 카드 (MUI-BD-12-M71, slide411) — 수의계약 배지 조건. 클릭 시 공개수의협상계획상세 진입.
-const OVS_NGTN_SUMMARY: OvsRlsVltrnsSummary = {
+const OVS_NGTN_SUMMARY: MockOvsRlsVltrnsSummary = {
   taskSeNm: '국외',
   ctrtMthdNm: '수의계약',
   intgRfrncNo: 'BDF01823EFE',
@@ -312,7 +312,7 @@ export function BdopnListPage() {
   const handleLoadMore = () => {
     setPage(page + 1)
   }
-  const handleCardClick = (it: BdopnItem) => {
+  const handleCardClick = (it: MockBdopnItem) => {
     // 입찰결과상세(개찰상세, MUI-BD-09-M01) 이동. URL 에 식별자를 두지 않으므로 카드 항목을 state 로 넘겨
     // 상단(뱃지/공고번호/타이틀/공고일자/개찰일시)을 즉시 그리고, 상세가 그 id 로 재조회해 확정한다.
     navigate('/bd/bidRsltDtl', { state: it })

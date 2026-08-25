@@ -3,9 +3,9 @@
 // ⚠️ 설계서 화면명(영문ID) 표기 `ImpltElgblRslt_PurchaseofItemsUnderkrw1B`(소문자 k)는 오타 → 파일/컴포넌트명 UnderKrw1B(대문자 K)로 교정.
 //    명명 규칙(파일 1:1)상 기본형 T10과 _2018 접미로 구분. ⚠️ 배점 ±(재확인). 심사평점 목업.
 import { ImpltElgblRsltRubric } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRsltRubric'
-import type { ImpltElgbSrngRubric } from '@/types/bd'
+import type { MockImpltElgbSrngRubric } from '@/types/mock/bd'
 
-const RUBRIC: ImpltElgbSrngRubric = {
+const RUBRIC: MockImpltElgbSrngRubric = {
   sections: [
     {
       field: '(가) 당해물품 납품이행능력',

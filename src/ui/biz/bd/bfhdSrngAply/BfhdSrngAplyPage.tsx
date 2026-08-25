@@ -23,10 +23,10 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { CabinetLink, type CabinetLinkKind } from '@/ui/biz/bd/bidPrtcpAperWrt/CabinetLink'
 import { formatFileSize } from '@/utils/format'
 import type { ApiError } from '@/types/api'
-import type { BidPrgrsItem } from '@/types/bd'
+import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 항목명/형식 그대로.
-const MOCK_DETAIL: BidPrgrsItem = {
+const MOCK_DETAIL: MockBidPrgrsItem = {
   rNum: '0',
   taskSeNm: '물품',
   pbancNo: '2026LDG000560349-01',
@@ -73,7 +73,7 @@ interface PendingFile {
 
 export function BfhdSrngAplyPage() {
   const navigate = useNavigate()
-  const detail = (useLocation().state as BidPrgrsItem | null) ?? MOCK_DETAIL
+  const detail = (useLocation().state as MockBidPrgrsItem | null) ?? MOCK_DETAIL
   // 첨부파일은 사용자가 추가하는 목록 — 설계서 mockup 초기 '총 0건'.
   const [files, setFiles] = useState<BfhdSrngAtchFile[]>([])
   const [pending, setPending] = useState<PendingFile[]>([])

@@ -15,7 +15,7 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { PymtDfryInfoInqFullPopup } from '@/ui/biz/ct/pymtDfryInfoList/PymtDfryInfoInqFullPopup'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
-import type { PymtDfryInfoItem } from '@/types/ct'
+import type { MockPymtDfryInfoItem } from '@/types/mock/ct'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
@@ -115,7 +115,7 @@ export function PymtDfryInfoListPage() {
   const visibleList = filteredList.slice(0, loaded)
 
   // 카드 — 문서정보(계약번호/증빙번호) + 계약건명 + 지불 내역 행(slide100 5]).
-  const cardItems: CardListItem[] = visibleList.map((it: PymtDfryInfoItem) => ({
+  const cardItems: CardListItem[] = visibleList.map((it: MockPymtDfryInfoItem) => ({
     id: it.id,
     badges: <Badge>{it.taskSeNm}</Badge>,
     subtitle: `계약번호 ${it.ctrtNo} / 증빙번호 ${it.evdncNo}`,

@@ -5,7 +5,7 @@
 import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsCmbzCtrtDtstResult } from '@/types/ct'
+import type { MockOvsCmbzCtrtDtstResult } from '@/types/mock/ct'
 
 export interface OvsCmbzCtrtDtstProps {
   /** 계약 식별자 — 부모 상세 페이지가 navigate state 에서 받아 전달. */
@@ -15,7 +15,7 @@ export interface OvsCmbzCtrtDtstProps {
 }
 
 // 품목 1건 → 표 행(slide185 목록 데이터 영역 순서 — L/I 항목번호 등 영문 레이블).
-function itemRows(it: OvsCmbzCtrtDtstResult['items'][number]): TableRow[] {
+function itemRows(it: MockOvsCmbzCtrtDtstResult['items'][number]): TableRow[] {
   return [
     { label: 'L/I', value: it.artclNo },
     { label: '조달요구번호', value: it.prcmRqtNo },

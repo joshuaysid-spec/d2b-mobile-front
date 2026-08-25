@@ -6,7 +6,7 @@
 import { wmQueries } from '@/queries/cts/wm/wmQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { PymtClmPrgrsSttItem } from '@/types/wm'
+import type { MockPymtClmPrgrsSttItem } from '@/types/mock/wm'
 
 export interface PrcmPymtClmSttsProps {
   /** 조회 대상 대금청구 식별자 — 상세 페이지(navigate state id)가 주입. */
@@ -14,7 +14,7 @@ export interface PrcmPymtClmSttsProps {
 }
 
 // 처리 1건 → 표 행 (slide80 표 헤더 순서).
-function sttsRows(it: PymtClmPrgrsSttItem): TableRow[] {
+function sttsRows(it: MockPymtClmPrgrsSttItem): TableRow[] {
   return [
     { label: '진행상태', value: it.dlvdocPrgrsSt },
     { label: '처리일시', value: it.prcsDt },

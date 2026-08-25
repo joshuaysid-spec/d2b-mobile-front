@@ -8,7 +8,7 @@ import { useState } from 'react'
 
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
-import type { BidPrgrsItem } from '@/types/bd'
+import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 한글금액 변환용 자릿수 사전 — 설계서 예시(10,000,000,000 → '금 일백억 원')와 1:1.
 const KOR_DIGITS = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구']
@@ -63,7 +63,7 @@ function formatDecimal2(raw: string): string {
 // 콤마 포함 표시 문자열 → 숫자
 const toNumber = (v: string) => Number(v.replace(/,/g, ''))
 
-export function TndrWrt_Stp3({ detail }: { detail: BidPrgrsItem }) {
+export function TndrWrt_Stp3({ detail }: { detail: MockBidPrgrsItem }) {
   // 단가제인 경우 입찰단가/입찰수량 노출 + 금액을 소수점 둘째자리까지 입력(설계서 slide123).
   const isUntprc = detail.bidMthdNm?.includes('단가제')
 

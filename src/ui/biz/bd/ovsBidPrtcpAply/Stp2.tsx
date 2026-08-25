@@ -8,11 +8,11 @@ import { useState } from 'react'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsSplyInfo } from '@/types/bd'
-import type { BidPrgrsItem } from '@/types/bd'
+import type { MockOvsSplyInfo } from '@/types/mock/bd'
+import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 입찰업체(dm_splyInfo) — 설계서 slide334 표시값 형식 그대로(2026-07-01 화면 수정: 주민등록번호 삭제).
-const MOCK_SPLY_INFO: OvsSplyInfo = {
+const MOCK_SPLY_INFO: MockOvsSplyInfo = {
   splyBzentyCd: '7004',
   splyBzentyNm: 'FB해외업체',
   splyRprsvNm: '홍길동',
@@ -37,7 +37,7 @@ const GUARANTEE_LETTER: string[] = [
   'We further agree that the DAPA is hereby authorized to deduct from any money due to us if we fail to make payment of such guaranteed amount.',
 ]
 
-export function Stp2({ detail }: { detail: BidPrgrsItem }) {
+export function Stp2({ detail }: { detail: MockBidPrgrsItem }) {
   // 입찰업체 업체코드(splyBzentyCd) — dm_splyInfo 중 유일한 편집(E) 항목.
   const [splyBzentyCd, setSplyBzentyCd] = useState(MOCK_SPLY_INFO.splyBzentyCd)
 

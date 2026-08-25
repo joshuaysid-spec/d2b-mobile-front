@@ -5,10 +5,10 @@
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { BidPrgrsItem, OvsBscPbancInfo, OvsSbtInfo } from '@/types/bd'
+import type { MockBidPrgrsItem, MockOvsBscPbancInfo, MockOvsSbtInfo } from '@/types/mock/bd'
 
 // 공고일반(dm_bscPbancInfo) — 입찰보증금총액은 달러금액(설계서 slide338 비고).
-const MOCK_BSC_PBANC_INFO: OvsBscPbancInfo = {
+const MOCK_BSC_PBANC_INFO: MockOvsBscPbancInfo = {
   pbancNo: 'EFD0007',
   pbancOd: '25',
   bdopnYmd: '2025-12-24 10:30',
@@ -16,7 +16,7 @@ const MOCK_BSC_PBANC_INFO: OvsBscPbancInfo = {
 }
 
 // 신청업체(dm_sbtInfo) — 설계서 slide333 표시값 형식 그대로.
-const MOCK_SBT_INFO: OvsSbtInfo = {
+const MOCK_SBT_INFO: MockOvsSbtInfo = {
   sbtBzentyCd: '7001',
   sbtBzentyNm: 'FA무역대리점',
   sbtRprsvNm: '홍길동',
@@ -30,7 +30,7 @@ const MOCK_SBT_INFO: OvsSbtInfo = {
 const GRNTE_OATH =
   '본인은 낙찰 후 계약을 체결하지 아니하거나 서류제출 기피 등 귀사로부터 상기 입찰보증금을 한도로 해당품목 입찰보증금액의 납입 요청 이견 없이 30일 이내 납부할 것을 서약합니다'
 
-export function Stp1({ detail }: { detail: BidPrgrsItem }) {
+export function Stp1({ detail }: { detail: MockBidPrgrsItem }) {
   // 일반정보(dm_bscPbancInfo) — 공고번호는 상세 항목(pbancNo), 나머지 목업.
   const pbancRows: TableRow[] = [
     { label: '공고번호', value: detail.pbancNo },

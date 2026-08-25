@@ -13,11 +13,11 @@ import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
-import type { MyPstItem } from '@/types/cm'
+import type { MockMyPstItem } from '@/types/mock/cm'
 
 // ── 목업 (설계서 slide107 예시/형식) ─────────────────────────────────────────
 const TOTAL = 258 // 설계서 slide107 더보기 (10/258)
-const dl_myPstList: MyPstItem[] = [
+const dl_myPstList: MockMyPstItem[] = [
   { id: '1', pstTtl: '작성한 제목 표시 영역', wrtYmd: '2025-12-01' },
   {
     id: '2',
@@ -28,7 +28,7 @@ const dl_myPstList: MyPstItem[] = [
 ]
 
 // ⚠️ 임시 목업 — API 연동 시 이 상수와 페이징 로직을 통째로 교체(cmService.selectMyPstList).
-const MOCK_LIST: MyPstItem[] = Array.from({ length: TOTAL }, (_, i) => ({
+const MOCK_LIST: MockMyPstItem[] = Array.from({ length: TOTAL }, (_, i) => ({
   ...dl_myPstList[i % dl_myPstList.length],
   id: String(i + 1),
 }))
@@ -53,7 +53,7 @@ export function MyPstPage() {
   }
   // 카드 클릭 — 설계서 slide113 은 '클릭 시 해당 게시물 화면으로 이동'이나 **상세 화면이 아직 없어 이동하지 않는다**
   //   (2026-08-03 사용자 지시: 상세 페이지 제작 후 다시 연결 요청 예정). 그때 여기에 navigate 만 넣으면 된다.
-  const handleCardClick = (it: MyPstItem) => {
+  const handleCardClick = (it: MockMyPstItem) => {
     console.log('[MyPst] 게시물 클릭', it.id) // 추후: navigate(나의 게시물 상세)
   }
 

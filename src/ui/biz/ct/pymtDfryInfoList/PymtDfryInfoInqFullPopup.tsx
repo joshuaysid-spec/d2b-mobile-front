@@ -6,7 +6,7 @@ import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { PymtDfryInfoInqItem } from '@/types/ct'
+import type { MockPymtDfryInfoInqItem } from '@/types/mock/ct'
 
 export interface PymtDfryInfoInqFullPopupProps {
   open: boolean
@@ -16,7 +16,7 @@ export interface PymtDfryInfoInqFullPopupProps {
 }
 
 // 지불 내역 1건 → 표 행(slide102 결과 데이터 영역 순서).
-function inqRows(it: PymtDfryInfoInqItem): TableRow[] {
+function inqRows(it: MockPymtDfryInfoInqItem): TableRow[] {
   return [
     { label: '지출일자', value: it.expndYmd },
     { label: '계약번호', value: it.ctrtNo },

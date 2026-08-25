@@ -5,10 +5,10 @@ import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import type { CncltnRmvNoti, CtrtAdocFile } from '@/types/ct'
+import type { MockCncltnRmvNoti, MockCtrtAdocFile } from '@/types/mock/ct'
 
 // 통보내용 1건 → 표 행(slide113 1.5).
-function notiRows(n: CncltnRmvNoti): TableRow[] {
+function notiRows(n: MockCncltnRmvNoti): TableRow[] {
   return [
     { label: '통보차수', value: n.ctrtCycl },
     { label: '통지일시', value: n.ctrtPrgrsSttsDt },
@@ -17,7 +17,7 @@ function notiRows(n: CncltnRmvNoti): TableRow[] {
 }
 
 // 참조서류 1건 — 계약서류명 라벨 + 파일 행(FileDownloadList 단건).
-function AdocItem({ doc }: { doc: CtrtAdocFile }) {
+function AdocItem({ doc }: { doc: MockCtrtAdocFile }) {
   return (
     <div className="flex flex-col gap-krds-5">
       <p className="text-krds-body-md font-bold text-krds-text-ink">{doc.ctrtAdocCd}</p>

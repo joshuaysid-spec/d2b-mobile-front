@@ -63,7 +63,13 @@ if (!detail) return <PageLoading />
 - 적용 예: `PrcmPlanDtlPage`(상세) · `PrcmPlanIntgListPage`(목록 useQuery + 클라 필터/페이징 유지) · `IdPswdLoginPage`(제출 await + 실패 AlertModal).
 - 페이지 fallback `MOCK_*` 상수는 두지 않는다 — 직접 진입 가드가 목록으로 돌려보낸다(일부 미배선 화면은 의도적 목업 fallback 유지).
 
-**타입은 설계서 데이터영역 기준(유지).** 아이템/상세 타입은 `src/types/{도메인}.ts` 에 설계서 항목명·형식 그대로. 요청/응답 미확정분은 각 도메인 타입 파일의 `TODO(백엔드 확정)` 섹션에.
+**타입 Mock/tobe 이원화 (2026-08-25 — 구 "타입은 설계서 데이터영역 기준(유지)" 정책 대체).**
+설계서 기반 더미 타입은 전부 `src/types/mock/{도메인}.ts` 에 **`Mock` 접두**(`MockOpPlanItem` 등)로 격리하고,
+`src/types/{도메인}.ts` 는 **tobe 전용** — 폐쇄망 실응답을 확인한 것만 정의한다(임의/설계서 추정 정의 금지).
+이유: 페이지 1개씩 실 API 전환 시 공유 타입을 실규격으로 고치면 옆 페이지들이 연쇄 컴파일 에러로 깨지는 것 방지.
+- **새 화면의 더미 타입은 `types/mock/` 에 `Mock` 접두로** 추가한다(설계서 항목명·형식 그대로, `TODO(백엔드 확정)` 섹션 포함).
+- **전환 절차**: ① 실응답 확인분을 `types/{도메인}.ts` 에 정의 → ② 그 페이지·서비스·훅만 import 를 `@/types/mock/{도메인}` → `@/types/{도메인}` 으로 교체 → ③ 전 화면 전환 완료 시 `types/mock/` 폴더째 삭제.
+- `types/mock/` 안에서도 도메인당 1파일 규칙 동일. `types/api.ts`(실규격 확정)·`types/file.ts`(RaonK 실연동 검증 완료 = tobe 승격)·`types/search-filter.ts`(UI 설정, API 무관)는 이원화 대상 아님.
 
 ## 타입 정의 (`src/types/`)
 
@@ -76,7 +82,8 @@ if (!detail) return <PageLoading />
 | `types/api.ts` | 백엔드 응답/요청 원형 타입 (`ApiResponse`, `ApiError` 등) |
 | `types/domain.ts` | 프론트 범용 도메인 모델 (`Account` 등) |
 | `types/search-filter.ts` | 범용 검색필터 config/value (도메인 무관 횡단) |
-| `types/{도메인}.ts` | 도메인별 화면 타입 — **op·bd·cm …** (도메인당 1파일, 그 안에 화면별 섹션 주석으로 구분) |
+| `types/{도메인}.ts` | 도메인별 **tobe** 타입 — 폐쇄망 실응답 확인분만 (도메인당 1파일, 화면별 섹션 주석 구분) |
+| `types/mock/{도메인}.ts` | 도메인별 **더미(설계서 기반)** 타입 — `Mock` 접두, 위 Mock/tobe 이원화 규칙 참조 |
 
 **어디에 둘지 판단 기준:**
 

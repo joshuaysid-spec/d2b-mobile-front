@@ -2,7 +2,7 @@
 // 계약 정보(dm_ctrtInfo — 견적(T71)과 유사, 발주번호/발주일자/신용장번호 포함) 아코디언 + Table.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsOrderRqdcDtl as RqdcDtl } from '@/types/ex'
+import type { MockOvsOrderRqdcDtl as RqdcDtl } from '@/types/mock/ex'
 
 export interface OvsOrderRqdcDtlProps {
   detail: RqdcDtl

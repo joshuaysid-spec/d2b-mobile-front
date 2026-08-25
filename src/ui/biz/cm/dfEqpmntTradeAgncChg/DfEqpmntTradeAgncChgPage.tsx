@@ -29,16 +29,16 @@ import {
   type DfEqpmntTradeAgncChgForm,
 } from '@/ui/biz/cm/dfEqpmntTradeAgncChg/DfEqpmntTradeAgncChg.schema'
 import type {
-  DfEqpmntTradeAgncAplyInfo,
-  DfEqpmntTradeAgncAtchFile,
-  DfEqpmntScrtyMsrmtPrsnl,
-} from '@/types/cm'
+  MockDfEqpmntTradeAgncAplyInfo,
+  MockDfEqpmntTradeAgncAtchFile,
+  MockDfEqpmntScrtyMsrmtPrsnl,
+} from '@/types/mock/cm'
 
 // 나라장터(G2B) 조달업체정보 최근 수신 일시 — Figma m_noticebox 예시값(추후 API).
 const G2B_LAST_RECV_DT = '2000-12-31 12:00'
 
 // ── 사업자정보(dm_dfEqpmntTradAgncAplyInfo, ReadOnly) — 추후 API. ──
-const MOCK_INFO: DfEqpmntTradeAgncAplyInfo = {
+const MOCK_INFO: MockDfEqpmntTradeAgncAplyInfo = {
   rcptNo: '2026-0020',
   rcptYmd: '2022-12-31',
   atrzYmd: '2022-12-31',
@@ -56,7 +56,7 @@ const MOCK_INFO: DfEqpmntTradeAgncAplyInfo = {
 }
 
 // ── 변경 첨부서류(dl_dfEqpmntTradAgncAplyAtchFileList, 설계서 slide186) — 증빙서류*·등록증*·기타. 초기: 증빙서류만 첨부. ──
-const INITIAL_FILES: DfEqpmntTradeAgncAtchFile[] = [
+const INITIAL_FILES: MockDfEqpmntTradeAgncAtchFile[] = [
   { id: '1', fileTtl: '변경사항을 입증할 수 있는 증빙서류', fileNm: '첨부파일명.hwp', size: '786KB', regYmd: '2026-01-01', required: true },
   { id: '2', fileTtl: '등록증(등록증 기재사항을 변경하는 경우만 해당)', fileNm: '', required: true },
   { id: '3', fileTtl: '기타(파일이 여러 개일 경우 압축해서 첨부 가능)', fileNm: '' },
@@ -64,7 +64,7 @@ const INITIAL_FILES: DfEqpmntTradeAgncAtchFile[] = [
 const DOC_TITLES = INITIAL_FILES.map((f) => f.fileTtl)
 
 // ── 보안측정인원(dl_scrtyMsrmtPrsnlList, ReadOnly) — 주민등록번호(rrno)는 Figma 표기(마스킹). ──
-const MOCK_SCRTY: DfEqpmntScrtyMsrmtPrsnl[] = [
+const MOCK_SCRTY: MockDfEqpmntScrtyMsrmtPrsnl[] = [
   {
     id: '1',
     taskHdlrNm: '홍길동',
@@ -120,7 +120,7 @@ export function DfEqpmntTradeAgncChgPage() {
   const navigate = useNavigate()
   const [bizExpanded, setBizExpanded] = useState(false)
   const [scrtyExpanded, setScrtyExpanded] = useState(false)
-  const [files, setFiles] = useState<DfEqpmntTradeAgncAtchFile[]>(INITIAL_FILES)
+  const [files, setFiles] = useState<MockDfEqpmntTradeAgncAtchFile[]>(INITIAL_FILES)
   const [addOpen, setAddOpen] = useState(false) // 파일첨부 시트(83432)
   const [addTarget, setAddTarget] = useState('')
   const [deleteId, setDeleteId] = useState<string | null>(null) // 파일삭제 확인(83442)

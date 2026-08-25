@@ -10,7 +10,7 @@ import { SelectBox } from '@/ui/common/base/SelectBox'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
-import type { OvsRlsVltrnsEtdcItem } from '@/types/bd'
+import type { MockOvsRlsVltrnsEtdcItem } from '@/types/mock/bd'
 
 // 품목대체구분 Y/N SelectBox (사용자 요청).
 const ALT_OPTIONS = [
@@ -28,7 +28,7 @@ const CRNCY_OPTIONS = [
 
 // 입찰참여품목 목업 — 설계서 slide422 값 그대로. 추후 bdService.selectEtdcSbmsn 매핑.
 const ITEM_BASE: Omit<
-  OvsRlsVltrnsEtdcItem,
+  MockOvsRlsVltrnsEtdcItem,
   'frcptlArtclNo' | 'itemSbstSe' | 'mdfcnInvtNo' | 'mdfcnPrtsNo' | 'estmtUntprc'
 > = {
   invtNo: '1015375183975',
@@ -40,7 +40,7 @@ const ITEM_BASE: Omit<
   crncNm: '미 달러',
 }
 const TOTAL = 100
-const MOCK_ITEMS: OvsRlsVltrnsEtdcItem[] = Array.from({ length: TOTAL }, (_, i) => ({
+const MOCK_ITEMS: MockOvsRlsVltrnsEtdcItem[] = Array.from({ length: TOTAL }, (_, i) => ({
   ...ITEM_BASE,
   frcptlArtclNo: String(i + 1),
   itemSbstSe: 'N',
@@ -60,7 +60,7 @@ interface ItemState {
   crncNm: string
 }
 
-const ItemCard = memo(function ItemCard({ item }: { item: OvsRlsVltrnsEtdcItem }) {
+const ItemCard = memo(function ItemCard({ item }: { item: MockOvsRlsVltrnsEtdcItem }) {
   const [expanded, setExpanded] = useState(false)
   const [s, setS] = useState<ItemState>({
     itemSbstSe: 'N',

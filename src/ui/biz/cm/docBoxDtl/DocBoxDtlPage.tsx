@@ -17,10 +17,10 @@ import { DocBoxDtl_Info } from '@/ui/biz/cm/docBoxDtl/DocBoxDtl_Info'
 import { DocBoxDtl_AtchOpnn } from '@/ui/biz/cm/docBoxDtl/DocBoxDtl_AtchOpnn'
 import { DocBoxDtl_Atch } from '@/ui/biz/cm/docBoxDtl/DocBoxDtl_Atch'
 import { docBadges, docOrgLine, docDateRows } from '@/ui/biz/cm/docBox/docBoxView'
-import type { DocBoxItem, DocBoxAtchFile } from '@/types/cm'
+import type { MockDocBoxItem, MockDocBoxAtchFile } from '@/types/mock/cm'
 
 // 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — 설계서 dl_rcptnDocBoxList 항목명/형식 그대로.
-const MOCK_DOC_DETAIL: DocBoxItem = {
+const MOCK_DOC_DETAIL: MockDocBoxItem = {
   id: '0',
   docSeCd: 'received',
   docSeNm: '받은 문서',
@@ -41,7 +41,7 @@ const MOCK_DOC_CN = `1. 계약명: 2026년 K5방독면 구매
 6. 기타: 세부 사항은 첨부파일을 참고하시기 바랍니다.`
 
 // 첨부문서 목업 — 첨부문서다운로드 데이터영역(dl_atchDocList) 형식.
-const MOCK_ATCH_FILES: DocBoxAtchFile[] = [
+const MOCK_ATCH_FILES: MockDocBoxAtchFile[] = [
   { fileTtl: '계약통보서', fileNm: '계약통보서.hwp', fileSize: '786KB', edmsDocId: 'EDMS20260310001-1' },
   { fileTtl: '품목명세서', fileNm: '품목명세서.pdf', fileSize: '1.2MB', edmsDocId: 'EDMS20260310001-2' },
 ]
@@ -52,7 +52,7 @@ export function DocBoxDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
   // 목록 → 상세 데이터 전달: navigate(state)로 넘어온 항목으로 상단을 그린다(없으면 페이지 목업).
-  const detail = (useLocation().state as DocBoxItem | null) ?? MOCK_DOC_DETAIL
+  const detail = (useLocation().state as MockDocBoxItem | null) ?? MOCK_DOC_DETAIL
 
   // 탭 구성 — 문서정보 항상. 첨언/반려사유/첨부파일은 데이터가 있을 때만(설계서 "추가 정보 발생 시 탭 표시").
   const tabs: TabItem[] = [{ value: 'info', label: '문서정보' }]

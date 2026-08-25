@@ -12,7 +12,7 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
-import type { OvsBidRsltUnitPriceItem, OvsBidRsltUnitPriceStatus } from '@/types/bd'
+import type { MockOvsBidRsltUnitPriceItem, MockOvsBidRsltUnitPriceStatus } from '@/types/mock/bd'
 
 // 입찰결과 필터(결과 전체 SelectBox) — 기본 '결과 전체'(all). value 는 item.bidRsltNm 과 일치.
 const RESULT_OPTIONS = [
@@ -25,7 +25,7 @@ const RESULT_OPTIONS = [
 const RESULT_VALUES = ['낙찰', '조건부 낙찰', '동가 낙찰', '유찰']
 
 // 입찰결과현황(단가제) 목업 — 설계서 slide404 값 형식(원/USD) 그대로.
-const MOCK_STATUS: OvsBidRsltUnitPriceStatus = {
+const MOCK_STATUS: MockOvsBidRsltUnitPriceStatus = {
   totItemCnt: '5',
   totScsbdCnt: '3',
   cnt: { scsbd: '2', cndl: '1', eqv: '1', sub: '4' },
@@ -35,7 +35,7 @@ const MOCK_STATUS: OvsBidRsltUnitPriceStatus = {
 
 // 입찰결과 목록(단가제) 목업 — 설계서 slide404 항목. 추후 bdService.selectBidCnListByItem 매핑.
 // bidRsltNm 은 결과 필터 데모용으로 4종(낙찰/조건부 낙찰/동가 낙찰/유찰) 순환.
-const ITEM_BASE: Omit<OvsBidRsltUnitPriceItem, 'clsfNo' | 'bidRsltNm'> = {
+const ITEM_BASE: Omit<MockOvsBidRsltUnitPriceItem, 'clsfNo' | 'bidRsltNm'> = {
   prdctNm: '500MD',
   stckNo: '000 000 0000',
   partNo: '0000',
@@ -47,7 +47,7 @@ const ITEM_BASE: Omit<OvsBidRsltUnitPriceItem, 'clsfNo' | 'bidRsltNm'> = {
   usdAmt: '1,000.00 USD',
 }
 const TOTAL = 258
-const MOCK_ITEMS: OvsBidRsltUnitPriceItem[] = Array.from({ length: TOTAL }, (_, i) => ({
+const MOCK_ITEMS: MockOvsBidRsltUnitPriceItem[] = Array.from({ length: TOTAL }, (_, i) => ({
   ...ITEM_BASE,
   clsfNo: String(i + 1),
   bidRsltNm: RESULT_VALUES[i % RESULT_VALUES.length],
@@ -65,7 +65,7 @@ const breakdownRows = (b: { scsbd: string; cndl: string; eqv: string; sub: strin
 ]
 
 // 입찰결과 목록 항목 표 (기본 4행 + 펼쳐보기 시 전체)
-const itemRows = (it: OvsBidRsltUnitPriceItem): TableRow[] => [
+const itemRows = (it: MockOvsBidRsltUnitPriceItem): TableRow[] => [
   { label: '항목번호', value: it.clsfNo },
   { label: '품명', value: it.prdctNm },
   { label: '재고번호', value: it.stckNo },
@@ -80,7 +80,7 @@ const itemRows = (it: OvsBidRsltUnitPriceItem): TableRow[] => [
 ]
 
 // 항목 1건 카드 — 기본 4행 + 펼쳐보기/접기 (품목명세서 탭과 동일).
-const BidRsltItemCard = memo(function BidRsltItemCard({ item }: { item: OvsBidRsltUnitPriceItem }) {
+const BidRsltItemCard = memo(function BidRsltItemCard({ item }: { item: MockOvsBidRsltUnitPriceItem }) {
   const [expanded, setExpanded] = useState(false)
   const allRows = useMemo(() => itemRows(item), [item])
   const rows = expanded ? allRows : allRows.slice(0, DEFAULT_VISIBLE)

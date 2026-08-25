@@ -6,7 +6,7 @@ import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Button } from '@/ui/common/base/Button'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { Infobox } from '@/ui/common/composites/Infobox'
-import type { BidPrgrsItem } from '@/types/bd'
+import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 공종 및 면허정보 목업 — 라벨 한글 그대로, 값은 설계서 형식.
 interface CnstwkRow {
@@ -55,7 +55,7 @@ function cnstwkRows(row: CnstwkRow): TableRow[] {
   ]
 }
 
-export function BidPrtcpAperWrtPage_Stp3({ detail }: { detail: BidPrgrsItem }) {
+export function BidPrtcpAperWrtPage_Stp3({ detail }: { detail: MockBidPrgrsItem }) {
   return (
     <>
       <SectionTitle as="h3" topDivider info={`총 ${MOCK_CNSTWKS.length}건`} className="bg-white">

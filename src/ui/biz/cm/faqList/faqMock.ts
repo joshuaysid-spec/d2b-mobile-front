@@ -1,8 +1,8 @@
 // 자주묻는질문 목업(dl_resultList) — 추후 API(tssCmService.selectFaqList) 로 교체.
 // 구분(bizFldCd = FAQCD)은 상단 탭(전체/조달계약/입찰/계약/이행)과 배지에 쓰인다.
-import type { FaqListItem } from '@/types/cm'
+import type { MockFaqListItem } from '@/types/mock/cm'
 
-const FAQ_SEEDS: FaqListItem[] = [
+const FAQ_SEEDS: MockFaqListItem[] = [
   {
     no: 1,
     bbsId: '000101',
@@ -73,7 +73,7 @@ const FAQ_SEEDS: FaqListItem[] = [
   },
 ]
 
-export const FAQ_MOCK: FaqListItem[] = Array.from({ length: 100 }, (_, i) => {
+export const FAQ_MOCK: MockFaqListItem[] = Array.from({ length: 100 }, (_, i) => {
   const base = FAQ_SEEDS[i % FAQ_SEEDS.length]
   return { ...base, no: i + 1, bbsId: String(101 + i).padStart(6, '0') }
 })

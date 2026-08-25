@@ -4,10 +4,10 @@
 //    용역(T06)/공사(T17)/기술용역(T18) 등 A군 flat 유형은 라벨만 상이 → ImpltElgblRslt_* 별 파일. 유형 분기는 ImpltPage.renderResultTab.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { ImpltElgbSrngResult } from '@/types/bd'
+import type { MockImpltElgbSrngResult } from '@/types/mock/bd'
 
 // 심사결과 목업 (설계서 slide169 값·slide170 항목명) — 추후 API 매핑.
-const MOCK_RESULT: ImpltElgbSrngResult = {
+const MOCK_RESULT: MockImpltElgbSrngResult = {
   srngScr1: '00',
   srngScr2: '000',
   srngScr4: '0000',
@@ -20,7 +20,7 @@ const MOCK_RESULT: ImpltElgbSrngResult = {
   jgmtRsltNm: '적격',
 }
 
-const resultRows = (it: ImpltElgbSrngResult): TableRow[] => [
+const resultRows = (it: MockImpltElgbSrngResult): TableRow[] => [
   { label: '이행실적', value: it.srngScr1, type: 'number' },
   { label: '제조능력', value: it.srngScr2, type: 'number' },
   { label: '재무상태', value: it.srngScr4, type: 'number' },

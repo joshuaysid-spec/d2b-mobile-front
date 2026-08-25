@@ -11,7 +11,7 @@ import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { Button } from '@/ui/common/base/Button'
 import { cn } from '@/utils/cn'
-import type { RegTrgtItemChcItem } from '@/types/cm'
+import type { MockRegTrgtItemChcItem } from '@/types/mock/cm'
 
 /** 부모 footer([적용하기])가 호출하는 확정 동작. */
 export interface RegTrgtItemChcHandle {
@@ -27,7 +27,7 @@ const KNDITM_OPTIONS = [
 ]
 
 // 등록대상 품목 목록 목업 (설계서 slide165 예시 — 품목코드 1234567890/품명 물컵/품류 05 피복/등록요건). 추후 API.
-const MOCK_ITEMS: RegTrgtItemChcItem[] = [
+const MOCK_ITEMS: MockRegTrgtItemChcItem[] = [
   {
     itemCd: '1234567890',
     itemCdNm: '물컵',
@@ -48,9 +48,9 @@ const MOCK_ITEMS: RegTrgtItemChcItem[] = [
 
 export interface RegTrgtItemChcProps {
   /** [적용하기] 시 호출 — 선택 품목 목록을 부모에 반환. */
-  onApply: (items: RegTrgtItemChcItem[]) => void
+  onApply: (items: MockRegTrgtItemChcItem[]) => void
   /** 행 [상세보기] — 품목 조회(P09 ItemInq)는 부모가 연다. */
-  onDetail: (item: RegTrgtItemChcItem) => void
+  onDetail: (item: MockRegTrgtItemChcItem) => void
 }
 
 const RegTrgtItemChc = forwardRef<RegTrgtItemChcHandle, RegTrgtItemChcProps>(

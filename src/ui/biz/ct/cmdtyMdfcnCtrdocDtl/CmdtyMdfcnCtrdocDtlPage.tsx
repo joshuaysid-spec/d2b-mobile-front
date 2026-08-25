@@ -23,7 +23,7 @@ import { CmdtyMdfcnCtrdocDtl_Cn } from '@/ui/biz/ct/cmdtyMdfcnCtrdocDtl/CmdtyMdf
 import { CmdtyMdfcnCtrdocDtl_MdfcnCtrt } from '@/ui/biz/ct/cmdtyMdfcnCtrdocDtl/CmdtyMdfcnCtrdocDtl_MdfcnCtrt'
 import { CmdtyMdfcnCtrdocDtl_Spcl } from '@/ui/biz/ct/cmdtyMdfcnCtrdocDtl/CmdtyMdfcnCtrdocDtl_Spcl'
 import { CmdtyMdfcnCtrdocDtstFullPopup } from '@/ui/biz/ct/cmdtyMdfcnCtrdocDtl/CmdtyMdfcnCtrdocDtstFullPopup'
-import type { CtrtIntgListItem } from '@/types/ct'
+import type { MockCtrtIntgListItem } from '@/types/mock/ct'
 
 // ── 탭 (slide76 탭바: 상세정보/수정계약명세서/특수조건) ────────────────────────
 const TABS: TabItem[] = [
@@ -43,7 +43,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CmdtyMdfcnCtrdocDtlPage() {
-  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const stateItem = useLocation().state as MockCtrtIntgListItem | null
   const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')

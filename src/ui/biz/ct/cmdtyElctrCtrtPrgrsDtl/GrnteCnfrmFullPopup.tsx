@@ -8,7 +8,7 @@ import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CtrtGrnteInfo } from '@/types/ct'
+import type { MockCtrtGrnteInfo } from '@/types/mock/ct'
 
 export interface GrnteCnfrmFullPopupProps {
   /** 계약 식별자 — 부모 상세 페이지가 navigate state 에서 받아 전달. */
@@ -18,7 +18,7 @@ export interface GrnteCnfrmFullPopupProps {
 }
 
 // 보증서 1건 → 표 행(slide161 dm_wtgrInfo 순서).
-function wtgrRows(w: CtrtGrnteInfo): TableRow[] {
+function wtgrRows(w: MockCtrtGrnteInfo): TableRow[] {
   return [
     { label: '계약업체', value: w.ctrtBzentyCd },
     { label: '업체구분', value: w.bzentySeCd },

@@ -12,10 +12,10 @@ import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { Button } from '@/ui/common/base/Button'
-import type { IndvRcofcItem } from '@/types/cm'
+import type { MockIndvRcofcItem } from '@/types/mock/cm'
 
 // ── 목업 (설계서 slide103 예시 + 데이터영역 dl_indvRcofcList 항목명/형식) ──────────
-const dl_indvRcofcList: IndvRcofcItem[] = [
+const dl_indvRcofcList: MockIndvRcofcItem[] = [
   {
     id: '1',
     eldocNm: '물량배정서',
@@ -44,7 +44,7 @@ const dl_indvRcofcList: IndvRcofcItem[] = [
 
 // ⚠️ 임시 목업 — API 연동 시 이 상수와 페이징 로직을 통째로 교체(cmService.selectIndvRcofcInfoList).
 const TOTAL = 258 // 설계서 slide103 더보기 (10/258)
-const MOCK_LIST: IndvRcofcItem[] = Array.from({ length: TOTAL }, (_, i) => ({
+const MOCK_LIST: MockIndvRcofcItem[] = Array.from({ length: TOTAL }, (_, i) => ({
   ...dl_indvRcofcList[i % dl_indvRcofcList.length],
   id: String(i + 1),
   rcvrId: `${dl_indvRcofcList[i % dl_indvRcofcList.length].rcvrId}-${i + 1}`,

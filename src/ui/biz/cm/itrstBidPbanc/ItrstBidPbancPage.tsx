@@ -23,7 +23,7 @@ import type {
   SearchFilterValue,
   DateRangePresetDef,
 } from '@/types/search-filter'
-import type { ItrstBidPbancItem } from '@/types/cm'
+import type { MockItrstBidPbancItem } from '@/types/mock/cm'
 
 // ── 검색필터 schema (설계서 slide82 검색조건 dm_searchInfo) ────────────────────
 // 개찰일자(FROM/TO 범위) + 통합참조번호 + 공고번호 + 입찰건명/사업명.
@@ -60,7 +60,7 @@ const SEARCH_DEFAULT: SearchFilterValue = {
 
 // ── 목업 (설계서 slide81 예시 + 항목명/형식) ──────────────────────────────────
 const TOTAL = 258 // 총 건수(목업 — slide81 더보기 10/258)
-const dl_itrstBidPbancList: ItrstBidPbancItem[] = [
+const dl_itrstBidPbancList: MockItrstBidPbancItem[] = [
   {
     id: '1',
     itrst: true,
@@ -103,7 +103,7 @@ const dl_itrstBidPbancList: ItrstBidPbancItem[] = [
 ]
 
 // ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 페이징 로직을 통째로 교체(cmService.selectItrstBidPbancList).
-const MOCK_LIST: ItrstBidPbancItem[] = Array.from({ length: TOTAL }, (_, i) => {
+const MOCK_LIST: MockItrstBidPbancItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dl_itrstBidPbancList[i % dl_itrstBidPbancList.length]
   return { ...base, id: String(i + 1) }
 })
@@ -119,7 +119,7 @@ export function ItrstBidPbancPage() {
   const [page, setPage] = useState(1)
 
   // 관심 상태(별 on/off) — 페이지 유지 중엔 해제해도 목록에 남고 별만 off(설계서 slide81).
-  const [items, setItems] = useState<ItrstBidPbancItem[]>(MOCK_LIST)
+  const [items, setItems] = useState<MockItrstBidPbancItem[]>(MOCK_LIST)
   // 해제 확인 대상 id(모달 open) · 토스트 · '다음부터 묻지 않기' 체크값.
   const [confirmId, setConfirmId] = useState<string | null>(null)
   const [dontAskChecked, setDontAskChecked] = useState(false)
@@ -146,7 +146,7 @@ export function ItrstBidPbancPage() {
     setPage(next)
     console.log('[ItrstBidPbanc] loadMore → page', next)
   }
-  const handleOpen = (item: ItrstBidPbancItem) => {
+  const handleOpen = (item: MockItrstBidPbancItem) => {
     // 클릭한 항목을 state 로 전달 — 입찰공고 상세(MUI-BD-01-M02) 상단 즉시표시.
     navigate('/bd/bidPbancDtl', { state: item })
   }
@@ -160,7 +160,7 @@ export function ItrstBidPbancPage() {
     setToastOpen(true) // 설계서: 즐겨찾기 해제 시 토스트("관심공고에서 제외 되었습니다.")
     console.log('[ItrstBidPbanc] 관심공고 해제', id) // 추후: cmService.deleteItrstBidPbanc(id)
   }
-  const handleToggleStar = (item: ItrstBidPbancItem) => {
+  const handleToggleStar = (item: MockItrstBidPbancItem) => {
     if (!item.itrst) {
       setItrst(item.id, true) // off→on: 재등록(확인 없이)
       console.log('[ItrstBidPbanc] 관심공고 등록', item.id) // 추후: cmService.addFavorite(id)

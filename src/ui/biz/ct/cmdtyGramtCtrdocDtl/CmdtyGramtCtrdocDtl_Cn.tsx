@@ -2,10 +2,10 @@
 // 아코디언 4개(계약 상세정보 · 계약금액 · 업체정보 · 담당자 정보) — 단가제만 부서명/조달판단번호 추가.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CmdtyCtrdocDtl } from '@/types/ct'
+import type { MockCmdtyCtrdocDtl } from '@/types/mock/ct'
 
 export interface CmdtyGramtCtrdocDtl_CnProps {
-  detail: CmdtyCtrdocDtl
+  detail: MockCmdtyCtrdocDtl
 }
 
 export function CmdtyGramtCtrdocDtl_Cn({ detail }: CmdtyGramtCtrdocDtl_CnProps) {

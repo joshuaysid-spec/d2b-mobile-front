@@ -21,11 +21,11 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { CmdtyGramtCtrdocDtl_Cn } from '@/ui/biz/ct/cmdtyGramtCtrdocDtl/CmdtyGramtCtrdocDtl_Cn'
 import { CmdtyGramtCtrdocDtl_Ctrt } from '@/ui/biz/ct/cmdtyGramtCtrdocDtl/CmdtyGramtCtrdocDtl_Ctrt'
 import { CmdtyGramtCtrdocDtl_Spcl } from '@/ui/biz/ct/cmdtyGramtCtrdocDtl/CmdtyGramtCtrdocDtl_Spcl'
-import type { CtCtrdocType, CtrtIntgListItem } from '@/types/ct'
+import type { MockCtCtrdocType, MockCtrtIntgListItem } from '@/types/mock/ct'
 
 export interface CmdtyGramtCtrdocDtlPageProps {
   /** 총액제(gramt, M07 — 기본) / 단가제(untprc, M08). 라우트가 주입. */
-  type?: CtCtrdocType
+  type?: MockCtCtrdocType
 }
 
 // ── 탭 (slide48·56 탭바: 상세정보/계약명세서/특수조건) ─────────────────────────
@@ -46,7 +46,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CmdtyGramtCtrdocDtlPage({ type = 'gramt' }: CmdtyGramtCtrdocDtlPageProps) {
-  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const stateItem = useLocation().state as MockCtrtIntgListItem | null
   const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')

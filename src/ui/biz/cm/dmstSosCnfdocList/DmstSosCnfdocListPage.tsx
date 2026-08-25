@@ -26,7 +26,7 @@ import {
   type DmstSosCnfdocAplyForm,
 } from '@/ui/biz/cm/dmstSosCnfdocList/DmstSosCnfdocAply.schema'
 import { cn } from '@/utils/cn'
-import type { DmstSosCnfdocItem } from '@/types/cm'
+import type { MockDmstSosCnfdocItem } from '@/types/mock/cm'
 import type {
   DateRangePresetDef,
   SearchFilterSchema,
@@ -88,7 +88,7 @@ const APPLICANT = {
 
 // 조달원확인서 신청 목록 데이터(dl_resultList, 설계서 slide134 항목명 영문) — 목업, 추후 API(cmService.selectDmstSosCnfdocAplyList).
 //   상태(aplyRcptStts)는 '발급'으로 고정(신청 시 바로 발급, 설계서 slide134 비고). 신청사유(aplyRsn)=입찰참가용/확인용.
-const dl_resultList: DmstSosCnfdocItem[] = [
+const dl_resultList: MockDmstSosCnfdocItem[] = [
   {
     id: '1',
     aplyRcptNo: '2026051812',
@@ -139,7 +139,7 @@ const dl_resultList: DmstSosCnfdocItem[] = [
 // ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 filteredList/visibleList 로직을 서버 조회로 교체.
 //   보유한 5건을 TOTAL 건으로 부풀려 더보기(page*pageSize slice)를 시연한다(설계서 slide132 '더보기 (10/258)').
 const TOTAL = 258
-const MOCK_LIST: DmstSosCnfdocItem[] = Array.from({ length: TOTAL }, (_, i) => {
+const MOCK_LIST: MockDmstSosCnfdocItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dl_resultList[i % dl_resultList.length]
   return { ...base, id: String(i + 1), aplyRcptNo: `${base.aplyRcptNo}${String(i + 1).padStart(2, '0')}`.slice(0, 12) }
 })
@@ -191,7 +191,7 @@ export function DmstSosCnfdocListPage() {
     console.log('[DmstSosCnfdoc] loadMore → page', next)
   }
   // 카드 클릭 → OZ 리포트 조달원 확인서 연결 > 서류 확인 팝업(MUI-BD-01-P14) 호출(설계서 slide132). 현재 스텁.
-  const handleCardClick = (item: DmstSosCnfdocItem) => {
+  const handleCardClick = (item: MockDmstSosCnfdocItem) => {
     console.log('[DmstSosCnfdoc] 조달원 확인서 출력(OZ리포트/서류확인 P14)', item.aplyRcptNo)
     // 추후: OZ 리포트 실행 + 서류확인 팝업(MUI-BD-01-P14)
   }

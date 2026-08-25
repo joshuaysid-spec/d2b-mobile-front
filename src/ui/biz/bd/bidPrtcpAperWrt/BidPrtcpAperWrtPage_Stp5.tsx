@@ -19,13 +19,13 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { RegBzentySrch } from '@/ui/biz/bd/bidPrtcpAperWrt/RegBzentySrch'
-import type { BidPrgrsItem, JsdBzentyAply } from '@/types/bd'
+import type { MockBidPrgrsItem, MockJsdBzentyAply } from '@/types/mock/bd'
 
 // 최대 협정업체 수(대표 + 구성).
 const MAX_BZENTY = 3
 
 // 공동수급업체 목록 목업(dlt_jsdBzentyList) — 값은 설계서 형식 그대로. 편집 항목 외에는 조회결과 표시.
-const MOCK_JSD_BZENTY: JsdBzentyAply[] = [
+const MOCK_JSD_BZENTY: MockJsdBzentyAply[] = [
   {
     id: 'jsd1',
     jsdBzentyNm: '대표',
@@ -53,11 +53,11 @@ const MOCK_JSD_BZENTY: JsdBzentyAply[] = [
 ]
 
 interface Props {
-  detail: BidPrgrsItem
+  detail: MockBidPrgrsItem
 }
 
 export function BidPrtcpAperWrtPage_Stp5({ detail }: Props) {
-  const [companies, setCompanies] = useState<JsdBzentyAply[]>(MOCK_JSD_BZENTY)
+  const [companies, setCompanies] = useState<MockJsdBzentyAply[]>(MOCK_JSD_BZENTY)
   const [searchOpen, setSearchOpen] = useState(false) // 업체검색 바텀시트(P11)
   const [activeId, setActiveId] = useState<string | null>(null) // 검색 결과를 주입할 업체 행
 
@@ -102,12 +102,12 @@ export function BidPrtcpAperWrtPage_Stp5({ detail }: Props) {
     ])
   }
 
-  const setField = (id: string, patch: Partial<JsdBzentyAply>) => {
+  const setField = (id: string, patch: Partial<MockJsdBzentyAply>) => {
     setCompanies((prev) => prev.map((c) => (c.id === id ? { ...c, ...patch } : c)))
   }
 
   // 업체 카드 1건 = Table. 편집 가능한 셀은 공동수급업체·출자비율뿐.
-  const companyRows = (c: JsdBzentyAply): TableRow[] => {
+  const companyRows = (c: MockJsdBzentyAply): TableRow[] => {
     const rows: TableRow[] = [
       { label: '구분', value: c.jsdBzentyNm },
       {

@@ -21,7 +21,7 @@ import { OvsCmbzCtrdocDtl_Stts } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrdo
 import { OvsCmbzCtrdocDtl_Ctrt } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrdocDtl_Ctrt'
 import { OvsCmbzCtrdocDtl_Trgt } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrdocDtl_Trgt'
 import { OvsCmbzCtrtDtst } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrtDtst'
-import type { CtrtIntgListItem } from '@/types/ct'
+import type { MockCtrtIntgListItem } from '@/types/mock/ct'
 
 // ── 탭 (slide178 탭바: 계약현황/계약명세서/계약대상) ───────────────────────────
 const TABS: TabItem[] = [
@@ -41,7 +41,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function OvsCmbzCtrdocDtlPage() {
-  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const stateItem = useLocation().state as MockCtrtIntgListItem | null
   const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('stts')

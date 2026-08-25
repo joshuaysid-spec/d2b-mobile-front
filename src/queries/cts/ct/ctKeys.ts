@@ -1,10 +1,10 @@
 // 계약(CT) 도메인 쿼리키 — 키명 = 서비스 함수명(services/cts/ct.ts)과 통일.
 // 구조: ['ct', 함수명, 파라미터] 3단 — 도메인 전체 무효화(['ct'])·함수 prefix 무효화 모두 가능.
 // 훅 파일(queries.ts)과 분리 이유: mutation 무효화가 파일 경계를 넘어도 순환 import 없이 키만 참조.
-import type { CncltnRmvListRequest, CtCtrdocType, CtrtIntgListRequest } from '@/types/ct'
+import type { MockCncltnRmvListRequest, MockCtCtrdocType, MockCtrtIntgListRequest } from '@/types/mock/ct'
 
 export const ctKeys = {
-  selectCtrtIntgList: (req: CtrtIntgListRequest) => ['ct', 'selectCtrtIntgList', req] as const,
+  selectCtrtIntgList: (req: MockCtrtIntgListRequest) => ['ct', 'selectCtrtIntgList', req] as const,
   selectCtrtPrgrsDtl: (id: string) => ['ct', 'selectCtrtPrgrsDtl', id] as const,
   selectCtrtBzentys: (id: string) => ['ct', 'selectCtrtBzentys', id] as const,
   selectCtrtRjctRsns: (id: string) => ['ct', 'selectCtrtRjctRsns', id] as const,
@@ -19,9 +19,9 @@ export const ctKeys = {
   selectCmdtyMdfcnCtrdocDtst: (id: string) => ['ct', 'selectCmdtyMdfcnCtrdocDtst', id] as const,
   selectCtrtLastDtst: (id: string) => ['ct', 'selectCtrtLastDtst', id] as const,
   selectCtrtSpclCnd: (id: string) => ['ct', 'selectCtrtSpclCnd', id] as const,
-  selectCmdtyCtrdocDtl: (id: string, type: CtCtrdocType) =>
+  selectCmdtyCtrdocDtl: (id: string, type: MockCtCtrdocType) =>
     ['ct', 'selectCmdtyCtrdocDtl', { id, type }] as const,
-  selectCmdtyCtrdocDtst: (id: string, type: CtCtrdocType) =>
+  selectCmdtyCtrdocDtst: (id: string, type: MockCtCtrdocType) =>
     ['ct', 'selectCmdtyCtrdocDtst', { id, type }] as const,
   selectCstrnCtrdocDtl: (id: string) => ['ct', 'selectCstrnCtrdocDtl', id] as const,
   selectCtrtJntGrntes: (id: string) => ['ct', 'selectCtrtJntGrntes', id] as const,
@@ -38,15 +38,15 @@ export const ctKeys = {
   selectCmbzCtrtDtstInfo: (id: string) => ['ct', 'selectCmbzCtrtDtstInfo', id] as const,
   selectOvsCmbzTrgt: (id: string) => ['ct', 'selectOvsCmbzTrgt', id] as const,
   selectOvsCmbzCtrtDtst: (id: string) => ['ct', 'selectOvsCmbzCtrtDtst', id] as const,
-  selectCtrtCncltnRmvListInq: (req: CncltnRmvListRequest) =>
+  selectCtrtCncltnRmvListInq: (req: MockCncltnRmvListRequest) =>
     ['ct', 'selectCtrtCncltnRmvListInq', req] as const,
   selectCtrtCncltnRmvDtlInfoInq: (id: string) =>
     ['ct', 'selectCtrtCncltnRmvDtlInfoInq', id] as const,
   selectCmdtyCncltnRmvBzentys: (id: string) => ['ct', 'selectCmdtyCncltnRmvBzentys', id] as const,
   selectCmdtyCncltnRmvNoti: (id: string) => ['ct', 'selectCmdtyCncltnRmvNoti', id] as const,
-  selectCncltnRmvGnrlCtrtDtl: (id: string, type: CtCtrdocType) =>
+  selectCncltnRmvGnrlCtrtDtl: (id: string, type: MockCtCtrdocType) =>
     ['ct', 'selectCncltnRmvGnrlCtrtDtl', { id, type }] as const,
-  selectCncltnRmvGnrlCtrtDtst: (id: string, type: CtCtrdocType) =>
+  selectCncltnRmvGnrlCtrtDtst: (id: string, type: MockCtCtrdocType) =>
     ['ct', 'selectCncltnRmvGnrlCtrtDtst', { id, type }] as const,
   selectCncltnRmvSpcl: (id: string) => ['ct', 'selectCncltnRmvSpcl', id] as const,
   selectCncltnRmvMdfcnCtrtDtl: (id: string) => ['ct', 'selectCncltnRmvMdfcnCtrtDtl', id] as const,

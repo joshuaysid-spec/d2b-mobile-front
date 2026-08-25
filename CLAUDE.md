@@ -44,7 +44,7 @@
 - 상세 이동 URL 에 식별자(path 변수·쿼리) — 상세 라우트는 고정 경로 + `navigate(state)` 전달(`api.md`)
 - 임의 영문 화면명·임의 항목명 작명 (설계서 영문 화면 ID·항목명 그대로)
 - 의미 없는 목업 더미("test", `aaa`) — 설계서 데이터영역 기준으로 실제 응답처럼
-- 화면(폴더)별 타입 파일 신설 (`src/types/{도메인}.ts` 도메인당 1파일)
+- 화면(폴더)별 타입 파일 신설 (`src/types/{도메인}.ts` 도메인당 1파일 — 더미는 `types/mock/`·`Mock` 접두, tobe(실응답 확인분)는 `types/`. `api.md` Mock/tobe 이원화 참조)
 - 컴포넌트별 `.css` 파일 · 개별 `cursor-pointer` (전역 규칙 있음)
 - 새 BottomSheet/AlertModal 의 `*Sheet` 전용 래퍼 (컨테이너는 부모 소유, 콘텐츠만 분리)
 

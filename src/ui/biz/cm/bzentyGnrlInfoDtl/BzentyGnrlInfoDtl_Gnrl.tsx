@@ -6,18 +6,18 @@
 import { useState } from 'react'
 
 import type {
-  BzentyGnrlInfo,
-  BzentyStts,
-  BzentyRlsVltrnsRstric,
-  BzentyRprsv,
-  BzentyBidAgt,
-} from '@/types/cm'
+  MockBzentyGnrlInfo,
+  MockBzentyStts,
+  MockBzentyRlsVltrnsRstric,
+  MockBzentyRprsv,
+  MockBzentyBidAgt,
+} from '@/types/mock/cm'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 
 // ── 업체일반 (dm_bzentyGnrlInfo) — 설계서 slide116/118 예시값 ────────────────
-const GNRL_INFO: BzentyGnrlInfo = {
+const GNRL_INFO: MockBzentyGnrlInfo = {
   bzentyCd: '100F',
   bzentyNm: '조달테스트업체',
   bzentyEngNm: 'Jodal',
@@ -43,7 +43,7 @@ const GNRL_INFO: BzentyGnrlInfo = {
 }
 
 // ── 상태/부정당 (dl_bzentySttsList) — 설계서 slide116/118 예시값 ─────────────
-const STTS_LIST: BzentyStts[] = [
+const STTS_LIST: MockBzentyStts[] = [
   {
     bzentyStcd: '03',
     bzentyStNm: '양도,양수',
@@ -55,7 +55,7 @@ const STTS_LIST: BzentyStts[] = [
 ]
 
 // ── 수의계약배제 (dl_bzentyRlsVltrnsRstricList) — 설계서 slide117/119 예시값 ──
-const RLS_VLTRNS_LIST: BzentyRlsVltrnsRstric[] = [
+const RLS_VLTRNS_LIST: MockBzentyRlsVltrnsRstric[] = [
   {
     pbancNo: '285608N',
     prcmNo: '5608N',
@@ -69,7 +69,7 @@ const RLS_VLTRNS_LIST: BzentyRlsVltrnsRstric[] = [
 ]
 
 // ── 대표자 (dl_bzentyRprsvList) — 설계서 slide117/119 예시값 ─────────────────
-const RPRSV_LIST: BzentyRprsv[] = [
+const RPRSV_LIST: MockBzentyRprsv[] = [
   {
     rprsvYn: '대대표',
     rprsvNm: '홍길동',
@@ -79,11 +79,11 @@ const RPRSV_LIST: BzentyRprsv[] = [
 ]
 
 // ── 입찰대리인 (dl_bzentyBidAgtList) — 설계서 slide117/120 예시값 ────────────
-const BID_AGT_LIST: BzentyBidAgt[] = [
+const BID_AGT_LIST: MockBzentyBidAgt[] = [
   { agtJbpsNm: '과장', agtNm: '김길동', agtEntlno: '02-1234-5678' },
 ]
 
-function gnrlRows(d: BzentyGnrlInfo): TableRow[] {
+function gnrlRows(d: MockBzentyGnrlInfo): TableRow[] {
   return [
     { label: '업체코드', value: d.bzentyCd },
     { label: '상호명', value: d.bzentyNm },
@@ -110,7 +110,7 @@ function gnrlRows(d: BzentyGnrlInfo): TableRow[] {
   ]
 }
 
-function sttsRows(d: BzentyStts): TableRow[] {
+function sttsRows(d: MockBzentyStts): TableRow[] {
   return [
     { label: '상태코드', value: d.bzentyStcd },
     { label: '상태명', value: d.bzentyStNm },
@@ -121,7 +121,7 @@ function sttsRows(d: BzentyStts): TableRow[] {
   ]
 }
 
-function rlsVltrnsRows(d: BzentyRlsVltrnsRstric): TableRow[] {
+function rlsVltrnsRows(d: MockBzentyRlsVltrnsRstric): TableRow[] {
   return [
     { label: '공고번호', value: d.pbancNo },
     { label: '판단번호', value: d.prcmNo },
@@ -134,7 +134,7 @@ function rlsVltrnsRows(d: BzentyRlsVltrnsRstric): TableRow[] {
   ]
 }
 
-function rprsvRows(d: BzentyRprsv): TableRow[] {
+function rprsvRows(d: MockBzentyRprsv): TableRow[] {
   return [
     { label: '대표대표자여부', value: d.rprsvYn },
     { label: '대표자명', value: d.rprsvNm },
@@ -143,7 +143,7 @@ function rprsvRows(d: BzentyRprsv): TableRow[] {
   ]
 }
 
-function bidAgtRows(d: BzentyBidAgt): TableRow[] {
+function bidAgtRows(d: MockBzentyBidAgt): TableRow[] {
   return [
     { label: '직위', value: d.agtJbpsNm },
     { label: '성명', value: d.agtNm },

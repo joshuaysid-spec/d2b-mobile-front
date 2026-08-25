@@ -4,16 +4,16 @@
 import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CtCtrdocType, CtrtDtstGroup, CtrtDtstGroupItem } from '@/types/ct'
+import type { MockCtCtrdocType, MockCtrtDtstGroup, MockCtrtDtstGroupItem } from '@/types/mock/ct'
 
 export interface CmdtyGramtCtrdocDtl_CtrtProps {
   /** 계약 식별자 — 부모 상세 페이지가 navigate state 에서 받아 전달. */
   id: string
-  type: CtCtrdocType
+  type: MockCtCtrdocType
 }
 
 // 품목 1건 → 표 행. 총액제(T14): 공동계약업체~예산항목 · 단가제(T17): 항목번호~납지수량.
-function itemRows(it: CtrtDtstGroupItem, type: CtCtrdocType): TableRow[] {
+function itemRows(it: MockCtrtDtstGroupItem, type: MockCtCtrdocType): TableRow[] {
   if (type === 'gramt') {
     return [
       { label: '공동계약업체', value: it.bzentyNm ?? '-' },
@@ -61,7 +61,7 @@ function itemRows(it: CtrtDtstGroupItem, type: CtCtrdocType): TableRow[] {
 }
 
 // 예산구분 그룹 1개 — 그룹 라벨(예산구분 - 장기국채/총계/예산별 소계) + 품목 블록.
-function DtstGroup({ group, type }: { group: CtrtDtstGroup; type: CtCtrdocType }) {
+function DtstGroup({ group, type }: { group: MockCtrtDtstGroup; type: MockCtCtrdocType }) {
   return (
     <div className="flex flex-col gap-krds-5">
       <p className="text-krds-body-md font-bold text-krds-text-ink">예산구분 - {group.bgtCd}</p>

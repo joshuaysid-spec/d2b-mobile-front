@@ -9,7 +9,7 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { cn } from '@/utils/cn'
-import type { BidPrgrsItem } from '@/types/bd'
+import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 추첨 대상 번호 1~15 (설계서 slide124 — 사용자 선택 버튼 15개).
 const PICK_NUMBERS = Array.from({ length: 15 }, (_, i) => String(i + 1))
@@ -45,7 +45,7 @@ function PickButton({
   )
 }
 
-export function TndrWrt_Stp4({ detail }: { detail: BidPrgrsItem }) {
+export function TndrWrt_Stp4({ detail }: { detail: MockBidPrgrsItem }) {
   void detail // 상단 요약은 컨테이너 소유 — 본 탭은 복수예비가격 선택만 담당.
 
   // 복수예비가격 선택값(설계서 slide129 dmt_rsrbPrcChc) — 미선택 = ''.

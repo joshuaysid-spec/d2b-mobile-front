@@ -25,10 +25,10 @@ import { TaskCldrDtl } from '@/ui/biz/cm/taskCldr/TaskCldrDtl'
 import { TaskCldrReg, type TaskCldrRegHandle } from '@/ui/biz/cm/taskCldr/TaskCldrReg'
 import type { TaskCldrRegSchemaValues } from '@/ui/biz/cm/taskCldr/TaskCldrReg.schema'
 import { cn } from '@/utils/cn'
-import type { TaskCldrItem, MyPageSchdlSeCd } from '@/types/cm'
+import type { MockTaskCldrItem, MockMyPageSchdlSeCd } from '@/types/mock/cm'
 
 // 구분별 배지 — 물품=blue · 공사=green · 개인=yellow(근사, MyPage_Calendar 와 동일 관례).
-const SCHDL_BADGE: Record<MyPageSchdlSeCd, { label: string; color: 'blue' | 'green' | 'yellow' }> = {
+const SCHDL_BADGE: Record<MockMyPageSchdlSeCd, { label: string; color: 'blue' | 'green' | 'yellow' }> = {
   goods: { label: '물품', color: 'blue' },
   construction: { label: '공사', color: 'green' },
   personal: { label: '개인', color: 'yellow' },
@@ -38,7 +38,7 @@ const SCHDL_BADGE: Record<MyPageSchdlSeCd, { label: string; color: 'blue' | 'gre
 // 날짜는 '오늘' 기준 상대값 — 캘린더 기본 노출 월에 표식이 보이도록. API 연동 시 실제 일자로 교체.
 const schdlDt = (offset: number) => dayjs().add(offset, 'day').format('YYYY-MM-DD')
 // ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 로직을 교체(cmService.selectTaskCldrList / selectTaskCldrDtl).
-const MOCK_TASK_CLDR: TaskCldrItem[] = [
+const MOCK_TASK_CLDR: MockTaskCldrItem[] = [
   {
     id: '1',
     schdlSeCd: 'goods',
@@ -79,7 +79,7 @@ const MOCK_TASK_CLDR: TaskCldrItem[] = [
 ]
 
 // 일정 카드 — 도메인 전용 조립물(MyPage_Calendar ScheduleCard 와 동일 시각). 관심 공고=공고번호+공고명 / 개인=제목.
-function ScheduleCard({ item, onClick }: { item: TaskCldrItem; onClick: () => void }) {
+function ScheduleCard({ item, onClick }: { item: MockTaskCldrItem; onClick: () => void }) {
   const badge = SCHDL_BADGE[item.schdlSeCd]
   const title = item.pbancNm ?? item.schdlTtl ?? ''
   return (
@@ -120,16 +120,16 @@ export function TaskCldrPage() {
   const navState = useLocation().state as { schdlDt?: string } | null
 
   // 일정 목록(목업) — 등록/수정/삭제 시 로컬 반영(API 연동 시 서버 재조회로 교체).
-  const [items, setItems] = useState<TaskCldrItem[]>(MOCK_TASK_CLDR)
+  const [items, setItems] = useState<MockTaskCldrItem[]>(MOCK_TASK_CLDR)
   // 선택 날짜 — 진입 시 전달된 날짜, 없으면 오늘.
   const [selected, setSelected] = useState<string>(
     () => navState?.schdlDt ?? dayjs().format('YYYY-MM-DD'),
   )
 
   // 바텀시트/모달/토스트 상태.
-  const [detailItem, setDetailItem] = useState<TaskCldrItem | null>(null) // M07 상세
-  const [regSheet, setRegSheet] = useState<{ mode: 'reg' | 'edit'; target: TaskCldrItem | null } | null>(null) // M08 등록/수정
-  const [deleteTarget, setDeleteTarget] = useState<TaskCldrItem | null>(null) // M09 삭제 확인
+  const [detailItem, setDetailItem] = useState<MockTaskCldrItem | null>(null) // M07 상세
+  const [regSheet, setRegSheet] = useState<{ mode: 'reg' | 'edit'; target: MockTaskCldrItem | null } | null>(null) // M08 등록/수정
+  const [deleteTarget, setDeleteTarget] = useState<MockTaskCldrItem | null>(null) // M09 삭제 확인
   const [toast, setToast] = useState<string | null>(null)
   const regRef = useRef<TaskCldrRegHandle>(null)
 
@@ -139,7 +139,7 @@ export function TaskCldrPage() {
 
   // ── 동작 스텁 (API 연동 시 services/queries 로 교체) ──
   // 카드 클릭 — 관심 공고면 해당 공고 이동, 개인 일정이면 M07 상세 바텀시트.
-  const handleCardClick = (item: TaskCldrItem) => {
+  const handleCardClick = (item: MockTaskCldrItem) => {
     if (item.schdlSeCd === 'personal') {
       setDetailItem(item)
       return
@@ -152,7 +152,7 @@ export function TaskCldrPage() {
   // 등록 시트 열기 — 선택 날짜를 기본값으로.
   const openReg = () => setRegSheet({ mode: 'reg', target: null })
   // 수정 시트 열기(M07 → 수정) — 대상 일정 프리필.
-  const openEdit = (item: TaskCldrItem) => {
+  const openEdit = (item: MockTaskCldrItem) => {
     setDetailItem(null)
     setRegSheet({ mode: 'edit', target: item })
   }
@@ -168,7 +168,7 @@ export function TaskCldrPage() {
       )
       console.log('[TaskCldr] 일정 수정', id, values) // 추후: cmService.updateSchdl(id, values)
     } else {
-      const newItem: TaskCldrItem = {
+      const newItem: MockTaskCldrItem = {
         id: `personal-${Date.now()}`,
         schdlSeCd: 'personal',
         schdlDt: values.schdlDt,
@@ -184,7 +184,7 @@ export function TaskCldrPage() {
   }
 
   // M07 → 삭제 → M09 확인 모달.
-  const openDelete = (item: TaskCldrItem) => {
+  const openDelete = (item: MockTaskCldrItem) => {
     setDetailItem(null)
     setDeleteTarget(item)
   }

@@ -2,10 +2,10 @@
 // 아코디언 2개(계약정보 · 대금신청 업체정보).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { PxcndCstPymtClmDtl } from '@/types/wm'
+import type { MockPxcndCstPymtClmDtl } from '@/types/mock/wm'
 
 export interface PxcndCstPymtClmDtl_CtrtProps {
-  detail: PxcndCstPymtClmDtl
+  detail: MockPxcndCstPymtClmDtl
 }
 
 export function PxcndCstPymtClmDtl_Ctrt({ detail }: PxcndCstPymtClmDtl_CtrtProps) {

@@ -17,7 +17,7 @@ import type {
   SearchFilterValue,
   DateRangePresetDef,
 } from '@/types/search-filter'
-import type { PrfmncPrdocCtrtInfo } from '@/types/cm'
+import type { MockPrfmncPrdocCtrtInfo } from '@/types/mock/cm'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
@@ -79,7 +79,7 @@ const SEARCH_TARGETS = [{ value: 'ctrtNo', label: '계약번호' }]
 
 // ── 목업 (dm_ctrtInfo 항목명/형식 — API 연동 시 교체) ─────────────────────────
 // 분기 데모: 방위사업청(물품 → 사용목적·T12) + 부대·시설공사(→ 제출유형·T13 unitB).
-const dl_ctrtList: PrfmncPrdocCtrtInfo[] = [
+const dl_ctrtList: MockPrfmncPrdocCtrtInfo[] = [
   {
     ctrtNo: '2025093455',
     CtrtOd: '00',
@@ -128,19 +128,19 @@ const dl_ctrtList: PrfmncPrdocCtrtInfo[] = [
 
 // ⚠️ 임시 목업 — API 연동 시 서버 조회(page/pageSize/검색조건)로 교체(목록 컨벤션 동일).
 const TOTAL = 24
-const MOCK_LIST: PrfmncPrdocCtrtInfo[] = Array.from({ length: TOTAL }, (_, i) => {
+const MOCK_LIST: MockPrfmncPrdocCtrtInfo[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dl_ctrtList[i % dl_ctrtList.length]
   return { ...base, ctrtNo: `${base.ctrtNo.slice(0, 6)}${String(i + 1000)}` }
 })
 
 // 선택 비교 키 — 계약번호+차수.
-const ctrtKey = (c: PrfmncPrdocCtrtInfo) => `${c.ctrtNo}-${c.CtrtOd}`
+const ctrtKey = (c: MockPrfmncPrdocCtrtInfo) => `${c.ctrtNo}-${c.CtrtOd}`
 
 export interface CtrtInfoChcProps {
   /** 현재 선택된 계약(부모 소유). */
-  selected: PrfmncPrdocCtrtInfo | null
+  selected: MockPrfmncPrdocCtrtInfo | null
   /** 카드 선택/해제(같은 카드 재클릭 = 해제 요청). 작성내용 보호 팝업은 부모 담당. */
-  onSelect: (ctrt: PrfmncPrdocCtrtInfo | null) => void
+  onSelect: (ctrt: MockPrfmncPrdocCtrtInfo | null) => void
 }
 
 export function CtrtInfoChc({ selected, onSelect }: CtrtInfoChcProps) {

@@ -27,7 +27,7 @@ import type {
   DateRangePresetDef,
   DateRangeValue,
 } from '@/types/search-filter'
-import type { AddRegInfoAplyItem } from '@/types/cm'
+import type { MockAddRegInfoAplyItem } from '@/types/mock/cm'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
@@ -95,7 +95,7 @@ const SEARCH_DEFAULT: SearchFilterValue = {
 
 // ── 목업 (설계서 slide137 예시 + slide139 데이터영역 dl_resultList 항목명/형식) ────
 const TOTAL = 258 // 총 건수(목업 — slide137 더보기 10/258)
-const dl_resultList: AddRegInfoAplyItem[] = [
+const dl_resultList: MockAddRegInfoAplyItem[] = [
   {
     id: '1',
     rcptNo: '2020101010',
@@ -126,7 +126,7 @@ const dl_resultList: AddRegInfoAplyItem[] = [
 ]
 
 // ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 filteredList/visibleList 로직을 서버 조회로 교체(cmService.selectBzentyInfoAddRegAplyList).
-const MOCK_LIST: AddRegInfoAplyItem[] = Array.from({ length: TOTAL }, (_, i) => {
+const MOCK_LIST: MockAddRegInfoAplyItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dl_resultList[i % dl_resultList.length]
   return { ...base, id: String(i + 1), rcptNo: `${base.rcptNo}${String(i + 1).padStart(2, '0')}`.slice(0, 12) }
 })
@@ -158,7 +158,7 @@ export function AddRegInfoAplyListPage() {
   }
   // 카드 클릭 → 처리상태 무관 상세(T05 물품(내자)신청 / T06 국내소재상사신청, 설계서 slide137).
   //   항목을 navigate state 로 넘겨 상세 상단(접수정보)을 그린다. 추가정보구분(addInfoCdNm)별 T05/T06 분기는 상세 페이지가 처리.
-  const handleCardClick = (item: AddRegInfoAplyItem) => {
+  const handleCardClick = (item: MockAddRegInfoAplyItem) => {
     navigate(ROUTES.ADD_REG_INFO_APLY_DETAIL, { state: item })
     console.log('[AddRegInfoAply] 상세 이동(T05/T06 분기)', item.rcptNo, item.addInfoCdNm)
   }

@@ -22,7 +22,7 @@ import { Checkbox } from '@/ui/common/base/Checkbox'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { SectionDivider } from '@/ui/common/base/SectionDivider'
 import { cn } from '@/utils/cn'
-import type { SbmsnAsctnItem } from '@/types/cm'
+import type { MockSbmsnAsctnItem } from '@/types/mock/cm'
 
 // 상태(sttsVl) → 뱃지 색. Figma 확인분: 송신완료(pastel blue) · 제출취소(pastel red).
 // 전송중/실패는 Figma 미표기 → 의미상 근접색 매핑(design 문서 §7 미결 2).
@@ -72,7 +72,7 @@ function useHasScroll(ref: React.RefObject<HTMLElement | null>) {
 
 export interface PrfmncPrdocSbmsnProps {
   /** 제출 협회 목록(dl_sbmsnAsctnList). */
-  items: SbmsnAsctnItem[]
+  items: MockSbmsnAsctnItem[]
   /** 선택된 제출협회명(sbmsnSttsNm) 목록 — 멀티 선택(slide336 이벤트 설명). */
   selected: string[]
   onToggle: (sbmsnSttsNm: string, checked: boolean) => void

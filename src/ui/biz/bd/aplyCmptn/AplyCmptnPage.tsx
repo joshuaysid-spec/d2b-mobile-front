@@ -3,7 +3,7 @@
 // 용도: 사전심사(PQ)/입찰참가신청/입찰서 작성 완료 공통 화면 — aplyType 에 따라 완료 제목 텍스트만 분기(설계서 slide133).
 // 레이아웃: 요약(공고) → 완료 hero(CheckCircle + 완료 제목) → 신청정보(신청 번호/신청 완료 일시)
 //   → 유의사항(SectionTitle + 본문 박스) → 하단 액션바([작성 내용 확인]/[목록]).
-// 진입: 전자서명(M21) → 견적서/입찰참가신청서 제출 → 이 화면(navigate state = AplyFlowState).
+// 진입: 전자서명(M21) → 견적서/입찰참가신청서 제출 → 이 화면(navigate state = MockAplyFlowState).
 //   상단(요약)은 넘어온 detail 로 그린다. 직접 URL 진입(state 없음)이면 MOCK_DETAIL fallback.
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -12,10 +12,10 @@ import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { AplyFlowState, BidPrgrsItem } from '@/types/bd'
+import type { MockAplyFlowState, MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 slide133 값/형식 그대로.
-const MOCK_DETAIL: BidPrgrsItem = {
+const MOCK_DETAIL: MockBidPrgrsItem = {
   rNum: '0',
   taskSeNm: '물품',
   pbancNo: '긴급공고 LDG0097-1',
@@ -43,7 +43,7 @@ const PRECAUTIONS: string[] = [
 
 export function AplyCmptnPage() {
   const navigate = useNavigate()
-  const state = useLocation().state as AplyFlowState | null
+  const state = useLocation().state as MockAplyFlowState | null
   const detail = state?.detail ?? MOCK_DETAIL
   const aplyType = state?.aplyType ?? 'tndr'
   const rcptNo = state?.rcptNo ?? '0000 000 0000'

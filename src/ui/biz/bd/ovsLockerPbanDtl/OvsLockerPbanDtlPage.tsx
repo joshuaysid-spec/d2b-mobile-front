@@ -13,10 +13,10 @@ import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 // 보관함 공고 타입 — @/types/bd 공유 타입(설계서 slide306 dl_resultList).
-import type { BidPrgrsItem, OvsLockerPbanItem } from '@/types/bd'
+import type { MockBidPrgrsItem, MockOvsLockerPbanItem } from '@/types/mock/bd'
 
 // 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — 설계서 slide304 데이터영역 항목명/형식 그대로.
-const MOCK_OVS_LOCKER_PBAN_DETAIL: OvsLockerPbanItem = {
+const MOCK_OVS_LOCKER_PBAN_DETAIL: MockOvsLockerPbanItem = {
   id: 'BDF01823EFE',
   intgRfrncNo: 'BDF01823EFE',
   pbancNo: 'EFE00012',
@@ -62,7 +62,7 @@ export function OvsLockerPbanDtlPage() {
   const { collapsed, rootRef, scrollToTop } = useCollapsibleHeader()
 
   // 목록 → 상세 데이터 전달: navigate state 항목으로 상단/본문을 그린다. state 없으면 페이지 목업.
-  const detail = (useLocation().state as OvsLockerPbanItem | null) ?? MOCK_OVS_LOCKER_PBAN_DETAIL
+  const detail = (useLocation().state as MockOvsLockerPbanItem | null) ?? MOCK_OVS_LOCKER_PBAN_DETAIL
 
   // 일반정보 (설계서 slide304 공고일반 데이터 영역) — detail 필드로 구동.
   const generalRows: TableRow[] = [
@@ -96,9 +96,9 @@ export function OvsLockerPbanDtlPage() {
   }
   const handleApfr = () => {
     // btn_moveApplFormEdit_onlick → 국외 입찰참가신청서 작성. 청렴계약이행서약서동의(P71)는 신청서 화면에서 처리.
-    // 신청서 화면은 BidPrgrsItem 형태 state 를 기대 — 보관함 항목을 매핑해 전달(목록 goPrtcpAply 와 동일).
+    // 신청서 화면은 MockBidPrgrsItem 형태 state 를 기대 — 보관함 항목을 매핑해 전달(목록 goPrtcpAply 와 동일).
     console.log('[OvsLockerDtl] 입찰참가신청서 작성 이동', detail.intgRfrncNo)
-    const aplyState: Partial<BidPrgrsItem> = {
+    const aplyState: Partial<MockBidPrgrsItem> = {
       taskSeNm: '국외',
       pbancNo: `${detail.pbancNo}-${detail.pbancOd}`,
       rfrncNo: detail.intgRfrncNo,

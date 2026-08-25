@@ -8,7 +8,7 @@ import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { Notice } from '@/ui/common/composites/Notice'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { SmprcScsbdRpsItem, SmprcScsbdRsltItem } from '@/types/bd'
+import type { MockSmprcScsbdRpsItem, MockSmprcScsbdRsltItem } from '@/types/mock/bd'
 
 export interface SmprcScsbdRsltFullPopupProps {
   /** 개찰 건 식별자 — 입찰결과상세 페이지가 navigate state 에서 받아 탭을 거쳐 전달. */
@@ -18,7 +18,7 @@ export interface SmprcScsbdRsltFullPopupProps {
 }
 
 // 업체정보 1건 → 표 행 (slide250 1.1 순서).
-function bzentyRows(it: SmprcScsbdRsltItem): TableRow[] {
+function bzentyRows(it: MockSmprcScsbdRsltItem): TableRow[] {
   return [
     { label: '번호', value: it.no, type: 'number' },
     { label: '사업자등록번호', value: it.brno },
@@ -29,7 +29,7 @@ function bzentyRows(it: SmprcScsbdRsltItem): TableRow[] {
 }
 
 // 가위바위보 1건 → 표 행 (slide250 1.2 순서). 진행되지 않은 차수는 빈 값이라 값 있는 차수만 표시.
-function rpsRows(it: SmprcScsbdRpsItem): TableRow[] {
+function rpsRows(it: MockSmprcScsbdRpsItem): TableRow[] {
   const rounds = [
     it.smprcScsbdRslt1,
     it.smprcScsbdRslt2,

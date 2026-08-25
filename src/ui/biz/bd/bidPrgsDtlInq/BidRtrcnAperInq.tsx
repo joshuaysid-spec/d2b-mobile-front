@@ -11,7 +11,7 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OathBox } from '@/ui/biz/bd/OathBox'
-import type { BidPrgrsItem } from '@/types/bd'
+import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 export interface BidRtrcnAperInqHandle {
   /** 부모 BottomSheet footer '제출' 이 호출 — 제출확인 모달을 띄운다 */
@@ -20,7 +20,7 @@ export interface BidRtrcnAperInqHandle {
 
 interface BidRtrcnAperInqProps {
   /** 상세에서 넘어온 항목(navigate state) — 요약/공고일반을 이 항목으로 그린다. */
-  detail: BidPrgrsItem
+  detail: MockBidPrgrsItem
   /** 제출 완료(확인) 시 호출(부모가 BottomSheet 를 닫음) */
   onSubmitted: () => void
 }

@@ -3,7 +3,7 @@
 // 신청정보에 신청구분(착수금/착·중도금)이 추가되고 지출원인금액이 없다(설계서 별도 데이터영역).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { DpsmnItrpyApfrDtl as ApfrDtl } from '@/types/wm'
+import type { MockDpsmnItrpyApfrDtl as ApfrDtl } from '@/types/mock/wm'
 
 export interface DpsmnItrpyApfrDtlProps {
   detail: ApfrDtl

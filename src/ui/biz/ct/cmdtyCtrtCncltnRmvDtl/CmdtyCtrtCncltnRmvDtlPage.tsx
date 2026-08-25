@@ -20,7 +20,7 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { CmdtyCtrtCncltnRmvDtl_Cn } from '@/ui/biz/ct/cmdtyCtrtCncltnRmvDtl/CmdtyCtrtCncltnRmvDtl_Cn'
 import { CmdtyCtrtCncltnRmvDtl_Artcl } from '@/ui/biz/ct/cmdtyCtrtCncltnRmvDtl/CmdtyCtrtCncltnRmvDtl_Artcl'
 import { CmdtyCtrtCncltnRmvDtl_SpclCnd } from '@/ui/biz/ct/cmdtyCtrtCncltnRmvDtl/CmdtyCtrtCncltnRmvDtl_SpclCnd'
-import type { CncltnRmvListItem } from '@/types/ct'
+import type { MockCncltnRmvListItem } from '@/types/mock/ct'
 
 // ── 탭 (slide108 레이아웃: 상세정보/계약업체/해지해제 정보) ────────────────────
 const TABS: TabItem[] = [
@@ -40,7 +40,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CmdtyCtrtCncltnRmvDtlPage() {
-  const stateItem = useLocation().state as CncltnRmvListItem | null
+  const stateItem = useLocation().state as MockCncltnRmvListItem | null
   const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')

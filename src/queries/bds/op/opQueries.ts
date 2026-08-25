@@ -6,13 +6,13 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { opService } from '@/services/bds/op'
 import { opKeys } from '@/queries/bds/op/opKeys'
 import type {
-  OpAnlPrcmPlanItem,
-  OpListRequest,
-  OpNotifyRequest,
-  OpPlanDetail,
-  PrcDataSearchRequest,
-  WarSplInqRequest,
-} from '@/types/op'
+  MockOpAnlPrcmPlanItem,
+  MockOpListRequest,
+  MockOpNotifyRequest,
+  MockOpPlanDetail,
+  MockPrcDataSearchRequest,
+  MockWarSplInqRequest,
+} from '@/types/mock/op'
 
 // 통합목록(MUI-OP-01-M02)은 화면상 탭 하나짜리 목록이지만 실 API 는 검색유형별로 3개다
 // (no.1 조달계획 / no.5 사전규격 / no.13 연간조달계획). 훅은 조건부 호출이 불가하므로
@@ -25,7 +25,7 @@ const PLAN_LIST_API = {
 
 export const opQueries = {
   /** 조달계획 통합목록 — 검색 확정값(appliedSearch)별 캐시. 키워드 세부 필터/페이징은 페이지 클라이언트 로직 유지. */
-  useSelectPrcmPlanList(req: OpListRequest) {
+  useSelectPrcmPlanList(req: MockOpListRequest) {
     const api = PLAN_LIST_API[req.srchType]
     return useQuery({
       queryKey: api.key(req),
@@ -34,7 +34,7 @@ export const opQueries = {
   },
 
   /** 조달계획 상세 — 목록에서 navigate state 로 넘어온 항목을 placeholder 로 즉시 렌더. */
-  useSelectPrcmPlanDtl(id: string, placeholder?: OpPlanDetail) {
+  useSelectPrcmPlanDtl(id: string, placeholder?: MockOpPlanDetail) {
     return useQuery({
       queryKey: opKeys.selectPrcmPlanDtl(id),
       queryFn: () => opService.selectPrcmPlanDtl(id),
@@ -53,7 +53,7 @@ export const opQueries = {
   },
 
   /** 국외 연간조달계획 상세(MUI-OP-01-M78) — 목록에서 navigate state 로 넘어온 항목을 placeholder 로 즉시 렌더. */
-  useSelectOvsPrcmPlanDtl(id: string, placeholder?: OpAnlPrcmPlanItem) {
+  useSelectOvsPrcmPlanDtl(id: string, placeholder?: MockOpAnlPrcmPlanItem) {
     return useQuery({
       queryKey: opKeys.selectOvsPrcmPlanDtl(id),
       queryFn: () => opService.selectOvsPrcmPlanDtl(id),
@@ -78,7 +78,7 @@ export const opQueries = {
   // enabled 는 호출부가 Boolean(niin) 으로 넘긴다(같은 훅을 두 용도로 쓰기 위함).
 
   /** 형상자료(T73) — 식별정보 + 참조번호. */
-  useSelectCnfgInfo(req: WarSplInqRequest, enabled = true) {
+  useSelectCnfgInfo(req: MockWarSplInqRequest, enabled = true) {
     return useQuery({
       queryKey: opKeys.selectCnfgInfo(req),
       queryFn: () => opService.selectCnfgInfo(req),
@@ -87,7 +87,7 @@ export const opQueries = {
   },
 
   /** 식별자료(T74). */
-  useSelectIdntfInfo(req: WarSplInqRequest, enabled = true) {
+  useSelectIdntfInfo(req: MockWarSplInqRequest, enabled = true) {
     return useQuery({
       queryKey: opKeys.selectIdntfInfo(req),
       queryFn: () => opService.selectIdntfInfo(req),
@@ -96,7 +96,7 @@ export const opQueries = {
   },
 
   /** 참고자료(T75). */
-  useSelectRefInfo(req: WarSplInqRequest, enabled = true) {
+  useSelectRefInfo(req: MockWarSplInqRequest, enabled = true) {
     return useQuery({
       queryKey: opKeys.selectRefInfo(req),
       queryFn: () => opService.selectRefInfo(req),
@@ -114,7 +114,7 @@ export const opQueries = {
   },
 
   /** 품목별 가격자료(P75) — 검색 확정값(applied)이 있을 때만 호출(enabled 는 호출부가 넘김). */
-  useSelectPrcDataListByItem(req: PrcDataSearchRequest, enabled = true) {
+  useSelectPrcDataListByItem(req: MockPrcDataSearchRequest, enabled = true) {
     return useQuery({
       queryKey: opKeys.selectPrcDataListByItem(req),
       queryFn: () => opService.selectPrcDataListByItem(req),
@@ -127,7 +127,7 @@ export const opQueries = {
   /** 공고게시알림 신청(MUI-OP-01-P10 PrcmPlan_NotiAply). */
   useSavePbancPstgNotiAply() {
     return useMutation({
-      mutationFn: (req: OpNotifyRequest) => opService.savePbancPstgNotiAply(req),
+      mutationFn: (req: MockOpNotifyRequest) => opService.savePbancPstgNotiAply(req),
     })
   },
 }

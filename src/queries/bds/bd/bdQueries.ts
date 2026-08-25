@@ -9,16 +9,16 @@ import { queryClient } from '@/lib/queryClient'
 import { bdService } from '@/services/bds/bd'
 import { bdKeys } from '@/queries/bds/bd/bdKeys'
 import type {
-  BidListSearchRequest,
-  BidPbancDetail,
-  BidPbancListSrchMap,
-  BdopnItem,
-  TndrSavePayload,
-} from '@/types/bd'
+  MockBidListSearchRequest,
+  MockBidPbancDetail,
+  MockBidPbancListSrchMap,
+  MockBdopnItem,
+  MockTndrSavePayload,
+} from '@/types/mock/bd'
 
 export const bdQueries = {
   /** 입찰공고 통합목록(no.28) — 목업은 전체 반환, 키워드/페이징은 페이지 클라이언트 로직 유지. */
-  useSelectBidPbancIntgList(req?: BidPbancListSrchMap) {
+  useSelectBidPbancIntgList(req?: MockBidPbancListSrchMap) {
     return useQuery({
       queryKey: bdKeys.selectBidPbancIntgList(req),
       queryFn: () => bdService.selectBidPbancIntgList(req),
@@ -26,7 +26,7 @@ export const bdQueries = {
   },
 
   /** 입찰공고 상세 공고일반(no.32) — 목록에서 navigate state 로 넘어온 항목을 placeholder 로 즉시 렌더. */
-  useSelectPbancGnrlInfo(id: string, placeholder?: BidPbancDetail) {
+  useSelectPbancGnrlInfo(id: string, placeholder?: MockBidPbancDetail) {
     return useQuery({
       queryKey: bdKeys.selectPbancGnrlInfo(id),
       queryFn: () => bdService.selectPbancGnrlInfo(id),
@@ -36,7 +36,7 @@ export const bdQueries = {
   },
 
   /** 입찰진행 목록(조달업체, no.73) — 목업 전체 반환, 검색/페이징은 페이지 클라이언트 로직 유지. */
-  useSelectBidPrgrsListForBzenty(req?: BidListSearchRequest) {
+  useSelectBidPrgrsListForBzenty(req?: MockBidListSearchRequest) {
     return useQuery({
       queryKey: bdKeys.selectBidPrgrsListForBzenty(req),
       queryFn: () => bdService.selectBidPrgrsListForBzenty(req),
@@ -44,7 +44,7 @@ export const bdQueries = {
   },
 
   /** 개찰목록(no.147) — 목업 전체 반환, 검색/페이징은 페이지 클라이언트 로직 유지. */
-  useSelectBdopnList(req?: BidListSearchRequest) {
+  useSelectBdopnList(req?: MockBidListSearchRequest) {
     return useQuery({
       queryKey: bdKeys.selectBdopnList(req),
       queryFn: () => bdService.selectBdopnList(req),
@@ -52,7 +52,7 @@ export const bdQueries = {
   },
 
   /** 입찰결과정보(no.165) — 목록에서 넘어온 항목을 placeholder 로 즉시 렌더(없으면 id 조회). */
-  useSelctBidRsltInfo(id: string, placeholder?: BdopnItem) {
+  useSelctBidRsltInfo(id: string, placeholder?: MockBdopnItem) {
     return useQuery({
       queryKey: bdKeys.selctBidRsltInfo(id),
       queryFn: () => bdService.selctBidRsltInfo(id),
@@ -160,7 +160,7 @@ export const bdQueries = {
   /** 입찰서제출(no.118, MUI-BD-06 TndrWrt) — 성공 시 진행목록 캐시 무효화. */
   useInsertTndrSbmsn() {
     return useMutation({
-      mutationFn: (payload: TndrSavePayload) => bdService.insertTndrSbmsn(payload),
+      mutationFn: (payload: MockTndrSavePayload) => bdService.insertTndrSbmsn(payload),
       onSuccess: () =>
         queryClient.invalidateQueries({ queryKey: bdKeys.selectBidPrgrsListForBzentyAll }),
     })

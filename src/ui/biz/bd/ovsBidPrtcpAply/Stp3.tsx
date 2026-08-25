@@ -16,7 +16,7 @@ import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsBidWtgrInqFullPopup } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidWtgrInqFullPopup'
-import type { BidPrgrsItem, OvsBidPrtcpBizItem, OvsBidWtgrItem } from '@/types/bd'
+import type { MockBidPrgrsItem, MockOvsBidPrtcpBizItem, MockOvsBidWtgrItem } from '@/types/mock/bd'
 
 // 입찰보증금 구분 — ⚠️ 값 항목명 설계서 미정의(이벤트 sbx_depositType_onchange 에서 파생한 임시 키, 관례 승인).
 const DEPOSIT_TYPES = [
@@ -31,7 +31,7 @@ const PAY_METHODS = [
 ]
 
 // 입찰참가사업 및 입찰보증금(dl_bizList·dl_bizExmptnList 공통 R 필드) — 달러금액(설계서 형식).
-const MOCK_BIZ_LIST: OvsBidPrtcpBizItem[] = [
+const MOCK_BIZ_LIST: MockOvsBidPrtcpBizItem[] = [
   {
     prchsDmndNo: '2025103001',
     bizNm: 'MD부품 국외구매',
@@ -74,7 +74,7 @@ const EMPTY_INPUT: BizGrnteInput = {
   grntePyslDocNo: '',
 }
 
-export function Stp3({ detail }: { detail: BidPrgrsItem }) {
+export function Stp3({ detail }: { detail: MockBidPrgrsItem }) {
   // 입찰보증금 구분 — 값 변경 시 데이터 영역(면제/비면제) 전환(설계서 slide341 sbx_depositType_onchange).
   const [depositType, setDepositType] = useState('nonExmptn')
   const isExmptn = depositType === 'exmptn'
@@ -89,7 +89,7 @@ export function Stp3({ detail }: { detail: BidPrgrsItem }) {
   const [wtgrInqFor, setWtgrInqFor] = useState<string | null>(null)
 
   // 보증서 적용(P75/P76 → 부모) — 전자보증서 정보(증권번호/보증기관명=발행자)를 해당 사업에 주입.
-  const applyWtgr = (item: OvsBidWtgrItem) => {
+  const applyWtgr = (item: MockOvsBidWtgrItem) => {
     if (wtgrInqFor) {
       patchInput(wtgrInqFor, { wtgrNo: item.wtgrNo, grnteInstNm: item.isrRprsvNm })
       console.log('[M74] 보증서 적용', { prchsDmndNo: wtgrInqFor, wtgrNo: item.wtgrNo })
@@ -99,7 +99,7 @@ export function Stp3({ detail }: { detail: BidPrgrsItem }) {
   }
 
   // 사업 1건 → Table rows (설계서 slide335 면제 / slide336 비면제 데이터 영역).
-  const buildBizRows = (biz: OvsBidPrtcpBizItem, index: number): TableRow[] => {
+  const buildBizRows = (biz: MockOvsBidPrtcpBizItem, index: number): TableRow[] => {
     const input = getInput(biz.prchsDmndNo)
     const isEGuarantee = input.grntePayMth === 'eGuarantee'
 

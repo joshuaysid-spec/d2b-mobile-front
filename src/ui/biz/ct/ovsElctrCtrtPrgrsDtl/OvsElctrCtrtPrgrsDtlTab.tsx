@@ -2,10 +2,10 @@
 // 설계서 slide150~154. 아코디언 5개(계약 상세정보 · 계약금액 · 구매형태 · 계약 업체정보 · 담당자 정보).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsElctrCtrtDtl } from '@/types/ct'
+import type { MockOvsElctrCtrtDtl } from '@/types/mock/ct'
 
 export interface OvsElctrCtrtPrgrsDtlTabProps {
-  detail: OvsElctrCtrtDtl
+  detail: MockOvsElctrCtrtDtl
 }
 
 export function OvsElctrCtrtPrgrsDtlTab({ detail }: OvsElctrCtrtPrgrsDtlTabProps) {

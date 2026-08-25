@@ -2,9 +2,9 @@
 // B군 채점 루브릭 — 유형 데이터만 소유, 렌더는 공용 [[ImpltElgblRsltRubric]].
 // 설계서 화면명(영문ID)이 기본형 T08과 동일이나 명명 규칙(파일 1:1)상 _2018 접미로 구분. ⚠️ 배점 ±(재확인). 심사평점 목업.
 import { ImpltElgblRsltRubric } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRsltRubric'
-import type { ImpltElgbSrngRubric } from '@/types/bd'
+import type { MockImpltElgbSrngRubric } from '@/types/mock/bd'
 
-const RUBRIC: ImpltElgbSrngRubric = {
+const RUBRIC: MockImpltElgbSrngRubric = {
   sections: [
     {
       field: '(가) 당해물품 납품이행능력',

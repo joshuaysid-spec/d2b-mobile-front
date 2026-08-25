@@ -6,15 +6,15 @@ import { useQuery } from '@tanstack/react-query'
 import { exService } from '@/services/cts/ex'
 import { exKeys } from '@/queries/cts/ex/exKeys'
 import type {
-  InspDlvdocPrstRequest,
-  InspIntgListRequest,
-  OvsEstmtRqdcListRequest,
-  OvsOrderRqdcListRequest,
-} from '@/types/ex'
+  MockInspDlvdocPrstRequest,
+  MockInspIntgListRequest,
+  MockOvsEstmtRqdcListRequest,
+  MockOvsOrderRqdcListRequest,
+} from '@/types/mock/ex'
 
 export const exQueries = {
   /** 검사통합목록(M01) — 키워드 세부 필터/더보기 페이징은 페이지 클라이언트 로직 유지(서버 전환 시 req 로 이행). */
-  useSelectInspIntgList(req: InspIntgListRequest = {}) {
+  useSelectInspIntgList(req: MockInspIntgListRequest = {}) {
     return useQuery({
       queryKey: exKeys.selectInspIntgList(req),
       queryFn: () => exService.selectInspIntgList(req),
@@ -85,7 +85,7 @@ export const exQueries = {
   },
 
   /** 검사및납품조서현황목록(M05). */
-  useSelectInspDlvdocPrstList(req: InspDlvdocPrstRequest = {}) {
+  useSelectInspDlvdocPrstList(req: MockInspDlvdocPrstRequest = {}) {
     return useQuery({
       queryKey: exKeys.selectInspDlvdocPrstList(req),
       queryFn: () => exService.selectInspDlvdocPrstList(req),
@@ -111,7 +111,7 @@ export const exQueries = {
   },
 
   /** 견적의뢰서목록(M71). */
-  useSelectEstmtRqdcList(req: OvsEstmtRqdcListRequest = {}) {
+  useSelectEstmtRqdcList(req: MockOvsEstmtRqdcListRequest = {}) {
     return useQuery({
       queryKey: exKeys.selectEstmtRqdcList(req),
       queryFn: () => exService.selectEstmtRqdcList(req),
@@ -163,7 +163,7 @@ export const exQueries = {
   },
 
   /** 발주의뢰서목록(M75). */
-  useSelectOrderRqdcList(req: OvsOrderRqdcListRequest = {}) {
+  useSelectOrderRqdcList(req: MockOvsOrderRqdcListRequest = {}) {
     return useQuery({
       queryKey: exKeys.selectOrderRqdcList(req),
       queryFn: () => exService.selectOrderRqdcList(req),

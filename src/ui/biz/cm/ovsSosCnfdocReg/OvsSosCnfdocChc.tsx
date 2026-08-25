@@ -16,14 +16,14 @@ import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
-import type { OvsSosBzentyChcItem } from '@/types/cm'
+import type { MockOvsSosBzentyChcItem } from '@/types/mock/cm'
 
 // 검색 대상(slide342 두 상태) — 업체명 / 업체코드
 type SearchTarget = 'bzentyNm' | 'bzentyCd'
 
 // ── 목업 (dl_resultList — 항목명/형식 설계서 그대로. API 연동 시 조회로 교체) ──
 // slide342 예시(업체명 NN / 대표자명 / 02-1234-5678 / 업체코드 0NN)를 실제 응답처럼 구성.
-const MOCK_BZENTY_LIST: OvsSosBzentyChcItem[] = [
+const MOCK_BZENTY_LIST: MockOvsSosBzentyChcItem[] = [
   { bzentyCd: '099', bzentyNm: '업체명 99', rprsvNm: '홍길동', rprsvTelno: '02-1234-5678' },
   { bzentyCd: '098', bzentyNm: '업체명 98', rprsvNm: '김길순', rprsvTelno: '02-1234-5679' },
   { bzentyCd: '097', bzentyNm: '업체명 97', rprsvNm: '박길동', rprsvTelno: '02-1234-5680' },
@@ -36,7 +36,7 @@ const MOCK_BZENTY_LIST: OvsSosBzentyChcItem[] = [
 
 export interface OvsSosCnfdocChcProps {
   /** 결과 row 선택 시 호출 — 부모가 필드 반영 + 시트 닫음. */
-  onSelect: (item: OvsSosBzentyChcItem) => void
+  onSelect: (item: MockOvsSosBzentyChcItem) => void
 }
 
 /**

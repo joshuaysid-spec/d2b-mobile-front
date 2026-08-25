@@ -18,7 +18,7 @@ import { TextArea } from '@/ui/common/base/TextArea'
 import { Table } from '@/ui/common/composites/Table'
 import { DateInput } from '@/ui/common/composites/DateInput'
 import type { CheckboxGroupItem } from '@/ui/common/composites/CheckboxGroup'
-import type { PrfmncPrdocAplyRprsInfo } from '@/types/cm'
+import type { MockPrfmncPrdocAplyRprsInfo } from '@/types/mock/cm'
 
 const fmtComma = (filtered: string) => (filtered ? Number(filtered).toLocaleString() : '')
 
@@ -54,7 +54,7 @@ const RSLT_DIVS_ITEMS: CheckboxGroupItem[] = [
 ]
 
 // 시공자(대표) — 불러온 정보 표시(dm_prfmncPrdocAplyRprsInfo, slide290)
-const RPRS_INFO: PrfmncPrdocAplyRprsInfo = {
+const RPRS_INFO: MockPrfmncPrdocAplyRprsInfo = {
   bzentyNm: 'A 업체',
   lcnsNoVl: '123456-7890123',
   rprsvNm: '홍길동',

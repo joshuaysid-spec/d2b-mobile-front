@@ -5,10 +5,10 @@
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { formatFileSize } from '@/utils/format'
-import type { OvsAtchDoc } from '@/types/bd'
+import type { MockOvsAtchDoc } from '@/types/mock/bd'
 
 // 첨부서류 목업 — PC 실 인터페이스(ovsBidPbancDtl.IResultAttach) 키. 설계서 slide292 Layout 값 기반.
-const MOCK_DOC_LIST: OvsAtchDoc[] = [
+const MOCK_DOC_LIST: MockOvsAtchDoc[] = [
   { docTitl: '입찰공고문', fileNm: '입찰공고문(EFD0007-2).hwp', fileSz: 804_864, fileId: 'ATCH-1001' },
   { docTitl: '입찰유의서', fileNm: '국외입찰유의서.hwp', fileSz: 1_258_291, fileId: 'ATCH-1002' },
   { docTitl: '계약특수조건', fileNm: '계약특수조건(500MD부품).pdf', fileSz: 2_516_582, fileId: 'ATCH-1003' },

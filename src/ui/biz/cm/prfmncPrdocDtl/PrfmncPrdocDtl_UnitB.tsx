@@ -22,16 +22,16 @@ import { Checkbox } from '@/ui/common/base/Checkbox'
 import type { CheckboxGroupItem } from '@/ui/common/composites/CheckboxGroup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type {
-  PrfmncPrdocAplyInptInfo,
-  PrfmncPrdocAplyWholCstrnInfo,
-  PrfmncPrdocAplyCstrnInfo,
-  PrfmncPrdocAplyRprsInfo,
-  PrfmncPrdocAplyCstrnTypeInfo,
-  PrfmncPrdocAplyJntCtrcInfo,
-  PrfmncPrdocAplyPrfmncTypeInfo,
-  PrfmncPrdocAplySbctrInfo,
-  PrfmncPrdocAplyLwprcInfo,
-} from '@/types/cm'
+  MockPrfmncPrdocAplyInptInfo,
+  MockPrfmncPrdocAplyWholCstrnInfo,
+  MockPrfmncPrdocAplyCstrnInfo,
+  MockPrfmncPrdocAplyRprsInfo,
+  MockPrfmncPrdocAplyCstrnTypeInfo,
+  MockPrfmncPrdocAplyJntCtrcInfo,
+  MockPrfmncPrdocAplyPrfmncTypeInfo,
+  MockPrfmncPrdocAplySbctrInfo,
+  MockPrfmncPrdocAplyLwprcInfo,
+} from '@/types/mock/cm'
 
 const won = (v?: number) => (v == null ? '-' : `${v.toLocaleString()} 원`)
 
@@ -40,14 +40,14 @@ const won = (v?: number) => (v == null ? '-' : `${v.toLocaleString()} 원`)
 // 로컬 상수로 표기. 항목명 확정 시 types/cm.ts 에 추가하고 교체할 것.
 const SBMSN_TYPE = '1. 시공실적증명서 [군시설공사 적격심사기준에 관한 훈령/국방부]'
 
-const APLY_INPT: PrfmncPrdocAplyInptInfo = {
+const APLY_INPT: MockPrfmncPrdocAplyInptInfo = {
   entlno: '02-1234-5678',
   dmndQty: '1',
   submOrgn: '방위사업청',
   usePrpsCd: '기타',
 }
 
-const RPRS_INFO: PrfmncPrdocAplyRprsInfo = {
+const RPRS_INFO: MockPrfmncPrdocAplyRprsInfo = {
   bzentyNm: 'A 업체',
   lcnsNoVl: '123456-7890123',
   rprsvNm: '홍길동',
@@ -55,7 +55,7 @@ const RPRS_INFO: PrfmncPrdocAplyRprsInfo = {
   salsLctnAddr: '서울특별시 종로구…',
 }
 
-const WHOL_CSTRN: PrfmncPrdocAplyWholCstrnInfo = {
+const WHOL_CSTRN: MockPrfmncPrdocAplyWholCstrnInfo = {
   ctrtYmd: '2016-01-02',
   bgncstYmd: '2016-01-02',
   cmcnYmd: '2016-01-02',
@@ -64,7 +64,7 @@ const WHOL_CSTRN: PrfmncPrdocAplyWholCstrnInfo = {
   gvspAmt: 5000000,
 }
 
-const CSTRN_INFO: PrfmncPrdocAplyCstrnInfo = {
+const CSTRN_INFO: MockPrfmncPrdocAplyCstrnInfo = {
   ctrtYmd2: '2016-01-02',
   bgncstYmd2: '2016-01-02',
   cmcnYmd2: '2016-01-02',
@@ -73,12 +73,12 @@ const CSTRN_INFO: PrfmncPrdocAplyCstrnInfo = {
   gvspAmt2: 5000000,
 }
 
-const CSTRN_TYPE: PrfmncPrdocAplyCstrnTypeInfo = {
+const CSTRN_TYPE: MockPrfmncPrdocAplyCstrnTypeInfo = {
   cnstrDivs: '신규공사',
   eltyDivs: '신규공사',
 }
 
-const JNT_CTRC: PrfmncPrdocAplyJntCtrcInfo = {
+const JNT_CTRC: MockPrfmncPrdocAplyJntCtrcInfo = {
   jntCtrcCd: '공동이행방식',
 }
 
@@ -140,7 +140,7 @@ function CheckList({ items, checked }: { items: CheckboxGroupItem[]; checked: st
 
 // 실적의 종류 + 텍스트 영역(dm_prfmncPrdocAplyprfmncTypeInfo).
 // 텍스트 영역 값은 목업 placeholder — "내용 표시 영역은 내용에 맞춰 높이를 조정하여 표시"(설계서).
-const PRFMNC_TYPE: PrfmncPrdocAplyPrfmncTypeInfo = {
+const PRFMNC_TYPE: MockPrfmncPrdocAplyPrfmncTypeInfo = {
   rsltDivs: '시공',
   wholCstrnCnstSclExpln: '내용 표시 영역은 내용에 맞춰 높이를 조정하여 표시',
   cnstBcoSclMthdCn: '내용 표시 영역은 내용에 맞춰 높이를 조정하여 표시',
@@ -154,7 +154,7 @@ const PRFMNC_TYPE: PrfmncPrdocAplyPrfmncTypeInfo = {
 const CNST_CN_ON_ISSUE_DT = '내용 표시 영역은 내용에 맞춰 높이를 조정하여 표시'
 
 // 시공자(대표)/시공자 1/시공자 2 — 같은 데이터영역 반복(slide248). 지분율은 금액에 병기.
-const CNST_BZENTY_LIST: { title: string; info: PrfmncPrdocAplyPrfmncTypeInfo }[] = [
+const CNST_BZENTY_LIST: { title: string; info: MockPrfmncPrdocAplyPrfmncTypeInfo }[] = [
   {
     title: '시공자 (대표)',
     info: {
@@ -194,14 +194,14 @@ const CNST_BZENTY_LIST: { title: string; info: PrfmncPrdocAplyPrfmncTypeInfo }[]
 ]
 
 // 하도급(최대 3건, 없으면 숨김 — slide249). 헤딩 "하도급자 : {명칭}" (설계서 'OOOO 명칭 표시' 자리).
-const SBCTR_LIST: PrfmncPrdocAplySbctrInfo[] = [
+const SBCTR_LIST: MockPrfmncPrdocAplySbctrInfo[] = [
   { sbctrSeNm: 'OOOO', sbctrCstrnSclCn: '하도급공사 규모 및 내용 표시', sbctrAmt: 1000000 },
   { sbctrSeNm: 'OOOO', sbctrCstrnSclCn: '하도급공사 규모 및 내용 표시', sbctrAmt: 1000000 },
   { sbctrSeNm: 'OOOO', sbctrCstrnSclCn: '하도급공사 규모 및 내용 표시', sbctrAmt: 1000000 },
 ]
 
 // 최저가 적정성심사관련 시공실적자료(slide250)
-const LWPRC_INFO: PrfmncPrdocAplyLwprcInfo = {
+const LWPRC_INFO: MockPrfmncPrdocAplyLwprcInfo = {
   cnstCn: '계단',
   useEqpmntNm: '트럭',
   eqpmntSpcfctCn: '규격',
@@ -234,7 +234,7 @@ function cstrnRows(v: {
 }
 
 // 시공자 카드(대표/1/2) — 공시금액·준공금액은 지분율 병기(slide248, 지분율 항목 미정의 → 표시만).
-function cnstBzentyRows(v: PrfmncPrdocAplyPrfmncTypeInfo): TableRow[] {
+function cnstBzentyRows(v: MockPrfmncPrdocAplyPrfmncTypeInfo): TableRow[] {
   return [
     { label: '회사명', value: v.cnstBzentyNm ?? '-' },
     { label: '사업자등록번호', value: v.enbrno ?? '-' },

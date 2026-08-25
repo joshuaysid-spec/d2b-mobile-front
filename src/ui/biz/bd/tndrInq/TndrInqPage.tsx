@@ -24,7 +24,7 @@ import { TndrInq_tab4 } from '@/ui/biz/bd/tndrInq/TndrInq_tab4'
 import { TndrInq_tab5 } from '@/ui/biz/bd/tndrInq/TndrInq_tab5'
 import { TndrInq_tab6 } from '@/ui/biz/bd/tndrInq/TndrInq_tab6'
 import { TndrInq_tab7 } from '@/ui/biz/bd/tndrInq/TndrInq_tab7'
-import type { BidPrgrsDetail } from '@/types/bd'
+import type { MockBidPrgrsDetail } from '@/types/mock/bd'
 
 // 입찰서 내역 탭(설계서 slide172 탭 버튼) — 1.일반정보 + T02~T07.
 const TABS: TabItem[] = [
@@ -38,7 +38,7 @@ const TABS: TabItem[] = [
 ]
 
 // 진입 state — 입찰진행 상세(M02)에서 넘어온 항목 + 신청완료(M08)와 동일한 접수 항목(rcptNo/rcptDt).
-type TndrInqState = BidPrgrsDetail & { rcptNo?: string; rcptDt?: string }
+type TndrInqState = MockBidPrgrsDetail & { rcptNo?: string; rcptDt?: string }
 
 export function TndrInqPage() {
   // 훅은 state 가드보다 위에서 무조건 호출(hooks-order).

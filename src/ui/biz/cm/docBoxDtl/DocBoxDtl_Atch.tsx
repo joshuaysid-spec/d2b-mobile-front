@@ -3,9 +3,9 @@
 // 첨부가 있는 문서에서만 탭이 노출된다(페이지가 분기). 데이터는 페이지 목업 → 추후 API 로 대체.
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
-import type { DocBoxAtchFile } from '@/types/cm'
+import type { MockDocBoxAtchFile } from '@/types/mock/cm'
 
-export function DocBoxDtl_Atch({ files }: { files: DocBoxAtchFile[] }) {
+export function DocBoxDtl_Atch({ files }: { files: MockDocBoxAtchFile[] }) {
   // 첨부문서(dl_atchDocList) → FileDownloadList 항목. 파일명(fileNm) 표시, 개별 다운로드는 콘솔 스텁.
   const items: FileDownloadItem[] = files.map((f, i) => ({
     id: f.edmsDocId ?? `${f.fileNm}-${i}`, // 파일명 중복 가능 → 고유 id

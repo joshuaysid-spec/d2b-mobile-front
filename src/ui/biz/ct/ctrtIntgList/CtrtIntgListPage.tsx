@@ -18,7 +18,7 @@ import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
-import type { CtrtIntgListItem, CtSearchFilter } from '@/types/ct'
+import type { MockCtrtIntgListItem, MockCtSearchFilter } from '@/types/mock/ct'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
@@ -146,7 +146,7 @@ const RECENT_1M = () => ({
 })
 
 // On-Load 기본값(slide22): 서류요청 수신일자·계약일자 = 현재일-1개월 ~ 현재일, 업무구분 = 전체.
-function buildDefaultValue(): CtSearchFilter {
+function buildDefaultValue(): MockCtSearchFilter {
   return {
     taskSeNm: ['0', 'goods', 'service', 'construction', 'foreign'], // 전체('0' = 전체 코드값)
     dcMntDmndRcptnDt: RECENT_1M(),
@@ -210,7 +210,7 @@ export function CtrtIntgListPage() {
   //   물품(계약최종=타 계약서) → 계약서유형(ctrdocTpNm)으로 M05 일반/M07 총액/M08 단가 분기
   //   공사(진행) → M09(cstrnElctrCtrtPrgrsDtl) · 공사(확정) → M10(cstrnCtrdocDtl)
   //   국외(진행) → M71(ovsElctrCtrtPrgrsDtl) · 국외(계약확정) → M72(ovsElctrCtrtCfmtn).
-  const handleCardClick = (item: CtrtIntgListItem) => {
+  const handleCardClick = (item: MockCtrtIntgListItem) => {
     if (item.taskSecd === '물품') {
       if (item.ctrtStatNm === '계약수정') {
         navigate('/ct/cmdtyMdfcnCtrdocDtl', { state: item })

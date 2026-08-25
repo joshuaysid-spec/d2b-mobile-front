@@ -2,7 +2,7 @@
 // 계약 정보(dm_ctrtInfo) 아코디언 + Table — 데이터(detail)는 페이지가 조회해 주입.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsEstmtRqdcDtl as RqdcDtl } from '@/types/ex'
+import type { MockOvsEstmtRqdcDtl as RqdcDtl } from '@/types/mock/ex'
 
 export interface OvsEstmtRqdcDtlProps {
   detail: RqdcDtl

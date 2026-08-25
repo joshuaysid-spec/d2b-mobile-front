@@ -10,14 +10,14 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 // 조회결과 1건 — PC 실 인터페이스(ovsGoalPrcRlsItemListPopup.IResult, 2026-08-24 판독본) 공유 타입.
-import type { OvsGoalPrcRlsItem } from '@/types/bd'
+import type { MockOvsGoalPrcRlsItem } from '@/types/mock/bd'
 
 // 금액(예산·단가·금액) 표기 — 설계서 예시 '1,000.00' / '3,000.00' (소수 2자리). string 필드는 Number() 경유.
 const formatAmt = (n: number | string) =>
   Number(n).toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 // 목업 기본 행 — 설계서 slide299 예시행(COLLAR,BREECH RING·발칸 20미리) 기반 실전형 값.
-const dl_resultListBase: Omit<OvsGoalPrcRlsItem, 'artclNo' | 'invtNo'>[] = [
+const dl_resultListBase: Omit<MockOvsGoalPrcRlsItem, 'artclNo' | 'invtNo'>[] = [
   {
     prtsNo: '59108730001-P400',
     spcfctNo: 'MIL-DTL-45932',
@@ -136,7 +136,7 @@ const dl_resultListBase: Omit<OvsGoalPrcRlsItem, 'artclNo' | 'invtNo'>[] = [
 
 const TOTAL = 43 // 총 건수(설계서 예시 '총 43건') — 실제 API total
 // 목업 확장 — 기본 6건을 인덱스로 복제해 TOTAL 건 구성(항목번호·재고번호는 고유하게).
-const MOCK_LIST: OvsGoalPrcRlsItem[] = Array.from({ length: TOTAL }, (_, i) => {
+const MOCK_LIST: MockOvsGoalPrcRlsItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dl_resultListBase[i % dl_resultListBase.length]
   return {
     ...base,
@@ -169,7 +169,7 @@ export function OvsGoalPrcRlsItemListPage() {
   const visibleList = MOCK_LIST.slice(0, loaded)
 
   // 목업 → Table rows 매핑 — 설계서 데이터영역(dl_resultList) 항목 순서 그대로 노출. 숫자/금액은 우측 정렬(type: number).
-  const itemRows = (it: OvsGoalPrcRlsItem): TableRow[] => [
+  const itemRows = (it: MockOvsGoalPrcRlsItem): TableRow[] => [
     { label: '항목번호', value: it.artclNo },
     { label: '재고번호', value: it.invtNo },
     { label: '부품번호', value: it.prtsNo },

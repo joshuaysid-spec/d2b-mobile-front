@@ -8,12 +8,12 @@ import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { BidItemListRow, BidPrgrsItem } from '@/types/bd'
+import type { MockBidItemListRow, MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 최초 로드/더보기 1회 건수(설계서 slide184).
 const PAGE_SIZE = 10
 
-function itemRows(item: BidItemListRow): TableRow[] {
+function itemRows(item: MockBidItemListRow): TableRow[] {
   return [
     { label: '항목번호', value: item.clsfNo },
     { label: '재고번호', value: item.fscCdNtnItemIdntfNo },
@@ -26,7 +26,7 @@ function itemRows(item: BidItemListRow): TableRow[] {
   ]
 }
 
-export function BidPrtcpAperDtl_Tab2({ detail }: { detail: BidPrgrsItem }) {
+export function BidPrtcpAperDtl_Tab2({ detail }: { detail: MockBidPrgrsItem }) {
   const { data } = bdQueries.useSelectItemList(detail.pbancNo)
   const items = data ?? []
   // 더보기 페이징(클라이언트) — 서버 페이징 전환 시 page 파라미터로 이행.

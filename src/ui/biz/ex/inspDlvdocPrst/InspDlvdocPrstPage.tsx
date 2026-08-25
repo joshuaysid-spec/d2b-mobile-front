@@ -18,7 +18,7 @@ import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
-import type { InspDlvdocPrstItem } from '@/types/ex'
+import type { MockInspDlvdocPrstItem } from '@/types/mock/ex'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
@@ -204,7 +204,7 @@ export function InspDlvdocPrstPage() {
     setPage(1)
   }
   // 카드 클릭(slide33 계약번호 클릭 이벤트) — M07 결과상세 / M03 부대조달 상세 / M04 기성및준공.
-  const handleCardClick = (item: InspDlvdocPrstItem) => {
+  const handleCardClick = (item: MockInspDlvdocPrstItem) => {
     // 식별자는 URL 이 아니라 state 로만 전달(상세가 item.id 로 조회).
     if (item.taskSeNm === '공사') {
       navigate('/ex/pxcndCmcnInspDtl', { state: item })

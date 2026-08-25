@@ -8,13 +8,13 @@
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { BidPrgrsItem, JsdBzentyAply } from '@/types/bd'
+import type { MockBidPrgrsItem, MockJsdBzentyAply } from '@/types/mock/bd'
 
 // 최대 협정업체 수(대표 + 구성) — 설계서 slide187.
 const MAX_BZENTY = 3
 
 // 제출된 공동수급업체 목록 목업(dlt_jsdBzentyList) — 값은 설계서 slide187 형식 그대로.
-const MOCK_JSD_BZENTY: JsdBzentyAply[] = [
+const MOCK_JSD_BZENTY: MockJsdBzentyAply[] = [
   {
     id: 'jsd1',
     jsdBzentyNm: '대표',
@@ -55,14 +55,14 @@ const MOCK_JSD_BZENTY: JsdBzentyAply[] = [
 // 합계(설계서 slide187 하단) — 신청서 전체의 입찰보증금액/투찰금액.
 const MOCK_TOTAL = { bidGrnteAmt: '629,820,000 원', bdngAmt: '12,596,400,000 원' }
 
-export function BidPrtcpAperDtl_Tab5({ detail }: { detail: BidPrgrsItem }) {
+export function BidPrtcpAperDtl_Tab5({ detail }: { detail: MockBidPrgrsItem }) {
   const companies = MOCK_JSD_BZENTY
   // 공동분담업종·시공능력평가액은 공사 전용(설계서 slide121 비고) — 물품이면 숨김.
   const isCnstwk = detail.taskSeNm === '공사'
   // 단일 업체면 동의여부 행 숨김(설계서 slide187).
   const isSingle = companies.length === 1
 
-  const companyRows = (c: JsdBzentyAply): TableRow[] => {
+  const companyRows = (c: MockJsdBzentyAply): TableRow[] => {
     const rows: TableRow[] = [
       { label: '구분', value: c.jsdBzentyNm },
       { label: '공동수급업체', value: c.bzentyNm },

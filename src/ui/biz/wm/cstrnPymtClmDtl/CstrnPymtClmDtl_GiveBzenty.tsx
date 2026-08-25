@@ -2,14 +2,14 @@
 // 대가지급업체 1건 = Table 반복(업체유형/업체명/신청금액/은행명/계좌번호/계좌실명번호/예금주).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CstrnPymtClmDtl, GiveBzentyItem } from '@/types/wm'
+import type { MockCstrnPymtClmDtl, MockGiveBzentyItem } from '@/types/mock/wm'
 
 export interface CstrnPymtClmDtl_GiveBzentyProps {
-  detail: CstrnPymtClmDtl
+  detail: MockCstrnPymtClmDtl
 }
 
 // 대가지급업체 1건 → 표 행 (dlt_giveBzentyList, slide59 1.2 순서).
-function bzentyRows(it: GiveBzentyItem): TableRow[] {
+function bzentyRows(it: MockGiveBzentyItem): TableRow[] {
   return [
     { label: '업체유형', value: it.fbctnSecd || '-' },
     { label: '업체명', value: it.bzentyNm },

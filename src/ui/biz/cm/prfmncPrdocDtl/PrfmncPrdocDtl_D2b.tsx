@@ -12,12 +12,12 @@
 //   임의 확정 키(*IssuAmt·prcsRsnCn — 2026-07-27 사용자 승인). 백엔드 연동 시 실키와 대조만(불일치 시 교체).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { PrfmncPrdocAplyInptInfo } from '@/types/cm'
+import type { MockPrfmncPrdocAplyInptInfo } from '@/types/mock/cm'
 
 const won = (v?: number) => (v == null ? '-' : `${v.toLocaleString()} 원`)
 
 // 목업 — slide251 표시값 그대로(사용목적 '기타' → 전부 표시). API 연동 시 조회값으로 교체.
-const APLY_INPT: PrfmncPrdocAplyInptInfo = {
+const APLY_INPT: MockPrfmncPrdocAplyInptInfo = {
   entlno: '02-1234-5678',
   dmndQty: '1',
   submOrgn: '방위사업청',

@@ -14,7 +14,7 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsRlsVltrnsNgtnPlanDtl2 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnPlanDtl/OvsRlsVltrnsNgtnPlanDtl2'
 import { OvsRlsVltrnsNgtnPlanDtl3 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnPlanDtl/OvsRlsVltrnsNgtnPlanDtl3'
-import type { OvsRlsVltrnsGeneral, OvsRlsVltrnsSummary } from '@/types/bd'
+import type { MockOvsRlsVltrnsGeneral, MockOvsRlsVltrnsSummary } from '@/types/mock/bd'
 
 // ── 탭 (설계서 T71 일반정보 / T72 품목정보 / T73 첨부서류) ─────────────────
 const TABS: TabItem[] = [
@@ -24,7 +24,7 @@ const TABS: TabItem[] = [
 ]
 
 // 상단 요약 fallback (직접 URL 진입/새로고침) — 개찰목록 국외·수의계약 카드와 동일 값(설계서 slide411).
-const MOCK_SUMMARY: OvsRlsVltrnsSummary = {
+const MOCK_SUMMARY: MockOvsRlsVltrnsSummary = {
   taskSeNm: '국외',
   ctrtMthdNm: '수의계약',
   intgRfrncNo: 'BDF01823EFE',
@@ -37,7 +37,7 @@ const MOCK_SUMMARY: OvsRlsVltrnsSummary = {
 }
 
 // 일반정보 탭 데이터 — 설계서 slide412 공고일반 데이터영역 값·형식 그대로.
-const MOCK_GENERAL: OvsRlsVltrnsGeneral = {
+const MOCK_GENERAL: MockOvsRlsVltrnsGeneral = {
   pbancNo: 'EFD0007-2',
   pbancType: '정상공고',
   pbancRqstYmd: '2022-11-12',
@@ -57,7 +57,7 @@ const MOCK_GENERAL: OvsRlsVltrnsGeneral = {
 }
 
 // ── 일반정보 탭 (T71, slide412) — 일반정보 표 + 담당자 정보 표 ───────────────
-function GeneralInfo({ detail }: { detail: OvsRlsVltrnsGeneral }) {
+function GeneralInfo({ detail }: { detail: MockOvsRlsVltrnsGeneral }) {
   const generalRows: TableRow[] = [
     { label: '공고번호', value: detail.pbancNo },
     { label: '공고구분', value: detail.pbancType },
@@ -106,7 +106,7 @@ export function OvsRlsVltrnsNgtnPlanDtlPage() {
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기 바텀시트
 
   // 상단 요약 — 카드에서 넘어온 값(navigate state) 우선, 없으면 fallback 목업.
-  const summary = (useLocation().state as OvsRlsVltrnsSummary | null) ?? MOCK_SUMMARY
+  const summary = (useLocation().state as MockOvsRlsVltrnsSummary | null) ?? MOCK_SUMMARY
 
   const summaryRows: SummaryInfoRow[] = [
     { label: '구매요청번호', value: summary.prchsDmndNo },

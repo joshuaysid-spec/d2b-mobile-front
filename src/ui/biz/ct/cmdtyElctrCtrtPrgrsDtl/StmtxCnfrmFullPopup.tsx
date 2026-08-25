@@ -8,7 +8,7 @@ import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CtrtStmtxPayInfo } from '@/types/ct'
+import type { MockCtrtStmtxPayInfo } from '@/types/mock/ct'
 
 export interface StmtxCnfrmFullPopupProps {
   /** 계약 식별자 — 부모 상세 페이지가 navigate state 에서 받아 전달. */
@@ -18,7 +18,7 @@ export interface StmtxCnfrmFullPopupProps {
 }
 
 // 납부정보 1건 → 표 행(slide163 dl_stmtxPayInfo 순서).
-function payInfoRows(p: CtrtStmtxPayInfo): TableRow[] {
+function payInfoRows(p: MockCtrtStmtxPayInfo): TableRow[] {
   return [
     { label: '계약번호', value: p.ctrtNo },
     { label: '사용여부', value: p.useYn },

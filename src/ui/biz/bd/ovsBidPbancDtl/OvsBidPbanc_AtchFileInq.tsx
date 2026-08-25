@@ -7,11 +7,11 @@
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { formatFileSize } from '@/utils/format'
-import type { OvsAtchDoc } from '@/types/bd'
+import type { MockOvsAtchDoc } from '@/types/mock/bd'
 
 interface OvsBidPbanc_AtchFileInqProps {
   /** 선택된 품목의 첨부서류 목록 (dl_docList 형태) */
-  docs: OvsAtchDoc[]
+  docs: MockOvsAtchDoc[]
 }
 
 export function OvsBidPbanc_AtchFileInq({ docs }: OvsBidPbanc_AtchFileInqProps) {

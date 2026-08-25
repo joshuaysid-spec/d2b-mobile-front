@@ -8,7 +8,7 @@ import { tsQueries } from '@/queries/cts/ts/tsQueries'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
-import type { TxivItem } from '@/types/ts'
+import type { MockTxivItem } from '@/types/mock/ts'
 
 export interface TxivListProps {
   /** 조회 대상 계약번호 — M01 목록 카드에서 주입. */
@@ -18,7 +18,7 @@ export interface TxivListProps {
   /** 바텀시트 열림 여부 — 열릴 때만 조회(enabled). */
   open: boolean
   /** 세금계산서 카드 클릭 — 상세(M03) 이동은 부모가 담당. */
-  onItemClick: (item: TxivItem) => void
+  onItemClick: (item: MockTxivItem) => void
 }
 
 export function TxivList({ ctrtNo, rpstItnm, open, onItemClick }: TxivListProps) {

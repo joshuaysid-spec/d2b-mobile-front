@@ -4,7 +4,7 @@
 import { wmQueries } from '@/queries/cts/wm/wmQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { GiveSttsItem } from '@/types/wm'
+import type { MockGiveSttsItem } from '@/types/mock/wm'
 
 export interface PrpayDpsmnItrpyGiveSttsProps {
   /** 조회 대상 신청 식별자 — 상세 페이지(navigate state id)가 주입. */
@@ -12,7 +12,7 @@ export interface PrpayDpsmnItrpyGiveSttsProps {
 }
 
 // 지급 1건 → 표 행 (slide37 1.1 순서).
-function sttsRows(it: GiveSttsItem): TableRow[] {
+function sttsRows(it: MockGiveSttsItem): TableRow[] {
   return [
     { label: '신청년도', value: it.rqstYr },
     { label: '계약번호', value: it.ctrtNo },

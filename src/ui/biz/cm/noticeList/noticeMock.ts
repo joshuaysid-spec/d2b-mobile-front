@@ -1,10 +1,10 @@
 // 일반공지사항 목업 데이터 — 목록(NoticeListPage)과 상세(NoticeDtlPage)가 공유한다.
 // 상세의 이전글/다음글은 이 목록에서 현재 글의 앞/뒤 항목으로 계산한다. 추후 API(cmService) 로 교체.
 import { inflateNotice } from './noticeBoard'
-import type { NoticeListItem, NoticeDetail } from '@/types/cm'
+import type { MockNoticeListItem, MockNoticeDetail } from '@/types/mock/cm'
 
 // 목업 seed(dl_resultList) — 설계서 항목명·형식 그대로.
-export const NOTICE_SEEDS: NoticeListItem[] = [
+export const NOTICE_SEEDS: MockNoticeListItem[] = [
   {
     no: 1,
     contsNo: '000101',
@@ -84,10 +84,10 @@ export const NOTICE_SEEDS: NoticeListItem[] = [
     inqCnt: 256,
   },
 ]
-export const NOTICE_MOCK: NoticeListItem[] = inflateNotice(NOTICE_SEEDS, 100)
+export const NOTICE_MOCK: MockNoticeListItem[] = inflateNotice(NOTICE_SEEDS, 100)
 
 // 방위사업청 공지 목업 seed (MUI-CM-04-M21/M22).
-export const D2B_NOTICE_SEEDS: NoticeListItem[] = [
+export const D2B_NOTICE_SEEDS: MockNoticeListItem[] = [
   {
     no: 1,
     contsNo: '000201',
@@ -141,10 +141,10 @@ export const D2B_NOTICE_SEEDS: NoticeListItem[] = [
     inqCnt: 588,
   },
 ]
-export const D2B_NOTICE_MOCK: NoticeListItem[] = inflateNotice(D2B_NOTICE_SEEDS, 100)
+export const D2B_NOTICE_MOCK: MockNoticeListItem[] = inflateNotice(D2B_NOTICE_SEEDS, 100)
 
 // 수요부대별 공지 목업 seed (MUI-CM-04-M23/M24).
-export const DMDFRC_NOTICE_SEEDS: NoticeListItem[] = [
+export const DMDFRC_NOTICE_SEEDS: MockNoticeListItem[] = [
   {
     no: 1,
     contsNo: '000301',
@@ -198,11 +198,11 @@ export const DMDFRC_NOTICE_SEEDS: NoticeListItem[] = [
     inqCnt: 311,
   },
 ]
-export const DMDFRC_NOTICE_MOCK: NoticeListItem[] = inflateNotice(DMDFRC_NOTICE_SEEDS, 100)
+export const DMDFRC_NOTICE_MOCK: MockNoticeListItem[] = inflateNotice(DMDFRC_NOTICE_SEEDS, 100)
 
 // 목록 아이템(요약) → 상세(dm_noticeInfo). 목록에 없는 상세 필드(게시기간·내용·첨부)는 목업 본문으로 보완.
 // 추후 API: tssCmService.selectNoticeDtl(contsNo). 목록에서 넘어온 값(state)으로 상단은 즉시 표시.
-export function toNoticeDetail(item: NoticeListItem): NoticeDetail {
+export function toNoticeDetail(item: MockNoticeListItem): MockNoticeDetail {
   return {
     contsNo: item.contsNo,
     bbsTtl: item.bbsTtl,

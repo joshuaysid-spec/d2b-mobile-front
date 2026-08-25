@@ -31,7 +31,7 @@ import {
   APLY_INPT_DEFAULTS,
   type AplyInptForm,
 } from '@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocReg_AplyInpt.schema'
-import type { PrfmncPrdocCtrtInfo } from '@/types/cm'
+import type { MockPrfmncPrdocCtrtInfo } from '@/types/mock/cm'
 
 const STEP_LABELS = ['계약 정보 선택', '신청정보 입력', '실적정보 입력'] as const
 
@@ -69,10 +69,10 @@ function renderPrfmncTab(branch: string) {
 export function PrfmncPrdocRegPage() {
   const navigate = useNavigate()
   const [step, setStep] = useState<1 | 2 | 3>(1)
-  const [selectedCtrt, setSelectedCtrt] = useState<PrfmncPrdocCtrtInfo | null>(null)
+  const [selectedCtrt, setSelectedCtrt] = useState<MockPrfmncPrdocCtrtInfo | null>(null)
   const [cancelOpen, setCancelOpen] = useState(false) // 취소 확인(작성 내용 有)
   const [changeOpen, setChangeOpen] = useState(false) // 계약 변경/해제 확인(작성 내용 有)
-  const pendingCtrtRef = useRef<PrfmncPrdocCtrtInfo | null>(null)
+  const pendingCtrtRef = useRef<MockPrfmncPrdocCtrtInfo | null>(null)
   const [toast, setToast] = useState<{ msg: string; then?: () => void } | null>(null)
 
   // 신청정보(M12) 폼 — 페이지가 useForm 소유(폼 표준), 콘텐츠는 control 로 연결.
@@ -117,7 +117,7 @@ export function PrfmncPrdocRegPage() {
   }
 
   // 카드 선택/해제 — 신청정보가 입력된 상태(isDirty)면 확인 팝업(slide286) 후 폼 리셋.
-  const handleSelect = (ctrt: PrfmncPrdocCtrtInfo | null) => {
+  const handleSelect = (ctrt: MockPrfmncPrdocCtrtInfo | null) => {
     if (form.formState.isDirty) {
       pendingCtrtRef.current = ctrt
       setChangeOpen(true)

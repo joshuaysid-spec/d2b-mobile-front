@@ -15,13 +15,13 @@ import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type {
-  DfEqpmntTradeAgncAplyInfo,
-  DfEqpmntTradeAgncAplyItem,
-  DfEqpmntTradeAgncAtchFile,
-} from '@/types/cm'
+  MockDfEqpmntTradeAgncAplyInfo,
+  MockDfEqpmntTradeAgncAplyItem,
+  MockDfEqpmntTradeAgncAtchFile,
+} from '@/types/mock/cm'
 
 // ── 페이지 fallback 목업(직접 URL 진입 시) — 목록 카드(dl_dfEqpmntTradAgncAplyList) 1건 형식. ──
-const FALLBACK_ITEM: DfEqpmntTradeAgncAplyItem = {
+const FALLBACK_ITEM: MockDfEqpmntTradeAgncAplyItem = {
   id: '0',
   regAplySecd: '신규',
   rcptNo: '2026-0020',
@@ -33,7 +33,7 @@ const FALLBACK_ITEM: DfEqpmntTradeAgncAplyItem = {
 }
 
 // ── 신청 접수·업체 정보(dm_dfEqpmntTradAgncAplyInfo, Figma 10020:83224 예시값) — 추후 API. ──
-const MOCK_INFO: DfEqpmntTradeAgncAplyInfo = {
+const MOCK_INFO: MockDfEqpmntTradeAgncAplyInfo = {
   rcptNo: '2026-0020',
   rcptYmd: '2026-05-01',
   atrzYmd: '2026-05-22',
@@ -52,11 +52,11 @@ const MOCK_INFO: DfEqpmntTradeAgncAplyInfo = {
 }
 
 // ── 첨부서류(dl_dfEqpmntTradAgncAplyAtchFileList, Figma 총 1건) — 첨부서류명(fileTtl)+첨부파일명(fileNm)+첨부일자. ──
-const MOCK_FILES: DfEqpmntTradeAgncAtchFile[] = [
+const MOCK_FILES: MockDfEqpmntTradeAgncAtchFile[] = [
   { id: '1', fileTtl: '이력서', fileNm: '신분증.jpg', size: '2.01MB', regYmd: '2026-01-01' },
 ]
 
-function baseRows(info: DfEqpmntTradeAgncAplyInfo): TableRow[] {
+function baseRows(info: MockDfEqpmntTradeAgncAplyInfo): TableRow[] {
   return [
     { label: '업태', value: info.bzstatCdNm },
     { label: '상호', value: info.bzentyNm },
@@ -66,7 +66,7 @@ function baseRows(info: DfEqpmntTradeAgncAplyInfo): TableRow[] {
     { label: '주소', value: info.bzentyAddr },
   ]
 }
-function contactRows(info: DfEqpmntTradeAgncAplyInfo): TableRow[] {
+function contactRows(info: MockDfEqpmntTradeAgncAplyInfo): TableRow[] {
   return [
     { label: '연락처', value: info.bzentyTelno },
     { label: '팩스', value: info.bzentyFxno },
@@ -77,7 +77,7 @@ function contactRows(info: DfEqpmntTradeAgncAplyInfo): TableRow[] {
 export function DfEqpmntTradeAgncAplyDtlPage() {
   const navigate = useNavigate()
   // 목록에서 넘어온 항목으로 상단을 그린다. 직접 진입(state 없음)이면 페이지 fallback 목업.
-  const item = (useLocation().state as DfEqpmntTradeAgncAplyItem | null) ?? FALLBACK_ITEM
+  const item = (useLocation().state as MockDfEqpmntTradeAgncAplyItem | null) ?? FALLBACK_ITEM
 
   const downloadFiles: FileDownloadItem[] = MOCK_FILES.map((f) => ({
     id: f.id,

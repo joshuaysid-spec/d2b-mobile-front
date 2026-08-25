@@ -3,7 +3,7 @@
 // 항목 순서는 slide37 화면 목업 그대로.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { DlvdocRsltDtl as RsltDtl } from '@/types/ex'
+import type { MockDlvdocRsltDtl as RsltDtl } from '@/types/mock/ex'
 
 export interface DlvdocRsltDtlProps {
   detail: RsltDtl

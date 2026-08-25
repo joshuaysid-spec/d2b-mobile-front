@@ -29,13 +29,13 @@ import {
 } from '@/ui/biz/bd/ovsBidPrtcpApfrDtl/OvsBidPrtcpRtrcnAply'
 import { OvsBidRegRsltByBiz } from '@/ui/biz/bd/ovsBidPrtcpApfrDtl/OvsBidRegRsltByBiz'
 import type {
-  OvsBidBizExmptnItem,
-  OvsBidBizItem,
-  OvsBidPrtcpApfrDetail,
-  OvsRtrcnTarget,
-  OvsSbtInfo,
-  OvsSplyInfo,
-} from '@/types/bd'
+  MockOvsBidBizExmptnItem,
+  MockOvsBidBizItem,
+  MockOvsBidPrtcpApfrDetail,
+  MockOvsRtrcnTarget,
+  MockOvsSbtInfo,
+  MockOvsSplyInfo,
+} from '@/types/mock/bd'
 
 // ── 타입 (설계서 데이터영역 항목명 그대로) — 공유 도메인 타입은 @/types/bd ──────────────
 
@@ -52,7 +52,7 @@ export interface OvsAtchDocItem {
 
 // ── fallback 목업 (직접 URL 진입 대비 — 설계서 slide349·357 예시값 형식 그대로) ──────────
 
-export const MOCK_OVS_BID_PRTCP_APFR_DTL: OvsBidPrtcpApfrDetail = {
+export const MOCK_OVS_BID_PRTCP_APFR_DTL: MockOvsBidPrtcpApfrDetail = {
   pbancNo: 'EFD0007',
   pbancOd: '25',
   bdopnYmd: '2025-12-24 10:30',
@@ -62,7 +62,7 @@ export const MOCK_OVS_BID_PRTCP_APFR_DTL: OvsBidPrtcpApfrDetail = {
   pbancTpcd: '긴급공고',
 }
 
-export const MOCK_OVS_SBT_INFO: OvsSbtInfo = {
+export const MOCK_OVS_SBT_INFO: MockOvsSbtInfo = {
   sbtBzentyCd: '7001',
   sbtBzentyNm: 'FA무역대리점',
   sbtRprsvNm: '홍길동',
@@ -72,7 +72,7 @@ export const MOCK_OVS_SBT_INFO: OvsSbtInfo = {
   sbtAddr: '서울특별시 종로구 세종대로 209',
 }
 
-export const MOCK_OVS_SPLY_INFO: OvsSplyInfo = {
+export const MOCK_OVS_SPLY_INFO: MockOvsSplyInfo = {
   splyBzentyCd: '7004',
   splyBzentyNm: 'FB해외업체',
   splyRprsvNm: '홍길동',
@@ -84,7 +84,7 @@ export const MOCK_OVS_SPLY_INFO: OvsSplyInfo = {
 }
 
 // 입찰참가사업 및 입찰보증금 — 보증금비면제(dl_bizList). 금액은 달러(소수 2자리).
-export const MOCK_OVS_BIZ_LIST: OvsBidBizItem[] = [
+export const MOCK_OVS_BIZ_LIST: MockOvsBidBizItem[] = [
   {
     prchsDmndNo: 'BAD839380-001',
     bizNm: 'MD부품 수리부속(엔진계통)',
@@ -124,7 +124,7 @@ export const MOCK_OVS_BIZ_LIST: OvsBidBizItem[] = [
 ]
 
 // 입찰참가사업 및 입찰보증금 — 보증금면제(dl_bizExmptnList).
-export const MOCK_OVS_BIZ_EXMPTN_LIST: OvsBidBizExmptnItem[] = [
+export const MOCK_OVS_BIZ_EXMPTN_LIST: MockOvsBidBizExmptnItem[] = [
   {
     prchsDmndNo: 'BAD839380-004',
     bizNm: 'MD부품 수리부속(기체계통)',
@@ -178,7 +178,7 @@ const fmtUsd = (n: number) =>
   n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 // ── 탭1 일반정보 (M78) — 페이지 파일 내 로컬 콘텐츠 ─────────────────────────────
-function Tab1({ detail, sbtInfo }: { detail: OvsBidPrtcpApfrDetail; sbtInfo: OvsSbtInfo }) {
+function Tab1({ detail, sbtInfo }: { detail: MockOvsBidPrtcpApfrDetail; sbtInfo: MockOvsSbtInfo }) {
   // 공고일반(dm_bscPbancInfo)
   const pbancRows: TableRow[] = [
     { label: '공고번호', value: `${detail.pbancNo}-${detail.pbancOd}` },
@@ -226,19 +226,19 @@ export function OvsBidPrtcpApfrDtlPage() {
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기 시트
   const [regRsltOpen, setRegRsltOpen] = useState(false) // P83 사업별입찰등록결과조회
   // P82 입찰참가신청서취소 — 대상 사업 목록(개별 1건 / 전체). null 이면 닫힘.
-  const [rtrcnTargets, setRtrcnTargets] = useState<OvsRtrcnTarget[] | null>(null)
+  const [rtrcnTargets, setRtrcnTargets] = useState<MockOvsRtrcnTarget[] | null>(null)
   const rtrcnRef = useRef<OvsBidPrtcpRtrcnAplyHandle>(null)
 
   // 국외 입찰진행 상세에서 navigate(state)로 넘어온 식별값을 목업 위에 병합.
   //   다른 화면(타 유닛) 아이템 타입과 필드가 다를 수 있어 누락 필드는 페이지 목업으로 보완 —
   //   직접 URL 진입/새로고침(state 없음)에도 완전히 그려진다.
-  const stateItem = useLocation().state as Partial<OvsBidPrtcpApfrDetail> | null
-  const detail: OvsBidPrtcpApfrDetail = { ...MOCK_OVS_BID_PRTCP_APFR_DTL, ...stateItem }
+  const stateItem = useLocation().state as Partial<MockOvsBidPrtcpApfrDetail> | null
+  const detail: MockOvsBidPrtcpApfrDetail = { ...MOCK_OVS_BID_PRTCP_APFR_DTL, ...stateItem }
   const sbtInfo = MOCK_OVS_SBT_INFO
   const splyInfo = MOCK_OVS_SPLY_INFO
 
   // 개별 입찰참가취소(탭3 각 사업) → P82 (선택 건)
-  const handleRtrcnItem = (target: OvsRtrcnTarget) => setRtrcnTargets([target])
+  const handleRtrcnItem = (target: MockOvsRtrcnTarget) => setRtrcnTargets([target])
   // 전체 입찰참가취소(플로팅 바로가기) → P82 (전체 건) — 면제/비면제 목록 합산.
   const handleRtrcnAll = () => {
     setShortcutOpen(false)

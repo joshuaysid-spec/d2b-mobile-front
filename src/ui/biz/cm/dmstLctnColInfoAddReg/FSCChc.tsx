@@ -8,7 +8,7 @@ import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { Button } from '@/ui/common/base/Button'
 import { cn } from '@/utils/cn'
-import type { DmsAgtFscCode } from '@/types/cm'
+import type { MockDmsAgtFscCode } from '@/types/mock/cm'
 
 /** 부모 footer([등록])가 호출하는 확정 동작. */
 export interface FSCChcHandle {
@@ -17,7 +17,7 @@ export interface FSCChcHandle {
 }
 
 // FSC 목록 목업 (설계서 slide171 예시 — 군급 1000·1001…/군급명). 추후 API: cmService.selectFscList.
-const MOCK_FSC: DmsAgtFscCode[] = [
+const MOCK_FSC: MockDmsAgtFscCode[] = [
   { fscCd: '1000', gunGrdNm: '군급명 1000' },
   { fscCd: '1001', gunGrdNm: '군급명 1001' },
   { fscCd: '1002', gunGrdNm: '군급명 1002' },
@@ -27,7 +27,7 @@ const MOCK_FSC: DmsAgtFscCode[] = [
 
 export interface FSCChcProps {
   /** [등록] 시 호출 — 선택한 FSC 목록을 부모에 반환. */
-  onRegister: (items: DmsAgtFscCode[]) => void
+  onRegister: (items: MockDmsAgtFscCode[]) => void
 }
 
 const FSCChc = forwardRef<FSCChcHandle, FSCChcProps>(({ onRegister }, ref) => {

@@ -17,14 +17,14 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import type { StepItem, StepState } from '@/ui/common/composites/StepBar'
 import { MyPrgrsHstryDtl } from '@/ui/biz/cm/myPrgrsHstryDtl/MyPrgrsHstryDtl'
-import type { MyPrgrsHstryItem } from '@/types/cm'
+import type { MockMyPrgrsHstryItem } from '@/types/mock/cm'
 
 // 진행 단계 라벨(고정 순서) — 세부 스텝 팝업(P03)의 StepBar 구동값. 아이템의 currentStage 로 done/doing/todo 결정.
 const STAGES = ['조달계획', '입찰공고', '입찰진행', '개찰', '계약', '이행', '대금청구'] as const
 
 // ── 목업 (설계서 slide78 예시/형식) ──────────────────────────────────────────
 const TOTAL = 99 // 총 건수(목업 — slide78 총 99건 / 더보기 10/258 은 예시라 총건수 99 채택)
-const dl_myPrgrsList: MyPrgrsHstryItem[] = [
+const dl_myPrgrsList: MockMyPrgrsHstryItem[] = [
   {
     id: '1',
     prcmNo: '6000A',
@@ -48,7 +48,7 @@ const dl_myPrgrsList: MyPrgrsHstryItem[] = [
 ]
 
 // ⚠️ 임시 목업 — API 연동 시 이 상수와 페이징 로직을 통째로 교체(cmService.selectMyTaskPrgrsPrstList).
-const MOCK_LIST: MyPrgrsHstryItem[] = Array.from({ length: TOTAL }, (_, i) => ({
+const MOCK_LIST: MockMyPrgrsHstryItem[] = Array.from({ length: TOTAL }, (_, i) => ({
   ...dl_myPrgrsList[i % dl_myPrgrsList.length],
   id: String(i + 1),
 }))
@@ -59,7 +59,7 @@ export function MyPrgrsHstryPage() {
   const [page, setPage] = useState(1)
 
   // 세부 스텝 팝업(P03) — 대상 아이템 + 선택 단계. 컨테이너/footer 는 이 페이지가 소유.
-  const [stepItem, setStepItem] = useState<MyPrgrsHstryItem | null>(null)
+  const [stepItem, setStepItem] = useState<MockMyPrgrsHstryItem | null>(null)
   const [selectedStage, setSelectedStage] = useState<string | null>(null)
 
   const total = MOCK_LIST.length
@@ -76,13 +76,13 @@ export function MyPrgrsHstryPage() {
     setPage((p) => p + 1)
     console.log('[MyPrgrsHstry] loadMore')
   }
-  const handleShowSteps = (item: MyPrgrsHstryItem) => {
+  const handleShowSteps = (item: MockMyPrgrsHstryItem) => {
     setSelectedStage(null)
     setStepItem(item)
   }
-  const handleGoto = (item: MyPrgrsHstryItem) => {
+  const handleGoto = (item: MockMyPrgrsHstryItem) => {
     // 공고 바로가기 → 입찰진행 상세(MUI-BD-03-M02). URL 에 식별자를 두지 않아 항목을 state 로 넘긴다.
-    // ⚠️ 진행업무현황 아이템(MyPrgrsHstryItem)은 입찰진행 상세가 기대하는 BidPrgrsItem 형태가 아니라
+    // ⚠️ 진행업무현황 아이템(MockMyPrgrsHstryItem)은 입찰진행 상세가 기대하는 BidPrgrsItem 형태가 아니라
     //    상단 요약 일부가 빈 값으로 뜬다(상세는 state 를 BidPrgrsItem 으로 캐스팅). API 연동 시 실제 조회로 대체.
     console.log('[MyPrgrsHstry] 바로가기', item.id) // 추후: bd 진행 상세 조회(prcmNo/공고번호 매핑)
     navigate('/bd/bidPrgsDtlInq', { state: item })

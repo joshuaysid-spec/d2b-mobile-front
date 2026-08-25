@@ -3,10 +3,10 @@
 import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsCtrtDtstItem } from '@/types/ct'
+import type { MockOvsCtrtDtstItem } from '@/types/mock/ct'
 
 // 품목 1건 → 표 행(slide164 계약품목 내역 순서).
-function itemRows(it: OvsCtrtDtstItem): TableRow[] {
+function itemRows(it: MockOvsCtrtDtstItem): TableRow[] {
   return [
     { label: '순번', value: String(it.regSn), type: 'number' },
     { label: '항목번호', value: it.artclNo },

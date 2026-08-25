@@ -12,7 +12,7 @@ import type {
   DateRangePresetDef,
   DateRangeValue,
 } from '@/types/search-filter'
-import type { NoticeListItem, NoticeSearchFilter } from '@/types/cm'
+import type { MockNoticeListItem, MockNoticeSearchFilter } from '@/types/mock/cm'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
@@ -88,14 +88,14 @@ export const RECENT_1M = (): DateRangeValue => ({
   start: dayjs().subtract(1, 'month').format(DATE_FORMAT),
   end: dayjs().format(DATE_FORMAT),
 })
-export const NOTICE_DEFAULT: NoticeSearchFilter = {
+export const NOTICE_DEFAULT: MockNoticeSearchFilter = {
   regDt: RECENT_1M(),
   bbsTtl: '',
   bbsCn: '',
   wrtrNm: '',
 }
 // 구분 설정 포함 화면의 기본/초기화 값 — 상태(emrg)는 '전체'.
-export const NOTICE_DEFAULT_WITH_CATEGORY: NoticeSearchFilter = {
+export const NOTICE_DEFAULT_WITH_CATEGORY: MockNoticeSearchFilter = {
   ...NOTICE_DEFAULT,
   emrg: 'all',
 }
@@ -107,7 +107,7 @@ export const NOTICE_SEARCH_TARGETS = [
 ]
 
 // 카드 매핑(설계서 slide216 표시레이블): 배지 긴급(emrg)+구분(bizFldCd) + 제목 + 담당부서/작성자/작성일자/첨부.
-export const noticeToCard = (it: NoticeListItem): Omit<CardListItem, 'id' | 'onClick'> => ({
+export const noticeToCard = (it: MockNoticeListItem): Omit<CardListItem, 'id' | 'onClick'> => ({
   badges: (
     <>
       <Badge type="pastel" color={it.emrg === '긴급' ? 'red' : 'blue'}>
@@ -127,20 +127,20 @@ export const noticeToCard = (it: NoticeListItem): Omit<CardListItem, 'id' | 'onC
 })
 
 // 상단 검색어 필터 — 제목(bbsTtl). 내용(bbsCn)은 목록 목업에 본문이 없어 제목으로 대체(API 연동 시 매핑).
-export const noticeMatchKeyword = (it: NoticeListItem, keyword: string) =>
+export const noticeMatchKeyword = (it: MockNoticeListItem, keyword: string) =>
   it.bbsTtl.toLowerCase().includes(keyword.toLowerCase())
 
 // 상세필터 '구분 설정 > 상태'(emrg 긴급/일반) 부합 여부 — 미선택/'all'=전체 통과. (API 연동 시 서버 조회로 대체)
-export const noticeMatchFilter = (it: NoticeListItem, filter: SearchFilterValue) => {
+export const noticeMatchFilter = (it: MockNoticeListItem, filter: SearchFilterValue) => {
   const st = filter.emrg as string | undefined
   return !st || st === 'all' || it.emrg === st
 }
 
 // 상위고정(upFix='Y') → 목록 상단 고정.
-export const noticeIsPinned = (it: NoticeListItem) => it.upFix === 'Y'
+export const noticeIsPinned = (it: MockNoticeListItem) => it.upFix === 'Y'
 
 // 목업 부풀리기 — 보유 seed 를 total 건으로. contsNo/no 고유화, 첫 건만 상위고정 유지.
-export function inflateNotice(seeds: NoticeListItem[], total: number): NoticeListItem[] {
+export function inflateNotice(seeds: MockNoticeListItem[], total: number): MockNoticeListItem[] {
   return Array.from({ length: total }, (_, i) => {
     const base = seeds[i % seeds.length]
     return {

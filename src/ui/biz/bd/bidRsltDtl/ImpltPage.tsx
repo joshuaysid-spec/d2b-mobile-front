@@ -36,7 +36,7 @@ import { ImpltElgblRslt_TechLbsvc } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_
 import { ImpltElgblRslt_Krw300MCstrn } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_Krw300MCstrn'
 import { ImpltElgblRslt_BelowThresholdLbsvc } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_BelowThresholdLbsvc'
 import { ImpltElgblRslt_BelowThresholdDspLbsvc } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRslt_BelowThresholdDspLbsvc'
-import type { BdopnItem, ImpltElgbSrngTyCd } from '@/types/bd'
+import type { MockBdopnItem, MockImpltElgbSrngTyCd } from '@/types/mock/bd'
 
 // ── 탭 (설계서 v1.83 slide138 화면목록 — 컨테이너 M01 · 탭 T01~T03(구 M01~M03) · 심사결과 T04~T21) ──
 const TABS: TabItem[] = [
@@ -58,7 +58,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 // 직접 URL 진입(state 없음)·목업 미존재 대비 fallback (설계서 slide162 값·항목명 형식 그대로).
-const MOCK_DETAIL: BdopnItem = {
+const MOCK_DETAIL: MockBdopnItem = {
   id: '0',
   bidPbancNo: 'LDG0097-1',
   bidPbancNm: '특수작전용대물타격무인향',
@@ -72,7 +72,7 @@ const MOCK_DETAIL: BdopnItem = {
 // 심사결과 탭(T04~T21) 유형별 렌더 — 유형 판별 임시 키 srngTyCd 로 18종 분기.
 // ⚠️ T04 통사(g2b)는 설계서(02.입찰 v1.83) 디자인 슬라이드 부재로 보류(추후 설계 보강 시 추가).
 //    값 없음/통사(t04)/미지정은 물품(T05=Implt) 기본 폴백.
-function renderResultTab(srngTyCd?: ImpltElgbSrngTyCd) {
+function renderResultTab(srngTyCd?: MockImpltElgbSrngTyCd) {
   switch (srngTyCd) {
     case 't06':
       return <ImpltElgblRslt_Lbsvc />
@@ -113,7 +113,7 @@ function renderResultTab(srngTyCd?: ImpltElgbSrngTyCd) {
 }
 
 // 탭 콘텐츠 렌더 (설계서 탭별 화면: 일반정보 T01 / 입찰·반려정보 T02 / 파일첨부 T03 / 심사결과 T04~T21)
-function renderTabContent(tab: string, srngTyCd?: ImpltElgbSrngTyCd) {
+function renderTabContent(tab: string, srngTyCd?: MockImpltElgbSrngTyCd) {
   switch (tab) {
     case 'general':
       return <Implt1 />
@@ -134,7 +134,7 @@ export function ImpltPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
   // 상단(요약/헤더) — 입찰결과상세에서 넘어온 개찰목록 항목(navigate state). 직접 진입(state 없음)은 fallback 목업.
-  const stateItem = useLocation().state as BdopnItem | null
+  const stateItem = useLocation().state as MockBdopnItem | null
   const detail = stateItem ?? MOCK_DETAIL
 
   const summaryRows: SummaryInfoRow[] = [

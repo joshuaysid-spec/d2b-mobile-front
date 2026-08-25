@@ -3,10 +3,10 @@
 // 용역(Lbsvc)은 데이터영역 srngScr1~8 = 표시 순서 그대로(수행능력~기타2). A군 flat 표 — 레퍼런스 [[Implt]].
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { ImpltElgbSrngScoreSet } from '@/types/bd'
+import type { MockImpltElgbSrngScoreSet } from '@/types/mock/bd'
 
 // 심사결과 목업 (설계서 slide175 값·slide176 항목명 srngScr1~8) — 추후 API 매핑.
-const MOCK_RESULT: ImpltElgbSrngScoreSet = {
+const MOCK_RESULT: MockImpltElgbSrngScoreSet = {
   srngScr1: '00',
   srngScr2: '000',
   srngScr3: '9,800,000.00 원',
@@ -19,7 +19,7 @@ const MOCK_RESULT: ImpltElgbSrngScoreSet = {
   jgmtRsltNm: '적격',
 }
 
-const resultRows = (it: ImpltElgbSrngScoreSet): TableRow[] => [
+const resultRows = (it: MockImpltElgbSrngScoreSet): TableRow[] => [
   { label: '수행능력', value: it.srngScr1, type: 'number' },
   { label: '경영상태', value: it.srngScr2, type: 'number' },
   { label: '입찰가격', value: it.srngScr3, type: 'number' },
