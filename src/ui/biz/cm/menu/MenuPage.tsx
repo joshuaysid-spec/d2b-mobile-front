@@ -145,10 +145,17 @@ const MENU_TREE: MenuNode[] = [
   {
     id: 'guide',
     label: '이용안내',
+    // 이용안내 하위 순서(사용자 확정 2026-08-25, cm05-guide-menu-links.plan.md):
+    //   전자입찰절차(국내) 밑 전자대금청구절차 · 국외조달원 등록절차 밑 등록/변경안내 밑 전자입찰절차(국외).
     children: [
       { id: 'guide-prep', label: LINKED_MENU_LABELS[ROUTES.GUIDE_PREPARATION] },
+      { id: 'guide-prep02', label: LINKED_MENU_LABELS[ROUTES.GUIDE_PREPARATION02] },
       { id: 'guide-domestic', label: LINKED_MENU_LABELS[ROUTES.GUIDE_DOMESTIC] },
+      { id: 'guide-domestic02', label: LINKED_MENU_LABELS[ROUTES.GUIDE_DOMESTIC02] },
+      { id: 'guide-domestic03', label: LINKED_MENU_LABELS[ROUTES.GUIDE_DOMESTIC03] },
       { id: 'guide-foreign', label: LINKED_MENU_LABELS[ROUTES.GUIDE_FOREIGN] },
+      { id: 'guide-foreign02', label: LINKED_MENU_LABELS[ROUTES.GUIDE_FOREIGN02] },
+      { id: 'guide-foreign03', label: LINKED_MENU_LABELS[ROUTES.GUIDE_FOREIGN03] },
       { id: 'guide-related-site', label: LINKED_MENU_LABELS[ROUTES.GUIDE_SITE] },
       { id: 'guide-glossary', label: '용어사전' },
       { id: 'guide-app', label: '앱 이용안내' },
@@ -228,9 +235,14 @@ const MENU_ROUTES: Record<string, string> = {
   'intro-infographics': ROUTES.INTRO_GRAPHIC, // 인포그래픽스(MUI-CM-05-M04)
   'intro-related-system': ROUTES.INTRO_RELATED, // 관련시스템(MUI-CM-05-M05)
   'intro-contact': ROUTES.INTRO_INQUIRY, // 이용문의(MUI-CM-05-M06)
-  'guide-prep': ROUTES.GUIDE_PREPARATION, // 조달사전준비안내 > 사전준비사항(MUI-CM-05-M07)
-  'guide-domestic': ROUTES.GUIDE_DOMESTIC, // 국내조달안내 > 국방조달참여절차(MUI-CM-05-M09)
-  'guide-foreign': ROUTES.GUIDE_FOREIGN, // 국외조달안내 > 국외조달원 등록절차(MUI-CM-05-M12)
+  'guide-prep': ROUTES.GUIDE_PREPARATION, // 사전준비사항(MUI-CM-05-M07)
+  'guide-prep02': ROUTES.GUIDE_PREPARATION02, // 청렴계약제(MUI-CM-05-M08)
+  'guide-domestic': ROUTES.GUIDE_DOMESTIC, // 국방조달참여절차(MUI-CM-05-M09)
+  'guide-domestic02': ROUTES.GUIDE_DOMESTIC02, // 전자입찰절차 국내(MUI-CM-05-M10)
+  'guide-domestic03': ROUTES.GUIDE_DOMESTIC03, // 전자대금청구절차(MUI-CM-05-M11)
+  'guide-foreign': ROUTES.GUIDE_FOREIGN, // 국외조달원 등록절차(MUI-CM-05-M12)
+  'guide-foreign02': ROUTES.GUIDE_FOREIGN02, // 국외조달원 등록/변경안내(MUI-CM-05-M13)
+  'guide-foreign03': ROUTES.GUIDE_FOREIGN03, // 전자입찰절차 국외(MUI-CM-05-M14)
   'guide-related-site': ROUTES.GUIDE_SITE, // 관련사이트(MUI-CM-05-M15)
   // 앱 이용안내(MUI-CM-05-M16) — 홈 위 인덱스 모달(AppSrvcExplnIdx, ?appGuide=index)로 진입.
   // (구 M06 스플래시 /app-guide 직행에서 교체 — M06 은 홈 첫 진입 오버레이로 유지.)

@@ -1,6 +1,7 @@
 // 회원탈퇴 — MUI-CM-02-P10. 설계서 00.공통 v0.84 slide209(mbWithdrawal).
 // 마이페이지 > 사용자정보관리 > 회원탈퇴(팝업). 헤더 타이틀 "회원탈퇴".
-// 구성(위→아래): 사용자 정보(ID·성명) → 주의사항(Notice urgent) → 탈퇴 사유 작성*(TextArea, 최대 5줄·이후 내부 스크롤)
+// 구성(위→아래): 주의사항(Notice urgent — 최상단, 사용자 확정 2026-08-25) → 사용자 정보(사용자 ID·사용자명 —
+//   설계서처럼 input(InputLabel+InputBox disabled) 형태) → 탈퇴 사유 작성*(TextArea, 최대 5줄·이후 내부 스크롤)
 //   → footer [회원탈퇴](primary)/[취소](secondary).
 //  - [회원탈퇴] → 탈퇴 사유 필수검증(RHF+zod) 통과 시 확인 팝업(AlertModal) → [확인] → 토스트 "회원 탈퇴 되었습니다." → 메인 이동+로그아웃(스텁).
 import { useState } from 'react'
@@ -8,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { InputMessage } from '@/ui/common/base/InputMessage'
 import { TextArea } from '@/ui/common/base/TextArea'
@@ -53,32 +55,26 @@ export function MbWithdrawalPage() {
   })
 
   return (
-    <div className="flex w-full flex-col">
-      {/* 상단 사용자 정보 — 사용자 ID · 사용자명. */}
-      <div className="flex flex-col gap-krds-3 px-krds-8 py-krds-7">
-        <div className="flex items-start gap-krds-5">
-          <span className="w-20 shrink-0 text-[17px] font-medium leading-normal text-krds-text-muted">
-            사용자 ID
-          </span>
-          <span className="min-w-px flex-1 text-[17px] font-bold leading-normal text-krds-text-ink">
-            {MOCK_USER.userId}
-          </span>
-        </div>
-        <div className="flex items-start gap-krds-5">
-          <span className="w-20 shrink-0 text-[17px] font-medium leading-normal text-krds-text-muted">
-            사용자명
-          </span>
-          <span className="min-w-px flex-1 text-[17px] font-bold leading-normal text-krds-text-ink">
-            {MOCK_USER.userNm}
-          </span>
-        </div>
-      </div>
-
-      {/* 주의사항 — 되돌릴 수 없음 강조(urgent). */}
-      <div className="px-krds-8 pb-krds-7">
-        <Notice type="urgent" badgeLabel="주의">
+    // min-h-full + footer mt-auto — 콘텐츠가 짧아도 버튼 영역이 화면 맨 아래 붙는다(사용자 확정 2026-08-25).
+    <div className="flex min-h-full w-full flex-col">
+      {/* 주의사항 — 되돌릴 수 없음 강조(urgent). 최상단 배치 + 문구를 배지 아래로 세로 정렬
+          (사용자 확정 2026-08-25 — 공통 Notice 는 수정하지 않고 flex-col 오버라이드). */}
+      <div className="px-krds-8 pt-krds-7 pb-krds-7">
+        <Notice type="urgent" badgeLabel="주의" className="flex-col">
           회원탈퇴 시 회원정보가 삭제됩니다. 회원탈퇴 시 되돌릴 수 없으며, 재가입 하셔야 합니다.
         </Notice>
+      </div>
+
+      {/* 사용자 정보 — 설계서(slide214)처럼 input 형태(라벨 위 + 값, 조회 전용 disabled). */}
+      <div className="flex flex-col gap-krds-7 px-krds-8 pb-krds-7">
+        <div className="flex flex-col gap-krds-3">
+          <InputLabel htmlFor="wdrw-userId">사용자 ID</InputLabel>
+          <InputBox id="wdrw-userId" disabled value={MOCK_USER.userId} readOnly />
+        </div>
+        <div className="flex flex-col gap-krds-3">
+          <InputLabel htmlFor="wdrw-userNm">사용자명</InputLabel>
+          <InputBox id="wdrw-userNm" disabled value={MOCK_USER.userNm} readOnly />
+        </div>
       </div>
 
       {/* 탈퇴 사유 작성* — 최대 5줄까지 확장, 이후 내부 스크롤. */}
@@ -107,9 +103,9 @@ export function MbWithdrawalPage() {
         )}
       </form>
 
-      {/* footer — [회원탈퇴](primary) / [취소](secondary). */}
+      {/* footer — [회원탈퇴](primary) / [취소](secondary). mt-auto 로 화면 맨 아래 고정(짧은 콘텐츠에서도). */}
       <div
-        className="sticky bottom-0 z-30 border-t border-krds-border-divider bg-background px-krds-8 pt-3"
+        className="sticky bottom-0 z-30 mt-auto border-t border-krds-border-divider bg-background px-krds-8 pt-3"
         style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
       >
         <ButtonGroup

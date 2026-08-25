@@ -3,7 +3,8 @@
 //
 // 구성: 상단바(표시개수 셀렉트 — 검색필터 삭제됨, slide78 2026-07-08) → 카드 리스트(공통 Card: 진행상태/업무/계약 배지
 //   + 판단번호 + 공고명 + 신청일시 + [진행 단계 보기][바로가기] 버튼) → 더보기 → 맨위로 FAB.
-//   [진행 단계 보기] → 세부 스텝 팝업(P03, MyPrgrsHstryDtl) BottomSheet(컨테이너/footer 는 이 페이지가 소유).
+//   [진행 단계 보기] → 세부 스텝 팝업(P03, MyPrgrsHstryDtl) BottomSheet(컨테이너는 이 페이지가 소유) — 조회 전용
+//   (2026-08-25 사용자 확정: footer [닫기][바로가기] 삭제 + 단계 선택 안내 문구 삭제. X 아이콘으로만 닫음).
 //
 // 데이터=파일 내 목업(설계서 slide78 형식), 동작=API 경계 스텁(console.log + '// 추후 …').
 import { useMemo, useState } from 'react'
@@ -58,9 +59,8 @@ export function MyPrgrsHstryPage() {
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
 
-  // 세부 스텝 팝업(P03) — 대상 아이템 + 선택 단계. 컨테이너/footer 는 이 페이지가 소유.
+  // 세부 스텝 팝업(P03) — 대상 아이템. 컨테이너는 이 페이지가 소유(조회 전용, footer 없음).
   const [stepItem, setStepItem] = useState<MyPrgrsHstryItem | null>(null)
-  const [selectedStage, setSelectedStage] = useState<string | null>(null)
 
   const total = MOCK_LIST.length
   const loaded = Math.min(page * pageSize, total)
@@ -77,7 +77,6 @@ export function MyPrgrsHstryPage() {
     console.log('[MyPrgrsHstry] loadMore')
   }
   const handleShowSteps = (item: MyPrgrsHstryItem) => {
-    setSelectedStage(null)
     setStepItem(item)
   }
   const handleGoto = (item: MyPrgrsHstryItem) => {
@@ -87,19 +86,13 @@ export function MyPrgrsHstryPage() {
     console.log('[MyPrgrsHstry] 바로가기', item.id) // 추후: bd 진행 상세 조회(prcmNo/공고번호 매핑)
     navigate('/bd/bidPrgsDtlInq', { state: item })
   }
-  // 세부 스텝 팝업의 '바로가기' — 선택 단계에 해당하는 목록으로 이동(설계서 slide79).
-  const handleStepGoto = () => {
-    console.log('[MyPrgrsHstry] 단계 바로가기', selectedStage) // 추후: 단계별 목록 라우팅
-    setStepItem(null)
-  }
-
-  // 세부 스텝 팝업용 StepBar 항목 — 아이템의 currentStage 기준 done/doing/todo.
+  // 세부 스텝 팝업용 StepBar 항목 — 아이템의 currentStage 기준 done/doing/todo (조회 전용, 클릭 없음).
   const stepItems: StepItem[] = useMemo(() => {
     if (!stepItem) return []
     const curIdx = STAGES.indexOf(stepItem.currentStage as (typeof STAGES)[number])
     return STAGES.map((label, i) => {
       const state: StepState = i < curIdx ? 'done' : i === curIdx ? 'doing' : 'todo'
-      return { label, state, onClick: () => setSelectedStage(label) }
+      return { label, state }
     })
   }, [stepItem])
 
@@ -162,22 +155,20 @@ export function MyPrgrsHstryPage() {
         }
       />
 
-      {/* 세부 스텝 팝업(P03) — 컨테이너/footer 를 페이지가 소유, 콘텐츠는 MyPrgrsHstryDtl. */}
+      {/* 세부 스텝 팝업(P03) — 컨테이너/footer 는 페이지 소유, 콘텐츠는 MyPrgrsHstryDtl.
+          조회 전용(사용자 확정 2026-08-25) — 구 [닫기][바로가기] 대신 풀폭 [닫기] 단독. */}
       <BottomSheet
         open={stepItem !== null}
         onOpenChange={(open) => !open && setStepItem(null)}
         title="진행 단계 확인"
         footer={
           <ButtonGroup
-            layout="split"
-            items={[
-              { label: '닫기', variant: 'secondary', onClick: () => setStepItem(null) },
-              { label: '바로가기', variant: 'primary', onClick: handleStepGoto },
-            ]}
+            layout="single"
+            items={[{ label: '닫기', variant: 'secondary', onClick: () => setStepItem(null) }]}
           />
         }
       >
-        <MyPrgrsHstryDtl items={stepItems} selectedLabel={selectedStage ?? undefined} />
+        <MyPrgrsHstryDtl items={stepItems} />
       </BottomSheet>
     </div>
   )

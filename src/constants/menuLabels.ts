@@ -41,8 +41,18 @@ export const LINKED_MENU_LABELS = {
   [ROUTES.SUPPORT_FAQ]: '자주 묻는 질문',
   [ROUTES.SUPPORT_DCMNT_ISSU_APLY]: '민원서류 발급신청',
   [ROUTES.SUPPORT_STT_INFO_LIST]: '법령 조회',
-  [ROUTES.GUIDE_PREPARATION]: '조달 사전준비 안내',
-  [ROUTES.GUIDE_DOMESTIC]: '국내 조달 안내',
-  [ROUTES.GUIDE_FOREIGN]: '국외 조달 안내',
+  // 이용안내 3종 메뉴명 개정(사용자 확정 2026-08-25): 조달 사전준비 안내→사전준비사항 ·
+  // 국내 조달 안내→국방 조달 참여절차 · 국외 조달 안내→국외조달원 등록절차.
+  [ROUTES.GUIDE_PREPARATION]: '사전준비사항',
+  // 청렴계약제(M08) — 사전준비사항 밑 배치(사용자 확정 2026-08-25).
+  [ROUTES.GUIDE_PREPARATION02]: '청렴계약제',
+  [ROUTES.GUIDE_DOMESTIC]: '국방 조달 참여절차',
+  // 이용안내 하위 안내 페이지 메뉴 노출(사용자 확정 2026-08-25 — cm05-guide-menu-links.plan.md).
+  // 전자입찰절차 국내(M10)/국외(M14)는 '국내/국외 전자입찰절차'로 구분(사용자 확정 2026-08-25).
+  [ROUTES.GUIDE_DOMESTIC02]: '국내 전자입찰절차',
+  [ROUTES.GUIDE_DOMESTIC03]: '전자대금청구절차',
+  [ROUTES.GUIDE_FOREIGN]: '국외조달원 등록절차',
+  [ROUTES.GUIDE_FOREIGN02]: '국외조달원 등록/변경안내',
+  [ROUTES.GUIDE_FOREIGN03]: '국외 전자입찰절차',
   [ROUTES.GUIDE_SITE]: '관련 사이트',
 } as const
