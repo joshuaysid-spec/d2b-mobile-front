@@ -4,7 +4,7 @@
 // 받은/보낸/임시저장/반려 문서를 하나의 목록으로 합쳐 표시하되, 상단 분기 탭(4구분)으로 필터한다.
 //   (설계서는 검색필터 '문서 구분'으로 필터하나, 마이페이지 문서함 하위 메뉴(받은/보낸/반려/임시저장)와
 //    동일하게 탭으로 노출 — 진입 시 마이페이지에서 넘어온 docType 으로 초기 탭 선택.)
-// 구성(위→아래): 분기 탭(TabList button) → 상단바(검색필터 버튼+표시개수, slide95 — 좌측 leftSlot 은 관심입찰공고
+// 구성(위→아래): 분기 탭(TabList line — 구 button 칩에서 전환, 260825 사용자 확정) → 상단바(검색필터 버튼+표시개수, slide95 — 좌측 leftSlot 은 관심입찰공고
 //   M05 와 동일 패턴) → 카드 리스트 → 더보기 → 맨위로 FAB → 검색필터 풀팝업(공통 SearchFilter 셸).
 // 검색필터(slide96, 2026-08-24 추가): 문서 구분(셀렉트) → 첨언·첨부 여부(셀렉트) → 기간 설정(dateRange+빠른칩 1/3/6개월).
 //   초기값 = 문서구분 전체 · 첨언첨부 전체 · 기간 최근 1개월. 검색 실행 시 문서구분은 상단 분기 탭에 동기화
@@ -265,7 +265,7 @@ export function DocBoxPage() {
   return (
     <div className="flex w-full flex-col">
       {/* 상단 분기 탭 — 4구분(받은/보낸/반려/임시저장). 라벨이 360px 폭에 안 들어가면 가로 스크롤. */}
-      <TabList variant="button" value={tab} onChange={handleTab} items={DOC_TABS} scrollButtons="auto" />
+      <TabList value={tab} onChange={handleTab} items={DOC_TABS} scrollButtons="auto" />
 
       {/* 상단바(slide95) — 좌: 검색필터 버튼(leftSlot, 관심입찰공고 M05 패턴) / 우: 표시개수 셀렉트. */}
       <ListSectionHeader
