@@ -106,6 +106,21 @@ const dl_itrstBidPbancList: ItrstBidPbancItem[] = [
     bidMthd: '총액제',
     bdgtAmt: 47200000,
   },
+  {
+    // 국외 건 — 카드 클릭 국외 상세(M71) 분기·별 재등록 no.51 분기 확인용.
+    id: '4',
+    itrst: true,
+    taskSeCd: TASK_SE_CD.OVERSEAS,
+    taskSeNm: '국외',
+    ctrtMthd: '일반경쟁',
+    pbancStasNm: '정상공고',
+    pbancNoCycl: 'EFD0007-2',
+    bidNm: '500MD HELICOPTER SPARE PARTS',
+    orderPrnmntYm: '2026-05',
+    orderInstNm: '국제부품계약팀',
+    bidMthd: '단가제',
+    bdgtAmt: 60800000,
+  },
 ]
 
 // ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 페이징 로직을 통째로 교체(cmService.selectItrstBidPbancList).
@@ -153,8 +168,10 @@ export function ItrstBidPbancPage() {
     console.log('[ItrstBidPbanc] loadMore → page', next)
   }
   const handleOpen = (item: ItrstBidPbancItem) => {
-    // 클릭한 항목을 state 로 전달 — 입찰공고 상세(MUI-BD-01-M02) 상단 즉시표시.
-    navigate('/bd/bidPbancDtl', { state: item })
+    // 클릭한 항목을 state 로 전달 — 업무구분코드(GTSA0001)로 국내(M02)/국외(M71) 상세 분기(통합목록과 동일 규칙).
+    const to =
+      item.taskSeCd === TASK_SE_CD.OVERSEAS ? '/bd/ovsBidPbancDtl' : '/bd/bidPbancDtl'
+    navigate(to, { state: item })
   }
 
   // 별 토글 API — 해제 = cm no.758(분기 없음) · 재등록 = 업무구분코드(GTSA0001)로 국내/국외 분기(no.30/51).
