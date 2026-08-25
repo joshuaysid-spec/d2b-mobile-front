@@ -162,12 +162,19 @@ export function PswdChgPage() {
         </Button>
       </form>
 
-      {/* 변경 완료 모달 — [확인] 시 이전 화면으로 복귀. */}
+      {/* 변경 완료 모달 — [확인] 시 이전 화면으로 복귀. 본문 문구는 설계서 v0.86 slide202 그대로(2026-08-25 추가). */}
       <AlertModal
         open={doneOpen}
         onOpenChange={setDoneOpen}
         variant="check"
         title="비밀번호가 변경되었습니다."
+        description={
+          <>
+            새로운 비밀번호로 로그인 하실 수 있습니다.
+            <br />
+            생체인증이 등록된 경우 새 비밀번호 입력없이 생체인증으로 로그인할 수 있습니다.
+          </>
+        }
         primaryAction={{ label: '확인', onClick: handleDoneConfirm }}
       />
     </>
