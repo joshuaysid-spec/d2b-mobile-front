@@ -4,7 +4,8 @@
 //   이 화면 내 시트로 처리(설계서 경로도 IndvIdntIdntyPage 재사용 표기): 인증서 선택 시트=M10 · 비밀번호 확인 시트=P11.
 //
 // 흐름:
-//   랜딩(slide199): 아이콘 + 안내문 "개인 신원 확인을 진행합니다." + 도움말 + [취소]/[개인신원확인]
+//   랜딩(v0.86 slide204): 아이콘 + 안내문 "개인 신원 확인을 진행합니다." + 본문 안내 문구 + [개인신원확인]
+//   (2026-08-25 사용자 확정 — 구 도움말(HelpDisclosure) 박스를 설계서처럼 페이지 본문 문구로 이동, [취소] 버튼 삭제)
 //   → [개인신원확인] → 인증서 선택 BottomSheet(slide200, "개인 인증서" — 개인 보유 인증서 목록)
 //   → 인증서 행 클릭 → 개인 인증서 확인 BottomSheet(slide201, 비밀번호 입력)
 //   → [인증하기] 성공 → 랜딩 복귀 + 토스트 "인증이 완료되었습니다." / 실패 → 시트 유지 + 에러 메시지.
@@ -12,12 +13,11 @@
 // 인증서 목록/카드는 인증서 관리(MUI-CM-04-M14) 화면 자산 재활용(CertCard + MOCK_CERTS).
 // 인증서 비밀번호 검증은 스마트PKI 솔루션 제공 — 데모는 고정값 비교(추후 API 로 교체).
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 
+import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
-import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { Toast } from '@/ui/common/composites/Toast'
 import { CertCard } from '@/ui/biz/cm/crtfMng/CertCard'
 import { MOCK_CERTS } from '@/ui/biz/cm/crtfMng/certMock'
@@ -27,14 +27,7 @@ import type { CertItem } from '@/types/mock/cm'
 // 데모용 비밀번호 — 실제 검증은 스마트PKI 솔루션.
 const MOCK_PASSWORD = '1234'
 
-// 보조 안내(도움말) — 설계서 slide199.
-const HELP_ITEMS = [
-  '개인신원확인 버튼을 클릭하여 인증서 창을 띄울 수 있습니다. 인증서 창이 나타나면 [조달테스트4]님의 개인인증서를 선택하십시오.',
-]
-
 export function IndvIdntIdntyPage() {
-  const navigate = useNavigate()
-
   const [selectOpen, setSelectOpen] = useState(false) // 인증서 선택 시트(slide200)
   const [confirmCert, setConfirmCert] = useState<CertItem | null>(null) // 선택된 인증서(=확인 시트 열림, slide201)
   const [password, setPassword] = useState('')
@@ -83,20 +76,19 @@ export function IndvIdntIdntyPage() {
         <p className="text-center text-[24px] font-bold leading-normal text-krds-text-ink">
           개인 신원 확인을 진행합니다.
         </p>
+        {/* 본문 안내 문구 — 설계서 v0.86 slide204 그대로(구 도움말 박스에서 이동, 사용자 확정 2026-08-25) */}
+        <p className="text-center text-[17px] leading-normal text-krds-text-muted">
+          개인신원확인 버튼을 클릭하여 인증서 창을 띄울 수 있습니다.
+          <br />
+          인증서 창이 나타나면 [조달테스트4]님의 개인인증서를 선택하십시오.
+        </p>
       </div>
 
-      {/* 하단 도움말 — 기본 펼침 */}
-      <HelpDisclosure title="도움말" items={HELP_ITEMS} defaultOpen />
-
-      {/* 하단 버튼바 — 좌 [취소] outline(secondary) + 우 [개인신원확인] primary */}
+      {/* 하단 버튼 — [개인신원확인] 단독(설계서 slide204 — [취소] 삭제, 사용자 확정 2026-08-25) */}
       <div className="p-krds-8">
-        <ButtonGroup
-          layout="asymmetric"
-          items={[
-            { label: '취소', variant: 'secondary', onClick: () => navigate(-1) },
-            { label: '개인신원확인', variant: 'primary', onClick: () => setSelectOpen(true) },
-          ]}
-        />
+        <Button variant="primary" className="w-full" onClick={() => setSelectOpen(true)}>
+          개인신원확인
+        </Button>
       </div>
 
       {/* 인증서 선택 BottomSheet(slide200) — "개인 인증서" = MUI-CM-02-M10 인증서관리(CrtfMng). 컨테이너/open 은 부모 소유, 콘텐츠(카드 목록)는 인라인. */}

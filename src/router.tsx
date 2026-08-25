@@ -1946,52 +1946,52 @@ export const router = createBrowserRouter([
         },
       },
       {
-        // 청렴계약제 (MUI-CM-05-M08) — 이용안내 > 국내조달안내 > 청렴계약제
+        // 청렴계약제 (MUI-CM-05-M08) — 이용안내 > 사전준비사항 밑(사용자 확정 2026-08-25)
         path: 'guide/preparation02',
         element: <Preparation02Page />,
         errorElement: <ErrorPage />,
         handle: {
-          header: { variant: 'sub', title: '청렴계약제' },
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.GUIDE_PREPARATION02] },
           scrollReset: true,
         },
       },
       {
-        // 전자입찰절차 국내 (MUI-CM-05-M10) — 이용안내 > 국내조달안내 > 전자입찰절차
+        // 전자입찰절차 국내 (MUI-CM-05-M10) — 이용안내 > 전자입찰절차(전체메뉴 링크 — 라벨은 LINKED_MENU_LABELS 단일화)
         path: 'guide/domestic02',
         element: <Domestic02Page />,
         errorElement: <ErrorPage />,
         handle: {
-          header: { variant: 'sub', title: '전자입찰절차' },
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.GUIDE_DOMESTIC02] },
           scrollReset: true,
         },
       },
       {
-        // 전자대금청구절차 (MUI-CM-05-M11) — 이용안내 > 국내조달안내 > 전자대금청구절차
+        // 전자대금청구절차 (MUI-CM-05-M11) — 이용안내 > 전자입찰절차 밑(사용자 확정 2026-08-25)
         path: 'guide/domestic03',
         element: <Domestic03Page />,
         errorElement: <ErrorPage />,
         handle: {
-          header: { variant: 'sub', title: '전자대금청구절차' },
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.GUIDE_DOMESTIC03] },
           scrollReset: true,
         },
       },
       {
-        // 국외조달원 등록/변경안내 (MUI-CM-05-M13) — 이용안내 > 국외조달안내 > 국외조달원 등록/변경안내
+        // 국외조달원 등록/변경안내 (MUI-CM-05-M13) — 이용안내 > 국외조달원 등록절차 밑(사용자 확정 2026-08-25)
         path: 'guide/foreign02',
         element: <Foreign02Page />,
         errorElement: <ErrorPage />,
         handle: {
-          header: { variant: 'sub', title: '국외조달원 등록/변경안내' },
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.GUIDE_FOREIGN02] },
           scrollReset: true,
         },
       },
       {
-        // 전자입찰절차 국외 (MUI-CM-05-M14) — 이용안내 > 국외조달안내 > 전자입찰절차
+        // 전자입찰절차 국외 (MUI-CM-05-M14) — 이용안내 > 국외조달원 등록/변경안내 밑(사용자 확정 2026-08-25)
         path: 'guide/foreign03',
         element: <Foreign03Page />,
         errorElement: <ErrorPage />,
         handle: {
-          header: { variant: 'sub', title: '전자입찰절차' },
+          header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.GUIDE_FOREIGN03] },
           scrollReset: true,
         },
       },
