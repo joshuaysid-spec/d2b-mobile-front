@@ -100,11 +100,17 @@ export function BzentyGnrlInfoDtlPage() {
           }`}
         >
           <div className="overflow-hidden">
-            <div className="flex flex-col gap-krds-5 bg-krds-bg-primary-faint px-4 py-4">
-              <p className="text-[15px] leading-normal text-krds-text-muted wrap-break-word">
+            {/* 갱신 버튼 — 전체폭 대신 우측 끝 소형(sm)으로 배치(260825 사용자 확정). */}
+            <div className="flex items-center gap-krds-5 bg-krds-bg-primary-faint px-4 py-4">
+              <p className="min-w-px flex-1 text-[15px] leading-normal text-krds-text-muted wrap-break-word">
                 나라장터(G2B) 조달업체정보 최근 수신(갱신) 일시 : {G2B_LAST_RECV_DT}
               </p>
-              <Button variant="secondary" className="w-full" onClick={handleRefreshG2b}>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="shrink-0"
+                onClick={handleRefreshG2b}
+              >
                 갱신하기
               </Button>
             </div>
