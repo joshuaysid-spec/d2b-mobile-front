@@ -38,14 +38,14 @@ src/
 │
 ├── lib/          # [인프라] 외부 라이브러리 설정 (apiClient, queryClient)
 ├── bridge/       # [인프라] 네이티브(WebView) 통신 추상화
-├── services/     # [API] 비즈니스 API 함수 — URL(EP 맵)·목업 분기는 여기만
-├── queries/      # [API] React Query wrapper (services 와 1:1, 페이지는 이것만 호출)
+├── services/     # [API] 비즈니스 API 함수 — {대메뉴}/{도메인}.ts (bds·cbs·cts·tss = 실 URL 1단), URL 인라인·목업 분기는 여기만
+├── queries/      # [API] React Query wrapper — services 와 동일 체계 (페이지는 이것만 호출)
 ├── stores/       # [상태] zustand 전역 상태 (authStore 단일)
 ├── hooks/        # [로직] 범용 hook
 │
 ├── utils/        # [보조] 순수 함수 유틸 (format, validators, cn …)
 ├── constants/    # [보조] 환경 무관 고정값 (routes, menuLabels, codes …)
-├── types/        # [보조] 전역 타입 (도메인당 1파일)
+├── types/        # [보조] 전역 타입 — {도메인}.ts = tobe(실응답 확정분) · mock/ = 더미(Mock 접두), 아래 "타입 이원화" 참조
 ├── styles/       # [보조] 전역 스타일 (KRDS 토큰)
 ├── assets/       # [보조] 이미지·아이콘·폰트 (폐쇄망 — 전부 self-host)
 │
@@ -77,6 +77,29 @@ lib/     → (외부 라이브러리만)
 - 도메인 간 직접 import 금지 (`ui/biz/procurement` ↔ `ui/biz/notice`)
 - Page 는 axios 직접 호출 금지 → 반드시 `queries/` 경유
 - import 경로는 항상 `@/` alias 사용
+
+## 타입 이원화 — Mock / tobe (2026-08-25, 폐쇄망 연동 대비)
+
+폐쇄망에서 페이지를 **하나씩** 실 API 로 붙일 때, 공유 타입을 고치면 같은 타입을 쓰는
+다른 페이지들이 연쇄 컴파일 에러로 깨지는 문제를 막기 위해 타입을 두 계층으로 분리했다.
+
+```
+src/types/
+├── mock/{도메인}.ts   # 더미(설계서 기반) 타입 — 전 타입명 Mock 접두 (MockOpPlanItem …)
+├── {도메인}.ts        # tobe — 폐쇄망 실응답으로 확인한 타입만 정의 (추정 정의 금지)
+└── api.ts · file.ts · search-filter.ts   # 확정분 — Mock 대상 아님(봉투·파일업로드·UI 설정)
+```
+
+**페이지 전환 절차 (폐쇄망에서 한 페이지당):**
+
+1. 실응답 확인 → `types/{도메인}.ts`(tobe)에 진짜 타입 정의
+2. **그 페이지 + 그 페이지가 쓰는 서비스 함수·훅만** `MockXxx` → `Xxx` 교체
+   (+ 해당 서비스 함수의 `if (USE_MOCK)` 분기 제거 = 그 함수만 실호출 확정)
+3. 나머지 페이지들은 Mock 타입·목업으로 계속 동작 — 연쇄 에러 없음
+4. 전 화면 전환 완료 시 `types/mock/` 폴더째 + 잔여 목업(mocks/) 통삭제
+
+새 화면을 지금(외부) 만들 때의 더미 타입도 `types/mock/` 에 Mock 접두로 추가한다.
+상세 규칙: `docs/rules/api.md` "타입 정의" 절.
 
 ## 참고 문서
 
