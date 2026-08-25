@@ -172,8 +172,8 @@ export function MyTaskHstryPage() {
     <div className="flex w-full flex-col">
       {/* 상단 분기 탭 — 4가지 현황(입찰참가신청/입찰서제출/공개수의협상/계약).
           6글자 한글 라벨 4개는 360px 폭에 균등(fitted)으로 안 들어가 잘리므로,
-          가로 스크롤(스와이프 + 좌/우 화살표, scrollButtons 기본 'auto')로 노출한다. */}
-      <TabList variant="button" value={tab} onChange={handleTab} items={STTS_TABS} scrollButtons="auto" />
+          가로 스크롤(스와이프 + 좌/우 화살표)로 노출. variant 기본(line 탭) — 구 button 칩에서 전환(사용자 확정). */}
+      <TabList value={tab} onChange={handleTab} items={STTS_TABS} scrollButtons="auto" />
 
       {/* 상단바 — 총건수 + 표시개수 셀렉트. */}
       <ListSectionHeader
