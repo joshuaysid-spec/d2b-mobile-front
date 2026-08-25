@@ -44,7 +44,7 @@ const MFRC_LIST: BzentyFcltMfrcFld[] = [
 
 function lcnsRows(d: BzentyFcltLcns): TableRow[] {
   return [
-    { label: '공종[업종코드]', value: `${d.cnstpCdNm} [${d.cnstpCd}]` },
+    { label: <>공종<br />[업종코드]</>, value: `${d.cnstpCdNm} [${d.cnstpCd}]` },
     { label: '면허번호', value: d.lcnsNo },
     { label: '시공능력 공시액', value: d.cnstAbltEvlAmt, type: 'number' },
     { label: '면허유효기간', value: `${d.lcnsAcqsYmd} ~ ${d.lcnsExpryYmd}` },
@@ -54,8 +54,8 @@ function lcnsRows(d: BzentyFcltLcns): TableRow[] {
 
 function mfrcRows(d: BzentyFcltMfrcFld): TableRow[] {
   return [
-    { label: '공종명[업종코드]', value: `${d.cnstpCdNm} [${d.cnstpCd}]` },
-    { label: '주력분야[코드]', value: `${d.mfrcFldNm} [${d.mfrcFldCd}]` },
+    { label: <>공종명<br />[업종코드]</>, value: `${d.cnstpCdNm} [${d.cnstpCd}]` },
+    { label: <>주력분야<br />[코드]</>, value: `${d.mfrcFldNm} [${d.mfrcFldCd}]` },
     { label: '해제일', value: d.mfrcFldRmvYmd },
     { label: '시공능력 공시액', value: d.cnstAbltEvlAmt, type: 'number' },
     { label: '평가액 기준년도', value: d.evlAmtCrtrYr },
@@ -73,7 +73,7 @@ export function BzentyGnrlInfoDtl_Fclt() {
           <Table
             rows={[
               { label: '대표업태', value: FCLT_INFO.bzstatCdNm },
-              { label: '연락소(전화번호)', value: FCLT_INFO.lcofcTelno },
+              { label: <>연락소<br />(전화번호)</>, value: FCLT_INFO.lcofcTelno },
             ]}
           />
         </AccordionSection>
