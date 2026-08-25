@@ -104,20 +104,18 @@ export function DocBoxDtlPage() {
           rows={docDateRows(detail)}
         />
 
-        {/* 탭 — 노출 탭이 2개 이상일 때만(단일 탭이면 굳이 표시 안 함). */}
-        {tabs.length > 1 && (
-          <div className="px-4">
-            <TabList
-              value={activeTab}
-              onChange={(next) => {
-                setTab(next)
-                goToContentTop()
-              }}
-              items={tabs}
-              scrollButtons="auto"
-            />
-          </div>
-        )}
+        {/* 탭 — 단일 탭(임시저장 등)이어도 항상 표시(260825 사용자 확정 — 미표시 시 레이아웃이 깨져 보임). */}
+        <div className="px-4">
+          <TabList
+            value={activeTab}
+            onChange={(next) => {
+              setTab(next)
+              goToContentTop()
+            }}
+            items={tabs}
+            scrollButtons="auto"
+          />
+        </div>
       </div>
 
       {/* 탭 콘텐츠 — 짧은 탭도 헤더 접힘을 지탱할 스크롤 높이 확보(진동 방지, 상세화면 공통). */}
