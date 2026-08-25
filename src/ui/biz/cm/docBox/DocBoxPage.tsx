@@ -19,7 +19,6 @@ import { Badge } from '@/ui/common/base/Badge'
 import { Icon } from '@/ui/common/base/Icon'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
-import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Button } from '@/ui/common/base/Button'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
@@ -31,14 +30,6 @@ import type {
   SearchFilterValue,
 } from '@/types/search-filter'
 import type { DocBoxItem, DocBoxSeCd } from '@/types/mock/cm'
-
-// 상단 분기 탭 — 문서구분 4가지(받은/보낸/반려/임시저장). docSeCd 로 목록 필터.
-const DOC_TABS: TabItem[] = [
-  { value: 'received', label: '받은 문서' },
-  { value: 'sent', label: '보낸 문서' },
-  { value: 'rejected', label: '반려 문서' },
-  { value: 'temp', label: '임시저장' },
-]
 
 // ── 검색필터 (MUI-CM-06-M10 검색필터, 설계서 slide96) — 공통 SearchFilter 셸 schema ──
 const DATE_PRESETS: DateRangePresetDef[] = [
@@ -203,26 +194,25 @@ const MOCK_DOCS: DocBoxItem[] = (Object.keys(DOC_SAMPLES) as DocBoxSeCd[]).flatM
 
 export function DocBoxPage() {
   const navigate = useNavigate()
-  // 마이페이지에서 넘어온 초기 문서구분(받은/보낸/반려/임시저장). 없으면 '받은 문서'.
-  const initTab = (useLocation().state as { docType?: DocBoxSeCd } | null)?.docType ?? 'received'
-  const [tab, setTab] = useState<DocBoxSeCd>(initTab)
+  // 문서구분 필터(검색필터 '문서 구분'과 동기) — 기본 전체. 구 상단 분기 탭은 제거(260825 사용자 확정:
+  // 받은/보낸/반려/임시저장을 한 리스트에 통합 표시, 구분은 카드 배지). 마이페이지 하위 메뉴로 진입 시 초기 필터로만 사용.
+  const initDocSe = (useLocation().state as { docType?: DocBoxSeCd } | null)?.docType
+  const [docSe, setDocSe] = useState<DocBoxSeCd | undefined>(initDocSe)
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
   const [filterOpen, setFilterOpen] = useState(false) // 검색필터 풀팝업(slide96)
   const [filter, setFilter] = useState<SearchFilterValue>(DEFAULT_FILTER)
 
-  // 탭(문서구분) 필터 → 페이징.
-  const filtered = useMemo(() => MOCK_DOCS.filter((it) => it.docSeCd === tab), [tab])
+  // 문서구분 필터(미지정=전체) → 페이징. 최신순은 목업 배열 순서 유지.
+  const filtered = useMemo(
+    () => (docSe ? MOCK_DOCS.filter((it) => it.docSeCd === docSe) : MOCK_DOCS),
+    [docSe],
+  )
   const total = filtered.length
   const loaded = Math.min(page * pageSize, total)
   const visible = filtered.slice(0, loaded)
 
   // ── 동작 스텁 ──
-  const handleTab = (next: string) => {
-    setTab(next as DocBoxSeCd)
-    setPage(1)
-    console.log('[DocBox] 탭', next) // 추후: cmService.selectRcvDocBoxList({ docSeCd: next })
-  }
   const handlePageSize = (size: number) => {
     setPageSize(size)
     setPage(1)
@@ -232,12 +222,11 @@ export function DocBoxPage() {
     setPage((p) => p + 1)
     console.log('[DocBox] loadMore')
   }
-  // 검색필터 실행 — 문서구분은 상단 분기 탭 동기화, 나머지 조건은 API 경계 스텁.
+  // 검색필터 실행 — '문서 구분' 값을 목록 필터에 반영(전체=미지정), 나머지 조건은 API 경계 스텁.
   const handleFilterSearch = (value: SearchFilterValue) => {
     setFilter(value)
     setPage(1)
-    const nextTab = TAB_BY_DOC_SE[value.docSe as string]
-    if (nextTab) setTab(nextTab)
+    setDocSe(TAB_BY_DOC_SE[value.docSe as string])
     console.log('[DocBox] 검색필터', value) // 추후 API: cmService.selectRcvDocBoxList(toRequest(value))
   }
   const handleCardClick = (it: DocBoxItem) => {
@@ -264,10 +253,8 @@ export function DocBoxPage() {
 
   return (
     <div className="flex w-full flex-col">
-      {/* 상단 분기 탭 — 4구분(받은/보낸/반려/임시저장). 라벨이 360px 폭에 안 들어가면 가로 스크롤. */}
-      <TabList value={tab} onChange={handleTab} items={DOC_TABS} scrollButtons="auto" />
-
-      {/* 상단바(slide95) — 좌: 검색필터 버튼(leftSlot, 관심입찰공고 M05 패턴) / 우: 표시개수 셀렉트. */}
+      {/* 상단바(slide95) — 좌: 검색필터 버튼(leftSlot, 관심입찰공고 M05 패턴) / 우: 표시개수 셀렉트.
+          (구 4구분 분기 탭 제거 — 한 리스트 통합, 구분은 카드 배지 + 검색필터 '문서 구분'.) */}
       <ListSectionHeader
         className="px-4 pt-4"
         pageSize={pageSize}
