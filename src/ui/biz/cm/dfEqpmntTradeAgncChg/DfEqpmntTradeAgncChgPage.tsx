@@ -1,14 +1,14 @@
 // 군수품무역대리업 변경 작성 (MUI-CM-01-M18, DfEqpmntTradeAgncChgPage).
 // Figma 정본(M17 10020:83291·83358)과 동일 구조 1:1 — 첨부서류 목록만 변경(증빙서류*/등록증*/기타). 설계서 slide186~189 항목명 준수.
-// 구성(위→아래): 나라장터 수신일자 Notice → 사업자정보 카드([더보기]) → 첨부파일(총N건·+파일추가·안내·리스트)
-//   → 보안측정인원(테이블·[더보기]) + 안내 불릿 → 행정정보 공동이용 동의(P13) → 상태 안내 불릿 → footer [저장하고 제출하기][목록].
+// 구성(위→아래): 나라장터(G2B) 갱신 밴드(수신일시+[갱신하기], 업체정보 상세 M02 UI 준용 — 사용자 확정 2026-08-24,
+//   구 m_noticebox Notice 대체) → 사업자정보 카드([더보기]) → 첨부파일(총N건·+파일추가·안내·리스트)
+//   → 보안측정인원(테이블·[더보기]) + 안내 불릿 → 행정정보 공동이용 동의(P13) → 상태 안내 불릿 → footer [저장하기][제출하기].
+//   (2026-08-24 사용자 확정 — 구 [저장하고 제출하기]→선택 시트 + [목록] 구성을 직접 버튼 2개로 대체, 목록 버튼 삭제.)
 // 데이터=목업(설계서 항목명 dm_dfEqpmntTradAgncAplyInfo / dl_*), 동작=console.log + '// 추후 …'. 제출 게이트=RHF+zod(동의).
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { ROUTES } from '@/constants/routes'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
@@ -19,8 +19,6 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
-import { Notice } from '@/ui/common/composites/Notice'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { Toast } from '@/ui/common/composites/Toast'
@@ -117,7 +115,6 @@ function MoreToggle({ expanded, onClick }: { expanded: boolean; onClick: () => v
 }
 
 export function DfEqpmntTradeAgncChgPage() {
-  const navigate = useNavigate()
   const [bizExpanded, setBizExpanded] = useState(false)
   const [scrtyExpanded, setScrtyExpanded] = useState(false)
   const [files, setFiles] = useState<MockDfEqpmntTradeAgncAtchFile[]>(INITIAL_FILES)
@@ -126,7 +123,6 @@ export function DfEqpmntTradeAgncChgPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null) // 파일삭제 확인(83442)
   const [consentOpen, setConsentOpen] = useState(false) // 동의 시트(83444)
   const [submitConfirmOpen, setSubmitConfirmOpen] = useState(false) // 제출 확인(83449)
-  const [saveSubmitOpen, setSaveSubmitOpen] = useState(false) // 저장/제출 선택(83451)
   const [toastMsg, setToastMsg] = useState<string | null>(null)
 
   const { control, handleSubmit, setValue } = useForm<DfEqpmntTradeAgncChgForm>({
@@ -209,16 +205,25 @@ export function DfEqpmntTradeAgncChgPage() {
     setDeleteId(null)
   }
 
-  // ── 저장/제출(83451 시트 → 83449 확인) ──
+  // ── 나라장터(G2B) 갱신 — 1일 1회 제한(업체정보 상세 M02 와 동일 스텁) ──
+  const [refreshedToday, setRefreshedToday] = useState(false)
+  const handleRefreshG2b = () => {
+    if (refreshedToday) {
+      setToastMsg('갱신은 1일 1회로 제한됩니다.')
+      return
+    }
+    console.log('[M18] 나라장터(G2B) 조달업체정보 갱신') // 추후 API: cmService.refreshG2b
+    setRefreshedToday(true)
+    setToastMsg('갱신되었습니다.')
+  }
+
+  // ── 저장/제출 — footer 직접 버튼(구 83451 선택 시트 폐기, 사용자 확정 2026-08-24) ──
   const handleSave = () => {
-    setSaveSubmitOpen(false)
     setToastMsg('저장되었습니다.')
     console.log('[M18] 저장하기', { files }) // 추후: cmService.updateDfEqpmntTradeAgnc(payload)
   }
-  const openSubmitConfirm = () => {
-    setSaveSubmitOpen(false)
-    setSubmitConfirmOpen(true)
-  }
+  // 제출하기 → 제출 확인 모달(83449) 오픈.
+  const openSubmitConfirm = () => setSubmitConfirmOpen(true)
   const onSubmitValid = () => {
     const missing = files.filter((f) => f.required && !f.fileNm)
     if (missing.length > 0) {
@@ -234,13 +239,14 @@ export function DfEqpmntTradeAgncChgPage() {
 
   return (
     <div className="flex w-full flex-col gap-krds-8 pb-4">
-      {/* 나라장터(G2B) 최근 수신일자 Notice(Figma m_noticebox). */}
-      <div className="px-4 pt-4">
-        <Notice icon="Schedule">
-          최근 수신일자
-          <br />
-          {G2B_LAST_RECV_DT} (나라장터)
-        </Notice>
+      {/* 나라장터(G2B) 갱신 밴드 — 업체정보 상세(M02) UI 준용(사용자 확정 2026-08-24, 구 m_noticebox Notice 대체). */}
+      <div className="flex flex-col gap-krds-5 bg-krds-bg-primary-faint px-4 py-4">
+        <p className="text-[15px] leading-normal text-krds-text-muted wrap-break-word">
+          나라장터(G2B) 조달업체정보 최근 수신(갱신) 일시 : {G2B_LAST_RECV_DT}
+        </p>
+        <Button variant="secondary" className="w-full" onClick={handleRefreshG2b}>
+          갱신하기
+        </Button>
       </div>
 
       {/* 사업자정보 카드 — 배지(변경) + 접수번호 + 테이블 + 더보기. */}
@@ -350,16 +356,16 @@ export function DfEqpmntTradeAgncChgPage() {
         />
       </div>
 
-      {/* footer — [저장하고 제출하기](primary) / [목록](secondary). */}
+      {/* footer — [저장하기](secondary) / [제출하기](primary). 목록 버튼 삭제(사용자 확정 2026-08-24). */}
       <div
         className="sticky bottom-0 z-30 border-t border-krds-border-divider bg-background px-4 pt-3"
         style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
       >
         <ButtonGroup
-          layout="vertical"
+          layout="asymmetric"
           items={[
-            { label: '저장하고 제출하기', variant: 'primary', onClick: () => setSaveSubmitOpen(true) },
-            { label: '목록', variant: 'secondary', onClick: () => navigate(ROUTES.DF_EQPMNT_TRADE_AGNC) },
+            { label: '저장하기', variant: 'secondary', onClick: handleSave },
+            { label: '제출하기', variant: 'primary', onClick: openSubmitConfirm },
           ]}
         />
       </div>
@@ -426,26 +432,6 @@ export function DfEqpmntTradeAgncChgPage() {
         </p>
       </BottomSheet>
 
-      {/* 저장/제출 선택 바텀시트(Figma 10020:83451) — 저장하기/제출하기 네비 + [확인]. */}
-      <BottomSheet
-        open={saveSubmitOpen}
-        onOpenChange={setSaveSubmitOpen}
-        title="저장하고 제출하기"
-        footer={
-          <Button variant="primary" className="w-full" onClick={() => setSaveSubmitOpen(false)}>
-            확인
-          </Button>
-        }
-      >
-        <div className="py-krds-3">
-          <NavigationItemList
-            items={[
-              { id: 'save', label: '저장하기', onClick: handleSave },
-              { id: 'submit', label: '제출하기', onClick: openSubmitConfirm },
-            ]}
-          />
-        </div>
-      </BottomSheet>
 
       {/* 제출 확인 모달(Figma 10020:83449) — [취소][확인]. */}
       <AlertModal

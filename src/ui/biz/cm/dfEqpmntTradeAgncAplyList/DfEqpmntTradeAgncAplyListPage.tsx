@@ -1,8 +1,9 @@
 // 군수품무역대리업 신청 및 발급 목록 (MUI-CM-01-M15, DfEqpmntTradeAgncAplyListPage).
 // Figma 정본 10020:83161(데이터)·10020:83191(결과없음). 설계서 00.공통 v0.84 slide178 항목명 준수.
 // 구성(위→아래, Figma): 업무도움 HelpDisclosure(말소/실효 안내) → "업체 등록현황 : 적격" + [업체등록안내](FullPopup)
-//   → 목록 헤더(총건수·표시개수) → m_card 리스트(배지[구분·진행상황] + 접수번호 + 신청/승인/실효말소/만료일자) → 더보기 → FAB
-//   → 하단 [신청] 바(→ 바텀시트 [신규][갱신][변경], 실효·말소면 [변경] Dim). 결과없음=CardList emptyText.
+//   → 목록 헤더(총건수·표시개수) → m_card 리스트(배지[구분·진행상황] + 접수번호 + 신청/승인/실효말소/만료일자) → 더보기
+//   → FAB(맨위로 / + 신청 → 바텀시트 [신규][갱신][변경], 실효·말소면 [변경] Dim). 결과없음=CardList emptyText.
+//   (2026-08-24 사용자 확정 — 구 하단 sticky [신청] 바를 우하단 + 플로팅 버튼으로 대체.)
 // 데이터=파일 내 목업(dl_dfEqpmntTradAgncAplyList), 동작=API 경계 스텁(console.log + '// 추후 …').
 //   신규/갱신 → M17(mode), 변경 → M18, 상세 → M16(navigate state).
 import { useMemo, useState } from 'react'
@@ -91,7 +92,8 @@ export function DfEqpmntTradeAgncAplyListPage() {
   const handleCardClick = (item: MockDfEqpmntTradeAgncAplyItem) => {
     navigate(ROUTES.DF_EQPMNT_TRADE_AGNC_DTL, { state: item })
   }
-  // 신청 선택(신규/갱신 → M17 mode / 변경 → M18).
+  // 신청 선택([신규(갱신)] → M17 / [변경] → M18). 신규·갱신 버튼 통합(사용자 확정 2026-08-25) —
+  // M17 이 신규/갱신 겸용 화면이라 mode 는 기본 'new' 로 진입(실제 구분은 백엔드 연동 시 신청 이력으로 판정).
   const goApply = (mode: 'new' | 'renew') => {
     setAplyOpen(false)
     navigate(ROUTES.DF_EQPMNT_TRADE_AGNC_APLY, { state: { mode } })
@@ -115,10 +117,12 @@ export function DfEqpmntTradeAgncAplyListPage() {
         접수번호 <span className="text-krds-text-primary-active">{it.rcptNo}</span>
       </>
     ),
+    // 정보행 라벨 — 설계서 v0.86 slide183 카드·slide185 항목설명 그대로(2026-08-24 대조):
+    //   요청일자(rcptYmd, 구 '신청일자') · 승인일자 · 실효, 말소 일자(구 '실효말소일자') · 만료일자.
     rows: [
-      { label: '신청일자', value: it.rcptYmd || '-' },
+      { label: '요청일자', value: it.rcptYmd || '-' },
       { label: '승인일자', value: it.aprvYmd || '-' },
-      { label: '실효말소일자', value: it.ersrYmd || '-' },
+      { label: '실효, 말소 일자', value: it.ersrYmd || '-' },
       { label: '만료일자', value: it.expryYmd || '-' },
     ],
     onClick: () => handleCardClick(it),
@@ -169,36 +173,26 @@ export function DfEqpmntTradeAgncAplyListPage() {
         </div>
       )}
 
-      {/* 맨 위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main).
-          ⚠️ 앵커 예외: 표준은 `bottom-0`(FAB 가 BottomNav 유무를 컨텍스트로 보정)이지만, 이 화면은
-          아래 sticky 신청 바를 페이지가 직접 갖고 있어 그 높이(≈72px)만큼 더 띄운다. 신청 바가 없는
-          화면에 이 값을 복사하지 말 것. */}
+      {/* 플로팅 버튼 — 맨위로(항상) + 신청(+) → 신규/갱신/변경 선택 시트.
+          구 하단 sticky [신청] 바 대체(사용자 확정 2026-08-24) — 표준 앵커(bottom-0) 복원. */}
       <FloatingActionButton
-        className="fixed bottom-24 right-4 z-40"
+        className="fixed bottom-0 right-4 z-40"
         onTop={() => document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })}
+        onPlus={() => setAplyOpen(true)}
+        plusLabel="신청"
       />
-
-      {/* 하단 신청 바 — [신청](→ 신규/갱신/변경 선택 시트). sticky 고정(BottomNav 없음). */}
-      <div
-        className="sticky bottom-0 z-30 border-t border-krds-border-divider bg-background px-4 pt-3"
-        style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
-      >
-        <Button variant="primary" className="w-full" onClick={() => setAplyOpen(true)}>
-          신청
-        </Button>
-      </div>
 
       {/* 업체등록안내 FullPopup(Figma 10020:83204) — 컨테이너는 컴포넌트 소유, open 만 주입. */}
       <BzentyRegGuide open={guideOpen} onOpenChange={setGuideOpen} />
 
-      {/* 신청 선택 바텀시트 — [신규][갱신][변경]. 실효·말소면 [변경] Dim(설계서 slide178). */}
-      <BottomSheet open={aplyOpen} onOpenChange={setAplyOpen} title="군수품무역대리업 신청">
+      {/* 신청 선택 바텀시트 — [신규][갱신][변경]. 실효·말소면 [변경] Dim(설계서 slide178).
+          타이틀 '바로가기'(사용자 확정 2026-08-24 — 다른 + 플로팅 시트와 통일). */}
+      <BottomSheet open={aplyOpen} onOpenChange={setAplyOpen} title="바로가기">
         <div className="py-krds-5">
           <ButtonGroup
             layout="vertical"
             items={[
-              { label: '신규', variant: 'primary', onClick: () => goApply('new') },
-              { label: '갱신', variant: 'secondary', onClick: () => goApply('renew') },
+              { label: '신규(갱신)', variant: 'primary', onClick: () => goApply('new') },
               { label: '변경', variant: 'secondary', disabled: changeDisabled, onClick: goChange },
             ]}
           />

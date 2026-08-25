@@ -1,7 +1,7 @@
 // MUI-CM-06-M13 관심법령 (ItrstSttPage). 설계서 00.공통 v0.84 slide105·106.
 // 즐겨찾기(별)한 관심 법령 목록. 카드 클릭 시 외부 브라우저로 법령 정보(sttUrl) 표시.
 // 관심 해제: 별표 하이라이트 off + 현재 페이지에서는 목록 유지(이탈 후 복귀 시 즐겨찾기만 표시).
-//   별도의 해제 메시지 없음(설계서 slide105).
+//   해제 시 토스트 "해제되었습니다." 노출(사용자 확정 2026-08-24 — 구 "해제 메시지 없음(설계서 slide105)" 대체).
 // 웹경로: 메인 홈 > 마이페이지 > 관심법령. 셸 안 + sub헤더(뒤로+타이틀). 3뎁스라 BottomNav 숨김.
 //
 // 데이터=파일 내 목업(데이터영역 dl_itrstSttList 항목명/형식), 동작=API 경계 스텁.
@@ -12,6 +12,7 @@ import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { Toast } from '@/ui/common/composites/Toast'
 import type { MockItrstSttItem } from '@/types/mock/cm'
 
 // ── 목업 (설계서 slide105 예시 + 데이터영역 dl_itrstSttList 항목명/형식) ─────────────
@@ -57,6 +58,8 @@ export function ItrstSttPage() {
   const [page, setPage] = useState(1)
   // 관심(별) 상태 — 해제해도 페이지 유지 중엔 목록에 남고 별만 off(설계서 slide105).
   const [items, setItems] = useState<MockItrstSttItem[]>(MOCK_LIST)
+  // 해제 토스트(사용자 확정 2026-08-24)
+  const [toastOpen, setToastOpen] = useState(false)
 
   const total = items.length
   const loaded = Math.min(page * pageSize, total)
@@ -78,8 +81,9 @@ export function ItrstSttPage() {
     window.open(it.sttUrl, '_blank', 'noopener,noreferrer')
   }
   const handleToggleStar = (it: MockItrstSttItem) => {
-    // 별표 하이라이트만 토글 — 현재 페이지에서는 목록 유지(해제 메시지 없음).
+    // 별표 하이라이트만 토글 — 현재 페이지에서는 목록 유지. 해제(on→off) 시에만 토스트 노출.
     setItems((prev) => prev.map((x) => (x.id === it.id ? { ...x, itrst: !x.itrst } : x)))
+    if (it.itrst) setToastOpen(true)
     console.log('[ItrstStt] 관심 토글', it.id) // 추후: cmService.cancelBkmSttInfo(id)
   }
 
@@ -168,6 +172,11 @@ export function ItrstSttPage() {
           document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
         }
       />
+
+      {/* 관심 해제 토스트(사용자 확정 2026-08-24) */}
+      <Toast open={toastOpen} onClose={() => setToastOpen(false)}>
+        해제되었습니다.
+      </Toast>
     </div>
   )
 }
