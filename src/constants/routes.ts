@@ -243,8 +243,6 @@ export const ROUTES = {
   DIGITAL_CABINET_FILES: '/mypage/digitalCabinetFileList',
   /** 문서함 (MUI-CM-06-M10). 마이페이지 > 문서함(받은/보낸/반려/임시저장 문서 목록). */
   DOC_BOX: '/mypage/doc-box',
-  /** 문서함 상세 (MUI-CM-06-M11). 식별자는 navigate state(DocBoxItem). */
-  DOC_BOX_DETAIL: '/mypage/docBoxDtl',
   /** 사용자정보관리 허브 (MUI-CM-02-M01, IndvInfoMngPage). 마이페이지 > 사용자 정보관리(진입 버튼 목록). */
   INDV_INFO_MNG: '/mypage/indv-info-mng',
   /** 개인(생체)/비밀번호 인증 (MUI-CM-02-M02, IndvCertPage). 사용자정보관리 > 개인정보 접근 전 본인 인증. */

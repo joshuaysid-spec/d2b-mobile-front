@@ -1330,7 +1330,7 @@ export interface DigitalCabinetFile {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 문서함 (MUI-CM-06-M10 DocBoxPage 목록 / M11 DocBoxDtlPage 상세 / T01·T02·T03 탭).
+// 문서함 (MUI-CM-06-M10 DocBoxPage 목록 — 상세 M11 은 폐기(260825), 첨언/첨부는 목록 바텀시트).
 //   설계서 00.공통 v0.84 slide90~102. 웹경로: 메인 홈 > 마이페이지 > 문서함(> 문서함 상세).
 //   받은문서(dl_rcptnDocBoxList)·보낸문서(dl_sendDocBoxList)·임시저장(dl_tmprDocBoxList)·
 //   반려함(dl_rjctDocBoxList) 4개 데이터영역을 하나의 목록으로 합쳐 표시(최신순, 카드 상단 레이블로 구분).
@@ -1379,8 +1379,12 @@ export interface DocBoxItem {
   rjctRsn?: string
   /** 첨언(addCn) — 500자. 있으면 카드 '첨언' 배지 + 상세 첨언상세보기(T02) 탭. */
   addCn?: string
-  /** 첨부 EDMS 문서 ID(edmsDocId) — 38자. 있으면 카드 '첨부' 배지 + 상세 첨부파일(T03) 탭. */
+  /** 첨부 EDMS 문서 ID(edmsDocId) — 38자. 있으면 카드 '첨부' 배지 + [첨부파일] 버튼(바텀시트). */
   edmsDocId?: string
+  /** 원천 공고번호 — 카드 클릭 시 해당 공고 상세로 이동. ⚠️ 데이터영역 미정의(임시키) — 폐쇄망 실응답으로 확정. */
+  pbancNo?: string
+  /** 원천 공고 업무구분(TASK_SE_CD) — 국내/국외 상세 라우팅 분기. ⚠️ 데이터영역 미정의(임시키). */
+  taskSeCd?: string
 }
 
 /**
@@ -2152,7 +2156,7 @@ export interface BoardListRequest {
   pageSize?: number
 }
 
-// ── 문서함 (DocBoxPage, DocBoxDtlPage) ──
+// ── 문서함 (DocBoxPage) ──
 /** 문서함 목록 조회 요청 — 문서구분(탭)·페이징. */
 export interface DocBoxListRequest {
   /** 문서구분(docSeCd) — 받은/보낸/반려/임시저장. */

@@ -986,12 +986,6 @@ const DocBoxPage = lazy(() =>
     default: m.DocBoxPage,
   })),
 )
-// 문서함 상세(MUI-CM-06-M11, /mypage/doc-box/:id) — biz/cm/docBoxDtl. T01/T02/T03 탭 호스트.
-const DocBoxDtlPage = lazy(() =>
-  import('@/ui/biz/cm/docBoxDtl/DocBoxDtlPage').then((m) => ({
-    default: m.DocBoxDtlPage,
-  })),
-)
 // 개인정보수정(MUI-CM-02-M04, /mypage/indv-info-mdfcn) — 비밀번호 인증 게이트.
 const IndvInfoMdfcnPage = lazy(() =>
   import('@/ui/biz/cm/indvInfoMdfcn/IndvInfoMdfcnPage').then((m) => ({
@@ -2236,13 +2230,6 @@ export const router = createBrowserRouter([
         element: <DocBoxPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '문서함' }, scrollReset: true },
-      },
-      // 문서함 상세(MUI-CM-06-M11) — 마이페이지 > 문서함 > 문서함 상세. 정적 'doc-box' 목록이 먼저 매칭.
-      {
-        path: 'mypage/docBoxDtl',
-        element: <DocBoxDtlPage />,
-        errorElement: <ErrorPage />,
-        handle: { header: { variant: 'sub', title: '문서함 상세' }, scrollReset: true },
       },
       // 개인정보수정(MUI-CM-02-M04) — 사용자정보관리 > 개인정보수정(비밀번호 인증 게이트). 3뎁스라 BottomNav 숨김.
       {
