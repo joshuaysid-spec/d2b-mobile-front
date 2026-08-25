@@ -124,6 +124,14 @@ export const bdQueries = {
     })
   },
 
+  /** 관심공고 등록 — 국외(no.51). 관심공고 화면(MUI-CM-06-M05) 재등록의 taskSeCd 국외 분기용. */
+  useInsertOvsItrstPbanc() {
+    return useMutation({
+      mutationFn: ({ id, favorite }: { id: string; favorite: boolean }) =>
+        bdService.insertOvsItrstPbanc(id, favorite),
+    })
+  },
+
   /** 전자서명(MUI-BD-04-M21) — 성공 시 진행목록 캐시 무효화(제출 성공 invalidate 규칙). */
   useSignElsgn() {
     return useMutation({

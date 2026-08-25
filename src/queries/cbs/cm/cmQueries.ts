@@ -25,6 +25,11 @@ export const cmQueries = {
     return useMutation({ mutationFn: (keyword: string) => cmService.selectSearchAll(keyword) })
   },
 
+  /** no.758 관심입찰공고삭제(MUI-CM-06-M05 별 해제). 재등록(별 켜기)은 bdQueries.useInsert(Ovs)ItrstPbanc — taskSeCd 국내/국외 분기. */
+  useDeleteItrstBidPbanc() {
+    return useMutation({ mutationFn: (pbancNo: string) => cmService.deleteItrstBidPbanc(pbancNo) })
+  },
+
   /** no.685 실적증명서제출(MUI-CM-04-P20). */
   useProcPrfmncPrdocSbmsn() {
     return useMutation({

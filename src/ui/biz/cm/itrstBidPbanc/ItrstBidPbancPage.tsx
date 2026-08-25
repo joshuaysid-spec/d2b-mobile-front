@@ -24,6 +24,9 @@ import type {
   DateRangePresetDef,
 } from '@/types/search-filter'
 import type { ItrstBidPbancItem } from '@/types/mock/cm'
+import { TASK_SE_CD } from '@/constants/codes'
+import { bdQueries } from '@/queries/bds/bd/bdQueries'
+import { cmQueries } from '@/queries/cbs/cm/cmQueries'
 
 // ── 검색필터 schema (설계서 slide82 검색조건 dm_searchInfo) ────────────────────
 // 개찰일자(FROM/TO 범위) + 통합참조번호 + 공고번호 + 입찰건명/사업명.
@@ -64,6 +67,7 @@ const dl_itrstBidPbancList: ItrstBidPbancItem[] = [
   {
     id: '1',
     itrst: true,
+    taskSeCd: TASK_SE_CD.GOODS,
     taskSeNm: '물품',
     ctrtMthd: '수의계약',
     pbancStasNm: '정상공고',
@@ -77,6 +81,7 @@ const dl_itrstBidPbancList: ItrstBidPbancItem[] = [
   {
     id: '2',
     itrst: true,
+    taskSeCd: TASK_SE_CD.CONSTRUCTION,
     taskSeNm: '공사',
     ctrtMthd: '제한경쟁',
     pbancStasNm: '정상공고',
@@ -90,6 +95,7 @@ const dl_itrstBidPbancList: ItrstBidPbancItem[] = [
   {
     id: '3',
     itrst: true,
+    taskSeCd: TASK_SE_CD.SERVICE,
     taskSeNm: '용역',
     ctrtMthd: '일반경쟁',
     pbancStasNm: '정정공고',
@@ -151,6 +157,12 @@ export function ItrstBidPbancPage() {
     navigate('/bd/bidPbancDtl', { state: item })
   }
 
+  // 별 토글 API — 해제 = cm no.758(분기 없음) · 재등록 = 업무구분코드(GTSA0001)로 국내/국외 분기(no.30/51).
+  //   화면은 낙관적 갱신(별 즉시 반영), 실패 시에만 롤백. USE_MOCK 모드에선 목업 지연 후 성공 처리.
+  const deleteItrst = cmQueries.useDeleteItrstBidPbanc()
+  const insertItrst = bdQueries.useInsertItrstPbanc()
+  const insertOvsItrst = bdQueries.useInsertOvsItrstPbanc()
+
   // 별 토글 — 켜기: 즉시 재등록 / 끄기: (다음부터 묻지않기면 즉시) 해제 확인 모달.
   const setItrst = (id: string, next: boolean) =>
     setItems((prev) => prev.map((it) => (it.id === id ? { ...it, itrst: next } : it)))
@@ -158,12 +170,18 @@ export function ItrstBidPbancPage() {
   const unfavorite = (id: string) => {
     setItrst(id, false)
     setToastOpen(true) // 설계서: 즐겨찾기 해제 시 토스트("관심공고에서 제외 되었습니다.")
-    console.log('[ItrstBidPbanc] 관심공고 해제', id) // 추후: cmService.deleteItrstBidPbanc(id)
+    // ⚠️ 식별자: 목업은 id — 실응답 확정 시 공고번호(pbancNoCycl 분해 등)로 교체 확인.
+    deleteItrst.mutate(id, { onError: () => setItrst(id, true) }) // no.758 — 실패 시 별 롤백
   }
   const handleToggleStar = (item: ItrstBidPbancItem) => {
     if (!item.itrst) {
       setItrst(item.id, true) // off→on: 재등록(확인 없이)
-      console.log('[ItrstBidPbanc] 관심공고 등록', item.id) // 추후: cmService.addFavorite(id)
+      // 업무구분코드로 국내/국외 등록 API 분기(설계서 GTSA0001 — 코드값 잠정, constants/codes.ts).
+      const insert = item.taskSeCd === TASK_SE_CD.OVERSEAS ? insertOvsItrst : insertItrst
+      insert.mutate(
+        { id: item.id, favorite: true },
+        { onError: () => setItrst(item.id, false) }, // 실패 시 별 롤백
+      )
       return
     }
     // on→off: '다음부터 묻지 않기' 저장돼 있으면 바로 해제, 아니면 확인 모달.

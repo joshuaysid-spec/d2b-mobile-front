@@ -493,6 +493,7 @@ const ITRST_BID_LIST: ItrstBidPbancItem[] = [
   {
     id: '1',
     itrst: true,
+    taskSeCd: '1', // 물품 (GTSA0001 잠정 — constants/codes.ts TASK_SE_CD)
     taskSeNm: '물품',
     ctrtMthd: '일반경쟁',
     pbancStasNm: '정상공고',

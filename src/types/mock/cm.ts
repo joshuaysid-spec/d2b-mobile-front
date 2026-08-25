@@ -1038,6 +1038,9 @@ export interface ItrstBidPbancItem {
   id: string
   /** 관심 여부 — 별 하이라이트 on/off. 해제해도 페이지 유지 중엔 목록에 남고 별만 off(설계서 slide81). */
   itrst: boolean
+  /** 업무구분코드(taskSeCd) — 공통코드 GTSA0001(constants/codes.ts TASK_SE_CD, 값 잠정).
+   *  관심공고 재등록 시 국내/국외 API 분기(no.30/51) 기준. ⚠️ no.757 응답 포함 여부 실응답 확인. */
+  taskSeCd: string
   /** 업무구분(taskSeNm) — 물품/용역/공사/국외. 뱃지. 코드 GTSA0001. */
   taskSeNm: string
   /** 계약방법(ctrtMthd) — 수의계약/일반경쟁/제한경쟁 등. 뱃지. 코드 CTMC. */
