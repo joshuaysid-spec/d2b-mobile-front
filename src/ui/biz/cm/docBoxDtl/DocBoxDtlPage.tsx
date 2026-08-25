@@ -53,33 +53,22 @@ export function DocBoxDtlPage() {
   // 목록 → 상세 데이터 전달: navigate(state)로 넘어온 항목으로 상단을 그린다(없으면 페이지 목업).
   const detail = (useLocation().state as DocBoxItem | null) ?? MOCK_DOC_DETAIL
 
-  // 탭 구성 — 모든 문서 동일 양식(260825 사용자 확정): 문서정보/첨언 상세보기/첨부파일 3탭 고정,
-  //   데이터 없는 탭은 빈 안내 표시(구 "데이터 있을 때만 탭 노출" 방식 폐기 — 임시저장 등에서 탭이 사라지던 것 통일).
-  //   반려사유만 반려 문서 전용이라 데이터 있을 때 추가.
-  const tabs: TabItem[] = [
-    { value: 'info', label: '문서정보' },
-    { value: 'opinion', label: '첨언 상세보기' },
-    ...(detail.rjctRsn ? [{ value: 'reject', label: '반려사유' }] : []),
-    { value: 'file', label: '첨부파일' },
-  ]
+  // 탭 구성(260825 사용자 확정) — 문서정보 = 디폴트(항상). 첨언/반려사유/첨부파일은 해당 데이터가
+  //   있는 문서에서만 탭 노출(첨언만 있으면 첨언만, 첨부만 있으면 첨부만). 데이터가 하나도 없으면
+  //   문서정보 단일 → 탭바 자체 미표시(임시저장 문서가 이 케이스).
+  const tabs: TabItem[] = [{ value: 'info', label: '문서정보' }]
+  if (detail.addCn) tabs.push({ value: 'opinion', label: '첨언 상세보기' })
+  if (detail.rjctRsn) tabs.push({ value: 'reject', label: '반려사유' })
+  if (detail.edmsDocId) tabs.push({ value: 'file', label: '첨부파일' })
   // 노출 탭이 줄어 현재 탭이 사라진 경우(방어) 첫 탭으로.
   const activeTab = tabs.some((t) => t.value === tab) ? tab : 'info'
-
-  // 데이터 없는 탭 공통 빈 안내.
-  const emptyNotice = (text: string) => (
-    <p className="px-4 py-krds-8 text-center text-krds-body-md text-krds-text-muted">{text}</p>
-  )
 
   function renderTabContent(value: string) {
     switch (value) {
       case 'info':
         return <DocBoxDtl_Info docCn={MOCK_DOC_CN} />
       case 'opinion':
-        return detail.addCn ? (
-          <DocBoxDtl_AtchOpnn addCn={detail.addCn} />
-        ) : (
-          emptyNotice('등록된 첨언이 없습니다.')
-        )
+        return <DocBoxDtl_AtchOpnn addCn={detail.addCn ?? ''} />
       case 'reject':
         // 반려사유(rjctRsn) — 별도 화면 ID 없어 페이지 인라인(도메인 전용 조립물).
         return (
@@ -92,11 +81,7 @@ export function DocBoxDtlPage() {
           </div>
         )
       case 'file':
-        return detail.edmsDocId ? (
-          <DocBoxDtl_Atch files={MOCK_ATCH_FILES} />
-        ) : (
-          emptyNotice('첨부파일이 없습니다.')
-        )
+        return <DocBoxDtl_Atch files={MOCK_ATCH_FILES} />
       default:
         return null
     }
