@@ -63,6 +63,12 @@
     - `CmdtyElctrCtrtPrgrsDtl.itemSumAmt`(계약금액 표 '품목별 합계' — 항목표 미정의)
     - T10 계약업체 '계약유형'(대표/구성) = `bzentySeCd` 재사용 · T03 반송/취소사유 탭 영문 ID 파생(`_RjctRsn`)
     - M73/M74(보증서/인지세 확인팝업) 영문 화면 ID 미기재 — 임시 파일명 `GrnteCnfrm`/`StmtxCnfrm`
+- [ ] **문서함(CM-06-M10) 카드 → 원천 공고 이동 식별자 (2026-08-25 실응답 확인)**: 카드 클릭 시
+  해당 문서가 발생한 공고 상세로 이동해야 하나(M11 상세 폐기), 개발계 실응답에 공고 식별자가 없음.
+  실응답 필드 = `ctgrIden`(문서유형 코드, 예: DP201Z) · `catName`(문서유형명) · `mainNumb`/`subNumb`(문서번호)
+  · `message`(첨언) · `edmsIden`(첨부 EDMS ID) · `rcptDate`/`recvDttm` 등. 백엔드 확인 필요:
+  ① `ctgrIden` → 이동 대상 화면 매핑표(코드 목록) ② `mainNumb` 로 공고번호(pbancNo)·업무구분(국내/국외)을
+  얻는 방법(응답 필드 추가 or 역조회 API). 그때까지 `DocBoxItem.pbancNo`/`taskSeCd` 는 임시키(목업 구동).
 - [ ] **CT 상세 분기 기준 확정**: 목록 카드 → 상세 분기(slide22)가 목록 데이터영역에 없는 항목
   (계약상태·계약서유형)에 의존 — 백엔드 응답 확정 시 `CtrtIntgListPage.handleCardClick` 분기 정비.
   바로가기 시트(M03/M09)의 진행단계별 버튼 노출 매트릭스(slide32/47)도 상태코드 확정 시 데이터 구동 전환.

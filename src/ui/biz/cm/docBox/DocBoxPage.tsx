@@ -264,7 +264,9 @@ export function DocBoxPage() {
   }
   // 카드 클릭 = 해당 문서가 발생한 공고 상세로 이동(문서함 상세(M11) 폐기 — 260825 사용자 확정).
   //   국내/국외 분기는 M05 와 동일(taskSeCd). 상세는 state placeholder 렌더 후 pbancNo 로 조회.
-  //   ⚠️ 원천 공고 식별자(pbancNo·taskSeCd)는 문서함 데이터영역 미정의 — 폐쇄망 실응답으로 확정.
+  //   ⚠️ 개발계 실응답(260825)에는 공고 식별자가 없음 — 문서유형 ctgrIden(예: DP201Z)·catName 과
+  //   mainNumb/subNumb(문서번호)만 존재. 이동처 매핑(ctgrIden→화면)과 공고 조회키 확보는
+  //   백엔드 확인 필요(closed-network-checklist). 그때까지 pbancNo·taskSeCd 는 임시키.
   const handleCardClick = (it: DocBoxItem) => {
     const to = it.taskSeCd === TASK_SE_CD.OVERSEAS ? '/bd/ovsBidPbancDtl' : '/bd/bidPbancDtl'
     navigate(to, { state: { pbancNo: it.pbancNo, taskSeCd: it.taskSeCd } as BidPbancItem })
@@ -286,38 +288,37 @@ export function DocBoxPage() {
     rows: docDateRows(it),
     // 임시저장은 원천 공고가 없어 이동 없음(터치 이벤트 X — 260825 사용자 확정).
     onClick: it.docSeCd === 'temp' ? undefined : () => handleCardClick(it),
-    // 첨언/첨부가 있는 카드만 각 버튼 노출 → 바텀시트. 카드 자체가 button 이라 클릭 전파 차단.
-    footer:
-      it.addCn || it.edmsDocId ? (
-        <div className="flex gap-krds-5">
-          {it.addCn && (
-            <Button
-              variant="secondary"
-              size="sm"
-              className="flex-1"
-              onClick={(e) => {
-                e.stopPropagation()
-                setAddCnItem(it)
-              }}
-            >
-              첨언
-            </Button>
-          )}
-          {it.edmsDocId && (
-            <Button
-              variant="secondary"
-              size="sm"
-              className="flex-1"
-              onClick={(e) => {
-                e.stopPropagation()
-                setAtchOpen(true)
-              }}
-            >
-              첨부파일
-            </Button>
-          )}
-        </div>
-      ) : undefined,
+    // 첨언/첨부파일 버튼 2개 디폴트(항상 노출) — 해당 데이터 없으면 disable(260825 사용자 확정).
+    //   실응답(개발계): 첨언=message · 첨부=edmsIden(null 여부) — 폐쇄망 배선 시 이 필드로 교체.
+    //   카드 자체가 button 이라 클릭 전파 차단(disabled 버튼은 클릭 이벤트 자체가 안 뜸).
+    footer: (
+      <div className="flex gap-krds-5">
+        <Button
+          variant="secondary"
+          size="sm"
+          className="flex-1"
+          disabled={!it.addCn}
+          onClick={(e) => {
+            e.stopPropagation()
+            setAddCnItem(it)
+          }}
+        >
+          첨언
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="flex-1"
+          disabled={!it.edmsDocId}
+          onClick={(e) => {
+            e.stopPropagation()
+            setAtchOpen(true)
+          }}
+        >
+          첨부파일
+        </Button>
+      </div>
+    ),
   }))
 
   // 첨부문서(dl_atchDocList) → FileDownloadList 항목. 개별 다운로드는 콘솔 스텁.
