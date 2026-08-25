@@ -2,8 +2,9 @@
 // 설계서 00.공통 v0.86 slide184(레이아웃)·185(항목설명 dm_dfEqpmntTradAgncAplyInfo) 준수.
 // 구성(위→아래, 설계서 그대로 — 아코디언, 사용자 확정 2026-08-24):
 //   요약(SummaryInfo: 구분·진행상황 배지 + 접수번호)
-//   → Accordion [접수정보(접수번호/신청일시/처리일시/처리구분) / 업체정보(업태~주소 + 반려사유(있는 경우만)) /
+//   → Accordion [업체정보(업태~주소 + 반려사유(있는 경우만)) / 접수정보(접수번호/신청일시/처리일시/처리구분) /
 //      첨부파일 - 총 N건(등록신청서·이력서·청렴서약서·고용현황·기타 + 다운로드)]
+//      — 섹션 순서 설계서 slide184 그대로: 업체정보 → 접수정보 → 첨부파일(사용자 확정 2026-08-25).
 //   → footer [군수품무역대리업 등록증 발급](primary). ([신청하기] 버튼은 삭제 — 사용자 확정 2026-08-24.)
 // 상단은 목록에서 넘어온 항목(navigate state)으로 그리고(service 스텁 없음), 본문/첨부는 페이지 목업(설계서 항목명 준수).
 //   직접 URL 진입(state 없음) 대비 페이지 fallback 목업. 데이터 연동 시 목업만 실제 조회로 교체.
@@ -107,15 +108,15 @@ export function DfEqpmntTradeAgncAplyDtlPage() {
         title={`접수번호 ${item.rcptNo}`}
       />
 
-      {/* 본문 — 설계서 slide184 섹션 순서 그대로, 아코디언(사용자 확정 2026-08-24). */}
-      <Accordion type="multiple" defaultValue={['rcpt', 'bzenty', 'atch']} className="w-full">
-        {/* 접수정보 — 접수번호/신청일시/처리일시/처리구분 */}
-        <AccordionSection value="rcpt" title="접수정보" borderTop={false}>
-          <Table rows={rcptRows(item, MOCK_INFO)} />
-        </AccordionSection>
+      {/* 본문 — 설계서 slide184 섹션 순서 그대로(업체정보 → 접수정보 → 첨부파일), 아코디언. */}
+      <Accordion type="multiple" defaultValue={['bzenty', 'rcpt', 'atch']} className="w-full">
         {/* 업체정보 — 업태~주소 + 반려사유(반려 사유가 있는 경우 내역 표시) */}
-        <AccordionSection value="bzenty" title="업체정보">
+        <AccordionSection value="bzenty" title="업체정보" borderTop={false}>
           <Table rows={bzentyRows(MOCK_INFO)} />
+        </AccordionSection>
+        {/* 접수정보 — 접수번호/신청일시/처리일시/처리구분 */}
+        <AccordionSection value="rcpt" title="접수정보">
+          <Table rows={rcptRows(item, MOCK_INFO)} />
         </AccordionSection>
         {/* 첨부파일 — 총 N건(설계서 5종: 등록신청서·이력서·청렴서약서·고용현황·기타) + 다운로드 */}
         <AccordionSection value="atch" title={`첨부파일 - 총 ${MOCK_FILES.length}건`}>
