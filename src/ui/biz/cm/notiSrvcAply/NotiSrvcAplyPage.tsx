@@ -1,7 +1,7 @@
-// 알림서비스 신청 및 해지 — MUI-CM-02-M09. Figma 10020-82330 / 설계서 00.공통 v0.84 slide65(notiSrvcAply).
+// 알림서비스 신청 및 해지 — MUI-CM-02-M09. Figma 10020-82330 / 설계서 00.공통 v0.86 slide212(notiSrvcAply).
 // 마이페이지 > 알림 서비스 신청 및 해지. 알림 수신정보 확인 + 알림 수단/항목별 on/off 설정.
 // 구성: 안내(Notice) + 수신정보(휴대전화/이메일 + 회원정보 수정) + 알림 수단 선택(앱 PUSH·SMS/이메일)
-//        + 알림 항목 선택(12개 항목별 토글). 값은 목업 초기상태(Figma), 토글은 로컬 상태 + API 경계 주석.
+//        + 알림 항목 선택(12개 항목별 토글 — 제목 앞 [분류] 표기: 전자입찰/전자계약/검사·검수·출납/대금청구·지급/조달원/전자조달, slide212). 값은 목업 초기상태(Figma), 토글은 로컬 상태 + API 경계 주석.
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -34,73 +34,73 @@ const NOTI_MEANS: { id: string; icon: IconName; title: string; desc: string; def
 const NOTI_ITEMS: { id: string; title: string; desc: string; defaultOn: boolean }[] = [
   {
     id: 'bidStep',
-    title: '입찰 단계별 안내',
+    title: '[전자입찰] 입찰 단계별 안내',
     desc: '등록심사, 적격심사, 낙찰자 선정 등 전자입찰 단계별 주요사항을 안내합니다.',
     defaultOn: false,
   },
   {
     id: 'regItemBid',
-    title: '등록품목 입찰공고 안내',
+    title: '[전자입찰] 등록품목 입찰공고 안내',
     desc: '조달업체의 등재 된 품목코드의 입찰공고가 등록되면 안내합니다.',
     defaultOn: false,
   },
   {
     id: 'itrstCntrctBid',
-    title: '관심 계약팀 입찰공고 안내',
+    title: '[전자입찰] 관심 계약팀 입찰공고 안내',
     desc: '관심 발주기관(계약팀)에서 입찰공고가 등록되면 안내합니다 (팝업에서 선택)',
     defaultOn: true,
   },
   {
     id: 'cntrctStep',
-    title: '계약단계 안내',
+    title: '[전자계약] 계약단계 안내',
     desc: '전자계약 단계별 진행상황 안내, 전자세금계산서 승인현황, 인지세납부 등을 안내합니다.',
     defaultOn: false,
   },
   {
     id: 'inspPay',
-    title: '검사/검수/출납 안내',
+    title: '[검사/검수/출납] 검사/검수/출납 안내',
     desc: '검사/검수/출납 항목이 확정 또는 반려되었을 시 안내합니다.',
     defaultOn: true,
   },
   {
     id: 'clmPay',
-    title: '대금청구 및 지급 안내',
+    title: '[대금청구/지급] 대금청구 및 지급 안내',
     desc: '대금청구의 접수/반려와 대금지급에 대해 안내합니다.',
     defaultOn: true,
   },
   {
     id: 'dlvrCert',
-    title: '납품실적증명서 발급',
+    title: '[조달원] 납품실적증명서 발급',
     desc: '납품실적증명서 발급 시 안내합니다.',
     defaultOn: false,
   },
   {
     id: 'itemReg',
-    title: '품목등재 신청/확정/갱신',
+    title: '[조달원] 품목등재 신청/확정/갱신',
     desc: '품목등록 관련 사항을 안내합니다.',
     defaultOn: true,
   },
   {
     id: 'natoCode',
-    title: '나토 생산자부호 접수/완료',
+    title: '[조달원] 나토 생산자부호 접수/완료',
     desc: '나토 생산자부호 접수 시 등록된 전화번호로 안내합니다.',
     defaultOn: true,
   },
   {
     id: 'sysNoticeD2b',
-    title: '시스템 공지사항 안내',
+    title: '[전자조달] 시스템 공지사항 안내',
     desc: '국방전자조달시스템 주요 공지사항을 안내합니다.',
     defaultOn: false,
   },
   {
     id: 'faultNoti',
-    title: '장애발생/복구 안내',
+    title: '[전자조달] 장애발생/복구 안내',
     desc: '국방전자조달시스템 장애발생 및 복구사항을 안내합니다.',
     defaultOn: true,
   },
   {
     id: 'sysNoticeCost',
-    title: '시스템 공지사항 안내',
+    title: '[전자조달] 시스템 공지사항 안내',
     desc: '국방통합원가시스템 주요 공지사항을 안내합니다.',
     defaultOn: true,
   },
