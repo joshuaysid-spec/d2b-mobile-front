@@ -1,6 +1,6 @@
 // 입찰내역 작성 - 입찰내역(단가제) (MUI-BD-01-T75(구 M77 — v1.83 재편), 설계서 07국외입찰공고상세 slide314·317·319)
 // 호스트 페이지(OvsTmprBidCnRegPage)의 '품목 목록' 탭 본문(단가제) — 요약/탭/FAB 는 페이지 소유.
-// 구성: PageTitle → 입찰내역 일괄적용(dl_fwkInfo: 입찰업체/화폐단위 + 전체·선택 적용) →
+// 구성: 입찰내역 일괄적용(dl_fwkInfo: 입찰업체/화폐단위 + 전체·선택 적용 — 구 PageTitle '입찰내역(단가제)' 삭제, 2026-08-25) →
 //   입찰 품목(총 N건) 카드 반복(항목선택 체크 + 요약 Table + 내역 펼쳐보기/접기 폼) → 더보기 →
 //   하단 액션바(입찰내역 삭제/저장).
 // 이벤트(설계서 slide319):
@@ -15,7 +15,6 @@ import { Checkbox } from '@/ui/common/base/Checkbox'
 import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
@@ -317,12 +316,10 @@ export function BidDsctn({ detail }: { detail: BscPbancInfo }) {
 
   return (
     <>
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        입찰내역(단가제)
-      </PageTitle>
-
+      {/* '입찰내역(단가제)' PageTitle 삭제(사용자 확정 2026-08-25 — 탭명이 '입찰내역'으로 개명돼 중복).
+          topDivider 없음 — 탭(TabList) 바로 아래 붙는 라인 제거(기확정 규칙). */}
       {/* 입찰내역 일괄적용 (dl_fwkInfo) — 입찰업체/화폐단위 선택 후 전체·선택 적용 */}
-      <SectionTitle as="h3" topDivider>
+      <SectionTitle as="h3">
         입찰내역 일괄적용
       </SectionTitle>
       <div className="flex flex-col gap-krds-6 px-4 pb-4">

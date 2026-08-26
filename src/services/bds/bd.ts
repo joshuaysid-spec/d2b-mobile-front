@@ -1381,7 +1381,7 @@ export const bdService = {
 
   /**
    * no.65 이전공고입찰내역목록조회 — MUI-BD-01-P80
-   * (ovsBfrTmprBidBidCnReg/BfrPbancBidDsctnItemDtlFullPopup). 구 `selectBfrPbancBidCnList`.
+   * (ovsBfrTmprBidBidCnReg/BfrPbancBidDsctnItemDtl — 260825 바텀시트 전환). 구 `selectBfrPbancBidCnList`.
    */
   async selectBfrTmprBidCnList(pbancNo: string, pbancOd: string): Promise<BfrPbancBidCnItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.bfrPbancBidCnList)

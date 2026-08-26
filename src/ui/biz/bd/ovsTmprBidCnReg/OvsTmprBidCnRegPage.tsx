@@ -1,8 +1,8 @@
 // 입찰내역 작성 (MUI-BD-01-M76 컨테이너 · 탭 T74 일반정보 · T75·T76 입찰내역(구 M77·M78 — v1.83 재편), 설계서 07국외입찰공고상세 slide312~319)
 // 접속: 홈 > 마이페이지 > 국외 보관함 > 국외 보관함 상세 > 입찰내역 작성 (/bd/ovsTmprBidCnReg)
-// 구성(TndrWrtPage 패턴): 요약(SummaryInfo) → 탭(일반정보 | 품목 목록) → 탭 콘텐츠 + 맨위로 FAB.
+// 구성(TndrWrtPage 패턴): 요약(SummaryInfo) → 탭(일반정보 | 입찰내역) → 탭 콘텐츠 + 맨위로 FAB.
 //   - 일반정보 탭(M76): 공고일반(dm_bscPbancInfo) + 담당자 정보 — 본 파일 인라인(Table).
-//   - 품목 목록 탭: 입찰방법에 따라 단가제(M77 BidDsctn) / 총액제(M78 BidDsctn2) 를 같은 페이지에서 분기(페이지 복제 금지).
+//   - 입찰내역 탭(구 '품목 목록' — 사용자 확정 2026-08-25 개명): 입찰방법에 따라 단가제(M77 BidDsctn) / 총액제(M78 BidDsctn2) 를 같은 페이지에서 분기(페이지 복제 금지).
 // 단가제/총액제 분기 테스트: 직접 URL 진입 시 ?bidMthdNm=총액제 쿼리로 M78(총액제) 확인 가능.
 import { useState } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
@@ -55,7 +55,7 @@ export function OvsTmprBidCnRegPage() {
 
   const tabs: TabItem[] = [
     { value: '일반정보', label: '일반정보' },
-    { value: '품목목록', label: '품목 목록' },
+    { value: '품목목록', label: '입찰내역' }, // 라벨 개명(사용자 확정 2026-08-25) — 내부 value 는 유지
   ]
   const [tab, setTab] = useState('일반정보')
   const goTab = (next: string) => {
@@ -107,7 +107,7 @@ export function OvsTmprBidCnRegPage() {
         ]}
       />
 
-      {/* 탭 — 일반정보(M76) | 품목 목록(M77 단가제 / M78 총액제) */}
+      {/* 탭 — 일반정보(M76) | 입찰내역(M77 단가제 / M78 총액제) */}
       <TabList items={tabs} value={tab} onChange={goTab} />
 
       {tab === '일반정보' ? (
