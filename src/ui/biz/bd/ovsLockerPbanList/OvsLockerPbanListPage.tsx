@@ -2,18 +2,17 @@
 // 레퍼런스: 입찰공고 통합목록 BidPbancIntgListPage (구성·상태·페이징 동일 패턴).
 // 구성: 검색조건(SearchCondition, 필터버튼→풀팝업) + 목록헤더(총건수·page size) + 카드 리스트 + 더보기 + FAB.
 // 데이터/페이징/검색은 페이지 소유. 목록은 목업(dl_resultList, 항목명 설계서 그대로) — 추후 API: bdService.selectLockerPbancList.
-// 카드 하단(2026-08-24 확정 — 설계서 slide409 "공고 신청 버튼으로 팝업 버튼 일원화(260709 개정)"):
-//   [+ 공고 신청] 버튼 1개 → 바텀시트 호출. 시트 버튼 = 상태 버튼 1개 + 보관함 품목 관리(항시).
-//   상태 버튼은 입찰내역작성여부(tmprBidCnStts)로만 분기(사용자 확정 2026-08-24 — 구 참가신청 우선순위 분기 대체):
-//     작성(금액 작성/저장) → [입찰내역 작성수정] · 미작성(품목만 보관) → [입찰진행 바로가기]
-//     완료(제출 완료) → [입찰내역 완료](비활성)
+// 카드 클릭 → 사업명(bizNm) 타이틀 바텀시트(사용자 확정 2026-08-25 — 구 [+ 공고 신청] footer 버튼 폐기):
+//   시트 버튼(설계서 slide409 노출 조건 + 사용자 확정 매핑 2026-08-25):
+//     [입찰내역 작성/수정] → MUI-BD-01-M76 (제출완료면 [입찰내역 완료] 비활성)
+//     [입찰참가신청 작성/수정] → MUI-BD-04-M71 (입찰내역 작성·저장 상태에서 노출)
+//     [입찰진행 바로가기] (입찰참가신청 완료 상태에서 노출) · [보관함 품목 관리] (항시)
 // 카드 배지 = 표시 레이블(slide409 ⑤) 중 입찰내역작성여부·입찰참가신청여부 2종만(사용자 확정 2026-08-24 — 입찰구분·가격제 제거).
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
-import { Icon } from '@/ui/common/base/Icon'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
@@ -286,10 +285,15 @@ export function OvsLockerPbanListPage() {
     tndrSbmsnPntmCd: 'post', // 국외 = 사후등록심사(입찰진행 목록 국외 목업과 동일)
   })
 
-  // 입찰내역 작성수정 (설계서 이벤트 btn_moveBidDetail_onclick → MUI-BD-01-M76)
+  // 입찰내역 작성/수정 (설계서 이벤트 btn_moveBidDetail_onclick → MUI-BD-01-M76)
   const goBidCn = (it: OvsLockerPbanItem) => {
-    console.log('[OvsLockerList] 입찰내역 작성수정 이동', it.intgRfrncNo)
+    console.log('[OvsLockerList] 입찰내역 작성/수정 이동', it.intgRfrncNo)
     navigate('/bd/ovsTmprBidCnReg', { state: it })
+  }
+  // 입찰참가신청 작성/수정 (국외 입찰참가신청서 작성 MUI-BD-04-M71 — 사용자 확정 2026-08-25)
+  const goPrtcpAply = (it: OvsLockerPbanItem) => {
+    console.log('[OvsLockerList] 입찰참가신청 작성/수정 이동', it.intgRfrncNo)
+    navigate('/bd/ovsBidPrtcpAply', { state: toPrgrsItem(it) })
   }
   // 입찰진행 바로가기 — 해당 공고 입찰진행 상세(/bd/bidPrgsDtlInq) 직행(260709 확정).
   const goBidPrgrs = (it: OvsLockerPbanItem) => {
@@ -317,31 +321,43 @@ export function OvsLockerPbanListPage() {
   const visibleList = filteredList.slice(0, loaded)
 
 
-  // [+ 공고 신청] 바텀시트 — 카드별 버튼 팝업(설계서 slide409 "공고 신청 버튼으로 팝업 버튼 일원화").
-  // 컨테이너는 페이지 소유(*Sheet 래퍼 금지), null 이면 닫힘.
+  // 카드 클릭 바텀시트 — 타이틀 = 카드 사업명(bizNm), 설계서 slide409 그대로(사용자 확정 2026-08-25,
+  //   구 [+ 공고 신청] footer 버튼 대체). 컨테이너는 페이지 소유(*Sheet 래퍼 금지), null 이면 닫힘.
   const [sheetItem, setSheetItem] = useState<OvsLockerPbanItem | null>(null)
-  // 시트 상태 버튼 — 입찰내역작성여부(tmprBidCnStts)로만 분기(사용자 확정 2026-08-24):
-  //   작성 → [입찰내역 작성수정] · 미작성 → [입찰진행 바로가기] · 완료 → [입찰내역 완료](비활성)
-  const statusBtnFor = (it: OvsLockerPbanItem): ButtonGroupItem =>
-    it.tmprBidCnStts === '완료'
-      ? { label: '입찰내역 완료', variant: 'primary', disabled: true }
-      : it.tmprBidCnStts === '작성'
-        ? {
-            label: '입찰내역 작성수정',
-            variant: 'primary',
-            onClick: () => {
-              setSheetItem(null)
-              goBidCn(it)
-            },
-          }
-        : {
-            label: '입찰진행 바로가기',
-            variant: 'primary',
-            onClick: () => {
-              setSheetItem(null)
-              goBidPrgrs(it)
-            },
-          }
+  // 시트 버튼 — 설계서 slide409 노출 조건 + 사용자 확정 매핑(2026-08-25):
+  //   [입찰내역 작성/수정](제출완료면 [입찰내역 완료] 비활성) → MUI-BD-01-M76
+  //   [입찰참가신청 작성/수정](입찰내역 작성·저장 상태에서 노출) → MUI-BD-04-M71
+  //   [입찰진행 바로가기](입찰참가신청 완료 상태에서 노출) · [보관함 품목 관리](항시)
+  const sheetButtonsFor = (it: OvsLockerPbanItem): ButtonGroupItem[] => {
+    const close = (fn: (v: OvsLockerPbanItem) => void) => () => {
+      setSheetItem(null)
+      fn(it)
+    }
+    return [
+      it.tmprBidCnStts === '완료'
+        ? { label: '입찰내역 완료', variant: 'primary', disabled: true }
+        : { label: '입찰내역 작성/수정', variant: 'primary', onClick: close(goBidCn) },
+      ...(it.tmprBidCnStts === '작성'
+        ? [
+            {
+              label: '입찰참가신청 작성/수정',
+              variant: 'secondary',
+              onClick: close(goPrtcpAply),
+            } satisfies ButtonGroupItem,
+          ]
+        : []),
+      ...(it.bidPrtcpAply === 'Y'
+        ? [
+            {
+              label: '입찰진행 바로가기',
+              variant: 'secondary',
+              onClick: close(goBidPrgrs),
+            } satisfies ButtonGroupItem,
+          ]
+        : []),
+      { label: '보관함 품목 관리', variant: 'secondary', onClick: close(goItemMng) },
+    ]
+  }
 
   // 목업 → Card props 매핑. 배지 = 표시 레이블(slide409 ⑤) 중
   //   입찰내역작성여부(작성/미작성/완료) · 입찰참가신청여부(신청/미신청) 2종만(사용자 확정 2026-08-24).
@@ -372,13 +388,8 @@ export function OvsLockerPbanListPage() {
       { label: '입찰서제출마감일시', value: it.bdngDdlnDt },
       { label: '개찰일자', value: it.bdopnYmd },
     ],
-    footer: (
-      // 구 버튼 2개 자리 → [+ 공고 신청] 버튼 1개(바텀시트 호출, 설계서 slide409 260709 개정)
-      <Button variant="secondary" className="w-full" onClick={() => setSheetItem(it)}>
-        <Icon name="Add" size={20} aria-hidden />
-        공고 신청
-      </Button>
-    ),
+    // 카드 자체 클릭 → 사업명 타이틀 바텀시트(사용자 확정 2026-08-25 — 구 [+ 공고 신청] footer 버튼 삭제)
+    onClick: () => setSheetItem(it),
   }))
 
   return (
@@ -429,30 +440,17 @@ export function OvsLockerPbanListPage() {
         }
       />
 
-      {/* [+ 공고 신청] 바텀시트 — 상태 버튼(입찰내역작성여부 분기) + 보관함 품목 관리(항시). 컨테이너는 페이지 소유 */}
+      {/* 카드 클릭 바텀시트(설계서 slide409) — 타이틀 = 카드 사업명(bizNm). 버튼은 노출 조건별
+          (입찰내역 작성/수정→M76 · 입찰참가신청 작성/수정→BD-04-M71 · 입찰진행 바로가기 · 보관함 품목 관리).
+          컨테이너는 페이지 소유(사용자 확정 2026-08-25). */}
       <BottomSheet
         open={sheetItem !== null}
         onOpenChange={(o) => {
           if (!o) setSheetItem(null)
         }}
-        title="공고 신청"
+        title={sheetItem?.bizNm ?? ''}
       >
-        {sheetItem && (
-          <ButtonGroup
-            layout="vertical"
-            items={[
-              statusBtnFor(sheetItem),
-              {
-                label: '보관함 품목 관리',
-                variant: 'secondary',
-                onClick: () => {
-                  setSheetItem(null)
-                  goItemMng(sheetItem)
-                },
-              },
-            ]}
-          />
-        )}
+        {sheetItem && <ButtonGroup layout="vertical" items={sheetButtonsFor(sheetItem)} />}
       </BottomSheet>
 
       {/* 상세필터 풀팝업 — 공통 SearchFilter 셸(설계서 slide302 검색필터) */}
