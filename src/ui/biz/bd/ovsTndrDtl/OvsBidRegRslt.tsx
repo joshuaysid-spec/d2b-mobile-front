@@ -2,11 +2,10 @@
 // 국외 입찰서 상세 바로가기 → 입찰등록심사 결과 조회. 읽기전용(footer=닫기, 부모 소유).
 // ⚠️ 바텀시트 콘텐츠 전용 — 컨테이너(BottomSheet title/footer/open)는 부모(OvsTndrDtlPage)가 소유, 여기엔 본문만.
 //    (국내 기술평가결과조회 TechEvlRsltInq 와 동일 패턴)
-// 구성: 요약(SummaryInfo flushX) + 일반정보(dm_bscPbancInfo)/신청업체(dm_sbtInfo)/입찰업체(dm_splyInfo)/
-//    등록결과(dl_resultList) 아코디언 + 구분/내용 표. 항목명(영문) 설계서 그대로.
+// 구성: 일반정보(dm_bscPbancInfo)/신청업체(dm_sbtInfo)/입찰업체(dm_splyInfo)/등록결과(dl_resultList)
+//    아코디언 + 구분/내용 표(상단 요약은 삭제 — 사용자 지시 2026-08-26). 항목명(영문) 설계서 그대로.
 // ※ 2026-07-01 화면 수정 반영: 주민등록번호 항목 삭제 — 사업자번호(사업자등록번호 또는 DUNS NUM)만 표시.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
-import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { OvsTndrDtlItem } from '@/types/mock/bd'
 
@@ -82,29 +81,19 @@ export function OvsBidRegRslt({ detail }: OvsBidRegRsltProps) {
 
   return (
     <div className="flex flex-col gap-krds-7">
-      <SummaryInfo
-        flushX
-        badges={[
-          { key: 'task', label: detail.taskSeNm ?? '국외' },
-          { key: 'mth', label: detail.bidMth },
-          { key: 'ctrt', label: detail.ctrtMthdNm },
-        ]}
-        subtitle={`통합참조번호 ${detail.intgRfrncNo} / 공고번호 ${detail.pbancNo}-${detail.pbancOd}`}
-        title={detail.bizNm}
-      />
-
+      {/* 상단 요약(SummaryInfo)은 삭제 — 바로 일반정보부터 시작(사용자 지시 2026-08-26) */}
       {/* flush: 시트 본문(px-16) 안이라 아코디언 콘텐츠 좌우 패딩 제거(2중 패딩 방지) */}
       <Accordion type="multiple" defaultValue={['pbanc', 'sbt', 'sply', 'result']}>
-        <AccordionSection value="pbanc" title="일반정보" borderTop={false} flush>
+        <AccordionSection value="pbanc" title="일반정보" borderTop={false} flush triggerClassName="px-0">
           <Table rows={pbancRows} />
         </AccordionSection>
-        <AccordionSection value="sbt" title="신청업체" flush>
+        <AccordionSection value="sbt" title="신청업체" flush triggerClassName="px-0">
           <Table rows={sbtRows} />
         </AccordionSection>
-        <AccordionSection value="sply" title="입찰업체" flush>
+        <AccordionSection value="sply" title="입찰업체" flush triggerClassName="px-0">
           <Table rows={splyRows} />
         </AccordionSection>
-        <AccordionSection value="result" title="등록결과" flush>
+        <AccordionSection value="result" title="등록결과" flush triggerClassName="px-0">
           <Table rows={resultRows} />
         </AccordionSection>
       </Accordion>

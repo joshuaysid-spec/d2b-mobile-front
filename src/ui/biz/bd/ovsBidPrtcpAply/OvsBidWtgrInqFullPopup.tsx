@@ -1,14 +1,16 @@
 // 입찰보증서선택 (MUI-BD-04-P75 ovsBidWtgrInq · 설계서 slide342 · 데이터/이벤트 slide343).
 // 스탭3 입찰 보증금(M74, Stp3)의 [보증서선택](전자보증서) → 진입하는 풀팝업(FullPopup) 래퍼.
 // 구성: 총건수 + 전자입찰보증서 카드 목록(dl_resultList)
-//   — 카드별 [보증서 정보 보기](→ 보증서정보조회 P76, OvsBidWtgrDtlFullPopup) / [보증서 적용](→ onApply).
+//   — 카드별 [보증서 정보 보기](→ 보증서정보조회 P76 바텀시트, 콘텐츠 OvsBidWtgrDtl) / [보증서 적용](→ onApply).
+// P76 은 바텀시트(풀팝업→전환, 사용자 지시 2026-08-26) — 컨테이너/footer([닫기/보증서 적용])는 여기(부모)가 소유.
 // 확인(보증서 적용) 클릭 시 선택한 입찰보증서를 부모화면에 적용(scwin.btn_confirm_onclick) — 닫기는 부모(Stp3)가 처리.
 import { useState } from 'react'
 
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
-import { OvsBidWtgrDtlFullPopup } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidWtgrDtlFullPopup'
+import { OvsBidWtgrDtl } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidWtgrDtl'
 import type { OvsBidWtgrItem } from '@/types/mock/bd'
 
 // 입찰보증서 목록 목업(dl_resultList) — 설계서 slide342 예시값(총 5건) 그대로.
@@ -121,15 +123,31 @@ export function OvsBidWtgrInqFullPopup({ open, onOpenChange, onApply }: OvsBidWt
         <CardList items={cardItems} />
       </div>
 
-      {/* 보증서정보조회(P76) — 보증서 정보 보기 클릭 시 */}
-      <OvsBidWtgrDtlFullPopup
+      {/* 보증서정보조회(P76) — 보증서 정보 보기 클릭 시 바텀시트(footer=닫기/보증서 적용, 부모 소유) */}
+      <BottomSheet
         open={dtlFor !== null}
         onOpenChange={(o) => {
           if (!o) setDtlFor(null)
         }}
-        item={dtlFor}
-        onApply={applyWtgr}
-      />
+        title="보증서정보 조회"
+        footer={
+          <ButtonGroup
+            layout="asymmetric"
+            items={[
+              { label: '닫기', variant: 'secondary', onClick: () => setDtlFor(null) },
+              {
+                label: '보증서 적용',
+                variant: 'primary',
+                onClick: () => {
+                  if (dtlFor) applyWtgr(dtlFor)
+                },
+              },
+            ]}
+          />
+        }
+      >
+        <OvsBidWtgrDtl item={dtlFor} />
+      </BottomSheet>
     </FullPopup>
   )
 }

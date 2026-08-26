@@ -8,6 +8,7 @@ import { useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
+import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 
 // 입찰참여품목(단가제) 1건 (dl_ititbBidCnList, 설계서 slide382) — 항목명(영문) 설계서 그대로.
@@ -185,10 +186,12 @@ function ItitbList() {
   }
 
   return (
-    <>
-      <p className="px-4 pb-krds-5 text-krds-body-sm text-krds-text-primary-active">
-        품목 목록 · 총 {total}건
-      </p>
+    // pt-4: 탭과 콘텐츠 사이 상단 간격(사용자 지시 2026-08-26)
+    <div className="pt-4">
+      {/* 품목 목록 — 총건수(SectionTitle info 표준 패턴). 상단 라인 없음(사용자 지시 2026-08-26) */}
+      <SectionTitle as="h3" info={`총 ${total}건`} className="bg-white">
+        품목 목록
+      </SectionTitle>
       {/* 항목당 아코디언 — 접힘 헤더가 '내역 펼쳐보기', 펼침이 '내역 접기' 역할(설계서 slide377). 첫 건만 펼침. */}
       <Accordion type="multiple" defaultValue={[MOCK_ITITB_LIST[0].frcptlArtclNo]} className="w-full">
         {visible.map((it, i) => (
@@ -209,7 +212,7 @@ function ItitbList() {
           </Button>
         </div>
       )}
-    </>
+    </div>
   )
 }
 
@@ -226,10 +229,12 @@ function AlonbsList() {
   }
 
   return (
-    <>
-      <p className="px-4 pb-krds-5 text-krds-body-sm text-krds-text-primary-active">
-        입찰 품목 · 총 {total}건
-      </p>
+    // pt-4: 탭과 콘텐츠 사이 상단 간격(사용자 지시 2026-08-26)
+    <div className="pt-4">
+      {/* 입찰 품목 — 총건수(SectionTitle info 표준 패턴). 상단 라인 없음(품목 목록과 동일 처리) */}
+      <SectionTitle as="h3" info={`총 ${total}건`} className="bg-white">
+        입찰 품목
+      </SectionTitle>
       <Accordion
         type="multiple"
         defaultValue={MOCK_ALONBS_ITEM_LIST.map((it) => it.frcptlArtclNo)}
@@ -259,7 +264,7 @@ function AlonbsList() {
           <Table rows={ALONBS_BID_CN_ROWS} />
         </AccordionSection>
       </Accordion>
-    </>
+    </div>
   )
 }
 

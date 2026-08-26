@@ -93,15 +93,16 @@ const OvsBidPrtcpRtrcnAply = forwardRef<OvsBidPrtcpRtrcnAplyHandle, OvsBidPrtcpR
 
     return (
       <div className="flex flex-col">
-        {/* 취소신청내역 — flush: 시트 본문(px-16) 안이라 아코디언 좌우 패딩 제거(2중 패딩 방지) */}
+        {/* 취소신청내역 — flush(콘텐츠) + triggerClassName px-0(타이틀 바): 시트 본문(px-16) 안이라
+            아코디언 좌우 패딩 전부 제거(2중 패딩 방지 — 타이틀 왼쪽 여백 제거는 사용자 지시 2026-08-26) */}
         <Accordion type="multiple" defaultValue={['rtrcn', 'sbt', 'sply']}>
-          <AccordionSection value="rtrcn" title="취소신청내역" borderTop={false} flush>
+          <AccordionSection value="rtrcn" title="취소신청내역" borderTop={false} flush triggerClassName="px-0">
             <Table rows={rtrcnRows} />
           </AccordionSection>
-          <AccordionSection value="sbt" title="신청업체" flush>
+          <AccordionSection value="sbt" title="신청업체" flush triggerClassName="px-0">
             <Table rows={sbtRows} />
           </AccordionSection>
-          <AccordionSection value="sply" title="입찰업체" flush>
+          <AccordionSection value="sply" title="입찰업체" flush triggerClassName="px-0">
             <Table rows={splyRows} />
           </AccordionSection>
         </Accordion>

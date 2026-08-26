@@ -93,7 +93,7 @@ export function BidAbndAperDtl({ detail }: BidAbndAperDtlProps) {
       />
 
       <Accordion type="multiple" defaultValue={['pbanc', 'item']}>
-        <AccordionSection value="pbanc" title="공고일반" variant="blue" borderTop={false} flush>
+        <AccordionSection value="pbanc" title="공고일반" variant="blue" borderTop={false} flush triggerClassName="px-0">
           <Table rows={pbancRows} />
         </AccordionSection>
         <AccordionSection
@@ -101,6 +101,7 @@ export function BidAbndAperDtl({ detail }: BidAbndAperDtlProps) {
           title={`품목내역 (총 ${MOCK_ITEMS.length}건)`}
           variant="blue"
           flush
+          triggerClassName="px-0"
         >
           <Table rows={itemRows} />
         </AccordionSection>

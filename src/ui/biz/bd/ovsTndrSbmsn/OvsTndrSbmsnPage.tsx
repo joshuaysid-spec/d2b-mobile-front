@@ -1,4 +1,5 @@
-// 국외 입찰서제출 - 스탭1 일반정보 (MUI-BD-06-M71 컨테이너 · 스탭1 일반정보 T71(구 M71 탭 — v1.83 재편), 설계서 08국외입찰진행 slide366·370).
+// 국외 입찰서제출 - 스탭1 일반정보 (MUI-BD-06-M71 컨테이너 · 스탭1 일반정보 T71(구 M71 탭 — v1.83 재편), 설계서 v1.88 slide476).
+// 일반정보 탭 = 일반정보 → 담당자 정보 아코디언(설계서 순서 — 2026-08-26 사용자 지시로 순서 교체 + 아코디언 전환).
 // 접속: 홈 > 입찰 진행 > 입찰서제출 (/bd/ovsTndrSbmsn).
 // 레이아웃(국내 TndrWrtPage·BidPrtcpAperWrtPage 패턴 그대로): 요약(SummaryInfo) → 진행단계(StepBar)
 //   → 업무도움(Infobox) → 스탭 탭(TabList: 1.일반정보 / 2.입찰참여품목 / 3.첨부파일) → 탭 콘텐츠
@@ -9,8 +10,7 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { PageTitle } from '@/ui/common/base/PageTitle'
-import { SectionTitle } from '@/ui/common/base/SectionTitle'
+import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { Infobox } from '@/ui/common/composites/Infobox'
@@ -75,14 +75,7 @@ export function OvsTndrSbmsnPage() {
 
   const [tab, setTab] = useState('일반정보')
 
-  // 담당자 정보(설계서 slide366) — 담당 부서명/담당자/연락처(dm_bscPbancInfo picDeptNm·picNm·picTlno).
-  const picRows: TableRow[] = [
-    { label: '담당 부서명', value: detail.picDeptNm },
-    { label: '담당자', value: detail.picNm },
-    { label: '연락처', value: detail.picTlno },
-  ]
-
-  // 일반정보(설계서 slide366·370 dm_bscPbancInfo) — 항목명/형식 설계서 그대로.
+  // 일반정보(설계서 slide476 dm_bscPbancInfo) — 항목명/형식 설계서 그대로.
   const pbancRows: TableRow[] = [
     { label: '공고번호-차수', value: `${detail.pbancNo}-${detail.pbancOd}` },
     { label: '구매요청번호', value: detail.prchsDmndNo },
@@ -94,6 +87,13 @@ export function OvsTndrSbmsnPage() {
     { label: '입찰서제출마감일시', value: detail.bdngDdlnDt },
     { label: '개찰일자', value: detail.bdopnDt },
     { label: '환율적용일자', value: detail.exchrtAplcnYmd },
+  ]
+
+  // 담당자 정보(설계서 slide476) — 담당 부서명/담당자/연락처(dm_bscPbancInfo picDeptNm·picNm·picTlno).
+  const picRows: TableRow[] = [
+    { label: '담당 부서명', value: detail.picDeptNm },
+    { label: '담당자', value: detail.picNm },
+    { label: '연락처', value: detail.picTlno },
   ]
 
   // 탭 = 하위 스텝. 다음/이전으로 탭 이동, 마지막 탭(첨부파일)의 [신청하기] = 신청완료(M08).
@@ -161,28 +161,17 @@ export function OvsTndrSbmsnPage() {
       default:
         return (
           <>
-            {/* 페이지 타이틀 */}
-            <PageTitle as="h2" className="px-4 pb-2 pt-4">
-              일반정보
-            </PageTitle>
+            {/* 탭명 반복 타이틀 없음(전 탭 공통 규칙) — 공지사항 영역은 설계서상 "있는 경우 표시" 조건부. 목업 생략. */}
 
-            {/* 공지사항 영역 — 설계서상 "공지사항이 있는 경우 표시" 조건부. 목업 생략. */}
-
-            {/* 담당자 정보 섹션 */}
-            <SectionTitle as="h3" topDivider>
-              담당자 정보
-            </SectionTitle>
-            <div className="px-4 py-4">
-              <Table rows={picRows} />
-            </div>
-
-            {/* 일반정보 섹션 */}
-            <SectionTitle as="h3" topDivider>
-              일반정보
-            </SectionTitle>
-            <div className="px-4 py-4">
-              <Table rows={pbancRows} />
-            </div>
+            {/* 일반정보 → 담당자 정보 아코디언(설계서 slide476 순서) — 국외 입찰서 상세(M75) 일반정보 탭과 동일 패턴 */}
+            <Accordion type="multiple" defaultValue={['general', 'contact']} className="w-full">
+              <AccordionSection value="general" title="일반정보" borderTop={false}>
+                <Table rows={pbancRows} />
+              </AccordionSection>
+              <AccordionSection value="contact" title="담당자 정보">
+                <Table rows={picRows} />
+              </AccordionSection>
+            </Accordion>
           </>
         )
     }
@@ -219,10 +208,11 @@ export function OvsTndrSbmsnPage() {
       {/* 탭별 콘텐츠(M71 일반정보 / M72·M73 입찰참여품목 / M74 첨부파일) */}
       {renderTab()}
 
-      {/* 하단 액션바 — 이전/다음으로(마지막 탭=신청하기, 설계서 slide369) */}
+      {/* 하단 액션바 — 이전/다음으로(마지막 탭=신청하기, 설계서 slide369).
+          전 탭 asymmetric(이전 좁게 + 다음으로/신청하기 넓게 — 사용자 지시 2026-08-26). */}
       <div className="border-t border-krds-border-divider bg-krds-bg-primary-faint px-4 py-4">
         <ButtonGroup
-          layout="split"
+          layout="asymmetric"
           items={[
             { label: '이전', variant: 'secondary', onClick: handlePrev },
             { label: isLastTab ? '신청하기' : '다음으로', variant: 'primary', onClick: handleNext },

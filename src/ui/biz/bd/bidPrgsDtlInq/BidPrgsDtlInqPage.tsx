@@ -9,6 +9,8 @@
 //    플로팅 바로가기는 국내/국외 분기 — 국내: 기존 상태별 구성 유지 · 국외: 입찰서 작성하기(M71)+
 //    입찰취소(국외 전용 P81)+환율정보(M74) 3종(사용자 확정 2026-08-26). 생산능력서류제출(P06)·
 //    입찰참가등록반려신청(P07)·입찰포기(P03)는 국외 챕터(slide432~435)에 화면 미정의(국외 미사용)라 제외.
+//    표도 국외 분기 — 사전심사(PQ)·생산능력서류 행(+사전심사 배지)은 국외 미사용으로 숨김,
+//    기술평가 [내용 보기]는 국외 전용 조회(MUI-BD-07-P71 OvsTechEvlRslt)로 연결(사용자 확정 2026-08-26).
 import { useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
@@ -22,6 +24,7 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { SummaryInfo, type SummaryInfoBadge } from '@/ui/common/composites/SummaryInfo'
 import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
 import { TechEvlRsltInq } from '@/ui/biz/bd/bfhdSrngRsltInq/TechEvlRsltInq'
+import { OvsTechEvlRslt } from '@/ui/biz/bd/ovsTndrDtl/OvsTechEvlRslt'
 import { PrdctnAbltDcmntSbmsn, type PrdctnAbltDcmntSbmsnHandle } from '@/ui/biz/bd/bfhdSrngRsltInq/PrdctnAbltDcmntSbmsn'
 import { OvsBidRtrcnAply, type OvsBidRtrcnAplyHandle } from '@/ui/biz/bd/ovsTndrDtl/OvsBidRtrcnAply'
 import { BidAbndAperWrt, type BidAbndAperWrtHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidAbndAperWrt'
@@ -79,7 +82,9 @@ function statusBadge(
 }
 
 // 구분/내용 표(설계서 slide66) — 일부 행은 상태텍스트 + 보기 버튼(combination). 대상 아닌 항목 행은 숨김.
-function buildRows(it: BidPrgrsDetail, onView: (key: string) => void): TableRow[] {
+// 국외(isOvs)는 사전심사(PQ)·생산능력서류 행을 국외 미사용으로 숨긴다(국외 챕터 slide432~435 에 해당 화면
+// 미정의 — 사용자 확정 2026-08-26). 기술평가는 국외 전용 조회(P71)가 있어 유지.
+function buildRows(it: BidPrgrsDetail, onView: (key: string) => void, isOvs: boolean): TableRow[] {
   // 상태 + 버튼 셀("신청/미동의/등록확정" 위, [내용 보기] 아래)
   const statusCell = (status: string, btnLabel: string, key: string) => (
     <div className="flex flex-col items-start gap-krds-3">
@@ -142,7 +147,7 @@ function buildRows(it: BidPrgrsDetail, onView: (key: string) => void): TableRow[
           },
     )
   }
-  if (it.bfhdSrng) {
+  if (it.bfhdSrng && !isOvs) {
     rows.push({
       label: '사전심사(PQ)',
       value: statusCell(it.bfhdSrngRsltYn ? '결과' : '진행중', '내용 보기', 'pq'),
@@ -156,7 +161,7 @@ function buildRows(it: BidPrgrsDetail, onView: (key: string) => void): TableRow[
       type: 'combination',
     })
   }
-  if (it.prdcpDcmntSbms) {
+  if (it.prdcpDcmntSbms && !isOvs) {
     rows.push({
       label: '생산능력서류',
       value: statusCell('제출', '내용 보기', 'prdcp'),
@@ -222,12 +227,12 @@ export function BidPrgsDtlInqPage() {
     else if (key === 'prdcp') setPrdcpOpen(true)
     else console.log('[M02] 보기', key) // 공고/국내 입찰서 등 — 추후 연계
   }
-  const rows = buildRows(detail, handleView)
+  const rows = buildRows(detail, handleView, isOvs)
   const status = statusBadge(detail)
 
-  // 국외 입찰취소(P81) 콘텐츠에 넘길 항목 — 상세(dlt_bidPrgrsList)에서 매핑 가능한 값 + 미보유 필드 목업.
-  //   (구매요청번호/공고차수/입찰방식/담당자 등은 M02 항목에 없음 — API 연동 시 국외 입찰서 조회로 대체)
-  const ovsRtrcnDetail: OvsTndrDtlItem = {
+  // 국외 조회/신청(P71 기술평가·P81 입찰취소) 콘텐츠에 넘길 항목 — 상세(dlt_bidPrgrsList)에서 매핑 가능한 값
+  //   + 미보유 필드 목업. (구매요청번호/공고차수/입찰방식/담당자 등은 M02 항목에 없음 — API 연동 시 조회로 대체)
+  const ovsDetail: OvsTndrDtlItem = {
     pbancNo: detail.pbancNo,
     pbancOd: '1',
     prchsDmndNo: 'BAD839380-001',
@@ -253,7 +258,8 @@ export function BidPrgsDtlInqPage() {
     ...(status ? [{ key: 'status', label: status.label, type: 'solid' as const, color: status.color }] : []),
     { key: 'task', label: detail.taskSeNm },
     { key: 'ctrt', label: detail.ctrtMthdNm },
-    ...(detail.bfhdSrng ? [{ key: 'bfhd', label: '사전심사' }] : []),
+    // 사전심사 배지 — 국외는 사전심사 미사용(표 행과 동일 기준)이라 숨김.
+    ...(detail.bfhdSrng && !isOvs ? [{ key: 'bfhd', label: '사전심사' }] : []),
     ...(detail.bidPrgrsApfr ? [{ key: 'apfr', label: '입찰참가' }] : []),
   ]
 
@@ -395,7 +401,7 @@ export function BidPrgsDtlInqPage() {
 
       {/* 환율정보 조회 풀팝업 (M74) */}
       <OvsExchrtListFullPopup open={exchrtOpen} onOpenChange={setExchrtOpen} />
-      {/* 기술평가결과조회(P01) — 바텀시트(읽기전용 조회, footer=닫기) */}
+      {/* 기술평가결과조회 — 바텀시트(읽기전용 조회, footer=닫기). 콘텐츠는 국내 P01 / 국외 P71 분기 */}
       <BottomSheet
         open={techEvlOpen}
         onOpenChange={setTechEvlOpen}
@@ -407,7 +413,7 @@ export function BidPrgsDtlInqPage() {
           />
         }
       >
-        <TechEvlRsltInq detail={detail} />
+        {isOvs ? <OvsTechEvlRslt detail={ovsDetail} /> : <TechEvlRsltInq detail={detail} />}
       </BottomSheet>
 
       {/* 생산능력서류제출(P06) — 바텀시트(컨테이너/footer 부모 소유, 콘텐츠는 ref 핸들) */}
@@ -447,7 +453,7 @@ export function BidPrgsDtlInqPage() {
       >
         <OvsBidRtrcnAply
           ref={ovsRtrcnRef}
-          detail={ovsRtrcnDetail}
+          detail={ovsDetail}
           onSubmitted={() => setOvsRtrcnOpen(false)}
         />
       </BottomSheet>

@@ -1,17 +1,18 @@
-// 국외 입찰서제출 - 스탭2 입찰참여품목 (MUI-BD-06-T72(구 M72 — v1.83 재편) 단가제 · MUI-BD-06-T73(구 M73 — v1.83 재편) 총액제, 설계서 slide367·368·371~372).
+// 국외 입찰서제출 - 스탭2 입찰참여품목 (MUI-BD-06-T72(구 M72 — v1.83 재편) 단가제 · MUI-BD-06-T73(구 M73 — v1.83 재편) 총액제,
+//   설계서 v1.88 slide477(단가제)·slide478(총액제)).
 // 호스트 페이지(OvsTndrSbmsnPage)의 '입찰참여품목' 탭 본문만 담당 — 요약/스텝/탭/하단 액션바는 페이지 소유.
 // 단가제(M72)/총액제(M73)는 한 파일에서 detail.bidMthdNm 데이터 모드로 분기(설계서 화면 목록: 두 화면 모두 Stp2.tsx).
-// - 단가제: 품목 카드(기본 4행 + 내역 펼쳐보기/접기, PrcmPlanDtl_PrdList 패턴) + 품목별 입찰단가 입력
-//   → 입찰금액/달러단가/달러금액 자동 계산(설계서 slide373 이벤트 ibx_unitPrice_onchange).
-// - 총액제: 입찰 품목 목록(읽기전용) + 입찰내역(입찰금액 입력 → 달러금액 계산, ibx_amountPrice_onchange).
+// - 단가제: 품목 카드(기본 4행 + 내역 펼쳐보기/접기, PrcmPlanDtl_PrdList 패턴). 입찰단가(E) 입력은 표 행 안 배치
+//   → 입찰금액/달러단가/달러금액 자동 계산(설계서 이벤트 ibx_unitPrice_onchange). 첨부문서는 O/X 표시(O만 [보기]).
+// - 총액제: 입찰내역 아코디언(위 — 입찰금액(E) 표 행 입력 → 달러금액 계산, ibx_amountPrice_onchange)
+//   + 입찰 품목 목록(아래, 읽기전용) — slide478 배치 순서.
 // 항목명/형식은 데이터영역(slide371 dl_ititbBidCnList · slide372 dl_alonbsItemList/dl_alonbsBidCnInfo) 그대로.
 import { useState } from 'react'
 
+import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
-import { InputLabel } from '@/ui/common/base/InputLabel'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
@@ -245,7 +246,8 @@ function ItitbItemCard({
     { label: '품명', value: item.itemNm },
   ]
 
-  // 펼침 시 추가 행 — 단위~달러환산율(읽기전용). 첨부문서 'O' 는 [보기] 로 첨부문서조회 팝업(P76) 호출.
+  // 펼침 시 추가 행 — 단위~달러환산율(읽기전용). 첨부문서는 O/X 표시(설계서 slide477 특이사항),
+  //   'O' 는 [보기] 로 첨부문서조회 팝업(P76) 호출.
   const detailRows: TableRow[] = [
     { label: '단위', value: item.unitNm },
     { label: '수량', value: item.qty, type: 'number' },
@@ -265,7 +267,7 @@ function ItitbItemCard({
             </div>
           </>
         ) : (
-          <span>-</span>
+          <span>X</span>
         ),
     },
     { label: '수정재고번호', value: item.mdfcnInvtNo || '-' },
@@ -286,55 +288,38 @@ function ItitbItemCard({
             </div>
           </>
         ) : (
-          <span>-</span>
+          <span>X</span>
         ),
     },
     { label: '납기(본조)', value: item.bscbgtDudtYmd },
     { label: '납기(당국)', value: item.athrtDudtYmd },
     { label: '납기(장국)', value: item.ltbndDudtYmd },
-    { label: '달러환산율', value: item.usdExrt, type: 'number' },
-  ]
-
-  // 입찰단가 입력 아래 계산 결과 행 — 입찰금액/화폐단위/달러단가/달러금액.
-  const calcRows: TableRow[] = [
+    { label: '달러환산율', value: `${item.usdExrt} USD`, type: 'number' },
+    // 입찰단가(E) 입력 행 — 표 안 배치(설계서 slide477). 변경 시 아래 입찰금액/달러단가/달러금액 자동 계산.
+    //   (Table combination 셀 내 InputBox — ovsBidPrtcpAply/Stp3 입찰보증금(확인입력) 선례 패턴)
+    {
+      label: '입찰단가',
+      type: 'combination',
+      value: (
+        <InputBox
+          inputMode="decimal"
+          format={formatDecimal2}
+          value={bdngTccrUntprc}
+          placeholder="입력해주세요."
+          onChange={(e) => onUntprcChange(e.target.value)}
+        />
+      ),
+    },
+    // 계산 결과 행 — 입찰금액/화폐단위/달러단가/달러금액(설계서 slide477 표시 형식).
     { label: '입찰금액', value: bdngTccrAmt, type: 'number' },
     { label: '화폐단위', value: item.crncNm },
-    { label: '달러단가', value: bdngUsdUntprc, type: 'number' },
+    { label: '달러단가', value: hasUntprc ? `${bdngUsdUntprc} KRW` : '-', type: 'number' },
     { label: '달러금액', value: bdngUsdAmt, type: 'number' },
   ]
 
   return (
     <div className="flex flex-col">
       <Table rows={expanded ? [...baseRows, ...detailRows] : baseRows} />
-
-      {expanded && (
-        <>
-          {/* 입찰단가(E) 입력 — 변경 시 입찰금액/달러단가/달러금액 자동 계산 */}
-          <div className="flex flex-col gap-krds-5 pt-4">
-            <InputLabel htmlFor={`bdngTccrUntprc-${item.frcptlArtclNo}`} required>
-              입찰단가
-            </InputLabel>
-            <div className="flex items-center gap-krds-3">
-              <InputBox
-                id={`bdngTccrUntprc-${item.frcptlArtclNo}`}
-                className="flex-1"
-                inputMode="decimal"
-                format={formatDecimal2}
-                value={bdngTccrUntprc}
-                placeholder="입력해주세요."
-                onChange={(e) => onUntprcChange(e.target.value)}
-                onClear={() => onUntprcChange('')}
-              />
-              <span className="shrink-0 text-krds-body-md text-krds-text-ink">USD</span>
-            </div>
-          </div>
-
-          {/* 계산 결과 — 입찰금액/화폐단위/달러단가/달러금액 */}
-          <div className="pt-4">
-            <Table rows={calcRows} />
-          </div>
-        </>
-      )}
 
       {/* 내역 펼쳐보기/접기 토글 */}
       <button
@@ -390,11 +375,40 @@ export function OvsTndrSbmsnPage_Stp2({ detail }: { detail: OvsTndrSbmsnDetail }
     // 추후 API: bdService.selectOvsAtchDoc(...) — 첨부문서조회 팝업(UI-BD-05-P76) 호출
   }
 
+  // 입찰내역(총액제, dl_alonbsBidCnInfo) 행 — 설계서 slide478 순서(입찰업체/화폐단위/입찰금액(E)/달러금액/달러환산율).
+  //   입찰금액 입력 행은 표 안 배치, 변경 시 달러금액 자동 계산(ibx_amountPrice_onchange).
+  const alonbsBidCnRows: TableRow[] = [
+    { label: '입찰업체', value: MOCK_ALONBS_BID_CN.splyBzentyNm },
+    { label: '화폐단위', value: MOCK_ALONBS_BID_CN.crncNm },
+    {
+      label: '입찰금액',
+      type: 'combination',
+      value: (
+        <InputBox
+          inputMode="decimal"
+          format={formatDecimal2}
+          value={bdngTccrAmt}
+          placeholder="입력해주세요."
+          onChange={(e) => setBdngTccrAmt(e.target.value)}
+        />
+      ),
+    },
+    { label: '달러금액', value: alonbsUsdAmt, type: 'number' },
+    { label: '달러환산율', value: `${MOCK_ALONBS_BID_CN.usdExrt} USD`, type: 'number' },
+  ]
+
   return (
     <>
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        입찰참여품목
-      </PageTitle>
+      {/* 탭명 반복 타이틀 없음(전 탭 공통 규칙) */}
+
+      {/* 입찰내역(총액제) — 품목 목록보다 위, 아코디언(설계서 slide478) */}
+      {!isUntprc && (
+        <Accordion type="multiple" defaultValue={['bidCn']} className="w-full">
+          <AccordionSection value="bidCn" title="입찰내역" borderTop={false}>
+            <Table rows={alonbsBidCnRows} />
+          </AccordionSection>
+        </Accordion>
+      )}
 
       {/* 품목 목록(단가제) / 입찰 품목(총액제) — 총건수 */}
       <SectionTitle as="h3" topDivider info={`총 ${TOTAL_COUNT}건`} className="bg-white">
@@ -435,52 +449,6 @@ export function OvsTndrSbmsnPage_Stp2({ detail }: { detail: OvsTndrSbmsnDetail }
           </Button>
         )}
       </div>
-
-      {/* 입찰내역(총액제, dl_alonbsBidCnInfo) — 입찰금액 입력 → 달러금액 계산 */}
-      {!isUntprc && (
-        <>
-          <SectionTitle as="h3" topDivider>
-            입찰내역
-          </SectionTitle>
-          <div className="flex flex-col gap-4 px-4 py-4">
-            <Table
-              rows={[
-                { label: '입찰업체', value: MOCK_ALONBS_BID_CN.splyBzentyNm },
-                { label: '화폐단위', value: MOCK_ALONBS_BID_CN.crncNm },
-              ]}
-            />
-
-            {/* 입찰금액(bdngTccrAmt, E) — 변경 시 달러금액 자동 계산 */}
-            <div className="flex flex-col gap-krds-5">
-              <InputLabel htmlFor="bdngTccrAmt" required>
-                입찰금액
-              </InputLabel>
-              <div className="flex items-center gap-krds-3">
-                <InputBox
-                  id="bdngTccrAmt"
-                  className="flex-1"
-                  inputMode="decimal"
-                  format={formatDecimal2}
-                  value={bdngTccrAmt}
-                  placeholder="입력해주세요."
-                  onChange={(e) => setBdngTccrAmt(e.target.value)}
-                  onClear={() => setBdngTccrAmt('')}
-                />
-                <span className="shrink-0 text-krds-body-md text-krds-text-ink">
-                  {MOCK_ALONBS_BID_CN.crncNm}
-                </span>
-              </div>
-            </div>
-
-            <Table
-              rows={[
-                { label: '달러금액', value: alonbsUsdAmt, type: 'number' },
-                { label: '달러환산율', value: MOCK_ALONBS_BID_CN.usdExrt, type: 'number' },
-              ]}
-            />
-          </div>
-        </>
-      )}
     </>
   )
 }

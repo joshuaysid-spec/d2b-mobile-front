@@ -57,7 +57,7 @@ export function BidRtrcnAperInqDtl({ detail }: BidRtrcnAperInqDtlProps) {
 
       {/* 공고일반 — flush: 시트 본문(px-16) 안이라 아코디언 콘텐츠 좌우 패딩 제거(2중 패딩 방지) */}
       <Accordion type="multiple" defaultValue={['pbanc']}>
-        <AccordionSection value="pbanc" title="공고일반" borderTop={false} flush>
+        <AccordionSection value="pbanc" title="공고일반" borderTop={false} flush triggerClassName="px-0">
           <Table rows={pbancRows} />
         </AccordionSection>
       </Accordion>
