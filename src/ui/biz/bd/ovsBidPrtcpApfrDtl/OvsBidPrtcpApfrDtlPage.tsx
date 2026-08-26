@@ -198,7 +198,8 @@ function Tab1({ detail, sbtInfo }: { detail: OvsBidPrtcpApfrDetail; sbtInfo: Ovs
   return (
     <>
       <Accordion type="multiple" defaultValue={['pbanc', 'sbt']} className="w-full">
-        <AccordionSection value="pbanc" title="공고일반" borderTop={false}>
+        {/* 섹션명 '공고일반'→'일반정보'(사용자 지시 2026-08-26) — 데이터영역은 dm_bscPbancInfo 그대로 */}
+        <AccordionSection value="pbanc" title="일반정보" borderTop={false}>
           <Table rows={pbancRows} />
         </AccordionSection>
         <AccordionSection value="sbt" title="신청업체">
@@ -237,11 +238,10 @@ export function OvsBidPrtcpApfrDtlPage() {
   const sbtInfo = MOCK_OVS_SBT_INFO
   const splyInfo = MOCK_OVS_SPLY_INFO
 
-  // 개별 입찰참가취소(탭3 각 사업) → P82 (선택 건)
-  const handleRtrcnItem = (target: OvsRtrcnTarget) => setRtrcnTargets([target])
-  // 전체 입찰참가취소(플로팅 바로가기) → P82 (전체 건) — 면제/비면제 목록 합산.
+  // 선택 입찰취소(탭3 카드 다중 선택) → P82 (선택 건들)
+  const handleRtrcnSelected = (targets: OvsRtrcnTarget[]) => setRtrcnTargets(targets)
+  // 전체 입찰취소(탭3 하단 고정 버튼) → P82 (전체 건) — 면제/비면제 목록 합산.
   const handleRtrcnAll = () => {
-    setShortcutOpen(false)
     setRtrcnTargets([
       ...MOCK_OVS_BIZ_LIST.map((b) => ({
         prchsDmndNo: b.prchsDmndNo,
@@ -267,7 +267,8 @@ export function OvsBidPrtcpApfrDtlPage() {
           <OvsBidPrtcpApfrDtlPage_Tab3
             bizList={MOCK_OVS_BIZ_LIST}
             bizExmptnList={MOCK_OVS_BIZ_EXMPTN_LIST}
-            onRtrcn={handleRtrcnItem}
+            onRtrcn={handleRtrcnSelected}
+            onRtrcnAll={handleRtrcnAll}
           />
         )
       case 'atch':
@@ -326,8 +327,9 @@ export function OvsBidPrtcpApfrDtlPage() {
         </div>
       </div>
 
-      {/* 탭 콘텐츠 — 짧은 탭도 헤더 접힘을 지탱하도록 min-h 확보(BidPbancDtlPage 참고) */}
-      <div className="min-h-[100dvh]">{renderTabContent(tab)}</div>
+      {/* 탭 콘텐츠 — 짧은 탭도 헤더 접힘을 지탱하도록 min-h 확보(BidPbancDtlPage 참고).
+          pt-4: 탭과 콘텐츠 사이 상단 여백 — 전 탭 공통(사용자 지시 2026-08-26). */}
+      <div className="min-h-[100dvh] pt-4">{renderTabContent(tab)}</div>
 
       {/* 플로팅 — 맨위로 + 바로가기(+) */}
       <FloatingActionButton
@@ -337,7 +339,8 @@ export function OvsBidPrtcpApfrDtlPage() {
         plusLabel="바로가기"
       />
 
-      {/* 바로가기 시트 — 입찰등록결과 조회(P83) / 전체 입찰참가취소(P82, slide356 이벤트) */}
+      {/* 바로가기 시트 — 입찰등록결과 조회(P83).
+          전체 입찰참가취소는 탭3 하단 고정 [전체 입찰취소]로 이관(사용자 지시 2026-08-26 — 플로팅에서 삭제) */}
       <BottomSheet open={shortcutOpen} onOpenChange={setShortcutOpen} title="바로가기">
         <ButtonGroup
           layout="vertical"
@@ -350,7 +353,6 @@ export function OvsBidPrtcpApfrDtlPage() {
                 setRegRsltOpen(true)
               },
             },
-            { label: '전체 입찰참가취소', variant: 'secondary', onClick: handleRtrcnAll },
           ]}
         />
       </BottomSheet>

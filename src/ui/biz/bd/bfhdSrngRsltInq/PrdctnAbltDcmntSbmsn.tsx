@@ -86,10 +86,10 @@ const PrdctnAbltDcmntSbmsn = forwardRef<PrdctnAbltDcmntSbmsnHandle, PrdctnAbltDc
         />
 
         <Accordion type="multiple" defaultValue={['pbanc', 'bzenty', 'file']}>
-          <AccordionSection value="pbanc" title="공고일반" variant="blue" borderTop={false} flush>
+          <AccordionSection value="pbanc" title="공고일반" variant="blue" borderTop={false} flush triggerClassName="px-0">
             <Table rows={pbancRows} />
           </AccordionSection>
-          <AccordionSection value="bzenty" title="업체내역" variant="blue" flush>
+          <AccordionSection value="bzenty" title="업체내역" variant="blue" flush triggerClassName="px-0">
             <Table rows={bzentyRows} />
           </AccordionSection>
           <AccordionSection
@@ -97,6 +97,7 @@ const PrdctnAbltDcmntSbmsn = forwardRef<PrdctnAbltDcmntSbmsnHandle, PrdctnAbltDc
             title={`입찰서 첨부파일 (총 ${files.length}건)`}
             variant="blue"
             flush
+            triggerClassName="px-0"
           >
             <FileDownloadList
               files={files.map((f) => ({

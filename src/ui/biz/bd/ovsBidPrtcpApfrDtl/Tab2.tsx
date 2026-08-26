@@ -1,6 +1,7 @@
 // 국외 입찰참가신청서 상세 - 탭2 업체정보 (MUI-BD-04-T77(구 M79 — v1.83 재편), 설계서 slide350·353).
 // 페이지(OvsBidPrtcpApfrDtlPage)가 renderTabContent 로 렌더하는 탭 콘텐츠 — 요약/스텝/탭은 페이지 소유.
-// 구성: 입찰업체(dm_splyInfo) Table + 입찰보증금 지급각서(LETTER OF GUARANTEE FOR PAYMENT OF BID BOND) 영문 전문.
+// 구성: 입찰업체(dm_splyInfo) Table + 지급각서 영문 전문 블록 — '입찰보증금 지급각서' 아코디언은 삭제하고
+//   영문 표제(LETTER OF GUARANTEE FOR PAYMENT OF BID BOND)가 타이틀 역할(사용자 지시 2026-08-26).
 //   영문 각서의 #입찰업체명(splyBzentyNm)·#보증금액(bidGrnteAmt)은 데이터로 치환(설계서 placeholder).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -45,23 +46,25 @@ export function OvsBidPrtcpApfrDtlPage_Tab2({ detail, splyInfo }: OvsBidPrtcpApf
 
   return (
     <>
-      <Accordion type="multiple" defaultValue={['sply', 'letter']} className="w-full">
+      <Accordion type="multiple" defaultValue={['sply']} className="w-full">
         <AccordionSection value="sply" title="입찰업체" borderTop={false}>
           <Table rows={splyRows} />
         </AccordionSection>
-        <AccordionSection value="letter" title="입찰보증금 지급각서">
-          <div className="flex flex-col gap-krds-5 rounded-[12px] bg-krds-bg-blue-pastel p-krds-8">
-            <p className="text-center text-[17px] font-bold leading-normal text-krds-text-info">
-              LETTER OF GUARANTEE FOR PAYMENT OF BID BOND
-            </p>
-            {letterParagraphs.map((text) => (
-              <p key={text} className="text-krds-body-sm text-krds-text-info">
-                {text}
-              </p>
-            ))}
-          </div>
-        </AccordionSection>
       </Accordion>
+
+      {/* 지급각서 영문 전문 — 아코디언 없이 영문 표제(LETTER OF …)가 타이틀 역할 */}
+      <div className="px-4 py-4">
+        <div className="flex flex-col gap-krds-5 rounded-[12px] bg-krds-bg-blue-pastel p-krds-8">
+          <p className="text-center text-[17px] font-bold leading-normal text-krds-text-info">
+            LETTER OF GUARANTEE FOR PAYMENT OF BID BOND
+          </p>
+          {letterParagraphs.map((text) => (
+            <p key={text} className="text-krds-body-sm text-krds-text-info">
+              {text}
+            </p>
+          ))}
+        </div>
+      </div>
     </>
   )
 }

@@ -1022,7 +1022,7 @@ export const bdService = {
 
   /**
    * no.102 입찰보증서정보조회(OvsBidPrtcpAplyController) — MUI-BD-04-P76
-   * (ovsBidPrtcpAply/OvsBidWtgrDtlFullPopup). 구 `selectOvsBidWtgrDtl`.
+   * (ovsBidPrtcpAply/OvsBidWtgrDtl). 구 `selectOvsBidWtgrDtl`.
    * 국내 no.88 과 메서드명이 같아 Ovs 접두.
    */
   async selectOvsBidWtgrInfo(wtgrNo: string): Promise<OvsBidWtgrInfo> {

@@ -1,9 +1,9 @@
 // 스탭1 일반정보 (MUI-BD-04-T72(구 M72 — v1.83 재편) OvsBidPrtcpAplyPage_Stp1 · 설계서 slide333 · 데이터 slide338).
 // 호스트 페이지(OvsBidPrtcpAplyPage)의 '일반정보' 탭 본문만 담당 — 요약/스텝/탭/하단 액션바는 페이지 소유.
 // 구성: 일반정보 Table(dm_bscPbancInfo: 공고번호·개찰일시·입찰보증금 총액[달러금액])
-//   → 공지사항 Infobox → 신청업체 Table(dm_sbtInfo) → 입찰보증금 납입 서약문 박스(설계서 slide333 원문).
+//   → 신청업체 Table(dm_sbtInfo) → 입찰보증금 납입 서약문 박스(설계서 slide333 원문).
+//   (공지사항 Infobox 는 사용자 지시로 삭제 — 2026-08-26)
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
-import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { BidPrgrsItem, OvsBscPbancInfo, OvsSbtInfo } from '@/types/mock/bd'
 
@@ -58,12 +58,6 @@ export function Stp1({ detail }: { detail: BidPrgrsItem }) {
       <div className="px-4 py-4">
         <Table rows={pbancRows} />
       </div>
-
-      {/* 공지사항(설계서 slide333) */}
-      <Infobox
-        title="공지사항"
-        items={['공고문 및 첨부문서의 공지사항을 확인한 후 입찰참가신청을 진행하시기 바랍니다.']}
-      />
 
       {/* 신청업체 — 로그인 조달업체 정보 */}
       <SectionTitle as="h3" topDivider>

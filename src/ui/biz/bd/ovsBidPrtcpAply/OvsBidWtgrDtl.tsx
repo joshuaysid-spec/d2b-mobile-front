@@ -1,12 +1,12 @@
 // 보증서정보조회 (MUI-BD-04-P76 ovsBidWtgrDtl · 설계서 slide344~345 · 데이터 slide346~347 · 이벤트 slide348).
-// 입찰보증서선택(P75, OvsBidWtgrInqFullPopup) 의 '보증서 정보 보기' → 진입하는 풀팝업(FullPopup) 래퍼.
+// 입찰보증서선택(P75, OvsBidWtgrInqFullPopup) 의 '보증서 정보 보기' → 바텀시트로 조회(풀팝업→바텀시트 전환,
+//   사용자 지시 2026-08-26).
+// ⚠️ 바텀시트 콘텐츠 전용 — 컨테이너(BottomSheet title/footer/open)는 부모(P75)가 소유, 여기엔 본문만.
+//    footer [보증서 적용/닫기]도 부모 구성(설계서 slide344).
 // 구성: 보증서 정보(dl_wtgrInfo) → 보증 계약자·채권자 → 발행자(dl_IsrInfo) → 대리인 → 담당자
-//   → 보증계약-주계약(dl_ctrtInfo) 섹션별 Table. footer [보증서 적용 / 닫기](설계서 slide344).
+//   → 보증계약-주계약(dl_ctrtInfo) 섹션별 Table.
 // On-Load 보증서 정보 상세 조회(scwin.onpageload)는 목업 — 선택 보증서(item) 값을 목업 위에 병합.
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
-import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
-import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { OvsBidWtgrInfo, OvsBidWtgrItem } from '@/types/mock/bd'
 
@@ -99,21 +99,12 @@ const buildSections = (info: OvsBidWtgrInfo): { title: string; rows: TableRow[] 
   },
 ]
 
-export interface OvsBidWtgrDtlFullPopupProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
+export interface OvsBidWtgrDtlProps {
   /** 조회 대상 보증서(P75 목록에서 선택). null 이면 렌더 생략. */
   item: OvsBidWtgrItem | null
-  /** 보증서 적용 클릭 — 선택 보증서를 부모화면(M74)에 적용. */
-  onApply: (item: OvsBidWtgrItem) => void
 }
 
-export function OvsBidWtgrDtlFullPopup({
-  open,
-  onOpenChange,
-  item,
-  onApply,
-}: OvsBidWtgrDtlFullPopupProps) {
+export function OvsBidWtgrDtl({ item }: OvsBidWtgrDtlProps) {
   // On-Load 보증서 정보 상세 조회 — 선택 보증서 값 병합(목업).
   // 추후 API: bdService.selectOvsBidWtgrInfo(item.wtgrNo)
   const info: OvsBidWtgrInfo = {
@@ -128,44 +119,21 @@ export function OvsBidWtgrDtlFullPopup({
   }
 
   return (
-    <FullPopup
-      open={open}
-      onOpenChange={onOpenChange}
-      title="보증서정보 조회"
-      footer={
-        <ButtonGroup
-          layout="split"
-          items={[
-            {
-              label: '보증서 적용',
-              variant: 'primary',
-              onClick: () => {
-                if (item) onApply(item)
-              },
-            },
-            { label: '닫기', variant: 'secondary', onClick: () => onOpenChange(false) },
-          ]}
-        />
-      }
-    >
-      <PageTitle as="h2" className="px-4 pb-2 pt-4">
-        보증서정보 조회
-      </PageTitle>
-
+    <div className="flex flex-col">
       {/* 섹션별 Table — 보증서 정보(dl_wtgrInfo) → 계약자·채권자 → 발행자(dl_IsrInfo) → 대리인
-          → 담당자 → 보증계약-주계약(dl_ctrtInfo). 데이터 배열 구동(설계서 slide344~345 순서 그대로). */}
-      {buildSections(info).map((section) => (
+          → 담당자 → 보증계약-주계약(dl_ctrtInfo). 데이터 배열 구동(설계서 slide344~345 순서 그대로).
+          px-0: BottomSheet 본문에 좌우 패딩이 이미 있어 SectionTitle 자체 px-4 를 해제(이중 패딩 방지). */}
+      {buildSections(info).map((section, i) => (
         <div key={section.title}>
-          <SectionTitle as="h3" topDivider>
+          <SectionTitle as="h3" topDivider={i > 0} className="px-0">
             {section.title}
           </SectionTitle>
-          <div className="px-4 py-4">
+          <div className="py-4">
             <Table rows={section.rows} />
           </div>
         </div>
       ))}
-      <div className="pb-2" />
-    </FullPopup>
+    </div>
   )
 }
-OvsBidWtgrDtlFullPopup.displayName = 'OvsBidWtgrDtlFullPopup'
+OvsBidWtgrDtl.displayName = 'OvsBidWtgrDtl'

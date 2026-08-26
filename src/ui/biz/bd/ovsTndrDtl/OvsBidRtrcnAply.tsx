@@ -3,15 +3,15 @@
 // ⚠️ 바텀시트 콘텐츠 전용 — 컨테이너(BottomSheet title/footer/open)는 부모(OvsTndrDtlPage)가 소유, 여기엔 본문만.
 //    footer '제출하기' 는 부모가 ref(useImperativeHandle)로 submit() 호출 → 제출확인 모달.
 //    (국내 입찰취소신청서작성 BidRtrcnAperInq 와 동일 패턴)
-// 구성: 요약(SummaryInfo flushX) + 취소신청내역(dl_resultInfo — 공고/신청업체/입찰업체/취소 신청건 품목)
+// 구성: 취소신청내역(dl_resultInfo — 공고/신청업체/입찰업체/취소 신청건 품목)
 //    + 취소사유(dl_sbmsnInfo.rsn, 필수·4000자) + 서약문 박스 + 제출확인(AlertModal).
+//    (상단 요약 SummaryInfo 는 삭제 — 사용자 지시 2026-08-26)
 import { forwardRef, useImperativeHandle, useState } from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { TextArea } from '@/ui/common/base/TextArea'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
-import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { OvsTndrDtlItem } from '@/types/mock/bd'
 
@@ -103,32 +103,23 @@ const OvsBidRtrcnAply = forwardRef<OvsBidRtrcnAplyHandle, OvsBidRtrcnAplyProps>(
     return (
       <div className="flex flex-col gap-krds-7">
         <div className="flex flex-col">
-          <SummaryInfo
-            flushX
-            badges={[
-              { key: 'task', label: detail.taskSeNm ?? '국외' },
-              { key: 'mth', label: detail.bidMth },
-              { key: 'ctrt', label: detail.ctrtMthdNm },
-            ]}
-            subtitle={`통합참조번호 ${detail.intgRfrncNo} / 공고번호 ${detail.pbancNo}-${detail.pbancOd}`}
-            title={detail.bizNm}
-          />
-
+          {/* 상단 요약(SummaryInfo)은 삭제 — 바로 취소신청내역부터 시작(사용자 지시 2026-08-26) */}
           {/* 취소신청내역 — flush: 시트 본문(px-16) 안이라 아코디언 콘텐츠 좌우 패딩 제거(2중 패딩 방지) */}
           <Accordion type="multiple" defaultValue={['pbanc', 'sbt', 'sply', 'item']}>
-            <AccordionSection value="pbanc" title="취소신청내역" borderTop={false} flush>
+            <AccordionSection value="pbanc" title="취소신청내역" borderTop={false} flush triggerClassName="px-0">
               <Table rows={pbancRows} />
             </AccordionSection>
-            <AccordionSection value="sbt" title="신청업체" flush>
+            <AccordionSection value="sbt" title="신청업체" flush triggerClassName="px-0">
               <Table rows={sbtRows} />
             </AccordionSection>
-            <AccordionSection value="sply" title="입찰업체" flush>
+            <AccordionSection value="sply" title="입찰업체" flush triggerClassName="px-0">
               <Table rows={splyRows} />
             </AccordionSection>
             <AccordionSection
               value="item"
               title={`취소 신청건 (총 ${MOCK_RTRCN_ITEM_LIST.length}건)`}
               flush
+              triggerClassName="px-0"
             >
               {MOCK_RTRCN_ITEM_LIST.map((it) => (
                 <Table key={it.frcptlArtclNo} rows={buildRtrcnItemRows(it)} />

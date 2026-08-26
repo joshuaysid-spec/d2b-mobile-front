@@ -6,10 +6,11 @@
 //     · 비면제(dl_bizList): 입찰보증금(확인입력) + 보증금납부방법(보증보험/전자보증서) + 증권번호/보증기관명 + 납부서
 //       - 전자보증서: 증권번호/보증기관명 입력 비활성 + [보증서선택] → 입찰보증서선택 팝업(P75, OvsBidWtgrInqFullPopup)
 //       - 보증보험: 직접 입력 + 입찰보증금납부서 파일 선택 업로드
-// P75/P76 풀팝업 컨테이너는 OvsBidWtgrInqFullPopup(내부에 P76 OvsBidWtgrDtlFullPopup)이 캡슐화 — 이 탭은 open/onApply 만 소유.
+// P75 풀팝업(내부에 P76 보증서정보조회 바텀시트, 콘텐츠 OvsBidWtgrDtl)은 OvsBidWtgrInqFullPopup 이 캡슐화 — 이 탭은 open/onApply 만 소유.
 import { useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
+import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
@@ -64,6 +65,10 @@ interface BizGrnteInput {
   grnteInstNm: string
   /** 입찰보증금납부서 파일명 (grntePyslDocNo, 38) — 보증보험인 경우 파일 업로드 */
   grntePyslDocNo: string
+  /** 연대보증서 파일명(면제) — undefined=조회값(biz.gurnAgreDocNo) 사용, ''=X 로 삭제됨 */
+  gurnAgreDocNo?: string
+  /** 지급각서 파일명(면제) — undefined=조회값(biz.giveWrtprmDocNo) 사용, ''=X 로 삭제됨 */
+  giveWrtprmDocNo?: string
 }
 
 const EMPTY_INPUT: BizGrnteInput = {
@@ -71,7 +76,8 @@ const EMPTY_INPUT: BizGrnteInput = {
   grntePayMth: '',
   wtgrNo: '',
   grnteInstNm: '',
-  grntePyslDocNo: '',
+  // 목업: 업로드된 상태로 시드 — 설계서 slide446 표시(File.pdf + X 삭제)와 동일하게 X 버튼 노출.
+  grntePyslDocNo: '입찰보증금납부서.pdf',
 }
 
 export function Stp3({ detail }: { detail: BidPrgrsItem }) {
@@ -124,40 +130,69 @@ export function Stp3({ detail }: { detail: BidPrgrsItem }) {
     ]
 
     if (isExmptn) {
-      // 보증금면제(dl_bizExmptnList) — 연대보증서/지급각서 파일.
+      // 보증금면제(dl_bizExmptnList) — 연대보증서/지급각서 파일. 업로드된 파일은 X 아이콘 버튼으로 삭제
+      //   (설계서 slide445 특이사항 3 "삭제 버튼으로 업로드된 파일 삭제" — 사용자 지시 2026-08-26).
+      //   input 상태 undefined=조회값(biz) 사용 · ''=삭제됨.
+      const gurnAgreDoc = input.gurnAgreDocNo ?? biz.gurnAgreDocNo ?? ''
+      const giveWrtprmDoc = input.giveWrtprmDocNo ?? biz.giveWrtprmDocNo ?? ''
+      // 파일 행 value — 파일명 인풋 + (파일 있을 때) X 삭제 + 파일선택.
+      //   X 버튼 !w-10 !min-w-0: sm 버튼 높이(h-10)와 같은 40px 정사각 — Table 셀의
+      //   [&_button]:w-fit·min-w-[74px] 를 아이콘 버튼에서만 해제.
+      const fileCell = (
+        fileNm: string,
+        docLabel: string,
+        onRemove: () => void,
+        onSelect: () => void,
+      ) => (
+        <>
+          <InputBox value={fileNm} readOnly disabled />
+          <div className="flex items-center gap-krds-3">
+            {fileNm && (
+              <Button
+                variant="inner"
+                size="sm"
+                aria-label={`${docLabel} 첨부파일 삭제`}
+                className="!w-10 !min-w-0 px-0"
+                onClick={onRemove}
+              >
+                <Icon name="Close" size={16} aria-hidden />
+              </Button>
+            )}
+            <Button variant="inner" size="sm" onClick={onSelect}>
+              파일선택
+            </Button>
+          </div>
+        </>
+      )
       rows.push(
         {
           label: '연대보증서',
           type: 'combination',
-          value: (
-            <>
-              <InputBox value={biz.gurnAgreDocNo ?? ''} readOnly disabled />
-              <Button
-                variant="inner"
-                size="sm"
-                onClick={() => console.log('[M74] 연대보증서 파일선택', biz.prchsDmndNo)}
-                // 추후: 네이티브 파일 선택 → bdService.uploadOvsGurnAgreDoc
-              >
-                파일선택
-              </Button>
-            </>
+          value: fileCell(
+            gurnAgreDoc,
+            '연대보증서',
+            () => {
+              patchInput(biz.prchsDmndNo, { gurnAgreDocNo: '' })
+              console.log('[M74] 연대보증서 파일 삭제', biz.prchsDmndNo)
+              // 추후 API: bdService.removeOvsGurnAgreDoc
+            },
+            () => console.log('[M74] 연대보증서 파일선택', biz.prchsDmndNo),
+            // 추후: 네이티브 파일 선택 → bdService.uploadOvsGurnAgreDoc
           ),
         },
         {
           label: '지급각서',
           type: 'combination',
-          value: (
-            <>
-              <InputBox value={biz.giveWrtprmDocNo ?? ''} readOnly disabled />
-              <Button
-                variant="inner"
-                size="sm"
-                onClick={() => console.log('[M74] 지급각서 파일선택', biz.prchsDmndNo)}
-                // 추후: 네이티브 파일 선택 → bdService.uploadOvsGiveWrtprmDoc
-              >
-                파일선택
-              </Button>
-            </>
+          value: fileCell(
+            giveWrtprmDoc,
+            '지급각서',
+            () => {
+              patchInput(biz.prchsDmndNo, { giveWrtprmDocNo: '' })
+              console.log('[M74] 지급각서 파일 삭제', biz.prchsDmndNo)
+              // 추후 API: bdService.removeOvsGiveWrtprmDoc
+            },
+            () => console.log('[M74] 지급각서 파일선택', biz.prchsDmndNo),
+            // 추후: 네이티브 파일 선택 → bdService.uploadOvsGiveWrtprmDoc
           ),
         },
       )
@@ -232,18 +267,37 @@ export function Stp3({ detail }: { detail: BidPrgrsItem }) {
         type: 'combination',
         value: (
           <>
-            <InputBox value={input.grntePyslDocNo} readOnly disabled placeholder="File.pdf" />
-            <Button
-              variant="inner"
-              size="sm"
-              onClick={() => {
-                patchInput(biz.prchsDmndNo, { grntePyslDocNo: '입찰보증금납부서.pdf' })
-                console.log('[M74] 입찰보증금납부서 파일선택', biz.prchsDmndNo)
-                // 추후: 네이티브 파일 선택 → bdService.uploadOvsGrntePyslDoc
-              }}
-            >
-              파일선택
-            </Button>
+            {/* placeholder 제거 — 파일 없는 상태에서 File.pdf 가 첨부된 것처럼 보이던 것 정리 */}
+            <InputBox value={input.grntePyslDocNo} readOnly disabled />
+            <div className="flex items-center gap-krds-3">
+              {/* 업로드된 파일 X 삭제(설계서 slide446 주석 4) — !w-10: 높이(h-10)와 같은 40px 정사각 */}
+              {input.grntePyslDocNo && (
+                <Button
+                  variant="inner"
+                  size="sm"
+                  aria-label="입찰보증금납부서 첨부파일 삭제"
+                  className="!w-10 !min-w-0 px-0"
+                  onClick={() => {
+                    patchInput(biz.prchsDmndNo, { grntePyslDocNo: '' })
+                    console.log('[M74] 입찰보증금납부서 파일 삭제', biz.prchsDmndNo)
+                    // 추후 API: bdService.removeOvsGrntePyslDoc
+                  }}
+                >
+                  <Icon name="Close" size={16} aria-hidden />
+                </Button>
+              )}
+              <Button
+                variant="inner"
+                size="sm"
+                onClick={() => {
+                  patchInput(biz.prchsDmndNo, { grntePyslDocNo: '입찰보증금납부서.pdf' })
+                  console.log('[M74] 입찰보증금납부서 파일선택', biz.prchsDmndNo)
+                  // 추후: 네이티브 파일 선택 → bdService.uploadOvsGrntePyslDoc
+                }}
+              >
+                파일선택
+              </Button>
+            </div>
           </>
         ),
       },

@@ -642,6 +642,7 @@ const prgrsListBase: BidPrgrsItem[] = [
     regRjctYn: true,
   },
   // 7) 국외(사후등록심사) — [입찰참가신청서 작성하기]·[입찰서 작성하기] → 국외 화면 분기.
+  //    기술평가 대상(결과 있음) — 상세 기술평가 행 [내용 보기] → 국외 기술평가결과조회(P71).
   {
     rNum: '7',
     taskSeNm: '국외',
@@ -651,7 +652,9 @@ const prgrsListBase: BidPrgrsItem[] = [
     rfrncNo: 'BAD83990EFD',
     orderInstTelno: '02-2079-5100',
     ctrtMthdNm: '경쟁입찰',
-    bidMthdNm: '총액제',
+    // 입찰방법 단가제 — 입찰서 작성(M71) 스탭2가 단가제(T72)로 분기되는 기준 예시(설계서 slide477 500MD부품).
+    //   총액제(T73) 확인은 /bd/ovsTndrSbmsn?bidMthdNm=총액제 직접 진입.
+    bidMthdNm: '단가제',
     bidClrsDt: '2025-12-23 15:00',
     tndrSbmsnDdlnDt: '2025-12-24 10:00',
     pbancYmd: '2025-11-20',
@@ -660,12 +663,13 @@ const prgrsListBase: BidPrgrsItem[] = [
     bfhdSrng: false,
     bidPrgrsApfr: true,
     tndr: true,
-    techEvl: false,
+    techEvl: true,
     prdcpDcmntSbms: false,
     apfrStatNm: '신청',
     tndrStatNm: '미제출',
     tndrSbmsnPntmCd: 'post',
     regRjctYn: false,
+    techEvlRsltYn: true,
   },
   // 8) 입찰참가신청서 제출완료(신청완료) → [내용 보기]가 입찰참가신청조회(MUI-BD-04-M22)로 분기.
   {

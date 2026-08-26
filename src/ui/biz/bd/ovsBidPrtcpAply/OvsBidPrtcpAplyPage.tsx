@@ -202,7 +202,9 @@ export function OvsBidPrtcpAplyPage() {
   }
 
   return (
-    <div className="flex w-full flex-col">
+    // min-h-full + 액션바 mt-auto — 콘텐츠가 짧은 서약서 단계에서도 하단 버튼이 화면 맨 아래 붙는다
+    // (mbWithdrawal 확정 패턴 2026-08-25).
+    <div className="flex min-h-full w-full flex-col">
       {/* 요약 — 업무구분/계약방법 + 통합참조번호·공고번호 + 입찰건명(설계서: 통합참조번호 BAD83990EFD / 공고번호 EFD0007-2500) */}
       <SummaryInfo
         badges={[
@@ -220,9 +222,6 @@ export function OvsBidPrtcpAplyPage() {
 
       {phase === 'wrot' ? (
         <>
-          {/* 사후심사대상 입찰안내 — 입찰전 꼭 확인(설계서 slide330) */}
-          <Infobox title="사후심사대상 입찰안내" items={NOTICE_ITEMS} />
-
           {/* 서약서 동의 섹션 */}
           <SectionTitle as="h2" topDivider>
             서약서 동의
@@ -240,10 +239,16 @@ export function OvsBidPrtcpAplyPage() {
             onView={openWrot}
           />
 
-          {/* 하단 액션바 — 취소/다음으로(설계서 slide330) */}
-          <div className="border-t border-krds-border-divider bg-krds-bg-primary-faint px-4 py-4">
+          {/* 사후심사대상 입찰안내 — 서약서 동의 하단 배치(사용자 지시 2026-08-26, 원 설계서 slide330 은 상단) */}
+          <Infobox title="사후심사대상 입찰안내" items={NOTICE_ITEMS} />
+
+          {/* 하단 액션바 — 취소/다음으로. 화면 하단 고정(sticky, cm 페이지 공통 패턴) */}
+          <div
+            className="sticky bottom-0 z-30 mt-auto border-t border-krds-border-divider bg-background px-4 pt-3"
+            style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
+          >
             <ButtonGroup
-              layout="split"
+              layout="asymmetric"
               items={[
                 { label: '취소', variant: 'secondary', onClick: () => navigate(-1) },
                 { label: '다음으로', variant: 'primary', onClick: handleWrotNext },
@@ -258,10 +263,13 @@ export function OvsBidPrtcpAplyPage() {
 
           {renderTab()}
 
-          {/* 하단 액션바 — 이전/다음으로(마지막 탭=신청하기, 2026-07-02 화면 수정) */}
-          <div className="border-t border-krds-border-divider bg-krds-bg-primary-faint px-4 py-4">
+          {/* 하단 액션바 — 이전/다음으로(마지막 탭=신청하기, 2026-07-02 화면 수정). 화면 하단 고정(sticky) */}
+          <div
+            className="sticky bottom-0 z-30 mt-auto border-t border-krds-border-divider bg-background px-4 pt-3"
+            style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
+          >
             <ButtonGroup
-              layout="split"
+              layout="asymmetric"
               items={[
                 { label: '이전', variant: 'secondary', onClick: handlePrev },
                 {

@@ -64,7 +64,7 @@ const BidPrtcpAplyRjct = forwardRef<BidPrtcpAplyRjctHandle, BidPrtcpAplyRjctProp
         />
 
         <Accordion type="multiple" defaultValue={['pbanc']}>
-          <AccordionSection value="pbanc" title="공고일반" variant="blue" borderTop={false} flush>
+          <AccordionSection value="pbanc" title="공고일반" variant="blue" borderTop={false} flush triggerClassName="px-0">
             <Table rows={pbancRows} />
           </AccordionSection>
         </Accordion>

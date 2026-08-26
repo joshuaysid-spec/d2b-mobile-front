@@ -90,15 +90,16 @@ export function OvsBidRegRsltByBiz({ detail, sbtInfo, splyInfo }: OvsBidRegRsltB
 
   return (
     <div className="flex flex-col">
-      {/* flush: 시트 본문(px-16) 안이라 아코디언 좌우 패딩 제거(2중 패딩 방지) */}
+      {/* flush(콘텐츠) + triggerClassName px-0(타이틀 바): 시트 본문(px-16) 안이라 아코디언 좌우 패딩
+          전부 제거(2중 패딩 방지 — 타이틀 왼쪽 여백 제거는 사용자 지시 2026-08-26, P82 와 동일 처리) */}
       <Accordion type="multiple" defaultValue={['pbanc', 'result-0']}>
-        <AccordionSection value="pbanc" title="공고 일반정보" borderTop={false} flush>
+        <AccordionSection value="pbanc" title="공고 일반정보" borderTop={false} flush triggerClassName="px-0">
           <Table rows={pbancRows} />
         </AccordionSection>
-        <AccordionSection value="sbt" title="신청업체" flush>
+        <AccordionSection value="sbt" title="신청업체" flush triggerClassName="px-0">
           <Table rows={sbtRows} />
         </AccordionSection>
-        <AccordionSection value="sply" title="입찰업체" flush>
+        <AccordionSection value="sply" title="입찰업체" flush triggerClassName="px-0">
           <Table rows={splyRows} />
         </AccordionSection>
 
@@ -110,6 +111,7 @@ export function OvsBidRegRsltByBiz({ detail, sbtInfo, splyInfo }: OvsBidRegRsltB
             title={`사업별등록결과 (순번 ${item.no})`}
             titleInfo={item.cfmtnRslt}
             flush
+            triggerClassName="px-0"
           >
             <Table
               rows={[
