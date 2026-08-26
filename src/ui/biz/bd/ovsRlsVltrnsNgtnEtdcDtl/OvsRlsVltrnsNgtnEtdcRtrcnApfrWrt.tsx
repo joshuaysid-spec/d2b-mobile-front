@@ -1,23 +1,29 @@
 // 공개수의협상견적서취소신청서작성 (MUI-BD-12-P82, 설계서 slide438 · 항목설명 slide439).
-// 견적서 상세(M78) 우측 하단 + 바로가기 '공개수의협상견적서 취소 신청서 작성' → 이 풀팝업.
-// ⚠️ FullPopup 래퍼(컨테이너/헤더/footer 자체 소유) — Figma 9973-132825 는 m_popup_header 기반 풀스크린 팝업.
-//    섹션은 아코디언이 아니라 SectionTitle + Table 구조(Figma m_section title_19). 항목명 = 설계서 데이터영역 영문(dm_rtrcnAplyDsctn).
-import { useState } from 'react'
+// 견적서 상세(M78) 우측 하단 + 바로가기 '공개수의협상견적서 취소 신청서 작성' → 바텀시트
+//   (풀팝업→바텀시트 전환 — 사용자 지시 2026-08-26).
+// ⚠️ 바텀시트 콘텐츠 전용 — 컨테이너(BottomSheet title/footer/open)는 부모(M78 페이지)가 소유, 여기엔 본문만.
+//    footer '제출하기' 는 부모가 ref(useImperativeHandle)로 submit() 호출 → 제출확인 모달(내부 소유).
+// 섹션은 아코디언이 아니라 SectionTitle + Table 구조 — 시트 본문(px-16) 안이라 자체 좌우 패딩은 제거(px-0).
+//    항목명 = 설계서 데이터영역 영문(dm_rtrcnAplyDsctn).
+import { forwardRef, useImperativeHandle, useState } from 'react'
 
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { TextArea } from '@/ui/common/base/TextArea'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
-import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
-import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { OvsRlsVltrnsSummary } from '@/types/mock/bd'
 
+export interface OvsRlsVltrnsNgtnEtdcRtrcnApfrWrtHandle {
+  /** 부모 BottomSheet footer '제출하기' 가 호출 — 제출확인 모달을 띄운다 */
+  submit: () => void
+}
+
 export interface OvsRlsVltrnsNgtnEtdcRtrcnApfrWrtProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
   /** 견적서 상세에서 넘어온 요약 — 취소신청내역(공고 식별값)을 이 값으로 그린다. */
   detail: OvsRlsVltrnsSummary
+  /** 제출 완료(확인) 시 호출(부모가 BottomSheet 를 닫음) */
+  onSubmitted: () => void
 }
 
 // 취소사유(rsn) — 필수, 자리수 4000 (설계서 slide439 dm_rtrcnAplyDsctn).
@@ -47,13 +53,14 @@ function todayLabel() {
   return `${d.getFullYear()} 년 ${mm} 월 ${dd} 일`
 }
 
-export function OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt({
-  open,
-  onOpenChange,
-  detail,
-}: OvsRlsVltrnsNgtnEtdcRtrcnApfrWrtProps) {
+const OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt = forwardRef<
+  OvsRlsVltrnsNgtnEtdcRtrcnApfrWrtHandle,
+  OvsRlsVltrnsNgtnEtdcRtrcnApfrWrtProps
+>(({ detail, onSubmitted }, ref) => {
   const [rsn, setRsn] = useState('')
   const [confirmOpen, setConfirmOpen] = useState(false)
+
+  useImperativeHandle(ref, () => ({ submit: () => setConfirmOpen(true) }), [])
 
   // 취소신청내역 — 공고 식별값(pbancNo/bizNm/prchsDmndNo/intgRfrncNo)은 상세 요약으로 구동.
   const pbancRows: TableRow[] = [
@@ -78,73 +85,65 @@ export function OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt({
   const handleConfirm = () => {
     console.log('[P82] 견적서 취소 신청서 제출', { rsn }) // 추후 API: bdService.cancelEtdcRtrcnApfrSbmsn
     setConfirmOpen(false)
-    onOpenChange(false)
+    onSubmitted()
   }
 
   return (
-    <>
-      <FullPopup
-        open={open}
-        onOpenChange={onOpenChange}
-        title="공개수의협상견적서 취소신청서"
-        footer={
-          <ButtonGroup
-            layout="asymmetric"
-            items={[
-              { label: '취소', variant: 'secondary', onClick: () => onOpenChange(false) },
-              { label: '제출하기', variant: 'primary', onClick: () => setConfirmOpen(true) },
-            ]}
-          />
-        }
-      >
-        {/* 취소신청내역 / 신청업체 / 입찰업체 — 아코디언 없이 섹션 제목 + 표 (Figma m_section title) */}
-        <SectionTitle as="h3">취소신청내역</SectionTitle>
-        <div className="px-4 py-4">
-          <Table rows={pbancRows} />
-        </div>
+    <div className="flex flex-col">
+      {/* 취소신청내역 / 신청업체 / 입찰업체 — 섹션 제목 + 표.
+          px-0/py-4: 시트 본문(px-16) 안이라 자체 좌우 패딩 제거(이중 패딩 방지) */}
+      <SectionTitle as="h3" className="px-0">
+        취소신청내역
+      </SectionTitle>
+      <div className="py-4">
+        <Table rows={pbancRows} />
+      </div>
 
-        <SectionTitle as="h3">신청업체</SectionTitle>
-        <div className="px-4 py-4">
-          <Table rows={sbtRows} />
-        </div>
+      <SectionTitle as="h3" className="px-0">
+        신청업체
+      </SectionTitle>
+      <div className="py-4">
+        <Table rows={sbtRows} />
+      </div>
 
-        <SectionTitle as="h3">입찰업체 - 제작자/공급자</SectionTitle>
-        <div className="px-4 py-4">
-          <Table rows={splyRows} />
-        </div>
+      <SectionTitle as="h3" className="px-0">
+        입찰업체 - 제작자/공급자
+      </SectionTitle>
+      <div className="py-4">
+        <Table rows={splyRows} />
+      </div>
 
-        {/* 취소사유 — 필수, 최대 4000자 */}
-        <div className="flex flex-col gap-krds-5 px-4 py-4">
-          <InputLabel htmlFor="ovsEtdcRtrcnRsn" required>
-            취소사유
-          </InputLabel>
-          <TextArea
-            id="ovsEtdcRtrcnRsn"
-            value={rsn}
-            onChange={(e) => setRsn(e.target.value)}
-            maxLength={RTRCN_RSN_MAX}
-            placeholder="내용을 입력하세요."
-          />
-          <div className="text-right text-krds-body-sm text-krds-text-muted tabular-nums">
-            {rsn.length} / {RTRCN_RSN_MAX}
-          </div>
+      {/* 취소사유 — 필수, 최대 4000자 */}
+      <div className="flex flex-col gap-krds-5 py-4">
+        <InputLabel htmlFor="ovsEtdcRtrcnRsn" required>
+          취소사유
+        </InputLabel>
+        <TextArea
+          id="ovsEtdcRtrcnRsn"
+          value={rsn}
+          onChange={(e) => setRsn(e.target.value)}
+          maxLength={RTRCN_RSN_MAX}
+          placeholder="내용을 입력하세요."
+        />
+        <div className="text-right text-krds-body-sm text-krds-text-muted tabular-nums">
+          {rsn.length} / {RTRCN_RSN_MAX}
         </div>
+      </div>
 
-        {/* 서약문 박스 — 설계서 slide438 원문(귀 청 / 방위사업청장 귀하), 날짜=오늘(제출일) */}
-        <div className="px-4 pb-krds-8 pt-krds-5">
-          <div className="flex flex-col items-center justify-center gap-krds-5 rounded-[12px] bg-krds-bg-blue-pastel p-krds-8 text-center">
-            <p className="w-full text-[17px] font-bold leading-normal text-krds-text-info">
-              우리 회사가 귀 청에 제출한 전자입찰서를 취소하오니, 무효 처리하여 주시기 바랍니다.
-            </p>
-            <p className="w-full text-[17px] font-bold leading-normal text-krds-text-info">
-              {todayLabel()}
-            </p>
-            <p className="w-full text-[17px] font-bold leading-normal text-krds-text-info">
-              방위사업청장 귀하
-            </p>
-          </div>
+      {/* 서약문 박스 — 설계서 slide438 원문(귀 청 / 방위사업청장 귀하), 날짜=오늘(제출일) */}
+      <div className="pb-krds-8 pt-krds-5">
+        <div className="flex flex-col items-center justify-center gap-krds-5 rounded-[12px] bg-krds-bg-blue-pastel p-krds-8 text-center">
+          <p className="w-full text-[17px] font-bold leading-normal text-krds-text-info">
+            우리 회사가 귀 청에 제출한 전자입찰서를 취소하오니, 무효 처리하여 주시기 바랍니다.
+          </p>
+          <p className="w-full text-[17px] font-bold leading-normal text-krds-text-info">
+            {todayLabel()}
+          </p>
+          <p className="w-full text-[17px] font-bold leading-normal text-krds-text-info">
+            방위사업청장 귀하
+          </p>
         </div>
-      </FullPopup>
+      </div>
 
       {/* 제출확인 — 설계서 제출 이벤트 알럿(Figma 9973-132885, check variant) */}
       <AlertModal
@@ -155,7 +154,9 @@ export function OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt({
         secondaryAction={{ label: '취소' }}
         primaryAction={{ label: '확인', onClick: handleConfirm }}
       />
-    </>
+    </div>
   )
-}
+})
 OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt.displayName = 'OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt'
+
+export { OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt }

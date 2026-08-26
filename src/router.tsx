@@ -1525,16 +1525,16 @@ export const router = createBrowserRouter([
         handle: { header: { variant: 'sub', title: '공개수의협상 계획상세' } },
       },
       {
-        // 공개수의협상 견적서 작성(4스텝) — 정적 'etdc' 세그먼트가 :id 보다 먼저 매칭. 헤더 타이틀 '견적서 작성'.
+        // 공개수의협상 견적서 작성(4스텝) — 정적 'etdc' 세그먼트가 :id 보다 먼저 매칭. 헤더 타이틀 '견적서 제출'(2026-08-26 수정).
         path: 'bd/ovsRlsVltrnsNgtnEtdcSbmsn',
         element: <OvsRlsVltrnsNgtnEtdcSbmsnPage />,
-        handle: { header: { variant: 'sub', title: '견적서 작성' } },
+        handle: { header: { variant: 'sub', title: '견적서 제출' } },
       },
       {
-        // 공개수의협상 견적서 조회(상세 읽기, 4탭) — 정적 'etdc-dtl' 세그먼트. 헤더 타이틀 '견적서 조회'.
+        // 공개수의협상 견적서 조회(상세 읽기, 4탭) — 정적 'etdc-dtl' 세그먼트. 헤더 타이틀 '공개수의협상 견적서 상세'(2026-08-26 수정).
         path: 'bd/ovsRlsVltrnsNgtnEtdcDtl',
         element: <OvsRlsVltrnsNgtnEtdcDtlPage />,
-        handle: { header: { variant: 'sub', title: '견적서 조회' } },
+        handle: { header: { variant: 'sub', title: '공개수의협상 견적서 상세' } },
       },
       {
         // 공개수의협상 결과조회 — 정적 'rslt' 세그먼트. 헤더 타이틀 '공개수의협상 결과조회'.

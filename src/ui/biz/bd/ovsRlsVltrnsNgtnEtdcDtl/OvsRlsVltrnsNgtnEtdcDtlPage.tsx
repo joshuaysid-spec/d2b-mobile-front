@@ -1,8 +1,8 @@
 // 국외 공개수의협상 견적서 조회(상세, 읽기전용) - 스탭1 일반정보 + 셸 (MUI-BD-12-M78 컨테이너 · 스탭1 일반정보 T78(구 M78 탭 — v1.83 재편), 설계서 slide429~430).
 // 진입: 공개수의협상계획상세 > 우측 하단 + 바로가기 > 견적서 조회. 레퍼런스: OvsRlsVltrnsNgtnEtdcSbmsnPage(견적서 작성).
 // 셸: SummaryInfo + StepBar(신청서/서명/제출, 전부 done) + TabList(4탭) + 탭콘텐츠(읽기전용). 하단 액션바·FAB 없음.
-// ⚠️ 페이지(헤더) 타이틀 = '견적서 조회'(라우트 handle). 설계서 우선 — 설계서에 없는 요소는 제거.
-import { useState } from 'react'
+// ⚠️ 페이지(헤더) 타이틀 = '공개수의협상 견적서 상세'(라우트 handle — 2026-08-26 수정). 설계서 우선 — 설계서에 없는 요소는 제거.
+import { useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
@@ -16,7 +16,10 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsRlsVltrnsNgtnEtdcDtl2 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcDtl/OvsRlsVltrnsNgtnEtdcDtl2'
 import { OvsRlsVltrnsNgtnEtdcDtl3 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcDtl/OvsRlsVltrnsNgtnEtdcDtl3'
 import { OvsRlsVltrnsNgtnEtdcDtl4 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcDtl/OvsRlsVltrnsNgtnEtdcDtl4'
-import { OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcDtl/OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt'
+import {
+  OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt,
+  type OvsRlsVltrnsNgtnEtdcRtrcnApfrWrtHandle,
+} from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcDtl/OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt'
 import type { OvsRlsVltrnsGeneral, OvsRlsVltrnsSummary } from '@/types/mock/bd'
 
 // 진행단계(설계서 slide429 "신청서 전체 진행단계 표시"): 신청서 → 서명 → 제출.
@@ -75,7 +78,8 @@ export function OvsRlsVltrnsNgtnEtdcDtlPage() {
   const summary = (useLocation().state as OvsRlsVltrnsSummary | null) ?? MOCK_SUMMARY
   const [tab, setTab] = useState('general')
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기 바텀시트
-  const [rtrcnOpen, setRtrcnOpen] = useState(false) // 견적서 취소신청서작성(P82) 풀팝업
+  const [rtrcnOpen, setRtrcnOpen] = useState(false) // 견적서 취소신청서작성(P82) 바텀시트(풀팝업→전환 2026-08-26)
+  const rtrcnRef = useRef<OvsRlsVltrnsNgtnEtdcRtrcnApfrWrtHandle>(null) // P82 제출 핸들
 
   const goTab = (next: string) => {
     setTab(next)
@@ -193,8 +197,28 @@ export function OvsRlsVltrnsNgtnEtdcDtlPage() {
         />
       </BottomSheet>
 
-      {/* 견적서 취소신청서작성(P82) — 풀팝업(헤더/footer 자체 소유, 제출 → 확인 모달) */}
-      <OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt open={rtrcnOpen} onOpenChange={setRtrcnOpen} detail={summary} />
+      {/* 견적서 취소신청서작성(P82) — 바텀시트(컨테이너/footer 부모 소유, 제출은 ref 핸들 → 확인 모달).
+          풀팝업→바텀시트 전환(사용자 지시 2026-08-26). */}
+      <BottomSheet
+        open={rtrcnOpen}
+        onOpenChange={setRtrcnOpen}
+        title="공개수의협상견적서 취소신청서"
+        footer={
+          <ButtonGroup
+            layout="asymmetric"
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setRtrcnOpen(false) },
+              { label: '제출하기', variant: 'primary', onClick: () => rtrcnRef.current?.submit() },
+            ]}
+          />
+        }
+      >
+        <OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt
+          ref={rtrcnRef}
+          detail={summary}
+          onSubmitted={() => setRtrcnOpen(false)}
+        />
+      </BottomSheet>
     </div>
   )
 }

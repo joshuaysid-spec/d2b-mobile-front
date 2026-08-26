@@ -54,6 +54,8 @@ const DEFAULT_VISIBLE = 4
 
 interface ItemState {
   itemSbstSe: 'Y' | 'N'
+  /** 품목대체첨부문서 파일명 — 파일선택으로 첨부, X 로 삭제(''=미첨부) */
+  itemSbstDocNm: string
   mdfcnInvtNo: string
   mdfcnPrtsNo: string
   estmtUntprc: string
@@ -64,6 +66,7 @@ const ItemCard = memo(function ItemCard({ item }: { item: OvsRlsVltrnsEtdcItem }
   const [expanded, setExpanded] = useState(false)
   const [s, setS] = useState<ItemState>({
     itemSbstSe: 'N',
+    itemSbstDocNm: '',
     mdfcnInvtNo: '',
     mdfcnPrtsNo: '',
     estmtUntprc: '',
@@ -96,8 +99,45 @@ const ItemCard = memo(function ItemCard({ item }: { item: OvsRlsVltrnsEtdcItem }
           </div>
         ),
       },
-      // 품목대체첨부문서 — 빈칸(추후 첨부 UI 연결).
-      { label: '품목대체첨부문서', value: '' },
+      {
+        // 품목대체첨부문서 — 파일 첨부(사용자 지시 2026-08-26): 파일명 + (첨부 시) X 삭제 + 파일선택.
+        //   (입찰참가신청서 T74 파일 행 패턴 — X 버튼 !w-10 !min-w-0: 셀 버튼 최소폭 해제, 40px 정사각)
+        label: '품목대체첨부문서',
+        type: 'combination',
+        value: (
+          <>
+            <InputBox value={s.itemSbstDocNm} readOnly disabled />
+            <div className="flex items-center gap-krds-3">
+              {s.itemSbstDocNm && (
+                <Button
+                  variant="inner"
+                  size="sm"
+                  aria-label="품목대체첨부문서 삭제"
+                  className="!w-10 !min-w-0 px-0"
+                  onClick={() => {
+                    set({ itemSbstDocNm: '' })
+                    console.log('[M74] 품목대체첨부문서 삭제', item.frcptlArtclNo)
+                    // 추후 API: bdService.removeEtdcItemSbstDoc
+                  }}
+                >
+                  <Icon name="Close" size={16} aria-hidden />
+                </Button>
+              )}
+              <Button
+                variant="inner"
+                size="sm"
+                onClick={() => {
+                  set({ itemSbstDocNm: '품목대체첨부문서.pdf' })
+                  console.log('[M74] 품목대체첨부문서 파일선택', item.frcptlArtclNo)
+                  // 추후: 네이티브 파일 선택 → bdService.uploadEtdcItemSbstDoc
+                }}
+              >
+                파일선택
+              </Button>
+            </div>
+          </>
+        ),
+      },
       {
         // 수정재고번호 — 항상 활성, 숫자만 입력(inputType=numeric). (onClear 제거로 입력폭 100%)
         label: '수정재고번호',
