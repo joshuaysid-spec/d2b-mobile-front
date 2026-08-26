@@ -1,16 +1,17 @@
-// 이전공고입찰내역품목상세 (MUI-BD-01-P80, 설계서 slide321·322·323 / 영문 BfrPbancBidDsctnItemDtl).
-// 클릭한 이전 공고의 입찰내역 품목을 확인하고 현재 공고의 입찰내역으로 불러오는 팝업.
-// 내역 목록(최대 수백건)·품목별 15개 필드·더보기·불러오기/취소 footer 로 화면급 → FullPopup 래퍼(*FullPopup 컨벤션).
+// 이전공고입찰내역품목상세 (MUI-BD-01-P80, 설계서 slide429 / 영문 BfrPbancBidDsctnItemDtl).
+// 클릭한 이전 공고의 입찰내역 품목을 확인하고 현재 공고의 입찰내역으로 불러오는 **바텀시트 콘텐츠 전용** 컴포넌트
+// (2026-08-25 사용자 확정 — 구 FullPopup 래퍼(BfrPbancBidDsctnItemDtlFullPopup)를 바텀시트로 전환).
+// 컨테이너(BottomSheet)/footer([취소][불러오기])는 부모(P79 OvsBfrTmprBidBidCnRegFullPopup)가 소유 —
+//   footer [불러오기]는 ref(useImperativeHandle) 의 loadSave() 로 호출(*Sheet 래퍼 금지 규칙).
 // 품목 카드: 항목선택(Checkbox box) + 요약 4개 필드(Table), '내역 펼쳐보기/접기' 로 전체 필드(dl_bidCnList) 확장.
 // 데이터는 목업(설계서 1.2 dl_bidCnList 항목명 그대로), 핸들러는 API 경계 스텁(console.log).
-import { useEffect, useMemo, useState } from 'react'
+// 시트가 닫히면 언마운트되어 선택/펼침 상태는 자동 초기화된다(구 useEffect(open) 리셋 대체).
+import { forwardRef, useImperativeHandle, useMemo, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { Checkbox } from '@/ui/common/base/Checkbox'
 import { Icon } from '@/ui/common/base/Icon'
-import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { Card } from '@/ui/common/composites/Card'
-import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
 
@@ -264,30 +265,25 @@ const PAGE_STEP = 10 // 더보기 10개씩(와이어프레임 '더보기(10/258)
 /** 빈 값(필수 아님 필드) 표시 */
 const dash = (v: string) => (v ? v : '-')
 
-export interface BfrPbancBidDsctnItemDtlFullPopupProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  /** 보관함 목록에서 클릭한 이전 공고 (닫힘 상태면 null) */
-  pbanc: BfrPbancInfoItem | null
+export interface BfrPbancBidDsctnItemDtlHandle {
+  /** 부모 BottomSheet footer [불러오기] 가 호출 — 선택 품목(미선택 시 전체)을 현재 공고 입찰내역으로 저장. */
+  loadSave: () => void
 }
 
-export function BfrPbancBidDsctnItemDtlFullPopup({
-  open,
-  onOpenChange,
-  pbanc,
-}: BfrPbancBidDsctnItemDtlFullPopupProps) {
+export interface BfrPbancBidDsctnItemDtlProps {
+  /** 보관함 목록에서 클릭한 이전 공고 */
+  pbanc: BfrPbancInfoItem
+  /** 불러오기 완료 시 호출(부모가 시트를 닫음) */
+  onDone: () => void
+}
+
+export const BfrPbancBidDsctnItemDtl = forwardRef<
+  BfrPbancBidDsctnItemDtlHandle,
+  BfrPbancBidDsctnItemDtlProps
+>(({ pbanc, onDone }, ref) => {
   const [visible, setVisible] = useState(PAGE_STEP) // 더보기 노출 개수
   const [checkedNos, setCheckedNos] = useState<string[]>([]) // 항목선택(불러올 품목 순번)
   const [expandedNos, setExpandedNos] = useState<string[]>([]) // 내역 펼쳐보기 상태(순번)
-
-  // 팝업이 열릴 때마다 상태 초기화 — 공고를 바꿔 다시 열어도 이전 선택/펼침이 남지 않게.
-  useEffect(() => {
-    if (open) {
-      setVisible(PAGE_STEP)
-      setCheckedNos([])
-      setExpandedNos([])
-    }
-  }, [open])
 
   // 클릭한 공고의 입찰내역 목록 — 목업. 추후 API: bdService.selectBfrTmprBidCnList(pbanc.pbancNo, pbanc.pbancOd)
   const list = MOCK_BID_CN_LIST
@@ -301,24 +297,20 @@ export function BfrPbancBidDsctnItemDtlFullPopup({
     setExpandedNos((prev) => (prev.includes(no) ? prev.filter((n) => n !== no) : [...prev, no]))
   }
 
-  // 불러오기 클릭(btn_loadSave_onclick) — 선택 품목(미선택 시 전체)을 현재 공고의 입찰내역으로 저장.
-  const handleLoadSave = () => {
-    const items = checkedNos.length > 0 ? list.filter((it) => checkedNos.includes(it.no)) : list
-    console.log('[P80] 이전공고입찰내역불러오기', {
-      pbancNo: pbanc?.pbancNo,
-      pbancOd: pbanc?.pbancOd,
-      count: items.length,
-      items,
-    })
-    // 추후 API: bdService.saveBfrTmprBidCn(pbanc.pbancNo, pbanc.pbancOd, items)
-    onOpenChange(false)
-  }
-
-  // 취소 클릭(btn_cancle_onclick) — 작업내용을 반영하지 않고 현재 팝업 종료.
-  const handleCancel = () => {
-    console.log('[P80] 취소 — 반영 없이 종료')
-    onOpenChange(false)
-  }
+  // 불러오기(btn_loadSave_onclick) — 부모 footer 가 ref 로 호출. 선택 품목(미선택 시 전체) 저장 후 onDone.
+  useImperativeHandle(ref, () => ({
+    loadSave: () => {
+      const items = checkedNos.length > 0 ? list.filter((it) => checkedNos.includes(it.no)) : list
+      console.log('[P80] 이전공고입찰내역불러오기', {
+        pbancNo: pbanc.pbancNo,
+        pbancOd: pbanc.pbancOd,
+        count: items.length,
+        items,
+      })
+      // 추후 API: bdService.saveBfrTmprBidCn(pbanc.pbancNo, pbanc.pbancOd, items)
+      onDone()
+    },
+  }))
 
   // 품목 1건 → Table rows. 접힘 = 요약 4개(순번/재고번호/부품번호/품명), 펼침 = dl_bidCnList 전체 필드.
   const buildRows = (it: BfrPbancBidCnItem, expanded: boolean): TableRow[] => {
@@ -347,83 +339,67 @@ export function BfrPbancBidDsctnItemDtlFullPopup({
   }
 
   return (
-    <FullPopup
-      open={open}
-      onOpenChange={onOpenChange}
-      title="이전공고입찰내역품목상세"
-      footer={
-        <ButtonGroup
-          layout="asymmetric"
-          items={[
-            { label: '취소', variant: 'secondary', onClick: handleCancel },
-            { label: '불러오기', variant: 'primary', onClick: handleLoadSave },
-          ]}
-        />
-      }
-    >
-      <div className="flex flex-col gap-krds-7 px-4 py-4">
-        {/* 대상 공고 — 보관함 목록에서 클릭한 공고 */}
-        {pbanc && (
-          <Table
-            rows={[
-              { label: '공고번호', value: `${pbanc.pbancNo}-${pbanc.pbancOd}` },
-              { label: '구매요청번호', value: pbanc.prchsDmndNo },
-            ]}
-          />
-        )}
+    // 좌우 패딩은 시트 본문(px-16)이 제공 — 자체 좌우 패딩 없음(2중 패딩 금지).
+    <div className="flex flex-col gap-krds-7 py-krds-5">
+      {/* 대상 공고 — 보관함 목록에서 클릭한 공고 */}
+      <Table
+        rows={[
+          { label: '공고번호', value: `${pbanc.pbancNo}-${pbanc.pbancOd}` },
+          { label: '구매요청번호', value: pbanc.prchsDmndNo },
+        ]}
+      />
 
-        {/* 입찰내역 총 건수 */}
-        <p className="text-[17px] font-bold leading-normal text-krds-text-primary-active">
-          입찰내역 총 {total}건
-        </p>
+      {/* 입찰내역 총 건수 */}
+      <p className="text-[17px] font-bold leading-normal text-krds-text-primary-active">
+        입찰내역 총 {total}건
+      </p>
 
-        {/* 입찰내역 품목 목록 — 항목선택 + 요약 Table + 내역 펼쳐보기/접기 */}
-        <div className="flex w-full flex-col gap-krds-8">
-          {visibleList.map((it) => {
-            const expanded = expandedNos.includes(it.no)
-            return (
-              <Card
-                key={it.no}
-                badges={
-                  <Checkbox
-                    variant="box"
-                    label="항목선택"
-                    checked={checkedNos.includes(it.no)}
-                    onCheckedChange={(c) => toggleChecked(it.no, c === true)}
-                  />
-                }
-                footer={
-                  <div className="flex w-full flex-col gap-krds-5">
-                    <Table rows={buildRows(it, expanded)} />
-                    {/* 내역 펼쳐보기 ↓ / 내역 접기 ↑ */}
-                    <button
-                      type="button"
-                      onClick={() => toggleExpanded(it.no)}
-                      className="flex w-full items-center justify-center gap-krds-3 py-krds-3 text-[17px] font-medium text-krds-text-primary-active"
-                    >
-                      {expanded ? '내역 접기' : '내역 펼쳐보기'}
-                      <Icon
-                        name="ExpandMore"
-                        size={20}
-                        className={cn('transition-transform duration-200', expanded && 'rotate-180')}
-                        aria-hidden
-                      />
-                    </button>
-                  </div>
-                }
-              />
-            )
-          })}
-        </div>
-
-        {/* 더보기 — 10개씩 추가(와이어프레임 '더보기(10/258)') */}
-        {visible < total && (
-          <Button variant="secondary" className="w-full" onClick={() => setVisible((v) => v + PAGE_STEP)}>
-            더보기 ({visibleList.length}/{total}건)
-          </Button>
-        )}
+      {/* 입찰내역 품목 목록 — 항목선택 + 요약 Table + 내역 펼쳐보기/접기 */}
+      <div className="flex w-full flex-col gap-krds-8">
+        {visibleList.map((it) => {
+          const expanded = expandedNos.includes(it.no)
+          return (
+            <Card
+              key={it.no}
+              badges={
+                <Checkbox
+                  variant="box"
+                  label="항목선택"
+                  checked={checkedNos.includes(it.no)}
+                  onCheckedChange={(c) => toggleChecked(it.no, c === true)}
+                />
+              }
+              footer={
+                <div className="flex w-full flex-col gap-krds-5">
+                  <Table rows={buildRows(it, expanded)} />
+                  {/* 내역 펼쳐보기 ↓ / 내역 접기 ↑ */}
+                  <button
+                    type="button"
+                    onClick={() => toggleExpanded(it.no)}
+                    className="flex w-full items-center justify-center gap-krds-3 py-krds-3 text-[17px] font-medium text-krds-text-primary-active"
+                  >
+                    {expanded ? '내역 접기' : '내역 펼쳐보기'}
+                    <Icon
+                      name="ExpandMore"
+                      size={20}
+                      className={cn('transition-transform duration-200', expanded && 'rotate-180')}
+                      aria-hidden
+                    />
+                  </button>
+                </div>
+              }
+            />
+          )
+        })}
       </div>
-    </FullPopup>
+
+      {/* 더보기 — 10개씩 추가(와이어프레임 '더보기(10/258)') */}
+      {visible < total && (
+        <Button variant="secondary" className="w-full" onClick={() => setVisible((v) => v + PAGE_STEP)}>
+          더보기 ({visibleList.length}/{total}건)
+        </Button>
+      )}
+    </div>
   )
-}
-BfrPbancBidDsctnItemDtlFullPopup.displayName = 'BfrPbancBidDsctnItemDtlFullPopup'
+})
+BfrPbancBidDsctnItemDtl.displayName = 'BfrPbancBidDsctnItemDtl'
