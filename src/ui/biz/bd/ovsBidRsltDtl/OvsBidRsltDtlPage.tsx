@@ -9,9 +9,6 @@ import { useLocation, useSearchParams } from 'react-router-dom'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
-import { BottomSheet } from '@/ui/common/composites/BottomSheet'
-import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
-import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -117,19 +114,6 @@ function GeneralInfo({ detail, bidTypeNm }: { detail: OvsBidRsltGeneral; bidType
 export function OvsBidRsltDtlPage() {
   const [tab, setTab] = useState('general')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
-  const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기 바텀시트(국내 상세와 동일)
-  const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보 조회 풀팝업(MUI-BD-01-M74)
-
-  // 바로가기 바텀시트 항목 — 국내 입찰결과상세(BidRsltDtlPage)와 동일. 작성류 primary · 포기/취소 secondary · 환율정보 tertiary.
-  const shortcutItems: { id: string; label: string; variant: 'primary' | 'secondary' | 'tertiary' }[] = [
-    { id: 'pq', label: '사전심사(PQ)신청서 작성하기', variant: 'primary' },
-    { id: 'bid', label: '입찰서(견적서) 작성하기', variant: 'primary' },
-    { id: 'apply', label: '입찰참가신청서 작성하기', variant: 'primary' },
-    { id: 'giveup', label: '입찰포기 신청서 작성하기', variant: 'secondary' },
-    { id: 'cancel', label: '입찰취소 신청서 작성하기', variant: 'secondary' },
-    { id: 'fx', label: '환율정보 바로가기', variant: 'tertiary' },
-  ]
-
   // 상단 요약 — 카드에서 넘어온 값(navigate state) 우선, 없으면 fallback 목업.
   //   단가제/총액제 분기 테스트: 직접 URL 진입 시 ?bidTypeNm=총액제 쿼리로 총액제 확인 가능.
   const [searchParams] = useSearchParams()
@@ -196,35 +180,9 @@ export function OvsBidRsltDtlPage() {
       {/* 탭 콘텐츠 — 짧은 탭도 헤더 접힘 지탱 위해 최소 높이 확보(진동 방지). */}
       <div className="min-h-[100dvh]">{renderTabContent(tab)}</div>
 
-      {/* 플로팅 버튼 — 맨위로(항상) + 바로가기(+). 국내 입찰결과상세와 동일. 스크롤 주체는 AppLayout 의 #app-scroll(main). */}
-      <FloatingActionButton
-        className="fixed bottom-0 right-4 z-40"
-        onTop={scrollToTop}
-        onPlus={() => setShortcutOpen(true)}
-        plusLabel="바로가기"
-      />
-
-      {/* 바로가기 바텀시트 — 컨테이너는 페이지가 직접 조립, 항목은 세로 버튼 리스트(국내 상세와 동일) */}
-      <BottomSheet open={shortcutOpen} onOpenChange={setShortcutOpen} title="바로가기">
-        <ButtonGroup
-          layout="vertical"
-          items={shortcutItems.map((it) => ({
-            label: it.label,
-            variant: it.variant,
-            onClick: () => {
-              setShortcutOpen(false)
-              if (it.id === 'fx') {
-                setExchrtOpen(true) // 환율정보 바로가기 → 환율정보 조회 풀팝업(M74)
-                return
-              }
-              console.log('[OvsBidRslt] 바로가기', it.id) // 추후: 각 신청서 작성 화면 이동
-            },
-          }))}
-        />
-      </BottomSheet>
-
-      {/* 환율정보 조회 풀팝업 (MUI-BD-01-M74) — 바로가기 '환율정보 바로가기' 로 진입 */}
-      <OvsExchrtListFullPopup open={exchrtOpen} onOpenChange={setExchrtOpen} />
+      {/* 플로팅 버튼 — 맨위로만(바로가기 + 버튼·시트는 사용자 지시로 삭제 2026-08-26).
+          스크롤 주체는 AppLayout 의 #app-scroll(main). */}
+      <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />
     </div>
   )
 }

@@ -115,10 +115,10 @@ export function OvsRlsVltrnsNgtnPlanDtlPage() {
     { label: '개찰일자', value: summary.bdopnDt },
   ]
 
-  // 바로가기 항목 (사용자 요청) — 견적서 작성 / 견적서 조회. 추후 공개수의협상견적서제출(M74) 등 연결.
+  // 바로가기 항목 — 견적서 제출(M74) / 공개수의협상 견적서 상세(M78). (버튼명 수정 — 사용자 지시 2026-08-26)
   const shortcutItems: { id: string; label: string; variant: 'primary' | 'secondary' }[] = [
-    { id: 'etdcWrt', label: '견적서 작성', variant: 'primary' },
-    { id: 'etdcInq', label: '견적서 조회', variant: 'secondary' },
+    { id: 'etdcWrt', label: '견적서 제출', variant: 'primary' },
+    { id: 'etdcInq', label: '공개수의협상 견적서 상세', variant: 'secondary' },
   ]
 
   const renderTabContent = (current: string) => {

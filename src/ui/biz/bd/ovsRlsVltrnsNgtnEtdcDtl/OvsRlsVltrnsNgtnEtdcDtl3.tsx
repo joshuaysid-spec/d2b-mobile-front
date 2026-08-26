@@ -1,13 +1,17 @@
 // 공개수의협상 견적서 조회(상세) - 입찰품목(입찰참여품목 단가제) (MUI-BD-12-T80(구 M80 — v1.83 재편), 설계서 slide432). 읽기전용.
 // 품목 카드(기본 4행 + 내역 펼쳐보기) — 전부 값 표시(입력 없음). altSe='Y' 시 품목대체첨부문서·수정재고/부품번호 노출.
+// 품목대체첨부문서 [보기] → 첨부파일 조회 바텀시트(국외 입찰공고 상세의 OvsBidPbanc_AtchFileInq 재사용 —
+//   사용자 지시 2026-08-26). 컨테이너는 여기(탭 콘텐츠)가 소유.
 import { memo, useMemo, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { OvsBidPbanc_AtchFileInq } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbanc_AtchFileInq'
 import { cn } from '@/utils/cn'
-import type { OvsRlsVltrnsEtdcDtlItem } from '@/types/mock/bd'
+import type { OvsAtchDoc, OvsRlsVltrnsEtdcDtlItem } from '@/types/mock/bd'
 
 // 입찰참여품목 목업 — 설계서 slide432 값 그대로. 항목명 = 설계서 데이터영역 영문(dl_bidItemList).
 const ITEM_BASE: Omit<OvsRlsVltrnsEtdcDtlItem, 'frcptlArtclNo'> = {
@@ -34,7 +38,14 @@ const MOCK_ITEMS: OvsRlsVltrnsEtdcDtlItem[] = Array.from({ length: TOTAL }, (_, 
 // 접힘 시 노출 행수 — 항목번호/재고번호/부품번호/품명 4행(slide432).
 const DEFAULT_VISIBLE = 4
 
-const ItemCard = memo(function ItemCard({ item }: { item: OvsRlsVltrnsEtdcDtlItem }) {
+const ItemCard = memo(function ItemCard({
+  item,
+  onViewAtch,
+}: {
+  item: OvsRlsVltrnsEtdcDtlItem
+  /** 품목대체첨부문서 [보기] — 첨부파일 조회 바텀시트 호출(컨테이너는 탭 콘텐츠 소유) */
+  onViewAtch: (item: OvsRlsVltrnsEtdcDtlItem) => void
+}) {
   const [expanded, setExpanded] = useState(false)
 
   const rows = useMemo<TableRow[]>(() => {
@@ -50,7 +61,19 @@ const ItemCard = memo(function ItemCard({ item }: { item: OvsRlsVltrnsEtdcDtlIte
       // 품목대체 = Y 일 때만 대체 관련 3행 노출(설계서 slide432).
       ...(item.itemSbstSe === 'Y'
         ? ([
-            { label: '품목대체첨부문서', value: item.itemSbstDocEn },
+            {
+              // 품목대체첨부문서 — [보기] 로 첨부파일 조회 바텀시트 호출(사용자 지시 2026-08-26).
+              label: '품목대체첨부문서',
+              type: 'combination',
+              value: (
+                <div className="flex flex-col items-start gap-krds-3">
+                  <span>{item.itemSbstDocEn}</span>
+                  <Button size="sm" variant="inner" onClick={() => onViewAtch(item)}>
+                    보기
+                  </Button>
+                </div>
+              ),
+            },
             { label: '수정재고번호', value: item.mdfcnInvtNo },
             { label: '수정부품번호', value: item.mdfcnPrtsNo },
           ] as TableRow[])
@@ -59,7 +82,7 @@ const ItemCard = memo(function ItemCard({ item }: { item: OvsRlsVltrnsEtdcDtlIte
       { label: '견적금액', value: item.estmtAmt, type: 'number' },
       { label: '화폐단위', value: item.crncNm },
     ]
-  }, [item])
+  }, [item, onViewAtch])
 
   const visibleRows = expanded ? rows : rows.slice(0, DEFAULT_VISIBLE)
 
@@ -86,8 +109,15 @@ const ItemCard = memo(function ItemCard({ item }: { item: OvsRlsVltrnsEtdcDtlIte
 export function OvsRlsVltrnsNgtnEtdcDtl3() {
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
+  // 첨부파일 조회 대상 품목 — null=시트 닫힘.
+  const [atchItem, setAtchItem] = useState<OvsRlsVltrnsEtdcDtlItem | null>(null)
   const loaded = Math.min(page * pageSize, TOTAL)
   const visible = MOCK_ITEMS.slice(0, loaded)
+
+  // 선택 품목의 첨부서류 목록(dl_docList 형태) — 목업. 추후 API: bdService.selectOvsItemAtchFileList(frcptlArtclNo)
+  const buildAtchDocs = (it: OvsRlsVltrnsEtdcDtlItem): OvsAtchDoc[] => [
+    { docTitl: '품목대체첨부문서', fileNm: it.itemSbstDocEn, fileSz: 262_144, fileId: `ETDC-ATCH-${it.frcptlArtclNo}` },
+  ]
 
   return (
     <div className="flex flex-col gap-krds-7 py-4">
@@ -105,9 +135,22 @@ export function OvsRlsVltrnsNgtnEtdcDtl3() {
       </div>
       <div className="flex flex-col gap-krds-8">
         {visible.map((item) => (
-          <ItemCard key={item.frcptlArtclNo} item={item} />
+          <ItemCard key={item.frcptlArtclNo} item={item} onViewAtch={setAtchItem} />
         ))}
       </div>
+
+      {/* 첨부파일 조회 바텀시트 — 컨테이너/footer(닫기)는 여기 소유, 콘텐츠는 OvsBidPbanc_AtchFileInq 재사용 */}
+      <BottomSheet
+        open={atchItem !== null}
+        onOpenChange={(o) => {
+          if (!o) setAtchItem(null)
+        }}
+        title="첨부파일 조회"
+        onConfirm={() => setAtchItem(null)}
+        confirmLabel="닫기"
+      >
+        {atchItem && <OvsBidPbanc_AtchFileInq docs={buildAtchDocs(atchItem)} />}
+      </BottomSheet>
       {loaded < TOTAL && (
         <div className="px-4">
           <Button
