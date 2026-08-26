@@ -6,6 +6,9 @@
 //   bfhdSrngRsltYn/techEvlRsltYn)은 설계서 미정의(상세설계 예정) 임시 항목 — 상태별 버튼 노출(slide68)을 구동.
 // ⚠️ 상태에 따라 표 행·플로팅(바로가기) 버튼이 분기된다. 결과조회(기술평가 P01·생산능력서류 P06)는 풀팝업.
 //    입찰참가신청서 작성(M01)·사전심사 신청(M01)은 화면 이동. 반려(P07)는 입찰참가신청서 화면에 있다.
+//    플로팅 바로가기는 국내/국외 분기 — 국내: 기존 상태별 구성 유지 · 국외: 입찰서 작성하기(M71)+
+//    입찰취소(국외 전용 P81)+환율정보(M74) 3종(사용자 확정 2026-08-26). 생산능력서류제출(P06)·
+//    입찰참가등록반려신청(P07)·입찰포기(P03)는 국외 챕터(slide432~435)에 화면 미정의(국외 미사용)라 제외.
 import { useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
@@ -20,11 +23,12 @@ import { SummaryInfo, type SummaryInfoBadge } from '@/ui/common/composites/Summa
 import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
 import { TechEvlRsltInq } from '@/ui/biz/bd/bfhdSrngRsltInq/TechEvlRsltInq'
 import { PrdctnAbltDcmntSbmsn, type PrdctnAbltDcmntSbmsnHandle } from '@/ui/biz/bd/bfhdSrngRsltInq/PrdctnAbltDcmntSbmsn'
+import { OvsBidRtrcnAply, type OvsBidRtrcnAplyHandle } from '@/ui/biz/bd/ovsTndrDtl/OvsBidRtrcnAply'
 import { BidAbndAperWrt, type BidAbndAperWrtHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidAbndAperWrt'
 import { BidAbndAperDtl } from '@/ui/biz/bd/bidPrgsDtlInq/BidAbndAperDtl'
 import { BidRtrcnAperInq, type BidRtrcnAperInqHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidRtrcnAperInq'
 import { BidRtrcnAperInqDtl } from '@/ui/biz/bd/bidPrgsDtlInq/BidRtrcnAperInqDtl'
-import type { BidPrgrsItem, BidPrgrsDetail } from '@/types/mock/bd'
+import type { BidPrgrsItem, BidPrgrsDetail, OvsTndrDtlItem } from '@/types/mock/bd'
 
 // 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — 설계서 dlt_bidPrgrsList 항목명/형식 그대로.
 const MOCK_BID_PRGRS_DETAIL: BidPrgrsDetail = {
@@ -183,10 +187,12 @@ export function BidPrgsDtlInqPage() {
   const [cancelDtlOpen, setCancelDtlOpen] = useState(false) // 입찰취소신청서조회(P10)
   const [techEvlOpen, setTechEvlOpen] = useState(false) // 기술평가결과조회(P01)
   const [prdcpOpen, setPrdcpOpen] = useState(false) // 생산능력서류제출(P06)
-  // P03/P04/P06 은 바텀시트 콘텐츠 전용 — 컨테이너/footer 는 여기(부모)가 소유, 제출은 ref 핸들로 호출.
+  const [ovsRtrcnOpen, setOvsRtrcnOpen] = useState(false) // 국외 입찰취소신청서작성(MUI-BD-06-P81)
+  // P03/P04/P06/P81 은 바텀시트 콘텐츠 전용 — 컨테이너/footer 는 여기(부모)가 소유, 제출은 ref 핸들로 호출.
   const abandonRef = useRef<BidAbndAperWrtHandle>(null)
   const cancelRef = useRef<BidRtrcnAperInqHandle>(null)
   const prdcpRef = useRef<PrdctnAbltDcmntSbmsnHandle>(null)
+  const ovsRtrcnRef = useRef<OvsBidRtrcnAplyHandle>(null)
 
   // 업무구분(taskSeNm) 데이터 필드로 국내/국외 화면 분기 — 목록(M01)·상세(M02)는 국내외 공용(설계서 slide324).
   const isOvs = detail.taskSeNm === '국외'
@@ -219,6 +225,27 @@ export function BidPrgsDtlInqPage() {
   const rows = buildRows(detail, handleView)
   const status = statusBadge(detail)
 
+  // 국외 입찰취소(P81) 콘텐츠에 넘길 항목 — 상세(dlt_bidPrgrsList)에서 매핑 가능한 값 + 미보유 필드 목업.
+  //   (구매요청번호/공고차수/입찰방식/담당자 등은 M02 항목에 없음 — API 연동 시 국외 입찰서 조회로 대체)
+  const ovsRtrcnDetail: OvsTndrDtlItem = {
+    pbancNo: detail.pbancNo,
+    pbancOd: '1',
+    prchsDmndNo: 'BAD839380-001',
+    intgRfrncNo: detail.rfrncNo,
+    bizNm: detail.bidNm,
+    bidMth: '일반투찰',
+    ctrtMthdNm: detail.ctrtMthdNm,
+    regDdlnDt: detail.bidClrsDt,
+    bdngDdlnDt: detail.tndrSbmsnDdlnDt,
+    bdopnDt: detail.tndrSbmsnDdlnDt,
+    exchrtAplcnYmd: '2026-02-13',
+    picDeptNm: '국제부품계약팀',
+    picNm: '정영금',
+    picTlno: '02-1234-5678',
+    taskSeNm: detail.taskSeNm,
+    tndrStatNm: detail.tndrStatNm,
+  }
+
   // 요약 헤더 배지 — (업무이력 진입 시 현황명) + 진행상태(색) + 업무구분 + 계약방법 + 신청유형.
   const summaryBadges: SummaryInfoBadge[] = [
     // 업무이력(CM-06-M04) 카드 진입 — 카드의 현황 뱃지(입찰참가신청/입찰서제출/공개수의협상)를 그대로 노출.
@@ -230,53 +257,68 @@ export function BidPrgsDtlInqPage() {
     ...(detail.bidPrgrsApfr ? [{ key: 'apfr', label: '입찰참가' }] : []),
   ]
 
-  // 바로가기(플로팅) 버튼 — 진행 상태에 따라 분기(설계서 slide68 "이벤트 설명" 노출 조건).
-  //   입찰참가신청서 작성: 입찰참가 대상(bidPrgrsApfr)이고 아직 등록확정 전(bidRegCfmtnYn!=='Y').
-  //   사전심사 신청: 사전심사 대상(bfhdSrng)이고 결과 없음(미신청).
-  //   입찰서 작성: 입찰서 대상(tndr)이고 (등록확정 bidRegCfmtnYn==='Y' 또는 사후등록심사 tndrSbmsnPntmCd==='post')이며 아직 완료 전.
-  //     └ slide68 원문: "입찰참가신청 상태가 등록확정 또는 입찰등록심사 시점이 사후심사인 경우 버튼 보이기".
-  //   입찰포기/취소: 입찰서를 제출한 경우(tndrStatNm==='제출').
+  // 바로가기(플로팅) 버튼 — 국내/국외 분기.
+  //   [국외] 입찰서 작성하기(국외 입찰서제출 M71) + 입찰취소(국외 전용 P81) + 환율정보 바로가기(M74) 3종
+  //     (사용자 확정 2026-08-26). 생산능력서류제출(P06)·입찰참가등록반려신청(P07)·입찰포기(P03)는
+  //     국외 챕터(slide432~435)에 화면 미정의(국외 미사용)라 제외.
+  //   [국내] 기존 구성 유지 — 진행 상태에 따라 분기(구 slide68 "이벤트 설명" 노출 조건).
+  //     입찰참가신청서 작성: 입찰참가 대상(bidPrgrsApfr)이고 아직 등록확정 전(bidRegCfmtnYn!=='Y').
+  //     사전심사 신청: 사전심사 대상(bfhdSrng)이고 결과 없음(미신청).
+  //   [공통] 입찰서 작성: 입찰서 대상(tndr)이고 (등록확정 bidRegCfmtnYn==='Y' 또는 사후등록심사 tndrSbmsnPntmCd==='post')이며 아직 완료 전.
+  //       └ slide68 원문: "입찰참가신청 상태가 등록확정 또는 입찰등록심사 시점이 사후심사인 경우 버튼 보이기".
+  //     입찰포기/취소: 입찰서를 제출한 경우(tndrStatNm==='제출'). 즉 제출 전=작성하기 · 제출 후=취소가 노출된다.
   type Shortcut = { id: string; label: string; variant: 'primary' | 'secondary' | 'tertiary' }
   const shortcutItems: Shortcut[] = []
-  if (detail.bidPrgrsApfr && detail.bidRegCfmtnYn !== 'Y') {
-    shortcutItems.push({ id: 'apply', label: '입찰참가신청서 작성하기', variant: 'primary' })
-  }
-  if (detail.bfhdSrng && !detail.bfhdSrngRsltYn) {
-    shortcutItems.push({ id: 'bfhdAply', label: '사전심사 신청하기', variant: 'primary' })
-  }
   const canTender =
     detail.tndr &&
     (detail.bidRegCfmtnYn === 'Y' || detail.tndrSbmsnPntmCd === 'post') &&
     detail.tndrStatNm !== '완료'
-  if (canTender) {
-    shortcutItems.push({ id: 'bid', label: '입찰서(견적서) 작성하기', variant: 'primary' })
+  if (isOvs) {
+    if (canTender) {
+      shortcutItems.push({ id: 'ovsBid', label: '입찰서 작성하기', variant: 'primary' })
+    }
+    if (detail.tndrStatNm === '제출') {
+      shortcutItems.push({ id: 'ovsRtrcn', label: '입찰취소', variant: 'secondary' })
+    }
+    shortcutItems.push({ id: 'fx', label: '환율정보 바로가기', variant: 'tertiary' })
+  } else {
+    if (detail.bidPrgrsApfr && detail.bidRegCfmtnYn !== 'Y') {
+      shortcutItems.push({ id: 'apply', label: '입찰참가신청서 작성하기', variant: 'primary' })
+    }
+    if (detail.bfhdSrng && !detail.bfhdSrngRsltYn) {
+      shortcutItems.push({ id: 'bfhdAply', label: '사전심사 신청하기', variant: 'primary' })
+    }
+    if (canTender) {
+      shortcutItems.push({ id: 'bid', label: '입찰서(견적서) 작성하기', variant: 'primary' })
+    }
+    if (detail.tndrStatNm === '제출') {
+      shortcutItems.push({ id: 'giveup', label: '입찰포기 신청서 작성하기', variant: 'secondary' })
+      shortcutItems.push({ id: 'cancel', label: '입찰취소 신청서 작성하기', variant: 'secondary' })
+    }
+    // 이미 포기/취소를 신청한 건은 제출한 신청서를 읽기전용으로 호출(P09/P10, slide109·112).
+    if (detail.tndrStatNm === '입찰포기') {
+      shortcutItems.push({ id: 'giveupDtl', label: '입찰포기 신청서 조회하기', variant: 'secondary' })
+    }
+    if (detail.tndrStatNm === '입찰취소') {
+      shortcutItems.push({ id: 'cancelDtl', label: '입찰취소 신청서 조회하기', variant: 'secondary' })
+    }
+    shortcutItems.push({ id: 'fx', label: '환율정보 바로가기', variant: 'tertiary' })
   }
-  if (detail.tndrStatNm === '제출') {
-    shortcutItems.push({ id: 'giveup', label: '입찰포기 신청서 작성하기', variant: 'secondary' })
-    shortcutItems.push({ id: 'cancel', label: '입찰취소 신청서 작성하기', variant: 'secondary' })
-  }
-  // 이미 포기/취소를 신청한 건은 제출한 신청서를 읽기전용으로 호출(P09/P10, slide109·112).
-  if (detail.tndrStatNm === '입찰포기') {
-    shortcutItems.push({ id: 'giveupDtl', label: '입찰포기 신청서 조회하기', variant: 'secondary' })
-  }
-  if (detail.tndrStatNm === '입찰취소') {
-    shortcutItems.push({ id: 'cancelDtl', label: '입찰취소 신청서 조회하기', variant: 'secondary' })
-  }
-  shortcutItems.push({ id: 'fx', label: '환율정보 바로가기', variant: 'tertiary' })
 
   const handleShortcut = (id: string) => {
     setShortcutOpen(false)
     switch (id) {
-      case 'apply': // 입찰참가신청서작성 — 국외(MUI-BD-04-M71, /bd/ovsBidPrtcpAply) / 국내(M01, 등록반려/반려신청조회 플로팅은 그 화면에 있다).
-        if (isOvs) navigate('/bd/ovsBidPrtcpAply', { state: detail })
-        else navigate('/bd/wrotAgre', { state: detail })
+      case 'apply': // 입찰참가신청서작성 — 국내(M01, 등록반려/반려신청조회 플로팅은 그 화면에 있다).
+        navigate('/bd/wrotAgre', { state: detail })
         break
       case 'bfhdAply': // 사전심사(PQ) 신청(M01)
         navigate('/bd/bfhd-srng-aply', { state: detail })
         break
-      case 'bid': // 입찰서 작성 — 국외 입찰서제출(MUI-BD-06-M71, /bd/ovsTndrSbmsn) / 국내 마법사(MUI-BD-06-M01~M07) → 전자서명 → 신청완료.
-        if (isOvs) navigate('/bd/ovsTndrSbmsn', { state: detail })
-        else navigate('/bd/tndrWrt', { state: detail })
+      case 'bid': // 입찰서 작성 — 국내 마법사(MUI-BD-06-M01~M07) → 전자서명 → 신청완료.
+        navigate('/bd/tndrWrt', { state: detail })
+        break
+      case 'ovsBid': // 국외 입찰서 작성 — 입찰서제출(MUI-BD-06-M71, /bd/ovsTndrSbmsn)
+        navigate('/bd/ovsTndrSbmsn', { state: detail })
         break
       case 'fx':
         setExchrtOpen(true)
@@ -287,6 +329,9 @@ export function BidPrgsDtlInqPage() {
       case 'cancel':
         setCancelOpen(true)
         break
+      case 'ovsRtrcn': // 국외 입찰취소신청서작성(P81) — 바텀시트(콘텐츠는 ovsTndrDtl 의 P81 공유)
+        setOvsRtrcnOpen(true)
+        break
       case 'giveupDtl':
         setAbandonDtlOpen(true)
         break
@@ -294,7 +339,7 @@ export function BidPrgsDtlInqPage() {
         setCancelDtlOpen(true)
         break
       default:
-        console.log('[M02] 바로가기', id) // 입찰서 작성 등 — 추후 연계
+        console.log('[M02] 바로가기', id) // 추후 연계
     }
   }
 
@@ -381,6 +426,30 @@ export function BidPrgsDtlInqPage() {
         }
       >
         <PrdctnAbltDcmntSbmsn ref={prdcpRef} detail={detail} onSubmitted={() => setPrdcpOpen(false)} />
+      </BottomSheet>
+
+      {/* 국외 입찰취소신청서작성(P81) — 바텀시트(컨테이너/footer 부모 소유, 콘텐츠는 ovsTndrDtl 의 P81 공유).
+          P81 콘텐츠는 OvsTndrDtlItem 을 기대 — 상세 항목에서 매핑 가능한 값만 넘기고 나머지는 목업
+          (M02→국외 화면 연계의 기존 관례: API 연동 시 조회로 대체). */}
+      <BottomSheet
+        open={ovsRtrcnOpen}
+        onOpenChange={setOvsRtrcnOpen}
+        title="입찰취소 신청서"
+        footer={
+          <ButtonGroup
+            layout="asymmetric"
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setOvsRtrcnOpen(false) },
+              { label: '제출하기', variant: 'primary', onClick: () => ovsRtrcnRef.current?.submit() },
+            ]}
+          />
+        }
+      >
+        <OvsBidRtrcnAply
+          ref={ovsRtrcnRef}
+          detail={ovsRtrcnDetail}
+          onSubmitted={() => setOvsRtrcnOpen(false)}
+        />
       </BottomSheet>
 
       {/* 입찰포기신청서(P03) — 바텀시트(컨테이너/footer 부모 소유, 콘텐츠는 ref 핸들) */}
