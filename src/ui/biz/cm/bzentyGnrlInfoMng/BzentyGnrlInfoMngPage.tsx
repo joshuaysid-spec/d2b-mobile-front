@@ -5,6 +5,7 @@
 import { useNavigate } from 'react-router-dom'
 
 import { Icon } from '@/ui/common/base/Icon'
+import { BzentySummaryCard } from '@/ui/biz/cm/bzentyInfo/BzentySummaryCard'
 import { ROUTES } from '@/constants/routes'
 
 // ⚠️ 현재 로그인 업체 요약(설계서 slide113 예시) — 추후: 업체정보 API(로그인 업체)로 교체.
@@ -35,9 +36,9 @@ const MENU_BOTTOM: { label: string; to: string }[] = [
   { label: '국외 조달원등록증 신청 안내', to: ROUTES.OVS_DMST_SOS }, // P21
 ]
 
+// 업체코드는 요약 카드 뱃지로 표시 — 행에서 제외(업체정보 상세 M02 와 동일).
 const SUMMARY: { label: string; value: string }[] = [
   { label: '사업자등록번호', value: MOCK_BZENTY.brno },
-  { label: '업체코드', value: MOCK_BZENTY.bzentyCd },
   { label: '대표자', value: MOCK_BZENTY.rprsvNm },
   { label: '등록일', value: MOCK_BZENTY.regDt },
   { label: '법인등록번호', value: MOCK_BZENTY.crno },
@@ -63,19 +64,9 @@ export function BzentyGnrlInfoMngPage() {
   const navigate = useNavigate()
   return (
     <div className="flex w-full flex-col">
-      {/* 현재 업체 정보 요약 */}
-      <div className="mx-4 mt-4 flex flex-col gap-krds-5 rounded-krds-8 bg-krds-bg-primary-faint p-krds-8">
-        <span className="text-krds-body-lg font-bold leading-normal text-krds-text-ink">
-          {MOCK_BZENTY.bzentyNm}
-        </span>
-        <dl className="flex flex-col gap-krds-3">
-          {SUMMARY.map((r) => (
-            <div key={r.label} className="flex items-start gap-krds-5 text-krds-body-md leading-normal">
-              <dt className="w-28 shrink-0 text-krds-text-muted">{r.label}</dt>
-              <dd className="min-w-px flex-1 text-krds-text-ink wrap-break-word">{r.value}</dd>
-            </div>
-          ))}
-        </dl>
+      {/* 현재 업체 정보 요약 — 업체정보 상세(M02) 리디자인과 동일한 요약 카드(260828 사용자 확정). */}
+      <div className="p-4 pb-0">
+        <BzentySummaryCard name={MOCK_BZENTY.bzentyNm} code={MOCK_BZENTY.bzentyCd} infos={SUMMARY} />
       </div>
 
       {/* 하위 화면 이동 버튼 — 19px Bold + 우측 ArrowForwardIos. 행 사이 구분선. */}
