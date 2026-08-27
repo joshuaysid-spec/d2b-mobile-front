@@ -18,6 +18,7 @@ import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
+import { PbamdsInfoJntUtztnBfhdWtcs } from '@/ui/biz/cm/dmstLctnColInfoAddReg/PbamdsInfoJntUtztnBfhdWtcs'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Toast } from '@/ui/common/composites/Toast'
 import { ScrtyMsrmtPrsnlReg, type ScrtyMsrmtPrsnlRegHandle } from '@/ui/biz/cm/dmstLctnColInfoAddReg/ScrtyMsrmtPrsnlReg'
@@ -89,6 +90,7 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
 
   // ── 팝업/상태 ──
   const [sheet, setSheet] = useState<SheetKind>(null)
+  const [agreeOpen, setAgreeOpen] = useState(false) // P13 사전동의서
   const [agreed, setAgreed] = useState(false)
   const [warnOpen, setWarnOpen] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
@@ -131,6 +133,18 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
     if (selectedFscCds.length === 0) return setToastMsg('선택 항목이 없습니다.')
     setFscList((prev) => prev.filter((f) => !selectedFscCds.includes(f.fscCd)))
     setSelectedFscCds([])
+  }
+
+  // 조회 동의 체크 토글 — 체크 시 P13 사전동의서 호출(M05 slide152 와 동일 흐름), 해제 시 동의 취소.
+  const handleAgreeToggle = (checked: boolean) => {
+    if (checked) setAgreeOpen(true)
+    else setAgreed(false)
+  }
+  // P13 [동의하고 신청하기] — 동의 확정 + P14 확인으로 진행.
+  const handleAgreeAndApply = () => {
+    setAgreed(true)
+    setAgreeOpen(false)
+    setConfirmOpen(true)
   }
 
   // 신청 흐름 — 미동의 시 경고(그대로 신청/닫기) → P14. 동의 시 바로 P14.
@@ -377,7 +391,7 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
       {/* 조회 동의여부 (slide157) */}
       <div className="flex flex-col gap-krds-5 px-4 pt-4">
         <InputLabel>공장등록증명서 또는 사업자등록증명원 조회 동의여부</InputLabel>
-        <Checkbox variant="box" checked={agreed} onCheckedChange={(c) => setAgreed(c === true)} label="조회 동의" />
+        <Checkbox variant="box" checked={agreed} onCheckedChange={(c) => handleAgreeToggle(c === true)} label="조회 동의" />
         <p className="text-[15px] leading-relaxed text-krds-text-muted">
           동의여부에 체크하지 않는 경우 오프라인으로 서류를 제출하셔야 합니다.
         </p>
@@ -440,6 +454,9 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
           }}
         />
       </BottomSheet>
+
+      {/* P13 행정정보공동이용 사전동의서 (FullPopup) — M05 와 공유 */}
+      <PbamdsInfoJntUtztnBfhdWtcs open={agreeOpen} onOpenChange={setAgreeOpen} onAgree={handleAgreeAndApply} />
 
       {/* 미동의 경고 모달 — [그대로 신청][닫기] */}
       <AlertModal
