@@ -24,6 +24,7 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Toast } from '@/ui/common/composites/Toast'
@@ -515,15 +516,19 @@ export function DmstLctnColInfoAddRegPage() {
         />
       </BottomSheet>
 
-      {/* P08 등록대상 품목 선택 — footer [적용하기](ref.apply) */}
-      <BottomSheet
+      {/* P08 등록대상품목선택 — Figma 10020:84985 풀팝업(구 바텀시트 → FullPopup, 260828 재대조).
+          footer [취소][확인](확인=ref.apply). 품목코드 클릭 → 품목상세정보(P09). */}
+      <FullPopup
         open={sheet === 'regtrgt'}
         onOpenChange={(o) => !o && setSheet(null)}
-        title="등록대상 품목 선택"
+        title="등록대상품목선택"
         footer={
-          <Button variant="primary" className="w-full" onClick={() => regTrgtRef.current?.apply()}>
-            적용하기
-          </Button>
+          <ButtonGroup
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setSheet(null) },
+              { label: '확인', variant: 'primary', onClick: () => regTrgtRef.current?.apply() },
+            ]}
+          />
         }
       >
         <RegTrgtItemChc
@@ -534,7 +539,7 @@ export function DmstLctnColInfoAddRegPage() {
             setSheet('itemInq')
           }}
         />
-      </BottomSheet>
+      </FullPopup>
 
       {/* P09 품목 조회(품목상세정보) — footer [닫기] */}
       <BottomSheet

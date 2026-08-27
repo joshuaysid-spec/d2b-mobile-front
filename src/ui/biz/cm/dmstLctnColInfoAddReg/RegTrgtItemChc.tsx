@@ -1,39 +1,48 @@
-// 등록대상 품목 선택 콘텐츠 (MUI-CM-01-P08, RegTrgtItemChc). 설계서 slide165.
-//   등록품목명세(M05 폼)의 [신규 추가]에서 호출 → 품류/품명/업종코드 조건 검색 → 결과 복수 선택
-//   → [적용하기] 시 선택 품목 목록 반환(부모가 시트 닫음). 행 [상세보기] → 품목 조회(P09 ItemInq)는 부모가 연다.
-//   컨테이너(BottomSheet)·타이틀('등록대상 품목 선택')·footer([적용하기])는 부모(M05 폼)가 소유.
-//   footer [적용하기] 선택 상태는 이 콘텐츠가 소유 → ref(RegTrgtItemChcHandle.apply)로 확정 동작만 노출.
+// 등록대상품목선택 콘텐츠 (MUI-CM-01-P08, RegTrgtItemChc). Figma 10020:84985(품류)·85060(품명) / 설계서 slide165.
+//   260828 Figma 리디자인 반영: 업무도움(HelpDisclosure) → 검색조건 탭(품류/품명/업종코드 — 하나만 선택)
+//   → 탭별 입력(품류=셀렉트, 품명/업종코드=검색어) + [조회/검색] → 총 N건 + [다운로드]
+//   → 결과 카드(품명 타이틀 + 우측 체크박스, 삭제여부/품목코드(파랑 → P09)/품류코드/명/등록요건).
+//   컨테이너(FullPopup)·타이틀('등록대상품목선택')·footer([취소][확인])는 부모(M05 폼)가 소유.
+//   footer [확인] 선택 상태는 이 콘텐츠가 소유 → ref(RegTrgtItemChcHandle.apply)로 확정 동작만 노출.
 import { forwardRef, useImperativeHandle, useMemo, useState } from 'react'
 
 import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
-import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { Button } from '@/ui/common/base/Button'
-import { cn } from '@/utils/cn'
+import { Checkbox } from '@/ui/common/base/Checkbox'
+import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
+import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import type { RegTrgtItemChcItem } from '@/types/mock/cm'
 
-/** 부모 footer([적용하기])가 호출하는 확정 동작. */
+/** 부모 footer([확인])가 호출하는 확정 동작. */
 export interface RegTrgtItemChcHandle {
   /** 현재 선택 항목을 onApply 로 반환. */
   apply: () => void
 }
 
-// 품류 드롭다운 옵션(목업, slide165 '품류를 선택해주세요.'). 추후 API: cmService.selectKnditmList.
-const KNDITM_OPTIONS = [
-  { value: '05', label: '05 / 피복' },
-  { value: '60', label: '60 / 총탄' },
-  { value: '11', label: '11 / 사무용기기' },
+// 검색조건 탭(Figma 84985 — 품류/품명/업종코드 중 하나만 선택).
+const COND_TABS: TabItem[] = [
+  { value: 'knditm', label: '품류' },
+  { value: 'itemNm', label: '품명' },
+  { value: 'bzstat', label: '업종코드' },
 ]
 
-// 등록대상 품목 목록 목업 (설계서 slide165 예시 — 품목코드 1234567890/품명 물컵/품류 05 피복/등록요건). 추후 API.
+// 품류 드롭다운 옵션(목업). 추후 API: cmService.selectKnditmList.
+const KNDITM_OPTIONS = [
+  { value: '05', label: '05/과자' },
+  { value: '60', label: '60/총탄' },
+  { value: '11', label: '11/사무용기기' },
+]
+
+// 등록대상 품목 목록 목업 (설계서 slide165 예시 항목명/형식). 추후 API.
 const MOCK_ITEMS: RegTrgtItemChcItem[] = [
   {
     itemCd: '1234567890',
     itemCdNm: '물컵',
     knditmCd: '05',
     knditmCdNm: '피복',
-    itemRgstrtRqmtNm: '해당업종 사업자 / 공장등록',
+    itemRgstrtRqmtNm: '해당업종 사업자/공장등록',
     delYn: 'N',
   },
   {
@@ -41,39 +50,47 @@ const MOCK_ITEMS: RegTrgtItemChcItem[] = [
     itemCdNm: '이불',
     knditmCd: '60',
     knditmCdNm: '총탄',
-    itemRgstrtRqmtNm: '해당업종 사업자 / 공장등록',
+    itemRgstrtRqmtNm: '해당업종 사업자/공장등록',
     delYn: 'N',
   },
 ]
 
 export interface RegTrgtItemChcProps {
-  /** [적용하기] 시 호출 — 선택 품목 목록을 부모에 반환. */
+  /** [확인] 시 호출 — 선택 품목 목록을 부모에 반환. */
   onApply: (items: RegTrgtItemChcItem[]) => void
-  /** 행 [상세보기] — 품목 조회(P09 ItemInq)는 부모가 연다. */
+  /** 품목코드(파랑 링크) 클릭 — 품목상세정보(P09 ItemInq)는 부모가 연다. */
   onDetail: (item: RegTrgtItemChcItem) => void
 }
 
 const RegTrgtItemChc = forwardRef<RegTrgtItemChcHandle, RegTrgtItemChcProps>(
   ({ onApply, onDetail }, ref) => {
+    const [cond, setCond] = useState('knditm') // 검색조건 탭
     const [knditmCd, setKnditmCd] = useState('')
-    const [itemNm, setItemNm] = useState('')
-    const [bzstatCd, setBzstatCd] = useState('') // 업종코드
+    const [keyword, setKeyword] = useState('') // 품명/업종코드 검색어(탭 공용)
     const [applied, setApplied] = useState(false)
     const [selected, setSelected] = useState<string[]>([]) // 선택 itemCd 목록(복수)
 
+    const handleCond = (next: string) => {
+      setCond(next)
+      setKeyword('')
+    }
     const handleSearch = () => {
       setApplied(true)
-      console.log('[P08] 등록대상 품목 검색', { knditmCd, itemNm, bzstatCd }) // 추후 API: cmService.selectRegTrgtItemList
+      console.log('[P08] 등록대상 품목 검색', { cond, knditmCd, keyword }) // 추후 API: cmService.selectRegTrgtItemList
+    }
+    const handleDownload = () => {
+      console.log('[P08] 목록 다운로드') // 추후 API: 등록대상 품목 목록 다운로드
     }
 
-    // Like 검색(목업) — 검색 실행 전엔 결과 미노출(설계서: 조건 검색 후 목록).
+    // Like 검색(목업) — 검색 실행 전엔 결과 미노출(설계서: 조건 검색 후 목록). 선택 조건 하나만 적용.
     const results = useMemo(() => {
       if (!applied) return []
-      return MOCK_ITEMS.filter(
-        (it) =>
-          (!knditmCd || it.knditmCd === knditmCd) && (!itemNm || it.itemCdNm.includes(itemNm)),
-      )
-    }, [applied, knditmCd, itemNm])
+      return MOCK_ITEMS.filter((it) => {
+        if (cond === 'knditm') return !knditmCd || it.knditmCd === knditmCd
+        if (cond === 'itemNm') return !keyword || it.itemCdNm.includes(keyword)
+        return true // 업종코드 — 목업 항목에 없어 전체(추후 서버 조회)
+      })
+    }, [applied, cond, knditmCd, keyword])
 
     const toggle = (itemCd: string) =>
       setSelected((prev) =>
@@ -89,93 +106,122 @@ const RegTrgtItemChc = forwardRef<RegTrgtItemChcHandle, RegTrgtItemChcProps>(
     )
 
     return (
-      <div className="flex flex-col gap-krds-7">
-        {/* 검색조건 — 품류(드롭다운) / 품명 / 업종코드 (slide165) */}
-        <div className="flex flex-col gap-krds-6">
-          <div className="flex flex-col gap-krds-5">
-            <InputLabel>품류</InputLabel>
+      <div className="flex w-full flex-col">
+        {/* 업무도움 (Figma 84985 상단) */}
+        <HelpDisclosure
+          items={[
+            '조회하고자 하는 검색조건을 하나 선택해주세요.',
+            '검색조건은 품류, 품명, 업종코드 중 하나를 선택하여 검색하실 수 있습니다.',
+            '선택한 조건으로 등록된 품목을 조회합니다.',
+          ]}
+          defaultOpen
+        />
+
+        {/* 검색조건 탭 — 품류/품명/업종코드 중 하나(Figma 라인 탭) */}
+        <div className="px-4 pt-4">
+          <TabList value={cond} onChange={handleCond} items={COND_TABS} fitted />
+        </div>
+
+        {/* 탭별 입력 + 조회/검색 버튼 */}
+        <div className="flex flex-col gap-krds-7 px-4 pt-4">
+          {cond === 'knditm' ? (
             <SelectBox
               placeholder="품류를 선택해주세요."
               value={knditmCd}
               onValueChange={setKnditmCd}
               items={KNDITM_OPTIONS}
             />
-          </div>
-          <div className="flex flex-col gap-krds-5">
-            <InputLabel htmlFor="regtrgt-itemNm">품명</InputLabel>
+          ) : (
             <InputBox
-              id="regtrgt-itemNm"
-              value={itemNm}
-              placeholder="품명을 입력해주세요."
-              onChange={(e) => setItemNm(e.target.value)}
-              onClear={() => setItemNm('')}
+              value={keyword}
+              placeholder="검색어를 입력해주세요"
+              aria-label={cond === 'itemNm' ? '품명 검색어' : '업종코드 검색어'}
+              onChange={(e) => setKeyword(e.target.value)}
+              onClear={() => setKeyword('')}
             />
-          </div>
-          <div className="flex flex-col gap-krds-5">
-            <InputLabel htmlFor="regtrgt-bzstatCd">업종코드</InputLabel>
-            <InputBox
-              id="regtrgt-bzstatCd"
-              value={bzstatCd}
-              placeholder="업종코드를 입력해주세요."
-              onChange={(e) => setBzstatCd(e.target.value)}
-              onClear={() => setBzstatCd('')}
-            />
-          </div>
-          <Button variant="secondary" className="w-full" onClick={handleSearch}>
+          )}
+          <Button variant="primary" className="w-full" onClick={handleSearch}>
             <Icon name="Search" size={20} aria-hidden />
-            검색
+            {cond === 'knditm' ? '조회' : '검색'}
           </Button>
         </div>
 
-        {/* 검색 결과 — 총 N건 + 복수 선택 목록. 행 [상세보기] → 품목 조회(P09). */}
+        {/* 검색 결과 — 총 N건(bold) + [다운로드] + 결과 카드 목록 */}
         {applied && (
-          <div className="flex flex-col gap-krds-5">
-            <p className="text-krds-body-sm text-krds-text-primary-active">총 {results.length}건</p>
+          <div className="flex flex-col gap-krds-7 px-4 pb-4 pt-5">
+            <div className="flex items-center justify-between gap-krds-5">
+              <p className="text-[17px] font-bold leading-normal text-krds-text-ink">
+                총 {results.length}건
+              </p>
+              <Button variant="secondary" size="sm" onClick={handleDownload}>
+                다운로드
+              </Button>
+            </div>
+
             {results.length === 0 ? (
               <p className="py-6 text-center text-krds-body-md text-krds-text-subtle">
                 검색 결과가 없습니다.
               </p>
             ) : (
-              <ul className="flex flex-col gap-krds-5">
+              <ul className="flex flex-col gap-krds-7">
                 {results.map((it) => {
                   const on = selected.includes(it.itemCd)
                   return (
                     <li
                       key={it.itemCd}
-                      className="flex items-start gap-krds-5 rounded-krds-8 border border-krds-border-divider p-krds-6"
+                      className="flex flex-col gap-krds-5 rounded-[12px] border border-krds-border-field p-krds-8"
                     >
-                      {/* 선택 토글(복수) */}
-                      <button
-                        type="button"
-                        aria-pressed={on}
-                        aria-label={`${it.itemCdNm} 선택`}
-                        onClick={() => toggle(it.itemCd)}
-                        className={cn(
-                          'mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border',
-                          on
-                            ? 'border-primary bg-primary text-white'
-                            : 'border-krds-border-field text-transparent',
-                        )}
-                      >
-                        <Icon name="Check" size={16} aria-hidden />
-                      </button>
-                      <div className="flex min-w-px flex-1 flex-col gap-1">
-                        <span className="text-[17px] font-bold text-krds-text-ink">
+                      {/* 타이틀(품명) + 우측 선택 체크박스(Figma 84985) */}
+                      <div className="flex items-start gap-krds-5">
+                        <span className="min-w-px flex-1 text-[19px] font-bold leading-normal text-krds-text-ink">
                           {it.itemCdNm}
                         </span>
-                        <span className="text-krds-body-sm text-krds-text-muted">
-                          품목코드 {it.itemCd}
-                        </span>
-                        <span className="text-krds-body-sm text-krds-text-muted">
-                          품류 {it.knditmCd} / {it.knditmCdNm}
-                        </span>
-                        <span className="text-krds-body-sm text-krds-text-muted">
-                          등록요건 {it.itemRgstrtRqmtNm}
-                        </span>
+                        <Checkbox
+                          variant="box"
+                          aria-label={`${it.itemCdNm} 선택`}
+                          checked={on}
+                          onCheckedChange={() => toggle(it.itemCd)}
+                        />
                       </div>
-                      <Button variant="secondary" size="sm" onClick={() => onDetail(it)}>
-                        상세보기
-                      </Button>
+                      {/* 정보행 — label 좌 / value 우(품목코드는 파랑 링크 → P09) */}
+                      <div className="flex flex-col gap-krds-3">
+                        <div className="flex items-start gap-krds-5">
+                          <span className="min-w-px flex-1 text-[17px] leading-normal text-krds-text-muted">
+                            삭제여부
+                          </span>
+                          <span className="text-right text-[17px] leading-normal text-krds-text-muted">
+                            {it.delYn}
+                          </span>
+                        </div>
+                        <div className="flex items-start gap-krds-5">
+                          <span className="min-w-px flex-1 text-[17px] leading-normal text-krds-text-muted">
+                            품목코드
+                          </span>
+                          <button
+                            type="button"
+                            className="text-right text-[17px] leading-normal text-krds-action-primary underline-offset-2 hover:underline"
+                            onClick={() => onDetail(it)}
+                          >
+                            {it.itemCd}
+                          </button>
+                        </div>
+                        <div className="flex items-start gap-krds-5">
+                          <span className="min-w-px flex-1 text-[17px] leading-normal text-krds-text-muted">
+                            품류코드/명
+                          </span>
+                          <span className="text-right text-[17px] leading-normal text-krds-text-muted">
+                            {it.knditmCd}/{it.knditmCdNm}
+                          </span>
+                        </div>
+                        <div className="flex items-start gap-krds-5">
+                          <span className="min-w-px flex-1 text-[17px] leading-normal text-krds-text-muted">
+                            등록요건
+                          </span>
+                          <span className="min-w-px flex-1 text-right text-[17px] leading-normal text-krds-text-muted wrap-break-word">
+                            {it.itemRgstrtRqmtNm}
+                          </span>
+                        </div>
+                      </div>
                     </li>
                   )
                 })}
