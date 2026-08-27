@@ -1,15 +1,26 @@
 // 업체정보 상세 - '물품(내자)' 탭 콘텐츠 (MUI-CM-01-T02, 설계서 v0.86 slide132~133 / Figma 10020:82844·82894).
 // 260827 Figma 리디자인 반영: 섹션 카드(InfoAccordionCard) 3장 + 제출서류 안내(HelpDisclosure)
-//   + [조달원확인서 신청] 풀폭 버튼 → 국내조달원확인서신청목록(M19) 이동(사용자 확정 260828 — P20 시트는 M19 소유).
+//   + [조달원확인서 신청] 풀폭 버튼(설계서 이벤트 btn_sosCnfdocAply — P03 팝업, 현재 스텁).
 //   등록품목명세는 품목적부판정을 품목코드 행 우측 뱃지로 표시(Figma), 접힘 시 4행 + 더보기.
 // 데이터는 목업(설계서 데이터영역 항목명·형식 그대로) — 추후 API(cmService.selectBzentyDmscptInfo)로 대체.
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
+import { ROUTES } from '@/constants/routes'
 import type { RegTrgtItem, PicInfo, KnditmAsctGrp } from '@/types/mock/cm'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
-import { ROUTES } from '@/constants/routes'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
+import { Toast } from '@/ui/common/composites/Toast'
+import { DmstSosCnfdocAply } from '@/ui/biz/cm/dmstSosCnfdocList/DmstSosCnfdocAply'
+import {
+  dmstSosCnfdocAplySchema,
+  type DmstSosCnfdocAplyForm,
+} from '@/ui/biz/cm/dmstSosCnfdocList/DmstSosCnfdocAply.schema'
 import {
   InfoAccordionCard,
   type InfoCardRowInput,
@@ -87,10 +98,38 @@ function regItemRows(list: RegTrgtItem[]): InfoCardRowInput[] {
   ])
 }
 
+// 로그인 사용자(신청인) 자동완성 값 — P20 신청 팝업 read-only 표시(설계서 '신청인 정보 자동완성').
+//   추후 authStore(로그인 업체 담당자)에서 주입. 현재는 목업(M19 와 동일).
+const APPLICANT = { aplcntNm: '홍길동', aplcntTelno: '010-1234-5678' }
+
 export function BzentyGnrlInfoDtl_Cmdty() {
-  // 조달원확인서 신청 — 국내조달원확인서신청목록(M19)으로 이동(사용자 확정 260828).
-  //   신청(P20) 바텀시트는 M19 의 [신청하기]에서만 호출.
+  // 조달원확인서 신청(P20) — 설계서 이벤트 btn_sosCnfdocAply. 컨테이너(BottomSheet)는 탭이 소유,
+  //   콘텐츠·폼 구성은 M19(DmstSosCnfdocListPage)의 P20 호스팅과 동일.
+  //   신청 완료 시 국내조달원확인서신청목록(M19)으로 이동(사용자 확정 260828 — 시트 신청 → 목록 확인).
   const navigate = useNavigate()
+  const [aplyOpen, setAplyOpen] = useState(false)
+  const [toastOpen, setToastOpen] = useState(false)
+  const { control, handleSubmit, reset: resetForm } = useForm<DmstSosCnfdocAplyForm>({
+    resolver: zodResolver(dmstSosCnfdocAplySchema),
+    mode: 'onSubmit',
+    reValidateMode: 'onBlur',
+    defaultValues: { aplyRsn: '' },
+  })
+  const openAply = () => {
+    resetForm({ aplyRsn: '' })
+    setAplyOpen(true)
+  }
+  const onAplySubmit = (values: DmstSosCnfdocAplyForm) => {
+    setAplyOpen(false)
+    setToastOpen(true)
+    console.log('[T02] 조달원확인서 신청', { ...APPLICANT, aplyRsn: values.aplyRsn })
+    // 추후: cmService.insertDmstSosCnfdocAply({ aplcntNm, aplcntTelno, aplyRsn })
+    // 완료 토스트 노출 후 목록(M19) 이동 — M05 신청 완료 이동과 동일 패턴.
+    window.setTimeout(() => navigate(ROUTES.DMST_SOS_CNFDOC), 1200)
+  }
+  const onAplyInvalid = () => {
+    document.getElementById('field-aplyRsn')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
 
   return (
     <>
@@ -106,12 +145,38 @@ export function BzentyGnrlInfoDtl_Cmdty() {
         items={['공장등록증명서 - 1부 (관련업체만 제출)', '인,허가증사본 - 1부 (해당품목 제출)']}
       />
 
-      {/* 조달원확인서 신청 (Figma 하단 풀폭 primary) → 국내조달원확인서신청목록(M19) */}
+      {/* 조달원확인서 신청 (Figma 하단 풀폭 primary) → P20 신청사유 바텀시트 */}
       <div className="p-4">
-        <Button variant="primary" className="w-full" onClick={() => navigate(ROUTES.DMST_SOS_CNFDOC)}>
+        <Button variant="primary" className="w-full" onClick={openAply}>
           조달원확인서 신청
         </Button>
       </div>
+
+      {/* 조달원 확인서 신청(P20) 바텀시트 — M19 와 동일 호스팅(타이틀·footer [취소][신청하기]). */}
+      <BottomSheet
+        open={aplyOpen}
+        onOpenChange={setAplyOpen}
+        title="조달원 확인서 신청서"
+        footer={
+          <ButtonGroup
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setAplyOpen(false) },
+              { label: '신청하기', variant: 'primary', onClick: handleSubmit(onAplySubmit, onAplyInvalid) },
+            ]}
+          />
+        }
+      >
+        <DmstSosCnfdocAply
+          control={control}
+          aplcntNm={APPLICANT.aplcntNm}
+          aplcntTelno={APPLICANT.aplcntTelno}
+        />
+      </BottomSheet>
+
+      {/* 신청 완료 토스트 */}
+      <Toast open={toastOpen} onClose={() => setToastOpen(false)} duration={2000}>
+        조달원 확인서 신청이 완료되었습니다.
+      </Toast>
     </>
   )
 }
