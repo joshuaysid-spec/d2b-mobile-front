@@ -18,7 +18,7 @@ import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
-import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
+import { BzentySummaryCard } from '@/ui/biz/cm/bzentyInfo/BzentySummaryCard'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import type {
@@ -199,13 +199,12 @@ export function AddRegInfoAplyListPage() {
 
   return (
     <div className="flex w-full flex-col">
-      {/* 현재 업체 정보 표시 영역 (설계서 slide137) — 로그인 업체 요약. 배경바로 구분. */}
-      <div className="border-b border-krds-border-divider bg-krds-bg-primary-faint px-4 py-2">
-        <SummaryInfo
-          flushX
-          subtitle={`업체코드 ${BZENTY.bzentyCd}`}
-          title={BZENTY.bzentyNm}
-          rows={[
+      {/* 현재 업체 정보 표시 영역 — 업체정보 상세(M02) 리디자인과 동일한 요약 카드(260827 사용자 확정). */}
+      <div className="p-4 pb-0">
+        <BzentySummaryCard
+          name={BZENTY.bzentyNm}
+          code={BZENTY.bzentyCd}
+          infos={[
             { label: '대표자', value: BZENTY.rprsvNm },
             { label: '사업자등록번호', value: BZENTY.brno },
             { label: '주소', value: BZENTY.bzentyAddr },

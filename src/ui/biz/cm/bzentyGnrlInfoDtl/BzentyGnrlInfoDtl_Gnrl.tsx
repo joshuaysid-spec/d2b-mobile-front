@@ -1,7 +1,7 @@
-// 업체정보 상세 - '업체일반' 탭 콘텐츠 (MUI-CM-01-T01, 설계서 slide116~120 / 문서 P115~119).
-// 아코디언(업체일반·상태/부정당·수의계약배제·대표자·입찰대리인) with 테이블.
-//   - 상태/부정당·수의계약배제·대표자·입찰대리인은 목록형(dl_*) → 항목별 Table 반복.
-//   - 수의계약배제는 기본 3개월 필터/전체(SegmentedControl). 없으면 안내 문구.
+// 업체정보 상세 - '업체일반' 탭 콘텐츠 (MUI-CM-01-T01, 설계서 v0.86 slide126~131 / Figma 10020:82706·82764).
+// 260827 Figma 리디자인 반영: 아코디언+파란라벨 테이블 → 섹션 카드(InfoAccordionCard) 5장.
+//   사업자정보 · 법인정보 · 상태/부정당 · 수의계약배제(전체/3개월 토글 유지 — 설계서) · 대표자 및 입찰 대리인.
+//   각 카드 접힘 시 4행 + [더보기](Figma 10020:82706). 주민등록번호는 설계서 260713 개정(삭제)에 따라 미표시(사용자 확정).
 // 데이터는 목업(설계서 데이터영역 항목명·형식 그대로) — 추후 API(cmService.selectBzentyGnrlInfo)로 대체.
 import { useState } from 'react'
 
@@ -12,11 +12,14 @@ import type {
   BzentyRprsv,
   BzentyBidAgt,
 } from '@/types/mock/cm'
-import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
+import { Badge } from '@/ui/common/base/Badge'
 import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
-import { Table, type TableRow } from '@/ui/common/composites/Table'
+import {
+  InfoAccordionCard,
+  type InfoCardRowInput,
+} from '@/ui/biz/cm/bzentyInfo/InfoAccordionCard'
 
-// ── 업체일반 (dm_bzentyGnrlInfo) — 설계서 slide116/118 예시값 ────────────────
+// ── 업체일반 (dm_bzentyGnrlInfo) — 설계서 slide126/128 예시값 ────────────────
 const GNRL_INFO: BzentyGnrlInfo = {
   bzentyCd: '100F',
   bzentyNm: '조달테스트업체',
@@ -42,7 +45,7 @@ const GNRL_INFO: BzentyGnrlInfo = {
   bplcSecd: '1-본사',
 }
 
-// ── 상태/부정당 (dl_bzentySttsList) — 설계서 slide116/118 예시값 ─────────────
+// ── 상태/부정당 (dl_bzentySttsList) — 설계서 slide126/129 예시값 ─────────────
 const STTS_LIST: BzentyStts[] = [
   {
     bzentyStcd: '03',
@@ -54,7 +57,7 @@ const STTS_LIST: BzentyStts[] = [
   },
 ]
 
-// ── 수의계약배제 (dl_bzentyRlsVltrnsRstricList) — 설계서 slide117/119 예시값 ──
+// ── 수의계약배제 (dl_bzentyRlsVltrnsRstricList) — 설계서 slide127/129 예시값 ──
 const RLS_VLTRNS_LIST: BzentyRlsVltrnsRstric[] = [
   {
     pbancNo: '285608N',
@@ -68,7 +71,7 @@ const RLS_VLTRNS_LIST: BzentyRlsVltrnsRstric[] = [
   },
 ]
 
-// ── 대표자 (dl_bzentyRprsvList) — 설계서 slide117/119 예시값 ─────────────────
+// ── 대표자 (dl_bzentyRprsvList) — 설계서 slide127/129 예시값 ─────────────────
 const RPRSV_LIST: BzentyRprsv[] = [
   {
     rprsvYn: '대대표',
@@ -78,160 +81,158 @@ const RPRSV_LIST: BzentyRprsv[] = [
   },
 ]
 
-// ── 입찰대리인 (dl_bzentyBidAgtList) — 설계서 slide117/120 예시값 ────────────
+// ── 입찰대리인 (dl_bzentyBidAgtList) — 설계서 slide127/130 예시값 ────────────
 const BID_AGT_LIST: BzentyBidAgt[] = [
   { agtJbpsNm: '과장', agtNm: '김길동', agtEntlno: '02-1234-5678' },
 ]
 
-function gnrlRows(d: BzentyGnrlInfo): TableRow[] {
+// 사업자정보 — Figma 행 구성(업체코드는 요약 카드 뱃지로 이동, 사업구분도 요약 카드로).
+function bizRows(d: BzentyGnrlInfo): InfoCardRowInput[] {
   return [
-    { label: '업체코드', value: d.bzentyCd },
     { label: '상호명', value: d.bzentyNm },
     { label: '영문상호명', value: d.bzentyEngNm },
     { label: '사업자등록번호', value: d.brno },
-    { label: '국적', value: d.ntnCd },
     { label: '개업일자', value: d.opbizYmd },
-    { label: '홈페이지주소', value: d.hmpgAddr },
+    { label: '국적', value: d.ntnCd },
+    { label: '홈페이지', value: d.hmpgAddr },
     { label: '주소', value: d.bzentyAddr },
-    { label: '전화번호', value: d.rprsvTelno },
+    { label: '연락처', value: d.rprsvTelno },
     { label: '팩스번호', value: d.rprsvFxno },
+  ]
+}
+
+// 법인정보 — 기업구분(entShcd1·2)은 뱃지 나열, 공장설립특례해당여부는 '해당' 뱃지(Figma).
+function corpRows(d: BzentyGnrlInfo): InfoCardRowInput[] {
+  return [
     { label: '법인설립일자', value: d.fndnYmd },
     { label: '법인등록번호', value: d.crno },
     { label: '본사사업자번호', value: d.hdofcBrno },
     { label: '종업원수', value: d.empCnt },
-    { label: '사업구분', value: d.bizCd.join(' | ') },
     { label: '제조구분', value: d.entTpcd },
-    // 기업구분2(entShcd2)는 값이 있을 때만 함께 표시(설계서 "값이 있을때만 표시").
-    { label: '기업구분', value: [d.entShcd1, d.entShcd2].filter(Boolean).join(' ') },
-    { label: '기업구분해당년도', value: d.entSeRlvtYr },
+    {
+      label: '기업구분',
+      valueIsNode: true,
+      value: (
+        <>
+          {[d.entShcd1, d.entShcd2].filter(Boolean).map((v) => (
+            <Badge key={v} type="pastel" color="blue">
+              {v}
+            </Badge>
+          ))}
+        </>
+      ),
+    },
+    { label: '기업구분해당년도', value: `${d.entSeRlvtYr}년` },
     { label: '지역코드', value: d.rgnCd },
-    { label: '공장설립특례해당여부', value: d.fctryFndnSpcsYn },
+    {
+      label: '공장설립특례해당여부',
+      valueIsNode: true,
+      value: (
+        <Badge type="pastel" color="blue">
+          {d.fctryFndnSpcsYn}
+        </Badge>
+      ),
+    },
     { label: '본/지사', value: d.bplcSecd },
   ]
 }
 
-function sttsRows(d: BzentyStts): TableRow[] {
-  return [
-    { label: '상태코드', value: d.bzentyStcd },
-    { label: '상태명', value: d.bzentyStNm },
-    { label: '발생일자', value: d.crtrYmd },
-    { label: '시작일자', value: d.bgngYmd },
-    { label: '종료일자', value: d.endYmd },
-    { label: '비고', value: d.rmrkCn },
-  ]
+// 상태/부정당 — 상태명 행에 상태코드 뱃지(Figma). 다건이면 divider 로 항목 구분.
+function sttsRows(list: BzentyStts[]): InfoCardRowInput[] {
+  return list.flatMap((s, i): InfoCardRowInput[] => [
+    ...(i > 0 ? ['divider' as const] : []),
+    {
+      label: '상태명',
+      value: s.bzentyStNm,
+      badge: (
+        <Badge type="pastel" color="blue">
+          상태코드{s.bzentyStcd}
+        </Badge>
+      ),
+    },
+    { label: '발생일자', value: s.crtrYmd },
+    { label: '시작일자', value: s.bgngYmd },
+    { label: '종료일자', value: s.endYmd },
+    { label: '비고', value: s.rmrkCn },
+  ])
 }
 
-function rlsVltrnsRows(d: BzentyRlsVltrnsRstric): TableRow[] {
-  return [
-    { label: '공고번호', value: d.pbancNo },
-    { label: '판단번호', value: d.prcmNo },
-    { label: '공고명', value: d.pbancNm },
-    { label: '개찰일자', value: d.bdopnYmd },
-    { label: '발주기관', value: d.orderInstNm },
-    { label: '수의계약 배제기간', value: d.exclPrd },
-    { label: '계약포기사유', value: d.exclRsn },
-    { label: '등록일자', value: d.regDt },
-  ]
+// 수의계약배제 — 공고번호/판단번호 합침 행(Figma). 다건이면 divider.
+function rlsVltrnsRows(list: BzentyRlsVltrnsRstric[]): InfoCardRowInput[] {
+  return list.flatMap((e, i): InfoCardRowInput[] => [
+    ...(i > 0 ? ['divider' as const] : []),
+    { label: '공고번호 / 판단번호', value: `${e.pbancNo} / ${e.prcmNo}` },
+    { label: '개찰일자', value: e.bdopnYmd },
+    { label: '공고명', value: e.pbancNm },
+    { label: '발주기관', value: e.orderInstNm },
+    { label: '수의계약배제기간', value: e.exclPrd },
+    { label: '계약포기사유', value: e.exclRsn },
+    { label: '등록일', value: e.regDt },
+  ])
 }
 
-function rprsvRows(d: BzentyRprsv): TableRow[] {
-  return [
-    { label: '대표대표자여부', value: d.rprsvYn },
-    { label: '대표자명', value: d.rprsvNm },
-    { label: '대표자영문', value: d.rprsvEngNm },
-    { label: '이메일주소', value: d.rprsvEmlAddr },
-  ]
-}
-
-function bidAgtRows(d: BzentyBidAgt): TableRow[] {
-  return [
-    { label: '직위', value: d.agtJbpsNm },
-    { label: '성명', value: d.agtNm },
-    { label: '전화번호', value: d.agtEntlno },
-  ]
-}
-
-// 목록형 데이터가 없을 때 안내 문구.
-function EmptyRow({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="px-1 py-2 text-[17px] leading-normal text-krds-text-muted">{children}</p>
-  )
+// 대표자 및 입찰 대리인 — 통합 카드(Figma). 주민등록번호는 설계서 260713 삭제 개정에 따라 미표시.
+function rprsvAgtRows(rprsvList: BzentyRprsv[], agtList: BzentyBidAgt[]): InfoCardRowInput[] {
+  const rows: InfoCardRowInput[] = rprsvList.flatMap((r, i): InfoCardRowInput[] => [
+    ...(i > 0 ? ['divider' as const] : []),
+    { label: '대표자 (영문)', value: `${r.rprsvNm} (${r.rprsvEngNm})` },
+    { label: '이메일', value: r.rprsvEmlAddr },
+  ])
+  agtList.forEach((a, i) => {
+    if (rows.length > 0 || i > 0) rows.push('divider')
+    rows.push(
+      { label: '대리인 (직위)', value: `${a.agtNm} (${a.agtJbpsNm})` },
+      { label: '연락처', value: a.agtEntlno },
+    )
+  })
+  return rows
 }
 
 export function BzentyGnrlInfoDtl_Gnrl() {
-  // 수의계약배제 조회 조건 — 기본 3개월(설계서 slide117 "기본 값 : 3개월"), 전체 토글.
+  // 수의계약배제 조회 조건 — 기본 3개월(설계서 slide127 "기본 값 : 3개월"), 전체 토글(리디자인에도 유지 — 사용자 확정).
   const [exclPeriod, setExclPeriod] = useState<'3m' | 'all'>('3m')
   // 목업이라 실제 필터링은 하지 않고 조회 조건만 표시(추후 API: cmService.selectBzentyRlsVltrnsRstrcList(period)).
   const exclList = RLS_VLTRNS_LIST
 
   return (
-    <Accordion
-      type="multiple"
-      defaultValue={['gnrl', 'stts', 'excl', 'rprsv', 'agt']}
-      className="w-full"
-    >
-      <AccordionSection value="gnrl" title="업체일반" borderTop={false}>
-        <Table rows={gnrlRows(GNRL_INFO)} />
-      </AccordionSection>
+    <div className="flex w-full flex-col gap-krds-8 px-4 py-5">
+      <InfoAccordionCard title="사업자정보" rows={bizRows(GNRL_INFO)} previewCount={4} />
+      <InfoAccordionCard title="법인정보" rows={corpRows(GNRL_INFO)} previewCount={4} />
 
-      <AccordionSection value="stts" title="상태/부정당">
-        {STTS_LIST.length > 0 ? (
-          <div className="flex flex-col gap-krds-8">
-            {STTS_LIST.map((s) => (
-              <Table key={`${s.bzentyStcd}-${s.crtrYmd}`} rows={sttsRows(s)} />
-            ))}
-          </div>
-        ) : (
+      <InfoAccordionCard title="상태/부정당" rows={sttsRows(STTS_LIST)} previewCount={4}>
+        {STTS_LIST.length === 0 && (
           // ⚠️ 설계서 "상태/부정당 데이터가 없는 경우 표시 정보 데이터 확인이 필요함" — 안내 문구 상세설계 확정 시 교체.
-          <EmptyRow>상태/부정당 내역이 없습니다.</EmptyRow>
+          <p className="text-[17px] leading-normal text-krds-text-muted">
+            상태/부정당 내역이 없습니다.
+          </p>
         )}
-      </AccordionSection>
+      </InfoAccordionCard>
 
-      <AccordionSection value="excl" title="수의계약배제">
-        <div className="flex flex-col gap-krds-7">
-          <SegmentedControl
-            items={[
-              { value: '3m', label: '3개월' },
-              { value: 'all', label: '전체' },
-            ]}
-            value={exclPeriod}
-            onValueChange={(v) => {
-              setExclPeriod(v as '3m' | 'all')
-              console.log('[T01] 수의계약배제 조회기간 →', v) // 추후 API: cmService.selectBzentyRlsVltrnsRstrcList
-            }}
-          />
-          {exclList.length > 0 ? (
-            <div className="flex flex-col gap-krds-8">
-              {exclList.map((e) => (
-                <Table key={`${e.pbancNo}-${e.prcmNo}`} rows={rlsVltrnsRows(e)} />
-              ))}
-            </div>
-          ) : (
-            <EmptyRow>수의계약에 배제된 사실이 없습니다.</EmptyRow>
-          )}
-        </div>
-      </AccordionSection>
-
-      <AccordionSection value="rprsv" title="대표자">
-        <div className="flex flex-col gap-krds-8">
-          {RPRSV_LIST.map((r) => (
-            <Table key={r.rprsvNm} rows={rprsvRows(r)} />
-          ))}
-        </div>
-      </AccordionSection>
-
-      <AccordionSection value="agt" title="입찰대리인">
-        {BID_AGT_LIST.length > 0 ? (
-          <div className="flex flex-col gap-krds-8">
-            {BID_AGT_LIST.map((a) => (
-              <Table key={`${a.agtNm}-${a.agtEntlno}`} rows={bidAgtRows(a)} />
-            ))}
-          </div>
-        ) : (
-          <EmptyRow>입찰대리인 정보가 없습니다.</EmptyRow>
+      <InfoAccordionCard title="수의계약배제" rows={rlsVltrnsRows(exclList)} previewCount={4}>
+        <SegmentedControl
+          items={[
+            { value: '3m', label: '3개월' },
+            { value: 'all', label: '전체' },
+          ]}
+          value={exclPeriod}
+          onValueChange={(v) => {
+            setExclPeriod(v as '3m' | 'all')
+            console.log('[T01] 수의계약배제 조회기간 →', v) // 추후 API: cmService.selectBzentyRlsVltrnsRstrcList
+          }}
+        />
+        {exclList.length === 0 && (
+          <p className="text-[17px] leading-normal text-krds-text-muted">
+            수의계약에 배제된 사실이 없습니다.
+          </p>
         )}
-      </AccordionSection>
-    </Accordion>
+      </InfoAccordionCard>
+
+      <InfoAccordionCard
+        title="대표자 및 입찰 대리인"
+        rows={rprsvAgtRows(RPRSV_LIST, BID_AGT_LIST)}
+        previewCount={4}
+      />
+    </div>
   )
 }
 BzentyGnrlInfoDtl_Gnrl.displayName = 'BzentyGnrlInfoDtl_Gnrl'

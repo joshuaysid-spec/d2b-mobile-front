@@ -1,14 +1,16 @@
-// 업체정보 상세 (MUI-CM-01-M02) — 마이페이지 > 업체정보관리 > 상세. 설계서 slide115~128(문서 P114~127).
+// 업체정보 상세 (MUI-CM-01-M02) — 마이페이지 > 업체정보관리 > 상세. 설계서 v0.86 slide125~138 / Figma 10020:82706.
 // 자신이 속한 업체 정보를 탭으로 표시(업체일반/물품(내자)/시설/국내소재상사).
-// 구성(레퍼런스 = op/prcmPlanDtl/PrcmPlanDtlPage): useCollapsibleHeader + sticky 블록
-//   [요약정보(SummaryInfo) + 나라장터(G2B) 갱신 밴드 + 탭(TabList)] + 탭별 콘텐츠 switch. StepBar 없음.
+// 260827 Figma 리디자인 반영: 상단 = 업체 요약 카드(BzentySummaryCard — 아이콘+업체명+코드 뱃지+사업구분 뱃지
+//   +최신 수신일자). G2B 갱신하기 버튼은 리디자인에 없으나 설계서 기능(1일 1회)이라 수신일자 행 우측에 유지(사용자 확정).
+// 구성: useCollapsibleHeader + sticky 블록[요약 카드(접힘) + 탭(TabList)] + 탭별 콘텐츠 switch.
 //   ⚠️ 사업구분(물품/공사/용역)에 따라 탭 노출이 달라질 수 있으나(설계서 미확정), 목업은 물품(내자) 기준 4탭 모두 노출.
+//   (Figma 탭 목록의 '입찰진행현황' 5번째 탭은 설계서 v0.86 에 없어 미반영 — 확인 필요.)
 // 헤더(뒤로/타이틀)는 전역 Header(AppLayout) 담당 → 본문은 콘텐츠만 렌더. 데이터는 목업(백엔드 미연동).
 import { useState } from 'react'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
-import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
+import { BzentySummaryCard } from '@/ui/biz/cm/bzentyInfo/BzentySummaryCard'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { Button } from '@/ui/common/base/Button'
 import { Toast } from '@/ui/common/composites/Toast'
@@ -74,25 +76,13 @@ export function BzentyGnrlInfoDtlPage() {
 
   return (
     <div ref={rootRef} className="flex w-full flex-col">
-      {/* 상단 블록 — sticky 고정. 스크롤 시 요약/G2B밴드가 축소되며 높이 감소(탭만 남아 붙음). */}
+      {/* 상단 블록 — sticky 고정. 스크롤 시 요약 카드가 축소되며 높이 감소(탭만 남아 붙음). */}
       <div
         className={`sticky top-0 z-20 border-b bg-white transition-colors ${
           collapsed ? 'border-krds-border-divider' : 'border-transparent'
         }`}
       >
-        <SummaryInfo
-          collapsed={collapsed}
-          badges={SUMMARY.bizCd.map((label) => ({ label }))}
-          subtitle={`사업자등록번호 ${SUMMARY.brno}`}
-          title={SUMMARY.bzentyNm}
-          rows={[
-            { label: '업체코드', value: SUMMARY.bzentyCd },
-            { label: '국적', value: SUMMARY.ntnCd },
-            { label: '개업일자', value: SUMMARY.opbizYmd },
-          ]}
-        />
-
-        {/* 나라장터(G2B) 갱신 밴드 — 스크롤 축소(collapsed) 시 함께 접힘(grid-rows 0fr, SummaryInfo 와 동일 방식). */}
+        {/* 업체 요약 카드(Figma m_summary info_card) — 스크롤 축소(collapsed) 시 접힘(grid-rows 0fr). */}
         <div
           aria-hidden={collapsed}
           className={`grid transition-all duration-200 ease-out motion-reduce:transition-none ${
@@ -100,22 +90,24 @@ export function BzentyGnrlInfoDtlPage() {
           }`}
         >
           <div className="overflow-hidden">
-            {/* 갱신 버튼 — 전체폭 대신 우측 끝 소형(sm)으로 배치(260825 사용자 확정). */}
-            <div className="flex items-center gap-krds-5 bg-krds-bg-primary-faint px-4 py-4">
-              {/* 안내문 2줄 고정 — 1줄: 항목명 / 2줄: 최근 수신 일시(260825 사용자 확정). */}
-              <p className="min-w-px flex-1 text-[15px] leading-normal text-krds-text-muted wrap-break-word">
-                나라장터(G2B) 조달업체정보
-                <br />
-                최근 수신(갱신) 일시 : {G2B_LAST_RECV_DT}
-              </p>
-              <Button
-                variant="secondary"
-                size="sm"
-                className="shrink-0"
-                onClick={handleRefreshG2b}
-              >
-                갱신하기
-              </Button>
+            <div className="p-4 pb-0">
+              <BzentySummaryCard
+                name={SUMMARY.bzentyNm}
+                code={SUMMARY.bzentyCd}
+                bizCd={SUMMARY.bizCd}
+                infos={[
+                  {
+                    label: '최신 수신일자',
+                    value: `${G2B_LAST_RECV_DT} (나라장터)`,
+                    // 갱신하기 — 리디자인에 없으나 설계서 기능(1일 1회 제한)이라 유지(260827 사용자 확정).
+                    action: (
+                      <Button variant="secondary" size="sm" onClick={handleRefreshG2b}>
+                        갱신하기
+                      </Button>
+                    ),
+                  },
+                ]}
+              />
             </div>
           </div>
         </div>
@@ -133,9 +125,8 @@ export function BzentyGnrlInfoDtlPage() {
         </div>
       </div>
 
-      {/* 탭 콘텐츠 — 짧은 탭도 헤더 접힘을 지탱할 스크롤 높이 확보(진동 방지).
-          pb-4 = 좌우(16px)와 같은 하단 여백. 아코디언으로 끝나는 탭(업체일반)도 바닥에 붙지 않는다. */}
-      <div className="min-h-[100dvh] pb-4">{renderTabContent(tab)}</div>
+      {/* 탭 콘텐츠 — 짧은 탭도 헤더 접힘을 지탱할 스크롤 높이 확보(진동 방지). 여백은 탭 콘텐츠가 소유(px-4 py-5). */}
+      <div className="min-h-[100dvh]">{renderTabContent(tab)}</div>
 
       {/* 맨위로 FAB */}
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />

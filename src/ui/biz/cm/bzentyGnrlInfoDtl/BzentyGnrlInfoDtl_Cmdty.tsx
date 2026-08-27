@@ -1,13 +1,18 @@
-// 업체정보 상세 - '물품(내자)' 탭 콘텐츠 (MUI-CM-01-T02, 설계서 slide122~123 / 문서 P121~122).
-// 아코디언(등록품목명세·담당자정보·대표품류및조합/단체) with 테이블 + 제출서류 안내(Infobox).
-//   - 등록품목명세(dl_regTrgtItemList)는 목록형 → 항목별 Table 반복.
+// 업체정보 상세 - '물품(내자)' 탭 콘텐츠 (MUI-CM-01-T02, 설계서 v0.86 slide132~133 / Figma 10020:82844·82894).
+// 260827 Figma 리디자인 반영: 섹션 카드(InfoAccordionCard) 3장 + 제출서류 안내(HelpDisclosure)
+//   + [조달원확인서 신청] 풀폭 버튼(설계서 이벤트 btn_sosCnfdocAply — P03 팝업, 현재 스텁).
+//   등록품목명세는 품목적부판정을 품목코드 행 우측 뱃지로 표시(Figma), 접힘 시 4행 + 더보기.
 // 데이터는 목업(설계서 데이터영역 항목명·형식 그대로) — 추후 API(cmService.selectBzentyDmscptInfo)로 대체.
 import type { RegTrgtItem, PicInfo, KnditmAsctGrp } from '@/types/mock/cm'
-import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
-import { Infobox } from '@/ui/common/composites/Infobox'
-import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { Badge } from '@/ui/common/base/Badge'
+import { Button } from '@/ui/common/base/Button'
+import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
+import {
+  InfoAccordionCard,
+  type InfoCardRowInput,
+} from '@/ui/biz/cm/bzentyInfo/InfoAccordionCard'
 
-// ── 등록품목명세 (dl_regTrgtItemList) — 설계서 slide122/123 예시값 ────────────
+// ── 등록품목명세 (dl_regTrgtItemList) — 설계서 slide132/133 예시값 ────────────
 const REG_ITEMS: RegTrgtItem[] = [
   {
     itemCd: '1001100001',
@@ -15,12 +20,12 @@ const REG_ITEMS: RegTrgtItem[] = [
     knditmCdNm: '총탄',
     itemRgstrtSecdNm: '제조',
     itemCdNm: '이불',
-    itemRgstrtRqmtNm: '해당업종 사업자 / 공장 등록',
+    itemRgstrtRqmtNm: '해당업종 사업자/공장등록',
     itemRvwRsltCn: '적격',
   },
 ]
 
-// ── 담당자정보 (dm_picInfo) — 설계서 slide122/123 예시값 ─────────────────────
+// ── 담당자정보 (dm_picInfo) — 설계서 slide132/133 예시값 ─────────────────────
 const PIC_INFO: PicInfo = {
   picNm: '김길동',
   picEntlno: '02-1234-5678',
@@ -28,7 +33,7 @@ const PIC_INFO: PicInfo = {
   picEmlAddr: 'abcde@dapa.go.kr',
 }
 
-// ── 대표품류 및 조합/단체 (dm_knditmListAsctGrpList) — 설계서 slide122/123 예시값 ──
+// ── 대표품류 및 조합/단체 (dm_knditmListAsctGrpList) — 설계서 slide132/133 예시값 ──
 const ASCT_GRP_LIST: KnditmAsctGrp[] = [
   {
     knditmCd: '05',
@@ -39,69 +44,71 @@ const ASCT_GRP_LIST: KnditmAsctGrp[] = [
   },
 ]
 
-function regItemRows(d: RegTrgtItem): TableRow[] {
+// 담당자정보 — 라벨은 Figma 표기(연락처/이메일/팩스).
+function picRows(d: PicInfo): InfoCardRowInput[] {
   return [
-    { label: '품목코드', value: d.itemCd },
-    { label: '품류코드/명', value: `${d.knditmCd} / ${d.knditmCdNm}` },
+    { label: '담당자명', value: d.picNm },
+    { label: '연락처', value: d.picEntlno },
+    { label: '이메일', value: d.picEmlAddr },
+    { label: '팩스', value: d.picFxno },
+  ]
+}
+
+function asctRows(list: KnditmAsctGrp[]): InfoCardRowInput[] {
+  return list.flatMap((a, i): InfoCardRowInput[] => [
+    ...(i > 0 ? ['divider' as const] : []),
+    { label: '대표품류', value: a.knditmCdNm },
+    { label: '업태', value: a.bzstatCdNm },
+    { label: '조합/단체', value: a.asctCdNm },
+  ])
+}
+
+// 등록품목명세 — 품목적부판정(itemRvwRsltCn)은 품목코드 행 우측 뱃지(Figma). 다건은 divider.
+//   Figma 라벨 '품목코드/명'은 값이 품류(60/총탄)라 설계서 표기(품류코드/명)를 유지.
+function regItemRows(list: RegTrgtItem[]): InfoCardRowInput[] {
+  return list.flatMap((d, i): InfoCardRowInput[] => [
+    ...(i > 0 ? ['divider' as const] : []),
+    {
+      label: '품목코드',
+      value: d.itemCd,
+      badge: (
+        <Badge type="pastel" color="blue">
+          {d.itemRvwRsltCn}
+        </Badge>
+      ),
+    },
+    { label: '품류코드/명', value: `${d.knditmCd}/${d.knditmCdNm}` },
     { label: '구분', value: d.itemRgstrtSecdNm },
     { label: '품명', value: d.itemCdNm },
     { label: '등록요건', value: d.itemRgstrtRqmtNm },
-    { label: '품목적부판정', value: d.itemRvwRsltCn },
-  ]
-}
-
-function picRows(d: PicInfo): TableRow[] {
-  return [
-    { label: '담당자명', value: d.picNm },
-    { label: '전화번호', value: d.picEntlno },
-    { label: '팩스번호', value: d.picFxno },
-    { label: '이메일주소', value: d.picEmlAddr },
-  ]
-}
-
-function asctRows(d: KnditmAsctGrp): TableRow[] {
-  return [
-    { label: '대표품류', value: d.knditmCdNm },
-    { label: '업태', value: d.bzstatCdNm },
-    { label: '조합/단체', value: d.asctCdNm },
-  ]
+  ])
 }
 
 export function BzentyGnrlInfoDtl_Cmdty() {
+  // 조달원확인서 신청 — 설계서 이벤트 btn_sosCnfdocAply(UI-CM-01-P03 팝업 호출). 팝업 미구현 스텁.
+  const handleSosCnfdocAply = () => {
+    console.log('[T02] 조달원확인서 신청') // 추후: P03 국내조달원 확인서 신청 팝업 배선
+  }
+
   return (
     <>
-      <Accordion type="multiple" defaultValue={['reg', 'pic', 'asct']} className="w-full">
-        <AccordionSection value="pic" title="담당자정보" borderTop={false}>
-          <Table rows={picRows(PIC_INFO)} />
-        </AccordionSection>
+      <div className="flex w-full flex-col gap-krds-8 px-4 py-5">
+        <InfoAccordionCard title="담당자정보" rows={picRows(PIC_INFO)} />
+        <InfoAccordionCard title="대표품류 및 조합/단체" rows={asctRows(ASCT_GRP_LIST)} />
+        <InfoAccordionCard title="등록품목명세" rows={regItemRows(REG_ITEMS)} previewCount={4} />
+      </div>
 
-        <AccordionSection value="asct" title="대표품류 및 조합/단체">
-          <div className="flex flex-col gap-krds-8">
-            {ASCT_GRP_LIST.map((a) => (
-              <Table key={a.knditmCd} rows={asctRows(a)} />
-            ))}
-          </div>
-        </AccordionSection>
+      {/* 물품[내자]업체 제출서류 (Figma m_help_disclosure — 공통 HelpDisclosure 1:1) */}
+      <HelpDisclosure
+        title="물품[내자]업체 제출서류"
+        items={['공장등록증명서 - 1부 (관련업체만 제출)', '인,허가증사본 - 1부 (해당품목 제출)']}
+      />
 
-        <AccordionSection value="reg" title="등록품목명세">
-          <div className="flex flex-col gap-krds-8">
-            {REG_ITEMS.map((item) => (
-              <Table key={item.itemCd} rows={regItemRows(item)} />
-            ))}
-          </div>
-        </AccordionSection>
-      </Accordion>
-
-      {/* 물품[내자] 업체 제출서류 안내 (설계서 slide122) — 하단 여백도 좌우(16px)와 동일하게. */}
-      <div className="px-4 py-4">
-        <Infobox
-          title="물품[내자] 업체 제출서류"
-          collapsible={false}
-          items={[
-            '공장등록증명서 - 1부 (관련업체만 제출)',
-            '인,허가증사본 - 1부 (해당품목 제출)',
-          ]}
-        />
+      {/* 조달원확인서 신청 (Figma 하단 풀폭 primary) */}
+      <div className="p-4">
+        <Button variant="primary" className="w-full" onClick={handleSosCnfdocAply}>
+          조달원확인서 신청
+        </Button>
       </div>
     </>
   )
