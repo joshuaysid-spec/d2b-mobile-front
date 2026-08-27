@@ -8,24 +8,24 @@ import { useNavigate } from 'react-router-dom'
 
 import { Icon } from '@/ui/common/base/Icon'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
+import { BzentySummaryCard } from '@/ui/biz/cm/bzentyInfo/BzentySummaryCard'
 import { ROUTES } from '@/constants/routes'
 
-// ⚠️ 업체정보(dm_bzentyInfo, 설계서 v0.86 slide195·196 예시값 그대로) — 추후: 회원정보 API 로 교체.
+// ⚠️ 업체정보(dm_bzentyInfo, 설계서 v0.86 slide195·196 항목) — 업체정보 상세(M02)와 동일 업체
+//   (조달테스트업체/100F, 260828 정합). 추후: 회원정보 API 로 교체.
 //   구 사용자 요약 카드(홍길동 님/아이디/부서명)는 설계서 미표기라 제거(사용자 확정 2026-08-25 — 설계서와 동일 구성).
 const MOCK_BZENTY = {
-  bzentyNm: '주식회사 국방전자조달', // 업체명
+  bzentyNm: '조달테스트업체', // 업체명
   brno: '123-45-67890', // 사업자등록번호
-  bzentyCd: '7004F', // 업체코드
+  bzentyCd: '100F', // 업체코드
   rprsvNm: '홍길동', // 대표자명
   bzentyRgstrtYmd: '2026-02-02', // 등록일
   crno: '123456-7890123', // 법인등록번호
 }
 
-// 업체정보 행 — 설계서 slide196 항목설명(dm_bzentyInfo) 순서 그대로.
+// 업체정보 행 — 설계서 slide196 항목설명(dm_bzentyInfo) 순서. 업체명·업체코드는 카드 타이틀/뱃지로 이동.
 const BZENTY_ROWS: { label: string; value: string }[] = [
-  { label: '업체명', value: MOCK_BZENTY.bzentyNm },
   { label: '사업자등록번호', value: MOCK_BZENTY.brno },
-  { label: '업체코드', value: MOCK_BZENTY.bzentyCd },
   { label: '대표자명', value: MOCK_BZENTY.rprsvNm },
   { label: '등록일', value: MOCK_BZENTY.bzentyRgstrtYmd },
   { label: '법인등록번호', value: MOCK_BZENTY.crno },
@@ -45,17 +45,13 @@ export function IndvInfoMngPage() {
   const navigate = useNavigate()
   return (
     <div className="flex w-full flex-col">
-      {/* 업체정보(dm_bzentyInfo) — 상단 배치(사용자 확정 2026-08-25). 항목·예시값은 설계서 slide195·196 그대로. */}
-      <div className="mx-4 mt-4 flex flex-col gap-krds-5 rounded-krds-8 bg-krds-bg-primary-faint p-krds-8">
-        <span className="text-krds-body-lg font-bold leading-normal text-krds-text-ink">업체정보</span>
-        <dl className="flex flex-col gap-krds-3">
-          {BZENTY_ROWS.map((r) => (
-            <div key={r.label} className="flex items-start gap-krds-5 text-krds-body-md leading-normal">
-              <dt className="w-28 shrink-0 text-krds-text-muted">{r.label}</dt>
-              <dd className="min-w-px flex-1 wrap-break-word text-krds-text-ink">{r.value}</dd>
-            </div>
-          ))}
-        </dl>
+      {/* 업체정보(dm_bzentyInfo) — 업체정보 상세(M02)와 동일한 요약 카드(260828 사용자 확정). */}
+      <div className="p-4 pb-0">
+        <BzentySummaryCard
+          name={MOCK_BZENTY.bzentyNm}
+          code={MOCK_BZENTY.bzentyCd}
+          infos={BZENTY_ROWS}
+        />
       </div>
 
       {/* 하위 화면 이동 버튼 — 19px Bold + 우측 ArrowForwardIos. 행 사이 구분선. */}
