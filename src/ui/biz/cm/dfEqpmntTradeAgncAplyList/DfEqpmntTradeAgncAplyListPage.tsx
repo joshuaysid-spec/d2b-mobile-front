@@ -2,10 +2,10 @@
 // Figma 정본 10020:83161(데이터)·10020:83191(결과없음). 설계서 00.공통 v0.84 slide178 항목명 준수.
 // 구성(위→아래, Figma): 업무도움 HelpDisclosure(말소/실효 안내) → "업체 등록현황 : 적격" + [업체등록안내](FullPopup)
 //   → m_card 리스트(배지[구분·진행상황] + 접수번호 + 요청/승인/실효말소/만료일자) → 더보기
-//   → FAB(맨위로 / + 신청 → 바텀시트 [신규][갱신] — Figma 10020:83284, 260827). 결과없음=CardList emptyText.
+//   → FAB(맨위로 / + 신청 → 바텀시트 [신규][갱신][변경] 버튼형 라디오, 설계서 slide188·Figma 83432 스타일). 결과없음=CardList emptyText.
 //   (2026-08-24 사용자 확정 — 구 하단 sticky [신청] 바를 우하단 + 플로팅 버튼으로 대체.)
 // 데이터=파일 내 목업(dl_dfEqpmntTradAgncAplyList), 동작=API 경계 스텁(console.log + '// 추후 …').
-//   신규/갱신 → M17(mode), 상세 → M16(navigate state). 변경(M18) 진입은 Figma 시트 재대조로 제외(라우트 유지).
+//   신규/갱신 → M17(mode), 변경 → M18, 상세 → M16(navigate state). 실효·말소면 [변경] Dim.
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -16,7 +16,8 @@ import { Icon } from '@/ui/common/base/Icon'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
-import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
+import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
+import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { BzentyRegGuide } from '@/ui/biz/cm/dfEqpmntTradeAgncAplyList/BzentyRegGuide'
 import type { DfEqpmntTradeAgncAplyItem } from '@/types/mock/cm'
@@ -81,11 +82,15 @@ export function DfEqpmntTradeAgncAplyListPage() {
   const handleCardClick = (item: DfEqpmntTradeAgncAplyItem) => {
     navigate(ROUTES.DF_EQPMNT_TRADE_AGNC_DTL, { state: item })
   }
-  // 신청 선택([신규(갱신)] → M17 / [변경] → M18). 신규·갱신 버튼 통합(사용자 확정 2026-08-25) —
-  // M17 이 신규/갱신 겸용 화면이라 mode 는 기본 'new' 로 진입(실제 구분은 백엔드 연동 시 신청 이력으로 판정).
-  const goApply = (mode: 'new' | 'renew') => {
+  // 신청 시트 — [신규][갱신][변경] 버튼형 라디오(설계서 slide188·Figma 10020:83432 스타일, 260828 사용자 확정).
+  //   실효·말소 상태면 [변경] Dim. [신청하기] → 선택 구분으로 이동(신규/갱신=M17 mode, 변경=M18).
+  const [aplyKind, setAplyKind] = useState<'new' | 'renew' | 'change'>('new')
+  const latestStatus = dl_dfEqpmntTradAgncAplyList[0]?.aprvSecdNm ?? ''
+  const changeDisabled = latestStatus === '실효' || latestStatus === '말소'
+  const handleAplyConfirm = () => {
     setAplyOpen(false)
-    navigate(ROUTES.DF_EQPMNT_TRADE_AGNC_APLY, { state: { mode } })
+    if (aplyKind === 'change') navigate(ROUTES.DF_EQPMNT_TRADE_AGNC_CHG)
+    else navigate(ROUTES.DF_EQPMNT_TRADE_AGNC_APLY, { state: { mode: aplyKind } })
   }
 
   // 목업 → Card props. 접수번호(번호만 primary 색), 배지=구분 + 진행상황.
@@ -159,21 +164,35 @@ export function DfEqpmntTradeAgncAplyListPage() {
       {/* 업체등록안내 FullPopup(Figma 10020:83204) — 컨테이너는 컴포넌트 소유, open 만 주입. */}
       <BzentyRegGuide open={guideOpen} onOpenChange={setGuideOpen} />
 
-      {/* 신청 선택 바텀시트 — Figma 10020:83284(260827 재대조): 타이틀 '군수품무역대리업 신청' +
-          [신규][갱신] 이동 행(NavigationItemList) + [확인](닫기). 구 [신규(갱신)][변경] 버튼 구성 폐기 —
-          변경(M18) 진입은 Figma 시트에 없어 제외(라우트는 유지, 재배선 필요 시 행 추가). */}
+      {/* 신청 선택 바텀시트 — [신규][갱신][변경] 버튼형 라디오(설계서 slide188, Figma 83432 스타일) + [신청하기][취소]. */}
       <BottomSheet
         open={aplyOpen}
         onOpenChange={setAplyOpen}
         title="군수품무역대리업 신청"
-        onConfirm={() => setAplyOpen(false)}
+        footer={
+          <ButtonGroup
+            layout="vertical"
+            items={[
+              { label: '신청하기', variant: 'primary', onClick: handleAplyConfirm },
+              { label: '취소', variant: 'secondary', onClick: () => setAplyOpen(false) },
+            ]}
+          />
+        }
       >
-        <NavigationItemList
-          items={[
-            { id: 'new', label: '신규', onClick: () => goApply('new') },
-            { id: 'renew', label: '갱신', onClick: () => goApply('renew') },
-          ]}
-        />
+        <div className="py-krds-5">
+          <RadioButtonGroup
+            direction="vertical"
+            showIndicator
+            value={aplyKind}
+            onValueChange={(v) => setAplyKind(v as 'new' | 'renew' | 'change')}
+            items={[
+              { value: 'new', label: '신규' },
+              { value: 'renew', label: '갱신' },
+              // 실효·말소 상태면 [변경] Dim(설계서 slide188).
+              { value: 'change', label: '변경', disabled: changeDisabled },
+            ]}
+          />
+        </div>
       </BottomSheet>
     </div>
   )
