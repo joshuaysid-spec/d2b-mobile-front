@@ -33,6 +33,8 @@ export interface CardProps
   badges?: React.ReactNode
   subtitle?: React.ReactNode
   title?: React.ReactNode
+  /** 타이틀 우측 슬롯(선택 체크박스 등, Figma 10020:85034) — 타이틀과 같은 행 상단 정렬. */
+  titleTrailing?: React.ReactNode
   rows?: CardRow[]
   /** rows 영역과 가로로 나란히 — 우측 끝 슬롯 (Badge, 아이콘 등). */
   trailing?: React.ReactNode
@@ -53,6 +55,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       badges,
       subtitle,
       title,
+      titleTrailing,
       rows,
       trailing,
       trailingAlign = 'rows',
@@ -81,12 +84,21 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
                 {subtitle}
               </span>
             )}
-            {title && (
+            {title &&
               // 2줄 초과 시 … 말줄임(2026-08-06 요청 — 설계서 '카드 title 2줄 말줄임'). 전문은 상세 화면이 표시.
-              <span className="line-clamp-2 text-[19px] font-bold leading-normal text-krds-text-ink wrap-break-word">
-                {title}
-              </span>
-            )}
+              (titleTrailing ? (
+                // 타이틀 우측 슬롯(선택 체크박스 등 — Figma 10020:85034 다중 선택 카드) — 상단 정렬.
+                <div className="flex items-start gap-krds-5">
+                  <span className="line-clamp-2 min-w-px flex-1 text-[19px] font-bold leading-normal text-krds-text-ink wrap-break-word">
+                    {title}
+                  </span>
+                  <div className="shrink-0">{titleTrailing}</div>
+                </div>
+              ) : (
+                <span className="line-clamp-2 text-[19px] font-bold leading-normal text-krds-text-ink wrap-break-word">
+                  {title}
+                </span>
+              ))}
           </div>
         )}
 

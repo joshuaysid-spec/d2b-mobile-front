@@ -11,6 +11,7 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { Button } from '@/ui/common/base/Button'
 import { Checkbox } from '@/ui/common/base/Checkbox'
+import { Card } from '@/ui/common/composites/Card'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import type { RegTrgtItemChcItem } from '@/types/mock/cm'
@@ -167,61 +168,36 @@ const RegTrgtItemChc = forwardRef<RegTrgtItemChcHandle, RegTrgtItemChcProps>(
                 {results.map((it) => {
                   const on = selected.includes(it.itemCd)
                   return (
-                    <li
-                      key={it.itemCd}
-                      className="flex flex-col gap-krds-5 rounded-[12px] border border-krds-border-field p-krds-8"
-                    >
-                      {/* 타이틀(품명) + 우측 선택 체크박스(Figma 84985) */}
-                      <div className="flex items-start gap-krds-5">
-                        <span className="min-w-px flex-1 text-[19px] font-bold leading-normal text-krds-text-ink">
-                          {it.itemCdNm}
-                        </span>
-                        <Checkbox
-                          variant="box"
-                          aria-label={`${it.itemCdNm} 선택`}
-                          checked={on}
-                          onCheckedChange={() => toggle(it.itemCd)}
-                        />
-                      </div>
-                      {/* 정보행 — label 좌 / value 우(품목코드는 파랑 링크 → P09) */}
-                      <div className="flex flex-col gap-krds-3">
-                        <div className="flex items-start gap-krds-5">
-                          <span className="min-w-px flex-1 text-[17px] leading-normal text-krds-text-muted">
-                            삭제여부
-                          </span>
-                          <span className="text-right text-[17px] leading-normal text-krds-text-muted">
-                            {it.delYn}
-                          </span>
-                        </div>
-                        <div className="flex items-start gap-krds-5">
-                          <span className="min-w-px flex-1 text-[17px] leading-normal text-krds-text-muted">
-                            품목코드
-                          </span>
-                          <button
-                            type="button"
-                            className="text-right text-[17px] leading-normal text-krds-action-primary underline-offset-2 hover:underline"
-                            onClick={() => onDetail(it)}
-                          >
-                            {it.itemCd}
-                          </button>
-                        </div>
-                        <div className="flex items-start gap-krds-5">
-                          <span className="min-w-px flex-1 text-[17px] leading-normal text-krds-text-muted">
-                            품류코드/명
-                          </span>
-                          <span className="text-right text-[17px] leading-normal text-krds-text-muted">
-                            {it.knditmCd}/{it.knditmCdNm}
-                          </span>
-                        </div>
-                        <div className="flex items-start gap-krds-5">
-                          <span className="min-w-px flex-1 text-[17px] leading-normal text-krds-text-muted">
-                            등록요건
-                          </span>
-                          <span className="min-w-px flex-1 text-right text-[17px] leading-normal text-krds-text-muted wrap-break-word">
-                            {it.itemRgstrtRqmtNm}
-                          </span>
-                        </div>
-                      </div>
+                    <li key={it.itemCd}>
+                      {/* Figma 10020:85034 다중 선택 카드 — 타이틀(품명)+우측 체크박스+정보행(공통 Card). */}
+                      <Card
+                        title={it.itemCdNm}
+                        titleTrailing={
+                          <Checkbox
+                            variant="box"
+                            aria-label={`${it.itemCdNm} 선택`}
+                            checked={on}
+                            onCheckedChange={() => toggle(it.itemCd)}
+                          />
+                        }
+                        rows={[
+                          { label: '삭제여부', value: it.delYn },
+                          {
+                            label: '품목코드',
+                            value: (
+                              <button
+                                type="button"
+                                className="text-right text-[17px] leading-normal text-krds-action-primary underline-offset-2 hover:underline"
+                                onClick={() => onDetail(it)}
+                              >
+                                {it.itemCd}
+                              </button>
+                            ),
+                          },
+                          { label: '품류코드/명', value: `${it.knditmCd}/${it.knditmCdNm}` },
+                          { label: '등록요건', value: it.itemRgstrtRqmtNm },
+                        ]}
+                      />
                     </li>
                   )
                 })}

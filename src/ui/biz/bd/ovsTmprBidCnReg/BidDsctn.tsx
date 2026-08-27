@@ -365,7 +365,7 @@ export function BidDsctn({ detail }: { detail: BscPbancInfo }) {
             { label: '항목번호', value: row.frcptlArtclNo },
             { label: '재고번호', value: row.invtNo },
             { label: '부품번호', value: row.prtsNo },
-            { label: '품명', value: row.itemNm },
+            // 품명은 카드 타이틀로 승격(Figma 10020:85034) — 행에서 제외.
           ]
           // 펼침 시 품목 기본정보(ReadOnly)
           const itemInfoRows: TableRow[] = [
@@ -377,19 +377,18 @@ export function BidDsctn({ detail }: { detail: BscPbancInfo }) {
           return (
             <Card
               key={row.frcptlArtclNo}
-              badges={
+              title={row.itemNm}
+              titleTrailing={
                 <Checkbox
                   variant="box"
-                  label="선택"
                   aria-label={`${row.itemNm} 선택`}
                   checked={checkedNos.includes(row.frcptlArtclNo)}
                   onCheckedChange={(c) => toggleChecked(row.frcptlArtclNo, c === true)}
                 />
               }
+              rows={summaryRows}
               footer={
                 <div className="flex flex-col gap-krds-5">
-
-              <Table rows={summaryRows} />
 
               {isExpanded && (
                 <>

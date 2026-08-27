@@ -13,7 +13,7 @@ import { InputLabel } from '@/ui/common/base/InputLabel'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { Card } from '@/ui/common/composites/Card'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
-import { Table, type TableRow } from '@/ui/common/composites/Table'
+import type { TableRow } from '@/ui/common/composites/Table'
 import type {
   OvsBidBizExmptnItem,
   OvsBidBizItem,
@@ -49,7 +49,7 @@ function bizRows(item: OvsBidBizItem, no: number): TableRow[] {
   return [
     { label: '순번', value: String(no), type: 'number' },
     { label: '구매요청번호', value: item.prchsDmndNo },
-    { label: '사업명', value: item.bizNm },
+    // 사업명은 카드 타이틀로 승격(Figma 10020:85034) — 행에서 제외.
     { label: '입찰품목수', value: item.bdngItemQty.toLocaleString(), type: 'number' },
     { label: '입찰금액', value: `US$ ${fmtUsd(item.bdngTccrAmt)}`, type: 'number' },
     { label: '입찰보증금', value: `US$ ${fmtUsd(item.bidGrnteAmt)}`, type: 'number' },
@@ -66,7 +66,7 @@ function bizExmptnRows(item: OvsBidBizExmptnItem, no: number): TableRow[] {
   return [
     { label: '순번', value: String(no), type: 'number' },
     { label: '구매요청번호', value: item.prchsDmndNo },
-    { label: '사업명', value: item.bizNm },
+    // 사업명은 카드 타이틀로 승격(Figma 10020:85034) — 행에서 제외.
     { label: '입찰품목수', value: item.bdngItemQty.toLocaleString(), type: 'number' },
     { label: '입찰금액', value: `US$ ${fmtUsd(item.bdngTccrAmt)}`, type: 'number' },
     { label: '입찰보증금', value: `US$ ${fmtUsd(item.bidGrnteAmt)}`, type: 'number' },
@@ -149,23 +149,19 @@ export function OvsBidPrtcpApfrDtlPage_Tab3({
         {list.slice(0, loaded).map((item, i) => (
           <Card
             key={item.prchsDmndNo}
-            badges={
+            title={item.bizNm}
+            titleTrailing={
               <Checkbox
                 variant="box"
-                label="선택"
-                aria-label={`구매요구번호 ${item.prchsDmndNo} 선택`}
+                aria-label={`${item.bizNm} 선택`}
                 checked={checkedNos.includes(item.prchsDmndNo)}
                 onCheckedChange={(c) => toggleChecked(item.prchsDmndNo, c === true)}
               />
             }
-            footer={
-              <Table
-                rows={
-                  isExmptn
-                    ? bizExmptnRows(item as OvsBidBizExmptnItem, i + 1)
-                    : bizRows(item as OvsBidBizItem, i + 1)
-                }
-              />
+            rows={
+              isExmptn
+                ? bizExmptnRows(item as OvsBidBizExmptnItem, i + 1)
+                : bizRows(item as OvsBidBizItem, i + 1)
             }
           />
         ))}

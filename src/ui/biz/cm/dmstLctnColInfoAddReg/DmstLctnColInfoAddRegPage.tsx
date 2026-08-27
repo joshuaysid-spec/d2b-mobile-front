@@ -20,7 +20,7 @@ import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { Checkbox } from '@/ui/common/base/Checkbox'
 import { Card } from '@/ui/common/composites/Card'
-import { Table, type TableRow } from '@/ui/common/composites/Table'
+import type { TableRow } from '@/ui/common/composites/Table'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
@@ -233,7 +233,7 @@ export function DmstLctnColInfoAddRegPage() {
         ),
       },
       { label: '품류코드/명', value: `${d.knditmCd} / ${d.knditmCdNm}` },
-      { label: '품명', value: d.itemCdNm },
+      // 품명은 카드 타이틀로 승격(Figma 10020:85034) — 행에서 제외.
       { label: '구분', value: d.itemRgstrtSecdNm },
       { label: '등록요건', value: d.itemRgstrtRqmtNm },
       { label: '적격여부', value: d.itemRvwRsltCn },
@@ -404,22 +404,16 @@ export function DmstLctnColInfoAddRegPage() {
                 return (
                   <Card
                     key={it.id}
-                    badges={
-                      <>
-                        <Checkbox
-                          variant="box"
-                          checked={on}
-                          onCheckedChange={() => toggleItem(it.id)}
-                          label="선택"
-                          aria-label={`${it.itemCdNm} 선택`}
-                        />
-                        {/* [보기] — 품목 조회(P09). 설계서 slide157 행 우측 버튼. */}
-                        <Button variant="secondary" size="sm" className="ml-auto" onClick={() => openItemInq(it)}>
-                          보기
-                        </Button>
-                      </>
+                    title={it.itemCdNm}
+                    titleTrailing={
+                      <Checkbox
+                        variant="box"
+                        checked={on}
+                        onCheckedChange={() => toggleItem(it.id)}
+                        aria-label={`${it.itemCdNm} 선택`}
+                      />
                     }
-                    footer={<Table rows={itemRows(it, i + 1)} />}
+                    rows={itemRows(it, i + 1)}
                   />
                 )
               })}

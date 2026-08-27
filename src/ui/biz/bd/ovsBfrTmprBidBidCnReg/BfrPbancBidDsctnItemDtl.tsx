@@ -318,7 +318,7 @@ export const BfrPbancBidDsctnItemDtl = forwardRef<
       { label: '순번', value: it.no, type: 'number' },
       { label: '재고번호', value: it.invtNo },
       { label: '부품번호', value: it.prtsNo },
-      { label: '품명', value: it.itemNm },
+      // 품명은 카드 타이틀로 승격(Figma 10020:85034) — 행에서 제외.
     ]
     if (!expanded) return summary
     return [
@@ -361,18 +361,18 @@ export const BfrPbancBidDsctnItemDtl = forwardRef<
           return (
             <Card
               key={it.no}
-              badges={
+              title={it.itemNm}
+              titleTrailing={
                 <Checkbox
                   variant="box"
-                  label="선택"
                   aria-label={`${it.itemNm} 선택`}
                   checked={checkedNos.includes(it.no)}
                   onCheckedChange={(c) => toggleChecked(it.no, c === true)}
                 />
               }
+              rows={buildRows(it, expanded)}
               footer={
                 <div className="flex w-full flex-col gap-krds-5">
-                  <Table rows={buildRows(it, expanded)} />
                   {/* 내역 펼쳐보기 ↓ / 내역 접기 ↑ */}
                   <button
                     type="button"

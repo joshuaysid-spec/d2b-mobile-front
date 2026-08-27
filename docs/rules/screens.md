@@ -54,32 +54,33 @@
 - 기본값이 "전체 선택"인 화면은 default 배열에도 `'0'` 을 포함시킨다. 전체 칩이 비활성(`disabled`)이거나 `single` 모드면 값 주입 없음.
 - 필터 값 배열을 개수로 판정하는 로직은 `'0'` 을 제외하고 센다(적용 예: `BidPbancIntgListPage` resolver).
 
-## 다중 선택 카드 목록 컨벤션 — 선택 UI 통일(2026-08-28 사용자 확정)
+## 다중 선택 카드 목록 컨벤션 — 선택 UI 통일(2026-08-28 사용자 확정, 같은 날 Figma 10020:85034 로 재개정)
 
 목록 항목을 체크박스로 다중 선택하는 화면(선택 삭제/갱신/불러오기/신청 등)은 **전부 아래 한 가지 조립**으로 통일한다.
-과거 두 갈래(A: 맨몸 Checkbox+Table 반복 / B: Card badges 슬롯)를 **B 로 일원화**했다.
 
-**표준 조립 — 공통 `Card` + badges 슬롯 체크박스:**
+**표준 조립 — 공통 `Card`: 타이틀(대표 필드) + titleTrailing 슬롯 체크박스 + rows:**
 
 ```tsx
 <Card
   key={it.id}
-  badges={
+  title={it.itemCdNm}                    // 대표 필드(품명/성명/사업명 등)를 타이틀로 승격 — 행에서 제외
+  titleTrailing={
     <Checkbox
       variant="box"
-      label="선택"                       // 시각 라벨은 "선택" 고정 (구 "항목선택"·"{품명} 선택" 금지)
-      aria-label={`${it.itemNm} 선택`}   // 스크린리더 구분은 aria-label 로 항목 식별자 부여
+      aria-label={`${it.itemCdNm} 선택`} // 시각 라벨 없음 — 접근성 구분은 aria-label
       checked={checkedIds.includes(it.id)}
       onCheckedChange={(c) => toggle(it.id, c === true)}
     />
   }
-  footer={<Table rows={rows(it)} />}     // 본문(테이블·펼침 폼 등)은 footer 슬롯
+  rows={rows(it)}                        // 정보행(label 좌 muted / value 우) — 파란 라벨 Table 금지
 />
 ```
 
-- **부가 버튼**([보기] 등)이 필요하면 badges 슬롯 안에서 `className="ml-auto"` 로 우측 정렬(별도 행 만들지 않음).
-- 펼침/입력 폼이 있는 편집 카드도 동일 — footer 에 `flex-col gap-krds-5` 래퍼로 본문 전체를 넣는다(`BidDsctn` 참조).
+- 구 A(맨몸 Checkbox+Table)·구 B(badges 슬롯 Checkbox 'label=선택'+footer Table)는 모두 폐기 — 이 형태로만.
+- 펼침/입력 폼이 있는 편집 카드는 rows 에 요약 행, footer 에 폼·토글(`BidDsctn` 참조).
+- 행 안 이동 링크(품목코드 → 상세 팝업)는 value 를 파랑 버튼으로(`RegTrgtItemChc` 참조).
 - 선택 상태 하이라이트(행 배경 변경)는 하지 않는다 — 체크박스가 유일한 선택 표시.
-- 레퍼런스: `bd/ovsBidPrtcpApfrDtl/Tab3`(조회형) · `bd/ovsTmprBidCnReg/BidDsctn`(편집형) ·
-  `cm/dmstLctnColInfoAddReg` 등록품목명세(부가 버튼) · `bd/ovsBfrTmprBidBidCnReg/BfrPbancBidDsctnItemDtl`(팝업).
-- 예외: 디지털캐비닛 파일목록(attach 모드)의 "행 전체 토글 + 체크 아이콘"은 파일 선택 전용 설계라 이 컨벤션 대상 아님.
+- 레퍼런스: `cm/dmstLctnColInfoAddReg/RegTrgtItemChc`(P08 정본) · `bd/ovsTmprBidCnReg/BidDsctn`(편집형) ·
+  `bd/ovsBidPrtcpApfrDtl/Tab3` · `bd/ovsBfrTmprBidBidCnReg/BfrPbancBidDsctnItemDtl` ·
+  `cm/dmstLctnColInfoAddReg` 등록품목명세/보안측정인원/FSC.
+- 예외: 디지털캐비닛 파일목록(attach 모드)의 "행 전체 토글 + 체크 아이콘"은 파일 선택 전용 설계라 대상 아님.

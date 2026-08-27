@@ -14,7 +14,7 @@ import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { Checkbox } from '@/ui/common/base/Checkbox'
 import { Card } from '@/ui/common/composites/Card'
-import { Table, type TableRow } from '@/ui/common/composites/Table'
+import type { TableRow } from '@/ui/common/composites/Table'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
@@ -165,16 +165,14 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
     window.setTimeout(() => navigate(-1), 1200)
   }
 
+  // 성명은 카드 타이틀로 승격(Figma 10020:85034) — 행에서 제외.
   const personRows = (d: ScrtyMsrmtPrsn): TableRow[] => [
-    { label: '성명', value: d.prsnNm || '-' },
     { label: '적격여부', value: d.qualYn || '-' },
     { label: '보안측정일', value: d.scrtMsrYmd || '-' },
     { label: '첨부파일', value: d.fileName || '-' },
   ]
-  const fscRows = (d: DmsAgtFscCode): TableRow[] => [
-    { label: 'FSC', value: d.fscCd },
-    { label: '군급명', value: d.gunGrdNm },
-  ]
+  // 군급명은 카드 타이틀로 승격(Figma 10020:85034) — 행에서 제외.
+  const fscRows = (d: DmsAgtFscCode): TableRow[] => [{ label: 'FSC', value: d.fscCd }]
 
   // 법인/개인 구분 필드는 '법인'일 때만 노출(slide156 화면).
   const isCorp = corpIndvSe === 'corp'
@@ -296,16 +294,16 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
               {persons.map((p) => (
                 <Card
                   key={p.id}
-                  badges={
+                  title={p.prsnNm || '-'}
+                  titleTrailing={
                     <Checkbox
                       variant="box"
-                      label="선택"
                       aria-label={`${p.prsnNm || '인원'} 선택`}
                       checked={selectedPrsnIds.includes(p.id)}
                       onCheckedChange={() => togglePrsn(p.id)}
                     />
                   }
-                  footer={<Table rows={personRows(p)} />}
+                  rows={personRows(p)}
                 />
               ))}
               {persons.length === 0 && (
@@ -330,16 +328,16 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
               {fscList.map((f) => (
                 <Card
                   key={f.fscCd}
-                  badges={
+                  title={f.gunGrdNm}
+                  titleTrailing={
                     <Checkbox
                       variant="box"
-                      label="선택"
                       aria-label={`${f.gunGrdNm} 선택`}
                       checked={selectedFscCds.includes(f.fscCd)}
                       onCheckedChange={() => toggleFsc(f.fscCd)}
                     />
                   }
-                  footer={<Table rows={fscRows(f)} />}
+                  rows={fscRows(f)}
                 />
               ))}
               {fscList.length === 0 && (
