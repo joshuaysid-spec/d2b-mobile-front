@@ -1,10 +1,10 @@
 // 업체정보 상세 - '국내소재상사' 탭 콘텐츠 (MUI-CM-01-T04, 설계서 v0.86 slide137~138 / Figma 10020:83043·83098).
 // 260827 Figma 리디자인 반영: 섹션 카드(InfoAccordionCard) 4장 + 제출서류 안내(Infobox — 설계서, 유지 확정)
-//   + [국외조달원등록증 신청 안내] 풀폭 버튼(→ 국외조달원등록증 신청 목록).
+//   + [국외조달원등록증 신청 안내] 풀폭 버튼 → P21 안내 바텀시트(260828 사용자 확정, 콘텐츠 = OvsdmstSosCnfdoc 재사용).
 //   법인/개인 구분 값은 카드 타이틀에 표기(Figma '법인/개인 구분 : 개인'), 지점 행은 Figma 구성에 없어 제외.
 // ⚠️ 설계서에 T04 데이터영역(항목명 영문) 표가 없다 → 필드명은 화면 표기 기준 잠정 영문키(types/mock/cm.ts DmsAgt* ⚠️).
 // 데이터는 목업(설계서 화면 예시값 그대로) — API 연동 시 실제 데이터영역 매핑 확인 필요.
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 import type {
   DmsAgtSaleInfo,
@@ -12,9 +12,10 @@ import type {
   DmsAgtCorpInfo,
   DmsAgtOvsBzenty,
 } from '@/types/mock/cm'
-import { ROUTES } from '@/constants/routes'
 import { Button } from '@/ui/common/base/Button'
 import { Infobox } from '@/ui/common/composites/Infobox'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { OvsdmstSosCnfdoc } from '@/ui/biz/cm/dmstSosCnfdocList/OvsdmstSosCnfdoc'
 import {
   InfoAccordionCard,
   type InfoCardRowInput,
@@ -105,7 +106,8 @@ function ovsRows(list: DmsAgtOvsBzenty[]): InfoCardRowInput[] {
 }
 
 export function BzentyGnrlInfoDtl_DmsAgt() {
-  const navigate = useNavigate()
+  // 국외조달원등록증신청안내(P21) 바텀시트 — 컨테이너는 탭 소유.
+  const [guideOpen, setGuideOpen] = useState(false)
 
   return (
     <>
@@ -128,16 +130,17 @@ export function BzentyGnrlInfoDtl_DmsAgt() {
         <Infobox title="국내소재상사 제출서류" collapsible={false} items={['보안측정결과서 - 1부']} />
       </div>
 
-      {/* 국외조달원등록증 신청 안내 (Figma 하단 풀폭 primary) → 국외조달원등록증신청안내(P21, 260828 사용자 확정) */}
+      {/* 국외조달원등록증 신청 안내 (Figma 하단 풀폭 primary) → P21 바텀시트(260828 사용자 확정 — 페이지 이동 대신 시트) */}
       <div className="px-4 pb-4">
-        <Button
-          variant="primary"
-          className="w-full"
-          onClick={() => navigate(ROUTES.OVS_DMST_SOS)}
-        >
+        <Button variant="primary" className="w-full" onClick={() => setGuideOpen(true)}>
           국외조달원등록증 신청 안내
         </Button>
       </div>
+
+      {/* 국외조달원등록증신청안내(P21) 바텀시트 — 컨테이너는 탭 소유, 콘텐츠는 OvsdmstSosCnfdoc 재사용(padded=false). */}
+      <BottomSheet open={guideOpen} onOpenChange={setGuideOpen} title="국외조달원등록증신청안내">
+        <OvsdmstSosCnfdoc padded={false} />
+      </BottomSheet>
     </>
   )
 }

@@ -1,10 +1,11 @@
 // 국외조달원등록증신청안내 (MUI-CM-01-P21, Figma 10020:82378). 설계서 00.공통 v0.84.
 //   웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 업체정보 조회/추가정보 진입 안내. (진입점 M01 미구현 → 라우트만 등록)
 //   구성(Figma 1:1): 처리절차(문서 아이콘 + 안내) · 양식 다운로드(첨부파일명 + FileDownloadList) · 신청서 확인사항(번호목록 + 링크).
-//   헤더(m_popup_header '국외조달원등록증신청안내')는 AppLayout sub 헤더가 담당(router handle).
+//   바텀시트 임베드 시 padded=false(시트 본문 px-16 소유 — 이중 패딩 방지). 헤더(m_popup_header '국외조달원등록증신청안내')는 AppLayout sub 헤더가 담당(router handle).
 import { type ComponentProps } from 'react'
 
 import { Icon } from '@/ui/common/base/Icon'
+import { cn } from '@/utils/cn'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 
 // 섹션 헤더 — 아이콘(24) + 19px Bold 제목 (Figma list row).
@@ -34,7 +35,7 @@ function ExtLink({ href }: { href: string }) {
   )
 }
 
-export function OvsdmstSosCnfdoc() {
+export function OvsdmstSosCnfdoc({ padded = true }: { padded?: boolean } = {}) {
   // 양식 다운로드 파일 — 스텁(추후 cmService.downloadOvsSosForm). Figma: 첨부파일명.hwp [786KB].
   const handleDownload = () => {
     console.log('[OvsdmstSosCnfdoc] 양식 다운로드', '첨부파일명.hwp')
@@ -44,7 +45,7 @@ export function OvsdmstSosCnfdoc() {
   return (
     <div className="flex w-full flex-col">
       {/* 양식 다운로드 — 첨부파일명 라벨 + 파일 행(다운로드) */}
-      <section className="flex flex-col gap-krds-5 px-4 py-4">
+      <section className={cn('flex flex-col gap-krds-5 py-4', padded && 'px-4')}>
         <SectionHead icon="Download" title="양식 다운로드" />
         <span className="text-[17px] font-bold leading-normal text-krds-text-ink">첨부파일명</span>
         <FileDownloadList
@@ -53,7 +54,7 @@ export function OvsdmstSosCnfdoc() {
       </section>
 
       {/* 처리절차 */}
-      <section className="flex flex-col gap-1 px-4 py-4">
+      <section className={cn('flex flex-col gap-1 py-4', padded && 'px-4')}>
         <SectionHead icon="Description" title="처리절차" />
         <p className="text-[17px] leading-normal text-krds-text-ink">
           국외조달원 등록증 발급 신청서 양식을 출력하여 수기로 작성 후 팩스 또는 직접 방문 접수합니다.
@@ -61,7 +62,7 @@ export function OvsdmstSosCnfdoc() {
       </section>
 
       {/* 신청서 확인사항 — 번호 목록 */}
-      <section className="flex flex-col gap-krds-5 px-4 py-4">
+      <section className={cn('flex flex-col gap-krds-5 py-4', padded && 'px-4')}>
         <SectionHead icon="AssignmentGlobe" title="신청서 확인사항" />
         <div className="flex flex-col gap-4">
           {/* 1. */}
