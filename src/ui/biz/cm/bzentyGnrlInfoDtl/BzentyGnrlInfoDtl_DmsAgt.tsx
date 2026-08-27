@@ -128,12 +128,12 @@ export function BzentyGnrlInfoDtl_DmsAgt() {
         <Infobox title="국내소재상사 제출서류" collapsible={false} items={['보안측정결과서 - 1부']} />
       </div>
 
-      {/* 국외조달원등록증 신청 안내 (Figma 하단 풀폭 primary) → 국외조달원등록증 신청 목록 */}
+      {/* 국외조달원등록증 신청 안내 (Figma 하단 풀폭 primary) → 국외조달원등록증신청안내(P21, 260828 사용자 확정) */}
       <div className="px-4 pb-4">
         <Button
           variant="primary"
           className="w-full"
-          onClick={() => navigate(ROUTES.SUPPORT_OVS_SOS_CNFDOC)}
+          onClick={() => navigate(ROUTES.OVS_DMST_SOS)}
         >
           국외조달원등록증 신청 안내
         </Button>
