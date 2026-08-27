@@ -1,11 +1,11 @@
 // 군수품무역대리업 신청 및 발급 목록 (MUI-CM-01-M15, DfEqpmntTradeAgncAplyListPage).
 // Figma 정본 10020:83161(데이터)·10020:83191(결과없음). 설계서 00.공통 v0.84 slide178 항목명 준수.
 // 구성(위→아래, Figma): 업무도움 HelpDisclosure(말소/실효 안내) → "업체 등록현황 : 적격" + [업체등록안내](FullPopup)
-//   → 목록 헤더(총건수·표시개수) → m_card 리스트(배지[구분·진행상황] + 접수번호 + 신청/승인/실효말소/만료일자) → 더보기
-//   → FAB(맨위로 / + 신청 → 바텀시트 [신규][갱신][변경], 실효·말소면 [변경] Dim). 결과없음=CardList emptyText.
+//   → m_card 리스트(배지[구분·진행상황] + 접수번호 + 요청/승인/실효말소/만료일자) → 더보기
+//   → FAB(맨위로 / + 신청 → 바텀시트 [신규][갱신] — Figma 10020:83284, 260827). 결과없음=CardList emptyText.
 //   (2026-08-24 사용자 확정 — 구 하단 sticky [신청] 바를 우하단 + 플로팅 버튼으로 대체.)
 // 데이터=파일 내 목업(dl_dfEqpmntTradAgncAplyList), 동작=API 경계 스텁(console.log + '// 추후 …').
-//   신규/갱신 → M17(mode), 변경 → M18, 상세 → M16(navigate state).
+//   신규/갱신 → M17(mode), 상세 → M16(navigate state). 변경(M18) 진입은 Figma 시트 재대조로 제외(라우트 유지).
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -15,9 +15,8 @@ import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
-import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
-import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
+import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { BzentyRegGuide } from '@/ui/biz/cm/dfEqpmntTradeAgncAplyList/BzentyRegGuide'
 import type { DfEqpmntTradeAgncAplyItem } from '@/types/mock/cm'
@@ -28,9 +27,8 @@ function kindColor(kind: string): 'blue' | 'green' | 'yellow' {
   if (kind === '변경') return 'blue'
   return 'yellow'
 }
-// 진행상황(aprvSecdNm)별 배지 색 — 승인=green / 반려·실효·말소=red / 제출·저장=blue(설계서 slide180 값).
+// 진행상황(aprvSecdNm)별 배지 색 — 반려·실효·말소=red / 그 외(승인·제출·저장)=blue(Figma 10020:83161 260827 재대조).
 function statusColor(status: string): 'blue' | 'red' | 'green' {
-  if (status === '승인') return 'green'
   if (status === '반려' || status === '실효' || status === '말소') return 'red'
   return 'blue'
 }
@@ -64,7 +62,7 @@ const MOCK_LIST: DfEqpmntTradeAgncAplyItem[] = Array.from({ length: TOTAL }, (_,
 
 export function DfEqpmntTradeAgncAplyListPage() {
   const navigate = useNavigate()
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize] = useState(10)
   const [page, setPage] = useState(1)
   const [guideOpen, setGuideOpen] = useState(false) // 업체등록안내 FullPopup
   const [aplyOpen, setAplyOpen] = useState(false) // 신청(신규/갱신/변경) 선택 시트
@@ -73,20 +71,11 @@ export function DfEqpmntTradeAgncAplyListPage() {
   const loaded = Math.min(page * pageSize, total)
   const visibleList = useMemo(() => MOCK_LIST.slice(0, loaded), [loaded])
 
-  // 실효·말소 상태면 [변경] 불가(설계서 slide178 'Dim 처리'). 최신(첫) 신청의 진행상황 기준.
-  const latestStatus = dl_dfEqpmntTradAgncAplyList[0]?.aprvSecdNm ?? ''
-  const changeDisabled = latestStatus === '실효' || latestStatus === '말소'
-
   // ── API 경계 스텁 (백엔드 연동 시 services/queries 로 대체) ──
   const handleLoadMore = () => {
     const next = page + 1
     setPage(next)
     console.log('[DfEqpmntTradeAgnc] loadMore → page', next)
-  }
-  const handlePageSize = (size: number) => {
-    setPageSize(size)
-    setPage(1)
-    console.log('[DfEqpmntTradeAgnc] pageSize →', size)
   }
   // 카드 클릭 → 신청 내역 상세(M16). 클릭 항목을 state 로 전달해 상단 즉시표시(service 없이 목업 fallback).
   const handleCardClick = (item: DfEqpmntTradeAgncAplyItem) => {
@@ -97,10 +86,6 @@ export function DfEqpmntTradeAgncAplyListPage() {
   const goApply = (mode: 'new' | 'renew') => {
     setAplyOpen(false)
     navigate(ROUTES.DF_EQPMNT_TRADE_AGNC_APLY, { state: { mode } })
-  }
-  const goChange = () => {
-    setAplyOpen(false)
-    navigate(ROUTES.DF_EQPMNT_TRADE_AGNC_CHG)
   }
 
   // 목업 → Card props. 접수번호(번호만 primary 색), 배지=구분 + 진행상황.
@@ -133,31 +118,20 @@ export function DfEqpmntTradeAgncAplyListPage() {
       {/* 업무도움 — 말소/실효 안내(HelpDisclosure, 기본 펼침). 기존 blue Accordion 도움말 대체(라운드 border 버그 해소). */}
       <HelpDisclosure title="군수품무역대리업 등록 신청목록" items={HELP_ITEMS} defaultOpen />
 
-      {/* 업체 등록현황 : 적격 + [업체등록안내](→ FullPopup) — Figma 10020:83161. */}
+      {/* 업체 등록현황 : 적격 + [업체등록안내](→ FullPopup) — Figma 10020:83161(값 ink·링크 primary, 260827 재대조). */}
       <div className="flex items-center justify-between gap-krds-5 px-4 py-4">
         <span className="text-[17px] font-bold leading-normal text-krds-text-ink">
-          업체 등록현황 :{' '}
-          <span className={REG_STTS === '적격' ? 'text-krds-color-success-60' : 'text-krds-feedback-danger'}>
-            {REG_STTS}
-          </span>
+          업체 등록현황 : {REG_STTS}
         </span>
         <button
           type="button"
           onClick={() => setGuideOpen(true)}
-          className="flex shrink-0 items-center gap-krds-3 text-[17px] font-medium leading-normal text-krds-text-primary-active"
+          className="flex shrink-0 items-center gap-krds-3 text-[17px] font-medium leading-normal text-krds-action-primary"
         >
           업체등록안내
           <Icon name="ArrowForwardIos" size={16} aria-hidden />
         </button>
       </div>
-
-      {/* 목록 헤더 — 총건수 + 표시개수(설계서 slide178 '더보기 (10/258)'). */}
-      <ListSectionHeader
-        variant="background"
-        total={total}
-        pageSize={pageSize}
-        onPageSizeChange={handlePageSize}
-      />
 
       {/* 카드 목록 (px-4 인셋). 결과없음=emptyText(Figma 10020:83191). */}
       <div className="flex flex-col gap-krds-7 px-4 pb-4 pt-krds-7">
@@ -185,18 +159,21 @@ export function DfEqpmntTradeAgncAplyListPage() {
       {/* 업체등록안내 FullPopup(Figma 10020:83204) — 컨테이너는 컴포넌트 소유, open 만 주입. */}
       <BzentyRegGuide open={guideOpen} onOpenChange={setGuideOpen} />
 
-      {/* 신청 선택 바텀시트 — [신규][갱신][변경]. 실효·말소면 [변경] Dim(설계서 slide178).
-          타이틀 '바로가기'(사용자 확정 2026-08-24 — 다른 + 플로팅 시트와 통일). */}
-      <BottomSheet open={aplyOpen} onOpenChange={setAplyOpen} title="바로가기">
-        <div className="py-krds-5">
-          <ButtonGroup
-            layout="vertical"
-            items={[
-              { label: '신규(갱신)', variant: 'primary', onClick: () => goApply('new') },
-              { label: '변경', variant: 'secondary', disabled: changeDisabled, onClick: goChange },
-            ]}
-          />
-        </div>
+      {/* 신청 선택 바텀시트 — Figma 10020:83284(260827 재대조): 타이틀 '군수품무역대리업 신청' +
+          [신규][갱신] 이동 행(NavigationItemList) + [확인](닫기). 구 [신규(갱신)][변경] 버튼 구성 폐기 —
+          변경(M18) 진입은 Figma 시트에 없어 제외(라우트는 유지, 재배선 필요 시 행 추가). */}
+      <BottomSheet
+        open={aplyOpen}
+        onOpenChange={setAplyOpen}
+        title="군수품무역대리업 신청"
+        onConfirm={() => setAplyOpen(false)}
+      >
+        <NavigationItemList
+          items={[
+            { id: 'new', label: '신규', onClick: () => goApply('new') },
+            { id: 'renew', label: '갱신', onClick: () => goApply('renew') },
+          ]}
+        />
       </BottomSheet>
     </div>
   )
