@@ -202,32 +202,20 @@ export function OvsSosCnfdocListPage() {
   return (
     <div className="flex w-full flex-col">
       {/* 필터 버튼 행 — mock 은 빠른검색 없이 검색필터 버튼만(SearchCondition 필터 버튼 스타일) */}
-      <div className="flex justify-end px-4 py-4">
-        <button
-          type="button"
-          aria-label="상세 검색 필터"
-          aria-pressed={filterApplied}
-          onClick={() => setOpen(true)}
-          className={cn(
-            'flex size-12 shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-primary text-krds-text-primary',
-            'bg-background active:bg-krds-bg-primary-subtle',
-            'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
-            filterApplied && 'border-2 bg-krds-bg-primary-subtle',
-          )}
-        >
-          <Icon name="Tune" size={24} aria-hidden />
-        </button>
-      </div>
-
-      {/* 목록 헤더 — 총건수 · 표시 개수 */}
+      {/* 상단바 — 좌: 검색필터 버튼 / 우: 표시개수(추가정보신청목록 M03 과 통일, 260828 사용자 확정). */}
       <ListSectionHeader
-        variant="background"
-        total={total}
+        className="px-4 pt-4"
         pageSize={pageSize}
         onPageSizeChange={(size) => {
           setPageSize(size)
           setPage(1)
         }}
+        leftSlot={
+          <Button variant="secondary" onClick={() => setOpen(true)} aria-pressed={filterApplied}>
+            <Icon name="Tune" aria-hidden />
+            검색필터
+          </Button>
+        }
       />
 
       {/* 신청 내역 카드 */}

@@ -153,9 +153,9 @@ export function DmstSosCnfdocListPage() {
   const defaultValue = useMemo(() => buildDefaultValue(), [])
   // 목록에 실제로 적용된 신청인 검색어.
   const appliedNm = typeof filter.aplcntNm === 'string' ? filter.aplcntNm.trim() : ''
-  // 정렬(목록 헤더 우측, Figma "최신순 ▼") — 신청날짜 기준 최신순/과거순. pageSize(10)는 더보기 슬라이스용 고정.
-  const [sort, setSort] = useState<'latest' | 'oldest'>('latest')
-  const pageSize = 10
+  // 정렬은 신청날짜 최신순 고정(구 정렬 셀렉트는 표시개수로 교체 — 260828 M03 통일). 표시개수는 더보기 슬라이스용.
+  const sort = 'latest' as 'latest' | 'oldest'
+  const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
 
   // P20 신청 팝업(BottomSheet) — 컨테이너/폼은 페이지가 소유(설계서 slide133).
@@ -183,10 +183,10 @@ export function DmstSosCnfdocListPage() {
     console.log('[DmstSosCnfdoc] 검색필터 조회', value)
     // cmService.selectDmstSosCnfdocAplyList({ edpPrcsYmdFrom, edpPrcsYmdTo, aplcntNm })
   }
-  const handleSort = (value: string) => {
-    setSort(value as 'latest' | 'oldest')
+  const handlePageSize = (size: number) => {
+    setPageSize(size)
     setPage(1)
-    console.log('[DmstSosCnfdoc] 정렬 →', value)
+    console.log('[DmstSosCnfdoc] pageSize →', size)
   }
   const handleLoadMore = () => {
     const next = page + 1
@@ -267,33 +267,17 @@ export function DmstSosCnfdocListPage() {
     <div className="flex w-full flex-col">
       {/* 검색필터 버튼 행 — 설계서 slide138 상단 '검색필터'. 누르면 공통 SearchFilter 셸이 열린다.
           (국외 조달원등록증 목록 OvsSosCnfdocListPage 와 동일 스타일 — 빠른검색 없이 필터 버튼만) */}
-      <div className="flex justify-end px-4 py-4">
-        <button
-          type="button"
-          aria-label="검색필터"
-          aria-pressed={filterApplied}
-          onClick={() => setFilterOpen(true)}
-          className={cn(
-            'flex size-12 shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-primary text-krds-text-primary',
-            'bg-background active:bg-krds-bg-primary-subtle',
-            'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
-            filterApplied && 'border-2 bg-krds-bg-primary-subtle',
-          )}
-        >
-          <Icon name="Tune" size={24} aria-hidden />
-        </button>
-      </div>
-
-      {/* 목록 헤더 — 총건수 + 정렬 셀렉트(Figma 10020:82626 "최신순 ▼"). 신청날짜 기준 최신순/과거순. */}
+      {/* 상단바 — 좌: 검색필터 버튼 / 우: 표시개수(추가정보신청목록 M03 과 통일, 260828 사용자 확정). */}
       <ListSectionHeader
-        variant="background"
-        total={total}
-        sortValue={sort}
-        sortOptions={[
-          { value: 'latest', label: '최신순' },
-          { value: 'oldest', label: '과거순' },
-        ]}
-        onSortChange={handleSort}
+        className="px-4 pt-4"
+        pageSize={pageSize}
+        onPageSizeChange={handlePageSize}
+        leftSlot={
+          <Button variant="secondary" onClick={() => setFilterOpen(true)} aria-pressed={filterApplied}>
+            <Icon name="Tune" aria-hidden />
+            검색필터
+          </Button>
+        }
       />
 
       {/* 카드 목록 (px-4 인셋). 빈 목록은 CardList emptyText(검색어 기준 안내). */}
