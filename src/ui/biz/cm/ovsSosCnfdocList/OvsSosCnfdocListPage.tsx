@@ -21,7 +21,6 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
-import { cn } from '@/utils/cn'
 import { ROUTES } from '@/constants/routes'
 import type {
   SearchFilterSchema,

@@ -26,7 +26,6 @@ import {
   dmstSosCnfdocAplySchema,
   type DmstSosCnfdocAplyForm,
 } from '@/ui/biz/cm/dmstSosCnfdocList/DmstSosCnfdocAply.schema'
-import { cn } from '@/utils/cn'
 import type { DmstSosCnfdocItem } from '@/types/mock/cm'
 import type {
   DateRangePresetDef,
