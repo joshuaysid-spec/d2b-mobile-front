@@ -137,8 +137,15 @@ export function BzentyGnrlInfoDtl_DmsAgt() {
         </Button>
       </div>
 
-      {/* 국외조달원등록증신청안내(P21) 바텀시트 — 컨테이너는 탭 소유, 콘텐츠는 OvsdmstSosCnfdoc 재사용(padded=false). */}
-      <BottomSheet open={guideOpen} onOpenChange={setGuideOpen} title="국외조달원등록증신청안내">
+      {/* 국외조달원등록증신청안내(P21) 바텀시트 — 컨테이너는 탭 소유, 콘텐츠는 OvsdmstSosCnfdoc 재사용(padded=false).
+          하단 [닫기] = onConfirm 자동 footer(클릭 시 닫힘). */}
+      <BottomSheet
+        open={guideOpen}
+        onOpenChange={setGuideOpen}
+        title="국외조달원등록증신청안내"
+        confirmLabel="닫기"
+        onConfirm={() => {}}
+      >
         <OvsdmstSosCnfdoc padded={false} />
       </BottomSheet>
     </>
