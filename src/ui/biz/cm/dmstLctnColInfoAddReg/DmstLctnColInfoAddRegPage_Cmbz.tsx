@@ -13,6 +13,7 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { Checkbox } from '@/ui/common/base/Checkbox'
+import { Card } from '@/ui/common/composites/Card'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
@@ -293,10 +294,19 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
             </div>
             <div className="flex flex-col gap-krds-8">
               {persons.map((p) => (
-                <div key={p.id} className="flex flex-col gap-krds-5">
-                  <Checkbox variant="box" checked={selectedPrsnIds.includes(p.id)} onCheckedChange={() => togglePrsn(p.id)} label={`${p.prsnNm || '인원'} 선택`} />
-                  <Table rows={personRows(p)} />
-                </div>
+                <Card
+                  key={p.id}
+                  badges={
+                    <Checkbox
+                      variant="box"
+                      label="선택"
+                      aria-label={`${p.prsnNm || '인원'} 선택`}
+                      checked={selectedPrsnIds.includes(p.id)}
+                      onCheckedChange={() => togglePrsn(p.id)}
+                    />
+                  }
+                  footer={<Table rows={personRows(p)} />}
+                />
               ))}
               {persons.length === 0 && (
                 <p className="py-6 text-center text-krds-body-md text-krds-text-subtle">보안측정인원이 없습니다.</p>
@@ -318,10 +328,19 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
             </div>
             <div className="flex flex-col gap-krds-8">
               {fscList.map((f) => (
-                <div key={f.fscCd} className="flex flex-col gap-krds-5">
-                  <Checkbox variant="box" checked={selectedFscCds.includes(f.fscCd)} onCheckedChange={() => toggleFsc(f.fscCd)} label={`${f.gunGrdNm} 선택`} />
-                  <Table rows={fscRows(f)} />
-                </div>
+                <Card
+                  key={f.fscCd}
+                  badges={
+                    <Checkbox
+                      variant="box"
+                      label="선택"
+                      aria-label={`${f.gunGrdNm} 선택`}
+                      checked={selectedFscCds.includes(f.fscCd)}
+                      onCheckedChange={() => toggleFsc(f.fscCd)}
+                    />
+                  }
+                  footer={<Table rows={fscRows(f)} />}
+                />
               ))}
               {fscList.length === 0 && (
                 <p className="py-6 text-center text-krds-body-md text-krds-text-subtle">FSC가 없습니다.</p>
