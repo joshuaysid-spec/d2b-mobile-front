@@ -8,11 +8,11 @@ import { Icon } from '@/ui/common/base/Icon'
 import { BzentySummaryCard } from '@/ui/biz/cm/bzentyInfo/BzentySummaryCard'
 import { ROUTES } from '@/constants/routes'
 
-// ⚠️ 현재 로그인 업체 요약(설계서 slide113 예시) — 추후: 업체정보 API(로그인 업체)로 교체.
+// ⚠️ 현재 로그인 업체 요약 — 업체정보 상세(M02)와 동일 업체(조달테스트업체/100F, 260828 정합). 추후: 업체정보 API(로그인 업체)로 교체.
 const MOCK_BZENTY = {
-  bzentyNm: '주식회사 국방전자조달',
+  bzentyNm: '조달테스트업체',
   brno: '123-45-67890',
-  bzentyCd: '7004F',
+  bzentyCd: '100F',
   rprsvNm: '홍길동',
   regDt: '2026-02-02',
   crno: '123456-7890123',

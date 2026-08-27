@@ -37,11 +37,11 @@ const DATE_FORMAT = 'YYYY-MM-DD'
 //   업체코드(bzentyCd)·상호명(bzentyNm)·사업자등록번호(brno)·주소(bzentyAddr)는 업체일반(BzentyGnrlInfo) 항목명 준수.
 //   ⚠️ 대표자(rprsvNm)·등록구분(regSeNm)은 이 화면 데이터영역에 없어 잠정 영문키(화면 표기 기준).
 const BZENTY = {
-  bzentyCd: '7004F',
-  bzentyNm: '주식회사 국방전자조달',
+  bzentyCd: '100F',
+  bzentyNm: '조달테스트업체',
   rprsvNm: '홍길동',
   brno: '123-45-67890',
-  bzentyAddr: '서울특별시 중구 세종대로 110 (태평로 1가)',
+  bzentyAddr: '[12345] 서울특별시 종로구 …',
   regSeNm: '물품(내자)',
 }
 
