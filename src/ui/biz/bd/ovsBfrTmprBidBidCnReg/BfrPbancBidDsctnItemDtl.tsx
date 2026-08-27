@@ -364,7 +364,8 @@ export const BfrPbancBidDsctnItemDtl = forwardRef<
               badges={
                 <Checkbox
                   variant="box"
-                  label="항목선택"
+                  label="선택"
+                  aria-label={`${it.itemNm} 선택`}
                   checked={checkedNos.includes(it.no)}
                   onCheckedChange={(c) => toggleChecked(it.no, c === true)}
                 />

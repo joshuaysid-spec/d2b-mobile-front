@@ -19,6 +19,7 @@ import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
+import { Card } from '@/ui/common/composites/Card'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -374,17 +375,19 @@ export function BidDsctn({ detail }: { detail: BscPbancInfo }) {
           ]
 
           return (
-            <div
+            <Card
               key={row.frcptlArtclNo}
-              className="flex flex-col gap-krds-5 rounded-krds-8 border border-krds-border-field p-krds-6"
-            >
-              {/* 항목선택 */}
-              <Checkbox
-                variant="box"
-                label="항목선택"
-                checked={checkedNos.includes(row.frcptlArtclNo)}
-                onCheckedChange={(c) => toggleChecked(row.frcptlArtclNo, c === true)}
-              />
+              badges={
+                <Checkbox
+                  variant="box"
+                  label="선택"
+                  aria-label={`${row.itemNm} 선택`}
+                  checked={checkedNos.includes(row.frcptlArtclNo)}
+                  onCheckedChange={(c) => toggleChecked(row.frcptlArtclNo, c === true)}
+                />
+              }
+              footer={
+                <div className="flex flex-col gap-krds-5">
 
               <Table rows={summaryRows} />
 
@@ -586,7 +589,9 @@ export function BidDsctn({ detail }: { detail: BscPbancInfo }) {
                   aria-hidden
                 />
               </Button>
-            </div>
+                </div>
+              }
+            />
           )
         })}
 

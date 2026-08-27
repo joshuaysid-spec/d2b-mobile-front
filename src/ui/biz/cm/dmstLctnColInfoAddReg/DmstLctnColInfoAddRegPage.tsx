@@ -19,6 +19,7 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { Checkbox } from '@/ui/common/base/Checkbox'
+import { Card } from '@/ui/common/composites/Card'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
@@ -400,21 +401,25 @@ export function DmstLctnColInfoAddRegPage() {
               {visibleItems.map((it, i) => {
                 const on = selectedIds.includes(it.id)
                 return (
-                  <div key={it.id} className="flex flex-col gap-krds-5">
-                    <div className="flex items-center justify-between gap-krds-5">
-                      <Checkbox
-                        variant="box"
-                        checked={on}
-                        onCheckedChange={() => toggleItem(it.id)}
-                        label={`${it.itemCdNm} 선택`}
-                      />
-                      {/* [보기] — 품목 조회(P09). 설계서 slide157 행 우측 버튼. */}
-                      <Button variant="secondary" size="sm" onClick={() => openItemInq(it)}>
-                        보기
-                      </Button>
-                    </div>
-                    <Table rows={itemRows(it, i + 1)} />
-                  </div>
+                  <Card
+                    key={it.id}
+                    badges={
+                      <>
+                        <Checkbox
+                          variant="box"
+                          checked={on}
+                          onCheckedChange={() => toggleItem(it.id)}
+                          label="선택"
+                          aria-label={`${it.itemCdNm} 선택`}
+                        />
+                        {/* [보기] — 품목 조회(P09). 설계서 slide157 행 우측 버튼. */}
+                        <Button variant="secondary" size="sm" className="ml-auto" onClick={() => openItemInq(it)}>
+                          보기
+                        </Button>
+                      </>
+                    }
+                    footer={<Table rows={itemRows(it, i + 1)} />}
+                  />
                 )
               })}
               {visibleItems.length === 0 && (

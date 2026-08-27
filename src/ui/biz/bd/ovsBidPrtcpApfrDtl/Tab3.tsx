@@ -153,6 +153,7 @@ export function OvsBidPrtcpApfrDtlPage_Tab3({
               <Checkbox
                 variant="box"
                 label="선택"
+                aria-label={`구매요구번호 ${item.prchsDmndNo} 선택`}
                 checked={checkedNos.includes(item.prchsDmndNo)}
                 onCheckedChange={(c) => toggleChecked(item.prchsDmndNo, c === true)}
               />

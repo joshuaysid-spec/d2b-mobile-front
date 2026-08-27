@@ -53,3 +53,33 @@
 - 업무구분 등 checkbox 필드의 '전체' 칩은 PC 웹과 전송 규격을 맞추기 위해 **코드값 `'0'`** 을 갖는다(전체 선택 = `"0 1 2 3 4"`). schema 필드에 `selectAll: { value: '0' }` 선언 시 `CheckboxGroup` 이 전체 선택 여부에 따라 값 배열에 `'0'` 을 자동 포함/제거한다.
 - 기본값이 "전체 선택"인 화면은 default 배열에도 `'0'` 을 포함시킨다. 전체 칩이 비활성(`disabled`)이거나 `single` 모드면 값 주입 없음.
 - 필터 값 배열을 개수로 판정하는 로직은 `'0'` 을 제외하고 센다(적용 예: `BidPbancIntgListPage` resolver).
+
+## 다중 선택 카드 목록 컨벤션 — 선택 UI 통일(2026-08-28 사용자 확정)
+
+목록 항목을 체크박스로 다중 선택하는 화면(선택 삭제/갱신/불러오기/신청 등)은 **전부 아래 한 가지 조립**으로 통일한다.
+과거 두 갈래(A: 맨몸 Checkbox+Table 반복 / B: Card badges 슬롯)를 **B 로 일원화**했다.
+
+**표준 조립 — 공통 `Card` + badges 슬롯 체크박스:**
+
+```tsx
+<Card
+  key={it.id}
+  badges={
+    <Checkbox
+      variant="box"
+      label="선택"                       // 시각 라벨은 "선택" 고정 (구 "항목선택"·"{품명} 선택" 금지)
+      aria-label={`${it.itemNm} 선택`}   // 스크린리더 구분은 aria-label 로 항목 식별자 부여
+      checked={checkedIds.includes(it.id)}
+      onCheckedChange={(c) => toggle(it.id, c === true)}
+    />
+  }
+  footer={<Table rows={rows(it)} />}     // 본문(테이블·펼침 폼 등)은 footer 슬롯
+/>
+```
+
+- **부가 버튼**([보기] 등)이 필요하면 badges 슬롯 안에서 `className="ml-auto"` 로 우측 정렬(별도 행 만들지 않음).
+- 펼침/입력 폼이 있는 편집 카드도 동일 — footer 에 `flex-col gap-krds-5` 래퍼로 본문 전체를 넣는다(`BidDsctn` 참조).
+- 선택 상태 하이라이트(행 배경 변경)는 하지 않는다 — 체크박스가 유일한 선택 표시.
+- 레퍼런스: `bd/ovsBidPrtcpApfrDtl/Tab3`(조회형) · `bd/ovsTmprBidCnReg/BidDsctn`(편집형) ·
+  `cm/dmstLctnColInfoAddReg` 등록품목명세(부가 버튼) · `bd/ovsBfrTmprBidBidCnReg/BfrPbancBidDsctnItemDtl`(팝업).
+- 예외: 디지털캐비닛 파일목록(attach 모드)의 "행 전체 토글 + 체크 아이콘"은 파일 선택 전용 설계라 이 컨벤션 대상 아님.
