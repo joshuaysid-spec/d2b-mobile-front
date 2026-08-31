@@ -27,7 +27,7 @@ import type {
   SearchFilterValue,
 } from '@/types/search-filter'
 
-import type { BidPrgrsItem, OvsLockerPbanItem } from '@/types/mock/bd'
+import type { MockBidPrgrsItem, MockOvsLockerPbanItem } from '@/types/mock/bd'
 
 // 빠른검색 대상 — 설계서 slide301 검색영역(통합참조번호/구매요청번호).
 const SEARCH_TARGETS = [
@@ -98,7 +98,7 @@ const DEFAULT_FILTER: SearchFilterValue = {
 
 // 보관함 공고 목록(설계서 slide306 dl_resultList) — 목업, 추후 API: bdService.selectLockerPbancList.
 // 필드명·형식은 설계서 그대로(통합참조번호 BDF01823EFE·공고번호 EFE00012-2·일시 14자리 표시형식).
-const dl_resultList: OvsLockerPbanItem[] = [
+const dl_resultList: MockOvsLockerPbanItem[] = [
   {
     id: 'BDF01823EFE',
     intgRfrncNo: 'BDF01823EFE',
@@ -219,7 +219,7 @@ const dl_resultList: OvsLockerPbanItem[] = [
 
 const TOTAL = 258 // 총 건수(목업 — 설계서 slide301 '더보기(10/258)'. 실제 API total)
 // 목업 확장 — 보유 4건을 인덱스로 복제해 TOTAL 건 구성(통합참조번호·id 는 고유하게).
-const MOCK_LIST: OvsLockerPbanItem[] = Array.from({ length: TOTAL }, (_, i) => {
+const MOCK_LIST: MockOvsLockerPbanItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dl_resultList[i % dl_resultList.length]
   const intgRfrncNo = i < dl_resultList.length ? base.intgRfrncNo : `BDF${String(1823 + i).padStart(5, '0')}EFE`
   return { ...base, id: intgRfrncNo, intgRfrncNo }
@@ -262,9 +262,9 @@ export function OvsLockerPbanListPage() {
     setPage(next)
     console.log('[OvsLockerList] loadMore → page', next)
   }
-  // 진행 화면들(신청서/진행 상세)은 입찰진행 아이템(BidPrgrsItem) 형태의 state 를 기대 — 보관함 항목을 매핑.
+  // 진행 화면들(신청서/진행 상세)은 입찰진행 아이템(MockBidPrgrsItem) 형태의 state 를 기대 — 보관함 항목을 매핑.
   // 보관함 항목에 없는 필드(판단번호·연락처·진행 플래그)는 목업으로 보완(추후 API 응답으로 교체).
-  const toPrgrsItem = (it: OvsLockerPbanItem): BidPrgrsItem => ({
+  const toPrgrsItem = (it: MockOvsLockerPbanItem): MockBidPrgrsItem => ({
     rNum: it.id,
     taskSeNm: '국외',
     pbancNo: `${it.pbancNo}-${it.pbancOd}`,
@@ -286,22 +286,22 @@ export function OvsLockerPbanListPage() {
   })
 
   // 입찰내역 작성/수정 (설계서 이벤트 btn_moveBidDetail_onclick → MUI-BD-01-M76)
-  const goBidCn = (it: OvsLockerPbanItem) => {
+  const goBidCn = (it: MockOvsLockerPbanItem) => {
     console.log('[OvsLockerList] 입찰내역 작성/수정 이동', it.intgRfrncNo)
     navigate('/bd/ovsTmprBidCnReg', { state: it })
   }
   // 입찰참가신청 작성/수정 (국외 입찰참가신청서 작성 MUI-BD-04-M71 — 사용자 확정 2026-08-25)
-  const goPrtcpAply = (it: OvsLockerPbanItem) => {
+  const goPrtcpAply = (it: MockOvsLockerPbanItem) => {
     console.log('[OvsLockerList] 입찰참가신청 작성/수정 이동', it.intgRfrncNo)
     navigate('/bd/ovsBidPrtcpAply', { state: toPrgrsItem(it) })
   }
   // 입찰진행 바로가기 — 해당 공고 입찰진행 상세(/bd/bidPrgsDtlInq) 직행(260709 확정).
-  const goBidPrgrs = (it: OvsLockerPbanItem) => {
+  const goBidPrgrs = (it: MockOvsLockerPbanItem) => {
     console.log('[OvsLockerList] 입찰진행 바로가기', it.intgRfrncNo)
     navigate('/bd/bidPrgsDtlInq', { state: toPrgrsItem(it) })
   }
   // 보관함 품목 관리 (MUI-CM-01-M74) — 항시 노출.
-  const goItemMng = (it: OvsLockerPbanItem) => {
+  const goItemMng = (it: MockOvsLockerPbanItem) => {
     console.log('[OvsLockerList] 보관함 품목 관리 이동', it.intgRfrncNo)
     navigate('/bd/ovsLockerItemReg', { state: it })
   }
@@ -323,13 +323,13 @@ export function OvsLockerPbanListPage() {
 
   // 카드 클릭 바텀시트 — 타이틀 = 카드 사업명(bizNm), 설계서 slide409 그대로(사용자 확정 2026-08-25,
   //   구 [+ 공고 신청] footer 버튼 대체). 컨테이너는 페이지 소유(*Sheet 래퍼 금지), null 이면 닫힘.
-  const [sheetItem, setSheetItem] = useState<OvsLockerPbanItem | null>(null)
+  const [sheetItem, setSheetItem] = useState<MockOvsLockerPbanItem | null>(null)
   // 시트 버튼 — 설계서 slide409 노출 조건 + 사용자 확정 매핑(2026-08-25):
   //   [입찰내역 작성/수정](제출완료면 [입찰내역 완료] 비활성) → MUI-BD-01-M76
   //   [입찰참가신청 작성/수정](입찰내역 작성·저장 상태에서 노출) → MUI-BD-04-M71
   //   [입찰진행 바로가기](입찰참가신청 완료 상태에서 노출) · [보관함 품목 관리](항시)
-  const sheetButtonsFor = (it: OvsLockerPbanItem): ButtonGroupItem[] => {
-    const close = (fn: (v: OvsLockerPbanItem) => void) => () => {
+  const sheetButtonsFor = (it: MockOvsLockerPbanItem): ButtonGroupItem[] => {
+    const close = (fn: (v: MockOvsLockerPbanItem) => void) => () => {
       setSheetItem(null)
       fn(it)
     }

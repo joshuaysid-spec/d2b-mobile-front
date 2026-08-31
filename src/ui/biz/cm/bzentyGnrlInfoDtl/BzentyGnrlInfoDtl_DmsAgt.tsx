@@ -7,10 +7,10 @@
 import { useState } from 'react'
 
 import type {
-  DmsAgtSaleInfo,
-  DmsAgtFscCode,
-  DmsAgtCorpInfo,
-  DmsAgtOvsBzenty,
+  MockDmsAgtSaleInfo,
+  MockDmsAgtFscCode,
+  MockDmsAgtCorpInfo,
+  MockDmsAgtOvsBzenty,
 } from '@/types/mock/cm'
 import { Button } from '@/ui/common/base/Button'
 import { Infobox } from '@/ui/common/composites/Infobox'
@@ -22,7 +22,7 @@ import {
 } from '@/ui/biz/cm/bzentyInfo/InfoAccordionCard'
 
 // ── 영업정보 — 설계서 slide137 예시값 (⚠️ 잠정 영문키) ────────────────────────
-const SALE_INFO: DmsAgtSaleInfo = {
+const SALE_INFO: MockDmsAgtSaleInfo = {
   anlSaleAmt: 300000000,
   astScl: 0,
   lncLmt: 0,
@@ -35,10 +35,10 @@ const SALE_INFO: DmsAgtSaleInfo = {
 }
 
 // ── FSC Codes — 설계서 slide137 예시값 (⚠️ 잠정) ──────────────────────────────
-const FSC_CODES: DmsAgtFscCode[] = [{ fscCd: '1111', gunGrdNm: '기타 항공기 부수품' }]
+const FSC_CODES: MockDmsAgtFscCode[] = [{ fscCd: '1111', gunGrdNm: '기타 항공기 부수품' }]
 
 // ── 법인/개인 구분 — 설계서 slide137 예시값 (⚠️ 잠정 영문키) ──────────────────
-const CORP_INFO: DmsAgtCorpInfo = {
+const CORP_INFO: MockDmsAgtCorpInfo = {
   corpIndvSe: 'corp',
   corpRgstOrgnNm: '방위사업청',
   corpRgstYmd: '2020-01-01',
@@ -52,7 +52,7 @@ const CORP_INFO: DmsAgtCorpInfo = {
 }
 
 // ── 해외관련 업체정보 — 설계서 slide138 예시값 (⚠️ 잠정) ──────────────────────
-const OVS_BZENTY_LIST: DmsAgtOvsBzenty[] = [
+const OVS_BZENTY_LIST: MockDmsAgtOvsBzenty[] = [
   { ovsBzentyCd: '1111', ovsBzentyNm: 'Test Corp', ovsNtnNm: '프랑스', ovsTelno: '+33-1-34-88-30-00' },
 ]
 
@@ -60,7 +60,7 @@ const OVS_BZENTY_LIST: DmsAgtOvsBzenty[] = [
 const won1000 = (v: number) => `${v.toLocaleString()} 천원`
 
 // 법인/개인 구분 카드 — 구분값은 타이틀 표기(Figma), 행에서는 제외.
-function corpRows(d: DmsAgtCorpInfo): InfoCardRowInput[] {
+function corpRows(d: MockDmsAgtCorpInfo): InfoCardRowInput[] {
   return [
     { label: '법인등기기관', value: d.corpRgstOrgnNm },
     { label: '법인등기일자', value: d.corpRgstYmd },
@@ -74,7 +74,7 @@ function corpRows(d: DmsAgtCorpInfo): InfoCardRowInput[] {
   ]
 }
 
-function fscRows(list: DmsAgtFscCode[]): InfoCardRowInput[] {
+function fscRows(list: MockDmsAgtFscCode[]): InfoCardRowInput[] {
   return list.flatMap((d, i): InfoCardRowInput[] => [
     ...(i > 0 ? ['divider' as const] : []),
     { label: 'FSC', value: d.fscCd },
@@ -83,7 +83,7 @@ function fscRows(list: DmsAgtFscCode[]): InfoCardRowInput[] {
 }
 
 // 영업정보 — 거래기간(F/T) 합침 행(Figma). 지점은 Figma 구성에 없어 제외(설계서 항목 — 실연동 시 확인).
-function saleRows(d: DmsAgtSaleInfo): InfoCardRowInput[] {
+function saleRows(d: MockDmsAgtSaleInfo): InfoCardRowInput[] {
   return [
     { label: '연간매출액', value: won1000(d.anlSaleAmt) },
     { label: '자산규모', value: won1000(d.astScl) },
@@ -95,7 +95,7 @@ function saleRows(d: DmsAgtSaleInfo): InfoCardRowInput[] {
   ]
 }
 
-function ovsRows(list: DmsAgtOvsBzenty[]): InfoCardRowInput[] {
+function ovsRows(list: MockDmsAgtOvsBzenty[]): InfoCardRowInput[] {
   return list.flatMap((d, i): InfoCardRowInput[] => [
     ...(i > 0 ? ['divider' as const] : []),
     { label: '업체코드', value: d.ovsBzentyCd },

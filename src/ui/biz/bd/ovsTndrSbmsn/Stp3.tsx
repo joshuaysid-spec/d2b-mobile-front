@@ -9,7 +9,7 @@ import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import type { OvsTndrSbmsnDetail } from '@/types/mock/bd'
+import type { MockOvsTndrSbmsnDetail } from '@/types/mock/bd'
 
 // ── 첨부파일 데이터 영역(dl_docList, 설계서 slide373) ──
 export interface OvsTndrDocItem {
@@ -36,7 +36,7 @@ const INITIAL_FILES: OvsTndrDocItem[] = [
   },
 ]
 
-export function OvsTndrSbmsnPage_Stp3({ detail }: { detail: OvsTndrSbmsnDetail }) {
+export function OvsTndrSbmsnPage_Stp3({ detail }: { detail: MockOvsTndrSbmsnDetail }) {
   const [files, setFiles] = useState<OvsTndrDocItem[]>(INITIAL_FILES)
 
   const handleAdd = () => {

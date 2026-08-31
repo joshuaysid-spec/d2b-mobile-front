@@ -8,10 +8,10 @@
 // On-Load 보증서 정보 상세 조회(scwin.onpageload)는 목업 — 선택 보증서(item) 값을 목업 위에 병합.
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsBidWtgrInfo, OvsBidWtgrItem } from '@/types/mock/bd'
+import type { MockOvsBidWtgrInfo, MockOvsBidWtgrItem } from '@/types/mock/bd'
 
 // 보증서정보 상세 목업(dl_wtgrInfo + dl_IsrInfo + dl_ctrtInfo) — 설계서 slide344~345 예시값 그대로.
-const MOCK_WTGR_INFO: OvsBidWtgrInfo = {
+const MOCK_WTGR_INFO: MockOvsBidWtgrInfo = {
   wtgrNo: '0010011053320031100675611100',
   grnteAmt: '2,700,000 원',
   grnteBgngPrd: '2003-09-08 부터 2003-10-09 까지',
@@ -42,7 +42,7 @@ const MOCK_WTGR_INFO: OvsBidWtgrInfo = {
 }
 
 // 섹션(SectionTitle + Table) 데이터 — 설계서 slide344~345 데이터영역별 그룹.
-const buildSections = (info: OvsBidWtgrInfo): { title: string; rows: TableRow[] }[] => [
+const buildSections = (info: MockOvsBidWtgrInfo): { title: string; rows: TableRow[] }[] => [
   {
     title: '보증서 정보', // dl_wtgrInfo
     rows: [
@@ -101,13 +101,13 @@ const buildSections = (info: OvsBidWtgrInfo): { title: string; rows: TableRow[] 
 
 export interface OvsBidWtgrDtlProps {
   /** 조회 대상 보증서(P75 목록에서 선택). null 이면 렌더 생략. */
-  item: OvsBidWtgrItem | null
+  item: MockOvsBidWtgrItem | null
 }
 
 export function OvsBidWtgrDtl({ item }: OvsBidWtgrDtlProps) {
   // On-Load 보증서 정보 상세 조회 — 선택 보증서 값 병합(목업).
   // 추후 API: bdService.selectOvsBidWtgrInfo(item.wtgrNo)
-  const info: OvsBidWtgrInfo = {
+  const info: MockOvsBidWtgrInfo = {
     ...MOCK_WTGR_INFO,
     ...(item && {
       wtgrNo: item.wtgrNo,

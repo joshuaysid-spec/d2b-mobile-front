@@ -11,10 +11,10 @@ import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsBidPbanc_AtchFileInq } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbanc_AtchFileInq'
 import { cn } from '@/utils/cn'
-import type { OvsAtchDoc, OvsRlsVltrnsEtdcDtlItem } from '@/types/mock/bd'
+import type { MockOvsAtchDoc, MockOvsRlsVltrnsEtdcDtlItem } from '@/types/mock/bd'
 
 // 입찰참여품목 목업 — 설계서 slide432 값 그대로. 항목명 = 설계서 데이터영역 영문(dl_bidItemList).
-const ITEM_BASE: Omit<OvsRlsVltrnsEtdcDtlItem, 'frcptlArtclNo'> = {
+const ITEM_BASE: Omit<MockOvsRlsVltrnsEtdcDtlItem, 'frcptlArtclNo'> = {
   invtNo: '1015375183975',
   prtsNo: '000-A0000 0000',
   itemNm: 'T-80U/TBE-3',
@@ -30,7 +30,7 @@ const ITEM_BASE: Omit<OvsRlsVltrnsEtdcDtlItem, 'frcptlArtclNo'> = {
   crncNm: 'USD (미 달러)',
 }
 const TOTAL = 100
-const MOCK_ITEMS: OvsRlsVltrnsEtdcDtlItem[] = Array.from({ length: TOTAL }, (_, i) => ({
+const MOCK_ITEMS: MockOvsRlsVltrnsEtdcDtlItem[] = Array.from({ length: TOTAL }, (_, i) => ({
   ...ITEM_BASE,
   frcptlArtclNo: String(i + 1),
 }))
@@ -42,9 +42,9 @@ const ItemCard = memo(function ItemCard({
   item,
   onViewAtch,
 }: {
-  item: OvsRlsVltrnsEtdcDtlItem
+  item: MockOvsRlsVltrnsEtdcDtlItem
   /** 품목대체첨부문서 [보기] — 첨부파일 조회 바텀시트 호출(컨테이너는 탭 콘텐츠 소유) */
-  onViewAtch: (item: OvsRlsVltrnsEtdcDtlItem) => void
+  onViewAtch: (item: MockOvsRlsVltrnsEtdcDtlItem) => void
 }) {
   const [expanded, setExpanded] = useState(false)
 
@@ -110,12 +110,12 @@ export function OvsRlsVltrnsNgtnEtdcDtl3() {
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
   // 첨부파일 조회 대상 품목 — null=시트 닫힘.
-  const [atchItem, setAtchItem] = useState<OvsRlsVltrnsEtdcDtlItem | null>(null)
+  const [atchItem, setAtchItem] = useState<MockOvsRlsVltrnsEtdcDtlItem | null>(null)
   const loaded = Math.min(page * pageSize, TOTAL)
   const visible = MOCK_ITEMS.slice(0, loaded)
 
   // 선택 품목의 첨부서류 목록(dl_docList 형태) — 목업. 추후 API: bdService.selectOvsItemAtchFileList(frcptlArtclNo)
-  const buildAtchDocs = (it: OvsRlsVltrnsEtdcDtlItem): OvsAtchDoc[] => [
+  const buildAtchDocs = (it: MockOvsRlsVltrnsEtdcDtlItem): MockOvsAtchDoc[] => [
     { docTitl: '품목대체첨부문서', fileNm: it.itemSbstDocEn, fileSz: 262_144, fileId: `ETDC-ATCH-${it.frcptlArtclNo}` },
   ]
 

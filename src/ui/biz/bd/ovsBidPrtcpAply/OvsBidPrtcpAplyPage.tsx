@@ -5,7 +5,7 @@
 //   → 마지막 탭 [신청하기](2026-07-02 화면 수정: 전자서명 → 신청하기) → 신청 완료(기존 aplyCmptn 재사용).
 // 서약서 상세(P03)는 이 페이지가 BottomSheet 컨테이너/footer 를 소유하고 콘텐츠만 OvsProbWrotAgre
 //   (국내 wrotAgrePage 의 WROTS '청렴 계약 이행 서약서' 본문 재사용). 저장은 '동의함' 선택 시에만 활성(설계서 slide332).
-// 목록(입찰진행 목록, 국내 화면과 동일)에서 navigate state 로 넘어온 BidPrgrsItem 으로 상단 요약을 그린다.
+// 목록(입찰진행 목록, 국내 화면과 동일)에서 navigate state 로 넘어온 MockBidPrgrsItem 으로 상단 요약을 그린다.
 //   직접 URL 진입(state 없음)이면 MOCK_DETAIL fallback.
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -26,7 +26,7 @@ import { OvsProbWrotAgre } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsProbWrotAgre'
 import { Stp1 } from '@/ui/biz/bd/ovsBidPrtcpAply/Stp1'
 import { Stp2 } from '@/ui/biz/bd/ovsBidPrtcpAply/Stp2'
 import { Stp3 } from '@/ui/biz/bd/ovsBidPrtcpAply/Stp3'
-import type { AplyFlowState, BidPrgrsItem, OvsProbWrotAgreResultInfo } from '@/types/mock/bd'
+import type { MockAplyFlowState, MockBidPrgrsItem, MockOvsProbWrotAgreResultInfo } from '@/types/mock/bd'
 
 // ────────────────────────────────────────────────────────────────────────────
 // 도메인 타입 — 설계서 데이터영역 항목명(영문) 그대로. 공유 타입은 @/types/bd 로 이관.
@@ -51,7 +51,7 @@ export interface OvsAtchDocItem {
 // ────────────────────────────────────────────────────────────────────────────
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 국외 입찰진행 목록(국내 화면과 동일) 아이템 형태.
-const MOCK_DETAIL: BidPrgrsItem = {
+const MOCK_DETAIL: MockBidPrgrsItem = {
   rNum: '1',
   taskSeNm: '국외',
   pbancNo: 'EFD0007-2500',
@@ -74,7 +74,7 @@ const MOCK_DETAIL: BidPrgrsItem = {
 }
 
 // 서약서 데이터(P03 dl_resultInfo) — 서약일자는 당일일자 표시(설계서 slide331).
-const WROT_RESULT_INFO: OvsProbWrotAgreResultInfo = {
+const WROT_RESULT_INFO: MockOvsProbWrotAgreResultInfo = {
   wrotAgreYmd: dayjs().format('YYYY 년 MM 월 DD 일'),
   picNm: '홍길동',
   sbtBzentyNm: 'FA무역대리점',
@@ -104,10 +104,10 @@ const TABS: TabItem[] = [
 
 export function OvsBidPrtcpAplyPage() {
   const navigate = useNavigate()
-  // 진입 경로가 여럿(입찰진행 상세 = BidPrgrsItem 전체 / 국외보관함 목록 = 매핑된 부분 필드)이라
+  // 진입 경로가 여럿(입찰진행 상세 = MockBidPrgrsItem 전체 / 국외보관함 목록 = 매핑된 부분 필드)이라
   // fallback 목업 위에 병합 — 부분 state 로 들어와도 요약이 비지 않는다.
-  const stateItem = useLocation().state as Partial<BidPrgrsItem> | null
-  const detail: BidPrgrsItem = { ...MOCK_DETAIL, ...(stateItem ?? {}) }
+  const stateItem = useLocation().state as Partial<MockBidPrgrsItem> | null
+  const detail: MockBidPrgrsItem = { ...MOCK_DETAIL, ...(stateItem ?? {}) }
 
   // 마법사 국면 — 'wrot'(M71 서약서동의 목록) → 'aper'(M72~M77 신청서 4탭).
   const [phase, setPhase] = useState<'wrot' | 'aper'>('wrot')
@@ -174,7 +174,7 @@ export function OvsBidPrtcpAplyPage() {
         aplyType: 'apfr',
         rcptNo: '2025 120 0042',
         rcptDt: '2025-12-01 10:30',
-      } satisfies AplyFlowState,
+      } satisfies MockAplyFlowState,
     })
   }
   const handlePrev = () => {

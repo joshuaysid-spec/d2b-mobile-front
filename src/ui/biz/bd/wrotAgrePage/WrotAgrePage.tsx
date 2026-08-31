@@ -24,10 +24,10 @@ import {
   type WrotData,
 } from '@/ui/biz/bd/wrotAgrePage/WrotAgreForm'
 import type { ApiError } from '@/types/api'
-import type { BidPrgrsItem } from '@/types/mock/bd'
+import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 항목명/형식 그대로(BidPrtcpAperWrtPage 와 동일 형태).
-const MOCK_DETAIL: BidPrgrsItem = {
+const MOCK_DETAIL: MockBidPrgrsItem = {
   rNum: '0',
   taskSeNm: '물품',
   pbancNo: '긴급공고 LDG0097-1',
@@ -76,7 +76,7 @@ const ALL_IDS = WROT_ITEMS.map((i) => i.id) // 전체 동의 토글용 — 모�
 
 export function WrotAgrePage() {
   const navigate = useNavigate()
-  const detail = (useLocation().state as BidPrgrsItem | null) ?? MOCK_DETAIL
+  const detail = (useLocation().state as MockBidPrgrsItem | null) ?? MOCK_DETAIL
   const [checked, setChecked] = useState<string[]>([]) // 동의 완료된 서약서 id
   const [selected, setSelected] = useState<WrotData | null>(null) // 현재 열람 중인 서약서
   const [sheetOpen, setSheetOpen] = useState(false) // 서약서 바텀시트

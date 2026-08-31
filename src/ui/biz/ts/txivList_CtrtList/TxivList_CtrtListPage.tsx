@@ -19,7 +19,7 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { TxivList } from '@/ui/biz/ts/txivList_CtrtList/TxivList'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
-import type { TxivCtrtItem, TxivItem } from '@/types/mock/ts'
+import type { MockTxivCtrtItem, MockTxivItem } from '@/types/mock/ts'
 
 // ── MUI-TS-04-P05 검색필터 schema (slide24~25) — 계약연도(현재 연도 기본) + 계약번호 ──
 const THIS_YEAR = dayjs().year()
@@ -71,7 +71,7 @@ export function TxivList_CtrtListPage() {
   const [filterApplied, setFilterApplied] = useState(false)
   const [appliedSearch, setAppliedSearch] = useState<string | null>(null)
   // P02 세금계산서목록 바텀시트 — 선택한 계약(null=닫힘). key 리마운트로 재오픈 시 초기화.
-  const [pickedCtrt, setPickedCtrt] = useState<TxivCtrtItem | null>(null)
+  const [pickedCtrt, setPickedCtrt] = useState<MockTxivCtrtItem | null>(null)
 
   const { data: listData, isLoading } = tsQueries.useSelectCtrtList()
 
@@ -87,7 +87,7 @@ export function TxivList_CtrtListPage() {
     setPage(1)
   }
   // 세금계산서 카드 클릭(P02) — 상세(M03) 이동.
-  const handleTxivClick = (item: TxivItem) => {
+  const handleTxivClick = (item: MockTxivItem) => {
     navigate('/ts/txivDtl', { state: item })
   }
 

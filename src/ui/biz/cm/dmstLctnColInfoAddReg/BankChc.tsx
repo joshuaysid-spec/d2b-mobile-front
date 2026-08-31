@@ -6,10 +6,10 @@ import { useMemo, useState } from 'react'
 import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { Button } from '@/ui/common/base/Button'
-import type { BankChcItem } from '@/types/mock/cm'
+import type { MockBankChcItem } from '@/types/mock/cm'
 
 // 은행 목록 목업 (설계서 slide173 예시 — 코드 00100000…/은행명). 추후 API: cmService.selectBankList.
-const MOCK_BANK: BankChcItem[] = [
+const MOCK_BANK: MockBankChcItem[] = [
   { bankCd: '00100000', bankNm: '한국은행' },
   { bankCd: '00200000', bankNm: '산업은행' },
   { bankCd: '00300000', bankNm: '기업은행' },
@@ -20,7 +20,7 @@ const MOCK_BANK: BankChcItem[] = [
 
 export interface BankChcProps {
   /** 결과 선택 시 호출 — 선택 은행을 부모에 반환(부모가 시트 닫음). */
-  onSelect: (item: BankChcItem) => void
+  onSelect: (item: MockBankChcItem) => void
 }
 
 export function BankChc({ onSelect }: BankChcProps) {

@@ -2,9 +2,9 @@
 // B군 채점 루브릭 — 유형 데이터만 소유, 렌더는 공용 [[ImpltElgblRsltRubric]]. (연도 변형: 2015년=T09·2018년=T12 별 파일)
 // ⚠️ 심사항목 영문 항목명 미표기(한글 라벨). 배점 일부 ±(상세설계 재확인). 심사평점은 내 업체 목업.
 import { ImpltElgblRsltRubric } from '@/ui/biz/bd/bidRsltDtl/ImpltElgblRsltRubric'
-import type { ImpltElgbSrngRubric } from '@/types/mock/bd'
+import type { MockImpltElgbSrngRubric } from '@/types/mock/bd'
 
-const RUBRIC: ImpltElgbSrngRubric = {
+const RUBRIC: MockImpltElgbSrngRubric = {
   sections: [
     {
       field: '(가) 당해물품 납품이행능력',

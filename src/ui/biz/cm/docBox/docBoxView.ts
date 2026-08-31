@@ -1,7 +1,7 @@
-// 문서함(MUI-CM-06) 목록/상세 공통 표시 헬퍼 — DocBoxItem 한 건을 카드/요약 표시요소로 변환.
+// 문서함(MUI-CM-06) 목록/상세 공통 표시 헬퍼 — MockDocBoxItem 한 건을 카드/요약 표시요소로 변환.
 // 목록(DocBoxPage 카드)과 상세(DocBoxDtlPage 요약)가 동일하게 배지·기관라인·일자행을 그리므로
 // 갈라지면 안 되는 파생 로직만 여기서 공유한다(마크업은 각 화면이 소유 — CLAUDE.md 컨벤션).
-import type { DocBoxItem } from '@/types/mock/cm'
+import type { MockDocBoxItem } from '@/types/mock/cm'
 
 export interface DocBadge {
   label: string
@@ -9,7 +9,7 @@ export interface DocBadge {
 }
 
 /** 카드/요약 상단 배지 — 문서구분(반려=red, 그 외 blue) + 첨언(green) + 첨부(yellow). */
-export function docBadges(item: DocBoxItem): DocBadge[] {
+export function docBadges(item: MockDocBoxItem): DocBadge[] {
   const list: DocBadge[] = [
     { label: item.docSeNm, color: item.docSeCd === 'rejected' ? 'red' : 'blue' },
   ]
@@ -19,7 +19,7 @@ export function docBadges(item: DocBoxItem): DocBadge[] {
 }
 
 /** 기관 라인(subtitle) — 받은=송신처 / 보낸=수신처 / 반려=반려처 / 임시=없음. */
-export function docOrgLine(item: DocBoxItem): string | undefined {
+export function docOrgLine(item: MockDocBoxItem): string | undefined {
   switch (item.docSeCd) {
     case 'received':
       return item.trsmOgnzCd ? `송신처 - ${item.trsmOgnzCd}` : undefined
@@ -33,7 +33,7 @@ export function docOrgLine(item: DocBoxItem): string | undefined {
 }
 
 /** 카드/요약 일자 행 — 문서구분별 라벨/값(설계서 slide90 카드 표기 그대로). */
-export function docDateRows(item: DocBoxItem): { label: string; value: string }[] {
+export function docDateRows(item: MockDocBoxItem): { label: string; value: string }[] {
   switch (item.docSeCd) {
     case 'received':
       return [

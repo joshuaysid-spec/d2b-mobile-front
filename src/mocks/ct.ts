@@ -2,48 +2,48 @@
 // 설계서(03.계약 v0.83) 계약통합목록 데이터영역 항목·형식·slide18 목업값을 반영(임의 더미 금지).
 // ⚠️ 폐쇄망 반입 후 실백엔드 연동 시 이 파일은 사용되지 않는다(서비스가 apiClient 분기).
 import type {
-  CmdtyCtrdocDtl,
-  CmdtyCtrdocDtstResult,
-  CmdtyCtrtDtstResult,
-  CmdtyElctrCtrtPrgrsDtl,
-  CmdtyGnrlCtrdocDtl,
-  CmdtyMdfcnCtrdocDtl,
-  CmdtyMdfcnCtrdocDtstResult,
-  CmdtyCncltnRmvDtl,
-  CncltnRmvGnrlCtrtDtl,
-  CncltnRmvListItem,
-  CncltnRmvMdfcnCtrtDtl,
-  CncltnRmvNotiResult,
-  CstrnCncltnRmvDtl,
-  CstrnCtrdocDtl,
-  CstrnElctrCtrtPrgrsDtl,
-  CtrtAdocResult,
-  CtrtBzenty,
-  CtrtCnstpFlw,
-  CtrtFctry,
-  CtrtGrnteResult,
-  CtrtIntgListItem,
-  CtrtJntGrnte,
-  CtrtLastDtstItem,
-  CtrtPrgrsStts,
-  CtrtRjctRsn,
-  CtrtSpclCnd,
-  CtrtStmtxResult,
-  OvsBacntInfo,
-  OvsCmbzCtrdocDtl,
-  OvsCmbzCtrtDtstResult,
-  OvsCmbzDtstResult,
-  OvsCmbzTrgt,
-  OvsCtrtAdocResult,
-  OvsCtrtDtstResult,
-  OvsElctrCtrtDtl,
-  PymtDfryInfoInqItem,
-  PymtDfryInfoItem,
+  MockCmdtyCtrdocDtl,
+  MockCmdtyCtrdocDtstResult,
+  MockCmdtyCtrtDtstResult,
+  MockCmdtyElctrCtrtPrgrsDtl,
+  MockCmdtyGnrlCtrdocDtl,
+  MockCmdtyMdfcnCtrdocDtl,
+  MockCmdtyMdfcnCtrdocDtstResult,
+  MockCmdtyCncltnRmvDtl,
+  MockCncltnRmvGnrlCtrtDtl,
+  MockCncltnRmvListItem,
+  MockCncltnRmvMdfcnCtrtDtl,
+  MockCncltnRmvNotiResult,
+  MockCstrnCncltnRmvDtl,
+  MockCstrnCtrdocDtl,
+  MockCstrnElctrCtrtPrgrsDtl,
+  MockCtrtAdocResult,
+  MockCtrtBzenty,
+  MockCtrtCnstpFlw,
+  MockCtrtFctry,
+  MockCtrtGrnteResult,
+  MockCtrtIntgListItem,
+  MockCtrtJntGrnte,
+  MockCtrtLastDtstItem,
+  MockCtrtPrgrsStts,
+  MockCtrtRjctRsn,
+  MockCtrtSpclCnd,
+  MockCtrtStmtxResult,
+  MockOvsBacntInfo,
+  MockOvsCmbzCtrdocDtl,
+  MockOvsCmbzCtrtDtstResult,
+  MockOvsCmbzDtstResult,
+  MockOvsCmbzTrgt,
+  MockOvsCtrtAdocResult,
+  MockOvsCtrtDtstResult,
+  MockOvsElctrCtrtDtl,
+  MockPymtDfryInfoInqItem,
+  MockPymtDfryInfoItem,
 } from '@/types/mock/ct'
 
 // 계약통합목록 카드(설계서 slide18 목업: 판단번호 99001 / 계약번호 2025000000-01 등).
 // 업무구분(물품/용역/공사/국외) × 계약상태 × 진행상태 조합 대표 샘플.
-const CTRT_INTG_LIST: CtrtIntgListItem[] = [
+const CTRT_INTG_LIST: MockCtrtIntgListItem[] = [
   {
     id: '20250000001-01',
     rnum: 1,
@@ -228,7 +228,7 @@ const CTRT_INTG_LIST: CtrtIntgListItem[] = [
 ]
 
 // ── MUI-CT-01-M03 물품전자계약진행상세 — 설계서 slide23~24 목업값 반영 ─────────
-const CTRT_PRGRS_DTL: CmdtyElctrCtrtPrgrsDtl = {
+const CTRT_PRGRS_DTL: MockCmdtyElctrCtrtPrgrsDtl = {
   ctrtNo: '20250000001',
   ctrtCycl: '01',
   ctrdocTpcd: '6',
@@ -267,7 +267,7 @@ const CTRT_PRGRS_DTL: CmdtyElctrCtrtPrgrsDtl = {
 }
 
 // 계약업체(T02) — 여러 업체 반복 표시(slide25, Figma 154708: A/B 2개 업체).
-const CTRT_BZENTYS: CtrtBzenty[] = [
+const CTRT_BZENTYS: MockCtrtBzenty[] = [
   {
     id: '111-11-11111',
     bzentyNm: 'A 업체',
@@ -303,7 +303,7 @@ const CTRT_BZENTYS: CtrtBzenty[] = [
 ]
 
 // 생산공장(T02 하단, 방위사업청 계약의 경우 표시 — 여러 건 가능, slide25).
-const CTRT_FCTRYS: CtrtFctry[] = [
+const CTRT_FCTRYS: MockCtrtFctry[] = [
   {
     id: 'fctry-1',
     fctryAddr: '생산공장 명칭',
@@ -313,7 +313,7 @@ const CTRT_FCTRYS: CtrtFctry[] = [
 ]
 
 // 반송/취소 사유(T03) — 단계별 타이틀 4종(slide26·Figma 154930: 낙찰단가/제출서류/계약서/계약취소).
-const CTRT_RJCT_RSNS: CtrtRjctRsn[] = [
+const CTRT_RJCT_RSNS: MockCtrtRjctRsn[] = [
   {
     id: 'rjct-1',
     title: '낙찰단가반송사유',
@@ -337,7 +337,7 @@ const CTRT_RJCT_RSNS: CtrtRjctRsn[] = [
 ]
 
 // 첨부서류(T04) — 계약관/계약업체 2섹션(slide27 목업값: 파일명 없거나 크기 없으면 '-').
-const CTRT_ADOCS: CtrtAdocResult = {
+const CTRT_ADOCS: MockCtrtAdocResult = {
   refDocs: [
     { id: 'ref-1', ctrtAdocCd: '물품제조구매계약서', fileNm: '첨부파일명.hwp', fileSize: '786KB' },
     { id: 'ref-2', ctrtAdocCd: '계약명세서', fileNm: '첨부파일명.hwp', fileSize: '786KB' },
@@ -354,7 +354,7 @@ const CTRT_ADOCS: CtrtAdocResult = {
 }
 
 // ── MUI-CT-01-M09 공사전자계약진행상세 — 설계서 slide38~39 목업값 반영 ─────────
-const CSTRN_CTRT_PRGRS_DTL: CstrnElctrCtrtPrgrsDtl = {
+const CSTRN_CTRT_PRGRS_DTL: MockCstrnElctrCtrtPrgrsDtl = {
   ctrtNo: '20250000002',
   ctrtCycl: '01',
   fcltLbsvcSecd: '공사계약서',
@@ -396,7 +396,7 @@ const CSTRN_CTRT_PRGRS_DTL: CstrnElctrCtrtPrgrsDtl = {
 }
 
 // 하자담보책임(T11) — 여러 데이터가 있는 경우 추가 표시(slide41).
-const CTRT_CNSTP_FLWS: CtrtCnstpFlw[] = [
+const CTRT_CNSTP_FLWS: MockCtrtCnstpFlw[] = [
   {
     id: 'flw-1',
     cnstpNm: '철근콘크리트공사',
@@ -414,7 +414,7 @@ const CTRT_CNSTP_FLWS: CtrtCnstpFlw[] = [
 ]
 
 // ── MUI-CT-01-M05 물품일반계약서상세 — 설계서 slide63~65 목업값 ────────────────
-const CMDTY_GNRL_CTRDOC_DTL: CmdtyGnrlCtrdocDtl = {
+const CMDTY_GNRL_CTRDOC_DTL: MockCmdtyGnrlCtrdocDtl = {
   ctrtNo: '20250000007',
   ctrtCycl: '01',
   prcmNo: '99006',
@@ -457,7 +457,7 @@ const CMDTY_GNRL_CTRDOC_DTL: CmdtyGnrlCtrdocDtl = {
 }
 
 // ── MUI-CT-01-M06 물품수정계약서상세 — 설계서 slide76~77 목업값 ────────────────
-const CMDTY_MDFCN_CTRDOC_DTL: CmdtyMdfcnCtrdocDtl = {
+const CMDTY_MDFCN_CTRDOC_DTL: MockCmdtyMdfcnCtrdocDtl = {
   ctrtNo: '20250000004',
   ctrtCycl: '02',
   ctrtYmd: '2026-01-30',
@@ -492,7 +492,7 @@ const CMDTY_MDFCN_CTRDOC_DTL: CmdtyMdfcnCtrdocDtl = {
 }
 
 // 수정계약명세서(T23·P13) — 설계서 slide78·93 목업값(을/으로 2건).
-const CMDTY_MDFCN_CTRDOC_DTST: CmdtyMdfcnCtrdocDtstResult = {
+const CMDTY_MDFCN_CTRDOC_DTST: MockCmdtyMdfcnCtrdocDtstResult = {
   ctrtInfo: {
     ctrtNo: '20250000004',
     mdfcnCtrtCycl: '01',
@@ -537,7 +537,7 @@ const CMDTY_MDFCN_CTRDOC_DTST: CmdtyMdfcnCtrdocDtstResult = {
 }
 
 // 물품최종계약명세서(P12) — 설계서 slide91 목업값.
-const CTRT_LAST_DTST_ITEMS: CtrtLastDtstItem[] = [
+const CTRT_LAST_DTST_ITEMS: MockCtrtLastDtstItem[] = [
   {
     id: 'last-1',
     ctrtNo: '20250000001',
@@ -554,7 +554,7 @@ const CTRT_LAST_DTST_ITEMS: CtrtLastDtstItem[] = [
 ]
 
 // 특수조건(T24) — 설계서 slide79 목업값.
-const CTRT_SPCL_CND: CtrtSpclCnd = {
+const CTRT_SPCL_CND: MockCtrtSpclCnd = {
   spclCnd:
     '용역계약 특수조건(XXX 모델)\n제1조(계약당사자 등의 표시) 이 특수조건에서 사용하는 계약당사자 동의 표시는 다음과 같다.',
 }
@@ -594,7 +594,7 @@ const CMDTY_CTRDOC_DTL_BASE = {
   ctrtAmt: 11616000,
 }
 
-const CMDTY_CTRDOC_DTLS: Record<'gramt' | 'untprc', CmdtyCtrdocDtl> = {
+const CMDTY_CTRDOC_DTLS: Record<'gramt' | 'untprc', MockCmdtyCtrdocDtl> = {
   // 총액제(M07)
   gramt: { ...CMDTY_CTRDOC_DTL_BASE, ctrtNo: '20250000008', bidMthdCd: '총액제' },
   // 단가제(M08) — 부서명·조달판단번호 추가(slide57)
@@ -608,7 +608,7 @@ const CMDTY_CTRDOC_DTLS: Record<'gramt' | 'untprc', CmdtyCtrdocDtl> = {
 }
 
 // 계약명세서 탭(T14/T17) — 예산구분 그룹(장기국채/총계/예산별 소계, slide50·58).
-const CMDTY_CTRDOC_DTSTS: Record<'gramt' | 'untprc', CmdtyCtrdocDtstResult> = {
+const CMDTY_CTRDOC_DTSTS: Record<'gramt' | 'untprc', MockCmdtyCtrdocDtstResult> = {
   gramt: {
     deptCd: '000 부서',
     prcmNo: '111-11-11111',
@@ -674,7 +674,7 @@ const CMDTY_CTRDOC_DTSTS: Record<'gramt' | 'untprc', CmdtyCtrdocDtstResult> = {
 }
 
 // ── MUI-CT-01-M10 공사계약서상세 — 설계서 slide69~72 목업값 ───────────────────
-const CSTRN_CTRDOC_DTL: CstrnCtrdocDtl = {
+const CSTRN_CTRDOC_DTL: MockCstrnCtrdocDtl = {
   ctrtNo: '20250000010',
   ctrtCycl: '01',
   fcltLbsvcSecd: '공사계약서',
@@ -712,7 +712,7 @@ const CSTRN_CTRDOC_DTL: CstrnCtrdocDtl = {
 }
 
 // 연대보증(T21) — 추가 내용에 따라 표시(slide72).
-const CTRT_JNT_GRNTES: CtrtJntGrnte[] = [
+const CTRT_JNT_GRNTES: MockCtrtJntGrnte[] = [
   {
     id: 'jnt-1',
     rnum: 1,
@@ -728,7 +728,7 @@ const CTRT_JNT_GRNTES: CtrtJntGrnte[] = [
 ]
 
 // ── MUI-CT-01-M15 대금지불정보목록 — 설계서 slide100~101 목업값 ────────────────
-const PYMT_DFRY_INFO_LIST: PymtDfryInfoItem[] = [
+const PYMT_DFRY_INFO_LIST: MockPymtDfryInfoItem[] = [
   {
     id: 'pymt-1',
     rnum: 1,
@@ -758,7 +758,7 @@ const PYMT_DFRY_INFO_LIST: PymtDfryInfoItem[] = [
 ]
 
 // 대금지불정보조회(P16) — 설계서 slide102 목업값.
-const PYMT_DFRY_INFO_INQS: PymtDfryInfoInqItem[] = [
+const PYMT_DFRY_INFO_INQS: MockPymtDfryInfoInqItem[] = [
   {
     id: 'pymt-inq-1',
     expndYmd: '2025-12-23',
@@ -771,7 +771,7 @@ const PYMT_DFRY_INFO_INQS: PymtDfryInfoInqItem[] = [
 ]
 
 // 계약진행상태(P17) — 설계서 slide84 목업값(국내: 처리상태/부대·업체/처리일시).
-const CTRT_PRGRS_STTS: CtrtPrgrsStts[] = [
+const CTRT_PRGRS_STTS: MockCtrtPrgrsStts[] = [
   {
     id: 'stts-1',
     ctrtPrgrsStcd: '계약서작성',
@@ -793,7 +793,7 @@ const CTRT_PRGRS_STTS: CtrtPrgrsStts[] = [
 ]
 
 // 보증서 확인팝업(M73) — 설계서 T73(slide160) 목업값.
-const CTRT_GRNTES: CtrtGrnteResult = {
+const CTRT_GRNTES: MockCtrtGrnteResult = {
   ctrtInfo: { ctrtNo: '20250000001 (01)', ctrtYmd: '2026-02-10' },
   wtgrInfos: [
     {
@@ -814,7 +814,7 @@ const CTRT_GRNTES: CtrtGrnteResult = {
 }
 
 // 인지세 확인팝업(M74) — 설계서 T74(slide162) 목업값.
-const CTRT_STMTX: CtrtStmtxResult = {
+const CTRT_STMTX: MockCtrtStmtxResult = {
   ctrtInfo: { ctrtYr: '2025', ctrtNo: '20250000001', ctrtOd: '01' },
   payInfos: [
     {
@@ -834,7 +834,7 @@ const CTRT_STMTX: CtrtStmtxResult = {
 }
 
 // 물품계약명세서(P11) — 설계서 slide87 목업값(품목 2건).
-const CMDTY_CTRT_DTST: CmdtyCtrtDtstResult = {
+const CMDTY_CTRT_DTST: MockCmdtyCtrtDtstResult = {
   ctrtInfo: {
     ctrtNo: '20250000001',
     ctrtCycl: '01',
@@ -883,7 +883,7 @@ const CMDTY_CTRT_DTST: CmdtyCtrtDtstResult = {
 }
 
 // ── MUI-CT-01-M71 국외전자계약진행상세 — 설계서 slide149~151 목업값 ────────────
-const OVS_ELCTR_CTRT_DTL: OvsElctrCtrtDtl = {
+const OVS_ELCTR_CTRT_DTL: MockOvsElctrCtrtDtl = {
   ctrtNo: 'KD111111111',
   ctrtCycl: '00',
   pbancNo: '99001',
@@ -968,7 +968,7 @@ const OVS_ELCTR_CTRT_DTL: OvsElctrCtrtDtl = {
 }
 
 // 국외 계좌정보(T72) — 설계서 slide156 목업값.
-const OVS_BACNT_INFO: OvsBacntInfo = {
+const OVS_BACNT_INFO: MockOvsBacntInfo = {
   ctrtInfo: {
     ctrtNo: 'KD111111111 (00)',
     orderInstNm: '국제확정전력운영계약팀',
@@ -1001,7 +1001,7 @@ const OVS_BACNT_INFO: OvsBacntInfo = {
 }
 
 // 국외 계약명세서(T75) — 설계서 slide164 목업값.
-const OVS_CTRT_DTST: OvsCtrtDtstResult = {
+const OVS_CTRT_DTST: MockOvsCtrtDtstResult = {
   ctrtInfo: {
     ctrtNo: 'KD111111111',
     jdgmtNo: 'AAA12345',
@@ -1035,7 +1035,7 @@ const OVS_CTRT_DTST: OvsCtrtDtstResult = {
 }
 
 // 국외 첨부서류(T76) — 국내와 동일 + 직인등록정보(slide167).
-const OVS_CTRT_ADOCS: OvsCtrtAdocResult = {
+const OVS_CTRT_ADOCS: MockOvsCtrtAdocResult = {
   refDocs: [
     {
       id: 'ovs-ref-1',
@@ -1062,7 +1062,7 @@ const OVS_CTRT_ADOCS: OvsCtrtAdocResult = {
 }
 
 // ── MUI-CT-01-M77 상업계약서상세 — 설계서 slide178~181 목업값 ──────────────────
-const OVS_CMBZ_CTRDOC_DTL: OvsCmbzCtrdocDtl = {
+const OVS_CMBZ_CTRDOC_DTL: MockOvsCmbzCtrdocDtl = {
   ofcctrDeptNm: '국제확정전력운영계약팀',
   picNm: '홍길동',
   ctrtNo: 'KD111111111',
@@ -1109,7 +1109,7 @@ const OVS_CMBZ_CTRDOC_DTL: OvsCmbzCtrdocDtl = {
 }
 
 // 상업계약서 계약명세서(T78) — GRAND-TOTAL + 그룹 목록(slide180).
-const OVS_CMBZ_DTST: OvsCmbzDtstResult = {
+const OVS_CMBZ_DTST: MockOvsCmbzDtstResult = {
   gramt: '100.00 USD',
   groups: [
     { id: 'cmbz-grp-1', no: 1, prchsDmndNo: 'AAA12345', groupNo: '001', itemGramt: '100.00' },
@@ -1118,7 +1118,7 @@ const OVS_CMBZ_DTST: OvsCmbzDtstResult = {
 }
 
 // 상업계약서 계약대상(T79) — slide181.
-const OVS_CMBZ_TRGT: OvsCmbzTrgt = {
+const OVS_CMBZ_TRGT: MockOvsCmbzTrgt = {
   ofcctrNm: '방위사업청 계약관',
   bzenty: {
     ctrtBzentyNm: '[7001F] TESLA',
@@ -1138,7 +1138,7 @@ const OVS_CMBZ_TRGT: OvsCmbzTrgt = {
 }
 
 // 상업계약서명세서(P78) — slide185 목업값.
-const OVS_CMBZ_CTRT_DTST: OvsCmbzCtrtDtstResult = {
+const OVS_CMBZ_CTRT_DTST: MockOvsCmbzCtrtDtstResult = {
   ctrtInfo: {
     ctrtNo: 'KD111111111',
     prchsDmndNo: 'AAA12345',
@@ -1184,7 +1184,7 @@ const OVS_CMBZ_CTRT_DTST: OvsCmbzCtrtDtstResult = {
 // ════════════════════════════════════════════════════════════════════════════
 
 // 해지/해제 목록(M01) — slide104 목업값. dtlRouteCd 로 카드 클릭 시 상세(M02~M06) 분기.
-const CNCLTN_RMV_LIST: CncltnRmvListItem[] = [
+const CNCLTN_RMV_LIST: MockCncltnRmvListItem[] = [
   {
     id: '20250000001-01',
     rnum: 1,
@@ -1288,7 +1288,7 @@ const CNCLTN_RMV_LIST: CncltnRmvListItem[] = [
 ]
 
 // 물품 해지/해제 상세정보(M02 T01) — slide109·112 목업값.
-const CMDTY_CNCLTN_RMV_DTL: CmdtyCncltnRmvDtl = {
+const CMDTY_CNCLTN_RMV_DTL: MockCmdtyCncltnRmvDtl = {
   ctrtNo: '20250000001',
   ctrtCycl: '01',
   ctrdocTpcd: '물품제조구매계약서',
@@ -1318,8 +1318,8 @@ const CMDTY_CNCLTN_RMV_DTL: CmdtyCncltnRmvDtl = {
   ctrtAmt: 11616000,
 }
 
-// 물품 해지/해제 계약업체(M02 T02) — slide110·113 목업값(CtrtBzenty 재사용).
-const CMDTY_CNCLTN_RMV_BZENTYS: CtrtBzenty[] = [
+// 물품 해지/해제 계약업체(M02 T02) — slide110·113 목업값(MockCtrtBzenty 재사용).
+const CMDTY_CNCLTN_RMV_BZENTYS: MockCtrtBzenty[] = [
   {
     id: '111-11-11111',
     bzentyNm: 'A 업체',
@@ -1336,7 +1336,7 @@ const CMDTY_CNCLTN_RMV_BZENTYS: CtrtBzenty[] = [
 ]
 
 // 해지/해제 정보(M02 T03) — slide111·113 목업값(통보내용 + 참조서류).
-const CMDTY_CNCLTN_RMV_NOTI: CncltnRmvNotiResult = {
+const CMDTY_CNCLTN_RMV_NOTI: MockCncltnRmvNotiResult = {
   notis: [
     {
       id: 'noti-1',
@@ -1388,13 +1388,13 @@ const CNCLTN_RMV_GNRL_CTRT_DTL_BASE = {
   ctrtAmt: 11616000,
 }
 
-const CNCLTN_RMV_GNRL_CTRT_DTLS: Record<'gramt' | 'untprc', CncltnRmvGnrlCtrtDtl> = {
+const CNCLTN_RMV_GNRL_CTRT_DTLS: Record<'gramt' | 'untprc', MockCncltnRmvGnrlCtrtDtl> = {
   gramt: { ...CNCLTN_RMV_GNRL_CTRT_DTL_BASE, ctrtNo: '20250000011', bidMthdCd: '총액제' },
   untprc: { ...CNCLTN_RMV_GNRL_CTRT_DTL_BASE, ctrtNo: '20250000012', bidMthdCd: '단가제', taskSecd: '용역' },
 }
 
 // 해지/해제 수정계약 상세정보(M05 T10) — slide132·135 목업값.
-const CNCLTN_RMV_MDFCN_CTRT_DTL: CncltnRmvMdfcnCtrtDtl = {
+const CNCLTN_RMV_MDFCN_CTRT_DTL: MockCncltnRmvMdfcnCtrtDtl = {
   ctrtNo: '20250000013',
   ctrtCycl: '02',
   ctrtYmd: '2026-01-30',
@@ -1430,7 +1430,7 @@ const CNCLTN_RMV_MDFCN_CTRT_DTL: CncltnRmvMdfcnCtrtDtl = {
 }
 
 // 해지/해제 공사계약 상세정보(M06 T13) — slide141·143 목업값.
-const CSTRN_CNCLTN_RMV_DTL: CstrnCncltnRmvDtl = {
+const CSTRN_CNCLTN_RMV_DTL: MockCstrnCncltnRmvDtl = {
   ctrtNo: '20250000002',
   ctrtCycl: '01',
   ctrtNm: '공사계약서',
@@ -1461,7 +1461,7 @@ const CSTRN_CNCLTN_RMV_DTL: CstrnCncltnRmvDtl = {
 }
 
 // 공사 해지/해제 첨부서류(M06 T14) — slide142 목업값(해지해제 + 계약업체 2섹션).
-const CSTRN_CNCLTN_RMV_ADOCS: CtrtAdocResult = {
+const CSTRN_CNCLTN_RMV_ADOCS: MockCtrtAdocResult = {
   refDocs: [
     { id: 'crn-ref-1', ctrtAdocCd: '물품제조구매계약서', fileNm: '첨부파일명.hwp', fileSize: '786KB' },
     {

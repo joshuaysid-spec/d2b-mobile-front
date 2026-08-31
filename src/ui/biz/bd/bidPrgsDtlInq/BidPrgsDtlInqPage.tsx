@@ -31,10 +31,10 @@ import { BidAbndAperWrt, type BidAbndAperWrtHandle } from '@/ui/biz/bd/bidPrgsDt
 import { BidAbndAperDtl } from '@/ui/biz/bd/bidPrgsDtlInq/BidAbndAperDtl'
 import { BidRtrcnAperInq, type BidRtrcnAperInqHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidRtrcnAperInq'
 import { BidRtrcnAperInqDtl } from '@/ui/biz/bd/bidPrgsDtlInq/BidRtrcnAperInqDtl'
-import type { BidPrgrsItem, BidPrgrsDetail, OvsTndrDtlItem } from '@/types/mock/bd'
+import type { MockBidPrgrsItem, MockBidPrgrsDetail, MockOvsTndrDtlItem } from '@/types/mock/bd'
 
 // 직접 URL 진입(목록 state 없음) 대비 fallback 목업 — 설계서 dlt_bidPrgrsList 항목명/형식 그대로.
-const MOCK_BID_PRGRS_DETAIL: BidPrgrsDetail = {
+const MOCK_BID_PRGRS_DETAIL: MockBidPrgrsDetail = {
   rNum: '0',
   taskSeNm: '물품',
   pbancNo: '2026LGM000604191-01',
@@ -64,14 +64,14 @@ const MOCK_BID_PRGRS_DETAIL: BidPrgrsDetail = {
 // 입찰참가신청서 [내용 보기] 목적지 판정(설계서 slide66 상태값) — 제출은 끝났고 등록심사 전/동의 단계면
 // 신청서 자체를 읽기전용 조회(M22), 등록확정·반려 등 심사 결과가 나온 건은 결과조회(M05).
 const APFR_SUBMITTED_STATS = ['신청완료', '미동의', '동의완료']
-function isApfrSubmitted(it: BidPrgrsDetail) {
+function isApfrSubmitted(it: MockBidPrgrsDetail) {
   if (it.bidRegCfmtnYn === 'Y' || it.regRjctYn) return false
   return Boolean(it.apfrStatNm && APFR_SUBMITTED_STATS.includes(it.apfrStatNm))
 }
 
 // 진행상태 배지(요약 헤더에서 상태를 알 수 있게) — 목록 카드와 동일 규칙.
 function statusBadge(
-  it: BidPrgrsItem,
+  it: MockBidPrgrsItem,
 ): { label: string; color: 'blue' | 'green' | 'red' } | null {
   if (it.regRjctYn) return { label: '입찰참가등록반려', color: 'red' }
   if (it.tndrStatNm === '완료') return { label: '입찰서 완료', color: 'green' }
@@ -84,7 +84,7 @@ function statusBadge(
 // 구분/내용 표(설계서 slide66) — 일부 행은 상태텍스트 + 보기 버튼(combination). 대상 아닌 항목 행은 숨김.
 // 국외(isOvs)는 사전심사(PQ)·생산능력서류 행을 국외 미사용으로 숨긴다(국외 챕터 slide432~435 에 해당 화면
 // 미정의 — 사용자 확정 2026-08-26). 기술평가는 국외 전용 조회(P71)가 있어 유지.
-function buildRows(it: BidPrgrsDetail, onView: (key: string) => void, isOvs: boolean): TableRow[] {
+function buildRows(it: MockBidPrgrsDetail, onView: (key: string) => void, isOvs: boolean): TableRow[] {
   // 상태 + 버튼 셀("신청/미동의/등록확정" 위, [내용 보기] 아래)
   const statusCell = (status: string, btnLabel: string, key: string) => (
     <div className="flex flex-col items-start gap-krds-3">
@@ -175,9 +175,9 @@ function buildRows(it: BidPrgrsDetail, onView: (key: string) => void, isOvs: boo
   return rows
 }
 
-// 진입 유형별 state — 입찰진행 목록(M01)=BidPrgrsItem 전체 / 나의 업무이력(CM-06-M04)=카드 매핑 값
+// 진입 유형별 state — 입찰진행 목록(M01)=MockBidPrgrsItem 전체 / 나의 업무이력(CM-06-M04)=카드 매핑 값
 //   (+현황명 taskSttsNm — 카드 1번 뱃지 그대로 노출, 공고번호 등 카드에 없는 항목은 ''/'-').
-type BidPrgsDtlState = BidPrgrsDetail & { taskSttsNm?: string }
+type BidPrgsDtlState = MockBidPrgrsDetail & { taskSttsNm?: string }
 
 export function BidPrgsDtlInqPage() {
   const navigate = useNavigate()
@@ -213,8 +213,8 @@ export function BidPrgsDtlInqPage() {
       else if (isApfrSubmitted(detail)) navigate('/bd/bidPrtcpAperDtl', { state: detail })
       else navigate('/bd/reg-rslt', { state: detail })
     } else if (key === 'tndr') {
-      // 국외 입찰서 상세(MUI-BD-06-M75, /bd/ovsTndrDtl) — state 미전달(페이지가 OvsTndrDtlItem 전체를
-      // 기대하므로 BidPrgrsItem 을 넘기면 상단이 깨짐 → fallback 목업으로 렌더. API 연동 시 조회로 대체).
+      // 국외 입찰서 상세(MUI-BD-06-M75, /bd/ovsTndrDtl) — state 미전달(페이지가 MockOvsTndrDtlItem 전체를
+      // 기대하므로 MockBidPrgrsItem 을 넘기면 상단이 깨짐 → fallback 목업으로 렌더. API 연동 시 조회로 대체).
       // 국내: 제출 완료된 입찰서를 읽기전용 조회(MUI-BD-06-M09, /bd/tndrInq). 미제출 건은 위 buildRows 에서
       //   [내용 보기] 자체를 노출하지 않는다.
       if (isOvs) navigate('/bd/ovsTndrDtl')
@@ -232,7 +232,7 @@ export function BidPrgsDtlInqPage() {
 
   // 국외 조회/신청(P71 기술평가·P81 입찰취소) 콘텐츠에 넘길 항목 — 상세(dlt_bidPrgrsList)에서 매핑 가능한 값
   //   + 미보유 필드 목업. (구매요청번호/공고차수/입찰방식/담당자 등은 M02 항목에 없음 — API 연동 시 조회로 대체)
-  const ovsDetail: OvsTndrDtlItem = {
+  const ovsDetail: MockOvsTndrDtlItem = {
     pbancNo: detail.pbancNo,
     pbancOd: '1',
     prchsDmndNo: 'BAD839380-001',
@@ -435,7 +435,7 @@ export function BidPrgsDtlInqPage() {
       </BottomSheet>
 
       {/* 국외 입찰취소신청서작성(P81) — 바텀시트(컨테이너/footer 부모 소유, 콘텐츠는 ovsTndrDtl 의 P81 공유).
-          P81 콘텐츠는 OvsTndrDtlItem 을 기대 — 상세 항목에서 매핑 가능한 값만 넘기고 나머지는 목업
+          P81 콘텐츠는 MockOvsTndrDtlItem 을 기대 — 상세 항목에서 매핑 가능한 값만 넘기고 나머지는 목업
           (M02→국외 화면 연계의 기존 관례: API 연동 시 조회로 대체). */}
       <BottomSheet
         open={ovsRtrcnOpen}

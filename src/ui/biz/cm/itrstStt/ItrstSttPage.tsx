@@ -13,11 +13,11 @@ import { Button } from '@/ui/common/base/Button'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { Toast } from '@/ui/common/composites/Toast'
-import type { ItrstSttItem } from '@/types/mock/cm'
+import type { MockItrstSttItem } from '@/types/mock/cm'
 
 // ── 목업 (설계서 slide105 예시 + 데이터영역 dl_itrstSttList 항목명/형식) ─────────────
 const TOTAL = 258 // 설계서 slide105 더보기 (10/258)
-const dl_itrstSttList: ItrstSttItem[] = [
+const dl_itrstSttList: MockItrstSttItem[] = [
   {
     id: '1',
     itrst: true,
@@ -48,7 +48,7 @@ const dl_itrstSttList: ItrstSttItem[] = [
 ]
 
 // ⚠️ 임시 목업 — API 연동 시 이 상수와 페이징 로직을 통째로 교체(cmService.selectItrstSttList).
-const MOCK_LIST: ItrstSttItem[] = Array.from({ length: TOTAL }, (_, i) => ({
+const MOCK_LIST: MockItrstSttItem[] = Array.from({ length: TOTAL }, (_, i) => ({
   ...dl_itrstSttList[i % dl_itrstSttList.length],
   id: String(i + 1),
 }))
@@ -57,7 +57,7 @@ export function ItrstSttPage() {
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
   // 관심(별) 상태 — 해제해도 페이지 유지 중엔 목록에 남고 별만 off(설계서 slide105).
-  const [items, setItems] = useState<ItrstSttItem[]>(MOCK_LIST)
+  const [items, setItems] = useState<MockItrstSttItem[]>(MOCK_LIST)
   // 해제 토스트(사용자 확정 2026-08-24)
   const [toastOpen, setToastOpen] = useState(false)
 
@@ -75,12 +75,12 @@ export function ItrstSttPage() {
     setPage((p) => p + 1)
     console.log('[ItrstStt] loadMore')
   }
-  const handleOpen = (it: ItrstSttItem) => {
+  const handleOpen = (it: MockItrstSttItem) => {
     // 클릭 시 외부 브라우저로 법령 정보 표시(외부 URL 은 법령 등록 시 관리자가 작성).
     console.log('[ItrstStt] 법령 링크 열기', it.sttUrl) // 추후: 하이브리드 외부 브라우저 오픈 브릿지
     window.open(it.sttUrl, '_blank', 'noopener,noreferrer')
   }
-  const handleToggleStar = (it: ItrstSttItem) => {
+  const handleToggleStar = (it: MockItrstSttItem) => {
     // 별표 하이라이트만 토글 — 현재 페이지에서는 목록 유지. 해제(on→off) 시에만 토스트 노출.
     setItems((prev) => prev.map((x) => (x.id === it.id ? { ...x, itrst: !x.itrst } : x)))
     if (it.itrst) setToastOpen(true)

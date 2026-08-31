@@ -19,7 +19,7 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { DlvgdsAvtsmtListFullPopup } from '@/ui/biz/ex/inspIntgListInq/DlvgdsAvtsmtListFullPopup'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
-import type { InspIntgListItem } from '@/types/mock/ex'
+import type { MockInspIntgListItem } from '@/types/mock/ex'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
@@ -154,7 +154,7 @@ export function InspIntgListInqPage() {
     setPage(1)
   }
   // 카드 클릭(slide12 이벤트) — 물품/용역 → P10 납품통지목록 · 공사 → M04 기성및준공검사상세.
-  const handleCardClick = (item: InspIntgListItem) => {
+  const handleCardClick = (item: MockInspIntgListItem) => {
     if (item.taskSecd === '공사') {
       // 식별자는 URL 이 아니라 state 로만 전달(상세가 item.id 로 조회).
       navigate('/ex/pxcndCmcnInspDtl', { state: item })

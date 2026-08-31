@@ -2,10 +2,10 @@
 // 아코디언 3개(계약 상세정보 · 계약금액 · 담당자 정보) — 데이터(detail)는 페이지가 조회해 주입.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CmdtyCncltnRmvDtl } from '@/types/mock/ct'
+import type { MockCmdtyCncltnRmvDtl } from '@/types/mock/ct'
 
 export interface CmdtyCtrtCncltnRmvDtl_CnProps {
-  detail: CmdtyCncltnRmvDtl
+  detail: MockCmdtyCncltnRmvDtl
 }
 
 export function CmdtyCtrtCncltnRmvDtl_Cn({ detail }: CmdtyCtrtCncltnRmvDtl_CnProps) {

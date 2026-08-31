@@ -12,10 +12,10 @@ import {
   NOTICE_DEFAULT,
 } from '@/ui/biz/cm/noticeList/noticeBoard'
 import { SYSIMPV_MOCK } from '@/ui/biz/cm/rpstrList/rpstrMock'
-import type { SysImpvListItem } from '@/types/mock/cm'
+import type { MockSysImpvListItem } from '@/types/mock/cm'
 
 // 카드 매핑: 배지 구분(bizFldCd) + 제목(bbsTtl) + 작성자(wrtrNm)/작성일자(regDt).
-const toCard = (it: SysImpvListItem): Omit<CardListItem, 'id' | 'onClick'> => ({
+const toCard = (it: MockSysImpvListItem): Omit<CardListItem, 'id' | 'onClick'> => ({
   badges: (
     <Badge type="pastel" color="blue">
       {it.bizFldCd}
@@ -27,7 +27,7 @@ const toCard = (it: SysImpvListItem): Omit<CardListItem, 'id' | 'onClick'> => ({
     { label: '작성일자', value: it.regDt },
   ],
 })
-const matchKeyword = (it: SysImpvListItem, keyword: string) =>
+const matchKeyword = (it: MockSysImpvListItem, keyword: string) =>
   it.bbsTtl.toLowerCase().includes(keyword.toLowerCase())
 
 export function SysImpv_rpstrList() {

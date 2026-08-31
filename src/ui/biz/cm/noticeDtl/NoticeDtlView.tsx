@@ -7,18 +7,18 @@ import { Badge } from '@/ui/common/base/Badge'
 import { BoardDetailView } from '@/ui/biz/cm/board/BoardDetailView'
 import type { FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { toNoticeDetail } from '@/ui/biz/cm/noticeList/noticeMock'
-import type { NoticeListItem } from '@/types/mock/cm'
+import type { MockNoticeListItem } from '@/types/mock/cm'
 
-export function NoticeDtlView({ mock, base }: { mock: NoticeListItem[]; base: string }) {
+export function NoticeDtlView({ mock, base }: { mock: MockNoticeListItem[]; base: string }) {
   const navigate = useNavigate()
   // 상단 즉시표시: 목록에서 넘어온 항목(state). 직접 URL/새로고침이면 대상을 알 수 없어 목록으로 되돌린다.
-  const item = useLocation().state as NoticeListItem | null
+  const item = useLocation().state as MockNoticeListItem | null
   if (!item) return <Navigate to={base} replace />
   const detail = toNoticeDetail(item)
 
   const idx = mock.findIndex((x) => x.contsNo === item.contsNo)
   // 이전글/다음글은 같은 상세 라우트로 state 만 교체('.' = 현재 라우트 — 게시판별 경로를 따로 안 받아도 됨).
-  const goDetail = (target: NoticeListItem) => navigate('.', { state: target })
+  const goDetail = (target: MockNoticeListItem) => navigate('.', { state: target })
   const prevItem = idx > 0 ? mock[idx - 1] : null
   const nextItem = idx >= 0 && idx < mock.length - 1 ? mock[idx + 1] : null
 

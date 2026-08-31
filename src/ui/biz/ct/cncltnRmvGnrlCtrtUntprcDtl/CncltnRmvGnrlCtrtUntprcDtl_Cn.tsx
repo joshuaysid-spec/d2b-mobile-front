@@ -2,10 +2,10 @@
 // 아코디언 4개(계약 상세정보 · 계약금액 · 업체정보 · 담당자 정보) — 총액제(T04)와 상세정보 항목 동일.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CncltnRmvGnrlCtrtDtl } from '@/types/mock/ct'
+import type { MockCncltnRmvGnrlCtrtDtl } from '@/types/mock/ct'
 
 export interface CncltnRmvGnrlCtrtUntprcDtl_CnProps {
-  detail: CncltnRmvGnrlCtrtDtl
+  detail: MockCncltnRmvGnrlCtrtDtl
 }
 
 export function CncltnRmvGnrlCtrtUntprcDtl_Cn({ detail }: CncltnRmvGnrlCtrtUntprcDtl_CnProps) {

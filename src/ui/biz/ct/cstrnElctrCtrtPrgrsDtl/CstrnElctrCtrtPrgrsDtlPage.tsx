@@ -28,7 +28,7 @@ import { CstrnElctrCtrtPrgrsDtl_Adoc } from '@/ui/biz/ct/cstrnElctrCtrtPrgrsDtl/
 import { GrnteCnfrmFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/GrnteCnfrmFullPopup'
 import { StmtxCnfrmFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/StmtxCnfrmFullPopup'
 import { CtrtPrgrsSttsInqFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CtrtPrgrsSttsInqFullPopup'
-import type { CtrtIntgListItem } from '@/types/mock/ct'
+import type { MockCtrtIntgListItem } from '@/types/mock/ct'
 
 // ── 탭 (설계서 slide38 탭바: 상세정보/계약업체/하자담보책임/첨부서류) ──────────
 const TABS: TabItem[] = [
@@ -50,7 +50,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CstrnElctrCtrtPrgrsDtlPage() {
-  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const stateItem = useLocation().state as MockCtrtIntgListItem | null
   const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')

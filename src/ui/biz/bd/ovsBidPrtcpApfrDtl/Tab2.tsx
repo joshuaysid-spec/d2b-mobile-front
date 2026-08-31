@@ -6,8 +6,8 @@
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type {
-  OvsBidPrtcpApfrDetail,
-  OvsSplyInfo,
+  MockOvsBidPrtcpApfrDetail,
+  MockOvsSplyInfo,
 } from '@/types/mock/bd'
 
 // 달러 금액 표기 — 설계서 '000,000,000,000.00' 형식(소수 2자리).
@@ -15,8 +15,8 @@ const fmtUsd = (n: number) =>
   n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 interface OvsBidPrtcpApfrDtlPage_Tab2Props {
-  detail: OvsBidPrtcpApfrDetail
-  splyInfo: OvsSplyInfo
+  detail: MockOvsBidPrtcpApfrDetail
+  splyInfo: MockOvsSplyInfo
 }
 
 export function OvsBidPrtcpApfrDtlPage_Tab2({ detail, splyInfo }: OvsBidPrtcpApfrDtlPage_Tab2Props) {

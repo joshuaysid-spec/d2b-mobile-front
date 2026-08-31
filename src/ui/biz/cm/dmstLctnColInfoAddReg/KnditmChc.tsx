@@ -7,10 +7,10 @@ import { useMemo, useState } from 'react'
 import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { Button } from '@/ui/common/base/Button'
-import type { KnditmChcItem } from '@/types/mock/cm'
+import type { MockKnditmChcItem } from '@/types/mock/cm'
 
 // 품류 목록 목업 (설계서 slide161 예시 — 품류코드 11000·11740…/품류명). 추후 API: cmService.selectKnditmList.
-const MOCK_KNDITM: KnditmChcItem[] = [
+const MOCK_KNDITM: MockKnditmChcItem[] = [
   { knditmCd: '11000', knditmCdNm: '사무용기기' },
   { knditmCd: '11740', knditmCdNm: '피복' },
   { knditmCd: '11140', knditmCdNm: '전투장구' },
@@ -21,7 +21,7 @@ const MOCK_KNDITM: KnditmChcItem[] = [
 
 export interface KnditmChcProps {
   /** 결과 선택 시 호출 — 선택 품류를 부모에 반환(부모가 시트 닫음). */
-  onSelect: (item: KnditmChcItem) => void
+  onSelect: (item: MockKnditmChcItem) => void
 }
 
 export function KnditmChc({ onSelect }: KnditmChcProps) {

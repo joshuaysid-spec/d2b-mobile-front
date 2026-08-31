@@ -6,11 +6,11 @@
 import { useState } from 'react'
 
 import type {
-  BzentyGnrlInfo,
-  BzentyStts,
-  BzentyRlsVltrnsRstric,
-  BzentyRprsv,
-  BzentyBidAgt,
+  MockBzentyGnrlInfo,
+  MockBzentyStts,
+  MockBzentyRlsVltrnsRstric,
+  MockBzentyRprsv,
+  MockBzentyBidAgt,
 } from '@/types/mock/cm'
 import { Badge } from '@/ui/common/base/Badge'
 import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
@@ -20,7 +20,7 @@ import {
 } from '@/ui/biz/cm/bzentyInfo/InfoAccordionCard'
 
 // ── 업체일반 (dm_bzentyGnrlInfo) — 설계서 slide126/128 예시값 ────────────────
-const GNRL_INFO: BzentyGnrlInfo = {
+const GNRL_INFO: MockBzentyGnrlInfo = {
   bzentyCd: '100F',
   bzentyNm: '조달테스트업체',
   bzentyEngNm: 'Jodal',
@@ -46,7 +46,7 @@ const GNRL_INFO: BzentyGnrlInfo = {
 }
 
 // ── 상태/부정당 (dl_bzentySttsList) — 설계서 slide126/129 예시값 ─────────────
-const STTS_LIST: BzentyStts[] = [
+const STTS_LIST: MockBzentyStts[] = [
   {
     bzentyStcd: '03',
     bzentyStNm: '양도,양수',
@@ -58,7 +58,7 @@ const STTS_LIST: BzentyStts[] = [
 ]
 
 // ── 수의계약배제 (dl_bzentyRlsVltrnsRstricList) — 설계서 slide127/129 예시값 ──
-const RLS_VLTRNS_LIST: BzentyRlsVltrnsRstric[] = [
+const RLS_VLTRNS_LIST: MockBzentyRlsVltrnsRstric[] = [
   {
     pbancNo: '285608N',
     prcmNo: '5608N',
@@ -72,7 +72,7 @@ const RLS_VLTRNS_LIST: BzentyRlsVltrnsRstric[] = [
 ]
 
 // ── 대표자 (dl_bzentyRprsvList) — 설계서 slide127/129 예시값 ─────────────────
-const RPRSV_LIST: BzentyRprsv[] = [
+const RPRSV_LIST: MockBzentyRprsv[] = [
   {
     rprsvYn: '대대표',
     rprsvNm: '홍길동',
@@ -82,12 +82,12 @@ const RPRSV_LIST: BzentyRprsv[] = [
 ]
 
 // ── 입찰대리인 (dl_bzentyBidAgtList) — 설계서 slide127/130 예시값 ────────────
-const BID_AGT_LIST: BzentyBidAgt[] = [
+const BID_AGT_LIST: MockBzentyBidAgt[] = [
   { agtJbpsNm: '과장', agtNm: '김길동', agtEntlno: '02-1234-5678' },
 ]
 
 // 사업자정보 — Figma 행 구성(업체코드는 요약 카드 뱃지로 이동, 사업구분도 요약 카드로).
-function bizRows(d: BzentyGnrlInfo): InfoCardRowInput[] {
+function bizRows(d: MockBzentyGnrlInfo): InfoCardRowInput[] {
   return [
     { label: '상호명', value: d.bzentyNm },
     { label: '영문상호명', value: d.bzentyEngNm },
@@ -102,7 +102,7 @@ function bizRows(d: BzentyGnrlInfo): InfoCardRowInput[] {
 }
 
 // 법인정보 — 기업구분(entShcd1·2)은 뱃지 나열, 공장설립특례해당여부는 '해당' 뱃지(Figma).
-function corpRows(d: BzentyGnrlInfo): InfoCardRowInput[] {
+function corpRows(d: MockBzentyGnrlInfo): InfoCardRowInput[] {
   return [
     { label: '법인설립일자', value: d.fndnYmd },
     { label: '법인등록번호', value: d.crno },
@@ -138,7 +138,7 @@ function corpRows(d: BzentyGnrlInfo): InfoCardRowInput[] {
 }
 
 // 상태/부정당 — 상태명 행에 상태코드 뱃지(Figma). 다건이면 divider 로 항목 구분.
-function sttsRows(list: BzentyStts[]): InfoCardRowInput[] {
+function sttsRows(list: MockBzentyStts[]): InfoCardRowInput[] {
   return list.flatMap((s, i): InfoCardRowInput[] => [
     ...(i > 0 ? ['divider' as const] : []),
     {
@@ -158,7 +158,7 @@ function sttsRows(list: BzentyStts[]): InfoCardRowInput[] {
 }
 
 // 수의계약배제 — 공고번호/판단번호 합침 행(Figma). 다건이면 divider.
-function rlsVltrnsRows(list: BzentyRlsVltrnsRstric[]): InfoCardRowInput[] {
+function rlsVltrnsRows(list: MockBzentyRlsVltrnsRstric[]): InfoCardRowInput[] {
   return list.flatMap((e, i): InfoCardRowInput[] => [
     ...(i > 0 ? ['divider' as const] : []),
     { label: '공고번호 / 판단번호', value: `${e.pbancNo} / ${e.prcmNo}` },
@@ -172,7 +172,7 @@ function rlsVltrnsRows(list: BzentyRlsVltrnsRstric[]): InfoCardRowInput[] {
 }
 
 // 대표자 및 입찰 대리인 — 통합 카드(Figma). 주민등록번호는 설계서 260713 삭제 개정에 따라 미표시.
-function rprsvAgtRows(rprsvList: BzentyRprsv[], agtList: BzentyBidAgt[]): InfoCardRowInput[] {
+function rprsvAgtRows(rprsvList: MockBzentyRprsv[], agtList: MockBzentyBidAgt[]): InfoCardRowInput[] {
   const rows: InfoCardRowInput[] = rprsvList.flatMap((r, i): InfoCardRowInput[] => [
     ...(i > 0 ? ['divider' as const] : []),
     { label: '대표자 (영문)', value: `${r.rprsvNm} (${r.rprsvEngNm})` },

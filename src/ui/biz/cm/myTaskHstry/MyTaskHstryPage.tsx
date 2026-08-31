@@ -14,8 +14,8 @@ import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
-import type { MyTaskHstryItem } from '@/types/mock/cm'
-import type { BidPrgrsDetail } from '@/types/mock/bd'
+import type { MockMyTaskHstryItem } from '@/types/mock/cm'
+import type { MockBidPrgrsDetail } from '@/types/mock/bd'
 
 // 상단 분기 탭 — 업무 이력 4가지 현황(설계서 slide80). taskSttsNm 으로 목록 필터.
 const STTS_TABS: TabItem[] = [
@@ -26,7 +26,7 @@ const STTS_TABS: TabItem[] = [
 ]
 
 // ── 목업 (설계서 slide80 예시/형식) ──────────────────────────────────────────
-const dl_myTaskList: MyTaskHstryItem[] = [
+const dl_myTaskList: MockMyTaskHstryItem[] = [
   {
     id: '1',
     taskSttsNm: '입찰참가신청',
@@ -80,7 +80,7 @@ const dl_myTaskList: MyTaskHstryItem[] = [
 ]
 
 // ⚠️ 임시 목업 — API 연동 시 이 상수와 페이징 로직을 통째로 교체(cmService.selectBidPrtcpAplyList).
-const MOCK_LIST: MyTaskHstryItem[] = Array.from({ length: 99 }, (_, i) => ({
+const MOCK_LIST: MockMyTaskHstryItem[] = Array.from({ length: 99 }, (_, i) => ({
   ...dl_myTaskList[i % dl_myTaskList.length],
   id: String(i + 1),
 }))
@@ -113,9 +113,9 @@ export function MyTaskHstryPage() {
     console.log('[MyTaskHstry] loadMore')
   }
   // 카드 → 입찰진행상세(M02) state 매핑 — 상세 요약(뱃지/입찰건명/판단번호)·표(계약·입찰방법)가 카드와
-  // 같은 값으로 뜨도록 BidPrgrsDetail 항목명으로 변환한다. 카드에 없는 상세 전용 항목은 '-'(API 연동 시
+  // 같은 값으로 뜨도록 MockBidPrgrsDetail 항목명으로 변환한다. 카드에 없는 상세 전용 항목은 '-'(API 연동 시
   // 상세 조회가 공급). taskSttsNm 은 M02 가 현황 뱃지(카드 1번 뱃지)로 그대로 노출.
-  const toBidPrgrsState = (it: MyTaskHstryItem): BidPrgrsDetail & { taskSttsNm: string } => ({
+  const toBidPrgrsState = (it: MockMyTaskHstryItem): MockBidPrgrsDetail & { taskSttsNm: string } => ({
     taskSttsNm: it.taskSttsNm,
     rNum: it.id,
     taskSeNm: it.taskSeNm,
@@ -136,7 +136,7 @@ export function MyTaskHstryPage() {
     techEvl: false,
     prdcpDcmntSbms: false,
   })
-  const handleCardClick = (it: MyTaskHstryItem) => {
+  const handleCardClick = (it: MockMyTaskHstryItem) => {
     // 계약 → 물품전자계약진행상세(MUI-CT-01-M03). URL 에 식별자를 두지 않아 항목을 state 로 넘긴다
     // (⚠️ 이력 아이템은 계약 상세가 기대하는 아이템 타입이 아님 — API 연동 시 계약 조회로 대체).
     // 추후: 계약상태/유형별 M03~M10 분기(계약통합목록 선례).

@@ -9,10 +9,10 @@
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
-import type { DigitalCabinetAuthrtSe, DigitalCabinetFldr } from '@/types/mock/cm'
+import type { MockDigitalCabinetAuthrtSe, MockDigitalCabinetFldr } from '@/types/mock/cm'
 
 // 접근권한 코드(GTSC0009) — 라벨은 설계서 표기(쓰기/읽기/없음). ⚠️ 실제 코드값은 API 연동 시 확인.
-const AUTHRT_ITEMS: { value: DigitalCabinetAuthrtSe; label: string }[] = [
+const AUTHRT_ITEMS: { value: MockDigitalCabinetAuthrtSe; label: string }[] = [
   { value: 'write', label: '쓰기' },
   { value: 'read', label: '읽기' },
   { value: 'none', label: '없음' },
@@ -20,11 +20,11 @@ const AUTHRT_ITEMS: { value: DigitalCabinetAuthrtSe; label: string }[] = [
 
 interface DigitalCabinetMngProps {
   /** 대상 폴더(폴더명/사이즈/권한 목록). */
-  folder: DigitalCabinetFldr
+  folder: MockDigitalCabinetFldr
   /** 편집 중 사용자별 권한값(userNm → authrtSe). 부모가 소유(저장이 부모 footer). */
-  value: Record<string, DigitalCabinetAuthrtSe>
+  value: Record<string, MockDigitalCabinetAuthrtSe>
   /** 사용자 권한 변경 콜백. */
-  onChange: (userNm: string, authrtSe: DigitalCabinetAuthrtSe) => void
+  onChange: (userNm: string, authrtSe: MockDigitalCabinetAuthrtSe) => void
 }
 
 export function DigitalCabinetMng({ folder, value, onChange }: DigitalCabinetMngProps) {
@@ -65,7 +65,7 @@ export function DigitalCabinetMng({ folder, value, onChange }: DigitalCabinetMng
                 aria-label={`${u.userNm} 접근권한`}
                 items={AUTHRT_ITEMS}
                 value={value[u.userNm]}
-                onValueChange={(v) => onChange(u.userNm, v as DigitalCabinetAuthrtSe)}
+                onValueChange={(v) => onChange(u.userNm, v as MockDigitalCabinetAuthrtSe)}
                 direction="horizontal"
               />
             </li>

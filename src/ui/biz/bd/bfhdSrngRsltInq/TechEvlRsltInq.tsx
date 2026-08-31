@@ -8,11 +8,11 @@
 //    기술평가점수 techEvlScr(8,5) · 기술평가결과 techEvlPasYn(통과여부 → 합격/불합격). 데이터는 목업(상세 항목 기반).
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { BidPrgrsItem } from '@/types/mock/bd'
+import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 export interface TechEvlRsltInqProps {
   /** 상세에서 넘어온 항목 — 공고 식별/표시값 시드. */
-  detail: BidPrgrsItem
+  detail: MockBidPrgrsItem
 }
 
 export function TechEvlRsltInq({ detail }: TechEvlRsltInqProps) {

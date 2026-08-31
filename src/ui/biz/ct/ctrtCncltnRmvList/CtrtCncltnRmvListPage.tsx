@@ -17,7 +17,7 @@ import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
-import type { CncltnRmvListItem } from '@/types/mock/ct'
+import type { MockCncltnRmvListItem } from '@/types/mock/ct'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
@@ -141,7 +141,7 @@ const SEARCH_TARGETS = [
 ]
 
 // 카드 클릭 → 계약유형별 상세 경로(slide107). 식별자는 URL 이 아니라 navigate state 로 전달.
-const DETAIL_PATH: Record<CncltnRmvListItem['dtlRouteCd'], string> = {
+const DETAIL_PATH: Record<MockCncltnRmvListItem['dtlRouteCd'], string> = {
   gnrl: '/ct/cmdtyCtrtCncltnRmvDtl',
   gramt: '/ct/cncltnRmvGnrlCtrtGramtDtl',
   untprc: '/ct/cncltnRmvGnrlCtrtUntprcDtl',
@@ -184,7 +184,7 @@ export function CtrtCncltnRmvListPage() {
   const handleLoadMore = () => {
     setPage(page + 1)
   }
-  const handleCardClick = (item: CncltnRmvListItem) => {
+  const handleCardClick = (item: MockCncltnRmvListItem) => {
     navigate(DETAIL_PATH[item.dtlRouteCd], { state: item })
   }
 

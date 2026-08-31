@@ -18,7 +18,7 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { CstrnCtrtCncltnRmvDtl_Cn } from '@/ui/biz/ct/cstrnCtrtCncltnRmvDtl/CstrnCtrtCncltnRmvDtl_Cn'
 import { CstrnCtrtCncltnRmvDtl_Adoc } from '@/ui/biz/ct/cstrnCtrtCncltnRmvDtl/CstrnCtrtCncltnRmvDtl_Adoc'
-import type { CncltnRmvListItem } from '@/types/mock/ct'
+import type { MockCncltnRmvListItem } from '@/types/mock/ct'
 
 // ── 탭 (slide139 탭바: 상세정보/첨부서류) ────────────────────────────────────
 const TABS: TabItem[] = [
@@ -37,7 +37,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CstrnCtrtCncltnRmvDtlPage() {
-  const stateItem = useLocation().state as CncltnRmvListItem | null
+  const stateItem = useLocation().state as MockCncltnRmvListItem | null
   const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')

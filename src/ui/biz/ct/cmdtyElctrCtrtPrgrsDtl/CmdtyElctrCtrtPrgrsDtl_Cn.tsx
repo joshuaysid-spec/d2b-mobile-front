@@ -4,7 +4,7 @@
 //   대여목적/반납장소=대여계약서(유형 7/J/8/K) · 리스 4항목=리스계약서(유형 5/H) — 값 있는 행만 렌더.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CmdtyElctrCtrtPrgrsDtl as CtrtDtl } from '@/types/mock/ct'
+import type { MockCmdtyElctrCtrtPrgrsDtl as CtrtDtl } from '@/types/mock/ct'
 
 export interface CmdtyElctrCtrtPrgrsDtl_CnProps {
   detail: CtrtDtl

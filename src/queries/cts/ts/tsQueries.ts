@@ -7,15 +7,15 @@ import { useMutation, useQuery, useQueryClient, type QueryClient } from '@tansta
 import { tsService } from '@/services/cts/ts'
 import { tsKeys } from '@/queries/cts/ts/tsKeys'
 import type {
-  BfhdLoiListRequest,
-  BfhdLoiOpnnRequest,
-  TxivCtrtListRequest,
-  TxivPrgrsPrstRequest,
+  MockBfhdLoiListRequest,
+  MockBfhdLoiOpnnRequest,
+  MockTxivCtrtListRequest,
+  MockTxivPrgrsPrstRequest,
 } from '@/types/mock/ts'
 
 export const tsQueries = {
   /** 사전의향서목록(M01). */
-  useSelectBfhdLoiList(req: BfhdLoiListRequest = {}) {
+  useSelectBfhdLoiList(req: MockBfhdLoiListRequest = {}) {
     return useQuery({
       queryKey: tsKeys.selectBfhdLoiList(req),
       queryFn: () => tsService.selectBfhdLoiList(req),
@@ -41,7 +41,7 @@ export const tsQueries = {
   },
 
   /** 세금계산서계약목록(TS-04 M01). */
-  useSelectCtrtList(req: TxivCtrtListRequest = {}) {
+  useSelectCtrtList(req: MockTxivCtrtListRequest = {}) {
     return useQuery({
       queryKey: tsKeys.selectCtrtList(req),
       queryFn: () => tsService.selectCtrtList(req),
@@ -67,7 +67,7 @@ export const tsQueries = {
   },
 
   /** 세금계산서진행현황(TS-04 M04). */
-  useSelectTxivPrgrsPrstList(req: TxivPrgrsPrstRequest = {}) {
+  useSelectTxivPrgrsPrstList(req: MockTxivPrgrsPrstRequest = {}) {
     return useQuery({
       queryKey: tsKeys.selectTxivPrgrsPrstList(req),
       queryFn: () => tsService.selectTxivPrgrsPrstList(req),
@@ -81,7 +81,7 @@ export const tsQueries = {
   useSaveMnftrPrchsOpnnInpt() {
     const queryClient = useQueryClient()
     return useMutation({
-      mutationFn: (req: BfhdLoiOpnnRequest) => tsService.saveMnftrPrchsOpnnInpt(req),
+      mutationFn: (req: MockBfhdLoiOpnnRequest) => tsService.saveMnftrPrchsOpnnInpt(req),
       onSuccess: (_data, req) => invalidateBfhdLoi(queryClient, req.bfhdLoiNo),
     })
   },
@@ -90,7 +90,7 @@ export const tsQueries = {
   useSaveBfhdLoiSbmsn() {
     const queryClient = useQueryClient()
     return useMutation({
-      mutationFn: (req: BfhdLoiOpnnRequest) => tsService.saveBfhdLoiSbmsn(req),
+      mutationFn: (req: MockBfhdLoiOpnnRequest) => tsService.saveBfhdLoiSbmsn(req),
       onSuccess: (_data, req) => invalidateBfhdLoi(queryClient, req.bfhdLoiNo),
     })
   },

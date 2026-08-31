@@ -10,14 +10,14 @@ import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { DateInput } from '@/ui/common/composites/DateInput'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 // 조회결과 1건 — PC 실 인터페이스(ovsExchrtListPopup.IResult, 2026-08-24 판독본) 공유 타입.
-import type { OvsExchrtItem } from '@/types/mock/bd'
+import type { MockOvsExchrtItem } from '@/types/mock/bd'
 
 // 환율 표기 — 설계서 예시 '1,464.30' / '1.0000'.
 const fmtRate = (n: number, digits: number) =>
   n.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits })
 
 // 목업 — 설계서 예시값 기반. US(미국환)이 기준이라 최상단 고정. 추후 API 로 대체.
-const MOCK_RATES: OvsExchrtItem[] = [
+const MOCK_RATES: MockOvsExchrtItem[] = [
   {
     rnum: '1',
     ntnNm: 'US-미국',

@@ -17,35 +17,35 @@ import { apiClient } from '@/lib/apiClient'
 import { USE_MOCK, mockDelay } from '@/lib/env'
 import { MOCK_EX } from '@/mocks/ex'
 import type {
-  DlvdocRsltCmdtyItem,
-  DlvdocRsltDtl,
-  DlvgdsAvtsmtItem,
-  InspDlvdocCmdtyItem,
-  InspDlvdocDtl,
-  InspDlvdocDtlSbsdPrcm,
-  InspDlvdocItem,
-  InspDlvdocPrstRequest,
-  InspDlvdocPrstResult,
-  InspDlvdocSbsdCmdtyItem,
-  InspIntgListRequest,
-  InspIntgListResult,
-  OvsEstmtNtdcDtl,
-  OvsEstmtNtdcItemRow,
-  OvsEstmtNtdcListResult,
-  OvsEstmtRqdcDtl,
-  OvsEstmtRqdcItemRow,
-  OvsEstmtRqdcListRequest,
-  OvsEstmtRqdcListResult,
-  OvsOrderNtdcDtl,
-  OvsOrderNtdcItemRow,
-  OvsOrderNtdcListResult,
-  OvsOrderRqdcDtl,
-  OvsOrderRqdcItemRow,
-  OvsOrderRqdcListRequest,
-  OvsOrderRqdcListResult,
-  PxcndCmcnInspDtl,
-  PxcndCmcnInsptr,
-  PxcndCmcnSprv,
+  MockDlvdocRsltCmdtyItem,
+  MockDlvdocRsltDtl,
+  MockDlvgdsAvtsmtItem,
+  MockInspDlvdocCmdtyItem,
+  MockInspDlvdocDtl,
+  MockInspDlvdocDtlSbsdPrcm,
+  MockInspDlvdocItem,
+  MockInspDlvdocPrstRequest,
+  MockInspDlvdocPrstResult,
+  MockInspDlvdocSbsdCmdtyItem,
+  MockInspIntgListRequest,
+  MockInspIntgListResult,
+  MockOvsEstmtNtdcDtl,
+  MockOvsEstmtNtdcItemRow,
+  MockOvsEstmtNtdcListResult,
+  MockOvsEstmtRqdcDtl,
+  MockOvsEstmtRqdcItemRow,
+  MockOvsEstmtRqdcListRequest,
+  MockOvsEstmtRqdcListResult,
+  MockOvsOrderNtdcDtl,
+  MockOvsOrderNtdcItemRow,
+  MockOvsOrderNtdcListResult,
+  MockOvsOrderRqdcDtl,
+  MockOvsOrderRqdcItemRow,
+  MockOvsOrderRqdcListRequest,
+  MockOvsOrderRqdcListResult,
+  MockPxcndCmcnInspDtl,
+  MockPxcndCmcnInsptr,
+  MockPxcndCmcnSprv,
 } from '@/types/mock/ex'
 
 export const exService = {
@@ -55,12 +55,12 @@ export const exService = {
    * no.367 검사통합목록조회 — MUI-EX-01-M01 (inspIntgListInq/InspIntgListInqPage).
    * 키워드 필터/더보기 페이징은 페이지 클라이언트 로직(서버 전환 시 req 로 이행).
    */
-  async selectInspIntgList(req: InspIntgListRequest = {}): Promise<InspIntgListResult> {
+  async selectInspIntgList(req: MockInspIntgListRequest = {}): Promise<MockInspIntgListResult> {
     if (USE_MOCK) {
       const list = MOCK_EX.inspIntgList
       return mockDelay({ list, total: list.length })
     }
-    return apiClient.post<InspIntgListResult, InspIntgListResult>(
+    return apiClient.post<MockInspIntgListResult, MockInspIntgListResult>(
       '/cts/ex/inspDlvdoc/selectInspIntgList.do',
       req,
     )
@@ -74,9 +74,9 @@ export const exService = {
    * TODO(백엔드 확정): 화면명은 '납품통지목록'이나 실 API 는 '검사의뢰서목록' — 같은 문서(납품통지=검사의뢰서 발행 단위)로
    *   판단해 매핑. 다른 API 면 이 함수의 URL 만 교체.
    */
-  async selectInspRqstDocList(ctrtNo: string): Promise<DlvgdsAvtsmtItem[]> {
+  async selectInspRqstDocList(ctrtNo: string): Promise<MockDlvgdsAvtsmtItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_EX.dlvgdsAvtsmtList)
-    return apiClient.post<DlvgdsAvtsmtItem[], DlvgdsAvtsmtItem[]>(
+    return apiClient.post<MockDlvgdsAvtsmtItem[], MockDlvgdsAvtsmtItem[]>(
       '/cts/ex/inspDlvdoc/selectInspRqstDocList.do',
       { ctrtNo },
     )
@@ -85,9 +85,9 @@ export const exService = {
   // ── 검사및납품조서목록 (MUI-EX-01-P11) ────────────────────────────────────
 
   /** no.370 검사및납품조서목록조회 — MUI-EX-01-P11 (inspIntgListInq/InspDlvdocList). 선택 납품통지 기준. */
-  async selectInspDlvdocList(ctrtNo: string, avtsmtNo: string): Promise<InspDlvdocItem[]> {
+  async selectInspDlvdocList(ctrtNo: string, avtsmtNo: string): Promise<MockInspDlvdocItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_EX.inspDlvdocList)
-    return apiClient.post<InspDlvdocItem[], InspDlvdocItem[]>(
+    return apiClient.post<MockInspDlvdocItem[], MockInspDlvdocItem[]>(
       '/cts/ex/inspDlvdoc/selectInspDlvdocList.do',
       { ctrtNo, avtsmtNo },
     )
@@ -99,18 +99,18 @@ export const exService = {
    * no.378 검사및납품조서기본정보조회 — MUI-EX-01-M02/T01 (inspDlvdocDtl/InspDlvdocDtlPage).
    * 계약정보+비고+요약(slide20). 식별자 = 조서발행번호(P11 카드의 id).
    */
-  async selectInspDlvdocBscInfo(recrdPblcnNo: string): Promise<InspDlvdocDtl> {
+  async selectInspDlvdocBscInfo(recrdPblcnNo: string): Promise<MockInspDlvdocDtl> {
     if (USE_MOCK) return mockDelay(MOCK_EX.inspDlvdocDtl)
-    return apiClient.post<InspDlvdocDtl, InspDlvdocDtl>(
+    return apiClient.post<MockInspDlvdocDtl, MockInspDlvdocDtl>(
       '/cts/ex/inspDlvdoc/selectInspDlvdocBscInfo.do',
       { recrdPblcnNo },
     )
   },
 
   /** no.379 검사및납품조서납품목록조회 — MUI-EX-01-T02 (inspDlvdocDtl/InspDlvdocDtl_CmdtyList). */
-  async selectInspDlvdocDlvgdsList(recrdPblcnNo: string): Promise<InspDlvdocCmdtyItem[]> {
+  async selectInspDlvdocDlvgdsList(recrdPblcnNo: string): Promise<MockInspDlvdocCmdtyItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_EX.inspDlvdocCmdtyList)
-    return apiClient.post<InspDlvdocCmdtyItem[], InspDlvdocCmdtyItem[]>(
+    return apiClient.post<MockInspDlvdocCmdtyItem[], MockInspDlvdocCmdtyItem[]>(
       '/cts/ex/inspDlvdoc/selectInspDlvdocDlvgdsList.do',
       { recrdPblcnNo },
     )
@@ -124,9 +124,9 @@ export const exService = {
    * TODO(백엔드 확정): 실 API 는 중앙/부대 구분 없이 no.378 하나뿐이라 같은 URL 을 쓰되 응답 구성이 달라 함수 분리.
    *   부대조달 전용 메서드가 따로 있으면 URL 만 교체(함수명도 그때 백엔드 메서드명으로).
    */
-  async selectInspDlvdocSbsdDtl(recrdPblcnNo: string): Promise<InspDlvdocDtlSbsdPrcm> {
+  async selectInspDlvdocSbsdDtl(recrdPblcnNo: string): Promise<MockInspDlvdocDtlSbsdPrcm> {
     if (USE_MOCK) return mockDelay(MOCK_EX.inspDlvdocSbsdDtl)
-    return apiClient.post<InspDlvdocDtlSbsdPrcm, InspDlvdocDtlSbsdPrcm>(
+    return apiClient.post<MockInspDlvdocDtlSbsdPrcm, MockInspDlvdocDtlSbsdPrcm>(
       '/cts/ex/inspDlvdoc/selectInspDlvdocBscInfo.do',
       { recrdPblcnNo },
     )
@@ -136,9 +136,9 @@ export const exService = {
    * 부대조달 물품목록 조회 — MUI-EX-01-T04 (inspDlvdocDtlSbsdPrcm/InspDlvdocDtlSbsdPrcm_CmdtyList).
    * TODO(백엔드 확정): no.379 와 같은 URL(부대조달 응답 변형) — M03 과 동일 사유.
    */
-  async selectInspDlvdocSbsdCmdtys(recrdPblcnNo: string): Promise<InspDlvdocSbsdCmdtyItem[]> {
+  async selectInspDlvdocSbsdCmdtys(recrdPblcnNo: string): Promise<MockInspDlvdocSbsdCmdtyItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_EX.inspDlvdocSbsdCmdtyList)
-    return apiClient.post<InspDlvdocSbsdCmdtyItem[], InspDlvdocSbsdCmdtyItem[]>(
+    return apiClient.post<MockInspDlvdocSbsdCmdtyItem[], MockInspDlvdocSbsdCmdtyItem[]>(
       '/cts/ex/inspDlvdoc/selectInspDlvdocDlvgdsList.do',
       { recrdPblcnNo },
     )
@@ -152,27 +152,27 @@ export const exService = {
    * TODO(백엔드 확정): 검사관(no.376)·감독관(no.377)이 별도 API 라 응답에 포함되지 않을 수 있다.
    *   현재는 목업이 한 응답에 담고 페이지도 detail.insptrs/sprvs 로 읽는다 — 분리 확인 시 아래 두 함수로 배선 전환.
    */
-  async selectPxcndCmcnInspBscInfo(ctrtNo: string, pxcndCycl: string): Promise<PxcndCmcnInspDtl> {
+  async selectPxcndCmcnInspBscInfo(ctrtNo: string, pxcndCycl: string): Promise<MockPxcndCmcnInspDtl> {
     if (USE_MOCK) return mockDelay(MOCK_EX.pxcndCmcnInspDtl)
-    return apiClient.post<PxcndCmcnInspDtl, PxcndCmcnInspDtl>(
+    return apiClient.post<MockPxcndCmcnInspDtl, MockPxcndCmcnInspDtl>(
       '/cts/ex/inspDlvdoc/selectPxcndCmcnInspBscInfo.do',
       { ctrtNo, pxcndCycl },
     )
   },
 
   /** no.376 검사관목록조회 — MUI-EX-01-M04 검사관(dmt_Insptr, slide28 1.2). 소비처 대기(위 TODO). */
-  async selectInsptrList(ctrtNo: string, pxcndCycl: string): Promise<PxcndCmcnInsptr[]> {
+  async selectInsptrList(ctrtNo: string, pxcndCycl: string): Promise<MockPxcndCmcnInsptr[]> {
     if (USE_MOCK) return mockDelay(MOCK_EX.pxcndCmcnInspDtl.insptrs)
-    return apiClient.post<PxcndCmcnInsptr[], PxcndCmcnInsptr[]>(
+    return apiClient.post<MockPxcndCmcnInsptr[], MockPxcndCmcnInsptr[]>(
       '/cts/ex/inspDlvdoc/selectInsptrList.do',
       { ctrtNo, pxcndCycl },
     )
   },
 
   /** no.377 감독관목록조회 — MUI-EX-01-M04 감독관(dmt_Sprv, slide28 1.3). 소비처 대기(위 TODO). */
-  async selectSprvList(ctrtNo: string, pxcndCycl: string): Promise<PxcndCmcnSprv[]> {
+  async selectSprvList(ctrtNo: string, pxcndCycl: string): Promise<MockPxcndCmcnSprv[]> {
     if (USE_MOCK) return mockDelay(MOCK_EX.pxcndCmcnInspDtl.sprvs)
-    return apiClient.post<PxcndCmcnSprv[], PxcndCmcnSprv[]>(
+    return apiClient.post<MockPxcndCmcnSprv[], MockPxcndCmcnSprv[]>(
       '/cts/ex/inspDlvdoc/selectSprvList.do',
       { ctrtNo, pxcndCycl },
     )
@@ -184,12 +184,12 @@ export const exService = {
    * no.380 검사및납품조서현황 목록조회 — MUI-EX-01-M05 (inspDlvdocPrst/InspDlvdocPrstPage).
    * 키워드 필터/더보기 페이징은 페이지 클라이언트 로직(서버 전환 시 req 로 이행).
    */
-  async selectInspDlvdocPrstList(req: InspDlvdocPrstRequest = {}): Promise<InspDlvdocPrstResult> {
+  async selectInspDlvdocPrstList(req: MockInspDlvdocPrstRequest = {}): Promise<MockInspDlvdocPrstResult> {
     if (USE_MOCK) {
       const list = MOCK_EX.inspDlvdocPrstList
       return mockDelay({ list, total: list.length })
     }
-    return apiClient.post<InspDlvdocPrstResult, InspDlvdocPrstResult>(
+    return apiClient.post<MockInspDlvdocPrstResult, MockInspDlvdocPrstResult>(
       '/cts/ex/inspDlvdoc/selectInspDlvdocPrstList.do',
       req,
     )
@@ -202,18 +202,18 @@ export const exService = {
    * MUI-EX-01-M07/T05 (dlvdocRsltDtl/DlvdocRsltDtlPage).
    * TODO(백엔드 확정): no.378 과 같은 URL(검사 완료 후 결과 응답 변형) — 결과 전용 메서드 확인 시 URL 교체.
    */
-  async selectDlvdocRsltDtl(recrdPblcnNo: string): Promise<DlvdocRsltDtl> {
+  async selectDlvdocRsltDtl(recrdPblcnNo: string): Promise<MockDlvdocRsltDtl> {
     if (USE_MOCK) return mockDelay(MOCK_EX.dlvdocRsltDtl)
-    return apiClient.post<DlvdocRsltDtl, DlvdocRsltDtl>(
+    return apiClient.post<MockDlvdocRsltDtl, MockDlvdocRsltDtl>(
       '/cts/ex/inspDlvdoc/selectInspDlvdocBscInfo.do',
       { recrdPblcnNo },
     )
   },
 
   /** 결과상세 물품목록 조회 — MUI-EX-01-T06. TODO(백엔드 확정): no.379 와 같은 URL(M07 과 동일 사유). */
-  async selectDlvdocRsltCmdtys(recrdPblcnNo: string): Promise<DlvdocRsltCmdtyItem[]> {
+  async selectDlvdocRsltCmdtys(recrdPblcnNo: string): Promise<MockDlvdocRsltCmdtyItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_EX.dlvdocRsltCmdtyList)
-    return apiClient.post<DlvdocRsltCmdtyItem[], DlvdocRsltCmdtyItem[]>(
+    return apiClient.post<MockDlvdocRsltCmdtyItem[], MockDlvdocRsltCmdtyItem[]>(
       '/cts/ex/inspDlvdoc/selectInspDlvdocDlvgdsList.do',
       { recrdPblcnNo },
     )
@@ -225,12 +225,12 @@ export const exService = {
    * no.382 견적의뢰서목록조회 — MUI-EX-02-M71 (ovsEstmtRqdcList/OvsEstmtRqdcListPage).
    * On-Load: 수신일 5년전~현재(slide48).
    */
-  async selectEstmtRqdcList(req: OvsEstmtRqdcListRequest = {}): Promise<OvsEstmtRqdcListResult> {
+  async selectEstmtRqdcList(req: MockOvsEstmtRqdcListRequest = {}): Promise<MockOvsEstmtRqdcListResult> {
     if (USE_MOCK) {
       const list = MOCK_EX.ovsEstmtRqdcList
       return mockDelay({ list, total: list.length })
     }
-    return apiClient.post<OvsEstmtRqdcListResult, OvsEstmtRqdcListResult>(
+    return apiClient.post<MockOvsEstmtRqdcListResult, MockOvsEstmtRqdcListResult>(
       '/cts/ex/ovsLmtamtCtrt/selectEstmtRqdcList.do',
       req,
     )
@@ -241,18 +241,18 @@ export const exService = {
    * TODO(백엔드 확정): 실 API 는 no.384 견적의뢰서상세목록조회 하나뿐이라 같은 URL 을 쓰되, 헤더(계약정보)와
    *   품목목록(T72)의 반환 타입이 달라 함수 분리. 한 응답에 함께 오면 아래 selectEstmtRqdcDtlList 로 통합.
    */
-  async selectOvsEstmtRqdcDtl(clmSeq: string): Promise<OvsEstmtRqdcDtl> {
+  async selectOvsEstmtRqdcDtl(clmSeq: string): Promise<MockOvsEstmtRqdcDtl> {
     if (USE_MOCK) return mockDelay(MOCK_EX.ovsEstmtRqdcDtl)
-    return apiClient.post<OvsEstmtRqdcDtl, OvsEstmtRqdcDtl>(
+    return apiClient.post<MockOvsEstmtRqdcDtl, MockOvsEstmtRqdcDtl>(
       '/cts/ex/ovsLmtamtCtrt/selectEstmtRqdcDtlList.do',
       { clmSeq },
     )
   },
 
   /** no.384 견적의뢰서상세목록조회 — MUI-EX-02-T72 (ovsEstmtRqdcDtl/OvsEstmtRqdcDtl_CmdtyList). */
-  async selectEstmtRqdcDtlList(clmSeq: string): Promise<OvsEstmtRqdcItemRow[]> {
+  async selectEstmtRqdcDtlList(clmSeq: string): Promise<MockOvsEstmtRqdcItemRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_EX.ovsEstmtRqdcItems)
-    return apiClient.post<OvsEstmtRqdcItemRow[], OvsEstmtRqdcItemRow[]>(
+    return apiClient.post<MockOvsEstmtRqdcItemRow[], MockOvsEstmtRqdcItemRow[]>(
       '/cts/ex/ovsLmtamtCtrt/selectEstmtRqdcDtlList.do',
       { clmSeq },
     )
@@ -265,12 +265,12 @@ export const exService = {
    * 상단 계약정보 + 연계 견적통보 목록.
    * TODO(백엔드 확정): 상단 계약정보(dm_ctrtInfo)가 이 응답에 포함되는지 — 별도면 no.383 계약정보목록조회 소관.
    */
-  async selectEstmtNtdcList(ctrtNo?: string): Promise<OvsEstmtNtdcListResult> {
+  async selectEstmtNtdcList(ctrtNo?: string): Promise<MockOvsEstmtNtdcListResult> {
     if (USE_MOCK) {
       const list = MOCK_EX.ovsEstmtNtdcList
       return mockDelay({ ctrtInfo: MOCK_EX.ovsEstmtNtdcCtrtInfo, list, total: list.length })
     }
-    return apiClient.post<OvsEstmtNtdcListResult, OvsEstmtNtdcListResult>(
+    return apiClient.post<MockOvsEstmtNtdcListResult, MockOvsEstmtNtdcListResult>(
       '/cts/ex/ovsLmtamtCtrt/selectEstmtNtdcList.do',
       { ctrtNo },
     )
@@ -280,18 +280,18 @@ export const exService = {
    * 견적통보서상세(계약정보+품목수) 조회 — MUI-EX-02-M74/T73 (ovsEstmtNtdcDtl/OvsEstmtNtdcDtlPage).
    * TODO(백엔드 확정): no.390 과 같은 URL — M72 헤더와 동일 사유(헤더/품목 분리 여부 미확정).
    */
-  async selectOvsEstmtNtdcDtl(clmSeq: string): Promise<OvsEstmtNtdcDtl> {
+  async selectOvsEstmtNtdcDtl(clmSeq: string): Promise<MockOvsEstmtNtdcDtl> {
     if (USE_MOCK) return mockDelay(MOCK_EX.ovsEstmtNtdcDtl)
-    return apiClient.post<OvsEstmtNtdcDtl, OvsEstmtNtdcDtl>(
+    return apiClient.post<MockOvsEstmtNtdcDtl, MockOvsEstmtNtdcDtl>(
       '/cts/ex/ovsLmtamtCtrt/selectEstmtNtdcDtlList.do',
       { clmSeq },
     )
   },
 
   /** no.390 견적통보서상세목록조회 — MUI-EX-02-T74 (ovsEstmtNtdcDtl/OvsEstmtNtdcDtl_CmdtyList). */
-  async selectEstmtNtdcDtlList(clmSeq: string): Promise<OvsEstmtNtdcItemRow[]> {
+  async selectEstmtNtdcDtlList(clmSeq: string): Promise<MockOvsEstmtNtdcItemRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_EX.ovsEstmtNtdcItems)
-    return apiClient.post<OvsEstmtNtdcItemRow[], OvsEstmtNtdcItemRow[]>(
+    return apiClient.post<MockOvsEstmtNtdcItemRow[], MockOvsEstmtNtdcItemRow[]>(
       '/cts/ex/ovsLmtamtCtrt/selectEstmtNtdcDtlList.do',
       { clmSeq },
     )
@@ -303,12 +303,12 @@ export const exService = {
    * no.391 발주의뢰서목록조회 — MUI-EX-02-M75 (ovsOrderRqdcList/OvsOrderRqdcListPage).
    * On-Load: 수신일 5년전~현재(slide67).
    */
-  async selectOrderRqdcList(req: OvsOrderRqdcListRequest = {}): Promise<OvsOrderRqdcListResult> {
+  async selectOrderRqdcList(req: MockOvsOrderRqdcListRequest = {}): Promise<MockOvsOrderRqdcListResult> {
     if (USE_MOCK) {
       const list = MOCK_EX.ovsOrderRqdcList
       return mockDelay({ list, total: list.length })
     }
-    return apiClient.post<OvsOrderRqdcListResult, OvsOrderRqdcListResult>(
+    return apiClient.post<MockOvsOrderRqdcListResult, MockOvsOrderRqdcListResult>(
       '/cts/ex/ovsLmtamtCtrt/selectOrderRqdcList.do',
       req,
     )
@@ -318,18 +318,18 @@ export const exService = {
    * 발주의뢰서상세(계약정보) 조회 — MUI-EX-02-M76/T75 (ovsOrderRqdcDtl/OvsOrderRqdcDtlPage).
    * TODO(백엔드 확정): no.393 과 같은 URL — M72 헤더와 동일 사유.
    */
-  async selectOvsOrderRqdcDtl(orderSeq: string): Promise<OvsOrderRqdcDtl> {
+  async selectOvsOrderRqdcDtl(orderSeq: string): Promise<MockOvsOrderRqdcDtl> {
     if (USE_MOCK) return mockDelay(MOCK_EX.ovsOrderRqdcDtl)
-    return apiClient.post<OvsOrderRqdcDtl, OvsOrderRqdcDtl>(
+    return apiClient.post<MockOvsOrderRqdcDtl, MockOvsOrderRqdcDtl>(
       '/cts/ex/ovsLmtamtCtrt/selectOrderRqdcDtlList.do',
       { orderSeq },
     )
   },
 
   /** no.393 발주의뢰서상세목록조회 — MUI-EX-02-T76 (ovsOrderRqdcDtl/OvsOrderRqdcDtl_CmdtyList). */
-  async selectOrderRqdcDtlList(orderSeq: string): Promise<OvsOrderRqdcItemRow[]> {
+  async selectOrderRqdcDtlList(orderSeq: string): Promise<MockOvsOrderRqdcItemRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_EX.ovsOrderRqdcItems)
-    return apiClient.post<OvsOrderRqdcItemRow[], OvsOrderRqdcItemRow[]>(
+    return apiClient.post<MockOvsOrderRqdcItemRow[], MockOvsOrderRqdcItemRow[]>(
       '/cts/ex/ovsLmtamtCtrt/selectOrderRqdcDtlList.do',
       { orderSeq },
     )
@@ -341,12 +341,12 @@ export const exService = {
    * no.396 발주통보서목록조회 — MUI-EX-02-M77 (ovsOrderNtdcList/OvsOrderNtdcListPage).
    * 상단 계약정보 + 목록. TODO(백엔드 확정): 계약정보 포함 여부는 no.388 과 동일 사유.
    */
-  async selectOrderNtdcList(ctrtNo?: string): Promise<OvsOrderNtdcListResult> {
+  async selectOrderNtdcList(ctrtNo?: string): Promise<MockOvsOrderNtdcListResult> {
     if (USE_MOCK) {
       const list = MOCK_EX.ovsOrderNtdcList
       return mockDelay({ ctrtInfo: MOCK_EX.ovsEstmtNtdcCtrtInfo, list, total: list.length })
     }
-    return apiClient.post<OvsOrderNtdcListResult, OvsOrderNtdcListResult>(
+    return apiClient.post<MockOvsOrderNtdcListResult, MockOvsOrderNtdcListResult>(
       '/cts/ex/ovsLmtamtCtrt/selectOrderNtdcList.do',
       { ctrtNo },
     )
@@ -356,18 +356,18 @@ export const exService = {
    * 발주통보서상세(계약정보+품목수) 조회 — MUI-EX-02-M78/T77 (ovsOrderNtdcDtl/OvsOrderNtdcDtlPage).
    * TODO(백엔드 확정): no.398 과 같은 URL — M72 헤더와 동일 사유.
    */
-  async selectOvsOrderNtdcDtl(orderSeq: string): Promise<OvsOrderNtdcDtl> {
+  async selectOvsOrderNtdcDtl(orderSeq: string): Promise<MockOvsOrderNtdcDtl> {
     if (USE_MOCK) return mockDelay(MOCK_EX.ovsOrderNtdcDtl)
-    return apiClient.post<OvsOrderNtdcDtl, OvsOrderNtdcDtl>(
+    return apiClient.post<MockOvsOrderNtdcDtl, MockOvsOrderNtdcDtl>(
       '/cts/ex/ovsLmtamtCtrt/selectOrderNtdcDtlList.do',
       { orderSeq },
     )
   },
 
   /** no.398 발주통보서상세목록조회 — MUI-EX-02-T78 (ovsOrderNtdcDtl/OvsOrderNtdcDtl_CmdtyList). */
-  async selectOrderNtdcDtlList(orderSeq: string): Promise<OvsOrderNtdcItemRow[]> {
+  async selectOrderNtdcDtlList(orderSeq: string): Promise<MockOvsOrderNtdcItemRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_EX.ovsOrderNtdcItems)
-    return apiClient.post<OvsOrderNtdcItemRow[], OvsOrderNtdcItemRow[]>(
+    return apiClient.post<MockOvsOrderNtdcItemRow[], MockOvsOrderNtdcItemRow[]>(
       '/cts/ex/ovsLmtamtCtrt/selectOrderNtdcDtlList.do',
       { orderSeq },
     )

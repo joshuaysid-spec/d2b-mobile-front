@@ -2,10 +2,10 @@
 // 지급구분(선금 등)·세액여부(과세/면세/영세)·신고구분(확정/예정)별 항목 표기(slide49 1-1~1-3).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { SbsdPrcmPymtClmDtl } from '@/types/mock/wm'
+import type { MockSbsdPrcmPymtClmDtl } from '@/types/mock/wm'
 
 export interface SbsdPrcmPymtClmDtl_PymtAplyProps {
-  detail: SbsdPrcmPymtClmDtl
+  detail: MockSbsdPrcmPymtClmDtl
 }
 
 export function SbsdPrcmPymtClmDtl_PymtAply({ detail }: SbsdPrcmPymtClmDtl_PymtAplyProps) {

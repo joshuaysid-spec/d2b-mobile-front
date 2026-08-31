@@ -9,9 +9,9 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type {
-  OvsBidPrtcpApfrDetail,
-  OvsSbtInfo,
-  OvsSplyInfo,
+  MockOvsBidPrtcpApfrDetail,
+  MockOvsSbtInfo,
+  MockOvsSplyInfo,
 } from '@/types/mock/bd'
 
 /** 사업별등록결과 (dl_resultList, slide363) */
@@ -49,11 +49,11 @@ const PAGE_SIZE = 2
 
 interface OvsBidRegRsltByBizProps {
   /** 공고 일반정보 — 페이지 detail 로 공고 식별값을 그린다 */
-  detail: OvsBidPrtcpApfrDetail
+  detail: MockOvsBidPrtcpApfrDetail
   /** 신청업체(dm_sbtInfo) */
-  sbtInfo: OvsSbtInfo
+  sbtInfo: MockOvsSbtInfo
   /** 입찰업체(dm_splyInfo) */
-  splyInfo: OvsSplyInfo
+  splyInfo: MockOvsSplyInfo
 }
 
 export function OvsBidRegRsltByBiz({ detail, sbtInfo, splyInfo }: OvsBidRegRsltByBizProps) {

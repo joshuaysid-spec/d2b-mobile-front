@@ -2,7 +2,7 @@
 // 계약 정보(dm_ctrtInfo — 견적의뢰서 T71 과 동일 구성) 아코디언 + Table.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsEstmtNtdcDtl as NtdcDtl } from '@/types/mock/ex'
+import type { MockOvsEstmtNtdcDtl as NtdcDtl } from '@/types/mock/ex'
 
 export interface OvsEstmtNtdcDtlProps {
   detail: NtdcDtl

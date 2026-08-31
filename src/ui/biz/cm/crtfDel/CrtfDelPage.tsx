@@ -4,11 +4,11 @@
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { CertCard } from '@/ui/biz/cm/crtfMng/CertCard'
-import type { CertItem } from '@/types/mock/cm'
+import type { MockCertItem } from '@/types/mock/cm'
 
 export interface CrtfDelPageProps {
   /** 삭제 대상(선택된 인증서). */
-  cert: CertItem
+  cert: MockCertItem
   /** 인증서 비밀번호(부모가 소유 — 삭제 실행 시 검증). */
   password: string
   onPasswordChange: (value: string) => void

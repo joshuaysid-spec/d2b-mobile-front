@@ -6,7 +6,7 @@ import { exQueries } from '@/queries/cts/ex/exQueries'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsOrderRqdcItemRow } from '@/types/mock/ex'
+import type { MockOvsOrderRqdcItemRow } from '@/types/mock/ex'
 
 export interface OvsOrderRqdcDtl_CmdtyListProps {
   /** 조회 대상 발주의뢰서 식별자 — 페이지(navigate state id)가 주입. */
@@ -14,7 +14,7 @@ export interface OvsOrderRqdcDtl_CmdtyListProps {
 }
 
 // 품목 1건 → 표 행 (dl_orderRqdcItem, slide71~72 1.2 순서).
-function itemRows(it: OvsOrderRqdcItemRow): TableRow[] {
+function itemRows(it: MockOvsOrderRqdcItemRow): TableRow[] {
   return [
     { label: '번호', value: String(it.no) },
     { label: '청구번호', value: it.orderClmNo },

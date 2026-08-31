@@ -2,10 +2,10 @@
 // 아코디언 5개(계약 현황 · 계약금액(외화) · 계약금액(원화) · 계약 추가 정보 · 계약 안내 사항).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsCmbzCtrdocDtl } from '@/types/mock/ct'
+import type { MockOvsCmbzCtrdocDtl } from '@/types/mock/ct'
 
 export interface OvsCmbzCtrdocDtl_SttsProps {
-  detail: OvsCmbzCtrdocDtl
+  detail: MockOvsCmbzCtrdocDtl
 }
 
 export function OvsCmbzCtrdocDtl_Stts({ detail }: OvsCmbzCtrdocDtl_SttsProps) {

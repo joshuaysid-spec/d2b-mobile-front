@@ -5,9 +5,9 @@
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type {
-  PrfmncPrdocAplcntInfo,
-  PrfmncPrdocFrsvcCstrnDsctnInfo,
-  PrfmncPrdocFrsvcCstrnPrfmncInfo,
+  MockPrfmncPrdocAplcntInfo,
+  MockPrfmncPrdocFrsvcCstrnDsctnInfo,
+  MockPrfmncPrdocFrsvcCstrnPrfmncInfo,
 } from '@/types/mock/cm'
 
 const twon = (v?: number) => (v == null ? '-' : `${v.toLocaleString()} 천원`)
@@ -23,14 +23,14 @@ interface MltCstrnRow {
 }
 
 // ── 목업 (설계서 표시값 그대로 — API 연동 시 교체) ───────────────────────────
-const APLCNT: PrfmncPrdocAplcntInfo = {
+const APLCNT: MockPrfmncPrdocAplcntInfo = {
   bzentyNm: 'A 업체',
   rprsvNm: '홍길동',
   entlno: '02-1234-5678',
   lctnAddr: '서울특별시 종로구…',
 }
 
-const CSTRN: PrfmncPrdocFrsvcCstrnDsctnInfo = {
+const CSTRN: MockPrfmncPrdocFrsvcCstrnDsctnInfo = {
   cstrnNm: '공사 명칭 표시 영역',
   tpbizNm: '업종 표시영역',
   cstrnGrndsAddr: '경기도 과천시… 정부청사',
@@ -45,7 +45,7 @@ const CSTRN: PrfmncPrdocFrsvcCstrnDsctnInfo = {
   cstrnKndNm: '경보설비',
 }
 
-const PRFMNC: PrfmncPrdocFrsvcCstrnPrfmncInfo = {
+const PRFMNC: MockPrfmncPrdocFrsvcCstrnPrfmncInfo = {
   ctrcTctrtAmt: 1000,
   thyrCtrtAmt: 1000,
   thyrPxcndAmt: 1000,

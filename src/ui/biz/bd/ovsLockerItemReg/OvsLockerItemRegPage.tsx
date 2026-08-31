@@ -24,7 +24,7 @@ import type {
   SearchFilterValue,
 } from '@/types/search-filter'
 // 보관함 공고 타입 — @/types/bd 공유 타입.
-import type { OvsLockerPbanItem } from '@/types/mock/bd'
+import type { MockOvsLockerPbanItem } from '@/types/mock/bd'
 
 /**
  * 입찰품목 1건 (MUI-CM-01-M73, 설계서 slide310 1.2 입찰품목목록 데이터영역 dl_resultList).
@@ -146,7 +146,7 @@ const TOTAL = 258 // 총 건수(목업 — 설계서 slide308 '더보기(10/258)
 // 입찰품목 목록 목업 생성 — 상위(보관함 상세)에서 넘어온 공고 항목이 있으면 그 공고 번호를 반영.
 // 값 형식은 설계서 slide308 그대로(재고번호 9자리·부품번호·지시단가 20,767.85 USD (미달러)).
 // 추후 API: bdService.selectOvsLockerBidItemList(pbancNo, ...) 응답으로 교체.
-function buildMockItems(pbanc: OvsLockerPbanItem | null): OvsLockerBidItem[] {
+function buildMockItems(pbanc: MockOvsLockerPbanItem | null): OvsLockerBidItem[] {
   const base = {
     pbancNo: pbanc?.pbancNo ?? 'EFE00012',
     pbancOd: pbanc?.pbancOd ?? '2',
@@ -187,7 +187,7 @@ function formatUntprc(it: OvsLockerBidItem) {
 
 export function OvsLockerItemRegPage() {
   // 상위(보관함 상세)에서 navigate state 로 넘어온 공고 — 직접 URL 진입이면 null(목업 기본값 사용).
-  const pbanc = useLocation().state as OvsLockerPbanItem | null
+  const pbanc = useLocation().state as MockOvsLockerPbanItem | null
   const [items, setItems] = useState<OvsLockerBidItem[]>(() => buildMockItems(pbanc))
 
   const [open, setOpen] = useState(false) // 상세필터 풀팝업

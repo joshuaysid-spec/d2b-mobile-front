@@ -4,10 +4,10 @@
 import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CtrtBzenty, CtrtFctry } from '@/types/mock/ct'
+import type { MockCtrtBzenty, MockCtrtFctry } from '@/types/mock/ct'
 
 // 업체 1건 → 표 행(slide29 1.3 항목 순서 = Figma 154708).
-function bzentyRows(b: CtrtBzenty): TableRow[] {
+function bzentyRows(b: MockCtrtBzenty): TableRow[] {
   return [
     { label: '계약업체명', value: b.bzentyNm },
     { label: '사업자등록번호', value: b.brno },
@@ -23,7 +23,7 @@ function bzentyRows(b: CtrtBzenty): TableRow[] {
 }
 
 // 생산공장 1건 → 표 행(slide30 1.5).
-function fctryRows(f: CtrtFctry): TableRow[] {
+function fctryRows(f: MockCtrtFctry): TableRow[] {
   return [
     { label: '생산공장', value: f.fctryAddr },
     { label: '위치', value: f.fctryDaddr },

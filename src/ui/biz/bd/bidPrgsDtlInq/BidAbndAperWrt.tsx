@@ -6,7 +6,7 @@
 //    (신청서에 입력 필드가 없다) 그쪽 한 벌을 재사용하고, 여기선 제출 핸들만 얹는다.
 import { forwardRef, useImperativeHandle } from 'react'
 import { BidAbndAperDtl } from '@/ui/biz/bd/bidPrgsDtlInq/BidAbndAperDtl'
-import type { BidPrgrsItem } from '@/types/mock/bd'
+import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 export interface BidAbndAperWrtHandle {
   /** 부모 BottomSheet footer '제출하기' 가 호출 — 제출 처리 후 onSubmitted() 로 시트 닫힘 알림 */
@@ -15,7 +15,7 @@ export interface BidAbndAperWrtHandle {
 
 interface BidAbndAperWrtProps {
   /** 상세에서 넘어온 항목(navigate state) — 요약/공고일반을 이 항목으로 그린다. */
-  detail: BidPrgrsItem
+  detail: MockBidPrgrsItem
   /** 제출 완료 시 호출(부모가 BottomSheet 를 닫음) */
   onSubmitted: () => void
 }

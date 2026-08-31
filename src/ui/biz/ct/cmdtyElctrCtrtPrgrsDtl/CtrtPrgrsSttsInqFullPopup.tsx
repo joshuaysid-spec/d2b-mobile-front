@@ -6,7 +6,7 @@ import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CtrtPrgrsStts } from '@/types/mock/ct'
+import type { MockCtrtPrgrsStts } from '@/types/mock/ct'
 
 export interface CtrtPrgrsSttsInqFullPopupProps {
   /** 계약 식별자 — 부모 상세 페이지가 navigate state 에서 받아 전달. */
@@ -16,7 +16,7 @@ export interface CtrtPrgrsSttsInqFullPopupProps {
 }
 
 // 이력 1건 → 표 행(slide84: 처리상태/부대·업체/처리일시 + 국외 담당자/반려사유).
-function sttsRows(s: CtrtPrgrsStts): TableRow[] {
+function sttsRows(s: MockCtrtPrgrsStts): TableRow[] {
   return [
     { label: '처리상태', value: s.ctrtPrgrsStcd },
     { label: '부대/업체', value: s.prcsSbsdBzenty },

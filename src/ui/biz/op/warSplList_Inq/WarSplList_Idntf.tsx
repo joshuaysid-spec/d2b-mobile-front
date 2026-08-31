@@ -5,13 +5,13 @@
 //   NIIN 검색 시 디폴트 값 아래로 검색 결과 테이블이 이어붙는다(교체 아님).
 // 시트 본문(px-16) 안이라 AccordionSection 은 flush(콘텐츠 좌우 패딩 제거 — 2중 패딩 방지).
 import { opQueries } from '@/queries/bds/op/opQueries'
-import type { WarSplIdntf } from '@/types/mock/op'
+import type { MockWarSplIdntf } from '@/types/mock/op'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table } from '@/ui/common/composites/Table'
 import { WarSplList_NiinSrch } from '@/ui/biz/op/warSplList_Inq/WarSplList_NiinSrch'
 
 // 라벨(한글) ↔ 항목명(영문) 매핑 — 설계서 "항목 설명 1.6 식별자료 데이터 영역" 순서/표기 그대로.
-const IDNTF_FIELDS: { label: string; key: keyof WarSplIdntf }[] = [
+const IDNTF_FIELDS: { label: string; key: keyof MockWarSplIdntf }[] = [
   { label: '군급분류', key: 'fsc' },
   { label: '영문품명', key: 'itemNmEng' },
   { label: '한글품명', key: 'itemNmKor' },
@@ -63,7 +63,7 @@ export function WarSplList_Idntf({
   )
 
   // [디폴트, 검색] 순서. 검색 전이면 디폴트만.
-  const list: WarSplIdntf[] = [base, found].filter((v): v is WarSplIdntf => Boolean(v))
+  const list: MockWarSplIdntf[] = [base, found].filter((v): v is MockWarSplIdntf => Boolean(v))
 
   return (
     // pt-krds-8: 탭(TabList)과 NIIN 검색 섹션 사이 여백(2026-08-11 요청과 동일 간격 유지).

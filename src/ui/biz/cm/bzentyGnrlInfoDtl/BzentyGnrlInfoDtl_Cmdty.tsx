@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { ROUTES } from '@/constants/routes'
-import type { RegTrgtItem, PicInfo, KnditmAsctGrp } from '@/types/mock/cm'
+import type { MockRegTrgtItem, MockPicInfo, MockKnditmAsctGrp } from '@/types/mock/cm'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
@@ -27,7 +27,7 @@ import {
 } from '@/ui/biz/cm/bzentyInfo/InfoAccordionCard'
 
 // ── 등록품목명세 (dl_regTrgtItemList) — 설계서 slide132/133 예시값 ────────────
-const REG_ITEMS: RegTrgtItem[] = [
+const REG_ITEMS: MockRegTrgtItem[] = [
   {
     itemCd: '1001100001',
     knditmCd: '60',
@@ -40,7 +40,7 @@ const REG_ITEMS: RegTrgtItem[] = [
 ]
 
 // ── 담당자정보 (dm_picInfo) — 설계서 slide132/133 예시값 ─────────────────────
-const PIC_INFO: PicInfo = {
+const PIC_INFO: MockPicInfo = {
   picNm: '김길동',
   picEntlno: '02-1234-5678',
   picFxno: '02-2345-6789',
@@ -48,7 +48,7 @@ const PIC_INFO: PicInfo = {
 }
 
 // ── 대표품류 및 조합/단체 (dm_knditmListAsctGrpList) — 설계서 slide132/133 예시값 ──
-const ASCT_GRP_LIST: KnditmAsctGrp[] = [
+const ASCT_GRP_LIST: MockKnditmAsctGrp[] = [
   {
     knditmCd: '05',
     knditmCdNm: '05 / 피복',
@@ -59,7 +59,7 @@ const ASCT_GRP_LIST: KnditmAsctGrp[] = [
 ]
 
 // 담당자정보 — 라벨은 Figma 표기(연락처/이메일/팩스).
-function picRows(d: PicInfo): InfoCardRowInput[] {
+function picRows(d: MockPicInfo): InfoCardRowInput[] {
   return [
     { label: '담당자명', value: d.picNm },
     { label: '연락처', value: d.picEntlno },
@@ -68,7 +68,7 @@ function picRows(d: PicInfo): InfoCardRowInput[] {
   ]
 }
 
-function asctRows(list: KnditmAsctGrp[]): InfoCardRowInput[] {
+function asctRows(list: MockKnditmAsctGrp[]): InfoCardRowInput[] {
   return list.flatMap((a, i): InfoCardRowInput[] => [
     ...(i > 0 ? ['divider' as const] : []),
     { label: '대표품류', value: a.knditmCdNm },
@@ -79,7 +79,7 @@ function asctRows(list: KnditmAsctGrp[]): InfoCardRowInput[] {
 
 // 등록품목명세 — 품목적부판정(itemRvwRsltCn)은 품목코드 행 우측 뱃지(Figma). 다건은 divider.
 //   Figma 라벨 '품목코드/명'은 값이 품류(60/총탄)라 설계서 표기(품류코드/명)를 유지.
-function regItemRows(list: RegTrgtItem[]): InfoCardRowInput[] {
+function regItemRows(list: MockRegTrgtItem[]): InfoCardRowInput[] {
   return list.flatMap((d, i): InfoCardRowInput[] => [
     ...(i > 0 ? ['divider' as const] : []),
     {

@@ -3,7 +3,7 @@
 //   시설면허정보의 폐업여부는 공종 행 우측 뱃지(Figma), 주력분야는 접힘 시 4행 + 더보기.
 //   구 괄호부 2줄 라벨(260826)은 리디자인 라벨 폭 확대(flex-1)로 Figma 그대로 1줄 복귀.
 // 데이터는 목업(설계서 데이터영역 항목명·형식 그대로) — 추후 API(cmService.selectBzentyFcltInfo)로 대체.
-import type { BzentyFcltInfo, BzentyFcltLcns, BzentyFcltMfrcFld } from '@/types/mock/cm'
+import type { MockBzentyFcltInfo, MockBzentyFcltLcns, MockBzentyFcltMfrcFld } from '@/types/mock/cm'
 import { Badge } from '@/ui/common/base/Badge'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import {
@@ -12,13 +12,13 @@ import {
 } from '@/ui/biz/cm/bzentyInfo/InfoAccordionCard'
 
 // ── 시설정보 (dm_bzentyFcltInfo) — 설계서 slide134/135 예시값 ────────────────
-const FCLT_INFO: BzentyFcltInfo = {
+const FCLT_INFO: MockBzentyFcltInfo = {
   bzstatCdNm: '제조',
   lcofcTelno: '02-1234-5678',
 }
 
 // ── 시설면허정보 (dl_bzentyFcltLcnsList) — 설계서 slide134/135 예시값 ─────────
-const LCNS_LIST: BzentyFcltLcns[] = [
+const LCNS_LIST: MockBzentyFcltLcns[] = [
   {
     cnstpCdNm: '소방공사업',
     cnstpCd: '0001',
@@ -31,7 +31,7 @@ const LCNS_LIST: BzentyFcltLcns[] = [
 ]
 
 // ── 주력분야 (dl_bzentyFcltMfrcFldList) — 설계서 slide134/135 예시값 ──────────
-const MFRC_LIST: BzentyFcltMfrcFld[] = [
+const MFRC_LIST: MockBzentyFcltMfrcFld[] = [
   {
     cnstpCdNm: '총탄',
     cnstpCd: '60',
@@ -47,7 +47,7 @@ const MFRC_LIST: BzentyFcltMfrcFld[] = [
 ]
 
 // 시설면허정보 — 폐업여부(bzentyStcd)는 공종 행 우측 뱃지('폐업'일 때만, Figma). 다건은 divider.
-function lcnsRows(list: BzentyFcltLcns[]): InfoCardRowInput[] {
+function lcnsRows(list: MockBzentyFcltLcns[]): InfoCardRowInput[] {
   return list.flatMap((d, i): InfoCardRowInput[] => [
     ...(i > 0 ? ['divider' as const] : []),
     {
@@ -80,7 +80,7 @@ function lcnsRows(list: BzentyFcltLcns[]): InfoCardRowInput[] {
   ])
 }
 
-function mfrcRows(list: BzentyFcltMfrcFld[]): InfoCardRowInput[] {
+function mfrcRows(list: MockBzentyFcltMfrcFld[]): InfoCardRowInput[] {
   return list.flatMap((d, i): InfoCardRowInput[] => [
     ...(i > 0 ? ['divider' as const] : []),
     { label: '공종명[업종코드]', value: `${d.cnstpCdNm} [${d.cnstpCd}]` },

@@ -10,7 +10,7 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
-import type { BdopnItem } from '@/types/mock/bd'
+import type { MockBdopnItem } from '@/types/mock/bd'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
@@ -124,7 +124,7 @@ const ATTACH_FILES: FileDownloadItem[] = [
 ]
 
 // 일반정보 탭(M01) — 설계서 순서: 일반정보 → 첨부서류 → 담당자 정보 (slide152 일반정보·첨부서류, slide153 담당자).
-function GeneralInfo({ item }: { item: BdopnItem }) {
+function GeneralInfo({ item }: { item: MockBdopnItem }) {
   const navigate = useNavigate()
   // 이행/적격심사 포기신청 풀팝업(MUI-BD-10-P02) 열림 상태.
   const [abndOpen, setAbndOpen] = useState(false)
@@ -192,7 +192,7 @@ function GeneralInfo({ item }: { item: BdopnItem }) {
   )
 }
 
-function renderTabContent(tab: string, item: BdopnItem) {
+function renderTabContent(tab: string, item: MockBdopnItem) {
   switch (tab) {
     case 'general':
       return <GeneralInfo item={item} />
@@ -241,7 +241,7 @@ export function BidRsltDtlPage() {
 
   // navigate state 가 식별자 원천(URL 미포함). 개찰목록 카드는 항목 전체를 넘겨 placeholder 로 즉시 렌더하고,
   //   입찰진행현황 탭의 '입찰결과 바로가기' 는 id 만 넘기므로 조회 완료까지 PageLoading.
-  const stateItem = useLocation().state as BdopnItem | { id: string } | null
+  const stateItem = useLocation().state as MockBdopnItem | { id: string } | null
   const id = stateItem?.id ?? ''
   const { data: item } = bdQueries.useSelctBidRsltInfo(id, stateItem && 'bidPbancNo' in stateItem ? stateItem : undefined)
   // 진행단계(prgrsStg) — 입찰결과상세이므로 '입찰'(개찰/낙찰). 추후 bdService 응답으로 대체.

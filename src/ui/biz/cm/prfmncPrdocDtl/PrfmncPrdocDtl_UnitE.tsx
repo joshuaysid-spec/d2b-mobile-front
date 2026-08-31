@@ -4,20 +4,20 @@
 // 표/필드는 데이터 구동. 제출유형에 따라 하단 표시 정보 변경(신청도 동일) — API 연동 시 반영.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { PrfmncPrdocAplcntInfo, PrfmncPrdocCstrnDsctnInfoE } from '@/types/mock/cm'
+import type { MockPrfmncPrdocAplcntInfo, MockPrfmncPrdocCstrnDsctnInfoE } from '@/types/mock/cm'
 
 const twon = (v?: number) => (v == null ? '-' : `${v.toLocaleString()} 천원`)
 const SBMSN_TYPE = '6. 정보통신공사 실적증명서 [정보통신공사업법 시행에 관한 규정/전기공제조합]'
 
 // ── 목업 (설계서 표시값 그대로 — API 연동 시 교체) ───────────────────────────
-const APLCNT: PrfmncPrdocAplcntInfo = {
+const APLCNT: MockPrfmncPrdocAplcntInfo = {
   bzentyNm: 'A 업체',
   rprsvNm: '홍길동',
   salsLctnAddr: '서울특별시 종로구…',
   lcnsNoVl: '123456-7890123',
 }
 
-const CSTRN: PrfmncPrdocCstrnDsctnInfoE = {
+const CSTRN: MockPrfmncPrdocCstrnDsctnInfoE = {
   cstrnNm: '공사 명칭 표시 영역',
   ctrtYmd: '2010-01',
   bgncstYmd: '2012-01',

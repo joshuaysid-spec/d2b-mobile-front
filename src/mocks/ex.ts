@@ -2,30 +2,30 @@
 // 설계서(04.이행 v0.83) 항목설명 항목·형식·slide10/13/14 목업값을 반영(임의 더미 금지).
 // ⚠️ 폐쇄망 반입 후 실백엔드 연동 시 이 파일은 사용되지 않는다(서비스가 apiClient 분기).
 import type {
-  DlvdocRsltCmdtyItem,
-  DlvdocRsltDtl,
-  DlvgdsAvtsmtItem,
-  OvsEstmtNtdcDtl,
-  OvsEstmtNtdcItem,
-  OvsEstmtNtdcItemRow,
-  OvsEstmtNtdcCtrtInfo,
-  OvsEstmtRqdcDtl,
-  OvsEstmtRqdcItem,
-  OvsEstmtRqdcItemRow,
-  OvsOrderNtdcDtl,
-  OvsOrderNtdcItem,
-  OvsOrderNtdcItemRow,
-  OvsOrderRqdcDtl,
-  OvsOrderRqdcItem,
-  OvsOrderRqdcItemRow,
-  InspDlvdocCmdtyItem,
-  InspDlvdocDtl,
-  InspDlvdocDtlSbsdPrcm,
-  InspDlvdocItem,
-  InspDlvdocPrstItem,
-  InspDlvdocSbsdCmdtyItem,
-  InspIntgListItem,
-  PxcndCmcnInspDtl,
+  MockDlvdocRsltCmdtyItem,
+  MockDlvdocRsltDtl,
+  MockDlvgdsAvtsmtItem,
+  MockOvsEstmtNtdcDtl,
+  MockOvsEstmtNtdcItem,
+  MockOvsEstmtNtdcItemRow,
+  MockOvsEstmtNtdcCtrtInfo,
+  MockOvsEstmtRqdcDtl,
+  MockOvsEstmtRqdcItem,
+  MockOvsEstmtRqdcItemRow,
+  MockOvsOrderNtdcDtl,
+  MockOvsOrderNtdcItem,
+  MockOvsOrderNtdcItemRow,
+  MockOvsOrderRqdcDtl,
+  MockOvsOrderRqdcItem,
+  MockOvsOrderRqdcItemRow,
+  MockInspDlvdocCmdtyItem,
+  MockInspDlvdocDtl,
+  MockInspDlvdocDtlSbsdPrcm,
+  MockInspDlvdocItem,
+  MockInspDlvdocPrstItem,
+  MockInspDlvdocSbsdCmdtyItem,
+  MockInspIntgListItem,
+  MockPxcndCmcnInspDtl,
 } from '@/types/mock/ex'
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -33,7 +33,7 @@ import type {
 // 진행상태 저장/검사의뢰완료/검사반려/검사저장/검사완료/출납완료/조달접수/조달반려/납품조서반려/청구저장/대금청구).
 // 업무구분(물품/용역/공사) × 예산구분(전년국채/본조/당년국채) × 진행상태 대표 조합.
 // ────────────────────────────────────────────────────────────────────────────
-const INSP_INTG_LIST: InspIntgListItem[] = [
+const INSP_INTG_LIST: MockInspIntgListItem[] = [
   {
     id: '20250000001-01',
     no: 1,
@@ -143,7 +143,7 @@ const INSP_INTG_LIST: InspIntgListItem[] = [
 // MUI-EX-01-P10 납품통지목록 — slide13 목업(통지번호 100/99 · 관사 비품 구매 ·
 // 계약수량 1,000 · 계약금액 200,000,000 · 계약단가 100,000 · 납기 2025-12-01 · 납지 001부대).
 // ────────────────────────────────────────────────────────────────────────────
-const DLVGDS_AVTSMT_LIST: DlvgdsAvtsmtItem[] = [
+const DLVGDS_AVTSMT_LIST: MockDlvgdsAvtsmtItem[] = [
   {
     id: '20250000001-100',
     no: 1,
@@ -195,7 +195,7 @@ const DLVGDS_AVTSMT_LIST: DlvgdsAvtsmtItem[] = [
 // MUI-EX-01-P11 검사및납품조서목록 — slide14 목업(계약차수 00 · 조서발행번호
 // M2025MST000200-0001 · 납품금액 1,000,000 · 작성수량 100 · 납지 002부대 · 지체일수 10 · 지체상금 10,000).
 // ────────────────────────────────────────────────────────────────────────────
-const INSP_DLVDOC_LIST: InspDlvdocItem[] = [
+const INSP_DLVDOC_LIST: MockInspDlvdocItem[] = [
   {
     id: 'M2025MST000200-0001',
     no: 1,
@@ -247,7 +247,7 @@ const INSP_DLVDOC_LIST: InspDlvdocItem[] = [
 // MUI-EX-01-M02 검사및납품조서상세(중앙조달) — slide17 목업(계약번호 2025 0000 00 (01) ·
 // 통지번호 12345 6789 · 예산구분 전년국채 · 납지 제8385부대 · 납품요구일시 2026-10-15 08:00).
 // ────────────────────────────────────────────────────────────────────────────
-const INSP_DLVDOC_DTL: InspDlvdocDtl = {
+const INSP_DLVDOC_DTL: MockInspDlvdocDtl = {
   ctrtNo: '20250000001',
   ctrtCycl: '01',
   avtsmtNo: '100',
@@ -264,7 +264,7 @@ const INSP_DLVDOC_DTL: InspDlvdocDtl = {
 }
 
 // MUI-EX-01-T02 물품목록 — slide19 목업(깍두기(임가공)(3지역)[1412F] · kg · 49,230,000 · 0 · 49,230).
-const INSP_DLVDOC_CMDTY_LIST: InspDlvdocCmdtyItem[] = [
+const INSP_DLVDOC_CMDTY_LIST: MockInspDlvdocCmdtyItem[] = [
   {
     id: '000000000000001-000000001',
     prcmRqtNo: '000000000000001',
@@ -291,7 +291,7 @@ const INSP_DLVDOC_CMDTY_LIST: InspDlvdocCmdtyItem[] = [
 // MUI-EX-01-M03 검사및납품조서상세(부대조달) — slide21~22 목업(A 업체 · 서울특별시 종로구 ·
 // 홍길동 · CJ대한통운 · 개시/검수/납품/합격일자 2025-10-15 · 출납번호 1234 5678 등).
 // ────────────────────────────────────────────────────────────────────────────
-const INSP_DLVDOC_SBSD_DTL: InspDlvdocDtlSbsdPrcm = {
+const INSP_DLVDOC_SBSD_DTL: MockInspDlvdocDtlSbsdPrcm = {
   ctrtNo: '20250000004',
   ctrtCycl: '01',
   avtsmtNo: '123456789',
@@ -325,7 +325,7 @@ const INSP_DLVDOC_SBSD_DTL: InspDlvdocDtlSbsdPrcm = {
 }
 
 // MUI-EX-01-T04 부대조달 물품목록 — slide23 목업(중앙 T02 와 동일 형식, 총계약수량).
-const INSP_DLVDOC_SBSD_CMDTY_LIST: InspDlvdocSbsdCmdtyItem[] = [
+const INSP_DLVDOC_SBSD_CMDTY_LIST: MockInspDlvdocSbsdCmdtyItem[] = [
   {
     id: '000000000000003-000000003',
     prcmRqtNo: '000000000000003',
@@ -352,7 +352,7 @@ const INSP_DLVDOC_SBSD_CMDTY_LIST: InspDlvdocSbsdCmdtyItem[] = [
 // MUI-EX-01-M04 기성및준공검사상세 — slide27 목업(기성차수 002 · 착공 2025-02-15 ·
 // 실준공 2025-03-15 · 준공기한 2025-10-15 · 준공계제출 2025-11-01 · 검사관/감독관 계약담당 홍길동 주무관).
 // ────────────────────────────────────────────────────────────────────────────
-const PXCND_CMCN_INSP_DTL: PxcndCmcnInspDtl = {
+const PXCND_CMCN_INSP_DTL: MockPxcndCmcnInspDtl = {
   ctrtNo: '20250000003',
   ctrtCycl: '01',
   ctrtNm: '막사 보수 공사',
@@ -382,7 +382,7 @@ const PXCND_CMCN_INSP_DTL: PxcndCmcnInspDtl = {
 // MUI-EX-01-M05 검사및납품조서현황목록 — slide30 목업(계약번호 2025000000-01 · 계약금액 11,616,000 ·
 // 합격일자 2026-06-10/'-' · 납품일자 '-'/2026-08-15 · 진행상태 코드표(slide33) 표시명).
 // ────────────────────────────────────────────────────────────────────────────
-const INSP_DLVDOC_PRST_LIST: InspDlvdocPrstItem[] = [
+const INSP_DLVDOC_PRST_LIST: MockInspDlvdocPrstItem[] = [
   {
     id: '20250000001-100',
     no: 1,
@@ -446,7 +446,7 @@ const INSP_DLVDOC_PRST_LIST: InspDlvdocPrstItem[] = [
 // MUI-EX-01-M07 검사및납품조서결과상세 — slide36~37 목업(납품장소 제8385부대 · 정비 20일/10일 ·
 // 입고 2025-01-30/정비지시 2025-02-15/출고 2025-03-10 · 이행 정보는 M03 과 동일 구성).
 // ────────────────────────────────────────────────────────────────────────────
-const DLVDOC_RSLT_DTL: DlvdocRsltDtl = {
+const DLVDOC_RSLT_DTL: MockDlvdocRsltDtl = {
   ctrtNo: '20250000001',
   ctrtCycl: '01',
   avtsmtNo: '123456789',
@@ -484,7 +484,7 @@ const DLVDOC_RSLT_DTL: DlvdocRsltDtl = {
 }
 
 // MUI-EX-01-T06 물품목록 — T04 와 동일 형식(slide38).
-const DLVDOC_RSLT_CMDTY_LIST: DlvdocRsltCmdtyItem[] = [
+const DLVDOC_RSLT_CMDTY_LIST: MockDlvdocRsltCmdtyItem[] = [
   {
     id: '000000000000005-000000005',
     prcmRqtNo: '000000000000005',
@@ -503,7 +503,7 @@ const DLVDOC_RSLT_CMDTY_LIST: DlvdocRsltCmdtyItem[] = [
 
 // MUI-EX-02-M71 견적의뢰서목록 — slide46 목업(견적번호 01/02 · F-15 부품구매 · 항목수 3개 ·
 // A 업체 · 납기/작성 2026-02-10 · 통보서상태 작성/미작성/송신).
-const OVS_ESTMT_RQDC_LIST: OvsEstmtRqdcItem[] = [
+const OVS_ESTMT_RQDC_LIST: MockOvsEstmtRqdcItem[] = [
   {
     id: '01',
     clmSeq: '01',
@@ -538,7 +538,7 @@ const OVS_ESTMT_RQDC_LIST: OvsEstmtRqdcItem[] = [
 
 // MUI-EX-02-M72 견적의뢰서상세 — slide49 목업(KD111111111 · 견적/유효/계약일자 2025-03-01 ·
 // 공군/A 업체/조달테스트업체/홍길동/미 달러).
-const OVS_ESTMT_RQDC_DTL: OvsEstmtRqdcDtl = {
+const OVS_ESTMT_RQDC_DTL: MockOvsEstmtRqdcDtl = {
   ctrtNo: 'KD111111111',
   clmSeq: '01',
   clmYmd: '2025-03-01',
@@ -560,7 +560,7 @@ const OVS_ESTMT_RQDC_DTL: OvsEstmtRqdcDtl = {
 
 // MUI-EX-02-T72 견적의뢰서 품목 — slide50 목업(1111111111111 · 00000-010000-123 · F-15K ·
 // 항공 · 2025-05-01 · 12345 · IRST LRU-1 · EA · 1 · AFLC IM : IG(6급 홍길동)).
-const OVS_ESTMT_RQDC_ITEMS: OvsEstmtRqdcItemRow[] = [
+const OVS_ESTMT_RQDC_ITEMS: MockOvsEstmtRqdcItemRow[] = [
   {
     id: '1111111111111-1',
     no: 1,
@@ -593,7 +593,7 @@ const OVS_ESTMT_RQDC_ITEMS: OvsEstmtRqdcItemRow[] = [
 
 // MUI-EX-02-M73 견적통보서목록 — slide55 목업(TESLA · 2025-03-01 · 미 달러 ·
 // 5,000,000.00/100,000.00/2,000.00 · RQ No 1/2 · 작성/송신).
-const OVS_ESTMT_NTDC_CTRT_INFO: OvsEstmtNtdcCtrtInfo = {
+const OVS_ESTMT_NTDC_CTRT_INFO: MockOvsEstmtNtdcCtrtInfo = {
   ctrtBzentyCd: 'TESLA',
   ctrtYmd: '2025-03-01',
   crncCd: '미 달러',
@@ -602,7 +602,7 @@ const OVS_ESTMT_NTDC_CTRT_INFO: OvsEstmtNtdcCtrtInfo = {
   uclmAmt: 2000,
 }
 
-const OVS_ESTMT_NTDC_LIST: OvsEstmtNtdcItem[] = [
+const OVS_ESTMT_NTDC_LIST: MockOvsEstmtNtdcItem[] = [
   {
     id: '1',
     clmSeq: '1',
@@ -626,7 +626,7 @@ const OVS_ESTMT_NTDC_LIST: OvsEstmtNtdcItem[] = [
 ]
 
 // MUI-EX-02-M74 견적통보서상세 — slide58·59 목업(M72 동형 + 품목수 1/변경 0/총액 1,000.00).
-const OVS_ESTMT_NTDC_DTL: OvsEstmtNtdcDtl = {
+const OVS_ESTMT_NTDC_DTL: MockOvsEstmtNtdcDtl = {
   ctrtNo: 'KD111111111',
   clmSeq: '1',
   clmYmd: '2025-03-01',
@@ -650,7 +650,7 @@ const OVS_ESTMT_NTDC_DTL: OvsEstmtNtdcDtl = {
 }
 
 // MUI-EX-02-T74 견적통보서 품목 — slide59 목업(단가/금액 1,000.00 포함).
-const OVS_ESTMT_NTDC_ITEMS: OvsEstmtNtdcItemRow[] = [
+const OVS_ESTMT_NTDC_ITEMS: MockOvsEstmtNtdcItemRow[] = [
   {
     id: '1111111111113-1',
     no: 1,
@@ -671,7 +671,7 @@ const OVS_ESTMT_NTDC_ITEMS: OvsEstmtNtdcItemRow[] = [
 ]
 
 // MUI-EX-02-M75 발주의뢰서목록 — slide64 계열 목업(발주번호/항목수/화폐단위/계약금액/납기일/통보서상태).
-const OVS_ORDER_RQDC_LIST: OvsOrderRqdcItem[] = [
+const OVS_ORDER_RQDC_LIST: MockOvsOrderRqdcItem[] = [
   {
     id: '01',
     orderSeq: '01',
@@ -695,7 +695,7 @@ const OVS_ORDER_RQDC_LIST: OvsOrderRqdcItem[] = [
 ]
 
 // MUI-EX-02-M76 발주의뢰서상세 — slide68·70 목업(M72 동형 + 발주일자·신용장번호 MD1111111111).
-const OVS_ORDER_RQDC_DTL: OvsOrderRqdcDtl = {
+const OVS_ORDER_RQDC_DTL: MockOvsOrderRqdcDtl = {
   ctrtNo: 'KD111111111',
   orderSeq: '01',
   orderYmd: '2025-03-01',
@@ -717,7 +717,7 @@ const OVS_ORDER_RQDC_DTL: OvsOrderRqdcDtl = {
 }
 
 // MUI-EX-02-T76 발주의뢰서 품목 — slide70~72(청구번호/단가/금액/우선순위/하자보증/PriceList 적용년도).
-const OVS_ORDER_RQDC_ITEMS: OvsOrderRqdcItemRow[] = [
+const OVS_ORDER_RQDC_ITEMS: MockOvsOrderRqdcItemRow[] = [
   {
     id: '1111111111111-1',
     no: 1,
@@ -741,7 +741,7 @@ const OVS_ORDER_RQDC_ITEMS: OvsOrderRqdcItemRow[] = [
 ]
 
 // MUI-EX-02-M77 발주통보서목록 — slide74 목업(상단 계약정보는 견적통보서와 동일 구성 재사용).
-const OVS_ORDER_NTDC_LIST: OvsOrderNtdcItem[] = [
+const OVS_ORDER_NTDC_LIST: MockOvsOrderNtdcItem[] = [
   {
     id: '1',
     orderSeq: '1',
@@ -767,7 +767,7 @@ const OVS_ORDER_NTDC_LIST: OvsOrderNtdcItem[] = [
 ]
 
 // MUI-EX-02-M78 발주통보서상세 — slide78·80~82(품목수: 발주/수락/거부 + 발주/수락금액).
-const OVS_ORDER_NTDC_DTL: OvsOrderNtdcDtl = {
+const OVS_ORDER_NTDC_DTL: MockOvsOrderNtdcDtl = {
   ctrtNo: 'KD111111111',
   orderSeq: '1',
   orderYmd: '2025-03-01',
@@ -793,7 +793,7 @@ const OVS_ORDER_NTDC_DTL: OvsOrderNtdcDtl = {
 }
 
 // MUI-EX-02-T78 발주통보서 품목 — slide80~82(납품가능일자·수락여부 포함).
-const OVS_ORDER_NTDC_ITEMS: OvsOrderNtdcItemRow[] = [
+const OVS_ORDER_NTDC_ITEMS: MockOvsOrderNtdcItemRow[] = [
   {
     id: '1111111111111-1',
     no: 1,

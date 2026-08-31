@@ -8,14 +8,14 @@ import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Button } from '@/ui/common/base/Button'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { BidItemListRow, BidPrgrsItem } from '@/types/mock/bd'
+import type { MockBidItemListRow, MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 서버 총건수(품목내역 목록 조회 결과 total) — 상단 총건수·더보기 분모. 추후 API 응답으로 대체.
 const TOTAL_COUNT = 100
 // 더보기 한 번에 추가로 노출할 건수(페이지 크기).
 const PAGE_SIZE = 5
 
-function itemRows(item: BidItemListRow): TableRow[] {
+function itemRows(item: MockBidItemListRow): TableRow[] {
   return [
     { label: '항목번호', value: item.clsfNo },
     { label: '재고번호', value: item.fscCdNtnItemIdntfNo },
@@ -28,7 +28,7 @@ function itemRows(item: BidItemListRow): TableRow[] {
   ]
 }
 
-export function TndrWrt_Stp2({ detail }: { detail: BidPrgrsItem }) {
+export function TndrWrt_Stp2({ detail }: { detail: MockBidPrgrsItem }) {
   // 품목 목록 조회 — 목업/실연동은 bdService.selectTndrItemList 의 USE_MOCK 분기가 전환.
   const { data } = bdQueries.useSelectTndrItemList(detail.pbancNo)
   const items = data ?? []

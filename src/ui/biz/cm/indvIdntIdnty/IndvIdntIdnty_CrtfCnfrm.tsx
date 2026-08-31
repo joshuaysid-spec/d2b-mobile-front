@@ -5,11 +5,11 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { InputMessage } from '@/ui/common/base/InputMessage'
 import { CertCard } from '@/ui/biz/cm/crtfMng/CertCard'
-import type { CertItem } from '@/types/mock/cm'
+import type { MockCertItem } from '@/types/mock/cm'
 
 export interface IndvIdntIdnty_CrtfCnfrmProps {
   /** 선택된 개인 인증서. */
-  cert: CertItem
+  cert: MockCertItem
   /** 인증서 비밀번호(부모가 소유 — 인증하기 실행 시 검증). */
   password: string
   onPasswordChange: (value: string) => void

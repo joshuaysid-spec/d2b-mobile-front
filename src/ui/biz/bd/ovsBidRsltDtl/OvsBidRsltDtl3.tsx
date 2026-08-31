@@ -10,7 +10,7 @@ import { SelectBox } from '@/ui/common/base/SelectBox'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
-import type { OvsBidRsltTotalItem } from '@/types/mock/bd'
+import type { MockOvsBidRsltTotalItem } from '@/types/mock/bd'
 
 // 입찰결과 필터(결과 전체 SelectBox) — 기본 '결과 전체'(all). value 는 item.bidRsltNm 과 일치.
 const RESULT_OPTIONS = [
@@ -24,7 +24,7 @@ const RESULT_VALUES = ['낙찰', '조건부 낙찰', '동가 낙찰', '유찰']
 
 // 입찰결과 목록(총액제) 목업 — 설계서 slide405 항목. 추후 bdService.selectBidCnListByItem 매핑.
 // bidRsltNm 은 결과 필터 데모용으로 4종 순환.
-const ITEM_BASE: Omit<OvsBidRsltTotalItem, 'seq' | 'bidRsltNm'> = {
+const ITEM_BASE: Omit<MockOvsBidRsltTotalItem, 'seq' | 'bidRsltNm'> = {
   bidBzentyNm: 'A 국외업체',
   bizRegNo: '123-45-67890',
   drctnAmt: '5,000,000 원',
@@ -32,7 +32,7 @@ const ITEM_BASE: Omit<OvsBidRsltTotalItem, 'seq' | 'bidRsltNm'> = {
   usdAmt: '10,000.00 USD',
 }
 const TOTAL = 258
-const MOCK_ITEMS: OvsBidRsltTotalItem[] = Array.from({ length: TOTAL }, (_, i) => ({
+const MOCK_ITEMS: MockOvsBidRsltTotalItem[] = Array.from({ length: TOTAL }, (_, i) => ({
   ...ITEM_BASE,
   seq: String(i + 1),
   bidRsltNm: RESULT_VALUES[i % RESULT_VALUES.length],
@@ -41,7 +41,7 @@ const MOCK_ITEMS: OvsBidRsltTotalItem[] = Array.from({ length: TOTAL }, (_, i) =
 // 기본 노출 행수 (나머지는 '내역 펼쳐보기'로 토글) — 접힘 시 입찰업체/사업자번호 2행(slide405).
 const DEFAULT_VISIBLE = 2
 
-const itemRows = (it: OvsBidRsltTotalItem): TableRow[] => [
+const itemRows = (it: MockOvsBidRsltTotalItem): TableRow[] => [
   { label: '입찰업체', value: it.bidBzentyNm },
   { label: '사업자번호', value: it.bizRegNo },
   { label: '지시금액', value: it.drctnAmt, type: 'number' },
@@ -51,7 +51,7 @@ const itemRows = (it: OvsBidRsltTotalItem): TableRow[] => [
 ]
 
 // 항목 1건 카드 — 기본 2행 + 펼쳐보기/접기 (품목명세서 탭과 동일).
-const BidRsltItemCard = memo(function BidRsltItemCard({ item }: { item: OvsBidRsltTotalItem }) {
+const BidRsltItemCard = memo(function BidRsltItemCard({ item }: { item: MockOvsBidRsltTotalItem }) {
   const [expanded, setExpanded] = useState(false)
   const allRows = useMemo(() => itemRows(item), [item])
   const rows = expanded ? allRows : allRows.slice(0, DEFAULT_VISIBLE)

@@ -8,10 +8,10 @@
 //   footer(삭제·수정)는 부모가 BottomSheet footer 로 소유.
 import dayjs from 'dayjs'
 
-import type { TaskCldrItem } from '@/types/mock/cm'
+import type { MockTaskCldrItem } from '@/types/mock/cm'
 
 export interface TaskCldrDtlProps {
-  item: TaskCldrItem
+  item: MockTaskCldrItem
 }
 
 // 라벨 + 값 블록 — label 17 Bold, value 17 Regular(줄바꿈 보존).

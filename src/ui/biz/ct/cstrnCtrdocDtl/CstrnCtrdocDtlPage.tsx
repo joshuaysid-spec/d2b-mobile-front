@@ -18,7 +18,7 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { CstrnCtrdocDtl_Cn } from '@/ui/biz/ct/cstrnCtrdocDtl/CstrnCtrdocDtl_Cn'
 import { CstrnCtrdocDtl_Grnte } from '@/ui/biz/ct/cstrnCtrdocDtl/CstrnCtrdocDtl_Grnte'
 import { CstrnCtrdocDtl_Flw } from '@/ui/biz/ct/cstrnCtrdocDtl/CstrnCtrdocDtl_Flw'
-import type { CtrtIntgListItem } from '@/types/mock/ct'
+import type { MockCtrtIntgListItem } from '@/types/mock/ct'
 
 // ── 탭 (slide69 탭바: 상세정보/하자담보책임/연대보증) ──────────────────────────
 const TABS: TabItem[] = [
@@ -38,7 +38,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CstrnCtrdocDtlPage() {
-  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const stateItem = useLocation().state as MockCtrtIntgListItem | null
   const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')

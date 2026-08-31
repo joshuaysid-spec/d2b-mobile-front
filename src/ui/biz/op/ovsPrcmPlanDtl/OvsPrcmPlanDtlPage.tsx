@@ -9,7 +9,7 @@ import { useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 
 import { opQueries } from '@/queries/bds/op/opQueries'
-import type { OpAnlPrcmPlanItem } from '@/types/mock/op'
+import type { MockOpAnlPrcmPlanItem } from '@/types/mock/op'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
@@ -25,7 +25,7 @@ import { WarSplList_Inq } from '@/ui/biz/op/warSplList_Inq/WarSplList_Inq'
 
 export function OvsPrcmPlanDtlPage() {
   // 목록 → 상세 데이터 전달: 클릭 항목이 식별자 소스이자 placeholder(재조회 전 즉시 렌더).
-  const stateItem = useLocation().state as OpAnlPrcmPlanItem | null
+  const stateItem = useLocation().state as MockOpAnlPrcmPlanItem | null
   const id = stateItem?.id ?? ''
   // 스크롤 시 상단 요약 블록 축소 + sticky — 로직은 훅에서(overflow-anchor 진동방지 포함).
   const { collapsed, rootRef, scrollToTop } = useCollapsibleHeader()

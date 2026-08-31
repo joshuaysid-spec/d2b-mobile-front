@@ -4,10 +4,10 @@
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
-import type { ImpltElgbSrngPbancInfo } from '@/types/mock/bd'
+import type { MockImpltElgbSrngPbancInfo } from '@/types/mock/bd'
 
 // 공고정보 목업 (설계서 slide163 값·slide166 항목명) — 추후 API 매핑.
-const MOCK_PBANC_INFO: ImpltElgbSrngPbancInfo = {
+const MOCK_PBANC_INFO: MockImpltElgbSrngPbancInfo = {
   bidNm: '테스트공고',
   rprsCmdtyNm: '테스트품목',
   drctnYr: '2025',
@@ -32,7 +32,7 @@ const REF_DOCS: FileDownloadItem[] = [
   { id: 'law-form', name: '법 위반 처벌이력 확인서 양식.hwp', size: '120KB', onDownload: () => console.log('[Implt] 법 위반 처벌이력 확인서 양식 다운로드') },
 ]
 
-const pbancRows = (it: ImpltElgbSrngPbancInfo): TableRow[] => [
+const pbancRows = (it: MockImpltElgbSrngPbancInfo): TableRow[] => [
   { label: '입찰건명', value: it.bidNm },
   { label: '대표품명', value: it.rprsCmdtyNm },
   { label: '지시년도', value: it.drctnYr },

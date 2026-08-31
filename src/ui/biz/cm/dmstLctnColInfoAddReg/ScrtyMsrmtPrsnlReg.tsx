@@ -10,7 +10,7 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
-import type { ScrtyMsrmtPrsn } from '@/types/mock/cm'
+import type { MockScrtyMsrmtPrsn } from '@/types/mock/cm'
 
 /** 부모 footer([등록])가 호출하는 확정 동작. */
 export interface ScrtyMsrmtPrsnlRegHandle {
@@ -25,7 +25,7 @@ const QUAL_OPTIONS = [
 
 export interface ScrtyMsrmtPrsnlRegProps {
   /** [등록] 시 호출 — 입력한 보안측정인원 1건을 부모에 반환. */
-  onRegister: (person: ScrtyMsrmtPrsn) => void
+  onRegister: (person: MockScrtyMsrmtPrsn) => void
 }
 
 const ScrtyMsrmtPrsnlReg = forwardRef<ScrtyMsrmtPrsnlRegHandle, ScrtyMsrmtPrsnlRegProps>(

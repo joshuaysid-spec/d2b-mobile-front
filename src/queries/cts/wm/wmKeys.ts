@@ -2,16 +2,16 @@
 // 구조: ['wm', 함수명, 파라미터] 3단 — 도메인 전체 무효화(['wm'])·함수 prefix 무효화 모두 가능.
 // 훅 파일(queries.ts)과 분리 이유: mutation 무효화가 파일 경계를 넘어도 순환 import 없이 키만 참조.
 import type {
-  PymtClmIntgListRequest,
-  PymtClmPrgrsPrstRequest,
-  RtnPymtDfryInfoRequest,
-  OvsCmdtyRcvCnfdocRequest,
-  OvsPymtPrgrsRequest,
-  OvsRtnPymtDfryInfoRequest,
+  MockPymtClmIntgListRequest,
+  MockPymtClmPrgrsPrstRequest,
+  MockRtnPymtDfryInfoRequest,
+  MockOvsCmdtyRcvCnfdocRequest,
+  MockOvsPymtPrgrsRequest,
+  MockOvsRtnPymtDfryInfoRequest,
 } from '@/types/mock/wm'
 
 export const wmKeys = {
-  selectPymtClmIntgList: (req: PymtClmIntgListRequest) =>
+  selectPymtClmIntgList: (req: MockPymtClmIntgListRequest) =>
     ['wm', 'selectPymtClmIntgList', req] as const,
   selectPymtClmAplyList: (ctrtNo: string) => ['wm', 'selectPymtClmAplyList', ctrtNo] as const,
   selectPrpayClmAplyDtl: (id: string) => ['wm', 'selectPrpayClmAplyDtl', id] as const,
@@ -26,20 +26,20 @@ export const wmKeys = {
   selectCstrnPymtClmDtl: (id: string) => ['wm', 'selectCstrnPymtClmDtl', id] as const,
   selectPxcndCstPymtClmDtl: (id: string) => ['wm', 'selectPxcndCstPymtClmDtl', id] as const,
   selectEpfcClcInAplyDtlDtsm: (id: string) => ['wm', 'selectEpfcClcInAplyDtlDtsm', id] as const,
-  selectPymtClmPrgrsList: (req: PymtClmPrgrsPrstRequest) =>
+  selectPymtClmPrgrsList: (req: MockPymtClmPrgrsPrstRequest) =>
     ['wm', 'selectPymtClmPrgrsList', req] as const,
-  selectPymtDfryInfoRtnList: (req: RtnPymtDfryInfoRequest) =>
+  selectPymtDfryInfoRtnList: (req: MockRtnPymtDfryInfoRequest) =>
     ['wm', 'selectPymtDfryInfoRtnList', req] as const,
-  selectGoodsReceiveConfirmList: (req: OvsCmdtyRcvCnfdocRequest) =>
+  selectGoodsReceiveConfirmList: (req: MockOvsCmdtyRcvCnfdocRequest) =>
     ['wm', 'selectGoodsReceiveConfirmList', req] as const,
   selectOvsElcrtTxivList: (ctrtNo: string) => ['wm', 'selectOvsElcrtTxivList', ctrtNo] as const,
   selectElectronicBill: (bilPblcnNo: string) =>
     ['wm', 'selectElectronicBill', bilPblcnNo] as const,
   selectOvsElcrtTxivItems: (bilPblcnNo: string) =>
     ['wm', 'selectOvsElcrtTxivItems', bilPblcnNo] as const,
-  selectPaymentList: (req: OvsRtnPymtDfryInfoRequest) =>
+  selectPaymentList: (req: MockOvsRtnPymtDfryInfoRequest) =>
     ['wm', 'selectPaymentList', req] as const,
-  selectPaymentStatusList: (req: OvsPymtPrgrsRequest) =>
+  selectPaymentStatusList: (req: MockOvsPymtPrgrsRequest) =>
     ['wm', 'selectPaymentStatusList', req] as const,
   selectPackingItemList: (blNo: string) => ['wm', 'selectPackingItemList', blNo] as const,
 }

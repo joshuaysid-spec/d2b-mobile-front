@@ -11,7 +11,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { useAuthStore } from '@/stores/authStore'
-import type { BidPbancItem, OvsBidPbancDetail, OvsBidPbancNtc } from '@/types/mock/bd'
+import type { MockBidPbancItem, MockOvsBidPbancDetail, MockOvsBidPbancNtc } from '@/types/mock/bd'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
@@ -31,7 +31,7 @@ import { OvsBidPbancDtl } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbancDtl'
 import { OvsBidPbancDtl2 } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbancDtl2'
 
 // ── 도메인 타입 — PC 실 인터페이스(ovsBidPbancDtl.IResultPbanc/IResultNoti) 공유 타입(@/types/bd) 사용.
-//    (구 페이지 로컬 중복 선언(OvsNtcInfo/OvsBidPbancDetail)은 2026-08-24 판독본 반영과 함께 제거.)
+//    (구 페이지 로컬 중복 선언(OvsNtcInfo/MockOvsBidPbancDetail)은 2026-08-24 판독본 반영과 함께 제거.)
 
 // ── 탭 (설계서 slide289 — 일반정보 / 품목 목록 / 첨부서류) ─────────────────────────
 const TABS: TabItem[] = [
@@ -41,7 +41,7 @@ const TABS: TabItem[] = [
 ]
 
 // ── 페이지 fallback 목업 (직접 URL 진입 대비) — 설계서 slide289 예시값 + 실 인터페이스(IBidPbancList) 키 ──
-const MOCK_OVS_LIST_ITEM: BidPbancItem = {
+const MOCK_OVS_LIST_ITEM: MockBidPbancItem = {
   rnum: '1',
   prcmNo: 'BAD83990',
   bizRlmCd: 'B01',
@@ -89,7 +89,7 @@ const MOCK_OVS_LIST_ITEM: BidPbancItem = {
 }
 
 // 공고일반 목업 — 실 인터페이스(IResultPbanc) 키, 설계서 slide290 예시값. 추후 bdService.selectOvsBidPbancDtl
-const MOCK_OVS_BID_PBANC_DETAIL: OvsBidPbancDetail = {
+const MOCK_OVS_BID_PBANC_DETAIL: MockOvsBidPbancDetail = {
   pbancNo: 'EFD0007',
   pbancOd: '2',
   pbancNoOd: 'EFD0007-2',
@@ -120,7 +120,7 @@ const MOCK_OVS_BID_PBANC_DETAIL: OvsBidPbancDetail = {
 }
 
 // 공지사항(IResultNoti) 목업 — 설계서 slide289 '국외경쟁입찰 공지사항' 영역.
-const MOCK_NTC_LIST: OvsBidPbancNtc[] = [
+const MOCK_NTC_LIST: MockOvsBidPbancNtc[] = [
   {
     ntcDt: '2025-12-22',
     ntcCn: '본 공고는 국외경쟁입찰 공고입니다. 입찰참가등록 및 입찰서 제출 마감일시를 반드시 확인하시기 바랍니다.',
@@ -140,7 +140,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 // ── 일반정보 탭 (MUI-BD-01-T71(구 M71 — v1.83 재편)) — 페이지와 같은 화면 ID 라 이 파일이 소유 ────────────
-function GeneralInfoTab({ detail }: { detail: OvsBidPbancDetail }) {
+function GeneralInfoTab({ detail }: { detail: MockOvsBidPbancDetail }) {
   // 일반정보 (설계서 slide290 데이터영역 순서 그대로 — 키는 실 인터페이스 IResultPbanc)
   const generalRows: TableRow[] = [
     { label: '공고번호-차수', value: detail.pbancNoOd },
@@ -206,9 +206,9 @@ export function OvsBidPbancDtlPage() {
   // 로그인 필요 동작(업체담당자 노출 버튼) — 비로그인 시 로그인 안내(P15) 노출하고 동작 차단.
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
 
-  // 목록 → 상세 데이터 전달: 통합목록 국외 카드에서 navigate(state)로 넘어온 항목(BidPbancItem)으로 상단을 그린다.
+  // 목록 → 상세 데이터 전달: 통합목록 국외 카드에서 navigate(state)로 넘어온 항목(MockBidPbancItem)으로 상단을 그린다.
   //   직접 URL 진입(state 없음)이면 페이지 목업(MOCK_OVS_LIST_ITEM)으로 대체. (백엔드 미연동)
-  const passed = (useLocation().state as BidPbancItem | null) ?? MOCK_OVS_LIST_ITEM
+  const passed = (useLocation().state as MockBidPbancItem | null) ?? MOCK_OVS_LIST_ITEM
   const id = passed.pbancNo
   // 국외 전용 상세 필드(총금액 USD·환율적용일자·담당자 등)는 목록 아이템에 없어 페이지 목업으로 보완.
   const ovsDetail = MOCK_OVS_BID_PBANC_DETAIL

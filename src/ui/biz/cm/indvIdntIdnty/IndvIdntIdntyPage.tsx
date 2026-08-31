@@ -22,14 +22,14 @@ import { Toast } from '@/ui/common/composites/Toast'
 import { CertCard } from '@/ui/biz/cm/crtfMng/CertCard'
 import { MOCK_CERTS } from '@/ui/biz/cm/crtfMng/certMock'
 import { IndvIdntIdnty_CrtfCnfrm } from '@/ui/biz/cm/indvIdntIdnty/IndvIdntIdnty_CrtfCnfrm'
-import type { CertItem } from '@/types/mock/cm'
+import type { MockCertItem } from '@/types/mock/cm'
 
 // 데모용 비밀번호 — 실제 검증은 스마트PKI 솔루션.
 const MOCK_PASSWORD = '1234'
 
 export function IndvIdntIdntyPage() {
   const [selectOpen, setSelectOpen] = useState(false) // 인증서 선택 시트(slide200)
-  const [confirmCert, setConfirmCert] = useState<CertItem | null>(null) // 선택된 인증서(=확인 시트 열림, slide201)
+  const [confirmCert, setConfirmCert] = useState<MockCertItem | null>(null) // 선택된 인증서(=확인 시트 열림, slide201)
   const [password, setPassword] = useState('')
   const [authError, setAuthError] = useState<string | null>(null)
   const [toast, setToast] = useState<{ open: boolean; message: string }>({
@@ -38,7 +38,7 @@ export function IndvIdntIdntyPage() {
   })
 
   // 인증서 선택(slide200) → 확인 시트(slide201) 로 전환.
-  const handleSelectCert = (cert: CertItem) => {
+  const handleSelectCert = (cert: MockCertItem) => {
     setSelectOpen(false)
     setPassword('')
     setAuthError(null)

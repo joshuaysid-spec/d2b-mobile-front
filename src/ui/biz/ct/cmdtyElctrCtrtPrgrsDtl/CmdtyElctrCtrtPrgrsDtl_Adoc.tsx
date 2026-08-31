@@ -13,11 +13,11 @@ import { saveBlob } from '@/utils/download'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { Toast } from '@/ui/common/composites/Toast'
-import type { CtrtAdocFile } from '@/types/mock/ct'
+import type { MockCtrtAdocFile } from '@/types/mock/ct'
 
 // 첨부서류 1건 — 계약서류명 라벨(Figma file label) + 파일 행(FileDownloadList 단건).
 // 다운로드 핸들러는 부모(탭)가 소유(훅·토스트 1벌 공유) → 이 컴포넌트는 표시 전용.
-function AdocItem({ doc, onDownload }: { doc: CtrtAdocFile; onDownload: (doc: CtrtAdocFile) => void }) {
+function AdocItem({ doc, onDownload }: { doc: MockCtrtAdocFile; onDownload: (doc: MockCtrtAdocFile) => void }) {
   return (
     <div className="flex flex-col gap-krds-5">
       <p className="text-krds-body-md font-bold text-krds-text-ink">{doc.ctrtAdocCd}</p>
@@ -44,9 +44,9 @@ export function CmdtyElctrCtrtPrgrsDtl_Adoc({ id }: { id: string }) {
   const [toast, setToast] = useState<string | null>(null) // 다운로드 실패/안내 토스트(null=닫힘)
 
   // 다운로드 — guid 로 Blob 수신 → 원본 파일명으로 저장. 실패는 토스트 안내.
-  // ⚠️ CtrtAdocFile 에 파일 GUID 필드가 아직 없어 임시로 행 id 를 키로 사용 —
+  // ⚠️ MockCtrtAdocFile 에 파일 GUID 필드가 아직 없어 임시로 행 id 를 키로 사용 —
   //    백엔드 응답 확정 시 guid 필드 추가 후 교체(types/ct.ts TODO 섹션 참조).
-  const handleDownload = async (doc: CtrtAdocFile) => {
+  const handleDownload = async (doc: MockCtrtAdocFile) => {
     if (!doc.fileNm || doc.fileNm === '-') {
       setToast('첨부된 파일이 없습니다.')
       return

@@ -24,7 +24,7 @@ import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { PymtClmIntgAplyList } from '@/ui/biz/wm/pymtClmIntgList/PymtClmIntgAplyList'
 import { PymtClmGdntcFullPopup } from '@/ui/biz/wm/centerPrcmPymtClmDtl/PymtClmGdntcFullPopup'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
-import type { PymtClmAplyItem, PymtClmListItem } from '@/types/mock/wm'
+import type { MockPymtClmAplyItem, MockPymtClmListItem } from '@/types/mock/wm'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
@@ -134,7 +134,7 @@ export function PymtClmIntgListPage() {
     null,
   )
   // P13 신청목록 바텀시트 — 선택한 계약(진행중 청구 보유 건). null=닫힘.
-  const [pickedCtrt, setPickedCtrt] = useState<PymtClmListItem | null>(null)
+  const [pickedCtrt, setPickedCtrt] = useState<MockPymtClmListItem | null>(null)
   // 진행중 청구 없음 토스트(slide17)
   const [toastOpen, setToastOpen] = useState(false)
   // 대금청구 안내문(MUI-WM-01-P09) 풀팝업
@@ -158,7 +158,7 @@ export function PymtClmIntgListPage() {
     setPage(1)
   }
   // 카드 클릭(slide17) — 진행중 청구 있으면 P13 바텀시트, 없으면 토스트.
-  const handleCardClick = (item: PymtClmListItem) => {
+  const handleCardClick = (item: MockPymtClmListItem) => {
     if (item.pymtClmExstYn !== 'Y') {
       setToastOpen(true)
       return
@@ -166,7 +166,7 @@ export function PymtClmIntgListPage() {
     setPickedCtrt(item)
   }
   // 신청 카드 클릭(slide21) — 청구서 종류(clmDocNm, 임시 키)별 상세 분기.
-  const handleAplyClick = (item: PymtClmAplyItem) => {
+  const handleAplyClick = (item: MockPymtClmAplyItem) => {
     if (item.clmDocNm === '선금신청서') {
       navigate('/wm/prpayApfrDtl', { state: item })
       return

@@ -2,18 +2,18 @@
 // 호스트 페이지(BidPrtcpAperDtlPage)의 '3. 공종 및 면허' 탭 본문만 담당 — 요약/탭/하단 액션바는 페이지 소유.
 // 설계서 처리조건: 업무구분이 공사이고 공종정보가 있는 경우에만 목록 표시(여기선 목업 표시).
 //   나라장터 바로가기 = http://www.g2b.go.kr.
-// 항목명/형식은 작성판 공종및면허(M07)와 동일한 CnstwkLcnsRow — 조회판은 값 표시만 한다.
+// 항목명/형식은 작성판 공종및면허(M07)와 동일한 MockCnstwkLcnsRow — 조회판은 값 표시만 한다.
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CnstwkLcnsRow } from '@/types/mock/bd'
+import type { MockCnstwkLcnsRow } from '@/types/mock/bd'
 
 // 나라장터(G2B) — 설계서 slide185 '나라장터바로가기는 http://www.g2b.go.kr'.
 const G2B_URL = 'http://www.g2b.go.kr'
 
 // 공종 및 면허정보 목업 — 값은 설계서 slide185 형식 그대로.
-const MOCK_CNSTWKS: CnstwkLcnsRow[] = [
+const MOCK_CNSTWKS: MockCnstwkLcnsRow[] = [
   {
     id: 'c1',
     no: '1',
@@ -36,7 +36,7 @@ const MOCK_CNSTWKS: CnstwkLcnsRow[] = [
   },
 ]
 
-function cnstwkRows(row: CnstwkLcnsRow): TableRow[] {
+function cnstwkRows(row: MockCnstwkLcnsRow): TableRow[] {
   return [
     { label: '번호', value: row.no },
     { label: '공종명·업종코드', value: row.cnstwkNm },

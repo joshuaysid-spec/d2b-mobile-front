@@ -21,10 +21,10 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { CabinetHelpDisclosure } from '@/ui/biz/cm/digitalCabinet/CabinetHelpDisclosure'
 import { DigitalCabinetMng } from '@/ui/biz/cm/digitalCabinet/DigitalCabinetMng'
 import { cn } from '@/utils/cn'
-import type { DigitalCabinetAuthrtSe, DigitalCabinetFldr } from '@/types/mock/cm'
+import type { MockDigitalCabinetAuthrtSe, MockDigitalCabinetFldr } from '@/types/mock/cm'
 
 // ── 목업 (설계서 slide108/110 예시 + 데이터영역 항목명/형식) ────────────────────────
-const MOCK_FOLDERS: DigitalCabinetFldr[] = [
+const MOCK_FOLDERS: MockDigitalCabinetFldr[] = [
   {
     fldrSn: '1',
     fldrNm: '입찰 제출서류',
@@ -69,20 +69,20 @@ const MOCK_FROM_ATTACH = false
 export function DigitalCabinetPage() {
   const navigate = useNavigate()
   // P15 권한설정 시트 — 대상 폴더 + 편집 중 권한값(userNm → authrtSe). 페이지가 소유(저장이 footer).
-  const [permFolder, setPermFolder] = useState<DigitalCabinetFldr | null>(null)
-  const [permDraft, setPermDraft] = useState<Record<string, DigitalCabinetAuthrtSe>>({})
+  const [permFolder, setPermFolder] = useState<MockDigitalCabinetFldr | null>(null)
+  const [permDraft, setPermDraft] = useState<Record<string, MockDigitalCabinetAuthrtSe>>({})
   const [toastOpen, setToastOpen] = useState(false)
 
   const showPermBtn = MOCK_IS_REPRESENTATIVE && !MOCK_FROM_ATTACH
 
   // ── 동작 스텁 ──
-  const handleOpenFolder = (folder: DigitalCabinetFldr) => {
+  const handleOpenFolder = (folder: MockDigitalCabinetFldr) => {
     // 폴더 클릭 → 폴더 내 파일 목록(M16). 폴더 정보를 state 로 전달(추후 파일목록 조회 키).
     navigate(ROUTES.DIGITAL_CABINET_FILES, { state: folder })
   }
-  const handleOpenPerm = (folder: DigitalCabinetFldr) => {
+  const handleOpenPerm = (folder: MockDigitalCabinetFldr) => {
     // 권한 설정 시트 열기 — 편집 초기값을 폴더 권한 목록에서 구성.
-    const draft: Record<string, DigitalCabinetAuthrtSe> = {}
+    const draft: Record<string, MockDigitalCabinetAuthrtSe> = {}
     for (const u of folder.authrtList ?? []) draft[u.userNm] = u.authrtSe
     setPermDraft(draft)
     setPermFolder(folder)

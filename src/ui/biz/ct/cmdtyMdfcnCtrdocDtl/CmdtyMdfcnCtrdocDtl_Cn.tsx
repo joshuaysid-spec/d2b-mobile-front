@@ -2,7 +2,7 @@
 // 아코디언 4개(계약 상세정보 · 계약금액/추가보증금 · 업체정보 · 담당자 정보).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CmdtyMdfcnCtrdocDtl as MdfcnDtl } from '@/types/mock/ct'
+import type { MockCmdtyMdfcnCtrdocDtl as MdfcnDtl } from '@/types/mock/ct'
 
 export interface CmdtyMdfcnCtrdocDtl_CnProps {
   detail: MdfcnDtl

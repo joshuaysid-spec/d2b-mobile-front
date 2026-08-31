@@ -4,10 +4,10 @@
 import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CtrtJntGrnte } from '@/types/mock/ct'
+import type { MockCtrtJntGrnte } from '@/types/mock/ct'
 
 // 연대보증 1건 → 표 행(slide72 목업 순서).
-function grnteRows(g: CtrtJntGrnte): TableRow[] {
+function grnteRows(g: MockCtrtJntGrnte): TableRow[] {
   return [
     { label: '순번', value: String(g.rnum), type: 'number' },
     { label: '상호', value: g.bzentyNm },

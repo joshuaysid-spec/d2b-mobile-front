@@ -6,7 +6,7 @@
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 검사통합목록 검색조건 (dml_InspIntgListSrchCnd, slide12 1.1) — 서버 필터 전환 시 사용. */
-export interface InspIntgListRequest {
+export interface MockInspIntgListRequest {
   /** 계약시작일자 (ctrtBgngYmd, 8). */
   ctrtBgngYmd?: string
   /** 계약종료일자 (ctrtEndYmd, 8). */
@@ -22,7 +22,7 @@ export interface InspIntgListRequest {
 }
 
 /** 검사통합목록 1건 (dlt_InspIntgList, slide12 1.2). */
-export interface InspIntgListItem {
+export interface MockInspIntgListItem {
   /** 목록 key/라우팅용 고유 식별자 — `${ctrtNo}-${ctrtCycl}` (클라 생성, 배열 인덱스 key 금지). */
   id: string
   /** 번호 — 조회결과 자료 순번 (no, 10). */
@@ -65,8 +65,8 @@ export interface InspIntgListItem {
   dlvdocPrgrsStcd: string
 }
 
-export interface InspIntgListResult {
-  list: InspIntgListItem[]
+export interface MockInspIntgListResult {
+  list: MockInspIntgListItem[]
   total: number
 }
 
@@ -75,7 +75,7 @@ export interface InspIntgListResult {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 납품통지목록 1건 (dmt_dlvntcList, slide15 1.2). */
-export interface DlvgdsAvtsmtItem {
+export interface MockDlvgdsAvtsmtItem {
   /** 목록 key 용 고유 식별자 — `${ctrtNo}-${avtsmtNo}` (클라 생성). */
   id: string
   /** 번호 (no, 10). */
@@ -115,7 +115,7 @@ export interface DlvgdsAvtsmtItem {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 검사및납품조서목록 1건 (dlt_InspDlvdocList, slide15 1.3 + slide16 계속). */
-export interface InspDlvdocItem {
+export interface MockInspDlvdocItem {
   /** 목록 key/상세 라우팅용 고유 식별자 — `${recrdPblcnNo}` (조서발행번호 고유). */
   id: string
   /** 번호 (no, 10). */
@@ -151,11 +151,11 @@ export interface InspDlvdocItem {
 
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-EX-01-M02 검사및납품조서상세(중앙조달) (slide17~20) — inspDlvdocDtl/InspDlvdocDtlPage
-//   탭: T01 상세정보(InspDlvdocDtl) · T02 물품목록(InspDlvdocDtl_CmdtyList)
+//   탭: T01 상세정보(MockInspDlvdocDtl) · T02 물품목록(InspDlvdocDtl_CmdtyList)
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 검사및납품조서상세 — 계약정보(dmt_CtrtInfo, slide20 1.1) + 비고(dmt_Rmrk) + 요약 표시항목. */
-export interface InspDlvdocDtl {
+export interface MockInspDlvdocDtl {
   /** 계약번호 (ctrtNo, 11). */
   ctrtNo: string
   /** 계약번호차수 — 문서정보 표기(계약번호 (차수), slide17 1-2). ⚠️ dmt_CtrtInfo 미정의(CT 선례 재사용). */
@@ -189,7 +189,7 @@ export interface InspDlvdocDtl {
 }
 
 /** 물품목록 1건 (dlt_CmdtyList, slide20 1.2). */
-export interface InspDlvdocCmdtyItem {
+export interface MockInspDlvdocCmdtyItem {
   /** 목록 key 용 고유 식별자 — `${prcmRqtNo}-${invtNo}` (클라 생성). */
   id: string
   /** 조달요구번호 (prcmRqtNo, 15). */
@@ -210,12 +210,12 @@ export interface InspDlvdocCmdtyItem {
 
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-EX-01-M03 검사및납품조서상세(부대조달) (slide21~26) — inspDlvdocDtlSbsdPrcm/InspDlvdocDtlSbsdPrcmPage
-//   탭: T03 상세정보(InspDlvdocDtlSbsdPrcm) · T04 물품목록(InspDlvdocDtlSbsdPrcm_CmdtyList)
+//   탭: T03 상세정보(MockInspDlvdocDtlSbsdPrcm) · T04 물품목록(InspDlvdocDtlSbsdPrcm_CmdtyList)
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 검사및납품조서상세(부대조달) — 계약정보(dmt_CtrtInfo, slide24 1.1 + slide25 1.4)
  *  + 계약자 정보(dmt_CtrtrInfo, slide24 1.2) + 요약 표시항목. */
-export interface InspDlvdocDtlSbsdPrcm {
+export interface MockInspDlvdocDtlSbsdPrcm {
   /** 계약번호 (ctrtNo, 11). */
   ctrtNo: string
   /** 계약번호차수 — 문서정보 표기. ⚠️ dmt_CtrtInfo 미정의(CT 선례 재사용). */
@@ -285,7 +285,7 @@ export interface InspDlvdocDtlSbsdPrcm {
 }
 
 /** 부대조달 물품목록 1건 (dlt_CmdtyList, slide24 1.3) — 중앙(T02)과 달리 총계약수량(tctrtQty). */
-export interface InspDlvdocSbsdCmdtyItem {
+export interface MockInspDlvdocSbsdCmdtyItem {
   /** 목록 key 용 고유 식별자 — `${prcmRqtNo}-${invtNo}` (클라 생성). */
   id: string
   /** 조달요구번호 (prcmRqtNo, 15). */
@@ -310,7 +310,7 @@ export interface InspDlvdocSbsdCmdtyItem {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 검사관 1명 (dmt_Insptr, slide28 1.2). */
-export interface PxcndCmcnInsptr {
+export interface MockPxcndCmcnInsptr {
   /** 검사관소속명 (insptrOgdpNm, 100). */
   insptrOgdpNm: string
   /** 검사관계급명 (insptrEchlnNm, 100). */
@@ -320,7 +320,7 @@ export interface PxcndCmcnInsptr {
 }
 
 /** 감독관 1명 (dmt_Sprv, slide28 1.3). */
-export interface PxcndCmcnSprv {
+export interface MockPxcndCmcnSprv {
   /** 감독관소속 (sprvOgdpNm, 100). */
   sprvOgdpNm: string
   /** 감독관계급 (sprvEchlnNm, 100). */
@@ -330,7 +330,7 @@ export interface PxcndCmcnSprv {
 }
 
 /** 기성및준공검사상세 — 계약정보(dmt_CtrtInfo, slide28 1.1) + 검사관/감독관 + 요약 표시항목. */
-export interface PxcndCmcnInspDtl {
+export interface MockPxcndCmcnInspDtl {
   /** 계약번호 (ctrtNo, 11). */
   ctrtNo: string
   /** 계약번호차수 — 문서정보 표기. ⚠️ dmt_CtrtInfo 미정의(CT 선례 재사용). */
@@ -362,9 +362,9 @@ export interface PxcndCmcnInspDtl {
   /** 준공내용 (cmcnCn, 200). */
   cmcnCn: string
   /** 검사관 목록 (dmt_Insptr). */
-  insptrs: PxcndCmcnInsptr[]
+  insptrs: MockPxcndCmcnInsptr[]
   /** 감독관 목록 (dmt_Sprv). */
-  sprvs: PxcndCmcnSprv[]
+  sprvs: MockPxcndCmcnSprv[]
   // ── 요약(SummaryInfo)·뱃지 표시항목 — 목록(M01) 항목명 재사용(slide27 타이틀 영역) ──
   /** 업무구분 뱃지 (taskSecd) — 공사. */
   taskSecd: string
@@ -380,7 +380,7 @@ export interface PxcndCmcnInspDtl {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 검사및납품조서현황 검색조건 (dml_InspDlvdocPrstSrchCnd, slide33 1.1) — 서버 필터 전환 시 사용. */
-export interface InspDlvdocPrstRequest {
+export interface MockInspDlvdocPrstRequest {
   /** 계약시작일자 (ctrtBgngYmd, 8). */
   ctrtBgngYmd?: string
   /** 계약종료일자 (ctrtEndYmd, 8). */
@@ -394,7 +394,7 @@ export interface InspDlvdocPrstRequest {
 }
 
 /** 검사및납품조서현황 1건 (dlt_InspDlvdocPrst, slide33 1.2). */
-export interface InspDlvdocPrstItem {
+export interface MockInspDlvdocPrstItem {
   /** 목록 key/라우팅용 고유 식별자 — `${ctrtNo}-${avtsmtNo}` (클라 생성). */
   id: string
   /** 번호 (no, 10). */
@@ -435,19 +435,19 @@ export interface InspDlvdocPrstItem {
   sbsdPrcmYn: 'Y' | 'N'
 }
 
-export interface InspDlvdocPrstResult {
-  list: InspDlvdocPrstItem[]
+export interface MockInspDlvdocPrstResult {
+  list: MockInspDlvdocPrstItem[]
   total: number
 }
 
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-EX-01-M07 검사및납품조서결과상세 (slide36~40) — dlvdocRsltDtl/DlvdocRsltDtlPage
-//   탭: T05 상세정보(DlvdocRsltDtl) · T06 물품목록(DlvdocRsltDtl_CmdtyList)
+//   탭: T05 상세정보(MockDlvdocRsltDtl) · T06 물품목록(DlvdocRsltDtl_CmdtyList)
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 검사및납품조서결과상세 — 계약정보(dmt_CtrtInfo, slide39 1.1) + 계약자(dmt_CtrtrInfo)
  *  + 정비조회(dmt_MtncInq) + 납품조서결과(dmt_DlvdocRslt) + 요약 표시항목. */
-export interface DlvdocRsltDtl {
+export interface MockDlvdocRsltDtl {
   /** 계약번호 (ctrtNo, 11). */
   ctrtNo: string
   /** 계약번호차수 — 문서정보 표기. ⚠️ 미정의(CT 선례 재사용). */
@@ -515,7 +515,7 @@ export interface DlvdocRsltDtl {
 }
 
 /** M07 물품목록 1건 (dlt_CmdtyList, slide39 1.4) — 부대조달(T04)과 동일 구성이라 타입 재사용. */
-export type DlvdocRsltCmdtyItem = InspDlvdocSbsdCmdtyItem
+export type MockDlvdocRsltCmdtyItem = MockInspDlvdocSbsdCmdtyItem
 
 // ════════════════════════════════════════════════════════════════════════════
 // EX-02 한도액계약 (slide42~86) — 견적/발주 의뢰서·통보서. P79 계약번호조회는 cm/search 공통시트.
@@ -527,7 +527,7 @@ export type DlvdocRsltCmdtyItem = InspDlvdocSbsdCmdtyItem
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 견적의뢰서목록 검색조건 (dm_searchInfo, slide48 1.1) — On-Load: 수신일 5년전~현재. */
-export interface OvsEstmtRqdcListRequest {
+export interface MockOvsEstmtRqdcListRequest {
   /** 계약번호 (ctrtNo, 35) — 계약번호조회(P79) 공통팝업. */
   ctrtNo?: string
   /** 수신일(FROM) (rcptnBgngYmd, 8). */
@@ -537,7 +537,7 @@ export interface OvsEstmtRqdcListRequest {
 }
 
 /** 견적의뢰서목록 1건 (dl_estmtRqdc, slide48 1.2). */
-export interface OvsEstmtRqdcItem {
+export interface MockOvsEstmtRqdcItem {
   /** 목록 key/상세 라우팅용 고유 식별자 — 견적번호(clmSeq) 사용. */
   id: string
   /** 견적번호 (clmSeq, 22) — 카드 표기 '견적번호 {clmSeq}'(+차수, slide46 3-1). */
@@ -556,18 +556,18 @@ export interface OvsEstmtRqdcItem {
   ntdcStts: string
 }
 
-export interface OvsEstmtRqdcListResult {
-  list: OvsEstmtRqdcItem[]
+export interface MockOvsEstmtRqdcListResult {
+  list: MockOvsEstmtRqdcItem[]
   total: number
 }
 
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-EX-02-M72 견적의뢰서상세 (slide49~53) — ovsEstmtRqdcDtl/OvsEstmtRqdcDtlPage
-//   탭: T71 상세정보(OvsEstmtRqdcDtl) · T72 물품목록(OvsEstmtRqdcDtl_CmdtyList).
+//   탭: T71 상세정보(MockOvsEstmtRqdcDtl) · T72 물품목록(OvsEstmtRqdcDtl_CmdtyList).
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 견적의뢰서상세 — 계약정보(dm_ctrtInfo, slide52 1.1) + 요약 표시항목. */
-export interface OvsEstmtRqdcDtl {
+export interface MockOvsEstmtRqdcDtl {
   /** 계약번호 (ctrtNo, 35). */
   ctrtNo: string
   /** 견적번호 (clmSeq, 22) — 문서정보(견적번호+회차). */
@@ -606,7 +606,7 @@ export interface OvsEstmtRqdcDtl {
 }
 
 /** 견적의뢰서 품목 1건 (dl_estmtRqdcItem, slide52 1.2). */
-export interface OvsEstmtRqdcItemRow {
+export interface MockOvsEstmtRqdcItemRow {
   /** 목록 key — `${invtNo}-${no}` (클라 생성). */
   id: string
   /** 번호 — 순번(화면 표시). */
@@ -639,7 +639,7 @@ export interface OvsEstmtRqdcItemRow {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 견적통보서목록 상단 계약정보 (dm_ctrtInfo, slide56 1.2). */
-export interface OvsEstmtNtdcCtrtInfo {
+export interface MockOvsEstmtNtdcCtrtInfo {
   /** 계약업체 (ctrtBzentyCd, 5) — 표시명. */
   ctrtBzentyCd: string
   /** 계약일자 (ctrtYmd, 8). */
@@ -655,7 +655,7 @@ export interface OvsEstmtNtdcCtrtInfo {
 }
 
 /** 견적통보서목록 1건 (dl_estmtNtdc, slide56 1.3). */
-export interface OvsEstmtNtdcItem {
+export interface MockOvsEstmtNtdcItem {
   /** 목록 key/상세 라우팅용 고유 식별자 — RQ No(clmSeq) 사용. */
   id: string
   /** RQ No (clmSeq, 22) — 카드 표기 'RQ No {clmSeq}'. */
@@ -674,20 +674,20 @@ export interface OvsEstmtNtdcItem {
   rcvrNm: string
 }
 
-export interface OvsEstmtNtdcListResult {
-  ctrtInfo: OvsEstmtNtdcCtrtInfo
-  list: OvsEstmtNtdcItem[]
+export interface MockOvsEstmtNtdcListResult {
+  ctrtInfo: MockOvsEstmtNtdcCtrtInfo
+  list: MockOvsEstmtNtdcItem[]
   total: number
 }
 
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-EX-02-M74 견적통보서상세 (slide58~63) — ovsEstmtNtdcDtl/OvsEstmtNtdcDtlPage
-//   탭: T73 상세정보(OvsEstmtNtdcDtl) · T74 물품목록(OvsEstmtNtdcDtl_CmdtyList).
+//   탭: T73 상세정보(MockOvsEstmtNtdcDtl) · T74 물품목록(OvsEstmtNtdcDtl_CmdtyList).
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 견적통보서상세 — 계약정보(dm_ctrtInfo, slide61 1.1 — M72 와 동일 구성) + 품목수(dm_itemCntInfo)
  *  + 요약 표시항목. */
-export interface OvsEstmtNtdcDtl {
+export interface MockOvsEstmtNtdcDtl {
   ctrtNo: string
   clmSeq: string
   clmYmd: string
@@ -722,7 +722,7 @@ export interface OvsEstmtNtdcDtl {
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 발주의뢰서목록 검색조건 (dm_searchInfo, slide67 1.1) — On-Load: 수신일 5년전~현재. */
-export interface OvsOrderRqdcListRequest {
+export interface MockOvsOrderRqdcListRequest {
   /** 계약번호 (ctrtNo, 35) — 계약번호조회(P79) 공통팝업. */
   ctrtNo?: string
   /** 수신일(FROM) (rcptnBgngYmd, 8). */
@@ -732,7 +732,7 @@ export interface OvsOrderRqdcListRequest {
 }
 
 /** 발주의뢰서목록 1건 (dl_orderRqdc, slide67 1.2). */
-export interface OvsOrderRqdcItem {
+export interface MockOvsOrderRqdcItem {
   /** 목록 key/상세 라우팅용 고유 식별자 — 발주번호(orderSeq) 사용. */
   id: string
   /** 발주번호 (orderSeq, 22). */
@@ -751,18 +751,18 @@ export interface OvsOrderRqdcItem {
   ntdcStts: string
 }
 
-export interface OvsOrderRqdcListResult {
-  list: OvsOrderRqdcItem[]
+export interface MockOvsOrderRqdcListResult {
+  list: MockOvsOrderRqdcItem[]
   total: number
 }
 
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-EX-02-M76 발주의뢰서상세 (slide68~73) — ovsOrderRqdcDtl/OvsOrderRqdcDtlPage
-//   탭: T75 상세정보(OvsOrderRqdcDtl) · T76 물품목록(OvsOrderRqdcDtl_CmdtyList).
+//   탭: T75 상세정보(MockOvsOrderRqdcDtl) · T76 물품목록(OvsOrderRqdcDtl_CmdtyList).
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 발주의뢰서상세 — 계약정보(dm_ctrtInfo, slide71 1.1 — 신용장번호 포함) + 요약 표시항목. */
-export interface OvsOrderRqdcDtl {
+export interface MockOvsOrderRqdcDtl {
   ctrtNo: string
   /** 발주번호 (orderSeq, 22). */
   orderSeq: string
@@ -788,7 +788,7 @@ export interface OvsOrderRqdcDtl {
 }
 
 /** 발주의뢰서 품목 1건 (dl_orderRqdcItem, slide71~72 1.2). */
-export interface OvsOrderRqdcItemRow {
+export interface MockOvsOrderRqdcItemRow {
   /** 목록 key — `${invtNo}-${no}` (클라 생성). */
   id: string
   /** 번호 — 순번. */
@@ -829,11 +829,11 @@ export interface OvsOrderRqdcItemRow {
 
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-EX-02-M77 발주통보서목록 (slide74~77) — ovsOrderNtdcList/OvsOrderNtdcListPage
-//   상단 계약정보(견적통보서와 동일 구성 — OvsEstmtNtdcCtrtInfo 재사용) + 목록.
+//   상단 계약정보(견적통보서와 동일 구성 — MockOvsEstmtNtdcCtrtInfo 재사용) + 목록.
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 발주통보서목록 1건 (slide76 1.3). */
-export interface OvsOrderNtdcItem {
+export interface MockOvsOrderNtdcItem {
   /** 목록 key/상세 라우팅용 고유 식별자 — RQ No(orderSeq) 사용. */
   id: string
   /** RQ No — 발주번호 (orderSeq, 22). */
@@ -854,20 +854,20 @@ export interface OvsOrderNtdcItem {
   rcvrNm: string
 }
 
-export interface OvsOrderNtdcListResult {
-  ctrtInfo: OvsEstmtNtdcCtrtInfo
-  list: OvsOrderNtdcItem[]
+export interface MockOvsOrderNtdcListResult {
+  ctrtInfo: MockOvsEstmtNtdcCtrtInfo
+  list: MockOvsOrderNtdcItem[]
   total: number
 }
 
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-EX-02-M78 발주통보서상세 (slide78~83) — ovsOrderNtdcDtl/OvsOrderNtdcDtlPage
-//   탭: T77 상세정보(OvsOrderNtdcDtl) · T78 물품목록(OvsOrderNtdcDtl_CmdtyList).
+//   탭: T77 상세정보(MockOvsOrderNtdcDtl) · T78 물품목록(OvsOrderNtdcDtl_CmdtyList).
 // ────────────────────────────────────────────────────────────────────────────
 
 /** 발주통보서상세 — 계약정보(dm_ctrtInfo, slide81 1.1) + 품목수(dm_itemCntInfo, slide82 1.3)
  *  + 요약 표시항목. */
-export interface OvsOrderNtdcDtl {
+export interface MockOvsOrderNtdcDtl {
   ctrtNo: string
   orderSeq: string
   orderYmd: string
@@ -900,7 +900,7 @@ export interface OvsOrderNtdcDtl {
 }
 
 /** 발주통보서 품목 1건 (dl_orderNtdcItem, slide81~82 1.2). */
-export interface OvsOrderNtdcItemRow {
+export interface MockOvsOrderNtdcItemRow {
   /** 목록 key — `${invtNo}-${no}` (클라 생성). */
   id: string
   /** 번호 — 순번. */
@@ -938,7 +938,7 @@ export interface OvsOrderNtdcItemRow {
 }
 
 /** 견적통보서 품목 1건 (dl_estmtNtdcItem, slide61~62 1.2). */
-export interface OvsEstmtNtdcItemRow {
+export interface MockOvsEstmtNtdcItemRow {
   /** 목록 key — `${invtNo}-${no}` (클라 생성). */
   id: string
   /** 번호 — 순번. */

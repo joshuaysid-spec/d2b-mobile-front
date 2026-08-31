@@ -9,7 +9,7 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OathBox } from '@/ui/biz/bd/OathBox'
-import type { BidPrgrsItem } from '@/types/mock/bd'
+import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 export interface BidPrtcpAplyRjctHandle {
   /** 부모 BottomSheet footer '제출하기'(apply 모드)가 호출 — 신청 처리 후 onSubmitted() */
@@ -18,7 +18,7 @@ export interface BidPrtcpAplyRjctHandle {
 
 interface BidPrtcpAplyRjctProps {
   /** 입찰참가신청서 화면에서 넘겨준 항목 — 공고 식별/표시값 시드. */
-  detail: BidPrgrsItem
+  detail: MockBidPrgrsItem
   /** 신청 완료 시 호출(부모가 BottomSheet 를 닫음) */
   onSubmitted: () => void
 }

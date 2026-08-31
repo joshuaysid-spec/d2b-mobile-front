@@ -5,11 +5,11 @@
 //   Figma 1:1: infolist(품목코드 우측 muted) + m_table(업종코드 / 업종명(파란 링크)).
 //   품목코드는 상위(등록대상품목선택/등록품목명세)에서 품목코드로 진입했을 때만 노출(slide167).
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { ItemInqDetail } from '@/types/mock/cm'
+import type { MockItemInqDetail } from '@/types/mock/cm'
 
 export interface ItemInqProps {
   /** 상위에서 선택한 품목 상세(품목코드 + 업종코드/업종명). */
-  detail: ItemInqDetail
+  detail: MockItemInqDetail
   /** 업종명(링크) 클릭 — 업종 상세 이동 스텁. */
   onBzstatClick?: (bzstatCd: string) => void
 }

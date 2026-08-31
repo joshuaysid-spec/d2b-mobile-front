@@ -16,7 +16,7 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { CabinetLink, type CabinetLinkKind } from '@/ui/biz/bd/bidPrtcpAperWrt/CabinetLink'
 import { formatFileSize } from '@/utils/format'
-import type { BidPrgrsItem } from '@/types/mock/bd'
+import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 입찰서 첨부파일 데이터 영역(dlt_tndrAtchFileList, 설계서 slide134). 항목명(영문) 그대로.
 interface TndrAtchFile {
@@ -53,7 +53,7 @@ const INITIAL_TECH_FILES: TndrAtchFile[] = [
   { id: 'tech1', adocNm: '기술평가서류', fileNm: '첨부파일명.hwp', fileSz: '786KB', atchDt: '2026-01-01' },
 ]
 
-export function TndrWrt_Stp5({ detail }: { detail: BidPrgrsItem }) {
+export function TndrWrt_Stp5({ detail }: { detail: MockBidPrgrsItem }) {
   const [files, setFiles] = useState<TndrAtchFile[]>(INITIAL_FILES)
   const [techFiles, setTechFiles] = useState<TndrAtchFile[]>(INITIAL_TECH_FILES)
   // 파일첨부 방식 선택 시트(P13) — null=닫힘, 값=열림 + 추가 대상 그룹.

@@ -4,10 +4,10 @@
 import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CtrtDtstGroup, CtrtDtstGroupItem } from '@/types/mock/ct'
+import type { MockCtrtDtstGroup, MockCtrtDtstGroupItem } from '@/types/mock/ct'
 
 // 총액제(T05) 품목 1건 → 표 행(slide117·120 공동계약업체~예산항목).
-function itemRows(it: CtrtDtstGroupItem): TableRow[] {
+function itemRows(it: MockCtrtDtstGroupItem): TableRow[] {
   return [
     { label: '공동계약업체', value: it.bzentyNm ?? '-' },
     { label: '조달요구번호', value: it.prcmRqtNo ?? '-' },
@@ -20,7 +20,7 @@ function itemRows(it: CtrtDtstGroupItem): TableRow[] {
 }
 
 // 예산구분 그룹 1개 — 그룹 라벨 + 품목 블록.
-function DtstGroup({ group }: { group: CtrtDtstGroup }) {
+function DtstGroup({ group }: { group: MockCtrtDtstGroup }) {
   return (
     <div className="flex flex-col gap-krds-5">
       <p className="text-krds-body-md font-bold text-krds-text-ink">예산구분 - {group.bgtCd}</p>

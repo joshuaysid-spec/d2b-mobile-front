@@ -14,7 +14,7 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsBidRsltDtl2 } from '@/ui/biz/bd/ovsBidRsltDtl/OvsBidRsltDtl2'
 import { OvsBidRsltDtl3 } from '@/ui/biz/bd/ovsBidRsltDtl/OvsBidRsltDtl3'
-import type { OvsBidRsltGeneral, OvsBidRsltSummary } from '@/types/mock/bd'
+import type { MockOvsBidRsltGeneral, MockOvsBidRsltSummary } from '@/types/mock/bd'
 
 // ── 탭 (설계서 slide397: 일반정보 M71 / 입찰결과 단가제 M72) ─────────────────
 const TABS: TabItem[] = [
@@ -23,7 +23,7 @@ const TABS: TabItem[] = [
 ]
 
 // 상단 요약 fallback (직접 URL 진입/새로고침 — navigate state 소실 시) — 개찰목록 국외 카드와 동일 값(설계서 slide402).
-const MOCK_SUMMARY: OvsBidRsltSummary = {
+const MOCK_SUMMARY: MockOvsBidRsltSummary = {
   taskSeNm: '국외',
   bidTypeNm: '단가제',
   bidMthdNm: '경쟁입찰',
@@ -37,10 +37,10 @@ const MOCK_SUMMARY: OvsBidRsltSummary = {
   bdopnDt: '2026-03-30',
 }
 // 총액제 fallback — 단가제와 동일하되 입찰유형만 총액제. (직접 진입 시 ?bidTypeNm=총액제 로 분기)
-const MOCK_SUMMARY_TOTAL: OvsBidRsltSummary = { ...MOCK_SUMMARY, bidTypeNm: '총액제' }
+const MOCK_SUMMARY_TOTAL: MockOvsBidRsltSummary = { ...MOCK_SUMMARY, bidTypeNm: '총액제' }
 
 // 일반정보 탭 데이터 — 설계서 slide403 일반 데이터 영역 값·형식 그대로.
-const MOCK_GENERAL: OvsBidRsltGeneral = {
+const MOCK_GENERAL: MockOvsBidRsltGeneral = {
   pbancNo: 'EFD0007-2',
   pbancSeNm: '정상공고',
   pbancDt: '2022-11-12',
@@ -65,7 +65,7 @@ const MOCK_GENERAL: OvsBidRsltGeneral = {
 
 // ── 일반정보 탭 (M71, slide403) — 일반정보 표 + 담당자 정보 표 ───────────────
 // bidTypeNm(입찰유형)은 상단 배지(단가제/총액제)와 동일 값을 따른다.
-function GeneralInfo({ detail, bidTypeNm }: { detail: OvsBidRsltGeneral; bidTypeNm: string }) {
+function GeneralInfo({ detail, bidTypeNm }: { detail: MockOvsBidRsltGeneral; bidTypeNm: string }) {
   const generalRows: TableRow[] = [
     { label: '공고번호', value: detail.pbancNo },
     { label: '공고구분', value: detail.pbancSeNm },
@@ -118,7 +118,7 @@ export function OvsBidRsltDtlPage() {
   //   단가제/총액제 분기 테스트: 직접 URL 진입 시 ?bidTypeNm=총액제 쿼리로 총액제 확인 가능.
   const [searchParams] = useSearchParams()
   const summary =
-    (useLocation().state as OvsBidRsltSummary | null) ??
+    (useLocation().state as MockOvsBidRsltSummary | null) ??
     (searchParams.get('bidTypeNm') === '총액제' ? MOCK_SUMMARY_TOTAL : MOCK_SUMMARY)
 
   // 요약 정보행 (설계서 slide402) — 입찰업체·구매요청번호·마감일시·개찰일자.

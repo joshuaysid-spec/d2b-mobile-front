@@ -4,10 +4,10 @@
 import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CtrtCnstpFlw } from '@/types/mock/ct'
+import type { MockCtrtCnstpFlw } from '@/types/mock/ct'
 
 // 하자담보 1건 → 표 행(slide41 목업 순서).
-function flwRows(f: CtrtCnstpFlw): TableRow[] {
+function flwRows(f: MockCtrtCnstpFlw): TableRow[] {
   return [
     { label: '공종명', value: f.cnstpNm },
     { label: '공종별 계약금액', value: `${f.cnstpCtrtAmt.toLocaleString()} 원`, type: 'number' },

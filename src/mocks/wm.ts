@@ -2,29 +2,29 @@
 // 설계서(05.대금청구및사후 v0.83) 항목설명 항목·형식·slide16/17/19 목업값을 반영(임의 더미 금지).
 // ⚠️ 폐쇄망 반입 후 실백엔드 연동 시 이 파일은 사용되지 않는다(서비스가 apiClient 분기).
 import type {
-  OvsCmdtyRcvCnfdocItem,
-  OvsElcrtTxivDtl,
-  OvsElcrtTxivItem,
-  OvsElcrtTxivItemRow,
-  OvsPymtPrgrsItem,
-  OvsRtnPymtDfryInfoItem,
-  OvsShpgItemDsctnItem,
-  CenterPrcmPymtClmDtl,
-  CstrnPymtClmDtl,
-  DpsmnItrpyAplyDsctnItem,
-  DpsmnItrpyApfrDtl,
-  EpfcClclnClmDtl,
-  GiveSttsItem,
-  PrpayAplyDsctnItem,
-  PrpayApfrDtl,
-  PxcndCstPymtClmDtl,
-  PymtClmAplyItem,
-  PymtClmListItem,
-  PymtClmPrgrsPrstItem,
-  PymtClmPrgrsSttItem,
-  RtnPymtDfryInfoItem,
-  SbsdPrcmPymtClmDtl,
-  WmAdocItem,
+  MockOvsCmdtyRcvCnfdocItem,
+  MockOvsElcrtTxivDtl,
+  MockOvsElcrtTxivItem,
+  MockOvsElcrtTxivItemRow,
+  MockOvsPymtPrgrsItem,
+  MockOvsRtnPymtDfryInfoItem,
+  MockOvsShpgItemDsctnItem,
+  MockCenterPrcmPymtClmDtl,
+  MockCstrnPymtClmDtl,
+  MockDpsmnItrpyAplyDsctnItem,
+  MockDpsmnItrpyApfrDtl,
+  MockEpfcClclnClmDtl,
+  MockGiveSttsItem,
+  MockPrpayAplyDsctnItem,
+  MockPrpayApfrDtl,
+  MockPxcndCstPymtClmDtl,
+  MockPymtClmAplyItem,
+  MockPymtClmListItem,
+  MockPymtClmPrgrsPrstItem,
+  MockPymtClmPrgrsSttItem,
+  MockRtnPymtDfryInfoItem,
+  MockSbsdPrcmPymtClmDtl,
+  MockWmAdocItem,
 } from '@/types/mock/wm'
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -32,7 +32,7 @@ import type {
 // 계약일자 2026-02-10 · 발주기관 제8385부대 · 계약금액 11,616,000 · 뱃지 물품/수의계약).
 // 업무구분 × 입찰구분(총액제/단가제) × 진행중 청구 유무 대표 조합.
 // ────────────────────────────────────────────────────────────────────────────
-const PYMT_CLM_INTG_LIST: PymtClmListItem[] = [
+const PYMT_CLM_INTG_LIST: MockPymtClmListItem[] = [
   {
     id: '20250000001-01',
     no: 1,
@@ -104,7 +104,7 @@ const PYMT_CLM_INTG_LIST: PymtClmListItem[] = [
 // 작성일자 2025-10-15 · 청구일자 2025-11-20 · 진행중/진행완료).
 // 청구서 종류(선금/착중도금/대금청구/사후정산) 대표 조합 — 상세 분기(M02/M03/M05~/M13) 테스트용.
 // ────────────────────────────────────────────────────────────────────────────
-const PYMT_CLM_APLY_LIST: PymtClmAplyItem[] = [
+const PYMT_CLM_APLY_LIST: MockPymtClmAplyItem[] = [
   {
     id: '12315-42',
     no: 1,
@@ -216,7 +216,7 @@ const PYMT_CLM_APLY_LIST: PymtClmAplyItem[] = [
 // MUI-WM-01-M02 선금신청서상세 — slide22 목업(작성자 홍길동 대리 · 010-1234-5678 ·
 // 계약 2025-11-23/20257135021/배추김치/10,000,000원 · 신청 2026-01-30/1,000,000원/일백만 원정).
 // ────────────────────────────────────────────────────────────────────────────
-const PRPAY_APFR_DTL: PrpayApfrDtl = {
+const PRPAY_APFR_DTL: MockPrpayApfrDtl = {
   taskSeCd: '물품',
   ctrtMthdCd: '수의계약',
   ctrtNo: '20250000001',
@@ -240,7 +240,7 @@ const PRPAY_APFR_DTL: PrpayApfrDtl = {
 
 // MUI-WM-01-T02 선금 세부신청내역 — slide24~25 구분 목록(재료비 수입/국내/간접 · 노무비 직접/간접 ·
 // 경비 직접/간접 · 일반관리비 · 기타 · 합계).
-const PRPAY_APLY_DSCTNS: PrpayAplyDsctnItem[] = [
+const PRPAY_APLY_DSCTNS: MockPrpayAplyDsctnItem[] = [
   '재료비 - 수입 재료비',
   '재료비 - 국내 재료비',
   '재료비 - 간접 재료비',
@@ -264,7 +264,7 @@ const PRPAY_APLY_DSCTNS: PrpayAplyDsctnItem[] = [
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-WM-01-M03 착·중도금신청서상세 — slide29 목업(선금과 동형 + 품명/납기(최종)/신청구분 착수금).
 // ────────────────────────────────────────────────────────────────────────────
-const DPSMN_ITRPY_APFR_DTL: DpsmnItrpyApfrDtl = {
+const DPSMN_ITRPY_APFR_DTL: MockDpsmnItrpyApfrDtl = {
   taskSeCd: '물품',
   ctrtMthdCd: '수의계약',
   ctrtNo: '20250000004',
@@ -288,7 +288,7 @@ const DPSMN_ITRPY_APFR_DTL: DpsmnItrpyApfrDtl = {
 }
 
 // MUI-WM-01-T04 착·중도금 세부신청내역 — slide31~33(신청금액·승인된 전 차수 수령금액 합계).
-const DPSMN_ITRPY_APLY_DSCTNS: DpsmnItrpyAplyDsctnItem[] = [
+const DPSMN_ITRPY_APLY_DSCTNS: MockDpsmnItrpyAplyDsctnItem[] = [
   '재료비 - 수입 재료비',
   '재료비 - 국내 재료비',
   '재료비 - 간접 재료비',
@@ -309,7 +309,7 @@ const DPSMN_ITRPY_APLY_DSCTNS: DpsmnItrpyAplyDsctnItem[] = [
 }))
 
 // MUI-WM-01-T23 지급상태 — slide36 목업(2025 / 20250000 / 01 / 10,000,000원 / 진행중).
-const GIVE_STTS_LIST: GiveSttsItem[] = [
+const GIVE_STTS_LIST: MockGiveSttsItem[] = [
   {
     id: '20250000001-01',
     rqstYr: '2025',
@@ -330,7 +330,7 @@ const GIVE_STTS_LIST: GiveSttsItem[] = [
 
 // MUI-WM-01-T24 진행상태 (slide80~81) — 부대조달 대금청구 진행상태(UA34) 처리 이력.
 // 최신 처리건이 위로 오도록 역순.
-const PYMT_CLM_PRGRS_STT_LIST: PymtClmPrgrsSttItem[] = [
+const PYMT_CLM_PRGRS_STT_LIST: MockPymtClmPrgrsSttItem[] = [
   {
     no: '3',
     dlvdocPrgrsSt: '대금확정',
@@ -358,7 +358,7 @@ const PYMT_CLM_PRGRS_STT_LIST: PymtClmPrgrsSttItem[] = [
 // MUI-WM-01-M05 대금청구 상세(중앙조달) — slide38~42 목업(청구번호 00000000 · 배추김치 ·
 // 대금신청대상 통지 20257135021 · 공급자 A 업체/홍길동 · 세금계산서 1234-5678-9012).
 // ────────────────────────────────────────────────────────────────────────────
-const CENTER_PRCM_PYMT_CLM_DTL: CenterPrcmPymtClmDtl = {
+const CENTER_PRCM_PYMT_CLM_DTL: MockCenterPrcmPymtClmDtl = {
   taskSeCd: '물품',
   ctrtMthdCd: '수의계약',
   ctrtNo: '20250000001',
@@ -418,7 +418,7 @@ const CENTER_PRCM_PYMT_CLM_DTL: CenterPrcmPymtClmDtl = {
 }
 
 // 첨부서류 공통 목업 — slide51 목업(물품제조구매계약서/계약명세서, 파일크기 표기).
-const WM_ADOCS: WmAdocItem[] = [
+const WM_ADOCS: MockWmAdocItem[] = [
   { id: '1', docNm: '물품제조구매계약서', fileNm: '첨부파일명.hwp', fileSize: '786KB' },
   { id: '2', docNm: '계약명세서', fileNm: '첨부파일명이너무길면어떻게노출.hwp', fileSize: '-' },
 ]
@@ -426,7 +426,7 @@ const WM_ADOCS: WmAdocItem[] = [
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-WM-01-M06 대금청구상세(부대조달) — slide47~51 목업.
 // ────────────────────────────────────────────────────────────────────────────
-const SBSD_PRCM_PYMT_CLM_DTL: SbsdPrcmPymtClmDtl = {
+const SBSD_PRCM_PYMT_CLM_DTL: MockSbsdPrcmPymtClmDtl = {
   taskSeCd: '물품',
   ctrtMthdCd: '수의계약',
   ctrtNo: '20250000001',
@@ -474,7 +474,7 @@ const SBSD_PRCM_PYMT_CLM_DTL: SbsdPrcmPymtClmDtl = {
 // MUI-WM-01-M07 대금청구상세(공사) — slide56~59 목업(공사기간 2026-01-30~2026-12-30 ·
 // 대가지급업체 농협 1100-12345-02).
 // ────────────────────────────────────────────────────────────────────────────
-const CSTRN_PYMT_CLM_DTL: CstrnPymtClmDtl = {
+const CSTRN_PYMT_CLM_DTL: MockCstrnPymtClmDtl = {
   taskSeCd: '공사',
   ctrtMthdCd: '제한경쟁',
   ctrtNo: '20250000003',
@@ -508,7 +508,7 @@ const CSTRN_PYMT_CLM_DTL: CstrnPymtClmDtl = {
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-WM-01-M08 대금청구상세(기성대가) — slide62~67 목업(총기성율/총기성금/선금·금회정산액).
 // ────────────────────────────────────────────────────────────────────────────
-const PXCND_CST_PYMT_CLM_DTL: PxcndCstPymtClmDtl = {
+const PXCND_CST_PYMT_CLM_DTL: MockPxcndCstPymtClmDtl = {
   taskSeCd: '공사',
   ctrtMthdCd: '제한경쟁',
   ctrtNo: '20250000003',
@@ -558,7 +558,7 @@ const PXCND_CST_PYMT_CLM_DTL: PxcndCstPymtClmDtl = {
 // MUI-WM-01-M13 사후정산청구상세 — slide73~74 목업(배추김치 · 납기 2026-01-01~2026-12-31 ·
 // 일금 10,000,000원/일천만 원정 · 신청내역 구분 목록은 선금(T02)과 동형).
 // ────────────────────────────────────────────────────────────────────────────
-const EPFC_CLCLN_CLM_DTL: EpfcClclnClmDtl = {
+const EPFC_CLCLN_CLM_DTL: MockEpfcClclnClmDtl = {
   taskSeCd: '물품',
   ctrtMthdCd: '수의계약',
   ctrtNo: '20250000001',
@@ -619,7 +619,7 @@ const EPFC_CLCLN_CLM_DTL: EpfcClclnClmDtl = {
 // MUI-WM-01-M11 대금청구진행현황 — slide81 목업(신청번호 1234-5678 / 계약번호 2025000000-01 ·
 // 계약금액/수령액/청구금액 11,616,000원 · 대금상태 표시레이블).
 // ────────────────────────────────────────────────────────────────────────────
-const PYMT_CLM_PRGRS_PRST_LIST: PymtClmPrgrsPrstItem[] = [
+const PYMT_CLM_PRGRS_PRST_LIST: MockPymtClmPrgrsPrstItem[] = [
   {
     id: '12345678-01',
     no: 1,
@@ -670,7 +670,7 @@ const PYMT_CLM_PRGRS_PRST_LIST: PymtClmPrgrsPrstItem[] = [
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-WM-01-M10 대금지불정보(반납) — slide82 목업(계약금액/수령금액/반납금액 11,616,000원).
 // ────────────────────────────────────────────────────────────────────────────
-const RTN_PYMT_DFRY_INFO_LIST: RtnPymtDfryInfoItem[] = [
+const RTN_PYMT_DFRY_INFO_LIST: MockRtnPymtDfryInfoItem[] = [
   {
     id: '12345678-01',
     no: 1,
@@ -703,7 +703,7 @@ const RTN_PYMT_DFRY_INFO_LIST: RtnPymtDfryInfoItem[] = [
 // MUI-WM-01-M71 물품수령확인서목록 — slide89 목업(L/C·B/L 2025000000-01 · 계약 품목수 1 ·
 // 계약금액/송장금액/수령금액 1,100.00 · INVOICE 123456).
 // ────────────────────────────────────────────────────────────────────────────
-const OVS_CMDTY_RCV_CNFDOC_LIST: OvsCmdtyRcvCnfdocItem[] = [
+const OVS_CMDTY_RCV_CNFDOC_LIST: MockOvsCmdtyRcvCnfdocItem[] = [
   {
     id: '2025000000-01-123456',
     invcNo: 'INVOICE 123456',
@@ -752,7 +752,7 @@ const OVS_CMDTY_RCV_CNFDOC_LIST: OvsCmdtyRcvCnfdocItem[] = [
 // MUI-WM-01-P73 전자계산서목록 — slide91 목업(계산서 발행번호 1234567890 · 발행일자
 // 2025-11-20 · 구분 일반/수정 · 진행상태 국세청승인/작성/저장 · 총 3건).
 // ────────────────────────────────────────────────────────────────────────────
-const OVS_ELCRT_TXIV_LIST: OvsElcrtTxivItem[] = [
+const OVS_ELCRT_TXIV_LIST: MockOvsElcrtTxivItem[] = [
   {
     id: '1234567890',
     billSe: '일반',
@@ -794,7 +794,7 @@ const OVS_ELCRT_TXIV_LIST: OvsElcrtTxivItem[] = [
 // 일반정보 계약번호 2025 0000 00-01/책번호 000/일련번호 0000 0000 000/발행번호 1 ·
 // 품목 배추김치 2025-11-23 계산서번호 20257135021).
 // ────────────────────────────────────────────────────────────────────────────
-const OVS_ELCRT_TXIV_DTL: OvsElcrtTxivDtl = {
+const OVS_ELCRT_TXIV_DTL: MockOvsElcrtTxivDtl = {
   ...OVS_ELCRT_TXIV_LIST[0],
   bookNo: '000',
   regSn: '0000 0000 000',
@@ -820,7 +820,7 @@ const OVS_ELCRT_TXIV_DTL: OvsElcrtTxivDtl = {
   },
 }
 
-const OVS_ELCRT_TXIV_ITEMS: OvsElcrtTxivItemRow[] = [
+const OVS_ELCRT_TXIV_ITEMS: MockOvsElcrtTxivItemRow[] = [
   {
     id: '20257135021-1',
     wrtYmd: '2025-11-23',
@@ -863,7 +863,7 @@ const OVS_ELCRT_TXIV_ITEMS: OvsElcrtTxivItemRow[] = [
 // MUI-WM-01-M75 대금지불정보 — slide99 목업(B/L 2025000000-01 · 계약번호 KD0000 0000 00 ·
 // L/C XX은행 · 심사 2026-01-20 · 이체/지불 2026-03-10 · INVOICE 123456 · 지불/이체완료).
 // ────────────────────────────────────────────────────────────────────────────
-const OVS_RTN_PYMT_DFRY_INFO_LIST: OvsRtnPymtDfryInfoItem[] = [
+const OVS_RTN_PYMT_DFRY_INFO_LIST: MockOvsRtnPymtDfryInfoItem[] = [
   {
     id: '2025000000-01-123456',
     dfryYmd: '2026-03-10',
@@ -915,13 +915,13 @@ const OVS_RTN_PYMT_DFRY_INFO_LIST: OvsRtnPymtDfryInfoItem[] = [
 ]
 
 // MUI-WM-01-M77 대금지급현황 — 카드/항목이 M75와 동일(slide103). 계약번호로 조회된 건만 표시.
-const OVS_PYMT_PRGRS_LIST: OvsPymtPrgrsItem[] = OVS_RTN_PYMT_DFRY_INFO_LIST
+const OVS_PYMT_PRGRS_LIST: MockOvsPymtPrgrsItem[] = OVS_RTN_PYMT_DFRY_INFO_LIST
 
 // ────────────────────────────────────────────────────────────────────────────
 // MUI-WM-01-P78 선적품목내역 — slide104 목업(재고번호 1234567890 · 부품번호 259 ·
 // 선적수량 12 · 선적단가/선적금액 USD · 총 3건).
 // ────────────────────────────────────────────────────────────────────────────
-const OVS_SHPG_ITEM_DSCTNS: OvsShpgItemDsctnItem[] = [
+const OVS_SHPG_ITEM_DSCTNS: MockOvsShpgItemDsctnItem[] = [
   {
     id: '2025000000-01-1234567890',
     ctrtNo: 'KD2025 0001 00',

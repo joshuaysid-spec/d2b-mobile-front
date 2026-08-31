@@ -11,7 +11,7 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
-import type { BidPrgrsItem } from '@/types/mock/bd'
+import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 약관 동의 항목 — 설계서 slide127 "약관 동의 항목 필요에 따라 노출". 물품/부서부호(E·P) 등 조건에 따라 입찰보증금 지급확약서 노출.
 const AGREEMENT_ID = 'depsPayCert'
@@ -33,7 +33,7 @@ const AGREE_OPTIONS = [
   { value: '동의함', label: '동의함' },
 ]
 
-export function TndrWrt_Stp7({ detail }: { detail: BidPrgrsItem }) {
+export function TndrWrt_Stp7({ detail }: { detail: MockBidPrgrsItem }) {
   void detail // 공고 식별값 표시에 사용 가능(현재 미사용)
   const [checked, setChecked] = useState<string[]>([]) // 동의 완료된 동의서 id
   const [sheetOpen, setSheetOpen] = useState(false) // 동의서 상세 바텀시트

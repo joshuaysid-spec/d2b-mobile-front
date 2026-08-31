@@ -12,7 +12,7 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
-import { STT_TYPES, type SttInfoItem, type SttType } from '@/types/mock/cm'
+import { STT_TYPES, type MockSttInfoItem, type MockSttType } from '@/types/mock/cm'
 
 // 법령구분 탭 — '전체'(필터 전용) + 11종(STT_TYPES). 싱글 셀렉트(slide344).
 const ALL = '전체'
@@ -23,7 +23,7 @@ const STT_TYPE_TABS: TabItem[] = [
 
 // ── 목업 (설계서 slide344 예시 + 데이터영역 dl_resultList 항목명/형식) ────────────
 // 법령구분별로 분포하도록 구성. API 연동 시 이 상수와 클라 필터/페이징을 조회로 교체.
-const dl_resultList: SttInfoItem[] = [
+const dl_resultList: MockSttInfoItem[] = [
   {
     id: '1',
     sttType: '법령',
@@ -82,18 +82,18 @@ const dl_resultList: SttInfoItem[] = [
 
 // ⚠️ 임시 목업 — API 연동 시 서버 조회(검색조건/page/pageSize)로 교체(목록 컨벤션).
 const TOTAL = 42
-const MOCK_LIST: SttInfoItem[] = Array.from({ length: TOTAL }, (_, i) => ({
+const MOCK_LIST: MockSttInfoItem[] = Array.from({ length: TOTAL }, (_, i) => ({
   ...dl_resultList[i % dl_resultList.length],
   id: String(i + 1),
 }))
 
 export function SttInfoListPage() {
-  const [sttType, setSttType] = useState<SttType | typeof ALL>(ALL) // 법령구분 탭(전체 기본)
+  const [sttType, setSttType] = useState<MockSttType | typeof ALL>(ALL) // 법령구분 탭(전체 기본)
   const [keyword, setKeyword] = useState('') // 법령명 입력 중
   const [applied, setApplied] = useState('') // 검색 실행 시 확정
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
-  const [items, setItems] = useState<SttInfoItem[]>(MOCK_LIST)
+  const [items, setItems] = useState<MockSttInfoItem[]>(MOCK_LIST)
 
   // 법령구분 + 법령명(Like) 필터 — 검색 실행(applied)/탭 기준.
   const filtered = useMemo(() => {
@@ -110,7 +110,7 @@ export function SttInfoListPage() {
   const visible = useMemo(() => filtered.slice(0, loaded), [filtered, loaded])
 
   const handleTabChange = (v: string) => {
-    setSttType(v as SttType | typeof ALL)
+    setSttType(v as MockSttType | typeof ALL)
     setPage(1)
     // 추후 API: 법령구분 변경 시 목록 재조회
   }
@@ -124,11 +124,11 @@ export function SttInfoListPage() {
     setPage(1)
   }
   // 항목 클릭 — 외부 브라우저로 법령 원문(sttUrl) 이동(추후 하이브리드 외부 브라우저 브릿지).
-  const handleOpen = (it: SttInfoItem) => {
+  const handleOpen = (it: MockSttInfoItem) => {
     window.open(it.sttUrl, '_blank', 'noopener,noreferrer')
   }
   // 즐겨찾기 토글 — 별 하이라이트 on/off(로컬). 해제해도 페이지 유지 중엔 목록 잔류(관심법령 선례).
-  const handleToggleStar = (it: SttInfoItem) => {
+  const handleToggleStar = (it: MockSttInfoItem) => {
     setItems((prev) => prev.map((x) => (x.id === it.id ? { ...x, sttItrst: !x.sttItrst } : x)))
     // 추후 API: scwin.grd_sttItrst — 즐겨찾기 등록/해제
   }

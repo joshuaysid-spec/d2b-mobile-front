@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { STORAGE_KEYS } from '@/constants/storage'
 import { USE_MOCK } from '@/lib/env'
-import type { User } from '@/types/mock/domain'
+import type { MockUser } from '@/types/mock/domain'
 
 // frontend-architecture.md §8.1 — 클라이언트 전역 상태(통합 store).
 // 인증(토큰/로그인) · 사용자 프로필 · 알림 배지를 한 store 로 관리한다.
@@ -16,8 +16,8 @@ interface AuthState {
   logout: () => void
 
   // --- 사용자 프로필 ---
-  user: User | null
-  setUser: (user: User | null) => void
+  user: MockUser | null
+  setUser: (user: MockUser | null) => void
 
   // --- 알림 배지 ---
   /** 새(미읽음) 알림 존재 여부 → 알림 탭 빨강 dot. */

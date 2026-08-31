@@ -7,11 +7,11 @@
 // ※ 2026-07-01 화면 수정 반영: 주민등록번호 항목 삭제.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsTndrDtlItem } from '@/types/mock/bd'
+import type { MockOvsTndrDtlItem } from '@/types/mock/bd'
 
 export interface OvsTechEvlRsltProps {
   /** 상세에서 넘어온 항목 — 공고 식별/표시값 시드. */
-  detail: OvsTndrDtlItem
+  detail: MockOvsTndrDtlItem
 }
 
 // 신청업체 (dm_sbtInfo, 설계서 slide393) — 로그인 업체 정보라 목업.

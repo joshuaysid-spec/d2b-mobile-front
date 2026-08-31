@@ -8,16 +8,16 @@ import { Badge } from '@/ui/common/base/Badge'
 import { BoardDetailView } from '@/ui/biz/cm/board/BoardDetailView'
 import type { FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { SYSIMPV_MOCK, toSysImpvDetail } from '@/ui/biz/cm/rpstrList/rpstrMock'
-import type { SysImpvListItem } from '@/types/mock/cm'
+import type { MockSysImpvListItem } from '@/types/mock/cm'
 
 export function SysImpv_rpstrDtl() {
   const navigate = useNavigate()
-  const item = useLocation().state as SysImpvListItem | null
+  const item = useLocation().state as MockSysImpvListItem | null
   if (!item) return <Navigate to={ROUTES.SUPPORT_SYS_IMPV} replace />
   const detail = toSysImpvDetail(item)
 
   const idx = SYSIMPV_MOCK.findIndex((x) => x.contsNo === item.contsNo)
-  const goDetail = (target: SysImpvListItem) => navigate('.', { state: target })
+  const goDetail = (target: MockSysImpvListItem) => navigate('.', { state: target })
   const prevItem = idx > 0 ? SYSIMPV_MOCK[idx - 1] : null
   const nextItem = idx >= 0 && idx < SYSIMPV_MOCK.length - 1 ? SYSIMPV_MOCK[idx + 1] : null
 

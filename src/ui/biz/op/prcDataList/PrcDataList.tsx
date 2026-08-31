@@ -16,7 +16,7 @@
 import { memo, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 
 import { opQueries } from '@/queries/bds/op/opQueries'
-import type { PrcDataItem, PrcDataSearchRequest } from '@/types/mock/op'
+import type { MockPrcDataItem, MockPrcDataSearchRequest } from '@/types/mock/op'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
@@ -55,7 +55,7 @@ interface PrcDataRow {
 }
 
 // 검색결과 1건 → 구분/세부정보 행 21개(설계서 slide74 항목설명 순서 — 순번 제외).
-function buildRows(item: PrcDataItem): PrcDataRow[] {
+function buildRows(item: MockPrcDataItem): PrcDataRow[] {
   return [
     { label: '획득구분', value: item.acqstnTypeCd },
     { label: '획득구분명', value: item.acqstnTypeNm },
@@ -96,7 +96,7 @@ const CELL_LABEL =
 
 // 검색결과 1건 블록 — 순번 열(항목 전체 세로 스팬) + 구분/세부정보 행들 + 내역 펼쳐보기/접기.
 // 항목 클릭 없음(slide72) — 토글 버튼 외 인터랙션 없음.
-const PrcDataItemBlock = memo(function PrcDataItemBlock({ item }: { item: PrcDataItem }) {
+const PrcDataItemBlock = memo(function PrcDataItemBlock({ item }: { item: MockPrcDataItem }) {
   const [expanded, setExpanded] = useState(false)
   const allRows = useMemo(() => buildRows(item), [item])
   const rows = expanded ? allRows : allRows.slice(0, DEFAULT_VISIBLE)
@@ -165,7 +165,7 @@ export function PrcDataList({ invtNo }: PrcDataListProps) {
   const [itemNm, setItemNm] = useState('')
 
   // 검색 확정값 — null = 검색 전. 진입 정보(invtNo)가 있으면 즉시 조회(slide72 "진입 이전 정보가 있는 경우").
-  const [applied, setApplied] = useState<PrcDataSearchRequest | null>(() =>
+  const [applied, setApplied] = useState<MockPrcDataSearchRequest | null>(() =>
     init.fsc || init.niin
       ? { fsc: init.fsc || undefined, niin: init.niin || undefined }
       : null,

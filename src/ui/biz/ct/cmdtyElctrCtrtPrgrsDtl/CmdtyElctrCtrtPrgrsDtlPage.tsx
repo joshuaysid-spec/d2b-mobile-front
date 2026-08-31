@@ -35,7 +35,7 @@ import { StmtxCnfrmFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/StmtxCnf
 import { CmdtyCtrtDtstFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyCtrtDtstFullPopup'
 import { CmdtyLastCtrdocDtstFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyLastCtrdocDtstFullPopup'
 import { CtrtPrgrsSttsInqFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CtrtPrgrsSttsInqFullPopup'
-import type { CtrtIntgListItem } from '@/types/mock/ct'
+import type { MockCtrtIntgListItem } from '@/types/mock/ct'
 
 // ── 탭 (Figma 154930 tab bar — 화면목록 T03=특수조건은 레이아웃과 불일치, 레이아웃 기준) ──
 const TABS: TabItem[] = [
@@ -91,7 +91,7 @@ const BTN_MTRX_DEFAULT: { rprs: MtrxBtnKey[]; cnst: MtrxBtnKey[] } = {
 }
 
 export function CmdtyElctrCtrtPrgrsDtlPage() {
-  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const stateItem = useLocation().state as MockCtrtIntgListItem | null
   const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')

@@ -24,7 +24,7 @@ import {
   abndAplySchema,
   type AbndAplyForm,
 } from '@/ui/biz/bd/bidRsltDtl/ImpltElgbSrngAbndAply.schema'
-import type { BdopnItem } from '@/types/mock/bd'
+import type { MockBdopnItem } from '@/types/mock/bd'
 
 const MAX_RSN = 500
 
@@ -49,7 +49,7 @@ export interface ImpltElgbSrngAbndAplyProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   /** 상단 요약 표시용 개찰목록 항목(입찰결과상세에서 전달). 없으면 요약 생략. */
-  detail?: BdopnItem
+  detail?: MockBdopnItem
   /** 제출(심사포기) 콜백(추후 API). 제출 후 자동 닫힘. */
   onSubmitted?: () => void
   /** true = 이행/적격심사포기신청조회(MUI-BD-10-P03) — 제출한 내용을 읽기전용 표시(footer=닫기). */

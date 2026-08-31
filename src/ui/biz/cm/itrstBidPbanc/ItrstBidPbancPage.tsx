@@ -23,7 +23,7 @@ import type {
   SearchFilterValue,
   DateRangePresetDef,
 } from '@/types/search-filter'
-import type { ItrstBidPbancItem } from '@/types/mock/cm'
+import type { MockItrstBidPbancItem } from '@/types/mock/cm'
 import { TASK_SE_CD } from '@/constants/codes'
 import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import { cmQueries } from '@/queries/cbs/cm/cmQueries'
@@ -63,7 +63,7 @@ const SEARCH_DEFAULT: SearchFilterValue = {
 
 // ── 목업 (설계서 slide81 예시 + 항목명/형식) ──────────────────────────────────
 const TOTAL = 258 // 총 건수(목업 — slide81 더보기 10/258)
-const dl_itrstBidPbancList: ItrstBidPbancItem[] = [
+const dl_itrstBidPbancList: MockItrstBidPbancItem[] = [
   {
     id: '1',
     itrst: true,
@@ -124,7 +124,7 @@ const dl_itrstBidPbancList: ItrstBidPbancItem[] = [
 ]
 
 // ⚠️ 임시 목업 — API 연동 시 이 상수와 아래 페이징 로직을 통째로 교체(cmService.selectItrstBidPbancList).
-const MOCK_LIST: ItrstBidPbancItem[] = Array.from({ length: TOTAL }, (_, i) => {
+const MOCK_LIST: MockItrstBidPbancItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dl_itrstBidPbancList[i % dl_itrstBidPbancList.length]
   return { ...base, id: String(i + 1) }
 })
@@ -140,7 +140,7 @@ export function ItrstBidPbancPage() {
   const [page, setPage] = useState(1)
 
   // 관심 상태(별 on/off) — 페이지 유지 중엔 해제해도 목록에 남고 별만 off(설계서 slide81).
-  const [items, setItems] = useState<ItrstBidPbancItem[]>(MOCK_LIST)
+  const [items, setItems] = useState<MockItrstBidPbancItem[]>(MOCK_LIST)
   // 해제 확인 대상 id(모달 open) · 토스트 · '다음부터 묻지 않기' 체크값.
   const [confirmId, setConfirmId] = useState<string | null>(null)
   const [dontAskChecked, setDontAskChecked] = useState(false)
@@ -167,7 +167,7 @@ export function ItrstBidPbancPage() {
     setPage(next)
     console.log('[ItrstBidPbanc] loadMore → page', next)
   }
-  const handleOpen = (item: ItrstBidPbancItem) => {
+  const handleOpen = (item: MockItrstBidPbancItem) => {
     // 클릭한 항목을 state 로 전달 — 업무구분코드(GTSA0001)로 국내(M02)/국외(M71) 상세 분기(통합목록과 동일 규칙).
     const to =
       item.taskSeCd === TASK_SE_CD.OVERSEAS ? '/bd/ovsBidPbancDtl' : '/bd/bidPbancDtl'
@@ -190,7 +190,7 @@ export function ItrstBidPbancPage() {
     // ⚠️ 식별자: 목업은 id — 실응답 확정 시 공고번호(pbancNoCycl 분해 등)로 교체 확인.
     deleteItrst.mutate(id, { onError: () => setItrst(id, true) }) // no.758 — 실패 시 별 롤백
   }
-  const handleToggleStar = (item: ItrstBidPbancItem) => {
+  const handleToggleStar = (item: MockItrstBidPbancItem) => {
     if (!item.itrst) {
       setItrst(item.id, true) // off→on: 재등록(확인 없이)
       // 업무구분코드로 국내/국외 등록 API 분기(설계서 GTSA0001 — 코드값 잠정, constants/codes.ts).

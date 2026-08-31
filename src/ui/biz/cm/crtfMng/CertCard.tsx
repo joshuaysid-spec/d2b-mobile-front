@@ -3,10 +3,10 @@
 import type { ReactNode } from 'react'
 
 import { cn } from '@/utils/cn'
-import type { CertItem } from '@/types/mock/cm'
+import type { MockCertItem } from '@/types/mock/cm'
 
 export interface CertCardProps {
-  cert: CertItem
+  cert: MockCertItem
   /** 카드 하단 슬롯(예: 인증서 삭제 버튼). */
   footer?: ReactNode
   /** 지정 시 카드 전체 클릭(선택) — button 으로 렌더. */

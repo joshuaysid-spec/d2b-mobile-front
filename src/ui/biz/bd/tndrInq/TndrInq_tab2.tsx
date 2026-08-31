@@ -8,14 +8,14 @@ import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { BidItemListRow, BidPrgrsItem } from '@/types/mock/bd'
+import type { MockBidItemListRow, MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 서버 총건수(품목내역 목록 조회 결과 total) — 상단 총건수·더보기 분모(설계서 slide173 '더보기 (10/100)').
 const TOTAL_COUNT = 100
 // 더보기 한 번에 추가로 노출할 건수(페이지 크기).
 const PAGE_SIZE = 5
 
-function itemRows(item: BidItemListRow): TableRow[] {
+function itemRows(item: MockBidItemListRow): TableRow[] {
   return [
     { label: '항목번호', value: item.clsfNo },
     { label: '재고번호', value: item.fscCdNtnItemIdntfNo },
@@ -28,7 +28,7 @@ function itemRows(item: BidItemListRow): TableRow[] {
   ]
 }
 
-export function TndrInq_tab2({ detail }: { detail: BidPrgrsItem }) {
+export function TndrInq_tab2({ detail }: { detail: MockBidPrgrsItem }) {
   const { data } = bdQueries.useSelectTndrItemList(detail.pbancNo)
   const items = data ?? []
   // 더보기 페이징(클라이언트) — 목업 소진 시 버튼 숨김. 서버 페이징 전환 시 page 파라미터로 이행.

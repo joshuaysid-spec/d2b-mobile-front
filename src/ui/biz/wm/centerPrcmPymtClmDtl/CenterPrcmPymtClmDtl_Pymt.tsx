@@ -3,10 +3,10 @@
 // 세액여부(vatSecd) 없음(B)이면 세액 항목을 '-' 로 표기(slide41 4-1).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CenterPrcmPymtClmDtl } from '@/types/mock/wm'
+import type { MockCenterPrcmPymtClmDtl } from '@/types/mock/wm'
 
 export interface CenterPrcmPymtClmDtl_PymtProps {
-  detail: CenterPrcmPymtClmDtl
+  detail: MockCenterPrcmPymtClmDtl
 }
 
 export function CenterPrcmPymtClmDtl_Pymt({ detail }: CenterPrcmPymtClmDtl_PymtProps) {

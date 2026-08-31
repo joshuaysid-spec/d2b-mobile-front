@@ -4,21 +4,21 @@
 // 표/필드는 데이터 구동. 제출유형에 따라 하단 표시 정보 변경(신청도 동일) — API 연동 시 반영.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { PrfmncPrdocAplcntInfo, PrfmncPrdocCstrnDsctnInfoH } from '@/types/mock/cm'
+import type { MockPrfmncPrdocAplcntInfo, MockPrfmncPrdocCstrnDsctnInfoH } from '@/types/mock/cm'
 
 const twon = (v?: number) => (v == null ? '-' : `${v.toLocaleString()} 천원`)
 const SBMSN_TYPE =
   '9. 건설공사기성실적증명(신청)서_세부공종(전문) [건설산업기본법 시행규칙/국토해양부]'
 
 // ── 목업 (설계서 표시값 그대로 — API 연동 시 교체) ───────────────────────────
-const APLCNT: PrfmncPrdocAplcntInfo = {
+const APLCNT: MockPrfmncPrdocAplcntInfo = {
   bzentyNm: 'A 업체',
   rprsvNm: '홍길동',
   salsLctnAddr: '서울특별시 종로구…',
   lcnsNoVl: '11111',
 }
 
-const CSTRN: PrfmncPrdocCstrnDsctnInfoH = {
+const CSTRN: MockPrfmncPrdocCstrnDsctnInfoH = {
   cstrnNm: '공사 명칭 표시 영역',
   tcstrnAmt: 100000,
   grndsLctnAddr: '경기도 과천시…',

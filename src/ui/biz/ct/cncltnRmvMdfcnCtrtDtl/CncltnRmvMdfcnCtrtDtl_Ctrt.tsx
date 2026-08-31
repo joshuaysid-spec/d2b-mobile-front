@@ -4,10 +4,10 @@
 import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CtrtMdfcnDtstItem } from '@/types/mock/ct'
+import type { MockCtrtMdfcnDtstItem } from '@/types/mock/ct'
 
 // 품목 수정내역 1건 → 표 행(slide133 블록 순서).
-function itemRows(it: CtrtMdfcnDtstItem): TableRow[] {
+function itemRows(it: MockCtrtMdfcnDtstItem): TableRow[] {
   return [
     { label: '구분', value: it.se },
     { label: '조달요구번호', value: it.prcmRqtNo },

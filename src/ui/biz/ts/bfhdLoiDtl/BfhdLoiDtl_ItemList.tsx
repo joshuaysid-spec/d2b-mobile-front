@@ -17,12 +17,12 @@ import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { BfhdLoiWrt } from '@/ui/biz/ts/bfhdLoiDtl/BfhdLoiWrt'
 import { cn } from '@/utils/cn'
 import type { ApiError } from '@/types/api'
-import type { BfhdLoiSpcfctItem } from '@/types/mock/ts'
+import type { MockBfhdLoiSpcfctItem } from '@/types/mock/ts'
 
 // 기본 노출 행수(순번~최초조달원, slide14 목록 노출) — 나머지는 "내역 펼쳐보기"로 토글.
 const DEFAULT_VISIBLE = 9
 
-function buildRows(item: BfhdLoiSpcfctItem, onView: (invtNo: string) => void): TableRow[] {
+function buildRows(item: MockBfhdLoiSpcfctItem, onView: (invtNo: string) => void): TableRow[] {
   return [
     { label: '순번', value: String(item.no) },
     { label: '제조/구매', value: item.mnftrPrchsSecd || '-' },
@@ -66,10 +66,10 @@ const SpcfctItemCard = memo(function SpcfctItemCard({
   onView,
   onWrite,
 }: {
-  item: BfhdLoiSpcfctItem
+  item: MockBfhdLoiSpcfctItem
   expired: boolean
   onView: (invtNo: string) => void
-  onWrite: (item: BfhdLoiSpcfctItem) => void
+  onWrite: (item: MockBfhdLoiSpcfctItem) => void
 }) {
   const [expanded, setExpanded] = useState(false)
   const allRows = useMemo(() => buildRows(item, onView), [item, onView])
@@ -113,7 +113,7 @@ export function BfhdLoiDtl_ItemList({ id, expired }: BfhdLoiDtl_ItemListProps) {
   const [page, setPage] = useState(1)
 
   // ── 의견작성(P03) 시트 상태 — 선택 품목(null=닫힘) + 폼 값 ──
-  const [pickedItem, setPickedItem] = useState<BfhdLoiSpcfctItem | null>(null)
+  const [pickedItem, setPickedItem] = useState<MockBfhdLoiSpcfctItem | null>(null)
   const [mnftrPrchsSecd, setMnftrPrchsSecd] = useState('')
   const [etcOpnnCn, setEtcOpnnCn] = useState('')
   // 안내 확인 모달(slide15) — null=닫힘. onConfirm 은 확인 클릭 시 추가 동작(시트 닫기 등).
@@ -136,7 +136,7 @@ export function BfhdLoiDtl_ItemList({ id, expired }: BfhdLoiDtl_ItemListProps) {
   }
 
   // 의견작성 열기 — 기 작성 내역을 폼에 반영(slide14).
-  const handleWrite = (item: BfhdLoiSpcfctItem) => {
+  const handleWrite = (item: MockBfhdLoiSpcfctItem) => {
     setMnftrPrchsSecd(item.mnftrPrchsSecd)
     setEtcOpnnCn(item.etcOpnnCn)
     setPickedItem(item)

@@ -16,10 +16,10 @@
 //   컨테이너 div + 전면 덮는 nav <button>(z-0) + 콘텐츠(pointer-events-none, z-10) + 별 <button>(pointer-events-auto).
 import { Badge } from '@/ui/common/base/Badge'
 import { Icon } from '@/ui/common/base/Icon'
-import type { ItrstBidPbancItem } from '@/types/mock/cm'
+import type { MockItrstBidPbancItem } from '@/types/mock/cm'
 
 interface ItrstBidPbancCardProps {
-  item: ItrstBidPbancItem
+  item: MockItrstBidPbancItem
   /** 카드 클릭 — 해당 입찰공고 상세로 이동. */
   onOpen: () => void
   /** 별(관심) 토글 — 켜기/끄기. */

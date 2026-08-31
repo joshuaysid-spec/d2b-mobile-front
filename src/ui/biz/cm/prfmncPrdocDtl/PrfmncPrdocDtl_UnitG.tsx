@@ -6,19 +6,19 @@
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type {
-  PrfmncPrdocAplcntInfo,
-  PrfmncPrdocEltyCstrnDsctnInfo,
-  PrfmncPrdocEltyCstrnPrfmncInfo,
-  PrfmncPrdocSbctrDsctnInfo,
-  PrfmncPrdocCnstSclInfo,
-  PrfmncPrdocMltCstrnRow,
+  MockPrfmncPrdocAplcntInfo,
+  MockPrfmncPrdocEltyCstrnDsctnInfo,
+  MockPrfmncPrdocEltyCstrnPrfmncInfo,
+  MockPrfmncPrdocSbctrDsctnInfo,
+  MockPrfmncPrdocCnstSclInfo,
+  MockPrfmncPrdocMltCstrnRow,
 } from '@/types/mock/cm'
 
 const twon = (v?: number) => (v == null ? '-' : `${v.toLocaleString()} 천원`)
 const SBMSN_TYPE = '8. 전기공사 실적증명서 [전기공사업법 시행에 관한 규정/전기공사협회]'
 
 // ── 목업 (설계서 표시값 그대로 — API 연동 시 교체) ───────────────────────────
-const APLCNT: PrfmncPrdocAplcntInfo = {
+const APLCNT: MockPrfmncPrdocAplcntInfo = {
   bzentyNm: 'A 업체',
   rprsvNm: '홍길동',
   entlno: '02-1234-5678',
@@ -26,7 +26,7 @@ const APLCNT: PrfmncPrdocAplcntInfo = {
   bldrRegNo: '11111',
 }
 
-const CSTRN: PrfmncPrdocEltyCstrnDsctnInfo = {
+const CSTRN: MockPrfmncPrdocEltyCstrnDsctnInfo = {
   cstrnNm: '공사 명칭 표시 영역',
   cstrnKndNm: '발전설비',
   cstrnGrndsNm: '경기도 과천시…',
@@ -41,7 +41,7 @@ const CSTRN: PrfmncPrdocEltyCstrnDsctnInfo = {
   ctrcKndNm: '원도급',
 }
 
-const PRFMNC: PrfmncPrdocEltyCstrnPrfmncInfo = {
+const PRFMNC: MockPrfmncPrdocEltyCstrnPrfmncInfo = {
   ctrcTctrtAmt: 1000,
   prvyrCrfwAmt: 1000,
   thyrPxcndAmt: 1000,
@@ -53,16 +53,16 @@ const PRFMNC: PrfmncPrdocEltyCstrnPrfmncInfo = {
   thyrCtrtAmt: 1000,
 }
 
-const SBCTR: PrfmncPrdocSbctrDsctnInfo[] = [
+const SBCTR: MockPrfmncPrdocSbctrDsctnInfo[] = [
   { sbctrBzentyNm: 'A 업체', sbctrAmt: 1000, sbctrRegNo: '11111', sbctrRprsvNm: '홍길동' },
 ]
 
-const CNST_SCL: PrfmncPrdocCnstSclInfo = {
+const CNST_SCL: MockPrfmncPrdocCnstSclInfo = {
   cnstSclExpln: '내용 표시 영역은 내용에 맞춰 높이를 조정하여 표시',
 }
 
 // 복합공사종류(다른 공사 종류 포함) 실적 명세 — 공사(종)명 반복(단위: 천원, 부가세포함)
-const MLT_ROWS: PrfmncPrdocMltCstrnRow[] = [
+const MLT_ROWS: MockPrfmncPrdocMltCstrnRow[] = [
   {
     cstrnKndNm: '전기공사',
     ctrtAmt: 1000,

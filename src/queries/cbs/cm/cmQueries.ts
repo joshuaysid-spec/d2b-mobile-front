@@ -5,7 +5,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { cmService } from '@/services/cbs/cm'
 import { cmKeys } from '@/queries/cbs/cm/cmKeys'
-import type { LoginRequest, RegisterIntgAcntRequest } from '@/types/mock/domain'
+import type { MockLoginRequest, MockRegisterIntgAcntRequest } from '@/types/mock/domain'
 
 export const cmQueries = {
   /**
@@ -53,7 +53,7 @@ export const cmQueries = {
 
   /** no.650 로그인(아이디/비밀번호) — MUI-MS-02 IdPswdLogin. */
   useProcIdPswdLogin() {
-    return useMutation({ mutationFn: (req: LoginRequest) => cmService.procIdPswdLogin(req) })
+    return useMutation({ mutationFn: (req: MockLoginRequest) => cmService.procIdPswdLogin(req) })
   },
 
   /** 업체 선택 후 로그인 확정(복수 업체 계정). */
@@ -82,7 +82,7 @@ export const cmQueries = {
   /** no.658 통합로그인계정생성(NewIdPwReg 제출). */
   useInsertIntgLoginInfo() {
     return useMutation({
-      mutationFn: (req: RegisterIntgAcntRequest) => cmService.insertIntgLoginInfo(req),
+      mutationFn: (req: MockRegisterIntgAcntRequest) => cmService.insertIntgLoginInfo(req),
     })
   },
 }

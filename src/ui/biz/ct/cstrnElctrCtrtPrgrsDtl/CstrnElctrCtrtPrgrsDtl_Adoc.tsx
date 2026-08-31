@@ -5,10 +5,10 @@
 import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import type { CtrtAdocFile } from '@/types/mock/ct'
+import type { MockCtrtAdocFile } from '@/types/mock/ct'
 
 // 첨부서류 1건 — 계약서류명 라벨 + 파일 행(FileDownloadList 단건).
-function AdocItem({ doc }: { doc: CtrtAdocFile }) {
+function AdocItem({ doc }: { doc: MockCtrtAdocFile }) {
   return (
     <div className="flex flex-col gap-krds-5">
       <p className="text-krds-body-md font-bold text-krds-text-ink">{doc.ctrtAdocCd}</p>

@@ -6,10 +6,10 @@ import { useMemo, useState } from 'react'
 import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { Button } from '@/ui/common/base/Button'
-import type { AsctGrpChcItem } from '@/types/mock/cm'
+import type { MockAsctGrpChcItem } from '@/types/mock/cm'
 
 // 조합/단체 목록 목업 (설계서 slide163 예시 — 조합코드/단체명). 추후 API: cmService.selectAsctGrpList.
-const MOCK_ASCT: AsctGrpChcItem[] = [
+const MOCK_ASCT: MockAsctGrpChcItem[] = [
   { asctCd: '11000', asctCdNm: '한국피복공업협동조합' },
   { asctCd: '11740', asctCdNm: '대한기계설비건설협회' },
   { asctCd: '11140', asctCdNm: '한국정보통신공사협회' },
@@ -20,7 +20,7 @@ const MOCK_ASCT: AsctGrpChcItem[] = [
 
 export interface AsctGrpChcProps {
   /** 결과 선택 시 호출 — 선택 조합/단체를 부모에 반환(부모가 시트 닫음). */
-  onSelect: (item: AsctGrpChcItem) => void
+  onSelect: (item: MockAsctGrpChcItem) => void
 }
 
 export function AsctGrpChc({ onSelect }: AsctGrpChcProps) {

@@ -15,11 +15,11 @@ import { Card } from '@/ui/common/composites/Card'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
 
-import type { BfrPbancBidCnItem, BfrPbancInfoItem } from '@/types/mock/bd'
+import type { MockBfrPbancBidCnItem, MockBfrPbancInfoItem } from '@/types/mock/bd'
 
 // ── 목업 — 이전공고 입찰내역 목록(dl_bidCnList). 와이어프레임 예시값(A000-A0000·0000T-80U/TBE-3·OA 업체·10,000 USD) 기반.
 //    이전공고입찰내역목록조회 — 추후 API: bdService.selectBfrTmprBidCnList(pbancNo, pbancOd)
-const MOCK_BID_CN_LIST: BfrPbancBidCnItem[] = [
+const MOCK_BID_CN_LIST: MockBfrPbancBidCnItem[] = [
   {
     no: '1',
     invtNo: 'A000-A0000',
@@ -272,7 +272,7 @@ export interface BfrPbancBidDsctnItemDtlHandle {
 
 export interface BfrPbancBidDsctnItemDtlProps {
   /** 보관함 목록에서 클릭한 이전 공고 */
-  pbanc: BfrPbancInfoItem
+  pbanc: MockBfrPbancInfoItem
   /** 불러오기 완료 시 호출(부모가 시트를 닫음) */
   onDone: () => void
 }
@@ -313,7 +313,7 @@ export const BfrPbancBidDsctnItemDtl = forwardRef<
   }))
 
   // 품목 1건 → Table rows. 접힘 = 요약 4개(순번/재고번호/부품번호/품명), 펼침 = dl_bidCnList 전체 필드.
-  const buildRows = (it: BfrPbancBidCnItem, expanded: boolean): TableRow[] => {
+  const buildRows = (it: MockBfrPbancBidCnItem, expanded: boolean): TableRow[] => {
     const summary: TableRow[] = [
       { label: '순번', value: it.no, type: 'number' },
       { label: '재고번호', value: it.invtNo },

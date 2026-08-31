@@ -2,10 +2,10 @@
 // 아코디언 2개(계약정보 · 공급자 정보).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { EpfcClclnClmDtl } from '@/types/mock/wm'
+import type { MockEpfcClclnClmDtl } from '@/types/mock/wm'
 
 export interface EpfcClclnClmDtl_CNProps {
-  detail: EpfcClclnClmDtl
+  detail: MockEpfcClclnClmDtl
 }
 
 export function EpfcClclnClmDtl_CN({ detail }: EpfcClclnClmDtl_CNProps) {

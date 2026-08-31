@@ -19,13 +19,13 @@
 //   업체코드=bzentyCd · 업체명=bzentyNm · 사업자등록번호=bizRegNo (src/types/bd.ts 선례).
 import { RadioGroup, RadioGroupItem } from '@/ui/raw/radio-group'
 import { cn } from '@/utils/cn'
-import type { BzentyChcItem } from '@/types/mock/domain'
+import type { MockBzentyChcItem } from '@/types/mock/domain'
 
-// 업체 목록 데이터는 로그인 응답(LoginResult.bzentyList, @/types/domain BzentyChcItem)으로 주입된다.
+// 업체 목록 데이터는 로그인 응답(LoginResult.bzentyList, @/types/domain MockBzentyChcItem)으로 주입된다.
 // (구 페이지 내 MOCK_BZENTY_LIST 는 mocks/auth.ts 로 이관 — 목업 로그인 응답이 공급)
 export interface BzentyChcProps {
   /** 선택 대상 업체 목록 — 로그인 응답 bzentyList. */
-  items: BzentyChcItem[]
+  items: MockBzentyChcItem[]
   /** 선택된 업체코드 (controlled) */
   value: string
   /** 선택 변경 콜백 */

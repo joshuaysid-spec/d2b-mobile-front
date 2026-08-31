@@ -4,10 +4,10 @@ import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CtrtGrnteInfo } from '@/types/mock/ct'
+import type { MockCtrtGrnteInfo } from '@/types/mock/ct'
 
 // 보증서 1건 → 표 행(slide161 dm_wtgrInfo 순서 — M73 팝업과 동일).
-function wtgrRows(w: CtrtGrnteInfo): TableRow[] {
+function wtgrRows(w: MockCtrtGrnteInfo): TableRow[] {
   return [
     { label: '계약업체', value: w.ctrtBzentyCd },
     { label: '업체구분', value: w.bzentySeCd },

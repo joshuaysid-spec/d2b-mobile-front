@@ -4,7 +4,7 @@
 import { wmQueries } from '@/queries/cts/wm/wmQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { PrpayAplyDsctnItem } from '@/types/mock/wm'
+import type { MockPrpayAplyDsctnItem } from '@/types/mock/wm'
 
 export interface PrpayApfrDtl_AplyDtsmProps {
   /** 조회 대상 신청 식별자 — 페이지(navigate state id)가 주입. */
@@ -12,7 +12,7 @@ export interface PrpayApfrDtl_AplyDtsmProps {
 }
 
 // 구분 1건 → 표 행 (slide24 목업 순서).
-function dsctnRows(it: PrpayAplyDsctnItem): TableRow[] {
+function dsctnRows(it: MockPrpayAplyDsctnItem): TableRow[] {
   return [
     { label: '대상금액', value: `${it.trgtAmt.toLocaleString()} 원`, type: 'number' },
     { label: '신청금액 - 기사용', value: `${it.arusAplyAmt.toLocaleString()} 원`, type: 'number' },

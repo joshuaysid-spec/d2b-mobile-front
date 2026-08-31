@@ -18,7 +18,7 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { OvsShpgItemDsctn } from '@/ui/biz/wm/ovsPymtPrgrsList/OvsShpgItemDsctn'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
-import type { OvsPymtPrgrsItem } from '@/types/mock/wm'
+import type { MockOvsPymtPrgrsItem } from '@/types/mock/wm'
 
 /** 외화 금액 표기 — 소수 2자리 + 화폐단위(cmcUnit) 후행(slide103 3-2]). */
 const fmtAmt = (n: number, unit: string) =>
@@ -61,7 +61,7 @@ export function OvsPymtPrgrsListPage() {
   const [filterApplied, setFilterApplied] = useState(false)
   const [appliedCtrtNo, setAppliedCtrtNo] = useState<string | null>(null)
   // P78 선적품목내역 바텀시트 — 선택한 지급현황 건. null=닫힘.
-  const [picked, setPicked] = useState<OvsPymtPrgrsItem | null>(null)
+  const [picked, setPicked] = useState<MockOvsPymtPrgrsItem | null>(null)
 
   const ctrtNo = appliedCtrtNo ?? String(filter.ctrtNo ?? '')
   const { data: listData, isLoading } = wmQueries.useSelectPaymentStatusList({ ctrtNo })

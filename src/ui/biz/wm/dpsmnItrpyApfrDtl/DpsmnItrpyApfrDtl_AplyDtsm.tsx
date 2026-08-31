@@ -3,7 +3,7 @@
 import { wmQueries } from '@/queries/cts/wm/wmQueries'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { DpsmnItrpyAplyDsctnItem } from '@/types/mock/wm'
+import type { MockDpsmnItrpyAplyDsctnItem } from '@/types/mock/wm'
 
 export interface DpsmnItrpyApfrDtl_AplyDtsmProps {
   /** 조회 대상 신청 식별자 — 페이지(navigate state id)가 주입. */
@@ -11,7 +11,7 @@ export interface DpsmnItrpyApfrDtl_AplyDtsmProps {
 }
 
 // 구분 1건 → 표 행 (slide33 1.4 순서).
-function dsctnRows(it: DpsmnItrpyAplyDsctnItem): TableRow[] {
+function dsctnRows(it: MockDpsmnItrpyAplyDsctnItem): TableRow[] {
   return [
     { label: '대상금액', value: `${it.trgtAmt.toLocaleString()} 원`, type: 'number' },
     { label: '신청금액', value: `${it.aplyAmt.toLocaleString()} 원`, type: 'number' },

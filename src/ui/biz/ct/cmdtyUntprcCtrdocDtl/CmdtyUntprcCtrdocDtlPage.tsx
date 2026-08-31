@@ -22,7 +22,7 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { CmdtyUntprcCtrdocDtl_Cn } from '@/ui/biz/ct/cmdtyUntprcCtrdocDtl/CmdtyUntprcCtrdocDtl_Cn'
 import { CmdtyUntprcCtrdocDtl_Ctrt } from '@/ui/biz/ct/cmdtyUntprcCtrdocDtl/CmdtyUntprcCtrdocDtl_Ctrt'
 import { CmdtyUntprcCtrdocDtl_Spcl } from '@/ui/biz/ct/cmdtyUntprcCtrdocDtl/CmdtyUntprcCtrdocDtl_Spcl'
-import type { CtrtIntgListItem } from '@/types/mock/ct'
+import type { MockCtrtIntgListItem } from '@/types/mock/ct'
 
 // ── 탭 (slide56 탭바: 상세정보/계약명세서/특수조건) ─────────────────────────────
 const TABS: TabItem[] = [
@@ -42,7 +42,7 @@ function stepsByStg(prgrsStg: string): StepItem[] {
 }
 
 export function CmdtyUntprcCtrdocDtlPage() {
-  const stateItem = useLocation().state as CtrtIntgListItem | null
+  const stateItem = useLocation().state as MockCtrtIntgListItem | null
   const id = stateItem?.id ?? ''
   const navigate = useNavigate()
   const [tab, setTab] = useState('detail')

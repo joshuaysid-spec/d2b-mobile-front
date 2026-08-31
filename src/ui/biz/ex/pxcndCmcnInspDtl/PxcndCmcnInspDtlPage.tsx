@@ -17,7 +17,7 @@ import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { PxcndCmcnInspDtl } from '@/ui/biz/ex/pxcndCmcnInspDtl/PxcndCmcnInspDtl'
-import type { InspIntgListItem } from '@/types/mock/ex'
+import type { MockInspIntgListItem } from '@/types/mock/ex'
 
 // ── 탭 (slide27 탭 영역: 상세정보 단일 — 진입 시 고정 노출) ──────────────────
 const TABS: TabItem[] = [{ value: 'detail', label: '상세정보' }]
@@ -36,9 +36,9 @@ function buildSteps(): StepItem[] {
 export function PxcndCmcnInspDtlPage() {
   const navigate = useNavigate()
   // 목록 → 상세: 식별자는 URL 이 아니라 navigate state(클릭 항목)로 받는다 — 조회 키는 계약번호+기성차수.
-  // ⚠️ 진입 경로 2개(M01 InspIntgListItem · M05 InspDlvdocPrstItem)인데 M05 항목엔 기성차수가 없다
+  // ⚠️ 진입 경로 2개(M01 MockInspIntgListItem · M05 InspDlvdocPrstItem)인데 M05 항목엔 기성차수가 없다
   //   (dlt_InspDlvdocPrst 미정의) → 없으면 계약번호만으로 조회. 상세설계 확정 시 M05 항목에 pxcndCycl 추가.
-  const item = useLocation().state as Partial<InspIntgListItem> | null
+  const item = useLocation().state as Partial<MockInspIntgListItem> | null
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 

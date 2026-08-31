@@ -14,7 +14,7 @@ import { Checkbox } from '@/ui/common/base/Checkbox'
 import { Card } from '@/ui/common/composites/Card'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
-import type { RegTrgtItemChcItem } from '@/types/mock/cm'
+import type { MockRegTrgtItemChcItem } from '@/types/mock/cm'
 
 /** 부모 footer([확인])가 호출하는 확정 동작. */
 export interface RegTrgtItemChcHandle {
@@ -37,7 +37,7 @@ const KNDITM_OPTIONS = [
 ]
 
 // 등록대상 품목 목록 목업 (설계서 slide165 예시 항목명/형식). 추후 API.
-const MOCK_ITEMS: RegTrgtItemChcItem[] = [
+const MOCK_ITEMS: MockRegTrgtItemChcItem[] = [
   {
     itemCd: '1234567890',
     itemCdNm: '물컵',
@@ -58,9 +58,9 @@ const MOCK_ITEMS: RegTrgtItemChcItem[] = [
 
 export interface RegTrgtItemChcProps {
   /** [확인] 시 호출 — 선택 품목 목록을 부모에 반환. */
-  onApply: (items: RegTrgtItemChcItem[]) => void
+  onApply: (items: MockRegTrgtItemChcItem[]) => void
   /** 품목코드(파랑 링크) 클릭 — 품목상세정보(P09 ItemInq)는 부모가 연다. */
-  onDetail: (item: RegTrgtItemChcItem) => void
+  onDetail: (item: MockRegTrgtItemChcItem) => void
 }
 
 const RegTrgtItemChc = forwardRef<RegTrgtItemChcHandle, RegTrgtItemChcProps>(

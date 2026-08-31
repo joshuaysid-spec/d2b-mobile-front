@@ -15,9 +15,9 @@ import { Card } from '@/ui/common/composites/Card'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import type { TableRow } from '@/ui/common/composites/Table'
 import type {
-  OvsBidBizExmptnItem,
-  OvsBidBizItem,
-  OvsRtrcnTarget,
+  MockOvsBidBizExmptnItem,
+  MockOvsBidBizItem,
+  MockOvsRtrcnTarget,
 } from '@/types/mock/bd'
 
 // 달러 금액 표기 — 설계서 '000,000,000,000.00' 형식(소수 2자리).
@@ -45,7 +45,7 @@ function fileCell(docNo: string | undefined, label: string) {
 }
 
 // 보증금비면제(dl_bizList) 사업 1건 → Table rows
-function bizRows(item: OvsBidBizItem, no: number): TableRow[] {
+function bizRows(item: MockOvsBidBizItem, no: number): TableRow[] {
   return [
     { label: '순번', value: String(no), type: 'number' },
     { label: '구매요청번호', value: item.prchsDmndNo },
@@ -62,7 +62,7 @@ function bizRows(item: OvsBidBizItem, no: number): TableRow[] {
 }
 
 // 보증금면제(dl_bizExmptnList) 사업 1건 → Table rows
-function bizExmptnRows(item: OvsBidBizExmptnItem, no: number): TableRow[] {
+function bizExmptnRows(item: MockOvsBidBizExmptnItem, no: number): TableRow[] {
   return [
     { label: '순번', value: String(no), type: 'number' },
     { label: '구매요청번호', value: item.prchsDmndNo },
@@ -78,11 +78,11 @@ function bizExmptnRows(item: OvsBidBizExmptnItem, no: number): TableRow[] {
 
 interface OvsBidPrtcpApfrDtlPage_Tab3Props {
   /** 입찰참가사업 및 입찰보증금 — 보증금비면제(dl_bizList) */
-  bizList: OvsBidBizItem[]
+  bizList: MockOvsBidBizItem[]
   /** 입찰참가사업 및 입찰보증금 — 보증금면제(dl_bizExmptnList) */
-  bizExmptnList: OvsBidBizExmptnItem[]
+  bizExmptnList: MockOvsBidBizExmptnItem[]
   /** [선택 입찰취소] — 선택 사업 건들로 입찰참가신청서취소(P82) 호출(컨테이너는 페이지 소유) */
-  onRtrcn: (targets: OvsRtrcnTarget[]) => void
+  onRtrcn: (targets: MockOvsRtrcnTarget[]) => void
   /** [전체 입찰취소] — 전체 건으로 P82 호출(페이지의 전체취소 로직 재사용) */
   onRtrcnAll: () => void
 }
@@ -109,7 +109,7 @@ export function OvsBidPrtcpApfrDtlPage_Tab3({
 
   // 선택 입찰취소(설계서 주석 4 '개별 건(선택 건) 입찰 취소') — 선택 사업들로 P82 호출.
   const handleRtrcnChecked = () => {
-    const targets: OvsRtrcnTarget[] = list
+    const targets: MockOvsRtrcnTarget[] = list
       .filter((b) => checkedNos.includes(b.prchsDmndNo))
       .map((b) => ({ prchsDmndNo: b.prchsDmndNo, bizNm: b.bizNm, rtrcnItemQty: b.bdngItemQty }))
     if (targets.length === 0) return
@@ -160,8 +160,8 @@ export function OvsBidPrtcpApfrDtlPage_Tab3({
             }
             rows={
               isExmptn
-                ? bizExmptnRows(item as OvsBidBizExmptnItem, i + 1)
-                : bizRows(item as OvsBidBizItem, i + 1)
+                ? bizExmptnRows(item as MockOvsBidBizExmptnItem, i + 1)
+                : bizRows(item as MockOvsBidBizItem, i + 1)
             }
           />
         ))}

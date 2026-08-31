@@ -5,11 +5,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { ctService } from '@/services/cts/ct'
 import { ctKeys } from '@/queries/cts/ct/ctKeys'
-import type { CncltnRmvListRequest, CtCtrdocType, CtrtIntgListRequest } from '@/types/mock/ct'
+import type { MockCncltnRmvListRequest, MockCtCtrdocType, MockCtrtIntgListRequest } from '@/types/mock/ct'
 
 export const ctQueries = {
   /** 계약 통합목록 — 키워드 세부 필터/더보기 페이징은 페이지 클라이언트 로직 유지(서버 전환 시 req 로 이행). */
-  useSelectCtrtIntgList(req: CtrtIntgListRequest = {}) {
+  useSelectCtrtIntgList(req: MockCtrtIntgListRequest = {}) {
     return useQuery({
       queryKey: ctKeys.selectCtrtIntgList(req),
       queryFn: () => ctService.selectCtrtIntgList(req),
@@ -143,7 +143,7 @@ export const ctQueries = {
   },
 
   /** 물품총액(gramt)/단가(untprc)계약서 상세(M07/M08). */
-  useSelectCmdtyCtrdocDtl(id: string, type: CtCtrdocType) {
+  useSelectCmdtyCtrdocDtl(id: string, type: MockCtCtrdocType) {
     return useQuery({
       queryKey: ctKeys.selectCmdtyCtrdocDtl(id, type),
       queryFn: () => ctService.selectCmdtyCtrdocDtl(id, type),
@@ -152,7 +152,7 @@ export const ctQueries = {
   },
 
   /** 계약명세서 탭(T14/T17). */
-  useSelectCmdtyCtrdocDtst(id: string, type: CtCtrdocType) {
+  useSelectCmdtyCtrdocDtst(id: string, type: MockCtCtrdocType) {
     return useQuery({
       queryKey: ctKeys.selectCmdtyCtrdocDtst(id, type),
       queryFn: () => ctService.selectCmdtyCtrdocDtst(id, type),
@@ -297,7 +297,7 @@ export const ctQueries = {
   // ── 해지/해제 계열 (MUI-CT-03) ────────────────────────────────────────────
 
   /** 해지/해제 목록(M01) — 키워드/더보기 페이징은 페이지 클라이언트 로직 유지. */
-  useSelectCtrtCncltnRmvListInq(req: CncltnRmvListRequest = {}) {
+  useSelectCtrtCncltnRmvListInq(req: MockCncltnRmvListRequest = {}) {
     return useQuery({
       queryKey: ctKeys.selectCtrtCncltnRmvListInq(req),
       queryFn: () => ctService.selectCtrtCncltnRmvListInq(req),
@@ -332,7 +332,7 @@ export const ctQueries = {
   },
 
   /** 해지/해제 일반계약(총액 gramt / 단가 untprc) 상세정보(M03/M04). */
-  useSelectCncltnRmvGnrlCtrtDtl(id: string, type: CtCtrdocType) {
+  useSelectCncltnRmvGnrlCtrtDtl(id: string, type: MockCtCtrdocType) {
     return useQuery({
       queryKey: ctKeys.selectCncltnRmvGnrlCtrtDtl(id, type),
       queryFn: () => ctService.selectCncltnRmvGnrlCtrtDtl(id, type),
@@ -341,7 +341,7 @@ export const ctQueries = {
   },
 
   /** 해지/해제 일반계약 계약명세서 탭(T05/T08). */
-  useSelectCncltnRmvGnrlCtrtDtst(id: string, type: CtCtrdocType) {
+  useSelectCncltnRmvGnrlCtrtDtst(id: string, type: MockCtCtrdocType) {
     return useQuery({
       queryKey: ctKeys.selectCncltnRmvGnrlCtrtDtst(id, type),
       queryFn: () => ctService.selectCncltnRmvGnrlCtrtDtst(id, type),

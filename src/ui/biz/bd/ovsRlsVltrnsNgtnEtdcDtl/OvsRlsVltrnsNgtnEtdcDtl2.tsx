@@ -3,10 +3,10 @@
 // 주민등록번호 없음(2026-07-01 설계 수정). 데이터는 목업(추후 API).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsRlsVltrnsEtdcBzenty } from '@/types/mock/bd'
+import type { MockOvsRlsVltrnsEtdcBzenty } from '@/types/mock/bd'
 
 // 업체정보 목업 — 설계서 slide431 값 그대로. 항목명 = 설계서 데이터영역 영문(dm_aplyBzenty/dm_bidBzenty).
-const MOCK_BZENTY: OvsRlsVltrnsEtdcBzenty = {
+const MOCK_BZENTY: MockOvsRlsVltrnsEtdcBzenty = {
   aply: {
     sbtBzentyCd: '7001F',
     sbtBzentyNm: 'A 무역대리점',

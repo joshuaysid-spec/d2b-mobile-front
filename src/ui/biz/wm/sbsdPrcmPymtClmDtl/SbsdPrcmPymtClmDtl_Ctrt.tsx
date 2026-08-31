@@ -2,14 +2,14 @@
 // 아코디언 2개(계약정보 · 대금신청대상) — 대금신청대상은 통지 건별 Table 반복.
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { SbsdPrcmPymtClmDtl, SbsdPymtAplyTrgtItem } from '@/types/mock/wm'
+import type { MockSbsdPrcmPymtClmDtl, MockSbsdPymtAplyTrgtItem } from '@/types/mock/wm'
 
 export interface SbsdPrcmPymtClmDtl_CtrtProps {
-  detail: SbsdPrcmPymtClmDtl
+  detail: MockSbsdPrcmPymtClmDtl
 }
 
 // 대금신청대상 1건 → 표 행 (dlt_pymtAplyTrgtList, slide52 1.2 순서).
-function trgtRows(it: SbsdPymtAplyTrgtItem): TableRow[] {
+function trgtRows(it: MockSbsdPymtAplyTrgtItem): TableRow[] {
   return [
     { label: '통지번호', value: it.avtsmtNo },
     { label: '조서발행번호', value: it.recrdPblcnNo },

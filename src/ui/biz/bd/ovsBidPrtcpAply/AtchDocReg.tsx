@@ -12,7 +12,7 @@ import { Icon } from '@/ui/common/base/Icon'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import type { OvsAtchDocItem } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidPrtcpAplyPage'
-import type { BidPrgrsItem } from '@/types/mock/bd'
+import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 첨부파일 목록 목업 — 설계서 slide337 서류항목(해외업체위임장/공급자증명서/제작사증명서/기타 공고요구서류) 그대로.
 const INITIAL_FILES: OvsAtchDocItem[] = [
@@ -27,7 +27,7 @@ const INITIAL_FILES: OvsAtchDocItem[] = [
   },
 ]
 
-export function AtchDocReg({ detail }: { detail: BidPrgrsItem }) {
+export function AtchDocReg({ detail }: { detail: MockBidPrgrsItem }) {
   const [files, setFiles] = useState<OvsAtchDocItem[]>(INITIAL_FILES)
 
   const handleAdd = () => {

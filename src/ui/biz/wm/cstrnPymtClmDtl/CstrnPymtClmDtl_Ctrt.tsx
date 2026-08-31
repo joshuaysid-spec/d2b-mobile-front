@@ -2,10 +2,10 @@
 // 아코디언 2개(계약정보 · 비고).
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { CstrnPymtClmDtl } from '@/types/mock/wm'
+import type { MockCstrnPymtClmDtl } from '@/types/mock/wm'
 
 export interface CstrnPymtClmDtl_CtrtProps {
-  detail: CstrnPymtClmDtl
+  detail: MockCstrnPymtClmDtl
 }
 
 export function CstrnPymtClmDtl_Ctrt({ detail }: CstrnPymtClmDtl_CtrtProps) {

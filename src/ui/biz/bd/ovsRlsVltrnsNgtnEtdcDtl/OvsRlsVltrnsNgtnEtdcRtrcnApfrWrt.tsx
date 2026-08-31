@@ -12,7 +12,7 @@ import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { TextArea } from '@/ui/common/base/TextArea'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { OvsRlsVltrnsSummary } from '@/types/mock/bd'
+import type { MockOvsRlsVltrnsSummary } from '@/types/mock/bd'
 
 export interface OvsRlsVltrnsNgtnEtdcRtrcnApfrWrtHandle {
   /** 부모 BottomSheet footer '제출하기' 가 호출 — 제출확인 모달을 띄운다 */
@@ -21,7 +21,7 @@ export interface OvsRlsVltrnsNgtnEtdcRtrcnApfrWrtHandle {
 
 export interface OvsRlsVltrnsNgtnEtdcRtrcnApfrWrtProps {
   /** 견적서 상세에서 넘어온 요약 — 취소신청내역(공고 식별값)을 이 값으로 그린다. */
-  detail: OvsRlsVltrnsSummary
+  detail: MockOvsRlsVltrnsSummary
   /** 제출 완료(확인) 시 호출(부모가 BottomSheet 를 닫음) */
   onSubmitted: () => void
 }

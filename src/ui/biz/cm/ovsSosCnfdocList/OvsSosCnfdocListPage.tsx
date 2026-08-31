@@ -27,12 +27,12 @@ import type {
   SearchFilterValue,
   DateRangePresetDef,
 } from '@/types/search-filter'
-import type { OvsSosCnfdocItem, OvsSosPrcsStcd } from '@/types/mock/cm'
+import type { MockOvsSosCnfdocItem, MockOvsSosPrcsStcd } from '@/types/mock/cm'
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
 // 진행상태(prcsStcd) 코드 → 표시명 (slide332 — 신청(P)/반려(R)/승인(A))
-const PRCS_STCD_NM: Record<OvsSosPrcsStcd, string> = { P: '신청', R: '반려', A: '승인' }
+const PRCS_STCD_NM: Record<MockOvsSosPrcsStcd, string> = { P: '신청', R: '반려', A: '승인' }
 
 // ── 검색필터 schema (slide331 — 기간* → 검색어 → 구분) ───────────────────────
 const DATE_PRESETS: DateRangePresetDef[] = [
@@ -97,7 +97,7 @@ function buildDefaultValue(): SearchFilterValue {
 }
 
 // ── 목업 (dl_resultList + dm_ovsSosAplyDtlInfo 항목명/형식 — API 연동 시 교체) ─
-const dl_resultList: OvsSosCnfdocItem[] = [
+const dl_resultList: MockOvsSosCnfdocItem[] = [
   {
     aplyRcptNo: '2020101010',
     trgtBzentyCdNm: '발급 대상업체명',
@@ -136,7 +136,7 @@ const dl_resultList: OvsSosCnfdocItem[] = [
 
 // ⚠️ 임시 목업 — API 연동 시 서버 조회(page/pageSize/검색조건)로 교체(목록 컨벤션).
 const TOTAL = 24
-const MOCK_LIST: OvsSosCnfdocItem[] = Array.from({ length: TOTAL }, (_, i) => {
+const MOCK_LIST: MockOvsSosCnfdocItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dl_resultList[i % dl_resultList.length]
   return { ...base, aplyRcptNo: `20201010${String(i + 10)}` }
 })
@@ -150,7 +150,7 @@ export function OvsSosCnfdocListPage() {
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
   const [outputOpen, setOutputOpen] = useState(false) // 서류 출력 확인(MUI-BD-01-P14)
-  const [outputTarget, setOutputTarget] = useState<OvsSosCnfdocItem | null>(null)
+  const [outputTarget, setOutputTarget] = useState<MockOvsSosCnfdocItem | null>(null)
 
   const defaultValue = useMemo(() => buildDefaultValue(), [])
 
@@ -163,7 +163,7 @@ export function OvsSosCnfdocListPage() {
   }
 
   // 카드 클릭 — 신청(P)/승인(A) → 서류 출력 확인(P14). 반려(R)는 클릭 무동작(반려사유만 카드 표시).
-  const handleCardClick = (item: OvsSosCnfdocItem) => {
+  const handleCardClick = (item: MockOvsSosCnfdocItem) => {
     setOutputTarget(item)
     setOutputOpen(true)
   }

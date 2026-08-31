@@ -23,11 +23,11 @@ import { TndrWrt_Stp5 } from '@/ui/biz/bd/tndrWrt/TndrWrt_Stp5'
 import { TndrWrt_Stp6 } from '@/ui/biz/bd/tndrWrt/TndrWrt_Stp6'
 import { TndrWrt_Stp7 } from '@/ui/biz/bd/tndrWrt/TndrWrt_Stp7'
 import type { ApiError } from '@/types/api'
-import type { BidPrgrsItem } from '@/types/mock/bd'
+import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 slide121 예시값 그대로.
 // 입찰방법(bidMthdNm) 단가제 → 품목내역 탭 노출(설계서 slide121).
-const MOCK_DETAIL: BidPrgrsItem = {
+const MOCK_DETAIL: MockBidPrgrsItem = {
   rNum: '0',
   taskSeNm: '물품',
   pbancNo: '긴급공고 LDG0097-1',
@@ -52,7 +52,7 @@ const MOCK_DETAIL: BidPrgrsItem = {
 
 export function TndrWrtPage() {
   const navigate = useNavigate()
-  const detail = (useLocation().state as BidPrgrsItem | null) ?? MOCK_DETAIL
+  const detail = (useLocation().state as MockBidPrgrsItem | null) ?? MOCK_DETAIL
 
   // 탭 노출 조건 — 품목내역: 입찰방법 단가제(slide121). 동가낙찰 선추첨: 공고일자·계약방법 조건(slide126·130, 목업 노출).
   const isUntprc = detail.bidMthdNm?.includes('단가제')
