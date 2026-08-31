@@ -7,7 +7,8 @@
 //    260825 통합 리스트로 갔다가 분기 탭 원복 — 사용자 확정.)
 // 구성(위→아래): 분기 탭(TabList line) → 상단바(검색필터 버튼+표시개수, slide95 — 좌측 leftSlot 은 관심입찰공고
 //   M05 와 동일 패턴) → 카드 리스트 → 더보기 → 맨위로 FAB → 검색필터 풀팝업(공통 SearchFilter 셸)
-//   → 첨언/첨부파일 바텀시트(카드 버튼이 호출 — 컨테이너는 페이지 소유, CLAUDE.md).
+//   → 첨언/첨부파일/반려상세보기 바텀시트(카드 버튼이 호출 — 컨테이너는 페이지 소유, CLAUDE.md).
+// 반려 상세보기(MUI-CM-06-P23, v0.87 신규): 반려 문서 카드의 [반려사유] 버튼 → 바텀시트(문서명·반려자·반려사유 전문).
 // 검색필터(slide96, 2026-08-24 추가): 문서 구분(셀렉트) → 첨언·첨부 여부(셀렉트) → 기간 설정(dateRange+빠른칩 1/3/6개월).
 //   초기값 = 문서구분 전체 · 첨언첨부 전체 · 기간 최근 1개월. 검색 실행 시 문서구분은 상단 분기 탭에 동기화
 //   (반려 받은/반려한 → 반려 탭), 나머지 조건은 API 경계 스텁(서버 조회 파라미터 — 백엔드 연동 시 배선).
@@ -28,6 +29,7 @@ import { Button } from '@/ui/common/base/Button'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
+import { Table } from '@/ui/common/composites/Table'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { TASK_SE_CD } from '@/constants/codes'
 import { docBadges, docOrgLine, docDateRows } from '@/ui/biz/cm/docBox/docBoxView'
@@ -232,6 +234,8 @@ export function DocBoxPage() {
   // 첨언/첨부파일 바텀시트 — 카드 하단 버튼이 연다(해당 데이터가 있는 카드에서만 버튼 노출).
   const [addCnItem, setAddCnItem] = useState<MockDocBoxItem | null>(null)
   const [atchOpen, setAtchOpen] = useState(false)
+  // 반려 상세보기(P23) 바텀시트 — 반려 문서 카드의 [반려사유] 버튼이 연다.
+  const [rjctItem, setRjctItem] = useState<MockDocBoxItem | null>(null)
 
   // 탭(문서구분) 필터 → 페이징. 최신순은 목업 배열 순서 유지.
   const filtered = useMemo(() => MOCK_DOCS.filter((it) => it.docSeCd === tab), [tab])
@@ -293,6 +297,21 @@ export function DocBoxPage() {
     //   카드 자체가 button 이라 클릭 전파 차단(disabled 버튼은 클릭 이벤트 자체가 안 뜸).
     footer: (
       <div className="flex gap-krds-5">
+        {/* 반려 문서 전용 — 반려 상세보기(P23, v0.87). 사유 없으면 disable(첨언/첨부와 동일 규칙). */}
+        {it.docSeCd === 'rejected' && (
+          <Button
+            variant="secondary"
+            size="sm"
+            className="flex-1"
+            disabled={!it.rjctRsn}
+            onClick={(e) => {
+              e.stopPropagation()
+              setRjctItem(it)
+            }}
+          >
+            반려사유
+          </Button>
+        )}
         <Button
           variant="secondary"
           size="sm"
@@ -394,6 +413,31 @@ export function DocBoxPage() {
       <BottomSheet open={atchOpen} onOpenChange={setAtchOpen} title="첨부파일">
         <div className="pb-4">
           <FileDownloadList files={atchFiles} />
+        </div>
+      </BottomSheet>
+
+      {/* 반려 상세보기 바텀시트(MUI-CM-06-P23, v0.87 신규) — 문서명·반려자 + 반려사유 전문. */}
+      <BottomSheet
+        open={rjctItem !== null}
+        onOpenChange={(open) => {
+          if (!open) setRjctItem(null)
+        }}
+        title="반려 상세보기"
+      >
+        <div className="flex flex-col gap-krds-6 pb-4">
+          <Table
+            rows={[
+              { label: '문서명', value: rjctItem?.docNm },
+              // 반려한 문서(rturId 보유)만 반려자 행 — 반려받은 문서는 기관만 카드에 표시.
+              ...(rjctItem?.rturId ? [{ label: '반려자', value: rjctItem.rturId }] : []),
+            ]}
+          />
+          <div className="flex flex-col gap-krds-4">
+            <span className="text-[17px] font-bold leading-normal text-krds-text-ink">반려사유</span>
+            <p className="whitespace-pre-line text-krds-body-md leading-relaxed text-krds-text-ink">
+              {rjctItem?.rjctRsn}
+            </p>
+          </div>
         </div>
       </BottomSheet>
     </div>
