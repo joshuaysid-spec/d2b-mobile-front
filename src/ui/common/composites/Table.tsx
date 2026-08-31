@@ -5,7 +5,7 @@
 // rows[i].type 으로 value 렌더 모드 분기:
 //   'default'      — 17px Regular ink 좌측 정렬 (기본)
 //   'number'       — 17px Regular ink 우측 정렬 (숫자/금액 표시)
-//   'date'         — value(string|number)를 yyyy-mm-dd 로 포맷해 표시 (숫자 8자리 미만이면 원본 그대로)
+//   'date'         — value(string|number)를 yyyy-mm-dd 로 포맷해 표시 (숫자 6자리 연월은 yyyy-mm, 그 외는 원본 그대로)
 //   'combination'  — value 가 ReactNode — 그대로 렌더 (여러 줄, 버튼, Input 등 자유 컨텐츠)
 //
 // 행 사이에 1px divider(border-field, #c1d1ee) 자동.
@@ -26,12 +26,17 @@ import { cn } from '@/utils/cn'
 
 export type TableCellType = 'default' | 'number' | 'date' | 'combination'
 
-/** 'date' 셀: 값에서 숫자만 추출해 앞 8자리를 yyyy-mm-dd 로. 8자리 미만(빈값·'-' 등)은 원본 유지. */
+/**
+ * 'date' 셀: 값에서 숫자만 추출해 8자리 이상은 yyyy-mm-dd, 6자리(연월)는 yyyy-mm 로.
+ * 그 외(빈값·'-'·자릿수 불일치)는 원본 유지.
+ */
 function formatDateValue(v: React.ReactNode): React.ReactNode {
   if (typeof v !== 'string' && typeof v !== 'number') return v
   const digits = String(v).replace(/\D/g, '')
-  if (digits.length < 8) return v
-  return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6, 8)}`
+  if (digits.length >= 8)
+    return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6, 8)}`
+  if (digits.length === 6) return `${digits.slice(0, 4)}-${digits.slice(4, 6)}`
+  return v
 }
 
 export interface TableRow {
