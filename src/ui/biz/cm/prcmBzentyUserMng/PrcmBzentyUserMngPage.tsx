@@ -19,6 +19,7 @@ import { Badge, type BadgeProps } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { InputBox } from '@/ui/common/base/InputBox'
+import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
@@ -137,13 +138,17 @@ export function PrcmBzentyUserMngPage() {
     navigate(ROUTES.INDV_INFO_DTL, { state: { ...user, from: 'userList' } })
     console.log('[PrcmBzentyUserMng] 사용자 상세 이동', user.userId) // 추후 API/라우트: 메인 배선
   }
-  // 상태변경 시트 오픈 — 대상 사용자 전달. 현재 상태 코드를 초기 선택값으로(M 포함 — 2026-08-05 대표자 미승인 라디오 추가).
+  // 상태변경 시트 오픈 — 대상 사용자 전달. 현재 상태 코드를 초기 선택값으로.
   const openSttsChg = (user: BzentyUser) => {
     setSttsTarget(user)
     setSttsValue(user.userSttsCd)
   }
   const closeSttsChg = () => setSttsTarget(null)
-  const handleSaveStts = () => {
+  // 탈퇴 상태 대상은 재변경 불가(v0.87 slide213 — PC 버전에서만 처리). 시트는 안내만 표시, 저장 숨김.
+  const sttsLocked = sttsTarget?.userSttsCd === 'T'
+  // 탈퇴로 변경 확인 모달(v0.87 slide214 — 모바일에서 비가역).
+  const [tChgConfirmOpen, setTChgConfirmOpen] = useState(false)
+  const doSaveStts = () => {
     if (!sttsTarget || !sttsValue) return
     const code = sttsValue as UserSttsCd
     setUsers((prev) =>
@@ -153,6 +158,15 @@ export function PrcmBzentyUserMngPage() {
     )
     console.log('[PrcmBzentyUserMng] 상태변경 저장', sttsTarget.userId, '→', code) // 추후 API: cmService.updatePrcmBzentyUserSttsList(userId, code)
     closeSttsChg()
+  }
+  const handleSaveStts = () => {
+    if (!sttsTarget || !sttsValue || sttsLocked) return
+    // 탈퇴(T)로 변경은 되돌릴 수 없음 — 확인 모달을 거친다(v0.87 slide214 모달 3).
+    if (sttsValue === 'T' && sttsTarget.userSttsCd !== 'T') {
+      setTChgConfirmOpen(true)
+      return
+    }
+    doSaveStts()
   }
 
   return (
@@ -225,10 +239,15 @@ export function PrcmBzentyUserMngPage() {
         footer={
           <ButtonGroup
             layout="split"
-            items={[
-              { label: '닫기', variant: 'secondary', onClick: closeSttsChg },
-              { label: '저장', variant: 'primary', onClick: handleSaveStts },
-            ]}
+            items={
+              // 탈퇴 상태 대상은 재변경 불가 — 저장 버튼 제거(닫기만).
+              sttsLocked
+                ? [{ label: '닫기', variant: 'secondary', onClick: closeSttsChg }]
+                : [
+                    { label: '닫기', variant: 'secondary', onClick: closeSttsChg },
+                    { label: '저장', variant: 'primary', onClick: handleSaveStts },
+                  ]
+            }
           />
         }
       >
@@ -238,9 +257,31 @@ export function PrcmBzentyUserMngPage() {
             currentSttsNm={sttsTarget.userSttsNm}
             value={sttsValue}
             onValueChange={setSttsValue}
+            locked={sttsLocked}
           />
         )}
       </BottomSheet>
+
+      {/* 탈퇴 상태 변경 확인 모달(v0.87 slide214) — 모바일에서 비가역. 확인 시에만 저장. */}
+      <AlertModal
+        open={tChgConfirmOpen}
+        onOpenChange={setTChgConfirmOpen}
+        variant="error"
+        title="탈퇴 상태 변경 확인"
+        description={
+          <span className="whitespace-pre-line">
+            {'임직원의 상태를 탈퇴로 변경하면 모바일에서 되돌릴 수 없습니다.\n퇴사자 원복은 PC 버전에서 확인하고, 신청이 가능합니다.\n정말 임직원의 상태를 탈퇴로 변경할까요?'}
+          </span>
+        }
+        primaryAction={{
+          label: '확인',
+          onClick: () => {
+            setTChgConfirmOpen(false)
+            doSaveStts()
+          },
+        }}
+        secondaryAction={{ label: '취소', onClick: () => setTChgConfirmOpen(false) }}
+      />
     </div>
   )
 }
