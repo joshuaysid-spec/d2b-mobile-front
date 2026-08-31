@@ -3,6 +3,7 @@
 //   콘텐츠 컴포넌트다(라우트 아님 — 검색바/헤더는 부모 FullPopup 이 소유). 검색바 아래부터를 그린다:
 //   ① {검색어} 검색결과 총 N개(SectionTitle) → ② 검색필터 버튼 + 정렬 셀렉트 →
 //   ③ 결과 카테고리별(입찰공고·개찰결과) 섹션: 카테고리 총건수 + 카드 리스트 + 더보기.
+// 검색필터: 공통 SearchFilter 셸 재사용 — 기간검색(dateRange, 공고일자 기준 클라이언트 필터).
 // 데이터는 파일 내 목업 상수, 핸들러는 console.log + // 추후 API 주석으로 경계 표시.
 //   실제 검색결과는 cmService.selectSearchAll(keyword) → 카테고리별 목록/총건수 반환.
 // common/(base·composites)만 조립 — 신규 공통 컴포넌트 없음(정렬 셀렉트는 base SelectBox 로 근사).
@@ -20,6 +21,12 @@ import { Icon } from '@/ui/common/base/Icon'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
+import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
+import type {
+  DateRangeValue,
+  SearchFilterSchema,
+  SearchFilterValue,
+} from '@/types/search-filter'
 
 export interface IntgSrch_RsltProps {
   /** 실행된 검색어 — 결과 타이틀("{keyword} 검색결과")·목업 컨텍스트. */
@@ -170,11 +177,29 @@ const SORT_OPTIONS = [
 // 한 카테고리에서 처음 노출 + 더보기 1회당 추가되는 카드 수(Figma: 3장 후 더보기).
 const GROUP_PAGE_SIZE = 3
 
+// ── 검색필터 schema — 기간검색(공고일자 기준). 추후 통합검색 상세필터(Figma 10020-84840) 항목 확장.
+const INTG_SRCH_FILTER: SearchFilterSchema = {
+  title: '검색필터',
+  sections: [
+    {
+      key: 'period',
+      title: '기간검색',
+      fields: [{ key: 'period', type: 'dateRange' }],
+    },
+  ],
+}
+const DEFAULT_FILTER: SearchFilterValue = {
+  period: { start: '', end: '' },
+}
+
 function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProps) {
   const navigate = useNavigate()
   const [sort, setSort] = useState('relevance')
   // 카테고리별 더보기 페이지(기본 1 = GROUP_PAGE_SIZE 장). key → page.
   const [pages, setPages] = useState<Record<string, number>>({})
+  // 검색필터(기간검색) 풀팝업 + 확정값.
+  const [filterOpen, setFilterOpen] = useState(false)
+  const [filterValue, setFilterValue] = useState<SearchFilterValue>(DEFAULT_FILTER)
 
   const handleSort = (value: string) => {
     setSort(value)
@@ -183,9 +208,15 @@ function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProp
   }
 
   const handleFilter = () => {
-    console.log('[intgSrchRslt] 검색필터')
     onFilterClick?.()
-    // 추후: 통합검색 상세필터(Figma 10020-84840) 풀팝업 open
+    setFilterOpen(true) // 검색필터 풀팝업(기간검색)
+  }
+
+  const handleFilterSearch = (value: SearchFilterValue) => {
+    setFilterValue(value)
+    setPages({}) // 조건이 바뀌면 더보기 페이징 초기화
+    console.log('[intgSrchRslt] 검색필터 적용', value)
+    // 추후 API: cmService.selectSearchAll(keyword, { period }) 재조회
   }
 
   const handleLoadMore = (group: IntgSrchRsltGroup) => {
@@ -201,10 +232,19 @@ function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProp
     navigate(group.detailPath, { state: item })
   }
 
+  // 기간검색 필터 — 공고일자(pbancDt) 기준 클라이언트 필터(목업). 서버 페이징 전환 시 API 파라미터로 이행.
+  const period = filterValue.period as DateRangeValue | undefined
+  const inPeriod = (it: IntgSrchRsltItem) => {
+    if (!period) return true
+    if (period.start && it.pbancDt < period.start) return false
+    if (period.end && it.pbancDt > period.end) return false
+    return true
+  }
+
   // 카드 props 매핑(Figma m_card): 배지(업무구분·입찰방식) + subtitle(공고구분 공고번호) + title(입찰건명) + 4행.
   const toCardItems = (group: IntgSrchRsltGroup): CardListItem[] => {
     const loaded = (pages[group.key] ?? 1) * GROUP_PAGE_SIZE
-    return group.items.slice(0, loaded).map((it) => ({
+    return group.items.filter(inPeriod).slice(0, loaded).map((it) => ({
       id: it.id,
       badges: (
         <>
@@ -252,7 +292,7 @@ function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProp
       {RESULT_GROUPS.map((group) => {
         const cardItems = toCardItems(group)
         // 로컬 목업이 더 남아 있으면 더보기 노출(실제로는 loaded < total 로 서버 페이징 판단).
-        const hasMore = cardItems.length < group.items.length
+        const hasMore = cardItems.length < group.items.filter(inPeriod).length
         return (
           <section key={group.key} className="flex w-full flex-col">
             <SectionTitle info={`총 ${group.total.toLocaleString()}건`}>
@@ -273,6 +313,16 @@ function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProp
           </section>
         )
       })}
+
+      {/* 검색필터 풀팝업 — 기간검색(공고일자). 셸(SearchFilter) 재사용, schema 만 선언. */}
+      <SearchFilter
+        open={filterOpen}
+        onOpenChange={setFilterOpen}
+        schema={INTG_SRCH_FILTER}
+        value={filterValue}
+        defaultValue={DEFAULT_FILTER}
+        onSearch={handleFilterSearch}
+      />
     </div>
   )
 }
