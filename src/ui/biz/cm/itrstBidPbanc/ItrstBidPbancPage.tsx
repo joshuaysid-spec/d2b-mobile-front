@@ -226,11 +226,12 @@ export function ItrstBidPbancPage() {
         leftSlot={
           <Button
             variant="secondary"
+            size="icon"
+            aria-label="검색필터"
             onClick={() => setFilterOpen(true)}
             aria-pressed={filterApplied}
           >
             <Icon name="Tune" aria-hidden />
-            검색필터
           </Button>
         }
       />

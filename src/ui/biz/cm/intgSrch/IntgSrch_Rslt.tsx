@@ -325,9 +325,8 @@ function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProp
 
       {/* 검색필터 버튼 + 정렬 셀렉트 바 */}
       <div className="flex items-center justify-between gap-krds-5 px-4 py-krds-6">
-        <Button variant="secondary" onClick={handleFilter}>
-          <Icon name="Tune" size={20} aria-hidden />
-          검색필터
+        <Button variant="secondary" size="icon" aria-label="검색필터" onClick={handleFilter}>
+          <Icon name="Tune" aria-hidden />
         </Button>
         {/* Figma 정렬은 컴팩트 네이비 pill(m_select_text) — 전용 공통 컴포넌트가 없어 base SelectBox 로 근사. */}
         <div className="w-32 shrink-0">

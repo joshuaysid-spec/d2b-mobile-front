@@ -359,9 +359,13 @@ export function DocBoxPage() {
         pageSize={pageSize}
         onPageSizeChange={handlePageSize}
         leftSlot={
-          <Button variant="secondary" onClick={() => setFilterOpen(true)}>
+          <Button
+            variant="secondary"
+            size="icon"
+            aria-label="검색필터"
+            onClick={() => setFilterOpen(true)}
+          >
             <Icon name="Tune" aria-hidden />
-            검색필터
           </Button>
         }
       />

@@ -210,9 +210,14 @@ export function OvsSosCnfdocListPage() {
           setPage(1)
         }}
         leftSlot={
-          <Button variant="secondary" onClick={() => setOpen(true)} aria-pressed={filterApplied}>
+          <Button
+            variant="secondary"
+            size="icon"
+            aria-label="검색필터"
+            onClick={() => setOpen(true)}
+            aria-pressed={filterApplied}
+          >
             <Icon name="Tune" aria-hidden />
-            검색필터
           </Button>
         }
       />
