@@ -3,7 +3,9 @@
 //   콘텐츠 컴포넌트다(라우트 아님 — 검색바/헤더는 부모 FullPopup 이 소유). 검색바 아래부터를 그린다:
 //   ① {검색어} 검색결과 총 N개(SectionTitle) → ② 검색필터 버튼 + 정렬 셀렉트 →
 //   ③ 결과 카테고리별(입찰공고·개찰결과) 섹션: 카테고리 총건수 + 카드 리스트 + 더보기.
-// 검색필터: 공통 SearchFilter 셸 재사용 — 기간검색(dateRange, 공고일자 기준 클라이언트 필터).
+// 검색필터: 공통 SearchFilter 셸 재사용 — 검색대상(체크박스 7종, 체크 카테고리만 섹션 노출) +
+//   결과 내 재검색(검색어 포함/제외 + 입력, 건명·공고번호 대상) + 기간검색(dateRange, 공고일자 기준).
+//   설계서 v0.87 인쇄본 27쪽 — "체크 시 즉시 반영"은 셸 규격상 [검색] 실행 시 일괄 적용으로 대체.
 // 데이터는 파일 내 목업 상수, 핸들러는 console.log + // 추후 API 주석으로 경계 표시.
 //   실제 검색결과는 cmService.selectSearchAll(keyword) → 카테고리별 목록/총건수 반환.
 // common/(base·composites)만 조립 — 신규 공통 컴포넌트 없음(정렬 셀렉트는 base SelectBox 로 근사).
@@ -177,10 +179,45 @@ const SORT_OPTIONS = [
 // 한 카테고리에서 처음 노출 + 더보기 1회당 추가되는 카드 수(Figma: 3장 후 더보기).
 const GROUP_PAGE_SIZE = 3
 
-// ── 검색필터 schema — 기간검색(공고일자 기준). 추후 통합검색 상세필터(Figma 10020-84840) 항목 확장.
+// ── 검색필터 schema — 설계서 v0.87 인쇄본 27쪽(검색필터 설정 화면) + 기간검색(사용자 추가).
+//   검색대상: 체크박스(체크 시 결과 영역 반영 — 셸 규격상 [검색] 실행 시 일괄 적용).
+//   결과 내 재검색: 검색어 포함(현재 검색어 + 추가어) / 검색어 제외(입력어 제외 처리) + 입력.
+const SEARCH_TARGET_OPTIONS = [
+  { value: 'bidPbanc', label: '입찰공고' },
+  { value: 'bdopn', label: '개찰결과' },
+  { value: 'scsbid', label: '낙찰자 안내' },
+  { value: 'ctrt', label: '계약정보' },
+  { value: 'prcmPlan', label: '조달계획' },
+  { value: 'bfhdSpcfct', label: '사전규격' },
+  { value: 'elctrLbry', label: '전자서고' },
+]
 const INTG_SRCH_FILTER: SearchFilterSchema = {
   title: '검색필터',
   sections: [
+    {
+      key: 'targets',
+      title: '검색대상',
+      fields: [
+        { key: 'targets', type: 'checkbox', options: SEARCH_TARGET_OPTIONS, selectAll: true },
+      ],
+    },
+    {
+      key: 'rsrch',
+      title: '결과 내 재검색',
+      fields: [
+        {
+          key: 'rsrchMode',
+          type: 'radio',
+          direction: 'horizontal',
+          showIndicator: true,
+          options: [
+            { value: 'include', label: '검색어 포함' },
+            { value: 'exclude', label: '검색어 제외' },
+          ],
+        },
+        { key: 'rsrchKeyword', type: 'text', placeholder: '검색어를 입력하세요.' },
+      ],
+    },
     {
       key: 'period',
       title: '기간검색',
@@ -189,6 +226,9 @@ const INTG_SRCH_FILTER: SearchFilterSchema = {
   ],
 }
 const DEFAULT_FILTER: SearchFilterValue = {
+  targets: SEARCH_TARGET_OPTIONS.map((o) => o.value), // 기본 전체 선택
+  rsrchMode: 'include',
+  rsrchKeyword: '',
   period: { start: '', end: '' },
 }
 
@@ -232,19 +272,31 @@ function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProp
     navigate(group.detailPath, { state: item })
   }
 
-  // 기간검색 필터 — 공고일자(pbancDt) 기준 클라이언트 필터(목업). 서버 페이징 전환 시 API 파라미터로 이행.
+  // 검색필터 적용(클라이언트, 목업) — 서버 페이징 전환 시 API 파라미터로 이행.
+  // 기간검색: 공고일자(pbancDt) 기준.
   const period = filterValue.period as DateRangeValue | undefined
-  const inPeriod = (it: IntgSrchRsltItem) => {
-    if (!period) return true
-    if (period.start && it.pbancDt < period.start) return false
-    if (period.end && it.pbancDt > period.end) return false
+  // 결과 내 재검색: include=현재 결과에서 추가 검색어 포함만 / exclude=입력 검색어 포함 건 제외.
+  const rsrchKeyword = ((filterValue.rsrchKeyword as string) ?? '').trim()
+  const rsrchExclude = filterValue.rsrchMode === 'exclude'
+  // 검색대상: 체크된 카테고리만 결과 섹션 노출.
+  const targets = (filterValue.targets as string[] | undefined) ?? []
+  const matchesFilter = (it: IntgSrchRsltItem) => {
+    if (period) {
+      if (period.start && it.pbancDt < period.start) return false
+      if (period.end && it.pbancDt > period.end) return false
+    }
+    if (rsrchKeyword) {
+      const hit = `${it.bidPbancNm} ${it.pbancNo}`.includes(rsrchKeyword)
+      if (rsrchExclude ? hit : !hit) return false
+    }
     return true
   }
+  const visibleGroups = RESULT_GROUPS.filter((g) => targets.includes(g.key))
 
   // 카드 props 매핑(Figma m_card): 배지(업무구분·입찰방식) + subtitle(공고구분 공고번호) + title(입찰건명) + 4행.
   const toCardItems = (group: IntgSrchRsltGroup): CardListItem[] => {
     const loaded = (pages[group.key] ?? 1) * GROUP_PAGE_SIZE
-    return group.items.filter(inPeriod).slice(0, loaded).map((it) => ({
+    return group.items.filter(matchesFilter).slice(0, loaded).map((it) => ({
       id: it.id,
       badges: (
         <>
@@ -288,11 +340,11 @@ function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProp
         </div>
       </div>
 
-      {/* 카테고리별 결과 섹션 */}
-      {RESULT_GROUPS.map((group) => {
+      {/* 카테고리별 결과 섹션 — 검색대상 체크된 카테고리만. */}
+      {visibleGroups.map((group) => {
         const cardItems = toCardItems(group)
         // 로컬 목업이 더 남아 있으면 더보기 노출(실제로는 loaded < total 로 서버 페이징 판단).
-        const hasMore = cardItems.length < group.items.filter(inPeriod).length
+        const hasMore = cardItems.length < group.items.filter(matchesFilter).length
         return (
           <section key={group.key} className="flex w-full flex-col">
             <SectionTitle info={`총 ${group.total.toLocaleString()}건`}>
