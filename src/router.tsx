@@ -1658,7 +1658,7 @@ export const router = createBrowserRouter([
         },
       },
       {
-        // 방위사업청공지사항 (MUI-CM-04-M21)
+        // 방위사업청공지사항 (MUI-CM-04-M25)
         path: 'support/notice/dapa',
         element: <D2bNoticeListPage />,
         errorElement: <ErrorPage />,
@@ -1668,7 +1668,7 @@ export const router = createBrowserRouter([
         },
       },
       {
-        // 수요부대별공지사항 (MUI-CM-04-M23)
+        // 수요부대별공지사항 (MUI-CM-04-M27)
         path: 'support/notice/dmdfrc',
         element: <DmdfrcNoticeListPage />,
         errorElement: <ErrorPage />,
@@ -1678,7 +1678,7 @@ export const router = createBrowserRouter([
         },
       },
       {
-        // 일반자료실 (MUI-CM-04-M25)
+        // 일반자료실 (MUI-CM-04-M29)
         path: 'support/archive',
         element: <RpstrListPage />,
         errorElement: <ErrorPage />,
@@ -1688,7 +1688,7 @@ export const router = createBrowserRouter([
         },
       },
       {
-        // 수요부대별자료실 (MUI-CM-04-M27)
+        // 수요부대별자료실 (MUI-CM-04-M31)
         path: 'support/archive/dmdfrc',
         element: <DmdfrcRpstrListPage />,
         errorElement: <ErrorPage />,
@@ -1698,7 +1698,7 @@ export const router = createBrowserRouter([
         },
       },
       {
-        // 계약관련서식자료실 (MUI-CM-04-M29)
+        // 계약관련서식자료실 (MUI-CM-04-M33)
         path: 'support/archive/ctrt',
         element: <CtrtRpstrListPage />,
         errorElement: <ErrorPage />,
@@ -1708,7 +1708,7 @@ export const router = createBrowserRouter([
         },
       },
       {
-        // 시스템개선안내 (MUI-CM-04-M31)
+        // 시스템개선안내 (MUI-CM-04-M35)
         path: 'support/sys-impv',
         element: <SysImpvRpstrListPage />,
         errorElement: <ErrorPage />,
@@ -2020,42 +2020,42 @@ export const router = createBrowserRouter([
       },
       // 게시판 상세 — 목록 카드 클릭 진입. 정적 목록경로(dapa/dmdfrc/ctrt 등)가 RRv6 랭킹으로 우선 매칭됨.
       {
-        // 방위사업청공지사항 상세 (MUI-CM-04-M22)
+        // 방위사업청공지사항 상세 (MUI-CM-04-M26)
         path: 'support/d2bNoticeDtl',
         element: <D2bNoticeDtlPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '방위사업청 공지사항 상세' }, scrollReset: true },
       },
       {
-        // 수요부대별공지사항 상세 (MUI-CM-04-M24)
+        // 수요부대별공지사항 상세 (MUI-CM-04-M28)
         path: 'support/dmdfrcNoticeDtl',
         element: <DmdfrcNoticeDtlPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '수요부대별 공지사항 상세' }, scrollReset: true },
       },
       {
-        // 일반자료실 상세 (MUI-CM-04-M26)
+        // 일반자료실 상세 (MUI-CM-04-M30)
         path: 'support/rpstrDtl',
         element: <RpstrDtlPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '자료실 상세' }, scrollReset: true },
       },
       {
-        // 수요부대별자료실 상세 (MUI-CM-04-M28)
+        // 수요부대별자료실 상세 (MUI-CM-04-M32)
         path: 'support/dmdfrcRpstrDtl',
         element: <DmdfrcRpstrDtlPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '자료실 상세' }, scrollReset: true },
       },
       {
-        // 계약관련서식자료실 상세 (MUI-CM-04-M30)
+        // 계약관련서식자료실 상세 (MUI-CM-04-M34)
         path: 'support/ctrtRpstrDtl',
         element: <CtrtRpstrDtlPage />,
         errorElement: <ErrorPage />,
         handle: { header: { variant: 'sub', title: '자료실 상세' }, scrollReset: true },
       },
       {
-        // 시스템개선안내 상세 (MUI-CM-04-M32)
+        // 시스템개선안내 상세 (MUI-CM-04-M36)
         path: 'support/sysImpvRpstrDtl',
         element: <SysImpvRpstrDtlPage />,
         errorElement: <ErrorPage />,

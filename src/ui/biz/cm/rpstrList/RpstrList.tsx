@@ -1,4 +1,4 @@
-// 일반자료실(자료실 목록) — MUI-CM-04-M25. 공용 BoardListView + rpstrBoard config + 공유 목업.
+// 일반자료실(자료실 목록) — MUI-CM-04-M29. 공용 BoardListView + rpstrBoard config + 공유 목업.
 import { useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'

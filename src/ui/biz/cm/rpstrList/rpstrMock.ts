@@ -8,7 +8,7 @@ import type {
   MockSysImpvDetail,
 } from '@/types/mock/cm'
 
-// ── 일반자료실 (MUI-CM-04-M25/M26) ──────────────────────────────────────────
+// ── 일반자료실 (MUI-CM-04-M29/M26) ──────────────────────────────────────────
 export const RPSTR_SEEDS: MockRpstrListItem[] = [
   { no: 1, contsNo: '000101', bizFldCd: '서식', rpstrTtl: '전자입찰 참가신청서 서식 (2026년 개정)', fileCnt: 2, rgtrId: '관리자', regDt: '2026-05-11', inqNocs: 1320 },
   { no: 2, contsNo: '000102', bizFldCd: '매뉴얼', rpstrTtl: '모바일 앱 사용자 매뉴얼 (v1.2)', fileCnt: 1, rgtrId: '정보화팀', regDt: '2026-05-09', inqNocs: 845 },
@@ -17,7 +17,7 @@ export const RPSTR_SEEDS: MockRpstrListItem[] = [
 ]
 export const RPSTR_MOCK: MockRpstrListItem[] = inflateRpstr(RPSTR_SEEDS, 100)
 
-// ── 수요부대별자료실 (MUI-CM-04-M27/M28) ────────────────────────────────────
+// ── 수요부대별자료실 (MUI-CM-04-M31/M28) ────────────────────────────────────
 export const DMDFRC_RPSTR_SEEDS: MockRpstrListItem[] = [
   { no: 1, contsNo: '000101', bizFldCd: '서식', rpstrTtl: '수요부대 조달요구서 표준 양식', fileCnt: 2, rgtrId: '군수참모부', regDt: '2026-05-10', inqNocs: 640 },
   { no: 2, contsNo: '000102', bizFldCd: '자료', rpstrTtl: '부대별 소요 품목 분류 기준표', fileCnt: 1, rgtrId: '군수관리과', regDt: '2026-05-08', inqNocs: 388 },
@@ -25,7 +25,7 @@ export const DMDFRC_RPSTR_SEEDS: MockRpstrListItem[] = [
 ]
 export const DMDFRC_RPSTR_MOCK: MockRpstrListItem[] = inflateRpstr(DMDFRC_RPSTR_SEEDS, 100)
 
-// ── 계약관련서식자료실 (MUI-CM-04-M29/M30) ──────────────────────────────────
+// ── 계약관련서식자료실 (MUI-CM-04-M33/M30) ──────────────────────────────────
 export const CTRT_RPSTR_SEEDS: MockRpstrListItem[] = [
   { no: 1, contsNo: '000101', bizFldCd: '서식', rpstrTtl: '표준 계약서(물품) 서식', fileCnt: 1, rgtrId: '계약제도과', regDt: '2026-05-11', inqNocs: 1580 },
   { no: 2, contsNo: '000102', bizFldCd: '서식', rpstrTtl: '계약변경(변경계약) 신청서 양식', fileCnt: 2, rgtrId: '계약관리과', regDt: '2026-05-09', inqNocs: 903 },
@@ -55,7 +55,7 @@ export function toRpstrDetail(item: MockRpstrListItem, deptNm = '자료실운영
   }
 }
 
-// ── 시스템개선안내 (MUI-CM-04-M31/M32) ──────────────────────────────────────
+// ── 시스템개선안내 (MUI-CM-04-M35/M32) ──────────────────────────────────────
 export const SYSIMPV_SEEDS: MockSysImpvListItem[] = [
   { no: 1, contsNo: '000101', bizFldCd: '개선', bbsTtl: '입찰공고 목록 검색 속도 개선 적용 안내', fileCnt: 1, wrtrNm: '정보화팀', regDt: '2026-05-11', inqCnt: 512 },
   { no: 2, contsNo: '000102', bizFldCd: '개선', bbsTtl: '모바일 알림 수신 설정 기능 추가', fileCnt: 1, wrtrNm: '정보화팀', regDt: '2026-05-08', inqCnt: 337 },

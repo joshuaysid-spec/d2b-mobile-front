@@ -137,12 +137,12 @@ export interface MockNoticeDetail {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 자료실 / 시스템개선안내 (MUI-CM-04-M25~M32). 설계서 slide220~231.
+// 자료실 / 시스템개선안내 (MUI-CM-04-M29~M32). 설계서 slide220~231.
 // 공지사항과 게시판 구조는 유사하나 항목명이 일부 달라 별도 타입으로 둔다.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * 자료실 상세 데이터영역(dm_rpstrInfo) — MUI-CM-04-M26/M28/M30(일반/수요부대별/계약관련서식자료실 상세, slide228~230).
+ * 자료실 상세 데이터영역(dm_rpstrInfo) — MUI-CM-04-M30/M28/M30(일반/수요부대별/계약관련서식자료실 상세, slide228~230).
  * 공지 상세와 달리 긴급·상위고정·게시기간 없음. 담당부서=deptNm(≠공지 tkcgDeptNm)·제목=rpstrTtl.
  */
 export interface MockRpstrDetail {
@@ -163,7 +163,7 @@ export interface MockRpstrDetail {
 }
 
 /**
- * 시스템개선안내 상세 데이터영역(dm_rpstrInfo) — MUI-CM-04-M32(slide231).
+ * 시스템개선안내 상세 데이터영역(dm_rpstrInfo) — MUI-CM-04-M36(slide231).
  * 자료실 그룹이나 항목명은 공지형(bbsTtl/tkcgDeptNm) + 게시기간 있음. 긴급·상위고정 없음.
  */
 export interface MockSysImpvDetail {
@@ -188,7 +188,7 @@ export interface MockSysImpvDetail {
 }
 
 /**
- * 자료실 목록 데이터영역(dl_resultList) 1건 — MUI-CM-04-M25/M27/M29(일반/수요부대별/계약관련서식자료실).
+ * 자료실 목록 데이터영역(dl_resultList) 1건 — MUI-CM-04-M29/M27/M29(일반/수요부대별/계약관련서식자료실).
  * 설계서 slide220~222 항목명(영문) 준수. 공지사항과 달리 긴급(emrg)·상위고정(upFix)·담당부서(tkcgDeptNm) 없음.
  * 작성자=rgtrId(≠공지 wrtrNm)·조회=inqNocs(≠공지 inqCnt)·제목=rpstrTtl.
  */
@@ -227,7 +227,7 @@ export interface MockRpstrSearchFilter {
 }
 
 /**
- * 시스템개선안내 목록 데이터영역(dl_resultList) 1건 — MUI-CM-04-M31.
+ * 시스템개선안내 목록 데이터영역(dl_resultList) 1건 — MUI-CM-04-M35.
  * 자료실 그룹이나 항목명은 공지사항형(bbsTtl/wrtrNm/inqCnt). 긴급·상위고정·담당부서 없음.
  * 검색조건은 공지사항과 동일(bbsTtl/bbsCn/wrtrNm)이라 MockNoticeSearchFilter 를 재사용한다.
  */

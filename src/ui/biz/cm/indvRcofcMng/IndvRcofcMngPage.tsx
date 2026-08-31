@@ -76,6 +76,8 @@ export function IndvRcofcMngPage() {
       { label: '부서', value: it.deptNm },
       { label: '수신부서', value: it.rcptnOgnzNm },
       { label: '수신자', value: it.rcvrNm },
+      // v0.87(인쇄본 112쪽): ID 표기 추가 — 구판 Hidden 이던 rcvrId 를 카드에 노출.
+      { label: 'ID', value: it.rcvrId },
     ],
   }))
 

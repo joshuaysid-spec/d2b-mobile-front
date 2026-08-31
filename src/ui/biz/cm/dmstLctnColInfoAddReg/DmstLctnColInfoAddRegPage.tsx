@@ -87,6 +87,35 @@ const INITIAL_ITEMS: MockAddRegItemRow[] = [
     rnwlReqYmd: '9999-12-31',
     rcptSttsNm: '신청',
   },
+  // 적격여부 필터(전체/적격/부적격/만료/만료예정, v0.87) 시연용 — 만료·만료예정 상태 품목.
+  {
+    id: '3',
+    itemCd: '2001100003',
+    knditmCd: '05',
+    knditmCdNm: '피복',
+    itemCdNm: '전투화',
+    itemRgstrtSecdNm: '제조',
+    itemRgstrtRqmtNm: '공장등록',
+    itemRvwRsltCn: '만료',
+    aprvYmd: '2024-03-15',
+    expryYmd: '2026-03-14',
+    rnwlReqYmd: '-',
+    rcptSttsNm: '승인',
+  },
+  {
+    id: '4',
+    itemCd: '2001100004',
+    knditmCd: '60',
+    knditmCdNm: '총탄',
+    itemCdNm: '방탄모',
+    itemRgstrtSecdNm: '판매',
+    itemRgstrtRqmtNm: '공장등록',
+    itemRvwRsltCn: '만료예정',
+    aprvYmd: '2024-10-01',
+    expryYmd: '2026-09-30',
+    rnwlReqYmd: '-',
+    rcptSttsNm: '승인',
+  },
 ]
 const TOTAL_ITEMS = 258 // 더보기(10/258) 시연용 총건수(설계서 slide151)
 
@@ -375,9 +404,12 @@ export function DmstLctnColInfoAddRegPage() {
                 value={rvwRslt}
                 onValueChange={setRvwRslt}
                 items={[
+                  // v0.87(인쇄본 160쪽) 적격여부 필터 — 전체/적격/부적격/만료/만료예정(기본 전체).
                   { value: 'all', label: '전체' },
                   { value: '적격', label: '적격' },
                   { value: '부적격', label: '부적격' },
+                  { value: '만료', label: '만료' },
+                  { value: '만료예정', label: '만료예정' },
                 ]}
               />
             </div>

@@ -1,4 +1,4 @@
-// 수요부대별자료실(자료실 목록) — MUI-CM-04-M27. 공용 BoardListView + rpstrBoard config + 공유 목업.
+// 수요부대별자료실(자료실 목록) — MUI-CM-04-M31. 공용 BoardListView + rpstrBoard config + 공유 목업.
 import { useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'

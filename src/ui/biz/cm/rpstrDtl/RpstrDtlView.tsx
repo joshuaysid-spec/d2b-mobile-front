@@ -1,4 +1,4 @@
-// 자료실 상세 공유 뷰 — 일반/수요부대별/계약관련서식(MUI-CM-04-M26·M28·M30)이 dm_rpstrInfo 동일.
+// 자료실 상세 공유 뷰 — 일반/수요부대별/계약관련서식(MUI-CM-04-M30·M28·M30)이 dm_rpstrInfo 동일.
 // 공지 상세와 달리 긴급·게시기간 없음(배지=구분만, 메타=작성자/담당부서/구분). 이전글/다음글은 mock에서 계산.
 // URL 에 식별자를 두지 않는다(보안 정책) — 대상 글은 목록이 넘긴 navigate state 로만 받는다.
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'

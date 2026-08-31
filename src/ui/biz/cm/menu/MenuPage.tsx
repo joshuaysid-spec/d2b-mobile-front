@@ -356,15 +356,30 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
                   </p>
                 )}
               </div>
-              {/* 로그아웃 — 컴팩트 텍스트 버튼(기존 하단 큰 버튼 대체). 터치 타깃 44px 확보. */}
-              <button
-                type="button"
-                onClick={onLogout}
-                className="flex min-h-11 shrink-0 items-center gap-krds-2 text-[15px] font-medium leading-normal text-krds-text-muted focus-visible:outline-hidden active:opacity-70"
-              >
-                <Icon name="Logout" size={18} aria-hidden />
-                로그아웃
-              </button>
+              {/* 로그아웃·PC QR 로그인 — 컴팩트 텍스트 버튼(기존 하단 큰 버튼 대체). 터치 타깃 44px 확보.
+                  PC QR 로그인(v0.87 인쇄본 29쪽, 2026-08-26 추가): 모바일로 PC 화면 QR 스캔 → PC 로그인 승인.
+                  QR 스캔은 하이브리드 앱 브리지(카메라) 필요 — 상세 설계 미정, 스텁(closed-network-checklist). */}
+              <div className="flex shrink-0 items-center gap-krds-6">
+                <button
+                  type="button"
+                  onClick={() => {
+                    console.log('[Menu] PC QR 로그인')
+                    // 추후: 앱 브리지 QR 스캐너 호출 → PC 세션 승인 API
+                  }}
+                  className="flex min-h-11 shrink-0 items-center gap-krds-2 text-[15px] font-medium leading-normal text-krds-text-muted focus-visible:outline-hidden active:opacity-70"
+                >
+                  <Icon name="QrCodeScanner" size={18} aria-hidden />
+                  PC QR 로그인
+                </button>
+                <button
+                  type="button"
+                  onClick={onLogout}
+                  className="flex min-h-11 shrink-0 items-center gap-krds-2 text-[15px] font-medium leading-normal text-krds-text-muted focus-visible:outline-hidden active:opacity-70"
+                >
+                  <Icon name="Logout" size={18} aria-hidden />
+                  로그아웃
+                </button>
+              </div>
             </>
           ) : (
             // 로그인 전 — 텍스트 행 전체가 로그인 진입(기존 하단 큰 버튼 대체).

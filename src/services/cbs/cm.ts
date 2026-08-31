@@ -452,7 +452,7 @@ export const cmService = {
     })
   },
 
-  // ── 실적증명서(민원문서, /cbs/cm/minwon) — MUI-CM-04-M27~M30·P20 ───────────
+  // ── 실적증명서(민원문서, /cbs/cm/minwon) — MUI-CM-04-M06·M07·M10·M12·P20 (v0.87 재편) ───────────
 
   /** no.677 업체기본정보조회 — 실적증명서 신청서 상단 신청업체(자동완성). 소비처 대기. */
   async selectBzentyBscInfo(): Promise<MockBzentyInfo> {
@@ -469,7 +469,7 @@ export const cmService = {
     )
   },
 
-  /** no.679 실적증명서신청목록조회 — MUI-CM-04-M27 (prfmncPrdoc/PrfmncPrdocPage). 소비처 대기(목업 미정). */
+  /** no.679 실적증명서신청목록조회 — MUI-CM-04-M06 (prfmncPrdoc/PrfmncPrdocPage). 소비처 대기(목업 미정). */
   async selectPrfmncPrdocAplyList(
     params: { aplyYmdFrom?: string; aplyYmdTo?: string; ctrtNo?: string; prcsStts?: string } = {},
   ): Promise<MockPrfmncPrdocItem[]> {
@@ -480,25 +480,25 @@ export const cmService = {
     )
   },
 
-  /** no.683 실적증명서신청 — MUI-CM-04-M28 신규 신청. 소비처 대기. */
+  /** no.683 실적증명서신청 — MUI-CM-04-M12 신청정보입력. 소비처 대기. */
   async insertPrfmncPrdoc(payload: MockPrfmncPrdocAplyInfo): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
     await apiClient.post<void, void>('/cbs/cm/minwon/insertPrfmncPrdoc.do', payload)
   },
 
-  /** no.682 실적증명서신청수정 — MUI-CM-04-M28. 소비처 대기. */
+  /** no.682 실적증명서신청수정 — MUI-CM-04-M12. 소비처 대기. */
   async updatePrfmncPrdoc(payload: MockPrfmncPrdocAplyInfo): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
     await apiClient.post<void, void>('/cbs/cm/minwon/updatePrfmncPrdoc.do', payload)
   },
 
-  /** no.681 실적증명서신청삭제 — MUI-CM-04-M27 목록 삭제. 소비처 대기. */
+  /** no.681 실적증명서신청삭제 — MUI-CM-04-M06 목록 삭제. 소비처 대기. */
   async deletePrfmncPrdoc(prfmncRcptNo: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
     await apiClient.post<void, void>('/cbs/cm/minwon/deletePrfmncPrdoc.do', { prfmncRcptNo })
   },
 
-  /** no.684 실적증명서발급 — MUI-CM-04-M29 발급 버튼. 소비처 대기. */
+  /** no.684 실적증명서발급 — MUI-CM-04-M07 상세 발급 버튼. 소비처 대기. */
   async procPrfmncPrdocIssu(prfmncRcptNo: string): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
     await apiClient.post<void, void>('/cbs/cm/minwon/procPrfmncPrdocIssu.do', { prfmncRcptNo })

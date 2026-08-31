@@ -1,4 +1,4 @@
-// 자료실(일반/수요부대별/계약관련서식 — MUI-CM-04-M25·M27·M29) 공용 config.
+// 자료실(일반/수요부대별/계약관련서식 — MUI-CM-04-M29·M27·M29) 공용 config.
 // 세 화면은 데이터영역(dl_resultList)·검색조건이 동일하므로 schema·카드매핑·검색로직을 공유한다.
 // 공지사항과 달리 긴급·상위고정·담당부서 없음. 제목=rpstrTtl·작성자=rgtrId·조회=inqNocs(설계서 slide220~222).
 import dayjs from 'dayjs'

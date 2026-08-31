@@ -86,7 +86,7 @@ export const NOTICE_SEEDS: MockNoticeListItem[] = [
 ]
 export const NOTICE_MOCK: MockNoticeListItem[] = inflateNotice(NOTICE_SEEDS, 100)
 
-// 방위사업청 공지 목업 seed (MUI-CM-04-M21/M22).
+// 방위사업청 공지 목업 seed (MUI-CM-04-M25/M22).
 export const D2B_NOTICE_SEEDS: MockNoticeListItem[] = [
   {
     no: 1,
@@ -143,7 +143,7 @@ export const D2B_NOTICE_SEEDS: MockNoticeListItem[] = [
 ]
 export const D2B_NOTICE_MOCK: MockNoticeListItem[] = inflateNotice(D2B_NOTICE_SEEDS, 100)
 
-// 수요부대별 공지 목업 seed (MUI-CM-04-M23/M24).
+// 수요부대별 공지 목업 seed (MUI-CM-04-M27/M24).
 export const DMDFRC_NOTICE_SEEDS: MockNoticeListItem[] = [
   {
     no: 1,

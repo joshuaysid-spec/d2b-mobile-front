@@ -1,4 +1,4 @@
-// 수요부대별공지사항(공지사항 목록) — MUI-CM-04-M23. 공용 BoardListView + noticeBoard config + 공유 목업.
+// 수요부대별공지사항(공지사항 목록) — MUI-CM-04-M27. 공용 BoardListView + noticeBoard config + 공유 목업.
 import { useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'

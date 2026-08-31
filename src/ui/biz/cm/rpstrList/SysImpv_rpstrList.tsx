@@ -1,4 +1,4 @@
-// 시스템개선안내(자료실 목록) — MUI-CM-04-M31. 자료실 그룹이나 항목명은 공지형(bbsTtl/wrtrNm/inqCnt).
+// 시스템개선안내(자료실 목록) — MUI-CM-04-M35. 자료실 그룹이나 항목명은 공지형(bbsTtl/wrtrNm/inqCnt).
 // 검색조건은 공지형(bbsTtl/bbsCn/wrtrNm)이라 noticeBoard schema/타깃/기본값 재사용. 목업은 rpstrMock(SYSIMPV_MOCK).
 import { useNavigate } from 'react-router-dom'
 

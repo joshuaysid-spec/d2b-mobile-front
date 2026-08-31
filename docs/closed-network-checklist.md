@@ -69,6 +69,9 @@
   · `message`(첨언) · `edmsIden`(첨부 EDMS ID) · `rcptDate`/`recvDttm` 등. 백엔드 확인 필요:
   ① `ctgrIden` → 이동 대상 화면 매핑표(코드 목록) ② `mainNumb` 로 공고번호(pbancNo)·업무구분(국내/국외)을
   얻는 방법(응답 필드 추가 or 역조회 API). 그때까지 `DocBoxItem.pbancNo`/`taskSeCd` 는 임시키(목업 구동).
+- [ ] **PC QR 로그인 (MS-01-M12 햄버거메뉴, v0.87 인쇄본 29쪽 추가)**: 버튼은 구현(로그아웃 옆,
+  `MenuPage`), 동작은 스텁. QR 스캔에 하이브리드 앱 브리지(카메라) API 와 PC 세션 승인 API 가 필요 —
+  QR 상세 설계·브리지 규격 확정 시 배선(`// 추후: 앱 브리지 QR 스캐너 호출`).
 - [ ] **CT 상세 분기 기준 확정**: 목록 카드 → 상세 분기(slide22)가 목록 데이터영역에 없는 항목
   (계약상태·계약서유형)에 의존 — 백엔드 응답 확정 시 `CtrtIntgListPage.handleCardClick` 분기 정비.
   바로가기 시트(M03/M09)의 진행단계별 버튼 노출 매트릭스(slide32/47)도 상태코드 확정 시 데이터 구동 전환.

@@ -1,4 +1,4 @@
-// 계약관련서식자료실상세 — MUI-CM-04-M30. 공유 RpstrDtlView + 계약관련서식자료실 목업 조립.
+// 계약관련서식자료실상세 — MUI-CM-04-M34. 공유 RpstrDtlView + 계약관련서식자료실 목업 조립.
 import { ROUTES } from '@/constants/routes'
 import { RpstrDtlView } from './RpstrDtlView'
 import { CTRT_RPSTR_MOCK } from '@/ui/biz/cm/rpstrList/rpstrMock'

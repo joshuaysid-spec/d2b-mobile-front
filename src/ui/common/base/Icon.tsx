@@ -91,6 +91,7 @@ const REGISTRY = {
   PlayArrow: 'play_arrow',
   Print: 'print',
   Public: 'public',
+  QrCodeScanner: 'qr_code_scanner',
   Recommend: 'recommend',
   Refresh: 'refresh',
   Remove: 'remove',

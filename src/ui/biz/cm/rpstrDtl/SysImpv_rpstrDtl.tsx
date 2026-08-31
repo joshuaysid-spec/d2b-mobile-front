@@ -1,4 +1,4 @@
-// 시스템개선안내상세 — MUI-CM-04-M32(slide231). 자료실 그룹이나 항목명은 공지형 + 게시기간 있음(긴급 없음).
+// 시스템개선안내상세 — MUI-CM-04-M36(slide231). 자료실 그룹이나 항목명은 공지형 + 게시기간 있음(긴급 없음).
 // 공유 BoardDetailView 직접 조립(자료실 뷰와 필드가 달라 별도). 이전글/다음글은 SYSIMPV_MOCK에서 계산.
 // URL 에 식별자를 두지 않는다(보안 정책) — 대상 글은 목록이 넘긴 navigate state 로만 받는다.
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'

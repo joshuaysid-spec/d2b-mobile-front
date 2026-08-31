@@ -130,8 +130,8 @@ const NOTICE_TABS: NoticeTab[] = [
 
 // 공지 탭 → 더보기(공지 목록) 라우트. 라벨 문자열 분기 금지 — 탭 value 로 분기.
 const NOTICE_MORE_ROUTE: Record<string, string> = {
-  dapa: ROUTES.SUPPORT_NOTICE_DAPA, // 방위사업청공지사항 (MUI-CM-04-M21)
-  unit: ROUTES.SUPPORT_NOTICE_DMDFRC, // 수요부대별공지사항 (MUI-CM-04-M23)
+  dapa: ROUTES.SUPPORT_NOTICE_DAPA, // 방위사업청공지사항 (MUI-CM-04-M25)
+  unit: ROUTES.SUPPORT_NOTICE_DMDFRC, // 수요부대별공지사항 (MUI-CM-04-M27)
   general: ROUTES.SUPPORT_NOTICE, // 일반공지사항 (MUI-CM-04-M01)
 }
 

@@ -1,4 +1,4 @@
-// 방위사업청공지사항(공지사항 목록) — MUI-CM-04-M21. 공용 BoardListView + noticeBoard config + 공유 목업.
+// 방위사업청공지사항(공지사항 목록) — MUI-CM-04-M25. 공용 BoardListView + noticeBoard config + 공유 목업.
 import { useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'

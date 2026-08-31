@@ -1,4 +1,4 @@
-// 일반자료실상세 — MUI-CM-04-M26. 공유 RpstrDtlView + 일반자료실 목업(RPSTR_MOCK) 조립.
+// 일반자료실상세 — MUI-CM-04-M30. 공유 RpstrDtlView + 일반자료실 목업(RPSTR_MOCK) 조립.
 import { ROUTES } from '@/constants/routes'
 import { RpstrDtlView } from './RpstrDtlView'
 import { RPSTR_MOCK } from '@/ui/biz/cm/rpstrList/rpstrMock'

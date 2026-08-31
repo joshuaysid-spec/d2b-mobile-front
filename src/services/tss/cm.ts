@@ -48,7 +48,7 @@ export const tssCmService = {
     })
   },
 
-  /** no.930 자료실목록조회 — MUI-CM-04-M25 (rpstrList/board/BoardListView). 구 `selectBoardList('rpstr')`. */
+  /** no.930 자료실목록조회 — MUI-CM-04-M29 (rpstrList/board/BoardListView). 구 `selectBoardList('rpstr')`. */
   async selectRpstrList(params: MockBoardListRequest): Promise<MockBoardListItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.rpstrList)
     return apiClient.post<MockBoardListItem[], MockBoardListItem[]>(
@@ -57,7 +57,7 @@ export const tssCmService = {
     )
   },
 
-  /** no.931 자료실상세조회 — MUI-CM-04-M26. 구 `selectRpstrDetail`. */
+  /** no.931 자료실상세조회 — MUI-CM-04-M30. 구 `selectRpstrDetail`. */
   async selectRpstrDtl(contsNo: string): Promise<MockRpstrDetail> {
     if (USE_MOCK) return mockDelay(MOCK_CM.rpstrDetail)
     return apiClient.post<MockRpstrDetail, MockRpstrDetail>('/tss/cm/board/selectRpstrDtl.do', { contsNo })

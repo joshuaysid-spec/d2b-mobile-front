@@ -1,4 +1,4 @@
-// 수요부대별자료실상세 — MUI-CM-04-M28. 공유 RpstrDtlView + 수요부대별자료실 목업 조립.
+// 수요부대별자료실상세 — MUI-CM-04-M32. 공유 RpstrDtlView + 수요부대별자료실 목업 조립.
 import { ROUTES } from '@/constants/routes'
 import { RpstrDtlView } from './RpstrDtlView'
 import { DMDFRC_RPSTR_MOCK } from '@/ui/biz/cm/rpstrList/rpstrMock'
