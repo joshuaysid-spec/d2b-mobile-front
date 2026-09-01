@@ -228,7 +228,12 @@ export function OvsRlsVltrnsNgtnEtdcSbmsn3() {
     <div className="flex flex-col gap-krds-7 py-4">
       <div className="px-4">
         <ListSectionHeader
-          total={TOTAL}
+          // v0.87 검토108 — '총 N건' → '품목 목록 - 총 N건'
+          leftSlot={
+            <span className="text-[17px] font-bold leading-normal text-krds-text-primary-active">
+              품목 목록 - 총 {TOTAL.toLocaleString()}건
+            </span>
+          }
           pageSize={pageSize}
           pageSizeOptions={[10, 30, 50]}
           onPageSizeChange={(size) => {

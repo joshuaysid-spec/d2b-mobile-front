@@ -1,4 +1,4 @@
-// 국외 공개수의협상계획상세 — MUI-BD-12-M71(컨테이너) · 탭 T71 일반정보 · T72 품목정보 · T73 첨부서류(구 M71~M73 — v1.83 재편). 설계서 slide411~414.
+// 국외 공개수의협상계획상세 — MUI-BD-12-M71(컨테이너) · 탭 T71 일반정보 · T72 품목 목록 · T73 첨부서류 · 견적서 목록(v0.87 검토105 신설)(구 M71~M73 — v1.83 재편). 설계서 slide411~414.
 // 진입: 개찰목록 국외·수의계약 카드 클릭(수의계약 배지 조건일 때만) → /bd/ovsRlsVltrnsNgtnPlanDtl (state = 카드 요약).
 // 레퍼런스: OvsBidRsltDtlPage / OvsTndrDtlPage. ⚠️ 설계서 우선 — StepBar·즐겨찾기·출력 없음(사용자 확정).
 import { useState } from 'react'
@@ -16,11 +16,12 @@ import { OvsRlsVltrnsNgtnPlanDtl2 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnPlanDtl/Ov
 import { OvsRlsVltrnsNgtnPlanDtl3 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnPlanDtl/OvsRlsVltrnsNgtnPlanDtl3'
 import type { MockOvsRlsVltrnsGeneral, MockOvsRlsVltrnsSummary } from '@/types/mock/bd'
 
-// ── 탭 (설계서 T71 일반정보 / T72 품목정보 / T73 첨부서류) ─────────────────
+// ── 탭 — v0.87 검토105: (일반정보 / 품목 목록 / 첨부서류 / 견적서 목록) ─────────────────
 const TABS: TabItem[] = [
   { value: 'general', label: '일반정보' },
-  { value: 'item', label: '품목정보' },
+  { value: 'item', label: '품목 목록' },
   { value: 'file', label: '첨부서류' },
+  { value: 'etdc', label: '견적서 목록' },
 ]
 
 // 상단 요약 fallback (직접 URL 진입/새로고침) — 개찰목록 국외·수의계약 카드와 동일 값(설계서 slide411).
@@ -129,6 +130,35 @@ export function OvsRlsVltrnsNgtnPlanDtlPage() {
         return <OvsRlsVltrnsNgtnPlanDtl2 />
       case 'file':
         return <OvsRlsVltrnsNgtnPlanDtl3 />
+      case 'etdc':
+        // v0.87 검토105 — 견적서 목록 탭 신설. 설계서 데이터영역 미확정 — 기존 요약 필드 재사용
+        //   임시 목업(제출 견적서 1건). [공개수의협상 견적서 상세] → 견적서상세(M78, 바로가기와 동일 배선).
+        return (
+          <Accordion type="multiple" defaultValue={['etdc']} className="w-full">
+            <AccordionSection value="etdc" title="견적서 목록 (총 1건)" borderTop={false}>
+              <div className="flex flex-col gap-krds-7">
+                <Table
+                  rows={[
+                    { label: '사업명', value: summary.bizNm },
+                    { label: '공고번호', value: summary.pbancNo },
+                    { label: '통합참조번호', value: summary.intgRfrncNo },
+                    { label: '견적서제출마감일시', value: summary.etdcDdlnDt },
+                  ]}
+                />
+                <ButtonGroup
+                  layout="vertical"
+                  items={[
+                    {
+                      label: '공개수의협상 견적서 상세',
+                      variant: 'secondary',
+                      onClick: () => navigate('/bd/ovsRlsVltrnsNgtnEtdcDtl', { state: summary }),
+                    },
+                  ]}
+                />
+              </div>
+            </AccordionSection>
+          </Accordion>
+        )
       default:
         return null
     }

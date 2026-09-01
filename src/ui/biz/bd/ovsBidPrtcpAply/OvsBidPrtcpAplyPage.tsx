@@ -291,7 +291,8 @@ export function OvsBidPrtcpAplyPage() {
       <BottomSheet
         open={wrotOpen}
         onOpenChange={setWrotOpen}
-        title={WROT_TITLE}
+        title="서약서 상세" // v0.87 검토80 — 팝업 타이틀은 '서약서 상세', 서약서명은 본문 제목으로
+
         footer={
           <ButtonGroup
             layout="asymmetric"
@@ -307,6 +308,10 @@ export function OvsBidPrtcpAplyPage() {
           />
         }
       >
+        {/* v0.87 검토80 — 기존 타이틀(서약서명)을 본문 제목으로 */}
+        <p className="pt-2 text-center text-[19px] font-bold leading-normal text-krds-text-ink wrap-break-word">
+          {WROT_TITLE}
+        </p>
         <OvsProbWrotAgre
           resultInfo={WROT_RESULT_INFO}
           choice={wrotChoice}

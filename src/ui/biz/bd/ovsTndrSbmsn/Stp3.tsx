@@ -1,13 +1,12 @@
 // 국외 입찰서제출 - 스탭3 첨부파일 (MUI-BD-06-T74(구 M74 — v1.83 재편), 설계서 slide369·373).
 // 호스트 페이지(OvsTndrSbmsnPage)의 '첨부파일' 탭 본문만 담당 — 요약/스텝/탭/하단 액션바(신청하기)는 페이지 소유.
-// 구성(국내 TndrWrt_Stp5 패턴 그대로): SectionTitle(총 N건) + '파일 추가' 버튼
+// 구성: '파일첨부' 라벨행(우측 총 N건, v0.87 검토99 — 구 SectionTitle '첨부파일' 삭제) + '파일 추가' 버튼
 //   + 서류항목 행 N개(견적제안서/공급자증명서/제작사증명서/기타 공고요구서류 — 파일칩 + 삭제).
 // 항목명/형식은 첨부파일 데이터영역(dl_docList, 설계서 slide373) 그대로.
 import { useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
-import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import type { MockOvsTndrSbmsnDetail } from '@/types/mock/bd'
 
@@ -52,15 +51,16 @@ export function OvsTndrSbmsnPage_Stp3({ detail }: { detail: MockOvsTndrSbmsnDeta
 
   return (
     <>
-      {/* 첨부파일 — 총 건수(설계서 slide369 '첨부파일 – 총 0건') */}
-      <SectionTitle as="h3" info={`총 ${files.length}건`} className="bg-white">
-        첨부파일
-      </SectionTitle>
-
+      {/* v0.87 검토99 — 탭 아래 '첨부파일' 섹션 제목 삭제, 총 N건은 목록 라벨행 우측으로 이동 */}
       <div className="flex flex-col gap-krds-8 px-4 py-4">
         {/* 파일 추가 */}
         <div className="flex flex-col gap-krds-3">
-          <h4 className="text-[17px] font-bold leading-normal text-krds-text-ink">파일첨부</h4>
+          <div className="flex items-center justify-between">
+            <h4 className="text-[17px] font-bold leading-normal text-krds-text-ink">파일첨부</h4>
+            <span className="shrink-0 whitespace-nowrap text-[17px] font-bold text-krds-text-primary-active">
+              총 {files.length}건
+            </span>
+          </div>
           <Button variant="inner" className="w-full" onClick={handleAdd}>
             <Icon name="Add" size={20} aria-hidden />
             파일 추가
