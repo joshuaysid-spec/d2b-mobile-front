@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/ui/common/base/Button'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
+import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { Notice } from '@/ui/common/composites/Notice'
 import { ROUTES } from '@/constants/routes'
 
@@ -50,6 +51,17 @@ export function IndvCertPage() {
           확인
         </Button>
       </form>
+
+      {/* 도움말(v0.87 검토 48번 — 누락 추가) — 생체인증 흐름·앱 전용 안내(slide202). */}
+      <div className="pb-4">
+        <HelpDisclosure
+          title="도움말"
+          items={[
+            '생체인증이 등록된 경우 생체인증 후 비밀번호 인증 단계로 진행됩니다.',
+            '생체인증은 앱에서만 동작하며, 모바일 웹에서는 동작하지 않습니다.',
+          ]}
+        />
+      </div>
     </div>
   )
 }

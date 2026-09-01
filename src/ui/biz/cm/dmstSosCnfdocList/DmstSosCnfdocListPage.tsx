@@ -192,10 +192,13 @@ export function DmstSosCnfdocListPage() {
     setPage(next)
     console.log('[DmstSosCnfdoc] loadMore → page', next)
   }
-  // 카드 클릭 → OZ 리포트 조달원 확인서 연결 > 서류 확인 팝업(MUI-BD-01-P14) 호출(설계서 slide132). 현재 스텁.
-  const handleCardClick = (item: MockDmstSosCnfdocItem) => {
-    console.log('[DmstSosCnfdoc] 조달원 확인서 출력(OZ리포트/서류확인 P14)', item.aplyRcptNo)
-    // 추후: OZ 리포트 실행 + 서류확인 팝업(MUI-BD-01-P14)
+  // 카드 클릭 → 서류 출력 안내(MUI-BD-01-P14) 확인 후 OZ 리포트(v0.87 검토 26번 — 안내 팝업 배선).
+  const [printTarget, setPrintTarget] = useState<MockDmstSosCnfdocItem | null>(null)
+  const handleCardClick = (item: MockDmstSosCnfdocItem) => setPrintTarget(item)
+  const handlePrintConfirm = () => {
+    console.log('[DmstSosCnfdoc] 조달원 확인서 출력(OZ리포트)', printTarget?.aplyRcptNo)
+    // 추후: OZ 리포트 실행(뷰어 솔루션 연동)
+    setPrintTarget(null)
   }
   // 하단 [신청하기] → P20 신청 팝업 오픈(폼 초기화 후).
   const openAply = () => {
@@ -355,6 +358,17 @@ export function DmstSosCnfdocListPage() {
           onClick: () =>
             console.log('[DmstSosCnfdoc] 조달원 확인서 출력 — OZ 리포트 호출(스텁)'),
         }}
+      />
+
+      {/* 카드 클릭 서류 출력 안내(MUI-BD-01-P14, v0.87 검토 26번) — 확인=OZ 리포트 출력(스텁). */}
+      <AlertModal
+        open={printTarget !== null}
+        onOpenChange={(o) => !o && setPrintTarget(null)}
+        variant="info"
+        title="서류 출력 확인"
+        description="OZ 리포트가 실행되며, 로딩에 약간의 시간이 소요됩니다. 서류 출력을 진행할까요?"
+        secondaryAction={{ label: '취소' }}
+        primaryAction={{ label: '확인', onClick: handlePrintConfirm }}
       />
 
       {/* 신청 완료 토스트(설계서 slide139 '신청 되었습니다.') */}

@@ -13,6 +13,7 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { Checkbox } from '@/ui/common/base/Checkbox'
+import { AgreementList } from '@/ui/common/composites/AgreementList'
 import { Card } from '@/ui/common/composites/Card'
 import type { TableRow } from '@/ui/common/composites/Table'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
@@ -20,6 +21,9 @@ import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { PbamdsInfoJntUtztnBfhdWtcs } from '@/ui/biz/cm/dmstLctnColInfoAddReg/PbamdsInfoJntUtztnBfhdWtcs'
+
+// 조회 동의 항목 — 서약서 동의(AgreementList) 레이아웃(v0.87 검토 34번). [보기] = P13 사전동의서.
+const AGREE_ITEM = [{ id: 'P13', title: '공장등록증명서 또는 사업자등록증명원 조회 동의' }]
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Toast } from '@/ui/common/composites/Toast'
 import { ScrtyMsrmtPrsnlReg, type ScrtyMsrmtPrsnlRegHandle } from '@/ui/biz/cm/dmstLctnColInfoAddReg/ScrtyMsrmtPrsnlReg'
@@ -317,8 +321,9 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
         <AccordionSection value="fsc" title="FSC" titleInfo={`총 ${fscList.length}건`}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-krds-4">
+              {/* v0.87 검토 34번 — 버튼명 'FSC 추가' → '신규 추가'. */}
               <Button variant="primary" size="sm" onClick={() => setSheet('fsc')}>
-                FSC 추가
+                신규 추가
               </Button>
               <Button variant="secondary" size="sm" onClick={handleDeleteFsc}>
                 선택 삭제
@@ -405,10 +410,15 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
         />
       </div>
 
-      {/* 조회 동의여부 (slide157) */}
+      {/* 조회 동의여부 (slide157) — 서약서 동의(AgreementList) 레이아웃(v0.87 검토 34번, M05 와 동일). */}
       <div className="flex flex-col gap-krds-5 px-4 pt-4">
-        <InputLabel>공장등록증명서 또는 사업자등록증명원 조회 동의여부</InputLabel>
-        <Checkbox variant="box" checked={agreed} onCheckedChange={(c) => handleAgreeToggle(c === true)} label="조회 동의" />
+        <AgreementList
+          items={AGREE_ITEM}
+          checkAll={false}
+          checked={agreed ? ['P13'] : []}
+          onToggle={(_, c) => handleAgreeToggle(c)}
+          onView={() => setAgreeOpen(true)}
+        />
         <p className="text-[15px] leading-relaxed text-krds-text-muted">
           동의여부에 체크하지 않는 경우 오프라인으로 서류를 제출하셔야 합니다.
         </p>

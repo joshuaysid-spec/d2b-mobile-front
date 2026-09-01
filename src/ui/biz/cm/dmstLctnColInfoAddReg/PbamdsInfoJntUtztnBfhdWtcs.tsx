@@ -38,16 +38,16 @@ export function PbamdsInfoJntUtztnBfhdWtcs({
       onOpenChange={onOpenChange}
       title="행정정보공동이용사전동의서"
       footer={
+        // v0.87 검토 42번(기획 확정) — 하단 결정 버튼 한 줄 [닫기][추가 등록 신청].
         <ButtonGroup
-          layout="vertical"
           items={[
+            { label: '닫기', variant: 'secondary', onClick: () => onOpenChange(false) },
             {
-              label: '동의하고 신청하기',
+              label: '추가 등록 신청',
               variant: 'primary',
               disabled: !agreed,
               onClick: onAgree,
             },
-            { label: '취소', variant: 'secondary', onClick: () => onOpenChange(false) },
           ]}
         />
       }

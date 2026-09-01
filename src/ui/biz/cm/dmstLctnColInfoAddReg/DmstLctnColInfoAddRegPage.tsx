@@ -32,7 +32,11 @@ import { KnditmChc } from '@/ui/biz/cm/dmstLctnColInfoAddReg/KnditmChc'
 import { AsctGrpChc } from '@/ui/biz/cm/dmstLctnColInfoAddReg/AsctGrpChc'
 import { RegTrgtItemChc, type RegTrgtItemChcHandle } from '@/ui/biz/cm/dmstLctnColInfoAddReg/RegTrgtItemChc'
 import { ItemInq } from '@/ui/biz/cm/dmstLctnColInfoAddReg/ItemInq'
+import { AgreementList } from '@/ui/common/composites/AgreementList'
 import { PbamdsInfoJntUtztnBfhdWtcs } from '@/ui/biz/cm/dmstLctnColInfoAddReg/PbamdsInfoJntUtztnBfhdWtcs'
+
+// 조회 동의 항목 — 서약서 동의(AgreementList) 레이아웃(v0.87 검토 33번). [보기] = P13 사전동의서.
+const AGREE_ITEM = [{ id: 'P13', title: '공장등록증명서 또는 사업자등록증명원 조회 동의' }]
 import type {
   MockAddRegItemRow,
   MockKnditmChcItem,
@@ -289,8 +293,8 @@ export function DmstLctnColInfoAddRegPage() {
               />
             </div>
             <div className="flex flex-col gap-krds-5">
-              <InputLabel>본사 사업자번호</InputLabel>
-              {/* 본사 사업자번호 — 자동표시(read-only). 3-2-5 자리(slide150). */}
+              {/* 본사 사업자번호 — 필수(v0.87 검토 33번 기획 확정). 자동표시(read-only), 3-2-5 자리(slide150). */}
+              <InputLabel required>본사 사업자번호</InputLabel>
               <InputBox disabled value="123-45-67890" onChange={() => {}} />
             </div>
             <div className="flex flex-col gap-krds-5">
@@ -413,7 +417,12 @@ export function DmstLctnColInfoAddRegPage() {
                 ]}
               />
             </div>
-            {/* 버튼 — 신규 추가(P08)/선택 삭제/선택 갱신/초기화 */}
+            {/* 버튼 — 초기화는 우측 단독(v0.87 검토 33번, 인쇄본 160쪽 배치) / 신규 추가·선택 삭제·선택 갱신. */}
+            <div className="flex justify-end">
+              <Button variant="secondary" size="sm" onClick={handleResetItems}>
+                초기화
+              </Button>
+            </div>
             <div className="flex flex-wrap gap-krds-4">
               <Button variant="primary" size="sm" onClick={() => setSheet('regtrgt')}>
                 신규 추가
@@ -423,9 +432,6 @@ export function DmstLctnColInfoAddRegPage() {
               </Button>
               <Button variant="secondary" size="sm" onClick={handleRenewSelected}>
                 선택 갱신
-              </Button>
-              <Button variant="secondary" size="sm" onClick={handleResetItems}>
-                초기화
               </Button>
             </div>
 
@@ -494,14 +500,15 @@ export function DmstLctnColInfoAddRegPage() {
         />
       </div>
 
-      {/* 조회 동의여부 (slide152) — 체크 시 P13 사전동의서 호출 */}
+      {/* 조회 동의여부 (slide152) — 입찰 서약서 동의와 동일한 AgreementList 레이아웃
+          (v0.87 검토 33번 기획 확정). 체크 시 P13 사전동의서 호출, [보기]로도 열람. */}
       <div className="flex flex-col gap-krds-5 px-4 pt-4">
-        <InputLabel>공장등록증명서 또는 사업자등록증명원 조회 동의여부</InputLabel>
-        <Checkbox
-          variant="box"
-          checked={agreed}
-          onCheckedChange={(c) => handleAgreeToggle(c === true)}
-          label="조회 동의"
+        <AgreementList
+          items={AGREE_ITEM}
+          checkAll={false}
+          checked={agreed ? ['P13'] : []}
+          onToggle={(_, c) => handleAgreeToggle(c)}
+          onView={() => setAgreeOpen(true)}
         />
         <p className="text-[15px] leading-relaxed text-krds-text-muted">
           동의여부에 체크하지 않는 경우 오프라인으로 서류를 제출하셔야 합니다.
