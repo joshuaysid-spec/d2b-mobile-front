@@ -127,7 +127,18 @@ export function OvsBfrTmprBidBidCnRegFullPopup({
   }))
 
   return (
-    <FullPopup open={open} onOpenChange={onOpenChange} title="이전공고입찰내역등록">
+    <FullPopup
+      open={open}
+      onOpenChange={onOpenChange}
+      title="이전공고입찰내역등록"
+      // v0.87 검토87 — 하단 footer [닫기] 추가
+      footer={
+        <ButtonGroup
+          layout="single"
+          items={[{ label: '닫기', variant: 'secondary', onClick: () => onOpenChange(false) }]}
+        />
+      }
+    >
       <div className="flex w-full flex-col">
         {/* 업무도움 — 설계서 slide428 상단(총건수 위). 기본 펼침. */}
         <HelpDisclosure title="업무도움" items={HELP_ITEMS} defaultOpen />

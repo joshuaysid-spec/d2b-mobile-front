@@ -6,6 +6,7 @@
 import { useState } from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
+import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type {
@@ -103,21 +104,28 @@ export function OvsBidRegRsltByBiz({ detail, sbtInfo, splyInfo }: OvsBidRegRsltB
           <Table rows={splyRows} />
         </AccordionSection>
 
-        {/* 사업별등록결과(dl_resultList) — 사업별 Table. 등록불가만 사유 표시(slide361). */}
+        {/* 사업별등록결과(dl_resultList) — v0.87 검토96: 타이틀(순번. 사업명) + 상태 배지 + 펼쳐보기(아코디언).
+            순번/사업명은 타이틀로 승격(행 제외), 등록결과는 배지. 등록불가만 사유 표시(slide361). */}
         {MOCK_OVS_REG_RSLT_LIST.slice(0, loaded).map((item, i) => (
           <AccordionSection
             key={item.prchsDmndNo}
             value={`result-${i}`}
-            title={`사업별등록결과 (순번 ${item.no})`}
-            titleInfo={item.cfmtnRslt}
+            title={`${item.no}. ${item.bizNm}`}
+            titleInfo={
+              item.cfmtnRslt === '등록확정' ? (
+                <Badge type="solid" color="blue">등록확정</Badge>
+              ) : item.cfmtnRslt === '등록불가' ? (
+                <Badge type="pastel" color="red">등록불가</Badge>
+              ) : (
+                <Badge type="pastel" color="yellow">{item.cfmtnRslt}</Badge>
+              )
+            }
             flush
             triggerClassName="px-0"
           >
             <Table
               rows={[
-                { label: '순번', value: String(item.no), type: 'number' },
                 { label: '구매요청번호', value: item.prchsDmndNo },
-                { label: '사업명', value: item.bizNm },
                 { label: '등록결과', value: item.cfmtnRslt },
                 { label: '등록불가사유', value: item.rsn ?? '-' },
                 { label: '등록확정일자', value: item.cfmtnYmd ?? '-' },

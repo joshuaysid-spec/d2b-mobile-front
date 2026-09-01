@@ -4,12 +4,15 @@
 //   총액제(M78): 입찰 품목(dl_alonbsItemList) 목록 + 입찰내역(dl_alonbsBidCnInfo) 단건 표.
 // 항목명(영문)·코드값(As it is/Replace, Y/N, 'O' 표시) 설계서 그대로. 데이터는 목업 — 추후 API: bdService.selectOvsTndrItemList.
 // 첨부문서 '보기' 는 첨부문서조회 팝업(UI-BD-05-P76, 타 유닛) 연계 예정 — console.log 스텁.
-import { useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
+import { Icon } from '@/ui/common/base/Icon'
+import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { cn } from '@/utils/cn'
 
 // 입찰참여품목(단가제) 1건 (dl_ititbBidCnList, 설계서 slide382) — 항목명(영문) 설계서 그대로.
 interface OvsItitbBidCnItem {
@@ -173,6 +176,35 @@ const ALONBS_BID_CN_ROWS: TableRow[] = [
 
 const PAGE_SIZE = 10 // 더보기 10개씩(설계서 slide377 "더보기(10/100)")
 
+// v0.87 검토101 — 접힘 상태 기본 노출 행수(항목번호/재고번호/부품번호/품명 4행), 나머지는 '내역 펼쳐보기'로 토글.
+const ITITB_DEFAULT_VISIBLE = 4
+
+// v0.87 검토101 — 품목 1건 카드: 기본 4행 + 내역 펼쳐보기/접기 (OvsBidRsltDtl2 BidRsltItemCard 패턴).
+const ItitbItemCard = memo(function ItitbItemCard({ item }: { item: OvsItitbBidCnItem }) {
+  const [expanded, setExpanded] = useState(false)
+  const allRows = useMemo(() => buildItitbRows(item), [item])
+  const rows = expanded ? allRows : allRows.slice(0, ITITB_DEFAULT_VISIBLE)
+
+  return (
+    <div className="px-4">
+      <Table rows={rows} />
+      <button
+        type="button"
+        onClick={() => setExpanded((v) => !v)}
+        className="flex w-full items-center justify-center gap-krds-3 py-krds-6 text-[17px] font-medium text-krds-text-ink"
+      >
+        {expanded ? '내역 접기' : '내역 펼쳐보기'}
+        <Icon
+          name="ExpandMore"
+          size={20}
+          aria-hidden
+          className={cn('transition-transform duration-200', expanded && 'rotate-180')}
+        />
+      </button>
+    </div>
+  )
+})
+
 // ── 단가제 (M77) ─────────────────────────────────────────────────────────────
 function ItitbList() {
   const [page, setPage] = useState(1)
@@ -188,23 +220,19 @@ function ItitbList() {
   return (
     // pt-4: 탭과 콘텐츠 사이 상단 간격(사용자 지시 2026-08-26)
     <div className="pt-4">
-      {/* 품목 목록 — 총건수(SectionTitle info 표준 패턴). 상단 라인 없음(사용자 지시 2026-08-26) */}
-      <SectionTitle as="h3" info={`총 ${total}건`} className="bg-white">
-        품목 목록
-      </SectionTitle>
-      {/* 항목당 아코디언 — 접힘 헤더가 '내역 펼쳐보기', 펼침이 '내역 접기' 역할(설계서 slide377). 첫 건만 펼침. */}
-      <Accordion type="multiple" defaultValue={[MOCK_ITITB_LIST[0].frcptlArtclNo]} className="w-full">
-        {visible.map((it, i) => (
-          <AccordionSection
-            key={it.frcptlArtclNo}
-            value={it.frcptlArtclNo}
-            title={`${it.frcptlArtclNo}. ${it.itemNm}`}
-            borderTop={i > 0}
-          >
-            <Table rows={buildItitbRows(it)} />
-          </AccordionSection>
+      {/* v0.87 검토101 — '품목 목록 총 N건' 을 17px 라벨행 규격으로(구 SectionTitle 대체) */}
+      <div className="flex items-center justify-between gap-krds-5 px-4 pb-krds-5">
+        <InputLabel>품목 목록</InputLabel>
+        <span className="shrink-0 text-[17px] font-bold leading-normal text-krds-text-primary-active">
+          총 {total}건
+        </span>
+      </div>
+      {/* v0.87 검토101 — 항목별 카드: 기본 4개 정보행 + [내역 펼쳐보기](구 항목번호·품명 타이틀 아코디언 대체) */}
+      <div className="flex flex-col gap-krds-8">
+        {visible.map((it) => (
+          <ItitbItemCard key={it.frcptlArtclNo} item={it} />
         ))}
-      </Accordion>
+      </div>
       {loaded < total && (
         <div className="px-4 pb-4 pt-krds-7">
           <Button variant="secondary" className="w-full" onClick={handleLoadMore}>

@@ -9,6 +9,7 @@ import { useLocation } from 'react-router-dom'
 
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
+import { Checkbox } from '@/ui/common/base/Checkbox'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { SearchCondition } from '@/ui/common/composites/SearchCondition'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
@@ -117,10 +118,9 @@ const ITEM_FILTER_SCHEMA: SearchFilterSchema = {
       title: '보관함여부',
       fields: [
         {
-          type: 'radio',
+          // v0.87 검토85 — radio → select 전환.
+          type: 'select',
           key: 'lockerYn',
-          direction: 'horizontal',
-          showIndicator: true,
           options: [
             { value: 'all', label: '전체' },
             { value: 'Y', label: '보관' },
@@ -226,6 +226,26 @@ export function OvsLockerItemRegPage() {
     console.log('[OvsLockerItem] loadMore → page', next)
   }
 
+  // v0.87 검토84 — 품목 다중 선택(카드 titleTrailing Checkbox, Figma 10020:85034 컨벤션) + 일괄 추가/삭제.
+  // 카드 전체 클릭 토글은 footer [보관함 추가/삭제] 버튼과 중첩(button in button)이라 체크박스로 배선.
+  const [checkedIds, setCheckedIds] = useState<string[]>([])
+  const toggleChecked = (id: string, checked: boolean) =>
+    setCheckedIds((prev) => (checked ? [...prev, id] : prev.filter((n) => n !== id)))
+
+  // v0.87 검토84 — [일괄 삭제]/[일괄 추가]: 선택 품목의 보관함 여부를 일괄 변경.
+  const batchLocker = (adding: boolean) => {
+    setItems((prev) =>
+      prev.map((it) => (checkedIds.includes(it.id) ? { ...it, lockerYn: adding ? 'Y' : 'N' } : it)),
+    )
+    setToast({
+      open: true,
+      message: adding ? '보관함에 추가되었습니다.' : '보관함에서 삭제되었습니다.',
+    })
+    console.log('[OvsLockerItem]', adding ? '일괄 보관함 추가' : '일괄 보관함 삭제', checkedIds)
+    // 추후 API: bdService.insertItemToLocker / bdService.deleteItemFromLocker (다건)
+    setCheckedIds([])
+  }
+
   // 보관함 추가/삭제 — 설계서 이벤트 btn_addItem/btn_deleteItem_onclick. (최종 확정 260709: 개별 버튼만, 일괄 없음)
   const toggleLocker = (target: OvsLockerBidItem) => {
     const adding = target.lockerYn === 'N'
@@ -307,6 +327,15 @@ export function OvsLockerItemRegPage() {
                 }
                 subtitle={`통합참조번호 ${it.intgRfrncNo} / 공고번호 ${it.pbancNo}-${it.pbancOd}`}
                 title={it.itemNm}
+                // v0.87 검토84 — 선택 체크박스(Figma 10020:85034 다중 선택 카드 컨벤션)
+                titleTrailing={
+                  <Checkbox
+                    variant="box"
+                    aria-label={`${it.itemNm} 선택`}
+                    checked={checkedIds.includes(it.id)}
+                    onCheckedChange={(c) => toggleChecked(it.id, c === true)}
+                  />
+                }
                 rows={[
                   { label: '구매요청번호', value: it.prchsDmndNo },
                   { label: '재고번호', value: it.invtNo },
@@ -340,6 +369,22 @@ export function OvsLockerItemRegPage() {
           <Button variant="secondary" className="w-full" onClick={handleLoadMore}>
             더보기 ({loaded}/{total}건)
           </Button>
+        </div>
+      )}
+
+      {/* v0.87 검토84 — 1개 이상 선택 시 하단 고정 [일괄 삭제]/[일괄 추가] (ovsBidPrtcpApfrDtl Tab3 sticky 패턴) */}
+      {checkedIds.length > 0 && (
+        <div
+          className="sticky bottom-0 z-30 border-t border-krds-border-divider bg-background px-4 pt-3"
+          style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
+        >
+          <ButtonGroup
+            layout="split"
+            items={[
+              { label: '일괄 삭제', variant: 'secondary', onClick: () => batchLocker(false) },
+              { label: '일괄 추가', variant: 'primary', onClick: () => batchLocker(true) },
+            ]}
+          />
         </div>
       )}
 
