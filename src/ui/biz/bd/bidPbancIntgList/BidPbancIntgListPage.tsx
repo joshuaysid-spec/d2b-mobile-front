@@ -44,11 +44,14 @@ const DATE_PRESETS: DateRangePresetDef[] = [
 ]
 // 구분설정 드롭다운 옵션 — 설계서 속성값 기준. 코드값 미확정 항목은 '전체'+대표값(추후 백엔드 코드 보완).
 const ALL = { value: 'all', label: '전체' }
-const PBANC_TPCD_OPTIONS = [ALL, // 공고구분(pbancTpcd, 상위코드 ANTC — 코드값 미확정)
+// 공고구분(pbancTpcd, 상위코드 ANTC — 코드값 미확정) — 입찰 설계서 v1.88 slide17 표시값(v0.87 검토 76번 최신화).
+const PBANC_TPCD_OPTIONS = [ALL,
   { value: 'normal', label: '정상공고' }, { value: 'urgent', label: '긴급공고' },
+  { value: 'repost', label: '재공고' }, { value: 'urgentRenew', label: '긴급갱신' },
+  { value: 'repost3', label: '재공고(3차)' }, { value: 'urgentRenewRepost', label: '긴급갱신재공고' },
   { value: 'amend', label: '정정공고' }, { value: 'cancel', label: '취소공고' },
-  { value: 'delay', label: '연기공고' }, { value: 'repost', label: '재공고' },
-  { value: 'renew', label: '갱신공고' }]
+  { value: 'delay', label: '연기공고' }, { value: 'post', label: '게시' },
+  { value: 'mock', label: '모의입찰코드' }]
 // 진행상태(bidStatNm) — 설계서 slide19 비고: 입찰철/재입찰 조건에 따라 '개찰전'/'개찰완료'/'재입찰'.
 const BID_STAT_OPTIONS = [ALL,
   { value: 'beforeOpbid', label: '개찰전' }, { value: 'opbidDone', label: '개찰완료' },
@@ -71,16 +74,19 @@ const BID_MEDIA_OPTIONS = [ALL, // 입찰매체(bidMediaCd, 상위코드 BMDC)
 // 입찰형태(elctrNgtnYn) — 설계서 slide19: '1' 일반입찰 / '2' 전자입찰.
 const ELCTR_NGTN_OPTIONS = [ALL,
   { value: '1', label: '일반입찰' }, { value: '2', label: '전자입찰' }]
-const CTRT_MTHD_OPTIONS = [ALL, // 계약방법(ctrtMthdCd, 상위코드 CTMC) — slide13 표시레이블 전체(경쟁형태 포함)
+// 계약방법(ctrtMthdCd, 상위코드 CTMC) — 입찰 설계서 v1.88 slide17 To-Be 4종(v0.87 검토 76번 최신화,
+//   구 As-Is 11종에서 축소: 협상/2단계/종합낙찰 등은 낙찰방법으로 이관).
+const CTRT_MTHD_OPTIONS = [ALL,
   { value: 'open', label: '일반경쟁' }, { value: 'designated', label: '지명경쟁' },
-  { value: 'limited', label: '제한경쟁' }, { value: 'multiple', label: '복수경쟁' },
-  { value: 'private', label: '수의계약' }, { value: 'nego_doc', label: '협상에의한계약(서류)' },
-  { value: 'nego_elec', label: '협상에의한계약(전자)' }, { value: 'two_step_sync', label: '2단계경쟁(동시)' },
-  { value: 'two_step_split', label: '2단계경쟁(분리)' }, { value: 'total_award', label: '종합낙찰제' },
-  { value: 'reverse', label: '역경매' }]
-// 낙찰방법(scsbdMthdCd, 상위코드 CCMT) — 설계서에 속성값 미기재, 대표값 임시(추후 백엔드 코드 보완).
+  { value: 'limited', label: '제한경쟁' }, { value: 'private', label: '수의계약' }]
+// 낙찰방법(scsbdMthdCd, 상위코드 CCMT) — 입찰 설계서 v1.88 slide17 To-Be 11종(v0.87 검토 76번 최신화).
 const SCSBD_MTHD_OPTIONS = [ALL,
-  { value: 'lowest', label: '최저가' }, { value: 'qualify', label: '적격심사' }, { value: 'nego', label: '협상' }]
+  { value: 'ltdLowest', label: '제한적최저가격제' }, { value: 'qualify', label: '적격심사제' },
+  { value: 'twoStepSync', label: '2단계경쟁(동시)' }, { value: 'twoStepSplit', label: '2단계경쟁(분리)' },
+  { value: 'reverse', label: '역경매' }, { value: 'negoDoc', label: '협상에의한계약(서류)' },
+  { value: 'negoElec', label: '협상에의한계약(전자)' }, { value: 'totalAward', label: '종합낙찰제' },
+  { value: 'totalRvw', label: '종합심사제' }, { value: 'dsgnCnst', label: '설계시공일괄입찰' },
+  { value: 'openNego', label: '공개수의협상(가칭)' }]
 
 // 업무구분 4종 전체 — 기본값(전체 선택)·'전체' 판정에 공용.
 const TASK_SE_ALL = ['goods', 'service', 'construction', 'foreign']
