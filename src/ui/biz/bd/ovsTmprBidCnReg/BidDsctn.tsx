@@ -10,6 +10,7 @@
 //   - 업로드 클릭 → 첨부문서업로드 팝업(UI-BD-04-P75) 호출 — 목업은 console.log + 파일명 스텁
 import { useState, type ReactNode } from 'react'
 
+import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
 import { Checkbox } from '@/ui/common/base/Checkbox'
 import { Icon } from '@/ui/common/base/Icon'
@@ -319,35 +320,37 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
     <>
       {/* '입찰내역(단가제)' PageTitle 삭제(사용자 확정 2026-08-25 — 탭명이 '입찰내역'으로 개명돼 중복).
           topDivider 없음 — 탭(TabList) 바로 아래 붙는 라인 제거(기확정 규칙). */}
-      {/* 입찰내역 일괄적용 (dl_fwkInfo) — 입찰업체/화폐단위 선택 후 전체·선택 적용 */}
-      <SectionTitle as="h3">
-        입찰내역 일괄적용
-      </SectionTitle>
-      <div className="flex flex-col gap-krds-6 px-4 pb-4">
-        <Field label="입찰업체">
-          <SelectBox
-            items={SPLY_BZENTY_ITEMS}
-            placeholder="미선택"
-            value={fwkSplyBzentyNm || undefined}
-            onValueChange={setFwkSplyBzentyNm}
-          />
-        </Field>
-        <Field label="화폐단위">
-          <SelectBox
-            items={CRNC_ITEMS}
-            placeholder="미선택"
-            value={fwkCrncNm || undefined}
-            onValueChange={setFwkCrncNm}
-          />
-        </Field>
-        <ButtonGroup
-          layout="split"
-          items={[
-            { label: '전체 적용', variant: 'secondary', onClick: () => applyFwk('all') },
-            { label: '선택 적용', variant: 'primary', onClick: () => applyFwk('selected') },
-          ]}
-        />
-      </div>
+      {/* 입찰내역 일괄적용 (dl_fwkInfo) — 접힘/펼침 아코디언(2026-09-01 사용자 요청, 기본 펼침).
+          입찰업체/화폐단위 선택 후 전체·선택 적용. */}
+      <Accordion type="multiple" defaultValue={['fwk']} className="w-full">
+        <AccordionSection value="fwk" title="입찰내역 일괄적용" borderTop={false}>
+          <div className="flex flex-col gap-krds-6">
+            <Field label="입찰업체">
+              <SelectBox
+                items={SPLY_BZENTY_ITEMS}
+                placeholder="미선택"
+                value={fwkSplyBzentyNm || undefined}
+                onValueChange={setFwkSplyBzentyNm}
+              />
+            </Field>
+            <Field label="화폐단위">
+              <SelectBox
+                items={CRNC_ITEMS}
+                placeholder="미선택"
+                value={fwkCrncNm || undefined}
+                onValueChange={setFwkCrncNm}
+              />
+            </Field>
+            <ButtonGroup
+              layout="split"
+              items={[
+                { label: '전체 적용', variant: 'secondary', onClick: () => applyFwk('all') },
+                { label: '선택 적용', variant: 'primary', onClick: () => applyFwk('selected') },
+              ]}
+            />
+          </div>
+        </AccordionSection>
+      </Accordion>
 
       {/* 입찰 품목 — 총 N건 */}
       <SectionTitle as="h3" topDivider info={`총 ${rows.length}건`}>
