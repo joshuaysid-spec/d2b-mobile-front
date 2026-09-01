@@ -3,16 +3,20 @@
 //   단가제(M77): 품목 목록(dl_ititbBidCnList) — 항목당 아코디언(내역 펼쳐보기/접기) + 구분/내용 표 + 더보기(10개씩).
 //   총액제(M78): 입찰 품목(dl_alonbsItemList) 목록 + 입찰내역(dl_alonbsBidCnInfo) 단건 표.
 // 항목명(영문)·코드값(As it is/Replace, Y/N, 'O' 표시) 설계서 그대로. 데이터는 목업 — 추후 API: bdService.selectOvsTndrItemList.
-// 첨부문서 '보기' 는 첨부문서조회 팝업(UI-BD-05-P76, 타 유닛) 연계 예정 — console.log 스텁.
-import { memo, useMemo, useState } from 'react'
+// 첨부문서 '보기' → 첨부파일조회 바텀시트(MUI-BD-01-P76) — 콘텐츠는 OvsBidPbanc_AtchFileInq 재사용,
+//   컨테이너(BottomSheet)는 이 탭 콘텐츠(ItitbList)가 소유. 파일 UI FileDownloadList 통일(2026-09-01 사용자 확정).
+import { memo, useCallback, useMemo, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Icon } from '@/ui/common/base/Icon'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { OvsBidPbanc_AtchFileInq } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbanc_AtchFileInq'
 import { cn } from '@/utils/cn'
+import type { MockOvsAtchDoc } from '@/types/mock/bd'
 
 // 입찰참여품목(단가제) 1건 (dl_ititbBidCnList, 설계서 slide382) — 항목명(영문) 설계서 그대로.
 interface OvsItitbBidCnItem {
@@ -102,7 +106,7 @@ const MOCK_ALONBS_BID_CN = {
   usdExrt: '1.0000', // 달러환산율(15)
 }
 
-// 첨부문서 표시 셀 — 'O' 면 O + [보기] 버튼(첨부문서조회 팝업 UI-BD-05-P76 연계 예정), 아니면 '-'.
+// 첨부문서 표시 셀 — 'O' 면 O + [보기] 버튼(→ 첨부파일조회 바텀시트 P76), 아니면 '-'.
 const docCell = (en: 'O' | '', onView: () => void) =>
   en === 'O' ? (
     <div className="flex items-center justify-between gap-2">
@@ -116,7 +120,11 @@ const docCell = (en: 'O' | '', onView: () => void) =>
   )
 
 // 단가제 품목 1건 → 구분/내용 표 rows (설계서 slide377 노출 순서 그대로).
-function buildItitbRows(it: OvsItitbBidCnItem): TableRow[] {
+//   onViewDoc: 첨부문서 [보기] — 첨부파일조회 바텀시트 호출(컨테이너는 ItitbList 소유).
+function buildItitbRows(
+  it: OvsItitbBidCnItem,
+  onViewDoc: (docTitl: string, it: OvsItitbBidCnItem) => void,
+): TableRow[] {
   return [
     { label: '항목번호', value: it.frcptlArtclNo },
     { label: '재고번호', value: it.invtNo },
@@ -128,9 +136,7 @@ function buildItitbRows(it: OvsItitbBidCnItem): TableRow[] {
     { label: '품목대체구분', value: it.itemSbstSe },
     {
       label: '품목대체첨부문서',
-      value: docCell(it.itemSbstDocEn, () =>
-        console.log('[M77] 품목대체첨부문서 조회', it.frcptlArtclNo),
-      ), // 추후 첨부문서조회 팝업(UI-BD-05-P76)
+      value: docCell(it.itemSbstDocEn, () => onViewDoc('품목대체첨부문서', it)),
       type: it.itemSbstDocEn === 'O' ? 'combination' : 'default',
     },
     { label: '수정재고번호', value: it.mdfcnInvtNo || '-' },
@@ -139,7 +145,7 @@ function buildItitbRows(it: OvsItitbBidCnItem): TableRow[] {
     { label: 'MOQ수량', value: it.moqQty || '-', type: it.moqQty ? 'number' : 'default' },
     {
       label: 'MOQ첨부문서',
-      value: docCell(it.moqDocEn, () => console.log('[M77] MOQ첨부문서 조회', it.frcptlArtclNo)), // 추후 첨부문서조회 팝업(UI-BD-05-P76)
+      value: docCell(it.moqDocEn, () => onViewDoc('MOQ첨부문서', it)),
       type: it.moqDocEn === 'O' ? 'combination' : 'default',
     },
     { label: '납기(본조)', value: it.bscbgtDudtYmd },
@@ -180,9 +186,16 @@ const PAGE_SIZE = 10 // 더보기 10개씩(설계서 slide377 "더보기(10/100)
 const ITITB_DEFAULT_VISIBLE = 4
 
 // v0.87 검토101 — 품목 1건 카드: 기본 4행 + 내역 펼쳐보기/접기 (OvsBidRsltDtl2 BidRsltItemCard 패턴).
-const ItitbItemCard = memo(function ItitbItemCard({ item }: { item: OvsItitbBidCnItem }) {
+const ItitbItemCard = memo(function ItitbItemCard({
+  item,
+  onViewDoc,
+}: {
+  item: OvsItitbBidCnItem
+  /** 첨부문서 [보기] — 첨부파일조회 바텀시트 호출(컨테이너는 ItitbList 소유) */
+  onViewDoc: (docTitl: string, it: OvsItitbBidCnItem) => void
+}) {
   const [expanded, setExpanded] = useState(false)
-  const allRows = useMemo(() => buildItitbRows(item), [item])
+  const allRows = useMemo(() => buildItitbRows(item, onViewDoc), [item, onViewDoc])
   const rows = expanded ? allRows : allRows.slice(0, ITITB_DEFAULT_VISIBLE)
 
   return (
@@ -208,9 +221,19 @@ const ItitbItemCard = memo(function ItitbItemCard({ item }: { item: OvsItitbBidC
 // ── 단가제 (M77) ─────────────────────────────────────────────────────────────
 function ItitbList() {
   const [page, setPage] = useState(1)
+  // 첨부파일조회(P76) 대상 첨부서류 목록 — null=시트 닫힘. 파일 UI FileDownloadList 통일(2026-09-01 사용자 확정).
+  const [atchDocs, setAtchDocs] = useState<MockOvsAtchDoc[] | null>(null)
   const total = MOCK_ITITB_LIST.length
   const loaded = Math.min(page * PAGE_SIZE, total)
   const visible = MOCK_ITITB_LIST.slice(0, loaded)
+
+  // 첨부문서 [보기] — 선택 품목의 첨부서류 목록(dl_docList 형태) 목업 구성 후 시트 오픈.
+  //   추후 API: bdService.selectOvsItemAtchFileList(frcptlArtclNo)
+  const handleViewDoc = useCallback((docTitl: string, it: OvsItitbBidCnItem) => {
+    setAtchDocs([
+      { docTitl, fileNm: `${docTitl}.pdf`, fileSz: 262_144, fileId: `TNDR-ATCH-${it.frcptlArtclNo}` },
+    ])
+  }, [])
 
   const handleLoadMore = () => {
     setPage((p) => p + 1)
@@ -230,7 +253,7 @@ function ItitbList() {
       {/* v0.87 검토101 — 항목별 카드: 기본 4개 정보행 + [내역 펼쳐보기](구 항목번호·품명 타이틀 아코디언 대체) */}
       <div className="flex flex-col gap-krds-8">
         {visible.map((it) => (
-          <ItitbItemCard key={it.frcptlArtclNo} item={it} />
+          <ItitbItemCard key={it.frcptlArtclNo} item={it} onViewDoc={handleViewDoc} />
         ))}
       </div>
       {loaded < total && (
@@ -240,6 +263,19 @@ function ItitbList() {
           </Button>
         </div>
       )}
+
+      {/* 첨부파일 조회 바텀시트(P76) — 컨테이너/footer(닫기)는 여기 소유, 콘텐츠는 OvsBidPbanc_AtchFileInq 재사용 */}
+      <BottomSheet
+        open={atchDocs !== null}
+        onOpenChange={(o) => {
+          if (!o) setAtchDocs(null)
+        }}
+        title="첨부파일 조회"
+        onConfirm={() => setAtchDocs(null)}
+        confirmLabel="닫기"
+      >
+        {atchDocs && <OvsBidPbanc_AtchFileInq docs={atchDocs} />}
+      </BottomSheet>
     </div>
   )
 }

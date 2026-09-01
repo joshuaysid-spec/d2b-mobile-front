@@ -15,6 +15,7 @@ import { SelectBox } from '@/ui/common/base/SelectBox'
 import { Checkbox } from '@/ui/common/base/Checkbox'
 import { AgreementList } from '@/ui/common/composites/AgreementList'
 import { Card } from '@/ui/common/composites/Card'
+import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import type { TableRow } from '@/ui/common/composites/Table'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
@@ -173,7 +174,23 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
   const personRows = (d: MockScrtyMsrmtPrsn): TableRow[] => [
     { label: '적격여부', value: d.qualYn || '-' },
     { label: '보안측정일', value: d.scrtMsrYmd || '-' },
-    { label: '첨부파일', value: d.fileName || '-' },
+    {
+      // 파일 UI FileDownloadList 통일(2026-09-01 사용자 확정) — 구 파일명 텍스트 대체(보기 수단 부여).
+      label: '첨부파일',
+      value: d.fileName ? (
+        <FileDownloadList
+          files={[
+            {
+              id: d.id,
+              name: d.fileName,
+              onDownload: () => console.log('[M23] 보안측정 첨부 다운로드', d.fileName),
+            },
+          ]}
+        />
+      ) : (
+        '-'
+      ),
+    },
   ]
   // 군급명은 카드 타이틀로 승격(Figma 10020:85034) — 행에서 제외.
   const fscRows = (d: MockDmsAgtFscCode): TableRow[] => [{ label: 'FSC', value: d.fscCd }]

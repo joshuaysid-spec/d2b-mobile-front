@@ -7,6 +7,7 @@ import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { SelectBox } from '@/ui/common/base/SelectBox'
+import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
@@ -100,42 +101,34 @@ const ItemCard = memo(function ItemCard({ item }: { item: MockOvsRlsVltrnsEtdcIt
         ),
       },
       {
-        // 품목대체첨부문서 — 파일 첨부(사용자 지시 2026-08-26): 파일명 + (첨부 시) X 삭제 + 파일선택.
-        //   (입찰참가신청서 T74 파일 행 패턴 — X 버튼 !w-10 !min-w-0: 셀 버튼 최소폭 해제, 40px 정사각)
+        // 품목대체첨부문서 — 파일 첨부(사용자 지시 2026-08-26). 파일 UI FileDownloadList 통일(2026-09-01 사용자 확정):
+        //   파일 있으면 파일명 박스 + X 삭제, 없으면 [파일선택] 버튼만.
         label: '품목대체첨부문서',
         type: 'combination',
         value: (
-          <>
-            <InputBox value={s.itemSbstDocNm} readOnly disabled />
-            <div className="flex items-center gap-krds-3">
-              {s.itemSbstDocNm && (
-                <Button
-                  variant="inner"
-                  size="sm"
-                  aria-label="품목대체첨부문서 삭제"
-                  className="!w-10 !min-w-0 px-0"
-                  onClick={() => {
-                    set({ itemSbstDocNm: '' })
-                    console.log('[M74] 품목대체첨부문서 삭제', item.frcptlArtclNo)
-                    // 추후 API: bdService.removeEtdcItemSbstDoc
-                  }}
-                >
-                  <Icon name="Close" size={16} aria-hidden />
-                </Button>
-              )}
-              <Button
-                variant="inner"
-                size="sm"
-                onClick={() => {
-                  set({ itemSbstDocNm: '품목대체첨부문서.pdf' })
-                  console.log('[M74] 품목대체첨부문서 파일선택', item.frcptlArtclNo)
-                  // 추후: 네이티브 파일 선택 → bdService.uploadEtdcItemSbstDoc
-                }}
-              >
-                파일선택
-              </Button>
-            </div>
-          </>
+          <FileDownloadList
+            files={
+              s.itemSbstDocNm
+                ? [
+                    {
+                      id: `${item.frcptlArtclNo}-sbst`,
+                      name: s.itemSbstDocNm,
+                      onRemove: () => {
+                        set({ itemSbstDocNm: '' })
+                        console.log('[M74] 품목대체첨부문서 삭제', item.frcptlArtclNo)
+                        // 추후 API: bdService.removeEtdcItemSbstDoc
+                      },
+                    },
+                  ]
+                : []
+            }
+            onAddFile={() => {
+              set({ itemSbstDocNm: '품목대체첨부문서.pdf' })
+              console.log('[M74] 품목대체첨부문서 파일선택', item.frcptlArtclNo)
+              // 추후: 네이티브 파일 선택 → bdService.uploadEtdcItemSbstDoc
+            }}
+            addFileLabel="파일선택"
+          />
         ),
       },
       {

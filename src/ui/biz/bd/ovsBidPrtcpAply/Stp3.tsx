@@ -10,11 +10,11 @@
 import { useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
-import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
+import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsBidWtgrInqFullPopup } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidWtgrInqFullPopup'
@@ -130,41 +130,27 @@ export function Stp3({ detail }: { detail: MockBidPrgrsItem }) {
       },
     ]
 
+    // 파일 행 value — 파일 UI FileDownloadList 통일(2026-09-01 사용자 확정):
+    //   파일 있으면 파일명/용량 박스 + X 삭제, 없으면 목록 없이 [파일선택] 버튼만.
+    const fileCell = (
+      fileNm: string,
+      docLabel: string,
+      onRemove: () => void,
+      onSelect: () => void,
+    ) => (
+      <FileDownloadList
+        files={fileNm ? [{ id: docLabel, name: fileNm, onRemove }] : []}
+        onAddFile={onSelect}
+        addFileLabel="파일선택"
+      />
+    )
+
     if (isExmptn) {
       // 보증금면제(dl_bizExmptnList) — 연대보증서/지급각서 파일. 업로드된 파일은 X 아이콘 버튼으로 삭제
       //   (설계서 slide445 특이사항 3 "삭제 버튼으로 업로드된 파일 삭제" — 사용자 지시 2026-08-26).
       //   input 상태 undefined=조회값(biz) 사용 · ''=삭제됨.
       const gurnAgreDoc = input.gurnAgreDocNo ?? biz.gurnAgreDocNo ?? ''
       const giveWrtprmDoc = input.giveWrtprmDocNo ?? biz.giveWrtprmDocNo ?? ''
-      // 파일 행 value — 파일명 인풋 + (파일 있을 때) X 삭제 + 파일선택.
-      //   X 버튼 !w-10 !min-w-0: sm 버튼 높이(h-10)와 같은 40px 정사각 — Table 셀의
-      //   [&_button]:w-fit·min-w-[74px] 를 아이콘 버튼에서만 해제.
-      const fileCell = (
-        fileNm: string,
-        docLabel: string,
-        onRemove: () => void,
-        onSelect: () => void,
-      ) => (
-        <>
-          <InputBox value={fileNm} readOnly disabled />
-          <div className="flex items-center gap-krds-3">
-            {fileNm && (
-              <Button
-                variant="inner"
-                size="sm"
-                aria-label={`${docLabel} 첨부파일 삭제`}
-                className="!w-10 !min-w-0 px-0"
-                onClick={onRemove}
-              >
-                <Icon name="Close" size={16} aria-hidden />
-              </Button>
-            )}
-            <Button variant="inner" size="sm" onClick={onSelect}>
-              파일선택
-            </Button>
-          </div>
-        </>
-      )
       rows.push(
         {
           label: '연대보증서',
@@ -264,42 +250,22 @@ export function Stp3({ detail }: { detail: MockBidPrgrsItem }) {
         ),
       },
       {
+        // 업로드된 파일 X 삭제(설계서 slide446 주석 4).
         label: '입찰보증금납부서',
         type: 'combination',
-        value: (
-          <>
-            {/* placeholder 제거 — 파일 없는 상태에서 File.pdf 가 첨부된 것처럼 보이던 것 정리 */}
-            <InputBox value={input.grntePyslDocNo} readOnly disabled />
-            <div className="flex items-center gap-krds-3">
-              {/* 업로드된 파일 X 삭제(설계서 slide446 주석 4) — !w-10: 높이(h-10)와 같은 40px 정사각 */}
-              {input.grntePyslDocNo && (
-                <Button
-                  variant="inner"
-                  size="sm"
-                  aria-label="입찰보증금납부서 첨부파일 삭제"
-                  className="!w-10 !min-w-0 px-0"
-                  onClick={() => {
-                    patchInput(biz.prchsDmndNo, { grntePyslDocNo: '' })
-                    console.log('[M74] 입찰보증금납부서 파일 삭제', biz.prchsDmndNo)
-                    // 추후 API: bdService.removeOvsGrntePyslDoc
-                  }}
-                >
-                  <Icon name="Close" size={16} aria-hidden />
-                </Button>
-              )}
-              <Button
-                variant="inner"
-                size="sm"
-                onClick={() => {
-                  patchInput(biz.prchsDmndNo, { grntePyslDocNo: '입찰보증금납부서.pdf' })
-                  console.log('[M74] 입찰보증금납부서 파일선택', biz.prchsDmndNo)
-                  // 추후: 네이티브 파일 선택 → bdService.uploadOvsGrntePyslDoc
-                }}
-              >
-                파일선택
-              </Button>
-            </div>
-          </>
+        value: fileCell(
+          input.grntePyslDocNo,
+          '입찰보증금납부서',
+          () => {
+            patchInput(biz.prchsDmndNo, { grntePyslDocNo: '' })
+            console.log('[M74] 입찰보증금납부서 파일 삭제', biz.prchsDmndNo)
+            // 추후 API: bdService.removeOvsGrntePyslDoc
+          },
+          () => {
+            patchInput(biz.prchsDmndNo, { grntePyslDocNo: '입찰보증금납부서.pdf' })
+            console.log('[M74] 입찰보증금납부서 파일선택', biz.prchsDmndNo)
+            // 추후: 네이티브 파일 선택 → bdService.uploadOvsGrntePyslDoc
+          },
         ),
       },
     )

@@ -158,17 +158,19 @@ export function DfEqpmntTradeAgncChgPage() {
   ]
   const scrtyMore: TableRow[] = [
     {
+      // 파일 UI FileDownloadList 통일(2026-09-01 사용자 확정) — 구 파일명+[보기] 버튼 대체.
       label: '첨부파일',
-      type: 'combination',
       value: (
-        <div className="flex items-center gap-krds-5">
-          <span className="min-w-px flex-1 truncate">
-            {p.fileNm} <span className="text-krds-text-muted">[2.01MB]</span>
-          </span>
-          <Button size="sm" variant="inner" onClick={() => console.log('[M18] 보안측정 첨부 보기', p.fileNm)}>
-            보기
-          </Button>
-        </div>
+        <FileDownloadList
+          files={[
+            {
+              id: p.id,
+              name: p.fileNm,
+              size: '2.01MB',
+              onDownload: () => console.log('[M18] 보안측정 첨부 다운로드', p.fileNm),
+            },
+          ]}
+        />
       ),
     },
   ]
