@@ -144,8 +144,9 @@ const BottomSheet = ({
             className,
           )}
         >
-          {/* Title container — title 좌측 + close 우측, gap-16, items-start */}
-          <div className="flex items-start justify-between gap-4">
+          {/* Title container — title 좌측 + close 우측, gap-16, items-start.
+              하단 divider: 타이틀 영역과 본문 사이 구분선(v0.87 검토 6·9·10 — 기획 확정 '바텀시트 공통 수정'). */}
+          <div className="flex items-start justify-between gap-4 border-b border-krds-border-divider pb-4">
             <DialogTitle
               className={cn(
                 'min-w-0 flex-1',

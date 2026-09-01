@@ -24,7 +24,6 @@
 //     (좌/우 사이드 스크롤 화살표는 폐지 — Figma 9300-28323/28417.)
 import * as React from 'react'
 
-import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { cn } from '@/utils/cn'
@@ -244,17 +243,9 @@ function StepBarHorizontal({
         </span>
       </div>
 
-      {/* 진행현황 바텀시트 — 세로 StepBar 전체 + 확인(footer) */}
-      <BottomSheet
-        open={sheetOpen}
-        onOpenChange={setSheetOpen}
-        title={sheetTitle}
-        footer={
-          <Button variant="primary" className="w-full" onClick={() => setSheetOpen(false)}>
-            확인
-          </Button>
-        }
-      >
+      {/* 진행현황 바텀시트 — 세로 StepBar 전체.
+          하단 버튼 없음(v0.87 검토 6번 기획 확정: 바로가기/닫기 제거, 단계 클릭으로 바로 이동·X로 닫기). */}
+      <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen} title={sheetTitle}>
         <StepBar orientation="vertical" items={fullItems} />
       </BottomSheet>
     </div>
