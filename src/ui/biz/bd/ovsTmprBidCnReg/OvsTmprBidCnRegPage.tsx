@@ -8,13 +8,11 @@ import { useState } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
 
 import { Button } from '@/ui/common/base/Button'
-import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
-import { OvsBfrTmprBidBidCnRegFullPopup } from '@/ui/biz/bd/ovsBfrTmprBidBidCnReg/OvsBfrTmprBidBidCnRegFullPopup'
 import { BidDsctn } from '@/ui/biz/bd/ovsTmprBidCnReg/BidDsctn'
 import { BidDsctn2 } from '@/ui/biz/bd/ovsTmprBidCnReg/BidDsctn2'
 import type { MockBscPbancInfo } from '@/types/mock/bd'
@@ -63,13 +61,8 @@ export function OvsTmprBidCnRegPage() {
     document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  // 이전공고입찰내역 불러오기 → 이전공고입찰내역등록 풀팝업(MUI-BD-01-P79)
-  const [bfrBidOpen, setBfrBidOpen] = useState(false)
-  const handleBfrBidCn = () => {
-    console.log('[M76] 이전공고입찰내역 불러오기', detail.intgRfrncNo)
-    // 추후 API: bdService.selectOvsBfrPbancBidCnList(intgRfrncNo)
-    setBfrBidOpen(true)
-  }
+  // (구) 이전공고입찰내역 불러오기 버튼·P79 풀팝업 배선은 2026-09-01 사용자 지시로 제거
+  //   (컴포넌트 OvsBfrTmprBidBidCnRegFullPopup 파일은 유지 — 복원 필요 시 재배선).
 
   // ── 일반정보 탭(M76) — 공고일반(dm_bscPbancInfo) + 담당자 정보 ──
   const pbancRows: TableRow[] = [
@@ -112,10 +105,7 @@ export function OvsTmprBidCnRegPage() {
 
       {tab === '일반정보' ? (
         <>
-          <PageTitle as="h2" className="px-4 pb-2 pt-4">
-            일반정보
-          </PageTitle>
-
+          {/* 탭명과 중복되는 본문 PageTitle '일반정보' 제거(2026-09-01 사용자 지시 — 검토97 패턴). */}
           <SectionTitle as="h3" topDivider>
             일반정보
           </SectionTitle>
@@ -139,13 +129,6 @@ export function OvsTmprBidCnRegPage() {
         </>
       ) : (
         <>
-          {/* 이전공고입찰내역 불러오기 — 이전공고입찰내역등록(/bfr-bid-cn) 이동 */}
-          <div className="px-4 pt-4">
-            <Button variant="secondary" className="w-full" onClick={handleBfrBidCn}>
-              이전공고 입찰내역 불러오기
-            </Button>
-          </div>
-
           {/* 입찰방법에 따라 단가제(M77)/총액제(M78) 분기 — 같은 페이지, 데이터로 분기 */}
           {detail.bidMthdNm === '총액제' ? (
             <BidDsctn2 detail={detail} />
@@ -154,13 +137,6 @@ export function OvsTmprBidCnRegPage() {
           )}
         </>
       )}
-
-      {/* 이전공고입찰내역등록 (MUI-BD-01-P79) — 풀페이지 팝업 */}
-      <OvsBfrTmprBidBidCnRegFullPopup
-        open={bfrBidOpen}
-        onOpenChange={setBfrBidOpen}
-        lockerId={detail.intgRfrncNo}
-      />
 
       {/* 플로팅 — 맨위로 */}
       <FloatingActionButton
