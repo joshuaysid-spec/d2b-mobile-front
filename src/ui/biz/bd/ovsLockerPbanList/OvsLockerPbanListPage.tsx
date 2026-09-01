@@ -340,8 +340,9 @@ export function OvsLockerPbanListPage() {
       ...(it.tmprBidCnStts === '작성'
         ? [
             {
+              // primary 로 승격(2026-09-01 사용자 지시 — 입찰내역 작성/수정과 동일 위계).
               label: '입찰참가신청 작성/수정',
-              variant: 'secondary',
+              variant: 'primary',
               onClick: close(goPrtcpAply),
             } satisfies ButtonGroupItem,
           ]
