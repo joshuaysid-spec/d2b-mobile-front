@@ -4,12 +4,15 @@
 //   ⚠️ 설계서에 데이터영역(항목명 영문) 표 없음 → 화면 표기 기준 잠정 영문키(성명/적격여부/보안측정일/첨부파일).
 //      인원 정보(성명/적격/측정일)는 필수 아님, 첨부파일만 필수(*)(slide169). (2026-07-01 개정: 주민등록번호 삭제)
 //   footer [등록] 은 부모가 렌더 → 입력 상태는 이 콘텐츠가 소유, ref(ScrtyMsrmtPrsnlRegHandle.register)로 확정만 노출.
-import { forwardRef, useImperativeHandle, useState } from 'react'
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
+import { FileAdd, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 import type { MockScrtyMsrmtPrsn } from '@/types/mock/cm'
 
 /** 부모 footer([등록])가 호출하는 확정 동작. */
@@ -33,15 +36,12 @@ const ScrtyMsrmtPrsnlReg = forwardRef<ScrtyMsrmtPrsnlRegHandle, ScrtyMsrmtPrsnlR
     const [prsnNm, setPrsnNm] = useState('')
     const [qualYn, setQualYn] = useState('')
     const [scrtMsrYmd, setScrtMsrYmd] = useState('')
-    // 첨부파일 — 파일뷰어 솔루션(캐비닛/업로드) 연동 자리. 목업으로 파일명만 관리.
+    // 첨부파일 — [공통] 파일 추가 시트(v0.87)로 추가. 목업으로 파일명만 관리.
     const [files, setFiles] = useState<FileDownloadItem[]>([])
+    // 파일 추가 시트 — P10 자체가 시트 콘텐츠라 중첩 컨테이너는 여기서 소유(부모 M23 은 관여 X, 설계서 "공통 파일첨부 사용").
+    const [fileAddOpen, setFileAddOpen] = useState(false)
+    const fileAddRef = useRef<FileAddHandle>(null)
 
-    // 파일 추가 — 실제로는 캐비닛/파일 업로드 선택 팝업 호출(slide169). 목업으로 1건 추가.
-    const handleAddFile = () => {
-      const seq = files.length + 1
-      setFiles((prev) => [...prev, { id: `f-${Date.now()}`, name: `증명서${seq}.pdf`, size: '256KB' }])
-      console.log('[P10] 첨부파일 추가(캐비닛/업로드 선택 팝업)') // 추후 API: fbService.pickFromCabinet
-    }
     const handleRemove = (id: string | number) =>
       setFiles((prev) => prev.filter((f) => f.id !== id))
 
@@ -93,15 +93,48 @@ const ScrtyMsrmtPrsnlReg = forwardRef<ScrtyMsrmtPrsnlRegHandle, ScrtyMsrmtPrsnlR
           />
         </div>
 
-        {/* 첨부파일* — 파일 추가 + 목록(삭제). 필수(slide169). */}
+        {/* 첨부파일* — 파일 추가([공통] 파일 추가 시트) + 목록(삭제). 필수(slide169). */}
         <div className="flex flex-col gap-krds-5">
           <InputLabel required>첨부파일 — 총 {files.length}건</InputLabel>
           <FileDownloadList
             files={files.map((f) => ({ ...f, onRemove: () => handleRemove(f.id ?? f.name) }))}
-            onAddFile={handleAddFile}
+            onAddFile={() => setFileAddOpen(true)}
             addFileLabel="파일 추가"
           />
         </div>
+
+        {/* [공통] 파일 추가 시트(v0.87 마지막 장) — 첨부서류명 직접입력 + 직접/캐비닛 업로드. */}
+        <BottomSheet
+          open={fileAddOpen}
+          onOpenChange={setFileAddOpen}
+          title="파일 추가"
+          footer={
+            <ButtonGroup
+              items={[
+                { label: '취소', variant: 'secondary', onClick: () => setFileAddOpen(false) },
+                {
+                  label: '완료',
+                  variant: 'primary',
+                  onClick: () => {
+                    if (fileAddRef.current?.complete()) setFileAddOpen(false)
+                  },
+                },
+              ]}
+            />
+          }
+        >
+          {fileAddOpen && (
+            <FileAdd
+              ref={fileAddRef}
+              onComplete={({ files: picked }) =>
+                setFiles((prev) => [
+                  ...prev,
+                  ...picked.map((p) => ({ id: p.id, name: p.name, size: p.size })),
+                ])
+              }
+            />
+          )}
+        </BottomSheet>
       </div>
     )
   },

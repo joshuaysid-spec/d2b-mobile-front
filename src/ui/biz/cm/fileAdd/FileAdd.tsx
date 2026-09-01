@@ -1,0 +1,186 @@
+// [공통] 파일 추가 (설계서 v0.87 마지막 장, 2026-08-28 신규) — BottomSheet 콘텐츠 전용.
+//   기존 캐비닛 연결(MUI-BD-04-P13) 팝업을 대체하는 파일 첨부 공통 화면. 컨테이너(BottomSheet)·
+//   타이틀('파일 추가')·footer([취소][완료])는 사용처(부모)가 소유하고, 여기는 콘텐츠만 담는다.
+//   구성(슬라이드 순): [직접 업로드][캐비닛 업로드] → 첨부서류명(기본 직접입력 InputBox,
+//   군수품 신청 등 항목 지정 시 docNmOptions 셀렉트) → 첨부파일 목록(파일명·크기·건별 삭제).
+//   [완료] = 부모 footer 가 ref.complete() 호출 → 검증 통과 시 onComplete 로 확정(실제 업로드는
+//   사용처/서비스 몫 — 추후: fbService.upload 파일당 1요청 순차 큐).
+//   캐비닛 업로드는 디지털 캐비닛 팝업 연동 전 목업 스텁(추후: 캐비닛 파일 선택 팝업 호출).
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+
+import { Button } from '@/ui/common/base/Button'
+import { Icon } from '@/ui/common/base/Icon'
+import { InputBox } from '@/ui/common/base/InputBox'
+import { InputLabel } from '@/ui/common/base/InputLabel'
+import { InputMessage } from '@/ui/common/base/InputMessage'
+import { SelectBox } from '@/ui/common/base/SelectBox'
+import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
+
+/** 추가된 파일 1건 — 실제 File 객체는 직접 업로드 시에만 존재(캐비닛/목업은 메타만). */
+export interface FileAddFile {
+  id: string
+  name: string
+  size: string
+  file?: File
+}
+
+/** 부모 footer [완료]가 호출 — 검증 통과 시 onComplete 실행 후 true(부모가 닫기). */
+export interface FileAddHandle {
+  complete: () => boolean
+}
+
+export interface FileAddProps {
+  /** 첨부서류명 지정 항목(군수품 신청 등) — 주어지면 셀렉트, 없으면 직접입력(기본). */
+  docNmOptions?: string[]
+  /** 여러 파일 추가 허용(기본 true). false 면 새로 고른 파일이 기존을 교체. */
+  multiple?: boolean
+  /** [완료] 확정 — 첨부서류명 + 파일 목록 반환(부모가 목록 반영·실제 업로드). */
+  onComplete: (result: { docNm: string; files: FileAddFile[] }) => void
+}
+
+// 바이트 → 표시 크기(KB/MB) — 설계서 '[파일크기]' 표기.
+function formatSize(bytes: number): string {
+  if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)}MB`
+  return `${Math.max(1, Math.round(bytes / 1024))}KB`
+}
+
+const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
+  ({ docNmOptions, multiple = true, onComplete }, ref) => {
+    const [docNm, setDocNm] = useState('')
+    const [files, setFiles] = useState<FileAddFile[]>([])
+    const [error, setError] = useState<string | null>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    const appendFiles = (next: FileAddFile[]) => {
+      setError(null)
+      setFiles((prev) => (multiple ? [...prev, ...next] : next.slice(0, 1)))
+    }
+
+    // 직접 업로드 — 디바이스 저장소(input[type=file], AOS/iOS 시스템 파일 선택기).
+    const handlePickDevice = (list: FileList | null) => {
+      if (!list || list.length === 0) return
+      appendFiles(
+        Array.from(list).map((f, i) => ({
+          id: `d-${Date.now()}-${i}`,
+          name: f.name,
+          size: formatSize(f.size),
+          file: f,
+        })),
+      )
+    }
+
+    // 캐비닛 업로드 — 디지털 캐비닛 팝업에서 파일 선택(연동 전 목업 스텁).
+    const handlePickCabinet = () => {
+      console.log('[FileAdd] 캐비닛 업로드') // 추후: 디지털 캐비닛 파일 선택 팝업 호출 → 선택분 append
+      appendFiles([
+        { id: `c-${Date.now()}`, name: '첨부파일명.hwp', size: '786KB' },
+      ])
+    }
+
+    const handleRemove = (id: string | number) =>
+      setFiles((prev) => prev.filter((f) => f.id !== id))
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        complete: () => {
+          const name = docNm.trim()
+          if (!name) {
+            setError(
+              docNmOptions ? '첨부파일명을 선택해주세요.' : '첨부파일명을 입력해주세요.',
+            )
+            return false
+          }
+          if (files.length === 0) {
+            setError('첨부할 파일을 추가해주세요.')
+            return false
+          }
+          console.log('[FileAdd] 완료 — 업로드 실행', name, files.map((f) => f.name)) // 추후: fbService.upload 순차 큐
+          onComplete({ docNm: name, files })
+          return true
+        },
+      }),
+      [docNm, files, docNmOptions, onComplete],
+    )
+
+    return (
+      <div className="flex flex-col gap-krds-7 py-krds-5">
+        {/* 업로드 방식 — 직접(디바이스 저장소) / 캐비닛(디지털 캐비닛). */}
+        <div className="flex gap-krds-5">
+          <Button
+            variant="secondary"
+            className="flex-1"
+            onClick={() => inputRef.current?.click()}
+          >
+            <Icon name="Upload" size={20} aria-hidden />
+            직접 업로드
+          </Button>
+          <Button variant="secondary" className="flex-1" onClick={handlePickCabinet}>
+            <Icon name="Description" size={20} aria-hidden />
+            캐비닛 업로드
+          </Button>
+          <input
+            ref={inputRef}
+            type="file"
+            multiple={multiple}
+            className="hidden"
+            onChange={(e) => {
+              handlePickDevice(e.target.files)
+              e.target.value = '' // 같은 파일 재선택 허용
+            }}
+          />
+        </div>
+
+        {/* 첨부서류명 — 기본 직접입력, 항목 지정(군수품 등) 시 셀렉트. */}
+        <div className="flex flex-col gap-krds-5">
+          <InputLabel required>첨부파일명</InputLabel>
+          {docNmOptions ? (
+            <SelectBox
+              placeholder="첨부파일명을 선택해주세요."
+              value={docNm}
+              onValueChange={(v) => {
+                setDocNm(v)
+                setError(null)
+              }}
+              items={docNmOptions.map((t) => ({ value: t, label: t }))}
+            />
+          ) : (
+            <InputBox
+              value={docNm}
+              placeholder="첨부파일명을 입력해주세요."
+              onChange={(e) => {
+                setDocNm(e.target.value)
+                setError(null)
+              }}
+              onClear={() => setDocNm('')}
+            />
+          )}
+        </div>
+
+        {/* 첨부파일 — 업로드할 파일명·크기 + 건별 삭제. */}
+        <div className="flex flex-col gap-krds-5">
+          <InputLabel>첨부파일</InputLabel>
+          {files.length > 0 ? (
+            <FileDownloadList
+              files={files.map((f) => ({
+                id: f.id,
+                name: f.name,
+                size: f.size,
+                onRemove: () => handleRemove(f.id),
+              }))}
+            />
+          ) : (
+            <p className="text-[15px] leading-normal text-krds-text-muted">
+              직접 업로드 또는 캐비닛 업로드로 파일을 추가해주세요.
+            </p>
+          )}
+        </div>
+
+        {error && <InputMessage type="error">{error}</InputMessage>}
+      </div>
+    )
+  },
+)
+FileAdd.displayName = 'FileAdd'
+
+export { FileAdd }
