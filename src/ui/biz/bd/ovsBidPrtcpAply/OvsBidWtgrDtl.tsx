@@ -51,6 +51,10 @@ const buildSections = (info: MockOvsBidWtgrInfo): { title: string; rows: TableRo
       { label: '보증기간', value: info.grnteBgngPrd },
       { label: '보증료', value: info.grfe, type: 'number' },
       { label: '보증금율', value: info.grnteAmtDepstRt, type: 'number' },
+      // v0.87 검토92 — 특기사항/보증문/발행일자 행을 보증계약자 영역에서 이동
+      { label: '특기사항', value: info.spcltMttr },
+      { label: '보증문', value: info.grntePhrsCn },
+      { label: '발행일자', value: info.pblcnYmd },
     ],
   },
   {
@@ -60,9 +64,7 @@ const buildSections = (info: MockOvsBidWtgrInfo): { title: string; rows: TableRo
       { label: '보증 계약자 대표자', value: info.ctrtRprsvNm },
       { label: '보증 채권자 상호', value: info.crdtrBzentyNm },
       { label: '보증 채권자 대표자', value: info.crdtrRprsvNm },
-      { label: '특기사항', value: info.spcltMttr },
-      { label: '발행일자', value: info.pblcnYmd },
-      { label: '보증문', value: info.grntePhrsCn },
+      // 특기사항/발행일자/보증문 행은 '보증서 정보' 영역으로 이동 — v0.87 검토92
     ],
   },
   {

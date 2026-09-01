@@ -1,6 +1,6 @@
 // 스탭3 입찰 보증금 (MUI-BD-04-T74(구 M74 — v1.83 재편) OvsBidPrtcpAplyPage_Stp3 · 설계서 slide335~336 · 데이터 slide339 · 이벤트 slide341).
 // 호스트 페이지(OvsBidPrtcpAplyPage)의 '입찰 보증금' 탭 본문만 담당 — 요약/스텝/탭/하단 액션바는 페이지 소유.
-// 구성: 페이지타이틀 → 입찰보증금 구분 SelectBox(비면제/면제, sbx_depositType_onchange 로 데이터 영역 전환)
+// 구성: 페이지타이틀 → 입찰보증금 구분 라디오(비면제/면제, sbx_depositType_onchange 로 데이터 영역 전환 — v0.87 검토90 SelectBox→버튼형 라디오)
 //   → 입찰참가사업 및 입찰보증금 목록(사업별 Table)
 //     · 면제(dl_bizExmptnList): 입찰보증금(확인입력) + 연대보증서/지급각서 파일
 //     · 비면제(dl_bizList): 입찰보증금(확인입력) + 보증금납부방법(보증보험/전자보증서) + 증권번호/보증기관명 + 납부서
@@ -12,9 +12,10 @@ import { useState } from 'react'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
+import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
-import { Infobox } from '@/ui/common/composites/Infobox'
+import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsBidWtgrInqFullPopup } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidWtgrInqFullPopup'
 import type { MockBidPrgrsItem, MockOvsBidPrtcpBizItem, MockOvsBidWtgrItem } from '@/types/mock/bd'
@@ -307,26 +308,20 @@ export function Stp3({ detail }: { detail: MockBidPrgrsItem }) {
 
   return (
     <>
-      {/* 입찰보증금 구분 — 값에 따라 면제/비면제 데이터 영역 전환. 탭명과 중복되는 큰 타이틀은 제거(260709) */}
-      <div className="px-4 py-4">
-        <Table
-          rows={[
-            {
-              label: '입찰보증금 구분',
-              type: 'combination',
-              value: (
-                <SelectBox
-                  items={DEPOSIT_TYPES}
-                  value={depositType}
-                  onValueChange={(v) => {
-                    setDepositType(v)
-                    console.log('[M74] 입찰보증금 구분 변경', { pbancNo: detail.pbancNo, depositType: v })
-                    // 추후 API: bdService.selectBidPrtcpBizList(detail.pbancNo, v)
-                  }}
-                />
-              ),
-            },
-          ]}
+      {/* 입찰보증금 구분 — 값에 따라 면제/비면제 데이터 영역 전환.
+          SelectBox → 버튼형 라디오(v0.87 검토90, 상세 화면 Tab3 관례와 동일 가로 배치). */}
+      <div className="flex flex-col gap-krds-5 px-4 py-4">
+        {/* 라디오 그룹은 labelable 요소가 아니라 htmlFor 미사용(aria-label 로 연결) */}
+        <InputLabel>입찰보증금 구분</InputLabel>
+        <RadioButtonGroup
+          aria-label="입찰보증금 구분"
+          items={DEPOSIT_TYPES}
+          value={depositType}
+          onValueChange={(v) => {
+            setDepositType(v)
+            console.log('[M74] 입찰보증금 구분 변경', { pbancNo: detail.pbancNo, depositType: v })
+            // 추후 API: bdService.selectBidPrtcpBizList(detail.pbancNo, v)
+          }}
         />
       </div>
 
@@ -340,13 +335,7 @@ export function Stp3({ detail }: { detail: MockBidPrgrsItem }) {
         ))}
       </div>
 
-      <Infobox
-        title="안내사항"
-        items={[
-          '보증금납부방법이 전자보증서인 경우 [보증서선택]으로 전자보증서 정보를 적용하면 증권번호/보증기관명이 자동 입력됩니다.',
-          '보증금납부방법이 보증보험인 경우 보증서 파일을 선택하여 업로드합니다.',
-        ]}
-      />
+      {/* '안내사항' Infobox 는 삭제 — v0.87 검토90 */}
 
       {/* 입찰보증서선택(P75) + 보증서정보조회(P76) — 풀팝업 래퍼(OvsBidWtgrInqFullPopup)가 캡슐화 */}
       <OvsBidWtgrInqFullPopup

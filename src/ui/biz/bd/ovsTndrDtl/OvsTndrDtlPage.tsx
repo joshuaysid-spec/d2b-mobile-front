@@ -82,6 +82,8 @@ function GeneralInfo({ detail }: { detail: MockOvsTndrDtlItem }) {
     { label: '입찰서제출마감일시', value: detail.bdngDdlnDt },
     { label: '개찰일자', value: detail.bdopnDt },
     { label: '환율적용일자', value: detail.exchrtAplcnYmd },
+    // v0.87 검토100 — 공지사항 항목 추가(값은 설계서 형식 목업)
+    { label: '공지사항', value: '입찰서 제출 전 공고문 및 입찰유의서를 반드시 확인하시기 바랍니다.' },
   ]
   // 담당자 정보 (slide375 — 담당 부서명/담당자/연락처)
   const contactRows: TableRow[] = [

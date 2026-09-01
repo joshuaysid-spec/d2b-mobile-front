@@ -65,7 +65,23 @@ function itemRows(it: MockOvsRlsVltrnsItem, onViewDoc: () => void): TableRow[] {
         </div>
       ),
     },
-    { label: '재고번호', value: it.stckNo },
+    {
+      // v0.87 검토106 — 재고번호 [보기] 추가(OvsPrcmPlanDtlPage 재고번호 보기 패턴)
+      label: '재고번호',
+      type: 'combination',
+      value: (
+        <>
+          <span>{it.stckNo}</span>
+          <Button
+            size="sm"
+            variant="inner"
+            onClick={() => console.log('[T72] 재고번호 보기', it.stckNo)} // 추후: 재고번호 상세 조회
+          >
+            보기
+          </Button>
+        </>
+      ),
+    },
     { label: '부품번호', value: it.partNo },
     { label: '규격번호', value: it.specNo },
     { label: '품명', value: it.prdctNm },

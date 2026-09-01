@@ -10,6 +10,7 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
+import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { OvsBidWtgrDtl } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidWtgrDtl'
 import type { MockOvsBidWtgrItem } from '@/types/mock/bd'
 
@@ -114,7 +115,24 @@ export function OvsBidWtgrInqFullPopup({ open, onOpenChange, onApply }: OvsBidWt
   }))
 
   return (
-    <FullPopup open={open} onOpenChange={onOpenChange} title="입찰보증서 선택">
+    <FullPopup
+      open={open}
+      onOpenChange={onOpenChange}
+      title="입찰보증서 선택"
+      footer={
+        // 하단 [닫기] — v0.87 검토91
+        <ButtonGroup
+          layout="single"
+          items={[{ label: '닫기', variant: 'secondary', onClick: () => onOpenChange(false) }]}
+        />
+      }
+    >
+      {/* 업무도움 — v0.87 검토91 (문구는 구 Stp3 '안내사항' 보증서 안내 재사용) */}
+      <HelpDisclosure
+        items={[
+          '보증금납부방법이 전자보증서인 경우 [보증서 적용]으로 전자보증서 정보를 적용하면 증권번호/보증기관명이 자동 입력됩니다.',
+        ]}
+      />
       <div className="flex flex-col gap-krds-7 px-4 py-4">
         {/* 총 건수 */}
         <p className="text-krds-body-sm text-krds-text-primary-active">총 {list.length}건</p>

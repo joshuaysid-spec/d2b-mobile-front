@@ -184,6 +184,8 @@ function Tab1({ detail, sbtInfo }: { detail: MockOvsBidPrtcpApfrDetail; sbtInfo:
     { label: '공고번호', value: `${detail.pbancNo}-${detail.pbancOd}` },
     { label: '개찰일시', value: detail.bdopnYmd },
     { label: '입찰보증금 총액', value: `US$ ${fmtUsd(detail.bidGrnteAmt)}`, type: 'number' },
+    // v0.87 검토93 — 공지사항 항목 추가(값은 설계서 형식 목업)
+    { label: '공지사항', value: '입찰서 제출 전 공고문 및 입찰유의서를 반드시 확인하시기 바랍니다.' },
   ]
   // 신청업체(dm_sbtInfo)
   const sbtRows: TableRow[] = [

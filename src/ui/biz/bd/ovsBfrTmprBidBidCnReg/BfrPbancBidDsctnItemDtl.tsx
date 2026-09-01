@@ -11,8 +11,9 @@ import { forwardRef, useImperativeHandle, useMemo, useState } from 'react'
 import { Button } from '@/ui/common/base/Button'
 import { Checkbox } from '@/ui/common/base/Checkbox'
 import { Icon } from '@/ui/common/base/Icon'
+import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { Card } from '@/ui/common/composites/Card'
-import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { type TableRow } from '@/ui/common/composites/Table'
 import { cn } from '@/utils/cn'
 
 import type { MockBfrPbancBidCnItem, MockBfrPbancInfoItem } from '@/types/mock/bd'
@@ -284,6 +285,7 @@ export const BfrPbancBidDsctnItemDtl = forwardRef<
   const [visible, setVisible] = useState(PAGE_STEP) // 더보기 노출 개수
   const [checkedNos, setCheckedNos] = useState<string[]>([]) // 항목선택(불러올 품목 순번)
   const [expandedNos, setExpandedNos] = useState<string[]>([]) // 내역 펼쳐보기 상태(순번)
+  const [confirmOpen, setConfirmOpen] = useState(false) // v0.87 검토88 — [불러오기] 확인 모달
 
   // 클릭한 공고의 입찰내역 목록 — 목업. 추후 API: bdService.selectBfrTmprBidCnList(pbanc.pbancNo, pbanc.pbancOd)
   const list = MOCK_BID_CN_LIST
@@ -297,20 +299,22 @@ export const BfrPbancBidDsctnItemDtl = forwardRef<
     setExpandedNos((prev) => (prev.includes(no) ? prev.filter((n) => n !== no) : [...prev, no]))
   }
 
-  // 불러오기(btn_loadSave_onclick) — 부모 footer 가 ref 로 호출. 선택 품목(미선택 시 전체) 저장 후 onDone.
-  useImperativeHandle(ref, () => ({
-    loadSave: () => {
-      const items = checkedNos.length > 0 ? list.filter((it) => checkedNos.includes(it.no)) : list
-      console.log('[P80] 이전공고입찰내역불러오기', {
-        pbancNo: pbanc.pbancNo,
-        pbancOd: pbanc.pbancOd,
-        count: items.length,
-        items,
-      })
-      // 추후 API: bdService.saveBfrTmprBidCn(pbanc.pbancNo, pbanc.pbancOd, items)
-      onDone()
-    },
-  }))
+  // 불러오기(btn_loadSave_onclick) — 부모 footer 가 ref 로 호출. 확인 모달 승인 후 저장(v0.87 검토88).
+  useImperativeHandle(ref, () => ({ loadSave: () => setConfirmOpen(true) }))
+
+  // 확인 모달 [확인] — 선택 품목(미선택 시 전체) 저장 후 onDone.
+  const handleLoadConfirm = () => {
+    const items = checkedNos.length > 0 ? list.filter((it) => checkedNos.includes(it.no)) : list
+    console.log('[P80] 이전공고입찰내역불러오기', {
+      pbancNo: pbanc.pbancNo,
+      pbancOd: pbanc.pbancOd,
+      count: items.length,
+      items,
+    })
+    // 추후 API: bdService.saveBfrTmprBidCn(pbanc.pbancNo, pbanc.pbancOd, items)
+    setConfirmOpen(false)
+    onDone()
+  }
 
   // 품목 1건 → Table rows. 접힘 = 요약 4개(순번/재고번호/부품번호/품명), 펼침 = dl_bidCnList 전체 필드.
   const buildRows = (it: MockBfrPbancBidCnItem, expanded: boolean): TableRow[] => {
@@ -341,13 +345,7 @@ export const BfrPbancBidDsctnItemDtl = forwardRef<
   return (
     // 좌우 패딩은 시트 본문(px-16)이 제공 — 자체 좌우 패딩 없음(2중 패딩 금지).
     <div className="flex flex-col gap-krds-7 py-krds-5">
-      {/* 대상 공고 — 보관함 목록에서 클릭한 공고 */}
-      <Table
-        rows={[
-          { label: '공고번호', value: `${pbanc.pbancNo}-${pbanc.pbancOd}` },
-          { label: '구매요청번호', value: pbanc.prchsDmndNo },
-        ]}
-      />
+      {/* 공고번호/구매요청번호 표는 삭제 — v0.87 검토88 */}
 
       {/* 입찰내역 총 건수 */}
       <p className="text-[17px] font-bold leading-normal text-krds-text-primary-active">
@@ -400,6 +398,16 @@ export const BfrPbancBidDsctnItemDtl = forwardRef<
           더보기 ({visibleList.length}/{total}건)
         </Button>
       )}
+
+      {/* [불러오기] 확인 모달 — v0.87 검토88 */}
+      <AlertModal
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        variant="check"
+        title="이전 공고 입찰내역을 불러오시겠습니까?"
+        secondaryAction={{ label: '취소' }}
+        primaryAction={{ label: '확인', onClick: handleLoadConfirm }}
+      />
     </div>
   )
 })
