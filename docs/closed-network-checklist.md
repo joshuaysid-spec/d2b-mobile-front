@@ -50,8 +50,8 @@
     파라미터 분기 여부는 요청/응답 상세설계 나올 때 함께 확인.
 - [ ] **화면ID 채번**: 연관 진행 목록(`cm/anlPrgrsList`, `/anl-prgrs`) — 설계서 미정의 화면(PC 동선 준용).
   기획 채번 확정 시 폴더/파일명 교체. (상세: `docs/02-design/features/anl-prgrs-list.design.md`)
-- [ ] **잔존 화면 삭제 여부**: 국외 보관함 상세(`bd/ovsLockerPbanDtl`, `/bd/ovs/locker/:id`) —
-  260706 개정에서 설계서에서 삭제됐으나 코드/라우트 잔존. 유지/삭제 결정 필요.
+- [x] **잔존 화면 삭제 여부 — 2026-09-01 삭제 완료**: 국외 보관함 상세(구 `bd/ovsLockerPbanDtl`) —
+  설계서 v1.82 삭제 확정(사용자 확인)·진입 동선 0건 검증 후 페이지/라우트/서비스 메서드 제거.
 - [ ] **임시 영문키 교체**: 설계서 데이터영역 미정의로 임시 승인된 항목명들 — 상세설계 확정 시 교체.
   - `OvsLockerPbanItem.tmprBidCnStts` / `bidPrtcpAplyStts` (보관함 카드 상태 버튼 구동)
   - `BidPrgrsItem` 진행 상태값(apfrStatNm/tndrStatNm 등) · `bidPrcSysNm`/`ctrtMthdNm` 등
