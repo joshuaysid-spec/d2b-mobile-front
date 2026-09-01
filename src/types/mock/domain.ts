@@ -4,6 +4,8 @@
 export interface MockUser {
   customerNo: string
   name: string
+  /** 최근 로그인 일시 — 햄버거메뉴(M12) '최근 로그인' 표시(v0.87 검토 3번). 추후 로그인 응답에서 주입. */
+  lastLoginAt?: string
 }
 
 // ── 인증(auth) API 타입(추정 — TODO(백엔드 확정)) ──

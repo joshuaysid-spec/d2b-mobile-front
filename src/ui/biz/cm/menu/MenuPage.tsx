@@ -422,6 +422,9 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
           ))}
         </ul>
 
+        {/* '메뉴' 섹션 타이틀 — 바로가기(②)와 검색(③) 사이(v0.87 검토 3번). */}
+        <h2 className="text-[19px] font-bold leading-normal text-krds-text-ink">메뉴</h2>
+
         {/* ③ 검색 행 — InputBox + 검색 아이콘 버튼(Figma 9623:17683: secondary=흰 배경+파란 테두리+파란 아이콘 20).
             data-coach = 앱 이용안내(M16) 코치마크 하이라이트 측정 지점. */}
         <div data-coach="menu-search" className="flex items-center gap-krds-5">
@@ -433,8 +436,8 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
             onKeyDown={(e) => {
               if (e.key === 'Enter') void handleSearch()
             }}
-            placeholder="내용을 입력하세요."
-            aria-label="통합검색"
+            placeholder="메뉴명 검색"
+            aria-label="메뉴명 검색"
           />
           <Button
             variant="secondary"

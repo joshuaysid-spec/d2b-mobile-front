@@ -51,7 +51,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ accessToken: null, isLoggedIn: false, user: null, hasUnread: false })
   },
 
-  user: USE_MOCK ? { customerNo: '0012345678', name: '홍길동' } : null, // 목업 사용자
+  user: USE_MOCK
+    ? { customerNo: '0012345678', name: '홍길동', lastLoginAt: '2026-08-30 09:12:45' }
+    : null, // 목업 사용자
   setUser: (user) => set({ user }),
 
   hasUnread: false,
