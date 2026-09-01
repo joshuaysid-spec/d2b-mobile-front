@@ -84,6 +84,13 @@ const SCSBD_MTHD_OPTIONS = [ALL,
 
 // 업무구분 4종 전체 — 기본값(전체 선택)·'전체' 판정에 공용.
 const TASK_SE_ALL = ['goods', 'service', 'construction', 'foreign']
+// 업무구분 코드 → 목록 데이터 라벨(taskSeNm) — 클라 필터 매칭용(서버 전환 시 코드 그대로 전송).
+const TASK_SE_LABEL: Record<string, string> = {
+  goods: '물품',
+  service: '용역',
+  construction: '공사',
+  foreign: '국외',
+}
 
 // 동적 schema resolver — 설계서 slide19 노출조건:
 //   기능·군구분·입찰매체 = 업무구분 '전체' 또는 '국외' 선택 시 노출.
@@ -301,18 +308,26 @@ export function BidPbancIntgListPage() {
     navigate('/bd/bidPbancDtl', { state: it })
   }
 
-  // ── 키워드 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 이 블록 삭제) ──
-  //   filteredList: 조회 결과(data)를 검색대상(공고명→bizNm · 공고번호→g2bPbancNoOd)으로 부분일치.
+  // ── 키워드·업무구분 필터 + 더보기 슬라이스 — 클라이언트 로직(서버 페이징 전환 시 이 블록 삭제) ──
+  //   filteredList: 조회 결과(data)를 ① 검색필터 업무구분(taskSeNm — 코드→라벨 매칭)
+  //     ② 검색대상(공고명→bizNm · 공고번호→g2bPbancNoOd) 부분일치로 거른다.
+  //   나머지 상세필터(일자·공고구분 등)는 서버 조회 파라미터 경계 유지(handleFilterSearch 주석).
   //   visibleList: 더보기 누른 만큼(page*pageSize)만 노출.
   const filteredList = useMemo(() => {
-    const list = data ?? []
+    let list = data ?? []
+    // 업무구분 — '0'(전체 코드) 제외 후 부분 선택일 때만 필터(전체/미선택 = 통과).
+    const task = ((filter.taskSeNm as string[]) ?? []).filter((v) => v !== '0')
+    if (task.length > 0 && task.length < TASK_SE_ALL.length) {
+      const labels = new Set(task.map((t) => TASK_SE_LABEL[t]))
+      list = list.filter((it) => labels.has(it.taskSeNm))
+    }
     if (!appliedSearch || !appliedSearch.keyword) return list
     const kw = appliedSearch.keyword.toLowerCase()
     return list.filter((it) => {
       const field = appliedSearch.target === 'g2bPbancNoOd' ? it.g2bPbancNoOd : it.bizNm
       return field.toLowerCase().includes(kw)
     })
-  }, [appliedSearch, data])
+  }, [appliedSearch, data, filter])
 
   const total = filteredList.length
   const loaded = Math.min(page * pageSize, total)
