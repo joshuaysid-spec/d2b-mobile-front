@@ -598,12 +598,7 @@ const OvsLockerPbanListPage = lazy(() =>
     default: m.OvsLockerPbanListPage,
   })),
 )
-// 국외 보관함 상세(MUI-CM-01-M72, /bd/ovs/locker/:id) — biz/bd/ovsLockerPbanDtl.
-const OvsLockerPbanDtlPage = lazy(() =>
-  import('@/ui/biz/bd/ovsLockerPbanDtl/OvsLockerPbanDtlPage').then((m) => ({
-    default: m.OvsLockerPbanDtlPage,
-  })),
-)
+// 국외 보관함 상세(구 MUI-CM-01-M72)는 설계서 v1.82 개정에서 삭제 — 화면·라우트 제거(2026-09-01 사용자 확정).
 // 보관함 품목 관리(MUI-CM-01-M73, /bd/ovs/locker/:id/items) — biz/bd/ovsLockerItemReg.
 const OvsLockerItemRegPage = lazy(() =>
   import('@/ui/biz/bd/ovsLockerItemReg/OvsLockerItemRegPage').then((m) => ({
@@ -1557,11 +1552,6 @@ export const router = createBrowserRouter([
           header: { variant: 'sub', title: '국외 보관함' },
           scrollReset: true,
         },
-      },
-      {
-        path: 'bd/ovsLockerPbanDtl',
-        element: <OvsLockerPbanDtlPage />,
-        handle: { header: { variant: 'sub', title: '국외 보관함 상세' } },
       },
       {
         path: 'bd/ovsLockerItemReg',

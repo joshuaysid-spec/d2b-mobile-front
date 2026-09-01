@@ -1210,15 +1210,7 @@ export const bdService = {
     )
   },
 
-  /**
-   * 국외 보관함 공고 상세(담당자 영역) 조회
-   * — MUI-CM-01-M72 (ovsLockerPbanDtl/OvsLockerPbanDtlPage).
-   * TODO(실API 미매핑): 보관함 공고 '상세' API 가 없다 — 후보 no.57 목록 응답 1건 사용. URL 임시.
-   */
-  async selectOvsLockerPbanDtl(id: string): Promise<MockOvsLockerPbanItem> {
-    if (USE_MOCK) return mockDelay(MOCK_BD.ovsLockerPbanList[0])
-    return apiClient.post<MockOvsLockerPbanItem, MockOvsLockerPbanItem>(`/v1/bds/ovs/locker/pbancs/${id}`)
-  },
+  // (구) 국외 보관함 상세(MUI-CM-01-M72) selectOvsLockerPbanDtl — 설계서 v1.82 에서 화면 삭제되어 제거(2026-09-01).
 
   /**
    * 국외 보관함 입찰품목 목록 조회 — MUI-CM-01-M73 (ovsLockerItemReg/OvsLockerItemRegPage).
