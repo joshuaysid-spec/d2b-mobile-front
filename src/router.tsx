@@ -1624,7 +1624,12 @@ export const router = createBrowserRouter([
       {
         path: 'notification',
         element: <NotiPrstPage />,
-        handle: { scrollReset: true, showBottomNav: true },
+        // 뒤로가기 있는 sub 헤더(v0.87 검토 4번 — 알림현황 뒤로가기 추가).
+        handle: {
+          header: { variant: 'sub', title: '알림현황' },
+          scrollReset: true,
+          showBottomNav: true,
+        },
       },
       {
         // 연관 진행 목록 — 상세 진행현황 시트의 세부단계 클릭 진입(설계서 미정의, 화면ID 채번 대기)

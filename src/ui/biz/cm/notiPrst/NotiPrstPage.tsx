@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 
-import { PageContainer } from '@/ui/common/layout/PageContainer'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { Badge } from '@/ui/common/base/Badge'
 import { useAuthStore } from '@/stores/authStore'
@@ -109,8 +108,9 @@ export function NotiPrstPage() {
   const items = buildItems(MOCK_NOTIFICATIONS)
 
   return (
-    <PageContainer title="알림현황">
+    // 타이틀은 sub 헤더(뒤로가기 포함, router handle)가 소유 — 본문 중복 타이틀 제거(v0.87 검토 4번).
+    <section className="px-4 py-5">
       <CardList items={items} emptyText="알림이 없습니다." />
-    </PageContainer>
+    </section>
   )
 }
