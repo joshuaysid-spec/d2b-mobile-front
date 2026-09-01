@@ -266,9 +266,19 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
     } as Partial<MockItitbBidCnItem>)
   }
 
-  // ── 입찰내역 저장 — 조건부 필수(Replace/MOQ=Y) 검증 후 저장(암호화) ──
+  // ── 입찰내역 저장 — 필수값(입찰업체·화폐단위·입찰단가) + 조건부 필수(Replace/MOQ=Y) 검증 후 저장(암호화) ──
+  //   2026-09-01 사용자 확정: 필수값이 모두 입력되어야 저장 가능.
   const handleSave = () => {
     for (const r of rows) {
+      if (!r.splyBzentyNm || !r.crncNm || !r.bdngTccrUntprc) {
+        setNotice({
+          open: true,
+          variant: 'error',
+          title: `항목 ${r.frcptlArtclNo} 필수 항목 미입력`,
+          description: '입찰업체·화폐단위·입찰단가를 모두 입력해주세요.',
+        })
+        return
+      }
       if (r.itemSbstSe === 'R' && (!r.itemSbstDocEn || !r.mdfcnInvtNo || !r.mdfcnPrtsNo)) {
         setNotice({
           open: true,
