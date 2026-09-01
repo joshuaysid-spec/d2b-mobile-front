@@ -224,7 +224,7 @@ export function DfEqpmntTradeAgncAplyPage() {
   }
 
   return (
-    <div className="flex w-full flex-col gap-krds-8 pb-4">
+    <div className="flex w-full flex-col gap-krds-8 pb-4 pt-4">
       {/* 최근 수신일자 카드 — Figma 10020:83291 상단(m_summary 미니, 아이콘 타일 + 라벨/값).
           갱신하기 버튼은 리디자인에 없으나 설계서 기능(1일 1회)이라 우측 유지(업체정보 상세 M02 와 동일 처리). */}
       <div className="mx-4 flex items-center gap-krds-7 rounded-[12px] border border-krds-border-divider bg-white p-krds-8 shadow-[0px_0px_5px_0px_rgba(23,43,77,0.1)]">

@@ -238,7 +238,7 @@ export function DfEqpmntTradeAgncChgPage() {
   }
 
   return (
-    <div className="flex w-full flex-col gap-krds-8 pb-4">
+    <div className="flex w-full flex-col gap-krds-8 pb-4 pt-4">
       {/* 나라장터(G2B) 갱신 밴드 — 업체정보 상세(M02) UI 준용(사용자 확정 2026-08-24, 구 m_noticebox Notice 대체). */}
       <div className="flex flex-col gap-krds-5 bg-krds-bg-primary-faint px-4 py-4">
         <p className="text-[15px] leading-normal text-krds-text-muted wrap-break-word">
