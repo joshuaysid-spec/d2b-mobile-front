@@ -5,8 +5,7 @@
 // Figma 내보낸 SVG 를 커밋해 사용(직접 그린 벡터 없음).
 // 색상: 인포그래픽 전용 hex(#f5f7fc 배경 · #e3ecfb 번호/아이콘칩 · #14161c 고객지원센터)는 토큰이 없는
 // 일회성 그래픽 색이라 arbitrary 로 둔다(시스템소개 IntroducePage 와 동일 판단). 나머지는 KRDS 토큰.
-import { SatisfactionSurvey } from '@/ui/biz/cm/introduce/SatisfactionSurvey'
-
+// 하단 만족도 설문은 모바일 삭제(v0.87 검토 65~67, 기획 확정).
 import hero from '@/assets/images/graphic/hero.svg'
 import step01 from '@/assets/images/graphic/step01.svg'
 import step02 from '@/assets/images/graphic/step02.svg'
@@ -202,9 +201,6 @@ export function GraphicPage() {
           </section>
         </div>
       </div>
-
-      {/* 만족도 설문 — 소개 계열 화면 공통(Figma 10064-17206) */}
-      <SatisfactionSurvey />
     </div>
   )
 }

@@ -1,7 +1,6 @@
 // 주요특징 — MUI-CM-05-M02. Figma 10020-85369 / 설계서 00.공통 v0.83 slide343·347.
-// 구성: 주요특징(불릿) + 주요업무기능(불릿) + 국방전자조달시스템과 나라장터(설명 + 비교 카드) + 만족도 설문.
-// 하단 만족도는 시스템소개와 동일 컴포넌트(SatisfactionSurvey) 재사용.
-import { SatisfactionSurvey } from '@/ui/biz/cm/introduce/SatisfactionSurvey'
+// 구성: 주요특징(불릿) + 주요업무기능(불릿) + 국방전자조달시스템과 나라장터(설명 + 비교 카드).
+// 하단 만족도 설문은 모바일 삭제(v0.87 검토 65~67, 기획 확정).
 
 const FEATURES = [
   "'국가를 당사자로 하는 계약에 관한 법률 시행령' 에 따라 방위사업청장, 국방부장관이 지정·고시한 지정정보처리장치",
@@ -161,9 +160,6 @@ export function FeaturePage() {
           <CompareCard key={c.title} title={c.title} rows={c.rows} />
         ))}
       </div>
-
-      {/* 만족도 설문 */}
-      <SatisfactionSurvey />
     </div>
   )
 }

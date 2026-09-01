@@ -1,8 +1,8 @@
 // 시스템소개 — MUI-CM-05-M01. Figma 10020-85293 / 설계서 00.공통 v0.83 slide343·346.
-// 구성: 정보 요약(제목/부제) + 소개 본문 + 조달 프로세스 인포그래픽 + 만족도 설문(SatisfactionSurvey).
+// 구성: 정보 요약(제목/부제) + 소개 본문 + 조달 프로세스 인포그래픽.
+// 하단 만족도 설문은 모바일 삭제(v0.87 검토 65~67, 기획 확정).
 // 인포그래픽 색상은 디자인 원본(브랜드 일러스트) 실측 hex — 토큰 없는 일회성 그래픽이라 arbitrary 사용.
 import { Icon } from '@/ui/common/base/Icon'
-import { SatisfactionSurvey } from './SatisfactionSurvey'
 
 // 소개 본문(Figma 10020-85300) — 문단 사이 빈 줄.
 const INTRO_BODY = [
@@ -104,9 +104,6 @@ export function IntroducePage() {
           </div>
         </div>
       </div>
-
-      {/* 만족도 설문 */}
-      <SatisfactionSurvey />
     </div>
   )
 }

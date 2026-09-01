@@ -284,13 +284,17 @@ export function TaskCldrPage() {
         )}
       </BottomSheet>
 
-      {/* M09 삭제 확인 (설계서 slide88) */}
+      {/* M09 삭제 확인 (설계서 slide88) — 아이콘 없음·질문 줄바꿈(v0.87 검토 11번). */}
       <AlertModal
         open={deleteTarget !== null}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-        variant="error"
+        variant="none"
         title="일정 삭제"
-        description="업무 캘린더에 등록된 일정을 삭제합니다. 삭제된 일정은 복구할 수 없습니다. 정말 삭제할까요?"
+        description={
+          <span className="whitespace-pre-line">
+            {'업무 캘린더에 등록된 일정을 삭제합니다. 삭제된 일정은 복구할 수 없습니다.\n정말 삭제할까요?'}
+          </span>
+        }
         secondaryAction={{ label: '취소' }}
         primaryAction={{ label: '삭제', onClick: handleConfirmDelete }}
       />

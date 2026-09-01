@@ -1,10 +1,10 @@
 // 관련사이트 — MUI-CM-05-M15. Figma 10020-85148 / 설계서 00.공통 v0.83 slide352·363.
 // 이용안내 > 관련사이트 하위의 정적 안내(가이드) 페이지. 고정 링크 목록이라 목업/API 경계 없음.
-// 구성: 그룹별 섹션(제목 + 사이트 링크 네비게이션 리스트) + 하단 만족도평가(SatisfactionSurvey 재사용).
+// 구성: 그룹별 섹션(제목 + 사이트 링크 네비게이션 리스트).
+// 하단 만족도평가는 모바일 삭제(v0.87 검토 65~67, 기획 확정).
 // 링크 항목 = <a>(사이트명 Medium 19px) + arrow_forward_ios chevron + 상/하 divider(#d1d7e0=border-divider).
-// [[cm-preparation01-m07]] 안내 페이지 계열. 만족도평가는 IntroducePage 와 공통(SatisfactionSurvey).
+// [[cm-preparation01-m07]] 안내 페이지 계열.
 import { Icon } from '@/ui/common/base/Icon'
-import { SatisfactionSurvey } from '@/ui/biz/cm/introduce/SatisfactionSurvey'
 
 interface SiteLink {
   name: string
@@ -177,8 +177,6 @@ export function SitePage() {
       {SITE_GROUPS.map((g) => (
         <SiteGroup key={g.title} title={g.title} items={g.items} />
       ))}
-      {/* 만족도평가 — 국방전자조달 소개/이용안내 공통 */}
-      <SatisfactionSurvey />
     </div>
   )
 }

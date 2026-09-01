@@ -15,9 +15,8 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { FaqList, type FaqItemView } from './FaqList'
 import { FAQ_MOCK } from './faqMock'
 
-// 검색범위 — 제목(qstnTtl)/내용(contsCn), '전체'는 둘 다. (설계서 검색조건 dm_searchInfo)
+// 검색범위 — 제목(qstnTtl)/내용(contsCn)만. '전체' 제거(v0.87 검토 60번, 기획 확정).
 const SCOPE_OPTIONS = [
-  { value: 'all', label: '전체' },
   { value: 'qstnTtl', label: '제목' },
   { value: 'contsCn', label: '내용' },
 ]
@@ -41,11 +40,11 @@ const CATEGORY_TABS: TabItem[] = [
 ]
 
 export function FaqListPage() {
-  const [scope, setScope] = useState('all') // 검색범위(전체/제목/내용)
+  const [scope, setScope] = useState('qstnTtl') // 검색범위(제목/내용 — 기본 제목)
   const [keyword, setKeyword] = useState('') // 검색어(입력 중)
   const [applied, setApplied] = useState<{ keyword: string; scope: string }>({
     keyword: '',
-    scope: 'all',
+    scope: 'qstnTtl',
   })
   const [category, setCategory] = useState('all') // 구분 탭
   const [pageSize, setPageSize] = useState(10)

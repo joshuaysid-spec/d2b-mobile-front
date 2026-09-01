@@ -18,16 +18,9 @@ const RECV_INFO: { label: string; value: string }[] = [
   { label: '이메일', value: 'user****@naver.com' },
 ]
 
-// ── 알림 수단(앱 PUSH · SMS/이메일) ─────────────────────────────────────────
+// ── 알림 수단 — 앱 PUSH 단독(v0.87 검토 56번, 기획 확정: SMS/이메일 수단 삭제 — 하단 항목 선택에 따라 자동 발송). ──
 const NOTI_MEANS: { id: string; icon: IconName; title: string; desc: string; defaultOn: boolean }[] = [
   { id: 'push', icon: 'Smartphone', title: '앱 PUSH', desc: '모바일 앱으로 알림', defaultOn: false },
-  {
-    id: 'sms',
-    icon: 'Mail',
-    title: 'SMS / 이메일',
-    desc: '알림은 알림 항목 선택에 따라 자동으로 발송됩니다',
-    defaultOn: false,
-  },
 ]
 
 // ── 알림 항목(12개 — 제목/설명/기본 on-off 는 Figma 목업값) ─────────────────
@@ -194,9 +187,12 @@ export function NotiSrvcAplyPage() {
 
   return (
     <div className="flex flex-col pb-6">
-      {/* 안내 */}
+      {/* 안내 — v0.87 검토 56번 문구(업무도움말 수정). */}
       <div className="p-krds-8">
-        <Notice>입찰 · 계약 관련 주요 업무 알림을 모바일로 받을 수 있습니다.</Notice>
+        <Notice>
+          수신을 원하는 문자메시지 서비스에 체크하여 주시기 바랍니다. 본 서비스는 단순
+          참고용이며, 업무상 주요 부분은 국방전자조달시스템에서 직접 확인하시기 바랍니다.
+        </Notice>
       </div>
 
       {/* 수신정보 */}

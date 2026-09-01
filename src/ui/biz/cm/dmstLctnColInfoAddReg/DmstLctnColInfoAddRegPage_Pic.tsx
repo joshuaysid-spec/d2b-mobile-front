@@ -54,6 +54,10 @@ export function DmstLctnColInfoAddRegPage_Pic() {
   return (
     <div className="flex w-full flex-col">
       <div className="flex flex-col gap-4 px-4 py-4">
+        {/* 안내 문구(v0.87 검토 32번, 기획 확정) — 승인 없이 즉시 변경됨을 고지. */}
+        <p className="text-[15px] leading-relaxed text-krds-text-muted">
+          담당자정보는 [저장] 버튼 클릭 시 승인 없이 변경됩니다.
+        </p>
         {/* 담당자명* */}
         <Controller
           control={control}
@@ -156,7 +160,8 @@ export function DmstLctnColInfoAddRegPage_Pic() {
         />
       </div>
 
-      {/* 하단 액션 바 — [취소][추가등록]. sticky 하단 고정. (버튼명 저장→추가등록, 2026-08-05 요청) */}
+      {/* 하단 액션 바 — [취소][담당자 정보 저장]. sticky 하단 고정.
+          (버튼명: 저장→추가등록(2026-08-05)→담당자 정보 저장(v0.87 검토 32번, 기획서 기준 재변경)) */}
       <div
         className="sticky bottom-0 z-30 border-t border-krds-border-divider bg-background px-4 pt-3"
         style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
@@ -164,7 +169,7 @@ export function DmstLctnColInfoAddRegPage_Pic() {
         <ButtonGroup
           items={[
             { label: '취소', variant: 'secondary', onClick: () => navigate(-1) },
-            { label: '추가등록', variant: 'primary', onClick: handleSubmit(onSubmit, onInvalid) },
+            { label: '담당자 정보 저장', variant: 'primary', onClick: handleSubmit(onSubmit, onInvalid) },
           ]}
         />
       </div>

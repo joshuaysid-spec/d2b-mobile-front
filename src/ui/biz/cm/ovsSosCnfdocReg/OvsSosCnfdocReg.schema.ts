@@ -14,10 +14,10 @@ export const ovsSosCnfdocRegSchema = z.object({
     .max(100, { error: '직위(급)는 100자 이내로 입력하세요.' }),
   // 연락처 — aplcntEntlno (E, 88, 필수). formatPhoneInput(하이픈) 기준.
   aplcntEntlno: phoneSchema,
-  // 업체명1 — bzentyNm1 (E, 100, 필수). 조달업체선택(P23)으로 채움.
+  // 업체명 — bzentyNm1 (E, 100, 필수). 조달업체선택(P23)으로 채움.
+  //   v0.87 검토 62번(기획 확정): 업체명 1개만 표시 — 구 bzentyNm2 필드 제거
+  //   (설계서 업체명1/업체명2 는 한 업체의 업체명·업체코드로 추정, 백엔드 확정 시 재검).
   bzentyNm1: z.string().min(1, { error: '업체를 선택하세요.' }),
-  // 업체명2 — bzentyNm2 (E, 100, 필수). 조달업체선택(P23)으로 채움.
-  bzentyNm2: z.string().min(1, { error: '업체를 선택하세요.' }),
   // 발급신청사유 — aplyRsn (E, 4000, 필수)
   aplyRsn: z
     .string()

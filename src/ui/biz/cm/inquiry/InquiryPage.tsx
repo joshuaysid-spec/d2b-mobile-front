@@ -1,8 +1,7 @@
 // 이용문의 — MUI-CM-05-M06. Figma 10020-85895 / 설계서 00.공통 v0.83 slide351.
-// 구성: 안내(1577-1118) + 번호별 연락처 카드(1/2/3번) + 시스템별 전화 카드(원가/표준) + 만족도 설문.
-// 하단 만족도는 시스템소개와 동일 컴포넌트(SatisfactionSurvey) 재사용.
+// 구성: 안내(1577-1118) + 번호별 연락처 카드(1/2/3번) + 시스템별 전화 카드(원가/표준).
+// 하단 만족도 설문은 모바일 삭제(v0.87 검토 65~67, 기획 확정).
 import { Badge } from '@/ui/common/base/Badge'
-import { SatisfactionSurvey } from '@/ui/biz/cm/introduce/SatisfactionSurvey'
 
 // 번호별 연락처(분야/담당부서).
 const CONTACTS = [
@@ -129,9 +128,6 @@ export function InquiryPage() {
           <TelCard key={t.title} tel={t} />
         ))}
       </div>
-
-      {/* 만족도 설문 */}
-      <SatisfactionSurvey />
     </div>
   )
 }

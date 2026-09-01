@@ -1,7 +1,7 @@
 // 국외조달원등록증신청 — MUI-CM-04-M22 `ovsSosCnfdocReg`. 설계서 00.공통 v0.84 slide339~341.
 // 고객센터 > 민원서류발급신청 > 국외 조달원 등록증 목록(M21) > [신청] 진입 페이지.
 //   (slide339 "2026-07-20 화면 수정: 팝업에서 페이지로 변경" — 구 풀팝업 폐기, 라우트 페이지.)
-// 신청인(회사명/성명 자동완성 readonly + 직위*/연락처* 편집) + 조달원 등록증(업체명1*/업체명2* 선택 + 발급신청사유*).
+// 신청인(회사명/성명 자동완성 readonly + 직위*/연락처* 편집) + 조달원 등록증(업체명* 선택 + 발급신청사유*) — v0.87 검토 62번: 업체명 1개만.
 // [업체선택] → 조달업체선택(MUI-CM-04-P23 OvsSosCnfdocChc) 바텀시트(컨테이너는 이 페이지가 소유).
 // [신청하기] → 검증 통과 시 완료 토스트 "신청 되었습니다." → 목록(M21) 이동. [취소] → 뒤로.
 // Figma 전용 프레임 없음 → 내부 폼 컨벤션(RHF+zod, InputBox/SelectionFieldBox/TextArea/InputLabel/InputMessage).
@@ -37,8 +37,8 @@ const MOCK_APLY_INFO: MockOvsSosAplyInfo = {
   aplcntEntlno: '',
 }
 
-// 업체명 선택 대상 필드(업체명1/업체명2) — [업체선택] 이 어느 필드를 채울지.
-type CompanyField = 'bzentyNm1' | 'bzentyNm2'
+// 업체명 선택 대상 필드 — v0.87 검토 62번(기획 확정)으로 업체명 1개만 표시(구 bzentyNm2 제거).
+type CompanyField = 'bzentyNm1'
 
 export function OvsSosCnfdocRegPage() {
   const navigate = useNavigate()
@@ -54,7 +54,6 @@ export function OvsSosCnfdocRegPage() {
       aplcntJbgdNm: MOCK_APLY_INFO.aplcntJbgdNm,
       aplcntEntlno: MOCK_APLY_INFO.aplcntEntlno,
       bzentyNm1: '',
-      bzentyNm2: '',
       aplyRsn: '',
     },
   })
@@ -82,7 +81,6 @@ export function OvsSosCnfdocRegPage() {
         'aplcntJbgdNm',
         'aplcntEntlno',
         'bzentyNm1',
-        'bzentyNm2',
         'aplyRsn',
       ]
       const first = order.find((k) => errors[k])
@@ -182,42 +180,20 @@ export function OvsSosCnfdocRegPage() {
         {/* ── 조달원 등록증 (Certificate of Registration) ────────── */}
         <SectionTitle topDivider>조달원 등록증 (Certificate of Registration)</SectionTitle>
         <div className="flex flex-col gap-krds-7 px-4 py-krds-7">
-          {/* 업체명1 (Company Name) * — bzentyNm1 (조달업체선택 P23) */}
+          {/* 업체명 (Company Name) * — bzentyNm1 (조달업체선택 P23) */}
           <Controller
             control={control}
             name="bzentyNm1"
             render={({ field, fieldState }) => (
               <div id="field-bzentyNm1" className="flex flex-col gap-krds-5">
-                <InputLabel required>업체명1 (Company Name)</InputLabel>
+                <InputLabel required>업체명 (Company Name)</InputLabel>
                 <SelectionFieldBox
                   value={field.value}
                   placeholder="업체를 선택해주세요."
                   onClick={() => openSheet('bzentyNm1')}
                   onClear={() => field.onChange('')}
                   error={!!fieldState.error}
-                  aria-label="업체명1 선택"
-                />
-                {fieldState.error && (
-                  <InputMessage type="error">{fieldState.error.message}</InputMessage>
-                )}
-              </div>
-            )}
-          />
-
-          {/* 업체명2 (Company Name) * — bzentyNm2 (조달업체선택 P23) */}
-          <Controller
-            control={control}
-            name="bzentyNm2"
-            render={({ field, fieldState }) => (
-              <div id="field-bzentyNm2" className="flex flex-col gap-krds-5">
-                <InputLabel required>업체명2 (Company Name)</InputLabel>
-                <SelectionFieldBox
-                  value={field.value}
-                  placeholder="업체를 선택해주세요."
-                  onClick={() => openSheet('bzentyNm2')}
-                  onClear={() => field.onChange('')}
-                  error={!!fieldState.error}
-                  aria-label="업체명2 선택"
+                  aria-label="업체명 선택"
                 />
                 {fieldState.error && (
                   <InputMessage type="error">{fieldState.error.message}</InputMessage>

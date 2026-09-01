@@ -492,7 +492,12 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
         onOpenChange={setConfirmOpen}
         variant="check"
         title="업체정보 추가등록 신청 확인"
-        description="신청서를 접수합니다. 오기재된 사항이 없는지 모두 확인하셨나요?"
+        description={
+          // v0.87 검토 43번 — "신청서를 접수합니다." 뒤 줄바꿈(M05 P14 와 동일 처리).
+          <span className="whitespace-pre-line">
+            {'신청서를 접수합니다.\n오기재된 사항이 없는지 모두 확인하셨나요?'}
+          </span>
+        }
         secondaryAction={{ label: '취소' }}
         primaryAction={{ label: '확인', onClick: handleConfirmApply }}
       />
