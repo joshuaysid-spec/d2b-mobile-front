@@ -79,6 +79,10 @@ const ELCTR_NGTN_OPTIONS = [ALL,
 const CTRT_MTHD_OPTIONS = [ALL,
   { value: 'open', label: '일반경쟁' }, { value: 'designated', label: '지명경쟁' },
   { value: 'limited', label: '제한경쟁' }, { value: 'private', label: '수의계약' }]
+// 입찰방법(bidMthdCd, 상위코드 BDTC) — 입찰 설계서 v1.88 slide17 To-Be 3종(v0.87 검토 76번, 사용자 확정 신설).
+const BID_MTHD_OPTIONS = [ALL,
+  { value: 'totamt', label: '총액제' }, { value: 'untprc', label: '단가제' },
+  { value: 'lease', label: '리스입찰' }]
 // 낙찰방법(scsbdMthdCd, 상위코드 CCMT) — 입찰 설계서 v1.88 slide17 To-Be 11종(v0.87 검토 76번 최신화).
 const SCSBD_MTHD_OPTIONS = [ALL,
   { value: 'ltdLowest', label: '제한적최저가격제' }, { value: 'qualify', label: '적격심사제' },
@@ -192,6 +196,8 @@ function buildBidFilterSchema(value: SearchFilterValue): SearchFilterSchema {
             : []),
           { type: 'select', key: 'elctrNgtnYn', label: '입찰형태', options: ELCTR_NGTN_OPTIONS, placeholder: '전체' },
           { type: 'select', key: 'ctrtMthdCd', label: '계약방법', options: CTRT_MTHD_OPTIONS, placeholder: '전체' },
+          // 입찰방법(bidMthdCd) — v1.88 slide17 To-Be 3종(v0.87 검토 76번, 2026-09-01 사용자 확정 신설).
+          { type: 'select', key: 'bidMthdCd', label: '입찰방법', options: BID_MTHD_OPTIONS, placeholder: '전체' },
           { type: 'select', key: 'scsbdMthdCd', label: '낙찰방법', options: SCSBD_MTHD_OPTIONS, placeholder: '전체' },
           ...(showOvsFields
             ? ([
@@ -252,6 +258,7 @@ const DEFAULT_FILTER: SearchFilterValue = {
   rgnNm: '',
   pbancTpcd: 'all',
   bidStatNm: 'all',
+  bidMthdCd: 'all', // 입찰방법(검토 76번 신설)
   spfCode: 'all',
   prcmRqtInstCd: 'all',
   bidMediaCd: 'all',
