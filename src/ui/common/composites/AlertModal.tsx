@@ -60,6 +60,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog'
 import {
   Dialog,
   DialogPortal,
+  DialogClose,
   DialogTitle,
   DialogDescription,
 } from '@/ui/raw/dialog'
@@ -91,6 +92,11 @@ export interface AlertModalProps {
   secondaryAction?: AlertModalAction
   /** 기본 false — alert 는 명시적 액션 필요. true 면 Esc / 외부 클릭으로 닫힘. */
   dismissable?: boolean
+  /**
+   * 타이틀+X 닫기 변형(Figma m_modal_contents 8308:67237, v0.87 검토 7·11·57 계열) —
+   * true 면 아이콘 없이 타이틀(19 Bold) 좌측 + X 닫기 우측, 본문 좌측 정렬로 렌더.
+   */
+  titleClose?: boolean
   className?: string
 }
 
@@ -125,6 +131,7 @@ const AlertModal = ({
   primaryAction,
   secondaryAction,
   dismissable = false,
+  titleClose = false,
   className,
 }: AlertModalProps) => {
   const close = React.useCallback(() => {
@@ -141,8 +148,9 @@ const AlertModal = ({
     close()
   }, [secondaryAction, close])
 
-  // 아이콘 렌더 — icon prop 우선, 그 다음 variant 매핑. variant='none' 이면 미표시.
+  // 아이콘 렌더 — icon prop 우선, 그 다음 variant 매핑. variant='none'·titleClose 변형이면 미표시.
   const renderIcon = (): React.ReactNode => {
+    if (titleClose) return null
     if (icon !== undefined) return icon
     if (variant === 'none') return null
     const mapping = VARIANT_ICON[variant]
@@ -217,8 +225,13 @@ const AlertModal = ({
             className,
           )}
         >
-          {/* contents — 아이콘 + title + description (gap-8, items-center, w-full) */}
-          <div className="flex w-full flex-col items-center gap-krds-5">
+          {/* contents — 기본: 아이콘 + title + description 센터. titleClose: 타이틀 좌+X, 본문 좌측 정렬. */}
+          <div
+            className={cn(
+              'flex w-full flex-col gap-krds-5',
+              titleClose ? 'items-start' : 'items-center',
+            )}
+          >
             {iconNode && (
               <div className="flex h-9 w-9 items-center justify-center">
                 {iconNode}
@@ -227,7 +240,19 @@ const AlertModal = ({
 
             {/* Title — a11y 위해 항상 렌더. title 미주입 시 sr-only 빈값.
                 raw DialogTitle 의 기본 text-lg 는 cn() 으로 KRDS 스타일에 덮어씀. */}
-            {title ? (
+            {titleClose ? (
+              <div className="flex w-full items-start gap-krds-5">
+                <DialogTitle className="min-w-px flex-1 text-left text-[19px] font-bold leading-normal text-krds-text-ink">
+                  {title ?? <span className="sr-only">알림</span>}
+                </DialogTitle>
+                <DialogClose
+                  aria-label="닫기"
+                  className="inline-flex shrink-0 items-center justify-center rounded-krds-8 p-2.5 -m-2.5 mt-[-7px] text-krds-text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <Icon name="Close" size={24} aria-hidden />
+                </DialogClose>
+              </div>
+            ) : title ? (
               <DialogTitle
                 className={cn(
                   'w-full text-center text-krds-body-md font-bold leading-normal',
@@ -243,8 +268,8 @@ const AlertModal = ({
             {description ? (
               <DialogDescription
                 className={cn(
-                  'w-full text-center text-krds-body-md font-normal leading-normal',
-                  'text-krds-text-ink',
+                  'w-full text-krds-body-md font-normal leading-normal text-krds-text-ink',
+                  titleClose ? 'text-left' : 'text-center',
                 )}
               >
                 {description}

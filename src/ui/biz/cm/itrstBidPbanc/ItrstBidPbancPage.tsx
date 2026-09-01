@@ -27,6 +27,7 @@ import type { MockItrstBidPbancItem } from '@/types/mock/cm'
 import { TASK_SE_CD } from '@/constants/codes'
 import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import { cmQueries } from '@/queries/cbs/cm/cmQueries'
+import { useAuthStore } from '@/stores/authStore'
 
 // ── 검색필터 schema (설계서 slide82 검색조건 dm_searchInfo) ────────────────────
 // 개찰일자(FROM/TO 범위) + 통합참조번호 + 공고번호 + 입찰건명/사업명.
@@ -129,10 +130,14 @@ const MOCK_LIST: MockItrstBidPbancItem[] = Array.from({ length: TOTAL }, (_, i) 
   return { ...base, id: String(i + 1) }
 })
 
-const DONT_ASK_KEY = 'itrstBidPbanc.unfavorite.dontAsk' // 앱 스토리지 스텁(설계서 '다음부터 묻지 않기')
+// '다음부터 묻지 않기' — 계정별 localStorage 저장(2026-09-01 사용자 확인: 기기+계정 단위).
+//   서버 사용자 설정 API 미확정이라 로컬 저장에 계정키(customerNo)를 붙인다. API 확정 시 서버 저장으로 이관.
+const dontAskKey = (customerNo?: string) =>
+  `itrstBidPbanc.unfavorite.dontAsk:${customerNo ?? 'anon'}`
 
 export function ItrstBidPbancPage() {
   const navigate = useNavigate()
+  const user = useAuthStore((s) => s.user) // '다음부터 묻지 않기' 계정별 키용
   const [filterOpen, setFilterOpen] = useState(false)
   const [filter, setFilter] = useState<SearchFilterValue>(SEARCH_DEFAULT)
   const [filterApplied, setFilterApplied] = useState(false)
@@ -201,8 +206,8 @@ export function ItrstBidPbancPage() {
       )
       return
     }
-    // on→off: '다음부터 묻지 않기' 저장돼 있으면 바로 해제, 아니면 확인 모달.
-    if (localStorage.getItem(DONT_ASK_KEY) === 'Y') {
+    // on→off: '다음부터 묻지 않기'(계정별) 저장돼 있으면 바로 해제, 아니면 확인 모달.
+    if (localStorage.getItem(dontAskKey(user?.customerNo)) === 'Y') {
       unfavorite(item.id)
       return
     }
@@ -211,7 +216,7 @@ export function ItrstBidPbancPage() {
   }
   const handleConfirmUnfavorite = () => {
     if (!confirmId) return
-    if (dontAskChecked) localStorage.setItem(DONT_ASK_KEY, 'Y') // 앱 스토리지 스텁
+    if (dontAskChecked) localStorage.setItem(dontAskKey(user?.customerNo), 'Y') // 계정별 로컬 저장
     unfavorite(confirmId)
     setConfirmId(null)
   }
@@ -275,24 +280,25 @@ export function ItrstBidPbancPage() {
         onSearch={handleFilterSearch}
       />
 
-      {/* 관심공고 해제 확인 모달 (설계서 slide81 상태 2) — '다음부터 묻지 않기' 포함 */}
+      {/* 관심공고 해제 확인 모달 — Figma 10020:87083 1:1(v0.87 검토 7번, 2026-09-01 사용자 확정):
+          아이콘 없이 타이틀+X(titleClose), 본문 좌측 정렬 2문단, '다음부터 묻지 않기'(17 Bold) 체크. */}
       <AlertModal
         open={confirmId !== null}
         onOpenChange={(open) => !open && setConfirmId(null)}
-        variant="error"
+        titleClose
+        dismissable
         title="관심공고 해제"
         description={
-          <span className="flex flex-col items-center gap-krds-7">
-            <span>
-              관심공고를 해제하면 관심입찰공고 목록과 업무 캘린더에서 선택하신 입찰공고가 사라집니다.
-              정말 관심공고를 해제할까요?
+          <span className="flex flex-col items-start gap-krds-7">
+            <span className="whitespace-pre-line">
+              {'관심공고를 해제하면 관심입찰공고 목록과 업무 캘린더에서 선택하신 입찰공고가 사라집니다.\n정말 관심공고를 해제할까요?'}
             </span>
             <Checkbox
               variant="box"
               checked={dontAskChecked}
               onCheckedChange={(c) => setDontAskChecked(c === true)}
             >
-              다음부터 묻지 않기
+              <span className="font-bold">다음부터 묻지 않기</span>
             </Checkbox>
           </span>
         }
