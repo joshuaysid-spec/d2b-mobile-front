@@ -1569,12 +1569,14 @@ export const router = createBrowserRouter([
       {
         path: 'bd/ovsBidPrtcpAply',
         element: <OvsBidPrtcpAplyPage />,
-        handle: { header: { variant: 'sub', title: '입찰참가신청서' } },
+        // 설계서 v1.88 화면명 그대로(2026-09-01 사용자 확정) — 구 '입찰참가신청서'.
+        handle: { header: { variant: 'sub', title: '입찰참가신청서작성' } },
       },
       {
         path: 'bd/ovsBidPrtcpApfrDtl',
         element: <OvsBidPrtcpApfrDtlPage />,
-        handle: { header: { variant: 'sub', title: '입찰참가신청서 상세' } },
+        // 설계서 v1.88 화면명 그대로(2026-09-01 사용자 확정) — 구 '입찰참가신청서 상세'.
+        handle: { header: { variant: 'sub', title: '입찰참가신청서상세' } },
       },
       {
         path: 'bd/ovsTndrSbmsn',
