@@ -67,13 +67,13 @@ const SPF_OPTIONS = [ALL, // 기능(spfCode, 상위코드 SPF) — slide13 표�
 const PRCM_RQT_INST_OPTIONS = [ALL,
   { value: 'army', label: '육군' }, { value: 'navy', label: '해군' },
   { value: 'airforce', label: '공군' }, { value: 'etc', label: '기타' }]
-const BID_MEDIA_OPTIONS = [ALL, // 입찰매체(bidMediaCd, 상위코드 BMDC)
+// 입찰형태 — 입찰 설계서 v1.88 slide17 6종으로 단일화(v0.87 검토 76번, 2026-09-01 사용자 확정 A안:
+//   구 '입찰매체(bidMediaCd)' 필드 삭제·입찰형태 하나로 통합. 전송 항목명은 백엔드 공통코드 확정 시
+//   bidMediaCd/elctrNgtnYn 중 실키로 재확정 — 잠정 elctrNgtnYn 유지).
+const ELCTR_NGTN_OPTIONS = [ALL,
   { value: 'normal', label: '일반입찰' }, { value: 'electronic', label: '전자입찰' },
   { value: 'computer', label: '전산입찰' }, { value: 'ocr', label: 'OCR입찰' },
   { value: 'omr', label: 'OMR입찰' }, { value: 'reverse', label: '역경매' }]
-// 입찰형태(elctrNgtnYn) — 설계서 slide19: '1' 일반입찰 / '2' 전자입찰.
-const ELCTR_NGTN_OPTIONS = [ALL,
-  { value: '1', label: '일반입찰' }, { value: '2', label: '전자입찰' }]
 // 계약방법(ctrtMthdCd, 상위코드 CTMC) — 입찰 설계서 v1.88 slide17 To-Be 4종(v0.87 검토 76번 최신화,
 //   구 As-Is 11종에서 축소: 협상/2단계/종합낙찰 등은 낙찰방법으로 이관).
 const CTRT_MTHD_OPTIONS = [ALL,
@@ -191,7 +191,6 @@ function buildBidFilterSchema(value: SearchFilterValue): SearchFilterSchema {
           ...(showOvsFields
             ? ([
                 { type: 'select', key: 'spfCode', label: '기능', options: SPF_OPTIONS, placeholder: '전체' },
-                { type: 'select', key: 'bidMediaCd', label: '입찰매체', options: BID_MEDIA_OPTIONS, placeholder: '전체' },
               ] satisfies SearchFilterField[])
             : []),
           { type: 'select', key: 'elctrNgtnYn', label: '입찰형태', options: ELCTR_NGTN_OPTIONS, placeholder: '전체' },
@@ -261,8 +260,7 @@ const DEFAULT_FILTER: SearchFilterValue = {
   bidMthdCd: 'all', // 입찰방법(검토 76번 신설)
   spfCode: 'all',
   prcmRqtInstCd: 'all',
-  bidMediaCd: 'all',
-  elctrNgtnYn: 'all',
+  elctrNgtnYn: 'all', // 입찰형태(6종 단일화 — 구 입찰매체 필드 삭제, 검토 76번)
   ctrtMthdCd: 'all',
   scsbdMthdCd: 'all',
   prsmpPrc: { min: 10_000_000, max: 20_000_000 },

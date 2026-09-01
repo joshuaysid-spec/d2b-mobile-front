@@ -59,13 +59,12 @@ const FNC_OPTIONS = [ALL, // 기능
   { value: 'mobility', label: '기동' }, { value: 'oil', label: '유류' }, { value: 'ammo', label: '탄약' },
   { value: 'transport', label: '수송' }, { value: 'chem', label: '화학' }, { value: 'supply', label: '병참' },
   { value: 'medical', label: '의무' }, { value: 'etc', label: '기타' }]
-const BID_MDM_OPTIONS = [ALL, // 입찰매체
+// 입찰형태 — 입찰 설계서 v1.88 slide17 6종 단일화(v0.87 검토 76번 A안, 입찰공고 M01 필터와 동일 —
+//   구 '입찰매체' 필드 삭제, 구 입찰형태의 경쟁형태 값(일반경쟁 등)은 계약방법으로 흡수).
+const BID_FORM_OPTIONS = [ALL,
   { value: 'normal', label: '일반입찰' }, { value: 'electronic', label: '전자입찰' },
   { value: 'computer', label: '전산입찰' }, { value: 'ocr', label: 'OCR입찰' },
   { value: 'omr', label: 'OMR입찰' }, { value: 'reverse', label: '역경매' }]
-const BID_FORM_OPTIONS = [ALL, // 입찰형태
-  { value: 'open', label: '일반경쟁' }, { value: 'designated', label: '지명경쟁' },
-  { value: 'limited', label: '제한경쟁' }, { value: 'multiple', label: '복수경쟁' }]
 const CTRT_MTHD_OPTIONS = [ALL, // 계약방법
   { value: 'private', label: '수의계약' }, { value: 'nego_doc', label: '협상에의한계약(서류)' },
   { value: 'nego_elec', label: '협상에의한계약(전자)' }, { value: 'two_step_sync', label: '2단계경쟁(동시)' },
@@ -143,7 +142,6 @@ const BDOPN_FILTER_SCHEMA: SearchFilterSchema = {
         { type: 'select', key: 'pbancSe', label: '공고구분', options: PBANC_SE_OPTIONS, placeholder: '전체' },
         { type: 'select', key: 'prgrsStas', label: '진행상태', options: PRGRS_STAS_OPTIONS, placeholder: '전체' },
         { type: 'select', key: 'fnc', label: '기능', options: FNC_OPTIONS, placeholder: '전체' },
-        { type: 'select', key: 'bidMdm', label: '입찰매체', options: BID_MDM_OPTIONS, placeholder: '전체' },
         { type: 'select', key: 'bidForm', label: '입찰형태', options: BID_FORM_OPTIONS, placeholder: '전체' },
         { type: 'select', key: 'ctrtMthd', label: '계약방법', options: CTRT_MTHD_OPTIONS, placeholder: '전체' },
         { type: 'select', key: 'bidWinMthd', label: '낙찰방법', options: BID_WIN_OPTIONS, placeholder: '전체' },
@@ -192,8 +190,7 @@ const DEFAULT_FILTER: SearchFilterValue = {
   pbancSe: 'all',
   prgrsStas: 'all',
   fnc: 'all',
-  bidMdm: 'all',
-  bidForm: 'all',
+  bidForm: 'all', // 입찰형태(6종 단일화 — 구 입찰매체 필드 삭제, 검토 76번)
   ctrtMthd: 'all',
   bidWinMthd: 'all',
   estPrice: { min: 10_000_000, max: 20_000_000 },
