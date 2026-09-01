@@ -9,6 +9,7 @@ import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
+import { SelectBox } from '@/ui/common/base/SelectBox'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
@@ -135,7 +136,43 @@ export function SttInfoListPage() {
 
   return (
     <div className="flex w-full flex-col">
-      {/* 검색 영역 — 법령구분 탭(싱글 셀렉트) + 법령명 검색 */}
+      {/* 검색영역 — 자주묻는질문(M03) 포맷 통일(v0.87 검토 63번 기획 확정):
+          검색범위(법령명) 셀렉트 + 검색어 + 풀폭 검색 버튼이 상단, 구분 탭이 아래. */}
+      <div className="flex flex-col gap-krds-7 px-4 py-4">
+        <div className="flex items-center gap-krds-5">
+          <div className="w-[96px] shrink-0">
+            <SelectBox
+              aria-label="검색범위"
+              value="sttNm"
+              onValueChange={() => {}}
+              items={[{ value: 'sttNm', label: '법령명' }]}
+            />
+          </div>
+          <InputBox
+            className="min-w-px flex-1"
+            value={keyword}
+            maxLength={300}
+            placeholder="검색어를 입력하세요."
+            onChange={(e) => setKeyword(e.target.value)}
+            onClear={() => setKeyword('')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                handleSearch()
+              }
+            }}
+            aria-label="법령명 검색어"
+          />
+        </div>
+        <Button variant="primary" className="w-full" onClick={handleSearch}>
+          <Icon name="Search" size={20} aria-hidden />
+          검색
+        </Button>
+      </div>
+
+      <div className="h-px w-full bg-krds-border-divider" aria-hidden />
+
+      {/* 법령구분 탭(싱글 셀렉트) — 검색영역 아래(M03 포맷). */}
       <TabList
         variant="button"
         scrollButtons="auto"
@@ -143,27 +180,8 @@ export function SttInfoListPage() {
         onChange={handleTabChange}
         items={STT_TYPE_TABS}
         aria-label="법령구분"
+        className="pt-krds-7"
       />
-      <div className="flex items-center gap-krds-5 px-4 pt-krds-7">
-        <InputBox
-          className="flex-1"
-          value={keyword}
-          maxLength={300}
-          placeholder="검색할 내용을 입력하세요."
-          onChange={(e) => setKeyword(e.target.value)}
-          onClear={() => setKeyword('')}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault()
-              handleSearch()
-            }
-          }}
-          aria-label="법령명"
-        />
-        <Button variant="primary" size="icon" onClick={handleSearch} aria-label="검색">
-          <Icon name="Search" size={20} aria-hidden />
-        </Button>
-      </div>
 
       {/* 총건수 + 표시개수 */}
       <ListSectionHeader

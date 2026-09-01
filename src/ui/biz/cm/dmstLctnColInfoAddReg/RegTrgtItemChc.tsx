@@ -70,6 +70,9 @@ const RegTrgtItemChc = forwardRef<RegTrgtItemChcHandle, RegTrgtItemChcProps>(
     const [keyword, setKeyword] = useState('') // 품명/업종코드 검색어(탭 공용)
     const [applied, setApplied] = useState(false)
     const [selected, setSelected] = useState<string[]>([]) // 선택 itemCd 목록(복수)
+    // 표시개수 + 더보기(v0.87 검토 37번 — 항목수가 많아 표시개수 필요, 기획 확정).
+    const [pageSize, setPageSize] = useState(10)
+    const [page, setPage] = useState(1)
 
     const handleCond = (next: string) => {
       setCond(next)
@@ -77,6 +80,7 @@ const RegTrgtItemChc = forwardRef<RegTrgtItemChcHandle, RegTrgtItemChcProps>(
     }
     const handleSearch = () => {
       setApplied(true)
+      setPage(1)
       console.log('[P08] 등록대상 품목 검색', { cond, knditmCd, keyword }) // 추후 API: cmService.selectRegTrgtItemList
     }
     const handleDownload = () => {
@@ -151,9 +155,25 @@ const RegTrgtItemChc = forwardRef<RegTrgtItemChcHandle, RegTrgtItemChcProps>(
         {applied && (
           <div className="flex flex-col gap-krds-7 px-4 pb-4 pt-5">
             <div className="flex items-center justify-between gap-krds-5">
-              <p className="text-[17px] font-bold leading-normal text-krds-text-ink">
+              <p className="min-w-px flex-1 text-[17px] font-bold leading-normal text-krds-text-ink">
                 총 {results.length}건
               </p>
+              {/* 표시개수(v0.87 검토 37번) + 다운로드 */}
+              <div className="w-[104px] shrink-0">
+                <SelectBox
+                  aria-label="표시 개수"
+                  value={String(pageSize)}
+                  onValueChange={(v) => {
+                    setPageSize(Number(v))
+                    setPage(1)
+                  }}
+                  items={[
+                    { value: '10', label: '10개' },
+                    { value: '20', label: '20개' },
+                    { value: '30', label: '30개' },
+                  ]}
+                />
+              </div>
               <Button variant="secondary" size="sm" onClick={handleDownload}>
                 다운로드
               </Button>
@@ -165,7 +185,7 @@ const RegTrgtItemChc = forwardRef<RegTrgtItemChcHandle, RegTrgtItemChcProps>(
               </p>
             ) : (
               <ul className="flex flex-col gap-krds-7">
-                {results.map((it) => {
+                {results.slice(0, page * pageSize).map((it) => {
                   const on = selected.includes(it.itemCd)
                   return (
                     <li key={it.itemCd}>
@@ -202,6 +222,13 @@ const RegTrgtItemChc = forwardRef<RegTrgtItemChcHandle, RegTrgtItemChcProps>(
                   )
                 })}
               </ul>
+            )}
+
+            {/* 더보기 — 표시개수 초과분(v0.87 검토 37번). */}
+            {results.length > page * pageSize && (
+              <Button variant="secondary" className="w-full" onClick={() => setPage((p) => p + 1)}>
+                더보기 ({Math.min(page * pageSize, results.length)}/{results.length})
+              </Button>
             )}
           </div>
         )}
