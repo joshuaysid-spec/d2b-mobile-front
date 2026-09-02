@@ -51,6 +51,18 @@ export const bdQueries = {
     })
   },
 
+  /**
+   * 임시입찰내용조회(no.60) — 입찰내역 작성(T75/T76) 진입 시 기존 저장분 로드(2026-09-02 배선).
+   * 단가제=행 배열 · 총액제=단건. bidMthdNm 은 목업 분기용(실서버는 intgRfrncNo 로 판별).
+   */
+  useSelectTmprBidCnList(intgRfrncNo: string, bidMthdNm?: '단가제' | '총액제') {
+    return useQuery({
+      queryKey: bdKeys.selectTmprBidCnList(intgRfrncNo, bidMthdNm),
+      queryFn: () => bdService.selectTmprBidCnList(intgRfrncNo, bidMthdNm),
+      enabled: Boolean(intgRfrncNo),
+    })
+  },
+
   /** 입찰결과정보(no.165) — 목록에서 넘어온 항목을 placeholder 로 즉시 렌더(없으면 id 조회). */
   useSelctBidRsltInfo(id: string, placeholder?: MockBdopnItem) {
     return useQuery({

@@ -8,7 +8,9 @@
 //   - MOQ구분 = Y → MOQ첨부문서·MOQ수량 활성/필수
 //   - 입찰단가 변경 → 입찰금액/달러단가/달러금액 계산 · 화폐단위 변경 → 달러환산율/달러단가/달러금액 계산
 //   - 업로드 클릭 → 첨부문서업로드 팝업(UI-BD-04-P75) 호출 — 목업은 console.log + 파일명 스텁
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
+
+import { bdQueries } from '@/queries/bds/bd/bdQueries'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
@@ -69,8 +71,10 @@ function recalcBidCn(row: MockItitbBidCnItem): MockItitbBidCnItem {
 // 서버 총건수 — 더보기 분모(설계서 '더보기 (10/100)'). 추후 API 응답 total 로 대체.
 const PAGE_SIZE = 5
 
-// ── 입찰내역(단가제) 목업 (dl_ititbBidCnList, 설계서 slide314 예시값 형식) ──
-// 첫 항목은 입찰내역이 입력된 상태(단가 608,000.00 USD) — 계산 필드 확인용.
+// 입찰내역(단가제) 데이터 — 진입 시 임시입찰내용조회(no.60)로 기존 저장분을 로드(2026-09-02 배선,
+//   구 인라인 목업은 mocks/bd.ts tmprItitbBidCnList 로 이관 — 단일 소스).
+
+// 입찰내역 삭제 시 작성값 초기화용 빈 필드(품목 기본정보는 유지, 작성분만 비움).
 const EMPTY_BID_FIELDS = {
   itemSbstSe: 'A' as const,
   itemSbstDocEn: '',
@@ -90,88 +94,6 @@ const EMPTY_BID_FIELDS = {
   bdngUsdUntprc: '',
   bdngUsdAmt: '',
 }
-const MOCK_ITITB_BID_CN_LIST: MockItitbBidCnItem[] = [
-  {
-    frcptlArtclNo: '1',
-    invtNo: 'A000-A0001',
-    prtsNo: '369A1234-5',
-    itemNm: 'T-80U/TBE-3',
-    unitNm: 'EA',
-    qty: '1',
-    drctnUntprc: '608,000.00',
-    ...EMPTY_BID_FIELDS,
-    bscbgtDudtYmd: '2025-03-25',
-    athrtDudtYmd: '2025-03-25',
-    ltbndDudtYmd: '2025-03-25',
-    usdExrt: '1.0000',
-    splyBzentyNm: 'MD Helicopters Inc.',
-    bdngTccrUntprc: '608000',
-    bdngTccrAmt: '608,000.00',
-    crncNm: 'USD',
-    bdngUsdUntprc: '608,000.00',
-    bdngUsdAmt: '608,000.00',
-  },
-  {
-    frcptlArtclNo: '2',
-    invtNo: 'A000-A0002',
-    prtsNo: '369A5501-3',
-    itemNm: 'MAIN ROTOR BLADE ASSY',
-    unitNm: 'EA',
-    qty: '2',
-    drctnUntprc: '142,500.00',
-    ...EMPTY_BID_FIELDS,
-  },
-  {
-    frcptlArtclNo: '3',
-    invtNo: 'A000-A0003',
-    prtsNo: '369D2210-11',
-    itemNm: 'TAIL ROTOR ASSY',
-    unitNm: 'EA',
-    qty: '1',
-    drctnUntprc: '86,300.00',
-    ...EMPTY_BID_FIELDS,
-  },
-  {
-    frcptlArtclNo: '4',
-    invtNo: 'A000-A0004',
-    prtsNo: '369H9020-7',
-    itemNm: 'ENGINE FUEL PUMP',
-    unitNm: 'EA',
-    qty: '4',
-    drctnUntprc: '23,900.00',
-    ...EMPTY_BID_FIELDS,
-  },
-  {
-    frcptlArtclNo: '5',
-    invtNo: 'A000-A0005',
-    prtsNo: '369A7003-1',
-    itemNm: 'HYDRAULIC ACTUATOR',
-    unitNm: 'EA',
-    qty: '2',
-    drctnUntprc: '51,700.00',
-    ...EMPTY_BID_FIELDS,
-  },
-  {
-    frcptlArtclNo: '6',
-    invtNo: 'A000-A0006',
-    prtsNo: '369D2911-4',
-    itemNm: 'LANDING GEAR STRUT',
-    unitNm: 'EA',
-    qty: '2',
-    drctnUntprc: '18,200.00',
-    ...EMPTY_BID_FIELDS,
-  },
-  {
-    frcptlArtclNo: '7',
-    invtNo: 'A000-A0007',
-    prtsNo: '369F1105-9',
-    itemNm: 'MAIN TRANSMISSION GEARBOX',
-    unitNm: 'EA',
-    qty: '1',
-    drctnUntprc: '312,400.00',
-    ...EMPTY_BID_FIELDS,
-  },
-]
 
 // 폼 필드 블록 — InputLabel + 컨트롤 세로 스택 (파일 내부 전용 헬퍼)
 function Field({
@@ -199,11 +121,20 @@ interface NoticeModal {
 }
 
 export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
-  const [rows, setRows] = useState<MockItitbBidCnItem[]>(MOCK_ITITB_BID_CN_LIST)
+  // 기존 저장분 조회(no.60) — 재진입 시 임시저장된 입찰내역을 그대로 복원(사용자 확정 2026-09-02).
+  const { data: savedRows } = bdQueries.useSelectTmprBidCnList(detail.intgRfrncNo, '단가제')
+  const [rows, setRows] = useState<MockItitbBidCnItem[]>([])
   // 항목선택 체크 상태 — key 는 항목번호(frcptlArtclNo)
   const [checkedNos, setCheckedNos] = useState<string[]>([])
   // 내역 펼쳐보기/접기 상태
-  const [expandedNos, setExpandedNos] = useState<string[]>([MOCK_ITITB_BID_CN_LIST[0].frcptlArtclNo])
+  const [expandedNos, setExpandedNos] = useState<string[]>([])
+  // 조회 응답 도착 시 편집 상태 시드(첫 항목 펼침). 이후 편집은 로컬 상태가 소유.
+  useEffect(() => {
+    if (Array.isArray(savedRows)) {
+      setRows(savedRows)
+      setExpandedNos(savedRows[0] ? [savedRows[0].frcptlArtclNo] : [])
+    }
+  }, [savedRows])
   // 더보기 페이징
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   // 입찰내역 일괄적용(dl_fwkInfo) — 입찰업체/화폐단위

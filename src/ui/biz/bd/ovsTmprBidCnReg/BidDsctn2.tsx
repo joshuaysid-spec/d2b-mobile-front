@@ -4,7 +4,9 @@
 //   입찰내역(dl_alonbsBidCnInfo: 입찰업체/화폐단위/입찰금액 입력 + 달러금액/달러환산율 계산) →
 //   하단 액션바(입찰내역 삭제/저장).
 // 이벤트(설계서 slide319): 입찰금액 변경 → 달러금액 계산 · 화폐단위 변경 → 달러금액/달러환산율 계산.
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
+
+import { bdQueries } from '@/queries/bds/bd/bdQueries'
 
 import { Button } from '@/ui/common/base/Button'
 import { InputBox } from '@/ui/common/base/InputBox'
@@ -61,13 +63,14 @@ const MOCK_ALONBS_ITEM_LIST: MockAlonbsItem[] = [
   { frcptlArtclNo: '7', invtNo: 'A000-A0007', prtsNo: '369F1105-9', itemNm: 'MAIN TRANSMISSION GEARBOX', unitNm: 'EA', qty: '1' },
 ]
 
-// 입찰내역(총액제) 초기값 — 설계서 slide315 예시(입찰금액 608,000.00 · USD 1.0000). 입찰업체는 미선택.
-const INITIAL_ALONBS_BID_CN: MockAlonbsBidCnInfo = {
+// 입찰내역(총액제) — 진입 시 임시입찰내용조회(no.60)로 기존 저장분 로드(2026-09-02 배선,
+//   구 인라인 초기값은 mocks/bd.ts tmprAlonbsBidCn 으로 이관). 조회 전 빈 폼.
+const EMPTY_ALONBS_BID_CN: MockAlonbsBidCnInfo = {
   splyBzentyNm: '',
-  crncNm: 'USD',
-  bdngTccrAmt: '608000',
-  bdngUsdAmt: '608,000.00',
-  usdExrt: '1.0000',
+  crncNm: '',
+  bdngTccrAmt: '',
+  bdngUsdAmt: '',
+  usdExrt: '',
 }
 
 // 폼 필드 블록 — InputLabel + 컨트롤 세로 스택 (파일 내부 전용 헬퍼)
@@ -97,7 +100,12 @@ interface NoticeModal {
 
 export function BidDsctn2({ detail }: { detail: MockBscPbancInfo }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
-  const [bidCn, setBidCn] = useState<MockAlonbsBidCnInfo>(INITIAL_ALONBS_BID_CN)
+  // 기존 저장분 조회(no.60) — 재진입 시 임시저장된 입찰내역 복원(사용자 확정 2026-09-02).
+  const { data: saved } = bdQueries.useSelectTmprBidCnList(detail.intgRfrncNo, '총액제')
+  const [bidCn, setBidCn] = useState<MockAlonbsBidCnInfo>(EMPTY_ALONBS_BID_CN)
+  useEffect(() => {
+    if (saved && !Array.isArray(saved)) setBidCn(saved)
+  }, [saved])
   const [notice, setNotice] = useState<NoticeModal>({ open: false, variant: 'info', title: '' })
   const [deleteOpen, setDeleteOpen] = useState(false)
 

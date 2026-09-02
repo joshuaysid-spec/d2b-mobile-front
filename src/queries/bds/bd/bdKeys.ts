@@ -22,4 +22,7 @@ export const bdKeys = {
   selectTndrItemList: (pbancNo: string, page: number) =>
     ['bd', 'selectTndrItemList', { pbancNo, page }] as const,
   selectElsgnCerts: () => ['bd', 'selectElsgnCerts'] as const,
+  /** 임시입찰내용조회(no.60) — 입찰내역 작성(T75/T76) 진입 시 기존 저장분 로드. */
+  selectTmprBidCnList: (intgRfrncNo: string, bidMthdNm?: string) =>
+    ['bd', 'selectTmprBidCnList', { intgRfrncNo, bidMthdNm }] as const,
 }

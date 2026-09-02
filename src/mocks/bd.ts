@@ -4,7 +4,9 @@
 // 값은 설계서 데이터영역/예시(공고번호 형식·코드값·자릿수)를 최대한 반영 — 의미 없는 더미 금지.
 import type {
   MockAgreementDoc,
+  MockAlonbsBidCnInfo,
   MockBdopnItem,
+  MockItitbBidCnItem,
   MockBidAplyReceipt,
   MockBidItemListRow,
   MockBidPbancDetail,
@@ -1328,6 +1330,64 @@ const bfrPbancBidCnList: MockBfrPbancBidCnItem[] = [
   },
 ]
 
+// ── 임시입찰내용(no.60, MUI-BD-01-T75/T76 입찰내역 작성) — 기존 저장분 조회 응답 ──
+// 설계서 slide314·315 예시값 형식. 첫 항목은 입찰내역이 저장된 상태(계산 필드 확인용).
+const TMPR_EMPTY_BID_FIELDS = {
+  itemSbstSe: 'A' as const,
+  itemSbstDocEn: '',
+  mdfcnInvtNo: '',
+  mdfcnPrtsNo: '',
+  moqYn: 'N' as const,
+  moqQty: '',
+  moqDocEn: '',
+  bscbgtDudtYmd: '',
+  athrtDudtYmd: '',
+  ltbndDudtYmd: '',
+  usdExrt: '',
+  splyBzentyNm: '',
+  bdngTccrUntprc: '',
+  bdngTccrAmt: '',
+  crncNm: '',
+  bdngUsdUntprc: '',
+  bdngUsdAmt: '',
+}
+const tmprItitbBidCnList: MockItitbBidCnItem[] = [
+  {
+    frcptlArtclNo: '1',
+    invtNo: 'A000-A0001',
+    prtsNo: '369A1234-5',
+    itemNm: 'T-80U/TBE-3',
+    unitNm: 'EA',
+    qty: '1',
+    drctnUntprc: '608,000.00',
+    ...TMPR_EMPTY_BID_FIELDS,
+    bscbgtDudtYmd: '2025-03-25',
+    athrtDudtYmd: '2025-03-25',
+    ltbndDudtYmd: '2025-03-25',
+    usdExrt: '1.0000',
+    splyBzentyNm: 'MD Helicopters Inc.',
+    bdngTccrUntprc: '608000',
+    bdngTccrAmt: '608,000.00',
+    crncNm: 'USD',
+    bdngUsdUntprc: '608,000.00',
+    bdngUsdAmt: '608,000.00',
+  },
+  { frcptlArtclNo: '2', invtNo: 'A000-A0002', prtsNo: '369A5501-3', itemNm: 'MAIN ROTOR BLADE ASSY', unitNm: 'EA', qty: '2', drctnUntprc: '142,500.00', ...TMPR_EMPTY_BID_FIELDS },
+  { frcptlArtclNo: '3', invtNo: 'A000-A0003', prtsNo: '369D2210-11', itemNm: 'TAIL ROTOR ASSY', unitNm: 'EA', qty: '1', drctnUntprc: '86,300.00', ...TMPR_EMPTY_BID_FIELDS },
+  { frcptlArtclNo: '4', invtNo: 'A000-A0004', prtsNo: '369H9020-7', itemNm: 'ENGINE FUEL PUMP', unitNm: 'EA', qty: '4', drctnUntprc: '23,900.00', ...TMPR_EMPTY_BID_FIELDS },
+  { frcptlArtclNo: '5', invtNo: 'A000-A0005', prtsNo: '369A7003-1', itemNm: 'HYDRAULIC ACTUATOR', unitNm: 'EA', qty: '2', drctnUntprc: '51,700.00', ...TMPR_EMPTY_BID_FIELDS },
+  { frcptlArtclNo: '6', invtNo: 'A000-A0006', prtsNo: '369D2911-4', itemNm: 'LANDING GEAR STRUT', unitNm: 'EA', qty: '2', drctnUntprc: '18,200.00', ...TMPR_EMPTY_BID_FIELDS },
+  { frcptlArtclNo: '7', invtNo: 'A000-A0007', prtsNo: '369F1105-9', itemNm: 'MAIN TRANSMISSION GEARBOX', unitNm: 'EA', qty: '1', drctnUntprc: '312,400.00', ...TMPR_EMPTY_BID_FIELDS },
+]
+// 총액제 단건(설계서 slide315 예시 — 입찰금액 608,000.00 · USD 1.0000, 입찰업체 미선택 = 작성 중 저장분).
+const tmprAlonbsBidCn: MockAlonbsBidCnInfo = {
+  splyBzentyNm: '',
+  crncNm: 'USD',
+  bdngTccrAmt: '608000',
+  bdngUsdAmt: '608,000.00',
+  usdExrt: '1.0000',
+}
+
 // ── 셀렉트 옵션 (통화·입찰업체) ────────────────────────────────────────────
 const crncOptions: MockCrncOption[] = [
   { value: 'USD', label: '미 달러', usdExrt: 1.0 },
@@ -1398,6 +1458,9 @@ export const MOCK_BD = {
   ovsRlsVltrnsAtchDocs,
   ovsRlsVltrnsEtdcItems,
   ovsRlsVltrnsSrngRslt,
+  // 국외 임시입찰내용(입찰내역 작성 저장분)
+  tmprItitbBidCnList,
+  tmprAlonbsBidCn,
   // 국외 입찰서 상세/제출
   ovsTndrDetail,
   ovsTndrItitbItems,

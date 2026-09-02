@@ -1323,9 +1323,14 @@ export const bdService = {
    * (ovsTmprBidCnReg/BidDsctn · BidDsctn2) 입찰내역 목록.
    * 단가제=행 배열 · 총액제=단건(설계서 slide312~319).
    */
-  async selectTmprBidCnList(intgRfrncNo: string): Promise<MockItitbBidCnItem[] | MockAlonbsBidCnInfo> {
-    // 목업은 빈 목록 — BidDsctn/BidDsctn2 는 아직 인라인 목업을 쓴다(배선 시 mocks/bd.ts 로 이관).
-    if (USE_MOCK) return mockDelay<MockItitbBidCnItem[]>([])
+  async selectTmprBidCnList(
+    intgRfrncNo: string,
+    // 단가제/총액제 분기(목업 분기용) — 실서버는 intgRfrncNo 로 판별하므로 전송하지 않는다.
+    bidMthdNm?: '단가제' | '총액제',
+  ): Promise<MockItitbBidCnItem[] | MockAlonbsBidCnInfo> {
+    // 기존 저장분 조회(2026-09-02 배선) — 단가제=행 배열 · 총액제=단건.
+    if (USE_MOCK)
+      return mockDelay(bidMthdNm === '총액제' ? MOCK_BD.tmprAlonbsBidCn : MOCK_BD.tmprItitbBidCnList)
     return apiClient.post<
       MockItitbBidCnItem[] | MockAlonbsBidCnInfo,
       MockItitbBidCnItem[] | MockAlonbsBidCnInfo
