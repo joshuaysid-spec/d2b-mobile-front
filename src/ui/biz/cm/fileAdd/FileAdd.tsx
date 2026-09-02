@@ -32,6 +32,11 @@ export interface FileAddHandle {
 export interface FileAddProps {
   /** 첨부서류명 지정 항목(군수품 신청 등) — 주어지면 셀렉트, 없으면 직접입력(기본). */
   docNmOptions?: string[]
+  /**
+   * 첨부서류명 고정(연대보증서·품목대체첨부문서 등 서류가 정해진 자리) — 주어지면
+   * 첨부파일명 입력/선택 필드를 숨기고 이 값으로 확정한다. docNmOptions 보다 우선.
+   */
+  fixedDocNm?: string
   /** 여러 파일 추가 허용(기본 true). false 면 새로 고른 파일이 기존을 교체. */
   multiple?: boolean
   /** [완료] 확정 — 첨부서류명 + 파일 목록 반환(부모가 목록 반영·실제 업로드). */
@@ -45,8 +50,8 @@ function formatSize(bytes: number): string {
 }
 
 const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
-  ({ docNmOptions, multiple = true, onComplete }, ref) => {
-    const [docNm, setDocNm] = useState('')
+  ({ docNmOptions, fixedDocNm, multiple = true, onComplete }, ref) => {
+    const [docNm, setDocNm] = useState(fixedDocNm ?? '')
     const [files, setFiles] = useState<FileAddFile[]>([])
     const [error, setError] = useState<string | null>(null)
     const inputRef = useRef<HTMLInputElement>(null)
@@ -131,7 +136,8 @@ const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
           />
         </div>
 
-        {/* 첨부서류명 — 기본 직접입력, 항목 지정(군수품 등) 시 셀렉트. */}
+        {/* 첨부서류명 — 기본 직접입력, 항목 지정(군수품 등) 시 셀렉트. 고정(fixedDocNm)이면 필드 숨김. */}
+        {!fixedDocNm && (
         <div className="flex flex-col gap-krds-5">
           <InputLabel required>첨부파일명</InputLabel>
           {docNmOptions ? (
@@ -156,6 +162,7 @@ const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
             />
           )}
         </div>
+        )}
 
         {/* 첨부파일 — 업로드할 파일명·크기 + 건별 삭제. */}
         <div className="flex flex-col gap-krds-5">
