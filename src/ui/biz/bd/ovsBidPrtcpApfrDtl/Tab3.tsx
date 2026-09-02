@@ -12,6 +12,7 @@ import { Checkbox } from '@/ui/common/base/Checkbox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { Card } from '@/ui/common/composites/Card'
+import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import type { TableRow } from '@/ui/common/composites/Table'
 import type {
@@ -27,20 +28,19 @@ const fmtUsd = (n: number) =>
 // 한 번에 보여줄 사업 건수(더보기 단위) — 설계서 '더보기(10/100)' 패턴, 목업이라 소단위.
 const PAGE_SIZE = 2
 
-// 파일명 + [다운로드] combination 셀 (slide461·462 File.pdf 다운로드)
+// 파일 다운로드 행 — 공통 FileDownloadList(파일 UI 통일, 2026-09-02 사용자 확정. 구 파일명+[다운로드] 버튼 대체).
 function fileCell(docNo: string | undefined, label: string) {
   if (!docNo) return '-'
   return (
-    <div className="flex flex-col items-start gap-krds-3">
-      <span>{docNo}</span>
-      <Button
-        size="sm"
-        variant="inner"
-        onClick={() => console.log('[M80] 다운로드', label, docNo)} // 추후 API: bdService.downloadGrnteDoc
-      >
-        다운로드
-      </Button>
-    </div>
+    <FileDownloadList
+      files={[
+        {
+          id: `${label}-${docNo}`,
+          name: docNo,
+          onDownload: () => console.log('[M80] 다운로드', label, docNo), // 추후 API: bdService.downloadGrnteDoc
+        },
+      ]}
+    />
   )
 }
 
