@@ -13,7 +13,6 @@
 //    기술평가 [내용 보기]는 국외 전용 조회(MUI-BD-07-P71 OvsTechEvlRslt)로 연결(사용자 확정 2026-08-26).
 import { useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import dayjs from 'dayjs'
 
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Button } from '@/ui/common/base/Button'
@@ -280,13 +279,10 @@ export function BidPrgsDtlInqPage() {
     detail.tndr &&
     (detail.bidRegCfmtnYn === 'Y' || detail.tndrSbmsnPntmCd === 'post') &&
     detail.tndrStatNm !== '완료'
-  // 국외 마감 경과 — 서버에 경과 플래그·상태 반영이 미확정이라 클라 시계로 판정
-  //   (기존 유일 선례 BidPrgrsListForBzentyPage pbancYmd 체크와 동일 방식, 사용자 확정 2026-09-02).
-  //   입찰서제출마감일시(tndrSbmsnDdlnDt) 경과 시 [입찰서 작성하기] 숨김.
-  const ovsDdlnPassed =
-    isOvs && !!detail.tndrSbmsnDdlnDt && dayjs().isAfter(dayjs(detail.tndrSbmsnDdlnDt))
+  // 국외 마감 경과 — 서버 Y/N 플래그(tndr)로 판정(사용자 확정 2026-09-02, 클라 시계 판정 제거).
+  //   설계서 slide170: tndr = "입찰서 제출 가능한 경우 버튼 보이기" — 마감 경과 시 서버가 'N' 으로 내려준다.
   if (isOvs) {
-    if (canTender && !ovsDdlnPassed) {
+    if (canTender) {
       shortcutItems.push({ id: 'ovsBid', label: '입찰서 작성하기', variant: 'primary' })
     }
     if (detail.tndrStatNm === '제출') {

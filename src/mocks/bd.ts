@@ -657,8 +657,7 @@ const prgrsListBase: MockBidPrgrsItem[] = [
     // 입찰방법 단가제 — 입찰서 작성(M71) 스탭2가 단가제(T72)로 분기되는 기준 예시(설계서 slide477 500MD부품).
     //   총액제(T73) 확인은 /bd/ovsTndrSbmsn?bidMthdNm=총액제 직접 진입.
     bidMthdNm: '단가제',
-    // 마감일시는 미래로 유지 — 국외 [입찰서 작성하기]가 클라 시계 마감 판정(tndrSbmsnDdlnDt 경과 시 숨김,
-    //   2026-09-02)을 타므로 과거 날짜면 목업에서 버튼이 사라진다.
+    // 진행 중 입찰 시나리오라 마감일시는 미래(마감 판정은 서버 tndr 플래그 담당 — 클라 시계 판정 폐기 2026-09-02).
     bidClrsDt: '2027-12-23 15:00',
     tndrSbmsnDdlnDt: '2027-12-24 10:00',
     pbancYmd: '2025-11-20',
