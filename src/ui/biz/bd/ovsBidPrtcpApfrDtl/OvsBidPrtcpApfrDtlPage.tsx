@@ -248,23 +248,8 @@ export function OvsBidPrtcpApfrDtlPage() {
   const sbtInfo = MOCK_OVS_SBT_INFO
   const splyInfo = MOCK_OVS_SPLY_INFO
 
-  // 선택 입찰취소(탭3 카드 다중 선택) → P82 (선택 건들)
+  // 선택/전체 입찰취소(탭3) → P82 — 대상 구성은 Tab3 소유(전체=현재 구분 목록만, 사용자 확정 2026-09-02).
   const handleRtrcnSelected = (targets: MockOvsRtrcnTarget[]) => setRtrcnTargets(targets)
-  // 전체 입찰취소(탭3 하단 고정 버튼) → P82 (전체 건) — 면제/비면제 목록 합산.
-  const handleRtrcnAll = () => {
-    setRtrcnTargets([
-      ...MOCK_OVS_BIZ_LIST.map((b) => ({
-        prchsDmndNo: b.prchsDmndNo,
-        bizNm: b.bizNm,
-        rtrcnItemQty: b.bdngItemQty,
-      })),
-      ...MOCK_OVS_BIZ_EXMPTN_LIST.map((b) => ({
-        prchsDmndNo: b.prchsDmndNo,
-        bizNm: b.bizNm,
-        rtrcnItemQty: b.bdngItemQty,
-      })),
-    ])
-  }
 
   const renderTabContent = (current: string) => {
     switch (current) {
@@ -278,7 +263,6 @@ export function OvsBidPrtcpApfrDtlPage() {
             bizList={MOCK_OVS_BIZ_LIST}
             bizExmptnList={MOCK_OVS_BIZ_EXMPTN_LIST}
             onRtrcn={handleRtrcnSelected}
-            onRtrcnAll={handleRtrcnAll}
           />
         )
       case 'atch':
