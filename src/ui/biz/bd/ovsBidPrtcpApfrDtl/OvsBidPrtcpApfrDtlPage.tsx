@@ -15,6 +15,7 @@ import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
+import { Infobox } from '@/ui/common/composites/Infobox'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
@@ -184,8 +185,6 @@ function Tab1({ detail, sbtInfo }: { detail: MockOvsBidPrtcpApfrDetail; sbtInfo:
     { label: '공고번호', value: `${detail.pbancNo}-${detail.pbancOd}` },
     { label: '개찰일시', value: detail.bdopnYmd },
     { label: '입찰보증금 총액', value: `US$ ${fmtUsd(detail.bidGrnteAmt)}`, type: 'number' },
-    // v0.87 검토93 — 공지사항 항목 추가(값은 설계서 형식 목업)
-    { label: '공지사항', value: '입찰서 제출 전 공고문 및 입찰유의서를 반드시 확인하시기 바랍니다.' },
   ]
   // 신청업체(dm_sbtInfo)
   const sbtRows: TableRow[] = [
@@ -199,6 +198,15 @@ function Tab1({ detail, sbtInfo }: { detail: MockOvsBidPrtcpApfrDetail; sbtInfo:
   ]
   return (
     <>
+      {/* 공지사항(v0.87 검토93) — 테이블 행이 아니라 상단 Infobox 공지 박스(국외 공고 상세 dm_ntcInfo 패턴,
+          2026-09-02 보정: 구 '공고일반 행' 오배치 수정). 내역 없으면 미표시. */}
+      <div className="px-4 pb-2 pt-4">
+        <Infobox
+          title="공지사항"
+          items={['[2025-12-22] 입찰서 제출 전 공고문 및 입찰유의서를 반드시 확인하시기 바랍니다.']}
+        />
+      </div>
+
       <Accordion type="multiple" defaultValue={['pbanc', 'sbt']} className="w-full">
         {/* 섹션명 '공고일반'→'일반정보'(사용자 지시 2026-08-26) — 데이터영역은 dm_bscPbancInfo 그대로 */}
         <AccordionSection value="pbanc" title="일반정보" borderTop={false}>

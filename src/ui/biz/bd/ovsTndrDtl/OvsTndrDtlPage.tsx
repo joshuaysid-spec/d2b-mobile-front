@@ -11,6 +11,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
+import { Infobox } from '@/ui/common/composites/Infobox'
 import { Icon } from '@/ui/common/base/Icon'
 import { SummaryInfo, type SummaryInfoBadge, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
@@ -82,8 +83,6 @@ function GeneralInfo({ detail }: { detail: MockOvsTndrDtlItem }) {
     { label: '입찰서제출마감일시', value: detail.bdngDdlnDt },
     { label: '개찰일자', value: detail.bdopnDt },
     { label: '환율적용일자', value: detail.exchrtAplcnYmd },
-    // v0.87 검토100 — 공지사항 항목 추가(값은 설계서 형식 목업)
-    { label: '공지사항', value: '입찰서 제출 전 공고문 및 입찰유의서를 반드시 확인하시기 바랍니다.' },
   ]
   // 담당자 정보 (slide375 — 담당 부서명/담당자/연락처)
   const contactRows: TableRow[] = [
@@ -103,6 +102,15 @@ function GeneralInfo({ detail }: { detail: MockOvsTndrDtlItem }) {
 
   return (
     <>
+      {/* 공지사항(v0.87 검토100) — 테이블 행이 아니라 상단 Infobox 공지 박스(국외 공고 상세 dm_ntcInfo 패턴,
+          2026-09-02 보정: 구 '일반정보 행' 오배치 수정). 내역 없으면 미표시. */}
+      <div className="px-4 pb-2 pt-4">
+        <Infobox
+          title="공지사항"
+          items={['[2025-12-22] 입찰서 제출 전 공고문 및 입찰유의서를 반드시 확인하시기 바랍니다.']}
+        />
+      </div>
+
       <Accordion type="multiple" defaultValue={['general', 'contact']} className="w-full">
         <AccordionSection value="general" title="일반정보" borderTop={false}>
           <Table rows={generalRows} />
