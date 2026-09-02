@@ -5,12 +5,15 @@
 //   + 하단 확약문·구비서류 안내문구(타이틀 없는 본문 — 2026-08-26 사용자 지시: 상단 안내사항 Infobox 와
 //     '입찰 확약 및 구비서류 안내' 타이틀 삭제, ※ 문구는 설계서 색 강조(파랑/빨강)).
 // 항목명/형식은 첨부서류 데이터영역(dl_docList, 설계서 slide340) 그대로.
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
+import { FileAdd, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 import type { OvsAtchDocItem } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidPrtcpAplyPage'
 import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
@@ -27,12 +30,31 @@ const INITIAL_FILES: OvsAtchDocItem[] = [
   },
 ]
 
+// 첨부서류명 셀렉트 옵션 — 서류항목 행 항목명 배열 재사용.
+const DOC_NM_OPTIONS = INITIAL_FILES.map((f) => f.atchDocNm)
+
 export function AtchDocReg({ detail }: { detail: MockBidPrgrsItem }) {
   const [files, setFiles] = useState<OvsAtchDocItem[]>(INITIAL_FILES)
 
-  const handleAdd = () => {
-    console.log('[M77] 입찰참가 서류 파일 추가', detail.pbancNo)
+  // 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — [공통] 파일 추가 시트 열기.
+  const [addOpen, setAddOpen] = useState(false)
+  const fileAddRef = useRef<FileAddHandle>(null)
+
+  const handleAdd = () => setAddOpen(true)
+
+  // 완료 — 선택한 서류항목 행에 파일명 반영(삭제된 행이면 다시 추가).
+  const handleAttach = ({ docNm, files: picked }: { docNm: string; files: { id: string; name: string; size: string }[] }) => {
+    const file = picked[0]
+    if (!file) return
+    console.log('[M77] 입찰참가 서류 파일 추가', detail.pbancNo, docNm, file.name)
     // 추후: 네이티브 파일 선택 → bdService.saveAtchDoc
+    setFiles((prev) =>
+      prev.some((f) => f.atchDocNm === docNm)
+        ? prev.map((f) =>
+            f.atchDocNm === docNm ? { ...f, atchFileNm: file.name, fileSz: file.size } : f,
+          )
+        : [...prev, { id: file.id, atchDocNm: docNm, atchFileNm: file.name, fileSz: file.size }],
+    )
   }
 
   const handleRemove = (id: string) => {
@@ -110,6 +132,37 @@ export function AtchDocReg({ detail }: { detail: MockBidPrgrsItem }) {
           ※ 입찰 참가신청서 작성 후 입찰 담당관의 심사를 받으셔야 입찰서제출이 가능합니다.
         </p>
       </div>
+
+      {/* 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — [공통] 파일 추가(v0.87 마지막 장).
+          첨부서류명 셀렉트(서류항목 목록) + 서류당 1파일(multiple=false). */}
+      <BottomSheet
+        open={addOpen}
+        onOpenChange={setAddOpen}
+        title="파일 추가"
+        footer={
+          <ButtonGroup
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setAddOpen(false) },
+              {
+                label: '완료',
+                variant: 'primary',
+                onClick: () => {
+                  if (fileAddRef.current?.complete()) setAddOpen(false)
+                },
+              },
+            ]}
+          />
+        }
+      >
+        {addOpen && (
+          <FileAdd
+            ref={fileAddRef}
+            docNmOptions={DOC_NM_OPTIONS}
+            multiple={false}
+            onComplete={handleAttach}
+          />
+        )}
+      </BottomSheet>
     </>
   )
 }

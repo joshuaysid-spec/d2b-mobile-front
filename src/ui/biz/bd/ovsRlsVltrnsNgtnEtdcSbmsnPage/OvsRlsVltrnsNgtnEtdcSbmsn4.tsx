@@ -1,10 +1,13 @@
 // 공개수의협상 견적서 작성 - 스탭4 첨부파일 (MUI-BD-12-T77(구 M77 — v1.83 재편), 설계서 slide423). 업로드.
 // 구분 4종(견적제안서/공급자증명서/제작사증명서/기타 공고요구서류) 파일 추가/삭제 + 유의사항.
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { Infobox } from '@/ui/common/composites/Infobox'
+import { FileAdd, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 
 interface UploadFile {
   id: string
@@ -30,6 +33,10 @@ const NOTICE_ITEMS = [
 export function OvsRlsVltrnsNgtnEtdcSbmsn4() {
   const [files, setFiles] = useState<UploadFile[]>(INIT_FILES)
 
+  // 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — [공통] 파일 추가 시트 열기.
+  const [fileAddOpen, setFileAddOpen] = useState(false)
+  const fileAddRef = useRef<FileAddHandle>(null)
+
   const rows: FileDownloadItem[] = files.map((f) => ({
     id: f.id,
     name: `${f.docSeNm} · ${f.name}`,
@@ -42,12 +49,47 @@ export function OvsRlsVltrnsNgtnEtdcSbmsn4() {
       <Accordion type="multiple" defaultValue={['file']} className="w-full">
         <AccordionSection value="file" title={`첨부파일 (총 ${files.length}건)`} borderTop={false}>
           {/* 업로드 목록 — 삭제(X) + 파일 추가 (설계서 slide423) */}
-          <FileDownloadList files={rows} onAddFile={() => console.log('[M77] 첨부파일 파일 추가')} />
+          <FileDownloadList files={rows} onAddFile={() => setFileAddOpen(true)} />
         </AccordionSection>
       </Accordion>
 
       {/* 유의사항 — 파일 목록 하단(설계서 slide423). static(chevron 없이 항상 펼침). */}
       <Infobox title="유의사항" items={NOTICE_ITEMS} collapsible={false} className="mt-4" />
+
+      {/* 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — [공통] 파일 추가(v0.87 마지막 장).
+          첨부서류명 직접입력(구분으로 사용) + 여러 파일 허용. */}
+      <BottomSheet
+        open={fileAddOpen}
+        onOpenChange={setFileAddOpen}
+        title="파일 추가"
+        footer={
+          <ButtonGroup
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setFileAddOpen(false) },
+              {
+                label: '완료',
+                variant: 'primary',
+                onClick: () => {
+                  if (fileAddRef.current?.complete()) setFileAddOpen(false)
+                },
+              },
+            ]}
+          />
+        }
+      >
+        {fileAddOpen && (
+          <FileAdd
+            ref={fileAddRef}
+            onComplete={({ docNm, files: picked }) =>
+              // 추후: bdService.uploadEtdcAtchDoc — 목업은 목록 append 만.
+              setFiles((prev) => [
+                ...prev,
+                ...picked.map((p) => ({ id: p.id, docSeNm: docNm, name: p.name, size: p.size })),
+              ])
+            }
+          />
+        )}
+      </BottomSheet>
     </div>
   )
 }

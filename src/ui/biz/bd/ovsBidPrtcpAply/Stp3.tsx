@@ -7,16 +7,19 @@
 //       - 전자보증서: 증권번호/보증기관명 입력 비활성 + [보증서선택] → 입찰보증서선택 팝업(P75, OvsBidWtgrInqFullPopup)
 //       - 보증보험: 직접 입력 + 입찰보증금납부서 파일 선택 업로드
 // P75 풀팝업(내부에 P76 보증서정보조회 바텀시트, 콘텐츠 OvsBidWtgrDtl)은 OvsBidWtgrInqFullPopup 이 캡슐화 — 이 탭은 open/onApply 만 소유.
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { FileAdd, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 import { OvsBidWtgrInqFullPopup } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidWtgrInqFullPopup'
 import type { MockBidPrgrsItem, MockOvsBidPrtcpBizItem, MockOvsBidWtgrItem } from '@/types/mock/bd'
 
@@ -95,6 +98,15 @@ export function Stp3({ detail }: { detail: MockBidPrgrsItem }) {
   // 입찰보증서선택(P75) — 어느 사업(구매요청번호)에 적용할지. null=닫힘.
   const [wtgrInqFor, setWtgrInqFor] = useState<string | null>(null)
 
+  // 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — 어느 사업(구매요청번호)의
+  //   어느 서류(연대보증서/지급각서/입찰보증금납부서)를 여는지 대상 1개로 공용. null=닫힘.
+  const [fileAddFor, setFileAddFor] = useState<{
+    prchsDmndNo: string
+    field: 'gurnAgreDocNo' | 'giveWrtprmDocNo' | 'grntePyslDocNo'
+    docNm: string
+  } | null>(null)
+  const fileAddRef = useRef<FileAddHandle>(null)
+
   // 보증서 적용(P75/P76 → 부모) — 전자보증서 정보(증권번호/보증기관명=발행자)를 해당 사업에 주입.
   const applyWtgr = (item: MockOvsBidWtgrItem) => {
     if (wtgrInqFor) {
@@ -163,7 +175,13 @@ export function Stp3({ detail }: { detail: MockBidPrgrsItem }) {
               console.log('[M74] 연대보증서 파일 삭제', biz.prchsDmndNo)
               // 추후 API: bdService.removeOvsGurnAgreDoc
             },
-            () => console.log('[M74] 연대보증서 파일선택', biz.prchsDmndNo),
+            // 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02)
+            () =>
+              setFileAddFor({
+                prchsDmndNo: biz.prchsDmndNo,
+                field: 'gurnAgreDocNo',
+                docNm: '연대보증서',
+              }),
             // 추후: 네이티브 파일 선택 → bdService.uploadOvsGurnAgreDoc
           ),
         },
@@ -178,7 +196,13 @@ export function Stp3({ detail }: { detail: MockBidPrgrsItem }) {
               console.log('[M74] 지급각서 파일 삭제', biz.prchsDmndNo)
               // 추후 API: bdService.removeOvsGiveWrtprmDoc
             },
-            () => console.log('[M74] 지급각서 파일선택', biz.prchsDmndNo),
+            // 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02)
+            () =>
+              setFileAddFor({
+                prchsDmndNo: biz.prchsDmndNo,
+                field: 'giveWrtprmDocNo',
+                docNm: '지급각서',
+              }),
             // 추후: 네이티브 파일 선택 → bdService.uploadOvsGiveWrtprmDoc
           ),
         },
@@ -261,11 +285,14 @@ export function Stp3({ detail }: { detail: MockBidPrgrsItem }) {
             console.log('[M74] 입찰보증금납부서 파일 삭제', biz.prchsDmndNo)
             // 추후 API: bdService.removeOvsGrntePyslDoc
           },
-          () => {
-            patchInput(biz.prchsDmndNo, { grntePyslDocNo: '입찰보증금납부서.pdf' })
-            console.log('[M74] 입찰보증금납부서 파일선택', biz.prchsDmndNo)
-            // 추후: 네이티브 파일 선택 → bdService.uploadOvsGrntePyslDoc
-          },
+          // 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02)
+          () =>
+            setFileAddFor({
+              prchsDmndNo: biz.prchsDmndNo,
+              field: 'grntePyslDocNo',
+              docNm: '입찰보증금납부서',
+            }),
+          // 추후: 네이티브 파일 선택 → bdService.uploadOvsGrntePyslDoc
         ),
       },
     )
@@ -311,6 +338,43 @@ export function Stp3({ detail }: { detail: MockBidPrgrsItem }) {
         }}
         onApply={applyWtgr}
       />
+
+      {/* 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — [공통] 파일 추가(v0.87 마지막 장).
+          서류명 고정(fixedDocNm)·서류당 1파일(multiple=false). 완료 시 대상 사업 입력 상태에 파일명 반영. */}
+      <BottomSheet
+        open={fileAddFor !== null}
+        onOpenChange={(open) => {
+          if (!open) setFileAddFor(null)
+        }}
+        title="파일 추가"
+        footer={
+          <ButtonGroup
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setFileAddFor(null) },
+              {
+                label: '완료',
+                variant: 'primary',
+                onClick: () => {
+                  if (fileAddRef.current?.complete()) setFileAddFor(null)
+                },
+              },
+            ]}
+          />
+        }
+      >
+        {fileAddFor && (
+          <FileAdd
+            ref={fileAddRef}
+            fixedDocNm={fileAddFor.docNm}
+            multiple={false}
+            onComplete={({ files }) =>
+              patchInput(fileAddFor.prchsDmndNo, {
+                [fileAddFor.field]: files[0]?.name ?? '',
+              } as Partial<BizGrnteInput>)
+            }
+          />
+        )}
+      </BottomSheet>
     </>
   )
 }

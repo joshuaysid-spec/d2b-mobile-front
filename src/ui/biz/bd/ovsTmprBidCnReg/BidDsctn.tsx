@@ -8,7 +8,7 @@
 //   - MOQ구분 = Y → MOQ첨부문서·MOQ수량 활성/필수
 //   - 입찰단가 변경 → 입찰금액/달러단가/달러금액 계산 · 화폐단위 변경 → 달러환산율/달러단가/달러금액 계산
 //   - 업로드 클릭 → 첨부문서업로드 팝업(UI-BD-04-P75) 호출 — 목업은 console.log + 파일명 스텁
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 
 import { bdQueries } from '@/queries/bds/bd/bdQueries'
 
@@ -21,11 +21,13 @@ import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { Card } from '@/ui/common/composites/Card'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { FileAdd, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 import type { MockBscPbancInfo, MockItitbBidCnItem } from '@/types/mock/bd'
 
 // ── 목업 코드값 — On-Load 입찰업체목록/화폐단위 조회 결과(설계서 slide319) ──
@@ -144,6 +146,14 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
   const [notice, setNotice] = useState<NoticeModal>({ open: false, variant: 'info', title: '' })
   const [deleteOpen, setDeleteOpen] = useState(false)
 
+  // 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — 어느 품목의 어느 첨부
+  //   (품목대체/MOQ)를 여는지 대상 1개로 공용. null=닫힘.
+  const [uploadFor, setUploadFor] = useState<{
+    frcptlArtclNo: string
+    field: 'itemSbstDocEn' | 'moqDocEn'
+  } | null>(null)
+  const fileAddRef = useRef<FileAddHandle>(null)
+
   const visibleRows = rows.slice(0, visibleCount)
   const hasMore = visibleCount < rows.length
 
@@ -188,14 +198,9 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
     )
   }
 
-  // ── 업로드 — 첨부문서업로드 팝업(UI-BD-04-P75) 호출 자리. 목업은 파일명 스텁 주입 ──
-  const handleUpload = (frcptlArtclNo: string, field: 'itemSbstDocEn' | 'moqDocEn') => {
-    console.log('[M77] 첨부문서업로드 팝업 호출(UI-BD-04-P75)', frcptlArtclNo, field)
-    // 추후 API: bdService.uploadOvsBidCnDoc(...)
-    updateRow(frcptlArtclNo, {
-      [field]: field === 'itemSbstDocEn' ? '품목대체증빙.pdf' : 'MOQ증빙.pdf',
-    } as Partial<MockItitbBidCnItem>)
-  }
+  // ── 업로드 — [공통] 파일 추가 시트(FileAdd) 열기. 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) ──
+  const handleUpload = (frcptlArtclNo: string, field: 'itemSbstDocEn' | 'moqDocEn') =>
+    setUploadFor({ frcptlArtclNo, field })
 
   // ── 입찰내역 저장 — 필수값(입찰업체·화폐단위·입찰단가) + 조건부 필수(Replace/MOQ=Y) 검증 후 저장(암호화) ──
   //   2026-09-01 사용자 확정: 필수값이 모두 입력되어야 저장 가능.
@@ -577,6 +582,44 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
         secondaryAction={{ label: '취소' }}
         primaryAction={{ label: '삭제', onClick: handleDeleteConfirm }}
       />
+
+      {/* 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — [공통] 파일 추가(v0.87 마지막 장).
+          서류명 고정(fixedDocNm)·서류당 1파일(multiple=false). 완료 시 해당 품목 행에 파일명 세팅. */}
+      <BottomSheet
+        open={uploadFor !== null}
+        onOpenChange={(open) => {
+          if (!open) setUploadFor(null)
+        }}
+        title="파일 추가"
+        footer={
+          <ButtonGroup
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setUploadFor(null) },
+              {
+                label: '완료',
+                variant: 'primary',
+                onClick: () => {
+                  if (fileAddRef.current?.complete()) setUploadFor(null)
+                },
+              },
+            ]}
+          />
+        }
+      >
+        {uploadFor && (
+          <FileAdd
+            ref={fileAddRef}
+            fixedDocNm={uploadFor.field === 'itemSbstDocEn' ? '품목대체첨부문서' : 'MOQ첨부문서'}
+            multiple={false}
+            onComplete={({ files }) => {
+              // 추후 API: bdService.uploadOvsBidCnDoc(...)
+              updateRow(uploadFor.frcptlArtclNo, {
+                [uploadFor.field]: files[0]?.name ?? '',
+              } as Partial<MockItitbBidCnItem>)
+            }}
+          />
+        )}
+      </BottomSheet>
     </>
   )
 }

@@ -4,12 +4,15 @@
 //    여기엔 본문만. footer '제출하기' 는 부모가 ref.submit() 으로 호출한다. (P03/P04 와 동일 패턴)
 // 구성(설계서): 공고일반(dmt_bidPbancInfo) + 업체내역(dmt_bzentyInfo) + 생산능력서류 첨부파일(dlt_prdcpAtchFileList, 업로드).
 //   항목명/형식은 데이터영역 그대로. 데이터는 목업(상세에서 넘어온 항목 기반) — 백엔드 미연동.
-import { forwardRef, useImperativeHandle, useState } from 'react'
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { FileAdd, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 export interface PrdctnAbltDcmntSbmsnHandle {
@@ -33,6 +36,11 @@ const INIT_FILES: FileDownloadItem[] = [
 const PrdctnAbltDcmntSbmsn = forwardRef<PrdctnAbltDcmntSbmsnHandle, PrdctnAbltDcmntSbmsnProps>(
   ({ detail, onSubmitted }, ref) => {
     const [files, setFiles] = useState<FileDownloadItem[]>(INIT_FILES)
+
+    // 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — P06 자체가 시트 콘텐츠라
+    //   중첩 컨테이너는 여기서 소유(ScrtyMsrmtPrsnlReg 선례).
+    const [fileAddOpen, setFileAddOpen] = useState(false)
+    const fileAddRef = useRef<FileAddHandle>(null)
 
     useImperativeHandle(
       ref,
@@ -104,10 +112,44 @@ const PrdctnAbltDcmntSbmsn = forwardRef<PrdctnAbltDcmntSbmsnHandle, PrdctnAbltDc
                 ...f,
                 onRemove: () => setFiles((prev) => prev.filter((p) => p.id !== f.id)),
               }))}
-              onAddFile={() => console.log('[P06] 파일 추가')}
+              onAddFile={() => setFileAddOpen(true)}
             />
           </AccordionSection>
         </Accordion>
+
+        {/* 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — [공통] 파일 추가(v0.87 마지막 장).
+            첨부서류명 직접입력 + 여러 파일 허용, 완료 시 목록 append. */}
+        <BottomSheet
+          open={fileAddOpen}
+          onOpenChange={setFileAddOpen}
+          title="파일 추가"
+          footer={
+            <ButtonGroup
+              items={[
+                { label: '취소', variant: 'secondary', onClick: () => setFileAddOpen(false) },
+                {
+                  label: '완료',
+                  variant: 'primary',
+                  onClick: () => {
+                    if (fileAddRef.current?.complete()) setFileAddOpen(false)
+                  },
+                },
+              ]}
+            />
+          }
+        >
+          {fileAddOpen && (
+            <FileAdd
+              ref={fileAddRef}
+              onComplete={({ files: picked }) =>
+                setFiles((prev) => [
+                  ...prev,
+                  ...picked.map((p) => ({ id: p.id, name: p.name, size: p.size })),
+                ])
+              }
+            />
+          )}
+        </BottomSheet>
       </div>
     )
   },

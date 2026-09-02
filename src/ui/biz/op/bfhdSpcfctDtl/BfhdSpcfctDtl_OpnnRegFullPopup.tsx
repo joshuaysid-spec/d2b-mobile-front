@@ -2,16 +2,18 @@
 // 업체의견(제목*·내용*·공개여부*) + 첨부서류(삭제·파일추가, 다운로드 없음 — slide31 수정) + 작성자정보
 //   (업체명/사번/성명 readonly, 전화/이메일 입력) + 취소/저장. 저장 → 닫힘. 데이터 목업.
 import * as React from 'react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { TextArea } from '@/ui/common/base/TextArea'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
+import { FileAdd, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 
 interface UploadFile {
   id: string
@@ -61,7 +63,12 @@ export function BfhdSpcfctDtl_OpnnRegFullPopup({
   const [email, setEmail] = useState('abcde@naver.com')
 
   const removeFile = (id: string) => setFiles((fs) => fs.filter((f) => f.id !== id))
-  const addFile = () => console.log('[P07] 파일 추가 (파일 선택 스텁)')
+
+  // 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — FullPopup 안 BottomSheet 중첩 소유
+  //   (ScrtyMsrmtPrsnlReg 선례).
+  const [fileAddOpen, setFileAddOpen] = useState(false)
+  const fileAddRef = useRef<FileAddHandle>(null)
+  const addFile = () => setFileAddOpen(true)
 
   const handleSave = () => {
     console.log('[P07] 저장', { title, content, isPublic, phone, email, files: files.length })
@@ -166,6 +173,40 @@ export function BfhdSpcfctDtl_OpnnRegFullPopup({
           </Field>
         </AccordionSection>
       </Accordion>
+
+      {/* 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — [공통] 파일 추가(v0.87 마지막 장).
+          첨부서류명 직접입력 + 여러 파일 허용, 완료 시 목록 append. */}
+      <BottomSheet
+        open={fileAddOpen}
+        onOpenChange={setFileAddOpen}
+        title="파일 추가"
+        footer={
+          <ButtonGroup
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setFileAddOpen(false) },
+              {
+                label: '완료',
+                variant: 'primary',
+                onClick: () => {
+                  if (fileAddRef.current?.complete()) setFileAddOpen(false)
+                },
+              },
+            ]}
+          />
+        }
+      >
+        {fileAddOpen && (
+          <FileAdd
+            ref={fileAddRef}
+            onComplete={({ files: picked }) =>
+              setFiles((prev) => [
+                ...prev,
+                ...picked.map((p) => ({ id: p.id, name: p.name, size: p.size })),
+              ])
+            }
+          />
+        )}
+      </BottomSheet>
     </FullPopup>
   )
 }

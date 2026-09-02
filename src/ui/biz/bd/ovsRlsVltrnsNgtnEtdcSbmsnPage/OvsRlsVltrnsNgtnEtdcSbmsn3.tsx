@@ -1,15 +1,18 @@
 // 공개수의협상 견적서 작성 - 스탭3 입찰품목(입찰참여품목 단가제) (MUI-BD-12-T76(구 M76 — v1.83 재편), 설계서 slide422).
 // 품목 카드(기본 4행 + 내역 펼쳐보기) — 조회 항목 + 입력(품목대체구분 Y/N SelectBox·견적단가, 대체 시 수정재고/부품번호·대체첨부문서).
 // 항목명 = 설계서 데이터영역 영문(dl_bidItemList).
-import { memo, useMemo, useState } from 'react'
+import { memo, useMemo, useRef, useState } from 'react'
 
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { SelectBox } from '@/ui/common/base/SelectBox'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
+import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { FileAdd, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 import { cn } from '@/utils/cn'
 import type { MockOvsRlsVltrnsEtdcItem } from '@/types/mock/bd'
 
@@ -75,6 +78,11 @@ const ItemCard = memo(function ItemCard({ item }: { item: MockOvsRlsVltrnsEtdcIt
   })
   const set = (patch: Partial<ItemState>) => setS((p) => ({ ...p, ...patch }))
 
+  // 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — 첨부 상태(s)가 카드 로컬이라
+  //   시트도 카드가 소유(ScrtyMsrmtPrsnlReg 중첩 소유 선례).
+  const [fileAddOpen, setFileAddOpen] = useState(false)
+  const fileAddRef = useRef<FileAddHandle>(null)
+
   const rows = useMemo<TableRow[]>(() => {
     return [
       { label: '항목번호', value: item.frcptlArtclNo },
@@ -122,11 +130,8 @@ const ItemCard = memo(function ItemCard({ item }: { item: MockOvsRlsVltrnsEtdcIt
                   ]
                 : []
             }
-            onAddFile={() => {
-              set({ itemSbstDocNm: '품목대체첨부문서.pdf' })
-              console.log('[M74] 품목대체첨부문서 파일선택', item.frcptlArtclNo)
-              // 추후: 네이티브 파일 선택 → bdService.uploadEtdcItemSbstDoc
-            }}
+            // 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02)
+            onAddFile={() => setFileAddOpen(true)}
             addFileLabel="파일선택"
           />
         ),
@@ -207,6 +212,40 @@ const ItemCard = memo(function ItemCard({ item }: { item: MockOvsRlsVltrnsEtdcIt
           className={cn('transition-transform duration-200', expanded && 'rotate-180')}
         />
       </button>
+
+      {/* 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — [공통] 파일 추가(v0.87 마지막 장).
+          서류명 고정(품목대체첨부문서)·1파일(multiple=false). */}
+      <BottomSheet
+        open={fileAddOpen}
+        onOpenChange={setFileAddOpen}
+        title="파일 추가"
+        footer={
+          <ButtonGroup
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setFileAddOpen(false) },
+              {
+                label: '완료',
+                variant: 'primary',
+                onClick: () => {
+                  if (fileAddRef.current?.complete()) setFileAddOpen(false)
+                },
+              },
+            ]}
+          />
+        }
+      >
+        {fileAddOpen && (
+          <FileAdd
+            ref={fileAddRef}
+            fixedDocNm="품목대체첨부문서"
+            multiple={false}
+            onComplete={({ files }) => {
+              // 추후: 네이티브 파일 선택 → bdService.uploadEtdcItemSbstDoc
+              set({ itemSbstDocNm: files[0]?.name ?? '' })
+            }}
+          />
+        )}
+      </BottomSheet>
     </div>
   )
 })

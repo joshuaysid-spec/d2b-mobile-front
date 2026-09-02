@@ -5,7 +5,7 @@
 // ⚠️ readOnly = 이행/적격심사포기신청조회 (MUI-BD-10-P03, slide273~274). 설계서가 별도 화면이 아니라
 //    "이행/적격심사 상태가 심사포기인 경우 조회 항목으로 속성 변경"(slide274 항목설명)으로 규정하므로
 //    같은 화면의 모드로 둔다 — 저장된 포기사유·첨부서류를 읽기전용 표시, 입력/제출/파일추가·삭제 없음(footer=닫기).
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -14,10 +14,12 @@ import { InputMessage } from '@/ui/common/base/InputMessage'
 import { TextArea } from '@/ui/common/base/TextArea'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
+import { FileAdd, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 import {
   ABND_RSN_ETC,
   ABND_RSN_OPTIONS,
@@ -80,11 +82,17 @@ export function ImpltElgbSrngAbndAply({
   const isEtc = watch('elgbSrngAbndRsnSe') === ABND_RSN_ETC
 
   const removeFile = (id: string) => setFiles((fs) => fs.filter((f) => f.id !== id))
-  const addFile = () => console.log('[P21] 파일 추가 (파일 선택 스텁)') // 추후 API: btn_fileAdd
+
+  // 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — FullPopup 안 BottomSheet 중첩 소유
+  //   (ScrtyMsrmtPrsnlReg 선례). 추후 API: btn_fileAdd
+  const [fileAddOpen, setFileAddOpen] = useState(false)
+  const fileAddRef = useRef<FileAddHandle>(null)
+  const addFile = () => setFileAddOpen(true)
 
   const closeAndReset = () => {
     reset()
     setFiles(INITIAL_FILES)
+    setFileAddOpen(false)
     onOpenChange(false)
   }
 
@@ -227,6 +235,40 @@ export function ImpltElgbSrngAbndAply({
           />
         </AccordionSection>
       </Accordion>
+
+      {/* 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — [공통] 파일 추가(v0.87 마지막 장).
+          첨부서류명 직접입력 + 여러 파일 허용, 완료 시 목록 append. */}
+      <BottomSheet
+        open={fileAddOpen}
+        onOpenChange={setFileAddOpen}
+        title="파일 추가"
+        footer={
+          <ButtonGroup
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setFileAddOpen(false) },
+              {
+                label: '완료',
+                variant: 'primary',
+                onClick: () => {
+                  if (fileAddRef.current?.complete()) setFileAddOpen(false)
+                },
+              },
+            ]}
+          />
+        }
+      >
+        {fileAddOpen && (
+          <FileAdd
+            ref={fileAddRef}
+            onComplete={({ files: picked }) =>
+              setFiles((prev) => [
+                ...prev,
+                ...picked.map((p) => ({ id: p.id, name: p.name, size: p.size })),
+              ])
+            }
+          />
+        )}
+      </BottomSheet>
     </FullPopup>
   )
 }
