@@ -20,6 +20,8 @@ import { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { Badge } from '@/ui/common/base/Badge'
 import { Icon } from '@/ui/common/base/Icon'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
@@ -30,6 +32,7 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { Table } from '@/ui/common/composites/Table'
+import { Toast } from '@/ui/common/composites/Toast'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { TASK_SE_CD } from '@/constants/codes'
 import { docBadges, docOrgLine, docDateRows } from '@/ui/biz/cm/docBox/docBoxView'
@@ -234,6 +237,7 @@ export function DocBoxPage() {
   // 첨언/첨부파일 바텀시트 — 카드 하단 버튼이 연다(해당 데이터가 있는 카드에서만 버튼 노출).
   const [addCnItem, setAddCnItem] = useState<MockDocBoxItem | null>(null)
   const [atchOpen, setAtchOpen] = useState(false)
+  const [dlToast, setDlToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
   // 반려 상세보기(P23) 바텀시트 — 반려 문서 카드의 [반려사유] 버튼이 연다.
   const [rjctItem, setRjctItem] = useState<MockDocBoxItem | null>(null)
 
@@ -340,12 +344,23 @@ export function DocBoxPage() {
     ),
   }))
 
-  // 첨부문서(dl_atchDocList) → FileDownloadList 항목. 개별 다운로드는 콘솔 스텁.
+  // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
+  // ⚠️ edmsDocId 없는 행은 임시 GUID(파일명) — 백엔드 응답에 파일 GUID 확정 시 교체.
+  const downloadFile = fbQueries.useDownloadFile()
+  const handleDownload = async (guid: string, fileNm: string) => {
+    try {
+      saveBlob(await downloadFile.mutateAsync(guid), fileNm)
+    } catch {
+      setDlToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }
+
+  // 첨부문서(dl_atchDocList) → FileDownloadList 항목.
   const atchFiles: FileDownloadItem[] = MOCK_ATCH_FILES.map((f, i) => ({
     id: f.edmsDocId ?? `${f.fileNm}-${i}`,
     name: f.fileNm,
     size: f.fileSize,
-    onDownload: () => console.log('[DocBox] 첨부 다운로드', f.fileNm), // 추후: cmService.downloadAtchFile
+    onDownload: () => handleDownload(f.edmsDocId ?? f.fileNm, f.fileNm),
   }))
 
   return (
@@ -444,6 +459,11 @@ export function DocBoxPage() {
           </div>
         </div>
       </BottomSheet>
+
+      {/* 다운로드 실패 토스트 */}
+      <Toast open={dlToast !== null} onClose={() => setDlToast(null)} duration={2000}>
+        {dlToast}
+      </Toast>
     </div>
   )
 }

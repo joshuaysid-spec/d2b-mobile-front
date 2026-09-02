@@ -7,6 +7,8 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
 import { InputBox } from '@/ui/common/base/InputBox'
@@ -170,6 +172,17 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
     window.setTimeout(() => navigate(-1), 1200)
   }
 
+  // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제. 기존 토스트 재사용.
+  // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
+  const downloadFileMut = fbQueries.useDownloadFile()
+  const handleDownload = async (guid: string, fileNm: string) => {
+    try {
+      saveBlob(await downloadFileMut.mutateAsync(guid), fileNm)
+    } catch {
+      setToastMsg('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }
+
   // 성명은 카드 타이틀로 승격(Figma 10020:85034) — 행에서 제외.
   const personRows = (d: MockScrtyMsrmtPrsn): TableRow[] => [
     { label: '적격여부', value: d.qualYn || '-' },
@@ -183,7 +196,7 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
             {
               id: d.id,
               name: d.fileName,
-              onDownload: () => console.log('[M23] 보안측정 첨부 다운로드', d.fileName),
+              onDownload: () => handleDownload(d.id, d.fileName),
             },
           ]}
         />

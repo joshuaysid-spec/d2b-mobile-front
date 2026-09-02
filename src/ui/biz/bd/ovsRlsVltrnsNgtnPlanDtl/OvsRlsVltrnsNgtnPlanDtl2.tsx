@@ -2,12 +2,15 @@
 // 품목 목록 — 조달계획 상세 품목명세서 탭과 동일 패턴: ListSectionHeader + 카드(기본 4행 + 내역 펼쳐보기/접기) + 더보기.
 import { memo, useCallback, useMemo, useState } from 'react'
 
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { Toast } from '@/ui/common/composites/Toast'
 import { cn } from '@/utils/cn'
 import type { MockOvsRlsVltrnsItem } from '@/types/mock/bd'
 
@@ -45,8 +48,8 @@ const DEFAULT_VISIBLE = 4
 
 // 첨부문서 '보기' → 바텀시트에 표시할 첨부파일 목업 (품목별 첨부문서). 추후 API 매핑.
 const MOCK_DOC_FILES: FileDownloadItem[] = [
-  { id: 'doc-1', name: '규격서.pdf', size: '786KB', onDownload: () => console.log('[M72] 첨부문서 다운로드: 규격서') },
-  { id: 'doc-2', name: '도면.pdf', size: '1.2MB', onDownload: () => console.log('[M72] 첨부문서 다운로드: 도면') },
+  { id: 'doc-1', name: '규격서.pdf', size: '786KB' },
+  { id: 'doc-2', name: '도면.pdf', size: '1.2MB' },
 ]
 
 function itemRows(it: MockOvsRlsVltrnsItem, onViewDoc: () => void): TableRow[] {
@@ -139,6 +142,19 @@ export function OvsRlsVltrnsNgtnPlanDtl2() {
   const [page, setPage] = useState(1)
   // 첨부문서 보기 바텀시트 — 클릭한 품목의 항목번호로 타이틀 표기.
   const [docSheet, setDocSheet] = useState<{ open: boolean; clsfNo: string }>({ open: false, clsfNo: '' })
+
+  const downloadFile = fbQueries.useDownloadFile()
+  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
+
+  // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
+  // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
+  const handleDownload = async (guid: string, fileNm: string) => {
+    try {
+      saveBlob(await downloadFile.mutateAsync(guid), fileNm)
+    } catch {
+      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }
   const loaded = Math.min(page * pageSize, TOTAL)
   const visible = MOCK_ITEMS.slice(0, loaded)
 
@@ -189,8 +205,15 @@ export function OvsRlsVltrnsNgtnPlanDtl2() {
         onOpenChange={(o) => setDocSheet((s) => ({ ...s, open: o }))}
         title={`첨부문서${docSheet.clsfNo ? ` (항목번호 ${docSheet.clsfNo})` : ''}`}
       >
-        <FileDownloadList files={MOCK_DOC_FILES} />
+        <FileDownloadList
+          files={MOCK_DOC_FILES.map((f) => ({ ...f, onDownload: () => handleDownload(String(f.id), f.name) }))}
+        />
       </BottomSheet>
+
+      {/* 다운로드 실패 토스트 */}
+      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
+        {toast}
+      </Toast>
     </div>
   )
 }

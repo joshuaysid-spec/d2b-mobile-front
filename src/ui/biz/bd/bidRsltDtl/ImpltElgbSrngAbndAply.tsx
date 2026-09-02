@@ -9,6 +9,8 @@ import { useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { InputMessage } from '@/ui/common/base/InputMessage'
 import { TextArea } from '@/ui/common/base/TextArea'
@@ -19,6 +21,7 @@ import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
+import { Toast } from '@/ui/common/composites/Toast'
 import { FileAdd, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 import {
   ABND_RSN_ETC,
@@ -82,6 +85,19 @@ export function ImpltElgbSrngAbndAply({
   const isEtc = watch('elgbSrngAbndRsnSe') === ABND_RSN_ETC
 
   const removeFile = (id: string) => setFiles((fs) => fs.filter((f) => f.id !== id))
+
+  const downloadFile = fbQueries.useDownloadFile()
+  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
+
+  // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
+  // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체(slide273 scwin.btn_atchFileNm_onclick).
+  const handleDownload = async (guid: string, fileNm: string) => {
+    try {
+      saveBlob(await downloadFile.mutateAsync(guid), fileNm)
+    } catch {
+      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }
 
   // 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — FullPopup 안 BottomSheet 중첩 소유
   //   (ScrtyMsrmtPrsnlReg 선례). 추후 API: btn_fileAdd
@@ -228,7 +244,7 @@ export function ImpltElgbSrngAbndAply({
               name: file.name,
               size: file.size,
               ...(readOnly
-                ? { onDownload: () => console.log('[P03] 첨부파일 다운로드', file.name) } // 추후 API: scwin.btn_atchFileNm_onclick
+                ? { onDownload: () => handleDownload(file.id, file.name) }
                 : { onRemove: () => removeFile(file.id) }),
             }))}
             onAddFile={readOnly ? undefined : addFile}
@@ -269,6 +285,11 @@ export function ImpltElgbSrngAbndAply({
           />
         )}
       </BottomSheet>
+
+      {/* 다운로드 실패 토스트 */}
+      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
+        {toast}
+      </Toast>
     </FullPopup>
   )
 }

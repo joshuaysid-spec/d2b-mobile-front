@@ -12,6 +12,8 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { ROUTES } from '@/constants/routes'
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
@@ -125,6 +127,17 @@ export function DfEqpmntTradeAgncAplyPage() {
     defaultValues: { agree: false as unknown as true },
   })
 
+  // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제. 기존 토스트 재사용.
+  // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
+  const downloadFileMut = fbQueries.useDownloadFile()
+  const handleDownload = async (guid: string, fileNm: string) => {
+    try {
+      saveBlob(await downloadFileMut.mutateAsync(guid), fileNm)
+    } catch {
+      setToastMsg('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }
+
   // ── 사업자정보 카드 rows(접힘 4행 + 더보기 4행 — InfoAccordionCard previewCount) ──
   const bizRows: InfoCardRowInput[] = [
     { label: '업태', value: MOCK_INFO.bzstatCdNm },
@@ -155,7 +168,7 @@ export function DfEqpmntTradeAgncAplyPage() {
               id: p.id,
               name: p.fileNm,
               size: '2.01MB',
-              onDownload: () => console.log('[M17] 보안측정 첨부 다운로드', p.fileNm),
+              onDownload: () => handleDownload(p.id, p.fileNm),
             },
           ]}
         />

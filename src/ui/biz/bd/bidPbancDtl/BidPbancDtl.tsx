@@ -4,10 +4,15 @@
 //   slide29~31(공고일반 데이터 영역 dmt_bidPbancGnrl 항목설명 — 영문 키·형식·비고).
 // 일반정보 + 지역제한 + 공증·면허제한(업무도움) + 시공능력평가제한 + 지명경쟁업체 + 첨부서류 + 문의처 아코디언.
 // 데이터는 목업(추후 bdService.selectPbancGnrlInfo) — 값은 설계서 slide26~28 예시 그대로.
+import { useState } from 'react'
+
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
+import { Toast } from '@/ui/common/composites/Toast'
 
 // 일반정보 (설계서 slide26~27 콘텐츠 순서 · 영문 키는 slide29~31 dmt_bidPbancGnrl).
 // ⚠️ 업무구분 '공사' 분기(slide27 특이사항) — 현재 목업은 대표 케이스(물품·제조)로 렌더:
@@ -155,8 +160,8 @@ const DSGNT_BIDDER_ROWS: TableRow[] = DSGNT_BIDDERS.flatMap((b): TableRow[] => [
 
 // 첨부서류 (설계서 slide28 ⑤ — 총 N건 표시, 개별 리스트 탭으로 개별 다운로드)
 const ATTACH_FILES: FileDownloadItem[] = [
-  { id: 'att-1', name: '입찰공고문.hwp', size: '786KB', onDownload: () => console.log('[BD-01-T01] 다운로드: 입찰공고문') },
-  { id: 'att-2', name: '규격서.hwp', size: '1.2MB', onDownload: () => console.log('[BD-01-T01] 다운로드: 규격서') },
+  { id: 'att-1', name: '입찰공고문.hwp', size: '786KB' },
+  { id: 'att-2', name: '규격서.hwp', size: '1.2MB' },
 ]
 
 // 문의처 (설계서 slide28 ⑥ — 기관 부서명/담당자/연락처)
@@ -176,6 +181,19 @@ const CONTACT_ROWS: TableRow[] = [
 ]
 
 export function BidPbancDtl() {
+  const downloadFile = fbQueries.useDownloadFile()
+  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
+
+  // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
+  // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
+  const handleDownload = async (guid: string, fileNm: string) => {
+    try {
+      saveBlob(await downloadFile.mutateAsync(guid), fileNm)
+    } catch {
+      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }
+
   return (
     <>
       <Accordion
@@ -208,12 +226,19 @@ export function BidPbancDtl() {
         </AccordionSection>
         {/* 건수는 우측 titleInfo 슬롯(Figma m_section title 9973-131169 — 17px Bold 남색). 배경 흰색(사용자 확정) */}
         <AccordionSection value="attach" title="첨부서류" titleInfo={`총 ${ATTACH_FILES.length}건`}>
-          <FileDownloadList files={ATTACH_FILES} />
+          <FileDownloadList
+            files={ATTACH_FILES.map((f) => ({ ...f, onDownload: () => handleDownload(String(f.id), f.name) }))}
+          />
         </AccordionSection>
         <AccordionSection value="contact" title="문의처">
           <Table rows={CONTACT_ROWS} />
         </AccordionSection>
       </Accordion>
+
+      {/* 다운로드 실패 토스트 */}
+      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
+        {toast}
+      </Toast>
     </>
   )
 }

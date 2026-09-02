@@ -8,15 +8,19 @@
 //   → footer [군수품무역대리업 등록증 발급](primary) + [군수품무역대리업 신청하기](secondary → M17).
 // 상단은 목록에서 넘어온 항목(navigate state)으로 그리고(service 스텁 없음), 본문/첨부는 페이지 목업(설계서 항목명 준수).
 //   직접 URL 진입(state 없음) 대비 페이지 fallback 목업. 데이터 연동 시 목업만 실제 조회로 교체.
+import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { TextArea } from '@/ui/common/base/TextArea'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { Toast } from '@/ui/common/composites/Toast'
 import type {
   MockDfEqpmntTradeAgncAplyInfo,
   MockDfEqpmntTradeAgncAplyItem,
@@ -88,11 +92,24 @@ export function DfEqpmntTradeAgncAplyDtlPage() {
   // 목록에서 넘어온 항목으로 상단을 그린다. 직접 진입(state 없음)이면 페이지 fallback 목업.
   const item = (useLocation().state as MockDfEqpmntTradeAgncAplyItem | null) ?? FALLBACK_ITEM
 
+  const downloadFile = fbQueries.useDownloadFile()
+  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
+
+  // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
+  // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
+  const handleDownload = async (guid: string, fileNm: string) => {
+    try {
+      saveBlob(await downloadFile.mutateAsync(guid), fileNm)
+    } catch {
+      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }
+
   const downloadFiles: FileDownloadItem[] = MOCK_FILES.map((f) => ({
     id: f.id,
     name: f.fileNm as string,
     size: f.size,
-    onDownload: () => console.log('[M16] 첨부파일 다운로드', f.fileNm), // 추후: fbService.download(fileGuid)
+    onDownload: () => handleDownload(f.id, f.fileNm as string),
   }))
 
   // ── 액션 스텁 ──
@@ -167,6 +184,11 @@ export function DfEqpmntTradeAgncAplyDtlPage() {
           ]}
         />
       </div>
+
+      {/* 다운로드 실패 토스트 */}
+      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
+        {toast}
+      </Toast>
     </div>
   )
 }

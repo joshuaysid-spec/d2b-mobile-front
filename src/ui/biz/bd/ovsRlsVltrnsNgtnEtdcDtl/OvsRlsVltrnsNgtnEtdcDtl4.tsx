@@ -1,8 +1,14 @@
 // 공개수의협상 견적서 조회(상세) - 첨부파일 (MUI-BD-12-T81(구 M81 — v1.83 재편), 설계서 slide433). 다운로드 전용.
 // 구분 4종(견적제안서/공급자증명서/제작사증명서/기타 공고요구서류) 다운로드 + 유의사항(2건).
+// 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
+import { useState } from 'react'
+
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { Infobox } from '@/ui/common/composites/Infobox'
+import { Toast } from '@/ui/common/composites/Toast'
 
 // 항목명 = 설계서 데이터영역 영문(dl_docList). id 는 목록 React key 용(설계서 필드 아님).
 interface AtchFile {
@@ -29,11 +35,24 @@ const NOTICE_ITEMS = [
 ]
 
 export function OvsRlsVltrnsNgtnEtdcDtl4() {
+  const downloadFile = fbQueries.useDownloadFile()
+  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
+
+  // 다운로드 — guid 로 Blob 수신 → 원본 파일명으로 저장. 실패는 토스트 안내.
+  // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
+  const handleDownload = async (guid: string, fileNm: string) => {
+    try {
+      saveBlob(await downloadFile.mutateAsync(guid), fileNm)
+    } catch {
+      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }
+
   const rows: FileDownloadItem[] = FILES.map((f) => ({
     id: f.id,
     name: `${f.atchDocNm} · ${f.atchFileNm}`,
     size: f.fileSz,
-    onDownload: () => console.log('[M81] 첨부파일 다운로드', f.id), // 추후 API: bdService.downloadEtdcFile
+    onDownload: () => handleDownload(f.id, f.atchFileNm),
   }))
 
   return (
@@ -47,6 +66,11 @@ export function OvsRlsVltrnsNgtnEtdcDtl4() {
 
       {/* 유의사항 — 파일 목록 하단(설계서 slide433). static(chevron 없이 항상 펼침). */}
       <Infobox title="유의사항" items={NOTICE_ITEMS} collapsible={false} className="mt-4" />
+
+      {/* 다운로드 실패 토스트 */}
+      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
+        {toast}
+      </Toast>
     </div>
   )
 }

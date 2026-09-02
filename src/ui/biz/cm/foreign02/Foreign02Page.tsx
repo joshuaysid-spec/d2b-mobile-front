@@ -3,10 +3,14 @@
 // 구성: 인트로(근거 법령 불릿) → 1. 국외소재상사((1) 신규등록 카드 4 · (2) 정보변경 카드 3)
 //   → 2. 국내소재상사((1) 신규등록 카드 4 · (2) 정보변경 카드 2 · 보안측정안내 연락처 카드).
 // 카드 = Figma m_card type3(제목 19 Bold + 레이블 13 #717171 / 값 17 muted 블록 + divider #d1d7e0).
-// 서식 다운로드 버튼은 파일 저장소 미정 — 스텁(console.log). 프리미티브는 안내 페이지 계열 컨벤션대로 페이지 소유.
-import type { ReactNode } from 'react'
+// 서식 다운로드 — 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정), CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
+//   프리미티브는 안내 페이지 계열 컨벤션대로 페이지 소유.
+import { useState, type ReactNode } from 'react'
 
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { Icon } from '@/ui/common/base/Icon'
+import { Toast } from '@/ui/common/composites/Toast'
 
 // ● 불릿 항목 — Figma m_list: 20px 불릿 슬롯 + 4px gap, 본문 17 Regular ink.
 function Bullet({ children }: { children: ReactNode }) {
@@ -70,13 +74,13 @@ function Lnk({ href, children }: { href: string; children: ReactNode }) {
   )
 }
 
-// 서식 다운로드 버튼 — Figma: 24px 아이콘 + '다운로드'(17 blue underline). 파일 저장소 미정, 스텁.
-function DownloadButton({ doc }: { doc: string }) {
+// 서식 다운로드 버튼 — Figma: 24px 아이콘 + '다운로드'(17 blue underline). 핸들러는 페이지가 소유(훅·토스트 1벌).
+function DownloadButton({ doc, onDownload }: { doc: string; onDownload: (doc: string) => void }) {
   return (
     <button
       type="button"
       className="flex items-center gap-1 text-[17px] leading-normal text-krds-text-primary underline"
-      onClick={() => console.log('[Foreign02] 서식 다운로드', doc)} // 추후: 서식 파일 다운로드 연결
+      onClick={() => onDownload(doc)}
     >
       <Icon name="Download" size={24} aria-hidden />
       다운로드
@@ -153,6 +157,19 @@ const DCC_CONTACTS = [
 ]
 
 export function Foreign02Page() {
+  const downloadFile = fbQueries.useDownloadFile()
+  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
+
+  // 서식 다운로드 — guid 로 Blob 수신 → 서식명.hwp 로 저장. 실패는 토스트 안내.
+  // ⚠️ 임시 GUID(서식명) — 서식 파일 저장소/GUID 확정 시 교체.
+  const handleDownload = async (doc: string) => {
+    try {
+      saveBlob(await downloadFile.mutateAsync(doc), `${doc}.hwp`)
+    } catch {
+      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }
+
   return (
     <div className="flex w-full flex-col">
       {/* 인트로 — 근거 법령 */}
@@ -175,8 +192,8 @@ export function Foreign02Page() {
               content: (
                 <>
                   <Val>Application for Registration</Val>
-                  <DownloadButton doc="Application for Registration(국문)" />
-                  <DownloadButton doc="Application for Registration(영문)" />
+                  <DownloadButton doc="Application for Registration(국문)" onDownload={handleDownload} />
+                  <DownloadButton doc="Application for Registration(영문)" onDownload={handleDownload} />
                 </>
               ),
             },
@@ -191,8 +208,8 @@ export function Foreign02Page() {
               content: (
                 <>
                   <Val>Pledge for Security</Val>
-                  <DownloadButton doc="Pledge for Security(국문)" />
-                  <DownloadButton doc="Pledge for Security(영문)" />
+                  <DownloadButton doc="Pledge for Security(국문)" onDownload={handleDownload} />
+                  <DownloadButton doc="Pledge for Security(영문)" onDownload={handleDownload} />
                 </>
               ),
             },
@@ -224,8 +241,8 @@ export function Foreign02Page() {
               content: (
                 <>
                   <Val>Application for Amendment in Registration</Val>
-                  <DownloadButton doc="Application for Amendment in Registration(국문)" />
-                  <DownloadButton doc="Application for Amendment in Registration(영문)" />
+                  <DownloadButton doc="Application for Amendment in Registration(국문)" onDownload={handleDownload} />
+                  <DownloadButton doc="Application for Amendment in Registration(영문)" onDownload={handleDownload} />
                 </>
               ),
             },
@@ -241,8 +258,8 @@ export function Foreign02Page() {
               content: (
                 <>
                   <Val>Pledge for Security</Val>
-                  <DownloadButton doc="Pledge for Security(국문)" />
-                  <DownloadButton doc="Pledge for Security(영문)" />
+                  <DownloadButton doc="Pledge for Security(국문)" onDownload={handleDownload} />
+                  <DownloadButton doc="Pledge for Security(영문)" onDownload={handleDownload} />
                 </>
               ),
             },
@@ -258,8 +275,8 @@ export function Foreign02Page() {
               content: (
                 <>
                   <Val>Application for Amendment in Registration</Val>
-                  <DownloadButton doc="Application for Amendment in Registration(국문)" />
-                  <DownloadButton doc="Application for Amendment in Registration(영문)" />
+                  <DownloadButton doc="Application for Amendment in Registration(국문)" onDownload={handleDownload} />
+                  <DownloadButton doc="Application for Amendment in Registration(영문)" onDownload={handleDownload} />
                 </>
               ),
             },
@@ -380,6 +397,11 @@ export function Foreign02Page() {
           ]}
         />
       </Section>
+
+      {/* 다운로드 실패 토스트 */}
+      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
+        {toast}
+      </Toast>
     </div>
   )
 }

@@ -9,8 +9,11 @@
 //   ②-1 공고일반의 '공사번호'는 용역인 경우 '조달번호'로 표기(prcmNo 동일 항목).
 //   ⑤ 사전심사결과는 심사 완료면 합격/불합격, 심사중이면 '심사중'(점수·확정일시는 '-')
 //      — v1.83 의 '결과 전 숨김'에서 v1.86 으로 변경됨.
+import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { PageTitle } from '@/ui/common/base/PageTitle'
 import { Icon } from '@/ui/common/base/Icon'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
@@ -18,6 +21,7 @@ import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
+import { Toast } from '@/ui/common/composites/Toast'
 import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 /** 진입 모드 — 'aply'=신청조회(M03) / 'rslt'=결과조회(M02). */
@@ -153,6 +157,19 @@ export function BfhdSrngRsltInqPage({ mode = 'rslt' }: { mode?: BfhdSrngInqMode 
 
   const screenNm = mode === 'aply' ? '사전심사(PQ) 신청조회' : '사전심사(PQ) 결과조회'
 
+  const downloadFile = fbQueries.useDownloadFile()
+  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
+
+  // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
+  // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
+  const handleDownload = async (guid: string, fileNm: string) => {
+    try {
+      saveBlob(await downloadFile.mutateAsync(guid), fileNm)
+    } catch {
+      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }
+
   return (
     <div className="flex w-full flex-col">
       {/* 요약 헤더 — badges(업무구분/계약방식/심사/참가유형) + 공고번호 + 출력 + 공고명 (Figma 9300-38197) */}
@@ -224,7 +241,7 @@ export function BfhdSrngRsltInqPage({ mode = 'rslt' }: { mode?: BfhdSrngInqMode 
                       size: f.fileSz,
                       onDownload:
                         mode === 'rslt'
-                          ? () => console.log('[M02-PQ] 다운로드', f.fileNm)
+                          ? () => handleDownload(f.id, f.fileNm)
                           : undefined,
                     },
                   ]}
@@ -238,6 +255,11 @@ export function BfhdSrngRsltInqPage({ mode = 'rslt' }: { mode?: BfhdSrngInqMode 
           <Table rows={rsltRows} />
         </AccordionSection>
       </Accordion>
+
+      {/* 다운로드 실패 토스트 */}
+      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
+        {toast}
+      </Toast>
     </div>
   )
 }

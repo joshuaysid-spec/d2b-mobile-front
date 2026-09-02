@@ -1,16 +1,22 @@
 // 공지사항 상세 공유 뷰 — 일반/방위사업청/수요부대별(MUI-CM-04-M02·M22·M24)이 dm_noticeInfo 동일.
 // 각 상세 페이지는 자기 목록 목업(mock)과 base(목록 라우트)만 주입한다. 이전글/다음글은 mock에서 계산.
 // URL 에 식별자를 두지 않는다(보안 정책) — 대상 글은 목록이 넘긴 navigate state 로만 받는다.
+import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { Badge } from '@/ui/common/base/Badge'
 import { BoardDetailView } from '@/ui/biz/cm/board/BoardDetailView'
 import type { FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
+import { Toast } from '@/ui/common/composites/Toast'
 import { toNoticeDetail } from '@/ui/biz/cm/noticeList/noticeMock'
 import type { MockNoticeListItem } from '@/types/mock/cm'
 
 export function NoticeDtlView({ mock, base }: { mock: MockNoticeListItem[]; base: string }) {
   const navigate = useNavigate()
+  const downloadFile = fbQueries.useDownloadFile()
+  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
   // 상단 즉시표시: 목록에서 넘어온 항목(state). 직접 URL/새로고침이면 대상을 알 수 없어 목록으로 되돌린다.
   const item = useLocation().state as MockNoticeListItem | null
   if (!item) return <Navigate to={base} replace />
@@ -22,14 +28,25 @@ export function NoticeDtlView({ mock, base }: { mock: MockNoticeListItem[]; base
   const prevItem = idx > 0 ? mock[idx - 1] : null
   const nextItem = idx >= 0 && idx < mock.length - 1 ? mock[idx + 1] : null
 
+  // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
+  // ⚠️ 임시 GUID(fileSn) — 백엔드 응답에 파일 GUID 확정 시 교체.
+  const handleDownload = async (guid: string, fileNm: string) => {
+    try {
+      saveBlob(await downloadFile.mutateAsync(guid), fileNm)
+    } catch {
+      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }
+
   const files: FileDownloadItem[] = detail.files.map((f) => ({
     id: f.fileSn,
     name: f.fileName,
     size: f.fileSize,
-    onDownload: () => console.log('[NoticeDtl] 첨부 다운로드', f.fileSn),
+    onDownload: () => handleDownload(f.fileSn, f.fileName),
   }))
 
   return (
+    <>
     <BoardDetailView
       badges={
         <>
@@ -54,6 +71,12 @@ export function NoticeDtlView({ mock, base }: { mock: MockNoticeListItem[]; base
       prev={prevItem ? { title: prevItem.bbsTtl, onClick: () => goDetail(prevItem) } : null}
       next={nextItem ? { title: nextItem.bbsTtl, onClick: () => goDetail(nextItem) } : null}
     />
+
+    {/* 다운로드 실패 토스트 */}
+    <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
+      {toast}
+    </Toast>
+    </>
   )
 }
 NoticeDtlView.displayName = 'NoticeDtlView'

@@ -5,10 +5,13 @@
 // 기술점수(P04, scwin.grid_onclick)는 업체 행 단위라 행 내 버튼, 첨부파일 다운로드는 첨부서류 행 버튼.
 import { useState } from 'react'
 
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { Button } from '@/ui/common/base/Button'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { Toast } from '@/ui/common/composites/Toast'
 import { PrprcFullPopup } from '@/ui/biz/bd/bidRsltDtl/PrprcFullPopup'
 import { SmprcScsbdRsltFullPopup } from '@/ui/biz/bd/bidRsltDtl/SmprcScsbdRsltFullPopup'
 import { EvlMbcmtTechEvlScrDtlFullPopup } from '@/ui/biz/bd/bidRsltDtl/EvlMbcmtTechEvlScrDtlFullPopup'
@@ -64,6 +67,19 @@ export function BidRsltDtl({ id }: BidRsltDtlProps) {
   // 기술점수(P04) — 행 단위라 어느 업체 행인지 같이 보관(null = 닫힘).
   const [techEvlId, setTechEvlId] = useState<string | null>(null)
 
+  const downloadFile = fbQueries.useDownloadFile()
+  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
+
+  // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
+  // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체(slide245 scwin.btn_atchFileNm_onclick).
+  const handleDownload = async (guid: string, fileNm: string) => {
+    try {
+      saveBlob(await downloadFile.mutateAsync(guid), fileNm)
+    } catch {
+      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }
+
   const total = MOCK_RESULTS.length
   const loaded = Math.min(page * PAGE_SIZE, total)
   const visible = MOCK_RESULTS.slice(0, loaded)
@@ -87,10 +103,9 @@ export function BidRsltDtl({ id }: BidRsltDtlProps) {
       type: 'combination',
     },
     {
-      // TODO(첨부파일): RaonK 연동 후 fbService 다운로드로 교체 (slide245 scwin.btn_atchFileNm_onclick)
       label: '첨부서류',
       value: actionCell('첨부서류', '다운로드', () =>
-        console.log('[BidRsltDtl] 입찰결과 첨부서류 다운로드', it.id),
+        handleDownload(it.id, `첨부서류_${it.seq}.hwp`),
       ),
       type: 'combination',
     },
@@ -143,6 +158,11 @@ export function BidRsltDtl({ id }: BidRsltDtlProps) {
         open={techEvlId !== null}
         onOpenChange={(next) => !next && setTechEvlId(null)}
       />
+
+      {/* 다운로드 실패 토스트 */}
+      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
+        {toast}
+      </Toast>
     </>
   )
 }

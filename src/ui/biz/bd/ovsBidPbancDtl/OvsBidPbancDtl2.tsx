@@ -1,9 +1,15 @@
 // 국외 입찰공고 상세 - '첨부파일' 탭 (MUI-BD-01-T73(구 M73 — v1.83 재편), 설계서 slide292·294).
 // 첨부서류 — 공통 FileDownloadList 그대로(파일명 [크기] + 다운로드 행 스택).
 // 행별 넘버링·서류명 라벨과 타이틀 topDivider 는 두지 않는다(사용자 확정 2026-08-24).
-// 데이터는 목업(추후 bdService.selectAtchDocList). 다운로드 클릭 = 파일다운로드 스텁.
+// 데이터는 목업(추후 bdService.selectAtchDocList).
+// 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제. 키 = fileId.
+import { useState } from 'react'
+
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
+import { Toast } from '@/ui/common/composites/Toast'
 import { formatFileSize } from '@/utils/format'
 import type { MockOvsAtchDoc } from '@/types/mock/bd'
 
@@ -15,6 +21,18 @@ const MOCK_DOC_LIST: MockOvsAtchDoc[] = [
 ]
 
 export function OvsBidPbancDtl2() {
+  const downloadFile = fbQueries.useDownloadFile()
+  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
+
+  // 다운로드 — fileId(GUID) 로 Blob 수신 → 원본 파일명으로 저장. 실패는 토스트 안내.
+  const handleDownload = async (guid: string, fileNm: string) => {
+    try {
+      saveBlob(await downloadFile.mutateAsync(guid), fileNm)
+    } catch {
+      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }
+
   return (
     <>
       {/* 타이틀 + 건수 — Figma m_section title(9973-131169) 우측 건수 슬롯(총 N건). 배경은 흰색(사용자 확정 — info 기본 블루 강조 제거)
@@ -29,11 +47,15 @@ export function OvsBidPbancDtl2() {
             id: `doc-${doc.fileId}`,
             name: doc.fileNm,
             size: formatFileSize(doc.fileSz),
-            // 추후 API: bdService.downloadOvsBidAtchDoc(doc.fileId)
-            onDownload: () => console.log('[M73] 첨부파일 다운로드', doc.fileNm),
+            onDownload: () => handleDownload(doc.fileId, doc.fileNm),
           }))}
         />
       </div>
+
+      {/* 다운로드 실패 토스트 */}
+      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
+        {toast}
+      </Toast>
     </>
   )
 }

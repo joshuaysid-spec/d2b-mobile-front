@@ -3,6 +3,8 @@
 // 제출서류=O → '제출서류 보기' → 첨부파일 바텀시트(이 탭이 컨테이너 소유).
 import { memo, useMemo, useState } from 'react'
 
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { InputLabel } from '@/ui/common/base/InputLabel'
@@ -10,6 +12,7 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { Toast } from '@/ui/common/composites/Toast'
 import { cn } from '@/utils/cn'
 import type { MockOvsRlsVltrnsSrngRsltItem } from '@/types/mock/bd'
 
@@ -39,10 +42,10 @@ const MOCK_ITEMS: MockOvsRlsVltrnsSrngRsltItem[] = Array.from({ length: TOTAL },
 
 // 제출서류 첨부파일 목업(다운로드) — 설계서에 제출서류 팝업 상세 없음 → 견적서 제출서류 4종 기준 목업.
 const SUBMITTED_DOCS: FileDownloadItem[] = [
-  { id: 'd1', name: '견적제안서 · 첨부파일명.hwp', size: '786KB', onDownload: () => console.log('[M83] 제출서류 다운로드 d1') },
-  { id: 'd2', name: '공급자증명서 · 첨부파일명.hwp', size: '1.2MB', onDownload: () => console.log('[M83] 제출서류 다운로드 d2') },
-  { id: 'd3', name: '제작사증명서 · 첨부파일명.hwp', size: '540KB', onDownload: () => console.log('[M83] 제출서류 다운로드 d3') },
-  { id: 'd4', name: '기타 공고요구서류 · 첨부파일명.hwp', size: '320KB', onDownload: () => console.log('[M83] 제출서류 다운로드 d4') },
+  { id: 'd1', name: '견적제안서 · 첨부파일명.hwp', size: '786KB' },
+  { id: 'd2', name: '공급자증명서 · 첨부파일명.hwp', size: '1.2MB' },
+  { id: 'd3', name: '제작사증명서 · 첨부파일명.hwp', size: '540KB' },
+  { id: 'd4', name: '기타 공고요구서류 · 첨부파일명.hwp', size: '320KB' },
 ]
 
 // 접힘 시 노출 행수 — 순번/신청업체코드/신청업체명/입찰업체코드 4행(slide443).
@@ -116,6 +119,19 @@ export function OvsRlsVltrnsNgtnSrngRsltInq2() {
   const [page, setPage] = useState(1)
   const [docsOpen, setDocsOpen] = useState(false) // 제출서류 첨부파일 바텀시트
 
+  const downloadFile = fbQueries.useDownloadFile()
+  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
+
+  // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
+  // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
+  const handleDownload = async (guid: string, fileNm: string) => {
+    try {
+      saveBlob(await downloadFile.mutateAsync(guid), fileNm)
+    } catch {
+      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }
+
   const loaded = Math.min(page * pageSize, TOTAL)
   const visible = MOCK_ITEMS.slice(0, loaded)
 
@@ -160,8 +176,15 @@ export function OvsRlsVltrnsNgtnSrngRsltInq2() {
 
       {/* 제출서류 첨부파일 — 다운로드 전용 바텀시트(이 탭이 컨테이너 소유) */}
       <BottomSheet open={docsOpen} onOpenChange={setDocsOpen} title="제출서류">
-        <FileDownloadList files={SUBMITTED_DOCS} />
+        <FileDownloadList
+          files={SUBMITTED_DOCS.map((f) => ({ ...f, onDownload: () => handleDownload(String(f.id), f.name) }))}
+        />
       </BottomSheet>
+
+      {/* 다운로드 실패 토스트 */}
+      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
+        {toast}
+      </Toast>
     </div>
   )
 }

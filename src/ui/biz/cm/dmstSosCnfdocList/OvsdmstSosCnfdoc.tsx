@@ -2,11 +2,14 @@
 //   웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 업체정보 조회/추가정보 진입 안내. (진입점 M01 미구현 → 라우트만 등록)
 //   구성(Figma 1:1): 처리절차(문서 아이콘 + 안내) · 양식 다운로드(첨부파일명 + FileDownloadList) · 신청서 확인사항(번호목록 + 링크).
 //   바텀시트 임베드 시 padded=false(시트 본문 px-16 소유 — 이중 패딩 방지). 헤더(m_popup_header '국외조달원등록증신청안내')는 AppLayout sub 헤더가 담당(router handle).
-import { type ComponentProps } from 'react'
+import { type ComponentProps, useState } from 'react'
 
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { Icon } from '@/ui/common/base/Icon'
 import { cn } from '@/utils/cn'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
+import { Toast } from '@/ui/common/composites/Toast'
 
 // 섹션 헤더 — 아이콘(24) + 19px Bold 제목 (Figma list row).
 function SectionHead({ icon, title }: { icon: ComponentProps<typeof Icon>['name']; title: string }) {
@@ -36,10 +39,17 @@ function ExtLink({ href }: { href: string }) {
 }
 
 export function OvsdmstSosCnfdoc({ padded = true }: { padded?: boolean } = {}) {
-  // 양식 다운로드 파일 — 스텁(추후 cmService.downloadOvsSosForm). Figma: 첨부파일명.hwp [786KB].
-  const handleDownload = () => {
-    console.log('[OvsdmstSosCnfdoc] 양식 다운로드', '첨부파일명.hwp')
-    // 추후 API: cmService.downloadOvsSosForm()
+  const downloadFile = fbQueries.useDownloadFile()
+  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
+
+  // 양식 다운로드 — 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정), CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
+  // ⚠️ 임시 GUID(파일 슬롯 id 'form') — 양식 파일 GUID 확정 시 교체(추후 cmService.downloadOvsSosForm).
+  const handleDownload = async () => {
+    try {
+      saveBlob(await downloadFile.mutateAsync('form'), '첨부파일명.hwp')
+    } catch {
+      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
   }
 
   return (
@@ -102,6 +112,11 @@ export function OvsdmstSosCnfdoc({ padded = true }: { padded?: boolean } = {}) {
           </div>
         </div>
       </section>
+
+      {/* 다운로드 실패 토스트 */}
+      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
+        {toast}
+      </Toast>
     </div>
   )
 }

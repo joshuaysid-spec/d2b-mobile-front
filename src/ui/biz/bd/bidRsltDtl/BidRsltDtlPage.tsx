@@ -8,6 +8,8 @@ import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { bdQueries } from '@/queries/bds/bd/bdQueries'
+import { fbQueries } from '@/queries/tss/fb/fbQueries'
+import { saveBlob } from '@/utils/download'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import type { MockBdopnItem } from '@/types/mock/bd'
@@ -119,8 +121,8 @@ const CONTACT_ROWS: TableRow[] = [
 
 // 첨부서류 (설계서 slide151~152 — 총 N건, 개별 다운로드)
 const ATTACH_FILES: FileDownloadItem[] = [
-  { id: 'att-1', name: '첨부서류명.hwp', size: '786KB', onDownload: () => console.log('[BidRsltDtl] 다운로드: 첨부서류1') },
-  { id: 'att-2', name: '첨부서류명.hwp', size: '1.2MB', onDownload: () => console.log('[BidRsltDtl] 다운로드: 첨부서류2') },
+  { id: 'att-1', name: '첨부서류명.hwp', size: '786KB' },
+  { id: 'att-2', name: '첨부서류명.hwp', size: '1.2MB' },
 ]
 
 // 일반정보 탭(M01) — 설계서 순서: 일반정보 → 첨부서류 → 담당자 정보 (slide152 일반정보·첨부서류, slide153 담당자).
@@ -131,6 +133,19 @@ function GeneralInfo({ item }: { item: MockBdopnItem }) {
   // 이미 심사포기한 건은 같은 팝업이 조회 모드로 열린다(MUI-BD-10-P03 이행/적격심사포기신청조회, slide273~274).
   const srngAbnd = item.impltElgbSrngStatNm === '심사포기'
 
+  const downloadFile = fbQueries.useDownloadFile()
+  const [dlToast, setDlToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
+
+  // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
+  // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
+  const handleDownload = async (guid: string, fileNm: string) => {
+    try {
+      saveBlob(await downloadFile.mutateAsync(guid), fileNm)
+    } catch {
+      setDlToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  }
+
   return (
     <>
       <Accordion type="multiple" defaultValue={['general', 'attach', 'contact']} className="w-full">
@@ -138,7 +153,9 @@ function GeneralInfo({ item }: { item: MockBdopnItem }) {
           <Table rows={GENERAL_ROWS} />
         </AccordionSection>
         <AccordionSection value="attach" title={`첨부서류 (총 ${ATTACH_FILES.length}건)`}>
-          <FileDownloadList files={ATTACH_FILES} />
+          <FileDownloadList
+            files={ATTACH_FILES.map((f) => ({ ...f, onDownload: () => handleDownload(String(f.id), f.name) }))}
+          />
         </AccordionSection>
         <AccordionSection value="contact" title="담당자 정보">
           <Table rows={CONTACT_ROWS} />
@@ -188,6 +205,11 @@ function GeneralInfo({ item }: { item: MockBdopnItem }) {
         detail={item}
         readOnly={srngAbnd}
       />
+
+      {/* 다운로드 실패 토스트 */}
+      <Toast open={dlToast !== null} onClose={() => setDlToast(null)} duration={2000}>
+        {dlToast}
+      </Toast>
     </>
   )
 }
