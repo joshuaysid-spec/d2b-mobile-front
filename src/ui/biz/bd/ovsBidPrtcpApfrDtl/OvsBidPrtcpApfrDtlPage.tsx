@@ -303,7 +303,7 @@ export function OvsBidPrtcpApfrDtlPage() {
         >
           <div className="overflow-hidden">
             <div className="bg-krds-bg-primary-faint px-4 py-4">
-              <StepBar orientation="horizontal" items={STEPS} className="bg-transparent" />
+              <StepBar orientation="horizontal" items={STEPS} className="bg-transparent" expandable={false} />
             </div>
           </div>
         </div>

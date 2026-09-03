@@ -52,6 +52,11 @@ export interface StepBarProps extends React.HTMLAttributes<HTMLDivElement> {
   sheetItems?: StepItem[]
   /** 펼침 바텀시트 제목. 기본 '진행현황'. */
   sheetTitle?: string
+  /**
+   * horizontal 우측 펼침(▾)·진행현황 바텀시트 노출 여부. 기본 true.
+   * 신청 마법사 스텝(서약서→신청서→서명→제출)은 false — 바텀시트 제거(사용자 확정 2026-09-03).
+   */
+  expandable?: boolean
 }
 
 // ─── 1depth chip (pill) ──────────────────────────────────────────────────────
@@ -172,6 +177,7 @@ function StepBarHorizontal({
   items,
   sheetItems,
   sheetTitle = '진행현황',
+  expandable = true,
   ...props
 }: Omit<StepBarProps, 'orientation'>) {
   const [sheetOpen, setSheetOpen] = React.useState(false)
@@ -208,8 +214,11 @@ function StepBarHorizontal({
         aria-label="진행 단계"
         // 가로 스크롤 영역 키보드 접근(KWCAG/axe scrollable-region-focusable) — 초점 진입 + 방향키 스크롤.
         tabIndex={0}
-        // 칩 사이 간격은 연결선(8px line)이 담당 → 가로 gap 0. 우측 펼침 버튼 자리만큼 pr 확보.
-        className="flex w-full items-center overflow-x-auto overflow-y-hidden scrollbar-none pr-16 [&::-webkit-scrollbar]:hidden focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+        // 칩 사이 간격은 연결선(8px line)이 담당 → 가로 gap 0. 우측 펼침 버튼 자리만큼 pr 확보(펼침 없으면 불필요).
+        className={cn(
+          'flex w-full items-center overflow-x-auto overflow-y-hidden scrollbar-none [&::-webkit-scrollbar]:hidden focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring',
+          expandable && 'pr-16',
+        )}
         style={{ scrollbarWidth: 'none' }}
       >
         {items.map((item, i) => (
@@ -223,7 +232,8 @@ function StepBarHorizontal({
         ))}
       </div>
 
-      {/* 우측 끝 펼침(▾) 버튼 — 터치 시 진행현황 바텀시트. 좌/우 스크롤 화살표 대체. */}
+      {/* 우측 끝 펼침(▾) 버튼 — 터치 시 진행현황 바텀시트. 좌/우 스크롤 화살표 대체. expandable=false 면 미노출. */}
+      {expandable && (
       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center">
         {/* 칩 위로 투명→#ECF1FA fade — 버튼 안쪽 칩이 서서히 사라지게 */}
         <div
@@ -242,12 +252,15 @@ function StepBarHorizontal({
           </button>
         </span>
       </div>
+      )}
 
       {/* 진행현황 바텀시트 — 세로 StepBar 전체.
           하단 버튼 없음(v0.87 검토 6번 기획 확정: 바로가기/닫기 제거, 단계 클릭으로 바로 이동·X로 닫기). */}
-      <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen} title={sheetTitle}>
-        <StepBar orientation="vertical" items={fullItems} />
-      </BottomSheet>
+      {expandable && (
+        <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen} title={sheetTitle}>
+          <StepBar orientation="vertical" items={fullItems} />
+        </BottomSheet>
+      )}
     </div>
   )
 }
@@ -259,6 +272,7 @@ function StepBar({
   orientation = 'vertical',
   sheetItems,
   sheetTitle,
+  expandable,
   ...props
 }: StepBarProps) {
   if (orientation === 'horizontal') {
@@ -268,6 +282,7 @@ function StepBar({
         items={items}
         sheetItems={sheetItems}
         sheetTitle={sheetTitle}
+        expandable={expandable}
         {...props}
       />
     )

@@ -142,7 +142,7 @@ export function WrotAgrePage() {
 
       {/* 진행단계 표시기 — Figma: 배경 #ECF1FA(krds-bg-primary-faint) + px16/py16 */}
       <div className="bg-krds-bg-primary-faint px-4 py-4">
-        <StepBar orientation="horizontal" items={STEPS} className="bg-transparent" />
+        <StepBar orientation="horizontal" items={STEPS} className="bg-transparent" expandable={false} />
       </div>
 
       {/* 서약서 동의 섹션 헤더 — Figma m_section title(9300-40694, borderTop, 19px Bold, 카운트 없음) */}

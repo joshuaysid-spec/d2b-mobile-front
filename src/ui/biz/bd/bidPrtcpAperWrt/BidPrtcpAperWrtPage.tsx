@@ -230,7 +230,7 @@ export function BidPrtcpAperWrtPage() {
 
       {/* 진행단계 표시기 — Figma: 배경 #ECF1FA(krds-bg-primary-faint) + px16/py16 */}
       <div className="bg-krds-bg-primary-faint px-4 py-4">
-        <StepBar orientation="horizontal" items={STEPS} className="bg-transparent" />
+        <StepBar orientation="horizontal" items={STEPS} className="bg-transparent" expandable={false} />
       </div>
 
       {/* 업무도움 — 접힘 기본 */}

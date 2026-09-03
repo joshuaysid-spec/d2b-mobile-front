@@ -217,7 +217,7 @@ export function OvsBidPrtcpAplyPage() {
 
       {/* 진행단계 표시기 — 서약서/신청서/서명/제출 */}
       <div className="bg-krds-bg-primary-faint px-4 py-4">
-        <StepBar orientation="horizontal" items={steps} className="bg-transparent" />
+        <StepBar orientation="horizontal" items={steps} className="bg-transparent" expandable={false} />
       </div>
 
       {phase === 'wrot' ? (
