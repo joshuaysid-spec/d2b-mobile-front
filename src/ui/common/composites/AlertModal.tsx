@@ -18,7 +18,7 @@
 //   icon?                       — ReactNode · 주입 시 variant 매핑 무시하고 그대로 렌더
 //   title?                      — 17 Bold 메인 메시지 (text-center)
 //   description?                — 17 Regular 보조 메시지 (text-center)
-//   primaryAction               — { label, onClick? } · 필수. 풀폭(1버튼) 또는 우측(2버튼) primary
+//   primaryAction?              — { label, onClick? } · 풀폭(1버튼) 또는 우측(2버튼) primary. 미주입 시 버튼 없음
 //   secondaryAction?            — { label, onClick? } · 주입 시 좌측 secondary 추가 → 2버튼 split
 //   dismissable?                — 기본 false. true 면 Esc / 외부 클릭으로 닫힘 허용
 //   className?                  — 모달 카드(DialogContent) 추가 className
@@ -86,8 +86,8 @@ export interface AlertModalProps {
   title?: React.ReactNode
   /** 17 Regular 보조 메시지. */
   description?: React.ReactNode
-  /** 필수 primary 액션. 1버튼 모드 시 풀폭. */
-  primaryAction: AlertModalAction
+  /** primary 액션. 1버튼 모드 시 풀폭. 미주입 시 버튼 영역 미표시(titleClose X 닫기 전용 안내). */
+  primaryAction?: AlertModalAction
   /** 주입 시 좌측 secondary 추가 → 2버튼 split 모드. */
   secondaryAction?: AlertModalAction
   /** 기본 false — alert 는 명시적 액션 필요. true 면 Esc / 외부 클릭으로 닫힘. */
@@ -139,7 +139,7 @@ const AlertModal = ({
   }, [onOpenChange])
 
   const handlePrimary = React.useCallback(() => {
-    primaryAction.onClick?.()
+    primaryAction?.onClick?.()
     close()
   }, [primaryAction, close])
 
@@ -157,30 +157,18 @@ const AlertModal = ({
     return <Icon name={mapping.name} size={36} color={mapping.color} aria-hidden />
   }
 
-  // ButtonGroup items 구성 — secondaryAction 주입 시 [secondary, primary] split, 아니면 단일 primary
+  // ButtonGroup items 구성 — secondaryAction 주입 시 [secondary, primary] split, 아니면 단일 primary.
+  // primaryAction 미주입(titleClose 의 X 닫기만으로 끝나는 안내 등)이면 버튼 영역 자체를 렌더하지 않는다.
   const buttonItems: ButtonGroupItem[] = React.useMemo(
-    () =>
-      secondaryAction
-        ? [
-            {
-              label: secondaryAction.label,
-              variant: 'secondary',
-              onClick: handleSecondary,
-            },
-            {
-              label: primaryAction.label,
-              variant: 'primary',
-              onClick: handlePrimary,
-            },
-          ]
-        : [
-            {
-              label: primaryAction.label,
-              variant: 'primary',
-              onClick: handlePrimary,
-            },
-          ],
-    [secondaryAction, primaryAction.label, handleSecondary, handlePrimary],
+    () => [
+      ...(secondaryAction
+        ? [{ label: secondaryAction.label, variant: 'secondary' as const, onClick: handleSecondary }]
+        : []),
+      ...(primaryAction
+        ? [{ label: primaryAction.label, variant: 'primary' as const, onClick: handlePrimary }]
+        : []),
+    ],
+    [secondaryAction, primaryAction, handleSecondary, handlePrimary],
   )
 
   const buttonLayout = secondaryAction ? 'split' : 'single'
@@ -280,8 +268,8 @@ const AlertModal = ({
             )}
           </div>
 
-          {/* button group — 1버튼 single / 2버튼 split */}
-          <ButtonGroup items={buttonItems} layout={buttonLayout} />
+          {/* button group — 1버튼 single / 2버튼 split. 액션 미주입 시 미표시. */}
+          {buttonItems.length > 0 && <ButtonGroup items={buttonItems} layout={buttonLayout} />}
         </DialogPrimitive.Content>
       </DialogPortal>
     </Dialog>
