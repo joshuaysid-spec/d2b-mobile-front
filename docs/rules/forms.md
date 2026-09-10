@@ -42,3 +42,17 @@
 - **표시 포맷**(전화 하이픈·금액 콤마)은 `format?: (filtered) => string` prop 으로. 예: `<InputBox inputType="tel" format={formatPhoneInput} ... />`.
 - Controller 와 그대로 호환: `value={field.value} onChange={field.onChange}` 만 넘기면 InputBox 가 가공해 반영한다(콘텐츠가 `formatPhoneInput` 직접 호출하지 않음).
 - **적용 예시**: `PrcmPlan_NotiAply` 휴대번호(`inputType="tel" format={formatPhoneInput}`).
+
+## 최대 글자수(`maxLength`) — 기본값 내장 (2026-09-10)
+
+`InputBox`·`TextArea` 는 **`maxLength` 를 안 넘겨도 기본값이 적용**된다. 설계서 항목설명의 자릿수가 다르면 prop 으로 명시한다.
+
+| 컴포넌트 | 기본값(상수) | 근거 |
+|---|---|---|
+| `InputBox` | `INPUT_BOX_MAX_LENGTH` = 100 | 제목·이름류 단일행 컬럼 |
+| `TextArea` | `TEXT_AREA_MAX_LENGTH` = 4000 | 사유·내용류 컬럼 |
+
+- 기본값보다 **짧아야 하는 항목은 반드시 명시**(사업자번호 10·인증번호 6 등). 길이 무제한은 없음 — 더 길면 큰 값을 명시.
+- `maxLength` 는 **타이핑만 막는다**(붙여넣기·프로그램 세팅은 통과) → RHF+zod 폼은 스키마 `.max(N, { error })` 에 같은 값을 둔다(2레인 규칙의 검증 레인이 최종 방어).
+- 글자수 카운터는 내장 안 함 — 필요한 화면만 상수를 import 해 `{v.length} / {MAX}` 한 줄 표시(레퍼런스 `PrcmPlanDtl_OpnnRegFullPopup`).
+- 단위는 UTF-16(한글 1자). 백엔드 컬럼이 byte 기준이면 자릿수 확정 시 사용자와 확인.

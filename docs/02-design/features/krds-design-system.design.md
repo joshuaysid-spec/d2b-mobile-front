@@ -244,7 +244,8 @@ pretendard-gov 패키지 설치
 | Component | Location | Responsibility | cva 변형 |
 |-----------|----------|----------------|----------|
 | `Button` | `src/ui/common/base/Button.tsx` | 액션 버튼 (Figma m_button 1:1) | `variant`: primary / secondary / inner · `size`: default / sm / lg / icon · primary 텍스트는 `text-white` 명시(shadcn `--primary-foreground` 체인 회피 — 5/22, 5/28 동일 회귀 2회) |
-| `InputBox` | `src/ui/common/base/InputBox.tsx` | 텍스트 입력창 (Figma m_text input_box) | `error` · `onClear`(clearable) · 상태: default/focus/filled/error/disabled |
+| `InputBox` | `src/ui/common/base/InputBox.tsx` | 텍스트 입력창 (Figma m_text input_box) | `error` · `onClear`(clearable) · `maxLength` 기본 100(`INPUT_BOX_MAX_LENGTH`) · 상태: default/focus/filled/error/disabled |
+| `TextArea` | `src/ui/common/base/TextArea.tsx` | 여러 줄 입력 (Figma m_text area_box) | `error` · `maxLength` 기본 4000(`TEXT_AREA_MAX_LENGTH`) · resize-none · 상태: default/focus/error/disabled |
 | `Checkbox` | `src/ui/common/base/Checkbox.tsx` | 선택 칩 (Figma m_checkbox) | `label` · 상태: checked / disabled |
 | `Label` | `src/ui/common/base/Label.tsx` | 폼 라벨 | `required` 표시 변형 |
 | `Badge` | `src/ui/common/base/Badge.tsx` | 상태 표시 | `variant`: info / success / warning / danger / neutral |

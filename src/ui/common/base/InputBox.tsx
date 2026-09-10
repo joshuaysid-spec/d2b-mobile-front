@@ -31,11 +31,19 @@ const INPUT_MODE: Record<InputBoxType, React.HTMLAttributes<HTMLInputElement>['i
   english: undefined,
 }
 
+/** InputBox 기본 최대 글자수 — 제목/이름류 단일행 컬럼(100) 기준. 카운터 표시 등 사용처가 같은 값을 쓸 때 import. */
+export const INPUT_BOX_MAX_LENGTH = 100
+
 export interface InputBoxProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'className'> {
   error?: boolean
   onClear?: () => void
   className?: string
+  /**
+   * 최대 글자수(UTF-16 단위). 기본 INPUT_BOX_MAX_LENGTH(100) — 설계서 자릿수가 다르면 명시(예: 사업자번호 10).
+   * 타이핑만 막으므로 붙여넣기·프로그램 세팅은 zod `.max()` 가 최종 방어(docs/rules/forms.md).
+   */
+  maxLength?: number
   /** 입력 종류(허용 문자·키패드·IME 가드). 기본 'text'(가공 없음). */
   inputType?: InputBoxType
   /** 필터 후 적용할 표시 포맷(예: 전화 하이픈 `formatPhoneInput`, 금액 콤마). controlled value 에 반영된다. */
@@ -52,6 +60,7 @@ const InputBox = React.forwardRef<HTMLInputElement, InputBoxProps>(
       inputType = 'text',
       format,
       inputMode,
+      maxLength = INPUT_BOX_MAX_LENGTH,
       onChange,
       onCompositionStart,
       onCompositionEnd,
@@ -120,6 +129,7 @@ const InputBox = React.forwardRef<HTMLInputElement, InputBoxProps>(
           ref={ref}
           disabled={disabled}
           inputMode={inputMode ?? INPUT_MODE[inputType]}
+          maxLength={maxLength}
           onChange={handleChange}
           onCompositionStart={handleCompositionStart}
           onCompositionEnd={handleCompositionEnd}
