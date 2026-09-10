@@ -142,6 +142,8 @@ export const ROUTES = {
   SUPPORT_SYS_IMPV_DETAIL: '/support/sysImpvRpstrDtl',
   /** 자주묻는질문 (MUI-CM-04-M03). */
   SUPPORT_FAQ: '/support/faq',
+  /** 자주묻는질문 상세 — 목록 클릭 진입(공지사항 상세와 동일 프로세스). 식별자는 navigate state(MockFaqListItem). */
+  SUPPORT_FAQ_DETAIL: '/support/faqDtl',
   /** 민원서류발급신청 (MUI-CM-04-M04). 고객센터 > 민원서류발급신청 허브. */
   SUPPORT_DCMNT_ISSU_APLY: '/support/dcmnt-issu-aply',
   /** 신청절차 및 안내 (MUI-CM-04-M05). 민원서류발급신청 허브 > 신청 절차 및 안내. */

@@ -694,6 +694,9 @@ const SysImpvRpstrListPage = lazy(() =>
 const FaqListPage = lazy(() =>
   import('@/ui/biz/cm/faqList/FaqListPage').then((m) => ({ default: m.FaqListPage })),
 )
+const FaqDtlPage = lazy(() =>
+  import('@/ui/biz/cm/faqDtl/FaqDtlPage').then((m) => ({ default: m.FaqDtlPage })),
+)
 // 민원서류발급신청(MUI-CM-04-M04, /support/dcmnt-issu-aply) — biz/cm/dcmntIssuAply. 고객센터 허브.
 const DcmntIssuAplyPage = lazy(() =>
   import('@/ui/biz/cm/dcmntIssuAply/DcmntIssuAplyPage').then((m) => ({
@@ -1721,6 +1724,16 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: LINKED_MENU_LABELS[ROUTES.SUPPORT_FAQ] },
+          scrollReset: true,
+        },
+      },
+      {
+        // 자주묻는질문 상세 — 목록 질문 클릭 진입(공지사항 상세와 동일 프로세스). 식별자는 navigate state.
+        path: 'support/faqDtl',
+        element: <FaqDtlPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '자주 묻는 질문 상세' },
           scrollReset: true,
         },
       },

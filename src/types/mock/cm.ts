@@ -22,7 +22,7 @@ export interface MockCertItem {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 자주묻는질문 FAQ (MUI-CM-04-M03). 설계서 00.공통 v0.83 slide233 항목명(영문) 준수.
-// 상세 화면이 별도로 없고 목록에서 아코디언으로 답변을 펼친다(질문=qstnTtl, 답변=contsCn).
+// 설계서엔 상세 화면이 없으나(아코디언) 공지사항과 동일하게 목록 클릭 → 상세(FaqDtlPage) 이동으로 변경(2026-09-10).
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** 자주묻는질문 목록 데이터영역(dl_resultList) 1건. */
@@ -39,7 +39,7 @@ export interface MockFaqListItem {
   regDt: string
   /** 조회(inqNocs) — 조회횟수. */
   inqNocs: number
-  /** 내용=답변(contsCn). 아코디언 펼침 시 표시. */
+  /** 내용=답변(contsCn) — 에디터 HTML. 상세(FaqDtlPage)에서 sanitize 후 표시. */
   contsCn: string
 }
 
@@ -130,7 +130,7 @@ export interface MockNoticeDetail {
   pstgBgngYmd: string
   /** 게시종료일자(pstgEndYmd) — 'YYYY-MM-DD'. */
   pstgEndYmd: string
-  /** 내용(bbsCn). */
+  /** 내용(bbsCn) — 에디터 HTML(텍스트+이미지). 상세에서 sanitize 후 삽입. */
   bbsCn: string
   /** 첨부파일(fileSn) 목록. */
   files: MockNoticeAttachment[]
@@ -156,7 +156,7 @@ export interface MockRpstrDetail {
   deptNm: string
   /** 구분(bizFldCd) — 자료실구분 코드(BIZCD). */
   bizFldCd: string
-  /** 내용(contsCn). */
+  /** 내용(contsCn) — 에디터 HTML(텍스트+이미지). 상세에서 sanitize 후 삽입. */
   contsCn: string
   /** 첨부파일(fileSn) 목록. */
   files: MockNoticeAttachment[]
@@ -181,7 +181,7 @@ export interface MockSysImpvDetail {
   pstgBgngYmd: string
   /** 게시종료일(pstgEndYmd). */
   pstgEndYmd: string
-  /** 내용(bbsCn). */
+  /** 내용(bbsCn) — 에디터 HTML(텍스트+이미지). 상세에서 sanitize 후 삽입. */
   bbsCn: string
   /** 첨부파일(fileSn) 목록. */
   files: MockNoticeAttachment[]

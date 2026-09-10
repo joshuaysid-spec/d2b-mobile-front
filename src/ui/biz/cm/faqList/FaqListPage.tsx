@@ -1,9 +1,12 @@
 // 자주묻는질문(FAQ) — MUI-CM-04-M03. Figma 10020-87508 / 설계서 00.공통 v0.83 slide232·233.
 // 구성: 검색영역(검색범위 select + 검색어 + 검색) → 구분 탭 → 목록헤더(총건수·표시개수)
-//   → 아코디언(FaqList, 질문 클릭 시 답변 펼침·다중 열림) → 더보기 → 맨위로 FAB.
-// 별도 상세 화면·검색필터 풀팝업 없음(검색조건 dm_searchInfo = 제목/내용/구분이 모두 인라인·탭으로 표현).
+//   → 목록(FaqList, 질문 클릭 시 상세 FaqDtlPage 로 이동 — 공지사항과 동일 프로세스, 2026-09-10) → 더보기 → 맨위로 FAB.
+// 검색필터 풀팝업 없음(검색조건 dm_searchInfo = 제목/내용/구분이 모두 인라인·탭으로 표현).
+// 클릭 항목은 navigate state 로 전달(URL 에 식별자 미노출).
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import { ROUTES } from '@/constants/routes'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { InputBox } from '@/ui/common/base/InputBox'
@@ -40,6 +43,7 @@ const CATEGORY_TABS: TabItem[] = [
 ]
 
 export function FaqListPage() {
+  const navigate = useNavigate()
   const [scope, setScope] = useState('qstnTtl') // 검색범위(제목/내용 — 기본 제목)
   const [keyword, setKeyword] = useState('') // 검색어(입력 중)
   const [applied, setApplied] = useState<{ keyword: string; scope: string }>({
@@ -49,7 +53,6 @@ export function FaqListPage() {
   const [category, setCategory] = useState('all') // 구분 탭
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
-  const [openIds, setOpenIds] = useState<Set<string>>(new Set()) // 펼친 질문(다중)
 
   // ── API 경계 스텁 ──
   const handleSearch = () => {
@@ -68,13 +71,6 @@ export function FaqListPage() {
     setPage(1)
   }
   const handleLoadMore = () => setPage((p) => p + 1)
-  const toggle = (id: string) =>
-    setOpenIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
 
   // ── ⚠️ 임시 목업 필터/페이징 (API 연동 시 교체) ⚠️ ──
   const filtered = useMemo(() => {
@@ -100,7 +96,7 @@ export function FaqListPage() {
     no: it.no,
     category: it.bizFldCd,
     question: it.qstnTtl,
-    answer: it.contsCn,
+    onClick: () => navigate(ROUTES.SUPPORT_FAQ_DETAIL, { state: it }),
   }))
 
   return (
@@ -141,8 +137,8 @@ export function FaqListPage() {
         <ListSectionHeader total={total} pageSize={pageSize} onPageSizeChange={handlePageSize} />
       </div>
 
-      {/* 아코디언 목록 */}
-      <FaqList items={faqItems} openIds={openIds} onToggle={toggle} />
+      {/* 질문 목록 — 클릭 시 상세 이동 */}
+      <FaqList items={faqItems} />
 
       {/* 더보기 */}
       {loaded < total && (

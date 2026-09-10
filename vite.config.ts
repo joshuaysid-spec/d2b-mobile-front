@@ -77,6 +77,8 @@ export default defineConfig({
           'vendor-data': ['@tanstack/react-query', 'axios', 'dayjs', 'zustand'],
           // 폼·검증 — 입력 폼이 있는 여러 화면 공통 (react-hook-form + zod)
           'vendor-form': ['react-hook-form', 'zod', '@hookform/resolvers'],
+          // 에디터 HTML 정화 — 게시판 상세 8화면 공통 (utils/sanitizeHtml)
+          'vendor-html': ['dompurify'],
         },
       },
     },

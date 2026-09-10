@@ -2,6 +2,7 @@
 // 상세의 이전글/다음글은 이 목록에서 현재 글의 앞/뒤 항목으로 계산한다. 추후 API(cmService) 로 교체.
 import { inflateNotice } from './noticeBoard'
 import type { MockNoticeListItem, MockNoticeDetail } from '@/types/mock/cm'
+import sampleImage from '@/assets/images/mainBanner1.svg' // 본문 이미지 더미(에디터 업로드 이미지 대체)
 
 // 목업 seed(dl_resultList) — 설계서 항목명·형식 그대로.
 export const NOTICE_SEEDS: MockNoticeListItem[] = [
@@ -202,6 +203,7 @@ export const DMDFRC_NOTICE_MOCK: MockNoticeListItem[] = inflateNotice(DMDFRC_NOT
 
 // 목록 아이템(요약) → 상세(dm_noticeInfo). 목록에 없는 상세 필드(게시기간·내용·첨부)는 목업 본문으로 보완.
 // 추후 API: tssCmService.selectNoticeDtl(contsNo). 목록에서 넘어온 값(state)으로 상단은 즉시 표시.
+// 내용(bbsCn)은 에디터 HTML(텍스트+이미지) — 상세에서 sanitizeHtml 후 삽입.
 export function toNoticeDetail(item: MockNoticeListItem): MockNoticeDetail {
   return {
     contsNo: item.contsNo,
@@ -214,11 +216,12 @@ export function toNoticeDetail(item: MockNoticeListItem): MockNoticeDetail {
     pstgBgngYmd: '2026-05-01',
     pstgEndYmd: '2026-05-31',
     bbsCn:
-      '안녕하세요. 국방전자조달시스템 담당자입니다.\n\n' +
-      `"${item.bbsTtl}"\n\n` +
-      '관련하여 안내드립니다. 자세한 내용은 첨부파일을 참고하여 주시기 바랍니다.\n' +
-      '문의사항은 고객센터(1577-1118)로 연락 주시기 바랍니다.\n\n' +
-      '감사합니다.',
+      '<p>안녕하세요. 국방전자조달시스템 담당자입니다.</p>' +
+      `<p><strong>"${item.bbsTtl}"</strong></p>` +
+      '<p>관련하여 안내드립니다. 자세한 내용은 아래 이미지와 첨부파일을 참고하여 주시기 바랍니다.</p>' +
+      `<p><img src="${sampleImage}" alt="안내 이미지" /></p>` +
+      '<p>문의사항은 고객센터(<a href="tel:1577-1118">1577-1118</a>)로 연락 주시기 바랍니다.</p>' +
+      '<p>감사합니다.</p>',
     files: Array.from({ length: item.fileCnt }, (_, i) => ({
       fileSn: String(i + 1),
       fileName: `첨부파일_${i + 1}.hwp`,

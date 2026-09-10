@@ -7,6 +7,7 @@ import type {
   MockSysImpvListItem,
   MockSysImpvDetail,
 } from '@/types/mock/cm'
+import sampleImage from '@/assets/images/mainBanner2.svg' // 본문 이미지 더미(에디터 업로드 이미지 대체)
 
 // ── 일반자료실 (MUI-CM-04-M29/M26) ──────────────────────────────────────────
 export const RPSTR_SEEDS: MockRpstrListItem[] = [
@@ -43,10 +44,11 @@ export function toRpstrDetail(item: MockRpstrListItem, deptNm = '자료실운영
     wrtrNm: item.rgtrId,
     deptNm,
     bizFldCd: item.bizFldCd,
+    // 내용(contsCn) — 에디터 HTML(텍스트+이미지). 상세에서 sanitizeHtml 후 삽입.
     contsCn:
-      `"${item.rpstrTtl}" 관련 자료입니다.\n\n` +
-      '첨부파일을 내려받아 활용하시기 바랍니다.\n' +
-      '문의사항은 고객센터(1577-1118)로 연락 주시기 바랍니다.',
+      `<p><strong>"${item.rpstrTtl}"</strong> 관련 자료입니다.</p>` +
+      `<p><img src="${sampleImage}" alt="자료 미리보기" /></p>` +
+      '<p>첨부파일을 내려받아 활용하시기 바랍니다.<br />문의사항은 고객센터(1577-1118)로 연락 주시기 바랍니다.</p>',
     files: Array.from({ length: item.fileCnt }, (_, i) => ({
       fileSn: String(i + 1),
       fileName: `첨부파일_${i + 1}.hwp`,
@@ -76,10 +78,12 @@ export function toSysImpvDetail(item: MockSysImpvListItem): MockSysImpvDetail {
     bizFldCd: item.bizFldCd,
     pstgBgngYmd: '2026-05-01',
     pstgEndYmd: '2026-05-31',
+    // 내용(bbsCn) — 에디터 HTML(텍스트+이미지). 상세에서 sanitizeHtml 후 삽입.
     bbsCn:
-      `"${item.bbsTtl}"\n\n` +
-      '시스템 개선 사항을 안내드립니다. 자세한 내용은 첨부파일을 참고하여 주시기 바랍니다.\n' +
-      '문의사항은 고객센터(1577-1118)로 연락 주시기 바랍니다.',
+      `<p><strong>"${item.bbsTtl}"</strong></p>` +
+      '<p>시스템 개선 사항을 안내드립니다. 자세한 내용은 아래 이미지와 첨부파일을 참고하여 주시기 바랍니다.</p>' +
+      `<p><img src="${sampleImage}" alt="개선 화면" /></p>` +
+      '<p>문의사항은 고객센터(1577-1118)로 연락 주시기 바랍니다.</p>',
     files: Array.from({ length: item.fileCnt }, (_, i) => ({
       fileSn: String(i + 1),
       fileName: `첨부파일_${i + 1}.hwp`,
