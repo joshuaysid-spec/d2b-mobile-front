@@ -90,7 +90,11 @@ const FloatingActionButton = React.forwardRef<
     return (
       <div
         ref={ref}
-        className={cn('inline-flex flex-col items-center', className)}
+        // margin 전환: BottomNav 가 스크롤로 숨거나 복귀할 때 FAB 도 같은 속도(300ms)로 따라 이동.
+        className={cn(
+          'inline-flex flex-col items-center transition-[margin-bottom] duration-300 ease-out motion-reduce:transition-none',
+          className,
+        )}
         style={{ gap, marginBottom: liftBottom }}
       >
         {onTop && (

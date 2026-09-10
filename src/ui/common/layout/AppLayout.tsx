@@ -73,6 +73,28 @@ export function AppLayout() {
   const showBottomNav = [...matches].some(
     (m) => (m.handle as RouteHandle | undefined)?.showBottomNav,
   )
+  // 스크롤 방향에 따라 BottomNav 숨김/복귀 — 아래로 내리면 숨기고(콘텐츠 영역 확보), 위로 올리면 바로 복귀.
+  // 맨 위·맨 끝(iOS 바운스 포함)에선 항상 노출. 8px 미만 움직임은 무시(손떨림 깜빡임 방지).
+  // 화면 전환(location.key) 시 초기화 — 새 화면은 맨 위에서 시작하므로 노출 상태로.
+  const [navHidden, setNavHidden] = useState(false)
+  useEffect(() => {
+    const el = scrollRef.current
+    setNavHidden(false)
+    if (!el || !showBottomNav) return
+    // 첫 이벤트는 기준점만 잡는다 — 화면 전환 직후 scrollTo(복원/맨위)로 생기는 큰 점프를 "아래로 스크롤"로 오판하지 않게.
+    let last: number | null = null
+    const onScroll = () => {
+      const top = el.scrollTop
+      const delta = last === null ? 0 : top - last
+      last = top
+      const atEnd = top + el.clientHeight >= el.scrollHeight - 1
+      if (top <= 0 || atEnd) setNavHidden(false)
+      else if (delta > 8) setNavHidden(true)
+      else if (delta < -8) setNavHidden(false)
+    }
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => el.removeEventListener('scroll', onScroll)
+  }, [showBottomNav, location.key])
 
   // 뒤로: 이전 화면 있으면 -1, 직접 진입(딥링크/새로고침 등)이면 홈 폴백.
   const handleBack = () => {
@@ -111,7 +133,8 @@ export function AppLayout() {
     }
   }, [location.key, navType, scrollReset])
   return (
-    <BottomNavVisibleContext.Provider value={showBottomNav}>
+    // FAB 는 실제 노출 상태를 따른다 — 스크롤로 nav 가 숨으면 FAB 도 같이 내려감.
+    <BottomNavVisibleContext.Provider value={showBottomNav && !navHidden}>
     {/* 폭 정책(260729 확정): max-width 캡 없이 뷰포트 가로를 꽉 채운다(폴드 펼침·태블릿 포함). */}
     <div className="flex h-dvh w-full flex-col overflow-hidden bg-background">
       {/* 2단 헤더(2026-07-06 카톡 기획 이미지): 메인바(로고+로그인/로그아웃+알림+전체메뉴)는 모든 화면
@@ -150,6 +173,7 @@ export function AppLayout() {
       {/* 알림 dot 은 헤더 알림 버튼으로 이동(위치 스왑). 액션 탭(통합검색/챗봇)은 id 로 분기. */}
       {showBottomNav && (
         <BottomNav
+          hidden={navHidden}
           onAction={(id) => {
             if (id === 'search') setSearchOpen(true)
             if (id === 'chatbot') navigate(ROUTES.CHATBOT) // 챗봇문의(MUI-MS-01-M11)

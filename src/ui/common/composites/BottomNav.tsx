@@ -61,6 +61,11 @@ interface BottomNavProps {
    * AppLayout 이 id 로 분기해 주입(search→통합검색 오버레이, chatbot→챗봇).
    */
   onAction?: (id: string) => void
+  /**
+   * true 면 화면 아래로 슬라이드해 숨김(translate-y-full, 300ms). AppLayout 이 스크롤 방향으로 토글.
+   * 언마운트가 아니라 이동이라 복귀 시 탭 상태·애니메이션이 자연스럽다.
+   */
+  hidden?: boolean
 }
 
 // 기본 4탭. 라우트 탭은 to, 액션 탭(통합검색·챗봇)은 to 없이 onAction 으로 처리.
@@ -165,16 +170,21 @@ function BottomNav({
   notificationTabId = 'notification',
   activeId,
   onAction,
+  hidden = false,
 }: BottomNavProps) {
   return (
     <nav
       // data-coach = 앱 이용안내(M16) 코치마크 하이라이트 측정 지점.
       data-coach="bottom-nav"
+      aria-hidden={hidden || undefined}
       className={cn(
         // 폭 정책(260729 확정): 셸(AppLayout)과 동일하게 캡 없이 뷰포트 전체 폭.
         'fixed inset-x-0 bottom-0 z-10 flex w-full',
         'border-t border-krds-border-divider bg-white pb-[env(safe-area-inset-bottom)]',
         'shadow-[0px_-5px_10px_rgba(23,43,77,0.1)]',
+        // 스크롤 숨김 — 아래로 슬라이드. 모션 민감 사용자는 전환 없이 즉시.
+        'transition-transform duration-300 ease-out motion-reduce:transition-none',
+        hidden && 'translate-y-full',
       )}
     >
       {items.map((item) => (
