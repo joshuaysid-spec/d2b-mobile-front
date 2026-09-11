@@ -44,6 +44,11 @@ export interface InputBoxProps
    * 타이핑만 막으므로 붙여넣기·프로그램 세팅은 zod `.max()` 가 최종 방어(docs/rules/forms.md).
    */
   maxLength?: number
+  /**
+   * 최소 글자수 — native `minlength` 로 전달(브라우저 제약검증용 힌트). 타이핑을 막지 않으며 에러 표시도 하지 않는다.
+   * 실제 검사는 zod `.min()`(입력 폼) 또는 검색필터 text 필드의 `minLength` 규칙이 담당.
+   */
+  minLength?: number
   /** 입력 종류(허용 문자·키패드·IME 가드). 기본 'text'(가공 없음). */
   inputType?: InputBoxType
   /** 필터 후 적용할 표시 포맷(예: 전화 하이픈 `formatPhoneInput`, 금액 콤마). controlled value 에 반영된다. */

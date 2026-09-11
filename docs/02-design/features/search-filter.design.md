@@ -133,7 +133,7 @@ type SearchFilterField =
   | { type:'checkbox';       key; label?; required?; options[] }   // value: string[] (다중)
   | { type:'dateRange';      key; label?; required? }              // value: DateRangeValue
   | { type:'date';           key; label?; required?; placeholder? }// value: string
-  | { type:'text';           key; label?; required?; placeholder? }// value: string
+  | { type:'text';           key; label?; required?; placeholder?; minLength?; maxLength?; pattern?:{regex,message} }// value: string
   | { type:'selectionField'; key; label?; required?; placeholder? }// value: string (`>` 팝업)
   | { type:'select';         key; label?; required?; placeholder?; options[] } // value: string
 
@@ -285,7 +285,8 @@ OpListPage [검색필터] → 아코디언 팝업(초기 전 섹션 열림)
 
 - **사용법(페이지)**: schema 필드에 `required: true` 선언만. 그러면 [검색] 시 빈값이면 차단 + 해당 필드 아래 "필수 입력 항목입니다."(`InputMessage type="error"`) + 첫 에러 필드로 스크롤. 값이 채워지면 에러 즉시 해제.
 - **동작(셸)**: `buildZodSchema(resolved)` 가 required 필드 → `z.custom(빈값 거부)` 매핑으로 zod 스키마 생성(비 required 는 `z.any()`, `looseObject` 라 타 유형 키 통과). 각 필드는 `Controller` 로 RHF 등록. 동적 schema(resolver)여도 검증 시점의 resolved 기준(ref 참조).
-- **규칙 확장**: required 이상(기간 제한 등)이 생기면 **필드 정의 옵션 → `buildZodSchema` 매핑 추가**(셸 한 곳) — required 사용 화면들은 무수정 유지. 페이지별 zod 스키마 작성 금지(CLAUDE.md 검증 레인 규칙).
+- **text 필드 규칙(2026-09-11)**: `minLength`/`maxLength`/`pattern:{regex,message}` 선언 시 `buildZodSchema` 가 `z.string().optional().superRefine` 으로 매핑 — 빈값은 required 만 검사, 길이/형식은 입력이 있을 때만(선택 항목 비움 = 통과). 기본 문구 "N자 이상 입력해주세요." / "N자 이내로 입력해주세요.", pattern 은 message 필수. `maxLength` 는 InputBox native 속성으로도 전달(타이핑 차단, 미지정 시 InputBox 기본 100).
+- **규칙 확장**: 다른 타입 규칙(기간 제한 등)이 생기면 **필드 정의 옵션 → `buildZodSchema` 매핑 추가**(`cm/search/searchFilterSchema.ts` 한 곳 — SearchFilter.tsx 에서 분리한 순수 모듈) — 기존 화면들은 무수정 유지. 페이지별 zod 스키마 작성 금지(CLAUDE.md 검증 레인 규칙).
 - **명령형 핸들**: `SearchFilterHandle`(ref) — `submit()`(검증 포함 검색)/`reset()`. footer 버튼과 동일 동작을 페이지에서 트리거할 때만 사용.
 
 ```tsx

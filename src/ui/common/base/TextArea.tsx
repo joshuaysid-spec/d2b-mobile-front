@@ -15,6 +15,11 @@ export interface TextAreaProps
    * 타이핑만 막으므로 붙여넣기·프로그램 세팅은 zod `.max()` 가 최종 방어(docs/rules/forms.md).
    */
   maxLength?: number
+  /**
+   * 최소 글자수 — native `minlength` 로 전달(브라우저 제약검증용 힌트). 타이핑을 막지 않으며 에러 표시도 하지 않는다.
+   * 실제 검사는 zod `.min()` 이 담당.
+   */
+  minLength?: number
 }
 
 const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(

@@ -207,13 +207,16 @@ const SearchFilterField = ({
         </Field>
       )
 
-    // 제목/판단번호/담당자 등 — 자유 입력
+    // 제목/판단번호/담당자 등 — 자유 입력. minLength/maxLength 는 native 속성으로도 전달(maxLength 는 타이핑 차단,
+    // 미지정 시 InputBox 기본 100). 실제 검사는 셸의 zod 매핑(buildZodSchema).
     case 'text':
       return (
         <Field label={field.label} required={field.required}>
           <InputBox
             value={(value as string) ?? ''}
             placeholder={field.placeholder}
+            minLength={field.minLength}
+            maxLength={field.maxLength}
             onChange={(e) => onChange(e.target.value)}
             onClear={() => onChange('')}
           />

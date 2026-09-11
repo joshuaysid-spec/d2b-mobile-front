@@ -9,7 +9,7 @@
 | 화면 종류 | 검증 방식 | 규칙 수정 위치 |
 |---|---|---|
 | **입력 폼**(신청서·의견등록 등 제출 화면) | zod 스키마를 **직접 작성** + RHF (이 문서) | 해당 `*.schema.ts` |
-| **검색필터**(SearchFilter 셸 쓰는 목록 화면) | 셸 내부 RHF+zod — **zod 스키마는 필드 정의에서 자동 생성**(`buildZodSchema`), 페이지는 schema 필드에 `required: true` 선언만 | 필수 지정=페이지 schema · 검증 동작/규칙 확장=`cm/search/SearchFilter.tsx` `buildZodSchema` |
+| **검색필터**(SearchFilter 셸 쓰는 목록 화면) | 셸 내부 RHF+zod — **zod 스키마는 필드 정의에서 자동 생성**(`buildZodSchema`), 페이지는 schema 필드에 `required: true` · text 필드는 `minLength`/`maxLength`/`pattern:{regex,message}` 선언만(2026-09-11) | 규칙 지정=페이지 schema · 매핑/규칙 확장=`cm/search/searchFilterSchema.ts` `buildZodSchema` |
 
 - **검색필터 페이지에서 zod 스키마를 직접 만들지 말 것** — required 쓰는 14개 화면이 무수정으로 유지되는 구조(셸이 자동 생성)를 지킨다. required 이상의 규칙(기간 제한 등)이 생기면 필드 정의 옵션 → `buildZodSchema` 매핑으로 셸에 추가.
 - 페이지→셸 명령형 제어가 필요하면 `SearchFilterHandle`(ref — `submit`/`reset`) 사용.

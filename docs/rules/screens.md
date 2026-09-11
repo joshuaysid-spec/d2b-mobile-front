@@ -40,7 +40,7 @@
 - 위치: `src/ui/biz/cm/search/SearchFilter.tsx` — **schema 구동 범용 풀팝업 셸**(도메인 무관, Home·조달계획 등 공용). 페이지는 **`SearchFilter` 하나만 import** 하면 된다.
 - 페이지가 주입하는 것: `schema`(정적 `SearchFilterSchema` **또는** 입력값에 따라 섹션이 바뀌면 `resolver` 함수) · `value`/`defaultValue` · `onSearch` · (한 필드가 종속 필드를 바꿔야 하면) `normalize`. 필드 정의 타입은 `@/types/search-filter`.
 - 필드 렌더는 셸 내부 `SearchFilterField` 담당 — 페이지는 **schema(데이터)만 선언**하고 컨트롤을 직접 그리지 않는다.
-- 검증(필수값 등)은 셸 내부 RHF+zod 가 담당 — 페이지는 필드에 `required: true` 선언만. 상세는 `docs/rules/forms.md`.
+- 검증(필수값·길이·형식)은 셸 내부 RHF+zod 가 담당 — 페이지는 필드에 `required: true`, text 필드는 `minLength`/`maxLength`/`pattern` 선언만. 상세는 `docs/rules/forms.md`.
 - **공통 검색 바텀시트(품목별 `ItemInq`·생산자 `PrdcrInq`·발주부서 `DeptInq`)는 셸(`SearchFilter`)이 직접 소유**한다. selectionField 에 `searchSheet: 'item'|'producer'|'dept'` 만 선언하면 셸이 `BottomSheet` 컨테이너를 열고(슬롯 조합) 선택 결과를 그 필드 값으로 주입한다 — **페이지는 시트를 import·관여하지 않는다.** (시트는 cm/search 의 콘텐츠 전용 컴포넌트, `*Sheet` 래퍼 금지)
 - **새 공통 검색시트 추가 절차 (페이지가 아니라 셸에 추가):** 앞으로 검색필터에서 파생되는 바텀시트가 늘어나도 **소비 페이지가 아니라 `SearchFilter` 셸에 배선**한다.
   1. `src/ui/biz/cm/search/` 에 **콘텐츠 전용 컴포넌트** 신설 — `forwardRef` + `useImperativeHandle` 로 `SearchSheetHandle`(footer `reset`/`search`) 노출, 내부에 `BottomSheet`/footer/`open` 두지 않음(컨테이너는 셸 소유).

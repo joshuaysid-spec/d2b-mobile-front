@@ -115,6 +115,13 @@ export interface DateFieldDef extends BaseField {
 export interface TextFieldDef extends BaseField {
   type: 'text' // 자유 입력(InputBox) — value: string
   placeholder?: string
+  // ── 필드별 검증 규칙(2026-09-11) — 셸(SearchFilter.buildZodSchema)이 zod 로 매핑. 빈값은 required 규칙만 적용.
+  /** 최소 글자수 — 입력이 있을 때만 검사. 기본 문구 "N자 이상 입력해주세요." */
+  minLength?: number
+  /** 최대 글자수 — zod 검사 + InputBox maxLength(타이핑 차단). 미지정 시 InputBox 기본값(100). */
+  maxLength?: number
+  /** 형식 검사 — 정규식 + 실패 문구(예: 공고번호 `/^\d{4}[A-Z]\d{2}/`). 입력이 있을 때만 검사. */
+  pattern?: { regex: RegExp; message: string }
 }
 export interface SelectionFieldDef extends BaseField {
   type: 'selectionField' // 선택 트리거(SelectionFieldBox, `>`) — value: string

@@ -3,14 +3,13 @@
 // 검증 = react-hook-form + zod (2026-08-07 전환 — 폼 검증 레인과 엔진 통일):
 //   필드 정의(required)에서 zod 스키마를 자동 생성(buildZodSchema)하고 각 필드를 Controller 로
 //   RHF에 등록. 검증 실패 시 검색 차단 + 필드 아래 에러 + 첫 에러 필드로 스크롤.
-//   페이지는 여전히 schema 에 required: true 선언만 하면 됨(무수정) — 규칙 확장은 buildZodSchema.
+//   페이지는 schema 에 규칙(required · text 의 minLength/maxLength/pattern)만 선언 — 매핑은 searchFilterSchema.ts.
 // 페이지→셸 명령형 제어는 ref(SearchFilterHandle — submit/reset)로도 가능.
 // 필드 렌더는 SearchFilterField 에 위임(도메인·필드 무관). value(확정) ↔ RHF 폼값(작업중 draft) 분리.
 // common/(base·composites)만 사용 — raw 직접 import 금지.
 import * as React from 'react'
 import { Controller, useForm, type FieldPath, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { InputMessage } from '@/ui/common/base/InputMessage'
@@ -18,6 +17,7 @@ import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { SearchFilterField } from './SearchFilterField'
+import { buildZodSchema, isEmptyLike } from './searchFilterSchema'
 import { ItemInq } from './ItemInq'
 import { PrdcrInq } from './PrdcrInq'
 import { DeptInq } from './DeptInq'
@@ -66,14 +66,8 @@ export interface SearchFilterProps {
 }
 
 // ── 검색 버튼 활성화 판정(260729 확정): draft 가 기본값(defaultValue)과 다를 때만 검색 가능. ──
-// 빈값 동치(undefined·''·빈 배열·모든 값이 빈 객체)로 비교해, 미입력 필드가 ''/undefined 로
+// 빈값 동치(isEmptyLike — searchFilterSchema)로 비교해, 미입력 필드가 ''/undefined 로
 // 표기만 다른 경우는 "같다"로 본다(예: 입력했다 지운 텍스트 필드).
-const isEmptyLike = (v: unknown): boolean =>
-  v == null ||
-  v === '' ||
-  (Array.isArray(v) && v.length === 0) ||
-  (typeof v === 'object' && Object.values(v as object).every(isEmptyLike))
-
 const isSameValue = (a: unknown, b: unknown): boolean => {
   if (isEmptyLike(a) || isEmptyLike(b)) return isEmptyLike(a) && isEmptyLike(b)
   if (Object.is(a, b)) return true
@@ -86,21 +80,7 @@ const isSameValue = (a: unknown, b: unknown): boolean => {
   return false
 }
 
-// ── 필드 정의 → zod 스키마 자동 생성 ──────────────────────────────────────
-// required 필드는 빈값(isEmptyLike) 거부. 페이지는 required: true 선언만 유지(무수정 원칙).
-// 향후 필드별 규칙(기간 제한 등)이 생기면 필드 정의 옵션 → zod 규칙 매핑을 여기에 추가한다.
-// looseObject: 다른 탭/유형의 키가 값에 남아 있어도 통과.
-const buildZodSchema = (s: SearchFilterSchema) => {
-  const shape: Record<string, z.ZodType> = {}
-  s.sections.forEach((sec) =>
-    sec.fields.forEach((f) => {
-      shape[f.key] = f.required
-        ? z.custom((v) => !isEmptyLike(v), { error: '필수 입력 항목입니다.' })
-        : z.any()
-    }),
-  )
-  return z.looseObject(shape)
-}
+// 필드 정의 → zod 스키마 자동 생성은 searchFilterSchema.ts(buildZodSchema) — 규칙 확장은 그 파일에서.
 
 /** 페이지→셸 명령형 핸들 — footer 버튼과 동일 동작을 밖에서 트리거할 때. */
 export interface SearchFilterHandle {
