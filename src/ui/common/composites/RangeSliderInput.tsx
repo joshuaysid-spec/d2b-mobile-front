@@ -67,10 +67,11 @@ const RangeSliderInput = ({
         <div
           aria-invalid={error || undefined}
           className={cn(
-            'flex items-center gap-2 rounded-krds-8 border px-4 py-3 text-krds-body-md text-krds-text-ink',
+            // 내부 input 은 outline-none — 포커스는 박스 테두리로 표시(InputBox 와 동일 focus-within 2px).
+            'flex items-center gap-2 rounded-krds-8 border px-4 py-3 text-krds-body-md text-krds-text-ink transition-colors',
             error
-              ? 'border-krds-border-danger bg-krds-bg-danger-subtle'
-              : 'border-krds-border-field bg-background',
+              ? 'border-krds-border-danger bg-krds-bg-danger-subtle focus-within:border-2'
+              : 'border-krds-border-field bg-background focus-within:border-2 focus-within:border-krds-action-primary-active',
             disabled && 'border-krds-border-disabled bg-krds-bg-disabled-soft',
           )}
         >

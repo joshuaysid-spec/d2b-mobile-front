@@ -52,10 +52,13 @@ const SelectBoxTrigger = React.forwardRef<
     className={cn(
       'group flex h-12 w-full items-center gap-krds-3 rounded-krds-8 border px-krds-6',
       'text-krds-body-md text-krds-text-ink transition-colors',
-      'focus:outline-hidden focus-visible:outline-hidden',
+      // 기본 아웃라인 제거 대신 키보드/보조기기 포커스(focus-visible)는 InputBox 와 동일한 2px 테두리로 표시
+      // (KWCAG 초점 표시 — 터치 조작엔 focus-visible 이 안 걸려 모바일 화면 무변화).
+      'focus:outline-hidden focus-visible:outline-hidden focus-visible:border-2',
       'data-placeholder:text-krds-text-disabled',
       !error && [
         'border-krds-border-field bg-background',
+        'focus-visible:border-krds-action-primary-active',
         'data-[state=open]:border-2 data-[state=open]:border-primary',
       ],
       error && [

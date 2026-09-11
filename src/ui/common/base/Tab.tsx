@@ -37,7 +37,8 @@ const Tab = React.forwardRef<HTMLButtonElement, TabProps>(
           aria-selected={selected}
           className={cn(
             'inline-flex h-12 shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-tertiary px-krds-6',
-            'focus-visible:outline-hidden',
+            // 키보드/보조기기 포커스 표시(KWCAG 초점) — inset ring 으로 가로 스크롤 TabList 안에서도 잘리지 않게.
+            'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
             selected ? 'bg-krds-action-primary-active' : 'bg-background',
             className,
           )}
