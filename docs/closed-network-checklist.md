@@ -1,7 +1,7 @@
 # 폐쇄망 반입 전 체크리스트
 
 > 반입(폐쇄망 이관) **직전에** 이 문서를 열어 아래 항목을 확인한다. 항목이 해소되면 체크하고,
-> 새로 발견된 반입 전 확인 사항은 여기에 추가한다. (갱신: 2026-07-10)
+> 새로 발견된 반입 전 확인 사항은 여기에 추가한다. (갱신: 2026-09-11 — 전 항목 코드 대조 재점검)
 
 ## 1. 미구현 잔여 화면
 
@@ -35,6 +35,7 @@
     심사항목 라벨/키 세트를 설계서(v1.83 통합, slide169 이후 데이터영역)에서 추출해
     **유형값으로 표 데이터를 분기**해야 함. (새 페이지/탭 아님 — 구조 동일, 데이터 세트만 추가)
   - 근거: v1.83 통합 설계서 화면 목록 152건 전수 대조(2026-07-10) 결과 유일한 실질 공백.
+  - 2026-09-11 재확인: `Implt.tsx` 에 유형 분기 없음 — 여전히 미구현. BD-10-T04 도 보류 상태(2026-08-06 감사).
 
 ## 2. 결정 대기 항목
 
@@ -82,7 +83,10 @@
 
 ## 2-1. 반입 직전 마지막 결정 — EP 맵 구조 유지 여부
 
-- [ ] **엔드포인트 경로를 `EP = {}` 맵으로 취합해 둘지, 각 메서드에 인라인으로 풀지 결정**
+- [x] **결정 완료(2026-08-19) — 인라인으로 전환.** `const EP` 맵은 전 서비스에서 폐기, URL 은 각 메서드 안 문자열
+  (`services/{bds,cbs,cts,tss}/{도메인}.ts`). 반입 후 경로 대조는 `grep -rn "\.do'" src/services/` 로 전수 추출.
+  아래는 결정 당시 논거(기록용).
+- [x] ~~**엔드포인트 경로를 `EP = {}` 맵으로 취합해 둘지, 각 메서드에 인라인으로 풀지 결정**~~
   - 현재: 서비스 파일(`src/services/{bd,cm,op,auth,file}.ts`) **상단에 `const EP = {...} as const` 로 경로 일괄 취합**.
     고정 경로는 문자열, 파라미터 경로는 화살표 함수. 각 엔트리 JSDoc 에 화면 ID + 소비 파일 표기.
   - **유지 시 이점**: 반입 후 대조 대상이 파일당 한 블록(bd 96 · cm 55 · op 12 · auth 10 · file 4)으로 모여 있어
@@ -99,9 +103,16 @@
 
 - [ ] **폰트 self-host** — CDN `@import url(구글폰트)` 금지. Material Symbols woff2 가
   `public/fonts/` 에 포함되고 dist 에 복사되는지 확인. (상세: `docs/closed-network-fonts.md`)
+  (2026-09-11 확인: `globals.css` 는 npm 패키지 CSS 만 @import, dist/assets 에 woff2 121개 복사됨 — 반입 빌드에서 재확인)
 - [ ] **외부 네트워크 의존 없음** — 코드/스타일에 CDN·외부 URL fetch 없는지 확인
   (Figma 데이터·구글폰트 등은 개발 환경 전용).
+  (2026-09-11 확인: 런타임 외부 로드 0건. 남은 외부 URL 은 ① `/guide` 컴포넌트 카탈로그의 picsum 샘플 이미지(개발용 —
+  폐쇄망에선 깨진 이미지로만 보임, 기능 무관) ② 관련사이트·안내문의 외부 링크(콘텐츠 — 폐쇄망 단말에서 열리지 않음, 기획 확인))
+- [ ] **게시판 본문 에디터 HTML 의 이미지 URL (2026-09-10 신설)** — 공지/자료실/시스템개선/FAQ 상세 본문(bbsCn/contsCn)은
+  백엔드 에디터 HTML 을 `dompurify` 로 정화해 그대로 렌더한다. **본문 `<img src>` 가 내부망 도메인(또는 상대경로)인지**
+  실응답으로 확인 — 외부 CDN 경로면 이미지가 전부 깨진다. dompurify 는 번들 포함(vendor-html 청크)이라 네트워크 의존 없음.
 - [ ] **빌드 검증** — `npm run lint && npm run build` 통과, chunk size 경고(600KB) 없는지 확인.
+  (2026-09-11 확인: lint 0 에러(경고 36건은 react-refresh 기존분)·build 통과·chunk 경고 없음)
 
 ## 4. API 연동 절차 (반입 후 — 2026-07-20 서비스 레이어 구축으로 개정)
 
@@ -112,8 +123,8 @@
 ### 4-1. `.env.production` 채우기 (필수, 2줄)
 
 ```
-VITE_API_BASE_URL=http://<내부 API 서버>   ← 기입
-VITE_USE_MOCK=false                        ← 확인
+VITE_API_BASE_URL=http://<내부 API 서버>   ← 기입 (2026-09-11 현재 빈값)
+VITE_USE_MOCK=false                        ← 확인 (2026-09-11 현재 false)
 ```
 
 ### 4-2. EP(엔드포인트) 맵 대조 — `src/services/*.ts` 5개 파일 상단
@@ -125,10 +136,15 @@ VITE_USE_MOCK=false                        ← 확인
 - 봉투: apiClient 응답 인터셉터가 `{metadata:{status},data}` 를 벗겨 `data` 반환.
   봉투 형식이 다르면 `src/lib/apiClient.ts` 인터셉터 한 곳만 수정.
 - 인증: 로그인 응답 → `LoginResult`(`types/domain.ts`) 매핑은 `services/auth.ts` 에 격리.
-  refresh 토큰 재발급 플로우는 미구현(`apiClient.ts` 401 처리의 TODO) — 백엔드 스펙 확정 시 확장.
+  refresh 토큰 재발급 플로우는 미구현(`apiClient.ts` 401 처리의 TODO, 2026-09-11 현재도 미구현) — 백엔드 스펙 확정 시 확장.
 
 ### 4-3. 잔여 페이지 배선 (기계적 — 핵심 플로우는 배선 완료)
 
+- **2026-09-11 현황(코드 대조)**: 페이지 폴더 175개 중 도메인 Queries 훅(`{도메인}Queries`, 파일다운로드 `fbQueries` 제외)을
+  쓰는 폴더 76개. **미배선 104개** 중 정적 안내/인증솔루션/완료화면 등 데이터 없는 화면 약 33개를 빼면 **약 70개 폴더가
+  인라인 목업 구동** — bd 국외(ovs*) 13 · bd 국내 조회 3(bidPrgsDtlInq·bidRegRsltInq·bfhdSrngRsltInq) · cm 대부분
+  (마이페이지·업체정보·인증서·게시판/FAQ·알림·캘린더·로그인/찾기) · ct 확인 2(cmdtyElctrCtrtCfmtnDtl·ovsElctrCtrtCfmtn) · op 사전규격상세.
+  op/ct/ex/wm/ts 본류와 bd 국내 메인 플로우는 배선 완료.
 - **배선 완료(참조 예시)**: 로그인(`IdPswdLoginPage`) · 조달계획 목록/상세(`PrcmPlanIntgListPage`·
   `PrcmPlanDtlPage`) · bd 메인 플로우 · 파일업로드(`BidPrtcpAperWrtPage_Stp6`).
 - 잔여 페이지는 인라인 목업 유지 중 — `// 추후 API: xxxService.yyy` 주석의 메서드가 전부 실존하므로
@@ -170,11 +186,11 @@ VITE_USE_MOCK=false                        ← 확인
 
 ### 5-3. 결정 대기 (설계서↔Figma·구조)
 - [ ] **P10/P12/P13 인증화면**: 설계서·Figma는 **BottomSheet(팝업)**인데 셸 결정에 따라 **페이지 라우트**로 구현(`/login/simple-cert`·`joint-cert`·`mobile-id`). 방식선택(M01)→인증 트리거 배선 시 BottomSheet 전환 검토.
-- [ ] **P16 인증결과·P18 로그아웃**: Figma는 **토스트 바**인데 공통 토스트 컴포넌트 부재로 AlertModal 근사(`cm/certRslt`·`cm/lgoInfo`). 토스트 도입 시 재검토.
+- [ ] **P16 인증결과·P18 로그아웃**: Figma는 **토스트 바**인데 AlertModal 근사(`cm/certRslt`·`cm/lgoInfo`). 공통 `Toast`(composites) 가 이후 도입됨 — 토스트로 전환할지 기획 확인 후 교체.
 - [ ] **M20 생체등록완료**: 설계서는 별도 화면ID지만 M15(`cm/bioInfoCertReg`)의 상태전환(verified)으로 통합 구현. 별도 라우트 분리 필요 시 재작업.
 - [ ] **M05 아이디 마스킹**: 설계서·Figma 모두 미마스킹(`abcdef1234`) → 미마스킹 구현. 마스킹 정책 필요 시 `maskUserId` 스텁 활성화.
 - [ ] **하단 CTA 고정바**: 여러 화면(M08·P12 등) Figma는 화면 하단 고정(sticky) 버튼이나 셸 스크롤 소유 + sticky 바텀바 선례 없어 콘텐츠 말미 전폭 버튼으로 구현. sticky 필요 시 공통 패턴 신설.
-- [ ] **AlertModal 한계**: 좌측정렬 타이틀·닫기(X)·아웃라인 단일버튼 미지원 → 팝업들 근사. 반복되면 AlertModal variant 확장 검토(공통 변경이라 승인 필요).
+- [x] **AlertModal 한계 — 해소**: `titleClose` 변형(좌측 타이틀+X, 2026-09-01) · `primaryAction` 선택화(버튼 없는 안내, 2026-09-10) 추가됨. 아웃라인 단일버튼만 미지원(필요 시 variant 추가).
 
 ### 5-4. 임시 영문 항목키 (설계서 데이터영역 미정의 → 확정 시 교체)
 - [ ] 로그인/찾기 폼: `userId`·`password`·`passwordConfirm`·`bizRegNo`·`userName`·`birthDate`·`mobileNo`·`blngBzentyNm` (각 `.schema.ts`/페이지 `// TODO(설계서 확인)`).
@@ -182,5 +198,7 @@ VITE_USE_MOCK=false                        ← 확인
 - [ ] 통합검색결과 M10: BD 설계서 항목명(`taskSeNm`·`bidPbancNm`·`pbancNo` 등) 재사용 + 카드→상세 라우트(개찰결과 임시 `/bd/:id`) 확정 필요.
 
 ### 5-5. 미배선(호스트 대기) 팝업 컴포넌트
-- [ ] 아래는 **부모 소유** 설계라 라우트 없이 컴포넌트만 존재(아직 어디서도 import 안 됨) — 트리거 화면 확정 시 부모가 `open`/`onOpenChange`로 배선:
-  `appAuthrtAgre/{AppAuthrtAgre(P03)·AppUpdateInfo(P04)·AppErrInfo(P05)}` · `mscrn/SysExpln(P08)` · `certRslt/CertRslt(P16)` · `lgoInfo/LgoInfo(P18)` · `lgnSrvcInfo/LgnSrvcInfo(P19)` · `bzentyChc/BzentyChc(P14)`.
+- [ ] 아래는 **부모 소유** 설계라 라우트 없이 컴포넌트만 존재 — 트리거 화면 확정 시 부모가 `open`/`onOpenChange`로 배선.
+  - 배선 완료(2026-09-11 확인): `AppUpdateInfo(P04)`·`AppErrInfo(P05)` → `AppAuthrtAgrePage` · `SysExpln(P08)` → `HomePage` ·
+    `LgoInfo(P18)` → `AppLayout` · `BzentyChc(P14)` → `IdPswdLoginPage`.
+  - **미배선 잔여**: `certRslt/CertRslt(P16)` · `lgnSrvcInfo/LgnSrvcInfo(P19)` — 인증 플로우/비로그인 진입 가드 확정 시 배선.
