@@ -5,7 +5,7 @@
 //   하단 액션바(입찰내역 삭제/저장).
 // 이벤트(설계서 slide319):
 //   - 품목대체구분 = Replace → 품목대체첨부문서·수정재고번호·수정부품번호 활성/필수
-//   - MOQ구분 = Y → MOQ첨부문서·MOQ수량 활성/필수
+//   (MOQ구분/수량/첨부문서는 국외 전 화면에서 삭제 — 2026-09-14 사용자 지시)
 //   - 입찰단가 변경 → 입찰금액/달러단가/달러금액 계산 · 화폐단위 변경 → 달러환산율/달러단가/달러금액 계산
 //   - 업로드 클릭 → 첨부문서업로드 팝업(UI-BD-04-P75) 호출 — 목업은 console.log + 파일명 스텁
 import { useEffect, useRef, useState, type ReactNode } from 'react'
@@ -82,9 +82,6 @@ const EMPTY_BID_FIELDS = {
   itemSbstDocEn: '',
   mdfcnInvtNo: '',
   mdfcnPrtsNo: '',
-  moqYn: 'N' as const,
-  moqQty: '',
-  moqDocEn: '',
   bscbgtDudtYmd: '',
   athrtDudtYmd: '',
   ltbndDudtYmd: '',
@@ -146,11 +143,10 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
   const [notice, setNotice] = useState<NoticeModal>({ open: false, variant: 'info', title: '' })
   const [deleteOpen, setDeleteOpen] = useState(false)
 
-  // 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — 어느 품목의 어느 첨부
-  //   (품목대체/MOQ)를 여는지 대상 1개로 공용. null=닫힘.
+  // 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) — 어느 품목의 품목대체첨부를 여는지. null=닫힘.
   const [uploadFor, setUploadFor] = useState<{
     frcptlArtclNo: string
-    field: 'itemSbstDocEn' | 'moqDocEn'
+    field: 'itemSbstDocEn'
   } | null>(null)
   const fileAddRef = useRef<FileAddHandle>(null)
 
@@ -199,10 +195,10 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
   }
 
   // ── 업로드 — [공통] 파일 추가 시트(FileAdd) 열기. 파일선택 FileAdd 공통 시트 배선(v0.87 검토46, 2026-09-02) ──
-  const handleUpload = (frcptlArtclNo: string, field: 'itemSbstDocEn' | 'moqDocEn') =>
+  const handleUpload = (frcptlArtclNo: string, field: 'itemSbstDocEn') =>
     setUploadFor({ frcptlArtclNo, field })
 
-  // ── 입찰내역 저장 — 필수값(입찰업체·화폐단위·입찰단가) + 조건부 필수(Replace/MOQ=Y) 검증 후 저장(암호화) ──
+  // ── 입찰내역 저장 — 필수값(입찰업체·화폐단위·입찰단가) + 조건부 필수(Replace) 검증 후 저장(암호화) ──
   //   2026-09-01 사용자 확정: 필수값이 모두 입력되어야 저장 가능.
   const handleSave = () => {
     for (const r of rows) {
@@ -221,15 +217,6 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
           variant: 'error',
           title: `항목 ${r.frcptlArtclNo} 품목대체 필수 항목 미입력`,
           description: '품목대체구분이 Replace인 경우 품목대체첨부문서·수정재고번호·수정부품번호를 입력해주세요.',
-        })
-        return
-      }
-      if (r.moqYn === 'Y' && (!r.moqQty || !r.moqDocEn)) {
-        setNotice({
-          open: true,
-          variant: 'error',
-          title: `항목 ${r.frcptlArtclNo} MOQ 필수 항목 미입력`,
-          description: 'MOQ구분이 Y인 경우 MOQ수량·MOQ첨부문서를 입력해주세요.',
         })
         return
       }
@@ -306,7 +293,6 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
       <div className="flex flex-col gap-krds-7 px-4 py-4">
         {visibleRows.map((row) => {
           const isReplace = row.itemSbstSe === 'R'
-          const isMoq = row.moqYn === 'Y'
           const isExpanded = expandedNos.includes(row.frcptlArtclNo)
 
           // 접힘 요약 — 항목번호/재고번호/부품번호/품명 (설계서 slide314 접힘 카드)
@@ -398,52 +384,6 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
                           updateRow(row.frcptlArtclNo, { mdfcnPrtsNo: e.target.value })
                         }
                       />
-                    </Field>
-
-                    {/* ── MOQ (Y 시 수량/첨부 활성+필수, slide319) ── */}
-                    <Field label="MOQ구분" required>
-                      <RadioButtonGroup
-                        items={[
-                          { value: 'Y', label: 'Y' },
-                          { value: 'N', label: 'N' },
-                        ]}
-                        value={row.moqYn}
-                        onValueChange={(v) => updateRow(row.frcptlArtclNo, { moqYn: v as 'Y' | 'N' })}
-                      />
-                    </Field>
-                    <Field label="MOQ수량" required={isMoq}>
-                      <InputBox
-                        inputType="numeric"
-                        format={fmtComma}
-                        placeholder="입력해주세요."
-                        disabled={!isMoq}
-                        value={fmtComma(row.moqQty)}
-                        onChange={(e) =>
-                          updateRow(row.frcptlArtclNo, { moqQty: e.target.value.replace(/,/g, '') })
-                        }
-                      />
-                    </Field>
-                    <Field label="MOQ첨부문서" required={isMoq}>
-                      {row.moqDocEn ? (
-                        <FileDownloadList
-                          files={[
-                            {
-                              id: `${row.frcptlArtclNo}-moq`,
-                              name: row.moqDocEn,
-                              onRemove: () => updateRow(row.frcptlArtclNo, { moqDocEn: '' }),
-                            },
-                          ]}
-                        />
-                      ) : (
-                        <Button
-                          variant="secondary"
-                          disabled={!isMoq}
-                          onClick={() => handleUpload(row.frcptlArtclNo, 'moqDocEn')}
-                        >
-                          <Icon name="Add" size={20} aria-hidden />
-                          업로드
-                        </Button>
-                      )}
                     </Field>
 
                     {/* ── 납기 ── */}
@@ -609,7 +549,7 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
         {uploadFor && (
           <FileAdd
             ref={fileAddRef}
-            fixedDocNm={uploadFor.field === 'itemSbstDocEn' ? '품목대체첨부문서' : 'MOQ첨부문서'}
+            fixedDocNm="품목대체첨부문서"
             multiple={false}
             onComplete={({ files }) => {
               // 추후 API: bdService.uploadOvsBidCnDoc(...)

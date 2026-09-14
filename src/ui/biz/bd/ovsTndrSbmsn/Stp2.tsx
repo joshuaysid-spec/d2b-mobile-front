@@ -46,12 +46,6 @@ export interface OvsItitbBidCnItem {
   mdfcnInvtNo: string
   /** 수정부품번호 (mdfcnPrtsNo, 32) */
   mdfcnPrtsNo: string
-  /** MOQ구분 (moqYn, 1) — Y / N */
-  moqYn: 'Y' | 'N'
-  /** MOQ수량 (moqQty, 15) */
-  moqQty: string
-  /** MOQ첨부문서 (moqDocEn, 1) — 있으면 'O', 없으면 표시 없음 */
-  moqDocEn: 'O' | ''
   /** 납기(본조) (bscbgtDudtYmd, 8) */
   bscbgtDudtYmd: string
   /** 납기(당국) (athrtDudtYmd, 8) */
@@ -99,9 +93,6 @@ const MOCK_ITITB_ITEMS: OvsItitbBidCnItem[] = [
     itemSbstDocEn: 'O',
     mdfcnInvtNo: 'A000-A0001-001',
     mdfcnPrtsNo: 'T-80U/TBE-3R',
-    moqYn: 'Y',
-    moqQty: '1',
-    moqDocEn: 'O',
     bscbgtDudtYmd: '2025-03-25',
     athrtDudtYmd: '2025-03-25',
     ltbndDudtYmd: '2025-03-25',
@@ -121,9 +112,6 @@ const MOCK_ITITB_ITEMS: OvsItitbBidCnItem[] = [
     itemSbstDocEn: '',
     mdfcnInvtNo: '',
     mdfcnPrtsNo: '',
-    moqYn: 'N',
-    moqQty: '',
-    moqDocEn: '',
     bscbgtDudtYmd: '2025-03-25',
     athrtDudtYmd: '2025-04-25',
     ltbndDudtYmd: '2025-05-25',
@@ -143,9 +131,6 @@ const MOCK_ITITB_ITEMS: OvsItitbBidCnItem[] = [
     itemSbstDocEn: 'O',
     mdfcnInvtNo: 'A000-A0002-001',
     mdfcnPrtsNo: '369A1602-5R',
-    moqYn: 'N',
-    moqQty: '',
-    moqDocEn: '',
     bscbgtDudtYmd: '2025-03-25',
     athrtDudtYmd: '2025-03-25',
     ltbndDudtYmd: '2025-03-25',
@@ -165,9 +150,6 @@ const MOCK_ITITB_ITEMS: OvsItitbBidCnItem[] = [
     itemSbstDocEn: '',
     mdfcnInvtNo: '',
     mdfcnPrtsNo: '',
-    moqYn: 'Y',
-    moqQty: '5',
-    moqDocEn: 'O',
     bscbgtDudtYmd: '2025-03-25',
     athrtDudtYmd: '2025-03-25',
     ltbndDudtYmd: '2025-03-25',
@@ -225,7 +207,7 @@ function ItitbItemCard({
   /** 입찰단가 (bdngTccrUntprc, E) — 입력값(콤마 포함 표시 문자열) */
   bdngTccrUntprc: string
   onUntprcChange: (value: string) => void
-  onOpenAtchDoc: (kind: '품목대체' | 'MOQ', item: OvsItitbBidCnItem) => void
+  onOpenAtchDoc: (kind: '품목대체', item: OvsItitbBidCnItem) => void
 }) {
   const [expanded, setExpanded] = useState(false)
 
@@ -272,25 +254,7 @@ function ItitbItemCard({
     },
     { label: '수정재고번호', value: item.mdfcnInvtNo || '-' },
     { label: '수정부품번호', value: item.mdfcnPrtsNo || '-' },
-    { label: 'MOQ구분', value: item.moqYn },
-    { label: 'MOQ수량', value: item.moqQty || '-', type: 'number' },
-    {
-      label: 'MOQ첨부문서',
-      type: 'combination',
-      value:
-        item.moqDocEn === 'O' ? (
-          <>
-            <span>O</span>
-            <div>
-              <Button size="sm" variant="inner" onClick={() => onOpenAtchDoc('MOQ', item)}>
-                보기
-              </Button>
-            </div>
-          </>
-        ) : (
-          <span>X</span>
-        ),
-    },
+    // MOQ구분/수량/첨부문서 행은 국외 전 화면에서 삭제(2026-09-14 사용자 지시).
     { label: '납기(본조)', value: item.bscbgtDudtYmd },
     { label: '납기(당국)', value: item.athrtDudtYmd },
     { label: '납기(장국)', value: item.ltbndDudtYmd },
@@ -369,8 +333,8 @@ export function OvsTndrSbmsnPage_Stp2({ detail }: { detail: MockOvsTndrSbmsnDeta
     setVisibleCount((c) => Math.min(c + PAGE_SIZE, listLength))
   }
 
-  // 품목대체/MOQ 첨부문서 [보기] → 첨부문서조회 팝업(UI-BD-05-P76) 호출 스텁(설계서 slide373).
-  const handleOpenAtchDoc = (kind: '품목대체' | 'MOQ', item: OvsItitbBidCnItem) => {
+  // 품목대체 첨부문서 [보기] → 첨부문서조회 팝업(UI-BD-05-P76) 호출 스텁(설계서 slide373).
+  const handleOpenAtchDoc = (kind: '품목대체', item: OvsItitbBidCnItem) => {
     console.log(`[M72] ${kind}첨부문서 조회(P76)`, item.frcptlArtclNo, item.invtNo)
     // 추후 API: bdService.selectOvsAtchDoc(...) — 첨부문서조회 팝업(UI-BD-05-P76) 호출
   }

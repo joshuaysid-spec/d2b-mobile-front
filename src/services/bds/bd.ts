@@ -1433,12 +1433,12 @@ export const bdService = {
   },
 
   /**
-   * 국외 임시입찰내역 문서 업로드(품목대체/MOQ) — MUI-BD-01-T75 (ovsTmprBidCnReg/BidDsctn).
+   * 국외 임시입찰내역 문서 업로드(품목대체) — MUI-BD-01-T75 (ovsTmprBidCnReg/BidDsctn). MOQ 는 국외 전 화면 삭제(2026-09-14).
    * 실목록 외(file 도메인) — URL 임시.
    */
   async uploadOvsBidCnDoc(
     frcptlArtclNo: string,
-    field: 'itemSbstDocEn' | 'moqDocEn',
+    field: 'itemSbstDocEn',
     file: File,
   ): Promise<UploadedFile> {
     if (USE_MOCK) return mockUpload(file)
@@ -1557,7 +1557,7 @@ export const bdService = {
   },
 
   /**
-   * 국외 입찰서 첨부문서 조회(품목대체/MOQ 팝업) — MUI-BD-06-T72 (ovsTndrSbmsn/Stp2).
+   * 국외 입찰서 첨부문서 조회(품목대체 팝업) — MUI-BD-06-T72 (ovsTndrSbmsn/Stp2).
    * TODO(실API 미매핑): 후보 no.48 첨부서류목록조회(국외 공고 첨부). URL 임시.
    */
   async selectOvsAtchDoc(frcptlArtclNo: string, invtNo: string): Promise<MockOvsAtchDoc[]> {

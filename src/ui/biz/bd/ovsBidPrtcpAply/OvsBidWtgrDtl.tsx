@@ -1,7 +1,8 @@
-// 보증서정보조회 (MUI-BD-04-P76 ovsBidWtgrDtl · 설계서 v1.88 slide455~459).
-// 입찰보증서선택(P75, OvsBidWtgrInqFullPopup) 과 통합(PC 개정 메모, 사용자 지시 2026-09-14) —
-//   '보증서 정보 보기' 클릭 시 해당 카드 밑에 이어서 펼쳐지는 인라인 콘텐츠(구 바텀시트 2026-08-26 → 통합).
-// ⚠️ 콘텐츠 전용 — 컨테이너/버튼([정보 접기][보증서 적용])은 부모(P75 카드 footer)가 소유, 여기엔 본문만.
+// 보증서정보조회 (MUI-BD-04-P76 ovsBidWtgrDtl · 설계서 slide344~345 · 데이터 slide346~347 · 이벤트 slide348).
+// 입찰보증서선택(P75, OvsBidWtgrInqFullPopup) 의 '보증서 정보 보기' → 바텀시트로 조회(풀팝업→바텀시트 전환,
+//   사용자 지시 2026-08-26).
+// ⚠️ 바텀시트 콘텐츠 전용 — 컨테이너(BottomSheet title/footer/open)는 부모(P75)가 소유, 여기엔 본문만.
+//    footer [보증서 적용/닫기]도 부모 구성(설계서 slide344).
 // 구성: 보증서 정보(dl_wtgrInfo) → 보증 계약자·채권자 → 발행자(dl_IsrInfo) → 대리인 → 담당자
 //   → 보증계약-주계약(dl_ctrtInfo) 섹션별 Table.
 // On-Load 보증서 정보 상세 조회(scwin.onpageload)는 목업 — 선택 보증서(item) 값을 목업 위에 병합.
@@ -122,8 +123,8 @@ export function OvsBidWtgrDtl({ item }: OvsBidWtgrDtlProps) {
   return (
     <div className="flex flex-col">
       {/* 섹션별 Table — 보증서 정보(dl_wtgrInfo) → 계약자·채권자 → 발행자(dl_IsrInfo) → 대리인
-          → 담당자 → 보증계약-주계약(dl_ctrtInfo). 데이터 배열 구동(설계서 순서 그대로).
-          px-0: 부모(카드 footer)에 좌우 패딩이 이미 있어 SectionTitle 자체 px-4 를 해제(이중 패딩 방지). */}
+          → 담당자 → 보증계약-주계약(dl_ctrtInfo). 데이터 배열 구동(설계서 slide344~345 순서 그대로).
+          px-0: BottomSheet 본문에 좌우 패딩이 이미 있어 SectionTitle 자체 px-4 를 해제(이중 패딩 방지). */}
       {buildSections(info).map((section, i) => (
         <div key={section.title}>
           <SectionTitle as="h3" topDivider={i > 0} className="px-0">

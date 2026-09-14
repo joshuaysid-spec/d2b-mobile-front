@@ -107,21 +107,11 @@ const NOTICE_ITEMS = [
   '문의 :1577-1118(①)(전자입찰서비스 데스크)',
 ]
 
-// 서약서 동의 항목(T71) — 청렴 계약 이행 서약서(본문은 국내 WROTS(w_p03) 재사용) + 행정정보 공동이용 사전동의서.
-// ⚠️ 사전동의서는 PC 개정 메모(ovsWrotAgrePopup.xml 영역 추가)로 자리만 신설(사용자 지시 2026-09-14) — 모바일 설계서 v1.88
-//    미반영·본문 문구 미확보. 문구 수령 시 ADMIN_INFO_AGRE_BODY 만 교체(구조·검증은 완성). 영문 ID 도 잠정(w_admInfoAgre).
+// 서약서 동의 항목(T71) — 청렴 계약 이행 서약서 1건([필수]). 본문은 국내 WROTS(w_p03) 재사용.
+// (행정정보 공동이용 사전동의서는 국외 입찰서 제출(ovsTndrSbmsn)에만 추가 — 2026-09-14 사용자 정정, 여기엔 두지 않는다.)
 const WROT_ID = 'w_p03'
 const WROT_TITLE = WROTS.find((w) => w.id === WROT_ID)?.title ?? '청렴 계약 이행 서약서'
-const ADMIN_INFO_AGRE_ID = 'w_admInfoAgre'
-const ADMIN_INFO_AGRE_TITLE = '행정정보 공동이용 사전동의서'
-const ADMIN_INFO_AGRE_BODY = [
-  '행정정보 공동이용 사전동의서 본문은 문구 확보 후 변경 예정입니다.',
-  '(PC 개정분 ovsWrotAgrePopup.xml 의 사전동의서 영역 문구를 수령하면 이 안내를 원문으로 교체합니다.)',
-]
-const WROT_ITEMS = [
-  { id: WROT_ID, title: WROT_TITLE, requirement: 'required' as const },
-  { id: ADMIN_INFO_AGRE_ID, title: ADMIN_INFO_AGRE_TITLE, requirement: 'required' as const },
-]
+const WROT_ITEMS = [{ id: WROT_ID, title: WROT_TITLE, requirement: 'required' as const }]
 const REQUIRED_WROT_IDS = WROT_ITEMS.map((w) => w.id)
 const wrotSchema = ovsWrotAgreSchema(REQUIRED_WROT_IDS)
 
@@ -310,7 +300,7 @@ export function OvsBidPrtcpAplyPage() {
             서약서 동의
           </SectionTitle>
 
-          {/* 서약서 동의 목록 — 청렴 계약 이행 서약서 + 행정정보 공동이용 사전동의서(자리, 문구 확보 후 변경)(보기 → P03 바텀시트).
+          {/* 서약서 동의 목록 — 청렴 계약 이행 서약서 1건(보기 → P03 바텀시트).
               폼 값(wrotChecked)은 Controller 로 연결, 에러(필수 미동의)는 목록 아래 InputMessage + 앵커 블록으로 포커스. */}
           <div id="field-wrotChecked" className="m-4 flex flex-col gap-krds-3">
             <Controller
@@ -380,7 +370,7 @@ export function OvsBidPrtcpAplyPage() {
       {/* 맨위로 FAB */}
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollTop} />
 
-      {/* 서약서 상세(P03) — 컨테이너/footer 는 페이지 소유, 콘텐츠만 OvsProbWrotAgre(청렴서약서 원문 / 사전동의서 자리 문구).
+      {/* 서약서 상세(P03) — 컨테이너/footer 는 페이지 소유, 콘텐츠만 OvsProbWrotAgre.
           저장 후 닫기는 '동의함' 선택 시에만 활성화(설계서 slide443 이벤트). */}
       <BottomSheet
         open={wrotTarget !== null}
@@ -411,7 +401,6 @@ export function OvsBidPrtcpAplyPage() {
           resultInfo={WROT_RESULT_INFO}
           choice={wrotChoice}
           onChoiceChange={setWrotChoice}
-          body={wrotTarget === ADMIN_INFO_AGRE_ID ? ADMIN_INFO_AGRE_BODY : undefined}
         />
       </BottomSheet>
     </div>

@@ -9,7 +9,7 @@
 // 폼: react-hook-form + zod(ovsBidGrnteSchema) — 탭마다 RHF, 페이지는 확정값만 보관(2026-09-14 사용자 확정).
 //   [다음으로]는 페이지가 ref.submit() 으로 트리거 → 통과 시 onSubmit(값). 실패 시 이동 없이 첫 에러 필드로 포커스+스크롤
 //   (focusField — 셀렉트/파일 행은 RHF ref 가 없어 앵커 id 기준, shouldFocusError 는 끄고 한 경로로 통일).
-// P75 풀팝업(보증서정보조회 P76 통합 — 카드 밑 펼침, 콘텐츠 OvsBidWtgrDtl)은 OvsBidWtgrInqFullPopup 이 캡슐화 — 이 탭은 open/onApply 만 소유.
+// P75 풀팝업(내부에 P76 보증서정보조회 바텀시트, 콘텐츠 OvsBidWtgrDtl)은 OvsBidWtgrInqFullPopup 이 캡슐화 — 이 탭은 open/onApply 만 소유.
 import * as React from 'react'
 import { Controller, useForm, type FieldErrors } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'

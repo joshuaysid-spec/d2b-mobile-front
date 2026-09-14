@@ -32,9 +32,6 @@ interface OvsItitbBidCnItem {
   itemSbstDocEn: 'O' | '' // 품목대체첨부문서 — 있으면 'O', 그 외 표시 없음
   mdfcnInvtNo: string // 수정재고번호(13)
   mdfcnPrtsNo: string // 수정부품번호(32)
-  moqYn: 'Y' | 'N' // MOQ구분(1)
-  moqQty: string // MOQ수량(15)
-  moqDocEn: 'O' | '' // MOQ첨부문서 — 있으면 'O', 그 외 표시 없음
   bscbgtDudtYmd: string // 납기(본조)(8)
   athrtDudtYmd: string // 납기(당국)(8)
   ltbndDudtYmd: string // 납기(장국)(8)
@@ -58,9 +55,6 @@ const ITITB_BASE: Omit<OvsItitbBidCnItem, 'frcptlArtclNo'> = {
   itemSbstDocEn: 'O',
   mdfcnInvtNo: '101537519',
   mdfcnPrtsNo: 'T-80U/TBE-3R',
-  moqYn: 'Y',
-  moqQty: '1',
-  moqDocEn: 'O',
   bscbgtDudtYmd: '2025-03-25',
   athrtDudtYmd: '2025-03-25',
   ltbndDudtYmd: '2025-03-25',
@@ -76,7 +70,7 @@ const MOCK_ITITB_LIST: OvsItitbBidCnItem[] = Array.from({ length: ITITB_TOTAL },
   frcptlArtclNo: String(i + 1),
   // 짝수 항목은 원안(As it is)·첨부 없음으로 변형 — 'O'/보기 버튼 유무 확인용.
   ...(i % 2 === 1
-    ? { itemSbstSe: 'As it is', itemSbstDocEn: '' as const, mdfcnInvtNo: '', mdfcnPrtsNo: '', moqYn: 'N' as const, moqQty: '', moqDocEn: '' as const }
+    ? { itemSbstSe: 'As it is', itemSbstDocEn: '' as const, mdfcnInvtNo: '', mdfcnPrtsNo: '' }
     : {}),
 }))
 
@@ -141,13 +135,6 @@ function buildItitbRows(
     },
     { label: '수정재고번호', value: it.mdfcnInvtNo || '-' },
     { label: '수정부품번호', value: it.mdfcnPrtsNo || '-' },
-    { label: 'MOQ구분', value: it.moqYn },
-    { label: 'MOQ수량', value: it.moqQty || '-', type: it.moqQty ? 'number' : 'default' },
-    {
-      label: 'MOQ첨부문서',
-      value: docCell(it.moqDocEn, () => onViewDoc('MOQ첨부문서', it)),
-      type: it.moqDocEn === 'O' ? 'combination' : 'default',
-    },
     { label: '납기(본조)', value: it.bscbgtDudtYmd },
     { label: '납기(당국)', value: it.athrtDudtYmd },
     { label: '납기(장국)', value: it.ltbndDudtYmd },

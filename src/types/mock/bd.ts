@@ -1101,12 +1101,6 @@ export interface MockItitbBidCnItem {
   mdfcnInvtNo: string
   /** 수정부품번호 — Replace 인 경우 활성/필수 */
   mdfcnPrtsNo: string
-  /** MOQ구분 — Y/N */
-  moqYn: 'Y' | 'N'
-  /** MOQ수량 — Y 인 경우 활성/필수 */
-  moqQty: string
-  /** MOQ첨부문서 — Y 인 경우 활성/필수. 목업은 업로드된 파일명 보관 */
-  moqDocEn: string
   /** 납기(본조) — 국가 예산 납기일자 */
   bscbgtDudtYmd: string
   /** 납기(당국) — 당해년도 국채 납기일자 */
@@ -1204,12 +1198,6 @@ export interface MockBfrPbancBidCnItem {
   mdfcnInvtNo: string
   /** 수정부품번호 (mdfcnPrtsNo) */
   mdfcnPrtsNo: string
-  /** MOQ구분 (moqYn) */
-  moqYn: string
-  /** MOQ수량 (moqQty) */
-  moqQty: string
-  /** MOQ첨부문서 (moqDocEn) */
-  moqDocEn: string
   /** 입찰업체 (splyBzentyNm) */
   splyBzentyNm: string
   /** 입찰단가 (bdngTccrUntprc) */
@@ -2204,12 +2192,6 @@ export interface MockOvsTndrItitbItem {
   mdfcnInvtNo: string
   /** 수정부품번호 (32) */
   mdfcnPrtsNo: string
-  /** MOQ구분 — Y/N */
-  moqYn: 'Y' | 'N'
-  /** MOQ수량 (15) */
-  moqQty: string
-  /** MOQ첨부문서 — 'O' | '' */
-  moqDocEn: 'O' | ''
   /** 납기(본조) (8) */
   bscbgtDudtYmd: string
   /** 납기(당국) (8) */

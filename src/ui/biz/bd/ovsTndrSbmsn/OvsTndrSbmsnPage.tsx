@@ -7,11 +7,23 @@
 // 스탭1(일반정보)은 페이지 인라인, 스탭2(M72/M73)·스탭3(M74)은 Stp2/Stp3 컴포넌트.
 // 마지막 탭 [신청하기] → 신청완료(M08, 기존 aplyCmptn 재사용).
 //   (설계서 slide369 2026-07-02 화면 수정: '전자서명하기' → '신청하기' — 전자서명 단계 없이 신청완료로 이동)
+// 행정정보 공동이용 사전동의서 영역(2026-09-14, PC 개정 메모 정정분 — 국외 입찰서에만, 국내 입찰서 미적용):
+//   마지막 탭(첨부파일) 하단에 동의 목록(AgreementList, [필수]) + 동의서 상세 바텀시트(본문 + 동의 선택, 페이지 소유).
+//   [신청하기] 시 동의 필수 검증(페이지 소형 RHF 폼 ovsTndrAgreSchema) — 미동의면 차단 + 목록 아래 에러 + 포커스.
+//   본문 문구 미확보 → ADM_INFO_AGRE_BODY 자리 문구, 수령 시 교체.
 import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { focusField } from '@/utils/focusField'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
+import { InputMessage } from '@/ui/common/base/InputMessage'
+import { SectionTitle } from '@/ui/common/base/SectionTitle'
+import { AgreementList } from '@/ui/common/composites/AgreementList'
+import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
+import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
@@ -20,7 +32,23 @@ import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsTndrSbmsnPage_Stp2 } from '@/ui/biz/bd/ovsTndrSbmsn/Stp2'
 import { OvsTndrSbmsnPage_Stp3 } from '@/ui/biz/bd/ovsTndrSbmsn/Stp3'
+import {
+  ADM_INFO_AGRE_ID,
+  ovsTndrAgreSchema,
+  type OvsTndrAgreValues,
+} from '@/ui/biz/bd/ovsTndrSbmsn/OvsTndrSbmsn.schema'
 import type { MockBidPrgrsItem, MockOvsTndrSbmsnDetail } from '@/types/mock/bd'
+
+// 행정정보 공동이용 사전동의서 — 국외 입찰서 전용(국내 미적용). ⚠️ 본문 문구 미확보: 문구 수령 시 이 상수만 교체.
+const ADM_INFO_AGRE_TITLE = '행정정보 공동이용 사전동의서'
+const ADM_INFO_AGRE_BODY = [
+  '행정정보 공동이용 사전동의서 본문은 문구 확보 후 변경 예정입니다.',
+  '(PC 개정분 사전동의서 영역 문구를 수령하면 이 안내를 원문으로 교체합니다.)',
+]
+const AGREE_OPTIONS = [
+  { value: '동의안함', label: '동의안함' },
+  { value: '동의함', label: '동의함' },
+]
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 slide366 예시값 그대로.
 const MOCK_OVS_TNDR_DETAIL: MockOvsTndrSbmsnDetail = {
@@ -75,6 +103,31 @@ export function OvsTndrSbmsnPage() {
 
   const [tab, setTab] = useState('일반정보')
 
+  // ── 사전동의서 동의 폼(페이지 소유) — [신청하기] 때 필수 동의 검증. AgreementList 는 RHF ref 없음 → focusField. ──
+  const agreeForm = useForm<OvsTndrAgreValues>({
+    resolver: zodResolver(ovsTndrAgreSchema),
+    mode: 'onSubmit',
+    reValidateMode: 'onChange', // 체크 즉시 에러 해제
+    shouldFocusError: false,
+    defaultValues: { agreed: [] },
+  })
+  const agreeError = agreeForm.formState.errors.agreed?.message
+  const [agreeOpen, setAgreeOpen] = useState(false) // 동의서 상세 바텀시트
+  const [agreeChoice, setAgreeChoice] = useState('동의안함') // 시트 내 동의 선택(기본 동의안함)
+  const openAgreement = () => {
+    // 목록에 저장된 동의 상태를 시트 라디오 초기값으로 반영(국내 입찰서 약관동의 패턴).
+    setAgreeChoice(agreeForm.getValues('agreed').includes(ADM_INFO_AGRE_ID) ? '동의함' : '동의안함')
+    setAgreeOpen(true)
+    console.log('[M71] 사전동의서 열람', ADM_INFO_AGRE_ID) // 추후 API: bdService.selectAgreement
+  }
+  // 저장 후 닫기 — '동의함'일 때만 활성(국외 서약서 P03 패턴). 목록 체크 반영 + 재검증으로 에러 해제.
+  const saveAgreement = () => {
+    const prev = agreeForm.getValues('agreed')
+    agreeForm.setValue('agreed', [...new Set([...prev, ADM_INFO_AGRE_ID])], { shouldValidate: true })
+    setAgreeOpen(false)
+    console.log('[M71] 사전동의서 저장(동의)', ADM_INFO_AGRE_ID) // 추후 API: bdService.saveAgreement
+  }
+
   // 일반정보(설계서 slide476 dm_bscPbancInfo) — 항목명/형식 설계서 그대로.
   const pbancRows: TableRow[] = [
     { label: '공고번호-차수', value: `${detail.pbancNo}-${detail.pbancOd}` },
@@ -110,6 +163,10 @@ export function OvsTndrSbmsnPage() {
       goTab(tabOrder[tabIdx + 1])
       return
     }
+    // 신청하기 — 사전동의서 동의 검증 통과 시에만 제출. 실패 시 목록 아래 에러 + 목록으로 포커스.
+    void agreeForm.handleSubmit(submitTndr, () => focusField('field-admInfoAgre'))()
+  }
+  const submitTndr = () => {
     // 신청하기(설계서 slide369·373 투찰 클릭) — 입찰 작성내역 암호화 저장(모의입찰 상태면 모의투찰).
     console.log('[M74] 국외 입찰서 제출(투찰)', detail.pbancNo, detail.pbancOd)
     // 추후 API: bdService.insertOvsTndrSbmsn(pbancNo, pbancOd, ...)
@@ -208,6 +265,36 @@ export function OvsTndrSbmsnPage() {
       {/* 탭별 콘텐츠(M71 일반정보 / M72·M73 입찰참여품목 / M74 첨부파일) */}
       {renderTab()}
 
+      {/* 행정정보 공동이용 사전동의서 영역 — 마지막 탭(첨부파일) 하단, [신청하기] 전 필수 동의(국외 입찰서 전용).
+          목록 행 클릭 → 동의서 상세 바텀시트(페이지 소유). 에러는 목록 아래 + 앵커 블록 포커스. */}
+      {isLastTab && (
+        <>
+          <SectionTitle as="h3" topDivider>
+            동의
+          </SectionTitle>
+          <div id="field-admInfoAgre" className="m-4 flex flex-col gap-krds-3">
+            <Controller
+              control={agreeForm.control}
+              name="agreed"
+              render={({ field }) => (
+                <AgreementList
+                  checkAll={false}
+                  items={[{ id: ADM_INFO_AGRE_ID, title: ADM_INFO_AGRE_TITLE, requirement: 'required' }]}
+                  checked={field.value}
+                  onToggle={(id, on) =>
+                    field.onChange(
+                      on ? [...new Set([...field.value, id])] : field.value.filter((v) => v !== id),
+                    )
+                  }
+                  onView={openAgreement}
+                />
+              )}
+            />
+            {agreeError && <InputMessage type="error">{agreeError}</InputMessage>}
+          </div>
+        </>
+      )}
+
       {/* 하단 액션바 — 이전/다음으로(마지막 탭=신청하기, 설계서 slide369).
           전 탭 asymmetric(이전 좁게 + 다음으로/신청하기 넓게 — 사용자 지시 2026-08-26). */}
       <div className="border-t border-krds-border-divider bg-krds-bg-primary-faint px-4 py-4">
@@ -227,6 +314,54 @@ export function OvsTndrSbmsnPage() {
           document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
         }
       />
+
+      {/* 사전동의서 상세 바텀시트 — 컨테이너/footer 는 페이지 소유, 콘텐츠(본문 + 동의 선택)는 인라인.
+          저장 후 닫기는 '동의함' 선택 시에만 활성(국외 서약서 P03 패턴). */}
+      <BottomSheet
+        open={agreeOpen}
+        onOpenChange={setAgreeOpen}
+        title="동의서 상세"
+        footer={
+          <ButtonGroup
+            layout="asymmetric"
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setAgreeOpen(false) },
+              {
+                label: '저장 후 닫기',
+                variant: 'primary',
+                disabled: agreeChoice !== '동의함',
+                onClick: saveAgreement,
+              },
+            ]}
+          />
+        }
+      >
+        <div className="flex flex-col gap-krds-7 py-2">
+          <p className="text-center text-[19px] font-bold leading-normal text-krds-text-ink wrap-break-word">
+            {ADM_INFO_AGRE_TITLE}
+          </p>
+          {/* 본문 — 문구 확보 후 교체(ADM_INFO_AGRE_BODY) */}
+          <div className="flex flex-col gap-krds-5 text-[17px] leading-normal text-krds-text-ink">
+            {ADM_INFO_AGRE_BODY.map((p, i) => (
+              <p key={i} className="wrap-break-word">
+                {p}
+              </p>
+            ))}
+          </div>
+          {/* 동의 선택 — 기본 동의안함 */}
+          <div className="flex flex-col gap-krds-5">
+            <p className="text-[17px] font-bold leading-normal text-krds-text-ink">동의 선택</p>
+            <RadioButtonGroup
+              items={AGREE_OPTIONS}
+              value={agreeChoice}
+              onValueChange={(v) => {
+                setAgreeChoice(v)
+                console.log('[M71] 사전동의서 동의 선택', v) // 추후 API: bdService.setAgreementChoice
+              }}
+            />
+          </div>
+        </div>
+      </BottomSheet>
     </div>
   )
 }
