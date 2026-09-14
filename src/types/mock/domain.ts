@@ -6,6 +6,9 @@ export interface MockUser {
   name: string
   /** 최근 로그인 일시 — 햄버거메뉴(M12) '최근 로그인' 표시(v0.87 검토 3번). 추후 로그인 응답에서 주입. */
   lastLoginAt?: string
+  /** 사용자유형명(userTyNm) — 대표자/관리자/담당자. 사용자관리(PrcmBzentyUserMng) 항목명 재사용.
+   *  권한 분기(예: 사용자정보관리 도움말은 대표자·관리자만 — v0.87 검토 47번)에 사용. 추후 로그인 응답에서 주입. */
+  userTyNm?: string
 }
 
 // ── 인증(auth) API 타입(추정 — TODO(백엔드 확정)) ──

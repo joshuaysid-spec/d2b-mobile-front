@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { Infobox } from '@/ui/common/composites/Infobox'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
@@ -155,6 +156,15 @@ export function OvsRlsVltrnsNgtnEtdcSbmsnPage() {
       {/* 진행단계 — 신청서 → 서명 → 제출 (설계서 slide419) */}
       <div className="bg-krds-bg-primary-faint px-4 py-4">
         <StepBar orientation="horizontal" items={STEPS} className="bg-transparent" />
+      </div>
+
+      {/* 공지사항(v0.87 검토 107번) — 국외 공고 상세 dm_ntcInfo 패턴의 상단 Infobox 공지 박스. 내역 없으면 미표시.
+          목업 1건 — 추후 API 응답(공지 목록)으로 교체. */}
+      <div className="px-4 pb-2 pt-4">
+        <Infobox
+          title="공지사항"
+          items={['[2025-12-22] 견적서 제출 전 공개수의협상 공고문 및 견적 유의사항을 반드시 확인하시기 바랍니다.']}
+        />
       </div>
 
       {/* 스텝 탭 — 스크롤 시 상단 고정(sticky). 스크롤 주체는 AppLayout 의 #app-scroll. */}

@@ -6,6 +6,7 @@
 //   명시되지 않아 클러스터 화면으로 도출). 2026-07-13 개정: 회원탈퇴가 사용자정보 화면으로 이동됨.
 import { useNavigate } from 'react-router-dom'
 
+import { useAuthStore } from '@/stores/authStore'
 import { Icon } from '@/ui/common/base/Icon'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { BzentySummaryCard } from '@/ui/biz/cm/bzentyInfo/BzentySummaryCard'
@@ -43,6 +44,9 @@ const MENU: { label: string; to: string }[] = [
 
 export function IndvInfoMngPage() {
   const navigate = useNavigate()
+  // 도움말(퇴사자 원복 안내)은 대표자/관리자에게만 노출(v0.87 검토 47번). 사용자유형은 로그인 사용자(userTyNm).
+  const userTyNm = useAuthStore((s) => s.user?.userTyNm)
+  const canSeeHelp = userTyNm === '대표자' || userTyNm === '관리자'
   return (
     <div className="flex w-full flex-col">
       {/* 업체정보(dm_bzentyInfo) — 업체정보 상세(M02)와 동일한 요약 카드(260828 사용자 확정). */}
@@ -72,13 +76,15 @@ export function IndvInfoMngPage() {
         ))}
       </ul>
 
-      {/* 하단 도움말 — 설계서 v0.85 slide196(M01) 문구 그대로. */}
-      <div className="pt-4 pb-4">
-        <HelpDisclosure
-          title="도움말"
-          items={['퇴사자 원복은 PC 버전에서 확인하고, 신청이 가능합니다.']}
-        />
-      </div>
+      {/* 하단 도움말 — 설계서 v0.85 slide196(M01) 문구 그대로. 대표자/관리자만(v0.87 검토 47번). */}
+      {canSeeHelp && (
+        <div className="pt-4 pb-4">
+          <HelpDisclosure
+            title="도움말"
+            items={['퇴사자 원복은 PC 버전에서 확인하고, 신청이 가능합니다.']}
+          />
+        </div>
+      )}
     </div>
   )
 }

@@ -9,6 +9,7 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { Infobox } from '@/ui/common/composites/Infobox'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
@@ -153,6 +154,15 @@ export function OvsRlsVltrnsNgtnEtdcDtlPage() {
       {/* 진행단계 — 신청서 → 서명 → 제출 (설계서 slide429, 전부 완료) */}
       <div className="bg-krds-bg-primary-faint px-4 py-4">
         <StepBar orientation="horizontal" items={STEPS} className="bg-transparent" />
+      </div>
+
+      {/* 공지사항(v0.87 검토 109번) — 국외 공고 상세 dm_ntcInfo 패턴의 상단 Infobox 공지 박스. 내역 없으면 미표시.
+          목업 1건 — 추후 API 응답(공지 목록)으로 교체. */}
+      <div className="px-4 pb-2 pt-4">
+        <Infobox
+          title="공지사항"
+          items={['[2025-12-22] 제출한 견적서는 견적 마감 후 수정할 수 없습니다. 문의는 담당자 연락처로 주시기 바랍니다.']}
+        />
       </div>
 
       {/* 탭 — 스크롤 시 상단 고정(sticky). 스크롤 주체는 AppLayout 의 #app-scroll. */}

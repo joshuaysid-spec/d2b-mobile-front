@@ -60,8 +60,11 @@ export function MbWithdrawalPage() {
       {/* 주의사항 — 되돌릴 수 없음 강조(urgent). 최상단 배치 + 문구를 배지 아래로 세로 정렬
           (사용자 확정 2026-08-25 — 공통 Notice 는 수정하지 않고 flex-col 오버라이드). */}
       <div className="px-krds-8 pt-krds-7 pb-krds-7">
+        {/* 문장별 줄바꿈(v0.87 검토 57번 — 팝업은 그대로, 주의사항 문구만) */}
         <Notice type="urgent" badgeLabel="주의" className="flex-col">
-          회원탈퇴 시 회원정보가 삭제됩니다. 회원탈퇴 시 되돌릴 수 없으며, 재가입 하셔야 합니다.
+          회원탈퇴 시 회원정보가 삭제됩니다.
+          <br />
+          회원탈퇴 시 되돌릴 수 없으며, 재가입 하셔야 합니다.
         </Notice>
       </div>
 

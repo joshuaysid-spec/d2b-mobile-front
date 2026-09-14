@@ -11,7 +11,7 @@ import type {
 } from '@/types/mock/domain'
 
 // 로그인 사용자(목업) — 설계서 예시값(홍길동).
-const USER: MockUser = { customerNo: 'C0000001', name: '홍길동' }
+const USER: MockUser = { customerNo: 'C0000001', name: '홍길동', userTyNm: '대표자' }
 
 // 소속 업체 목록 — 2건 이상이면 로그인업체선택(BzentyChc) 바텀시트 노출.
 const BZENTY_LIST: MockBzentyChcItem[] = [
