@@ -10,8 +10,13 @@
 //   ⚠️ 디자인(Figma) 없음 → 설계서(pptx)로 작업. 데이터=목업(설계서 항목명/형식), 저장=API 경계 스텁(console.log).
 //   신청 흐름(slide152/175/177): 조회 동의 체크 → P13 사전동의서 → [동의하고 신청하기] → P14 확인 → 완료 토스트.
 //     미동의 상태로 [추가 등록 신청] → 경고 모달(그대로 신청/닫기) → 그대로 신청 → P14 확인.
-import { useMemo, useRef, useState } from 'react'
+//   v0.87 검토 33번(2026-09-14 반영): ① 진입 시 기존 정보 프리필 — cmQueries(업체기본정보 사업자번호 · 업체물품정보
+//     대표품류/업태/조합 · 등록품목명세) 응답으로 폼 초기값 채움 ② 등록품목 카드 [보기] 버튼(카드 하단, 국외 보관함 입찰내역
+//     작성 카드 패턴) → P09 품목조회.
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+
+import { cmQueries } from '@/queries/cbs/cm/cmQueries'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Button } from '@/ui/common/base/Button'
@@ -145,6 +150,24 @@ export function DmstLctnColInfoAddRegPage() {
   const [itemKeyword, setItemKeyword] = useState('') // 품목 코드 검색
   const [rvwRslt, setRvwRslt] = useState('all') // 적격상태(전체/적격/부적격)
 
+  // ── 기존 정보 프리필(v0.87 검토 33번) — 목업 응답. 추후 실 API(no.621 등)로 그대로 교체. ──
+  const bscInfo = cmQueries.useSelectBzentyBscInfo()
+  const dmscptInfo = cmQueries.useSelectBzentyDmscptInfo(bscInfo.data?.bzentyCd ?? '')
+  const regItemList = cmQueries.useSelectRegItemList()
+  const brno = bscInfo.data?.brno ?? '' // 본사 사업자번호(자동표시)
+  useEffect(() => {
+    // 대표품류/업태/조합·단체 — 업체물품정보 첫 건으로 채움(설계서 단일 값 폼).
+    const first = dmscptInfo.data?.knditmAsctGrpList[0]
+    if (!first) return
+    setKnditm({ knditmCd: first.knditmCd, knditmCdNm: first.knditmCdNm })
+    setBzstat(first.bzstatCdNm)
+    setAsctGrp({ asctCd: first.asctCd, asctCdNm: first.asctCdNm })
+  }, [dmscptInfo.data])
+  useEffect(() => {
+    // 등록품목명세 — 기존 등록 품목으로 교체(초기 목업 상수 대체).
+    if (regItemList.data) setItems(regItemList.data)
+  }, [regItemList.data])
+
   // ── 팝업/상태 ──
   const [sheet, setSheet] = useState<SheetKind>(null)
   const [itemInqDetail, setItemInqDetail] = useState<MockItemInqDetail | null>(null)
@@ -252,19 +275,8 @@ export function DmstLctnColInfoAddRegPage() {
   function itemRows(d: MockAddRegItemRow, rnum: number): TableRow[] {
     return [
       { label: '순번', value: String(rnum) },
-      {
-        label: '품목코드',
-        // 품목코드 클릭 → 품목 조회(P09). 클릭 요소는 button(전역 cursor·a11y 규칙 커버).
-        value: (
-          <button
-            type="button"
-            className="text-left text-krds-text-primary-active underline-offset-2 hover:underline"
-            onClick={() => openItemInq(d)}
-          >
-            {d.itemCd}
-          </button>
-        ),
-      },
+      // 품목코드 — 조회는 카드 하단 [보기] 버튼으로(v0.87 검토 33번), 코드 링크는 제거.
+      { label: '품목코드', value: d.itemCd },
       { label: '품류코드/명', value: `${d.knditmCd} / ${d.knditmCdNm}` },
       // 품명은 카드 타이틀로 승격(Figma 10020:85034) — 행에서 제외.
       { label: '구분', value: d.itemRgstrtSecdNm },
@@ -295,7 +307,7 @@ export function DmstLctnColInfoAddRegPage() {
             <div className="flex flex-col gap-krds-5">
               {/* 본사 사업자번호 — 필수(v0.87 검토 33번 기획 확정). 자동표시(read-only), 3-2-5 자리(slide150). */}
               <InputLabel required>본사 사업자번호</InputLabel>
-              <InputBox disabled value="123-45-67890" onChange={() => {}} />
+              <InputBox disabled value={brno} onChange={() => {}} />
             </div>
             <div className="flex flex-col gap-krds-5">
               <InputLabel required>ISO 인증여부</InputLabel>
@@ -435,7 +447,7 @@ export function DmstLctnColInfoAddRegPage() {
               </Button>
             </div>
 
-            {/* 품목 목록 — [선택] 토글 + [보기](P09) + 품목코드 링크(P09). 목업. */}
+            {/* 품목 목록 — [선택] 체크(카드 우측) + 카드 하단 [보기](P09) — 국외 보관함 입찰내역 작성 카드 패턴(v0.87 검토 33번). */}
             <div className="flex flex-col gap-krds-8">
               {visibleItems.map((it, i) => {
                 const on = selectedIds.includes(it.id)
@@ -452,6 +464,11 @@ export function DmstLctnColInfoAddRegPage() {
                       />
                     }
                     rows={itemRows(it, i + 1)}
+                    footer={
+                      <Button variant="secondary" className="w-full" onClick={() => openItemInq(it)}>
+                        보기
+                      </Button>
+                    }
                   />
                 )
               })}

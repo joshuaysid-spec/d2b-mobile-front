@@ -8,6 +8,24 @@ import { cmKeys } from '@/queries/cbs/cm/cmKeys'
 import type { MockLoginRequest, MockRegisterIntgAcntRequest } from '@/types/mock/domain'
 
 export const cmQueries = {
+  // ── 업체정보 추가등록 물품(내자) M05 프리필(v0.87 검토 33번) — 진입 시 기존 등록정보 조회 ──
+  /** 업체기본정보 — 본사 사업자번호(brno)·업체코드(bzentyCd). */
+  useSelectBzentyBscInfo() {
+    return useQuery({ queryKey: cmKeys.selectBzentyBscInfo, queryFn: () => cmService.selectBzentyBscInfo() })
+  },
+  /** no.621 업체물품(내자)정보 — 대표품류/업태/조합·단체(knditmAsctGrpList). 업체코드 확보 후 조회. */
+  useSelectBzentyDmscptInfo(bzentyCd: string) {
+    return useQuery({
+      queryKey: cmKeys.selectBzentyDmscptInfo(bzentyCd),
+      queryFn: () => cmService.selectBzentyDmscptInfo(bzentyCd),
+      enabled: !!bzentyCd,
+    })
+  },
+  /** 등록품목명세 목록 — 기존 등록 품목 프리필. */
+  useSelectRegItemList() {
+    return useQuery({ queryKey: cmKeys.selectRegItemList, queryFn: () => cmService.selectRegItemList() })
+  },
+
   /**
    * no.686 실적증명서제출목록조회 — 제출 협회 목록(dl_sbmsnAsctnList).
    * slide336 On-Load(scwin.onpageload). 제출 시트가 열릴 때만 조회한다(enabled).

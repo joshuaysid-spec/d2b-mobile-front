@@ -12,4 +12,12 @@ export const cmKeys = {
   /** no.659 사용자정보조회. */
   selectUserInfo: ['cm', 'selectUserInfo'] as const,
   selectIntgAcntTarget: ['cm', 'selectIntgAcntTarget'] as const,
+
+  // ── 업체정보 추가등록 물품(내자) M05 프리필(v0.87 검토 33번 — 기존 정보 불러와 표시) ─────
+  /** 업체기본정보(사업자번호·업체코드). */
+  selectBzentyBscInfo: ['cm', 'selectBzentyBscInfo'] as const,
+  /** no.621 업체물품(내자)정보(대표품류/조합·등록품목). */
+  selectBzentyDmscptInfo: (bzentyCd: string) => ['cm', 'selectBzentyDmscptInfo', bzentyCd] as const,
+  /** 등록품목명세 목록(URL 임시). */
+  selectRegItemList: ['cm', 'selectRegItemList'] as const,
 }
