@@ -4,8 +4,9 @@
 //   → 입찰참가사업 및 입찰보증금 목록(사업별 Table)
 //     · 면제(dl_bizExmptnList): 입찰보증금(확인입력 — R 표시, 설계서 항목표 기준·사용자 확정 2026-09-14) + 연대보증서/지급각서 파일(필수)
 //     · 비면제(dl_bizList): 입찰보증금(확인입력, 필수·입찰보증금과 일치) + 보증금납부방법(필수) + 증권번호/보증기관명(필수) + 납부서(선택)
-//       - 전자보증서: 증권번호/보증기관명 입력 비활성 + [보증서선택] → 입찰보증서선택 팝업(P75, OvsBidWtgrInqFullPopup)
-//       - 보증보험: 직접 입력 + 입찰보증금납부서 파일 선택 업로드
+//       - 전자보증서: 증권번호/보증기관명 입력 비활성 + '입찰보증서' 첨부 행(선택 보증서 표시 + [입찰보증서선택] → P75 팝업,
+//         PC 개정 메모 ① "하단 첨부파일에 입찰보증서" 반영 2026-09-14)
+//       - 보증보험: 직접 입력 + 입찰보증금납부서 파일 선택 업로드(납부서 파일 = 보증서)
 // 폼: react-hook-form + zod(ovsBidGrnteSchema) — 탭마다 RHF, 페이지는 확정값만 보관(2026-09-14 사용자 확정).
 //   [다음으로]는 페이지가 ref.submit() 으로 트리거 → 통과 시 onSubmit(값). 실패 시 이동 없이 첫 에러 필드로 포커스+스크롤
 //   (focusField — 셀렉트/파일 행은 RHF ref 가 없어 앵커 id 기준, shouldFocusError 는 끄고 한 경로로 통일).
@@ -15,7 +16,6 @@ import { Controller, useForm, type FieldErrors } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { focusField } from '@/utils/focusField'
-import { Button } from '@/ui/common/base/Button'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { InputMessage } from '@/ui/common/base/InputMessage'
@@ -258,35 +258,22 @@ const Stp3 = React.forwardRef<Stp3Handle, Stp3Props>(({ detail, defaultValues, o
         ),
       },
       {
+        // 증권번호 — 보증보험: 직접 입력 / 전자보증서: 아래 '입찰보증서' 첨부 행에서 선택한 보증서 값 표시(입력 비활성).
+        //   에러 앵커(wtgrNo)는 전자보증서면 '입찰보증서' 행으로(선택 버튼이 거기 있음).
         label: '보증금증권번호',
         type: 'combination',
         value: (
-          <div id={rowFieldId(i, 'wtgrNo')} className="flex flex-col gap-krds-3">
+          <div id={isEGuarantee ? undefined : rowFieldId(i, 'wtgrNo')} className="flex flex-col gap-krds-3">
             <InputBox
               placeholder="입력해주세요."
               maxLength={30}
               readOnly={isEGuarantee}
               disabled={isEGuarantee && !row?.wtgrNo}
-              error={!!wtgrErr}
-              aria-invalid={!!wtgrErr}
+              error={!!wtgrErr && !isEGuarantee}
+              aria-invalid={!!wtgrErr && !isEGuarantee}
               {...register(`bizList.${i}.wtgrNo`)}
             />
-            {/* 보증서선택(slide452 btn_openBond_onclick) — 전자보증서: P75 팝업 / 보증보험: 파일 선택 업로드 */}
-            <Button
-              variant="inner"
-              size="sm"
-              disabled={!row?.grntePayMth}
-              onClick={() => {
-                if (isEGuarantee) {
-                  setWtgrInqFor(i) // 입찰보증서선택 팝업(P75)
-                } else {
-                  setFileAddFor({ index: i, field: 'grntePyslDocNo', docNm: '입찰보증금납부서' })
-                }
-              }}
-            >
-              보증서선택
-            </Button>
-            {wtgrErr && <InputMessage type="error">{wtgrErr}</InputMessage>}
+            {wtgrErr && !isEGuarantee && <InputMessage type="error">{wtgrErr}</InputMessage>}
           </div>
         ),
       },
@@ -309,11 +296,45 @@ const Stp3 = React.forwardRef<Stp3Handle, Stp3Props>(({ detail, defaultValues, o
         ),
       },
       {
-        // 업로드된 파일 X 삭제(설계서 slide447 주석 4). 선택 항목(N).
+        // 업로드된 파일 X 삭제(설계서 slide447 주석 4). 선택 항목(N). 보증보험의 보증서 = 이 납부서 파일.
         label: '입찰보증금납부서',
         type: 'combination',
         value: fileCell(i, 'grntePyslDocNo', '입찰보증금납부서'),
       },
+      // 입찰보증서 첨부 행(PC 개정 메모 ① 반영, 사용자 확정 2026-09-14) — 전자보증서일 때만.
+      //   선택한 전자보증서를 첨부파일처럼 표시(증권번호, X=선택 해제) + [입찰보증서선택] → P75 팝업
+      //   (slide452 btn_openBond_onclick). 보증보험은 위 납부서 파일 행이 보증서 역할이라 이 행 없음.
+      ...(isEGuarantee
+        ? [
+            {
+              label: '입찰보증서',
+              type: 'combination' as const,
+              value: (
+                <div id={rowFieldId(i, 'wtgrNo')} className="flex flex-col gap-krds-3">
+                  <FileDownloadList
+                    files={
+                      row?.wtgrNo
+                        ? [
+                            {
+                              id: 'wtgr',
+                              name: `${row.grnteInstNm} ${row.wtgrNo}`,
+                              onRemove: () => {
+                                patchRow(i, { wtgrNo: '', grnteInstNm: '' })
+                                console.log('[T74] 입찰보증서 선택 해제', biz.prchsDmndNo)
+                              },
+                            },
+                          ]
+                        : []
+                    }
+                    onAddFile={() => setWtgrInqFor(i)}
+                    addFileLabel="입찰보증서선택"
+                  />
+                  {wtgrErr && <InputMessage type="error">{wtgrErr}</InputMessage>}
+                </div>
+              ),
+            },
+          ]
+        : []),
     ]
   }
 
