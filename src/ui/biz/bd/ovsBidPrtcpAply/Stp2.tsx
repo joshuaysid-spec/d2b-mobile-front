@@ -1,29 +1,23 @@
-// 스탭2 업체정보 (MUI-BD-04-T73(구 M73 — v1.83 재편) OvsBidPrtcpAplyPage_Stp2 · 설계서 slide334 · 데이터 slide338 dm_splyInfo).
+// 스탭2 업체정보 (MUI-BD-04-T73(구 M73 — v1.83 재편) OvsBidPrtcpAplyPage_Stp2 · 설계서 slide445 · 데이터 slide449 dm_splyInfo).
 // 호스트 페이지(OvsBidPrtcpAplyPage)의 '업체정보' 탭 본문만 담당 — 요약/스텝/탭/하단 액션바는 페이지 소유.
-// 구성: 페이지타이틀 → 입찰업체 Table(dm_splyInfo — 업체코드만 편집 E, 나머지 R)
-//   → LETTER OF GUARANTEE FOR PAYMENT OF BID BOND 본문 박스(설계서 slide334 영문 원문,
-//     #입찰업체명·#보증금액 자리는 목업값 치환).
-import { useState } from 'react'
+// 구성: 입찰업체 Table(dm_splyInfo — 업체코드만 편집 E, 나머지 R)
+//   → LETTER OF GUARANTEE FOR PAYMENT OF BID BOND 본문 박스(설계서 영문 원문, #입찰업체명·#보증금액 자리는 목업값 치환).
+// 폼: react-hook-form + zod(ovsSplyInfoSchema) — 탭마다 RHF, 페이지는 확정값만 보관(2026-09-14 사용자 확정).
+//   [다음으로]는 페이지가 ref.submit() 으로 트리거 → 통과 시 onSubmit(값) → 페이지가 저장 후 다음 탭.
+//   실패 시 이동 없이 업체코드 필드에 RHF 자동 포커스(register) + 에러 문구.
+import * as React from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 import { InputBox } from '@/ui/common/base/InputBox'
+import { InputMessage } from '@/ui/common/base/InputMessage'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import type { MockOvsSplyInfo } from '@/types/mock/bd'
+import { ovsSplyInfoSchema, type OvsSplyInfoValues } from '@/ui/biz/bd/ovsBidPrtcpAply/OvsBidPrtcpAply.schema'
+import { MOCK_SPLY_INFO } from '@/ui/biz/bd/ovsBidPrtcpAply/ovsBidPrtcpAplyMock'
 import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
-// 입찰업체(dm_splyInfo) — 설계서 slide334 표시값 형식 그대로(2026-07-01 화면 수정: 주민등록번호 삭제).
-const MOCK_SPLY_INFO: MockOvsSplyInfo = {
-  splyBzentyCd: '7004',
-  splyBzentyNm: 'FB해외업체',
-  splyRprsvNm: '홍길동',
-  splyEmlAddr: 'bid@fb-overseas.com',
-  splyTlno: '02-1234-5678',
-  splyFxno: '02-2345-6789',
-  splyBzmnNo: '123-45-67890',
-  splyAddr: '서울특별시 종로구 세종대로 209',
-}
-
-// LETTER OF GUARANTEE FOR PAYMENT OF BID BOND — 설계서 slide334 영문 원문.
+// LETTER OF GUARANTEE FOR PAYMENT OF BID BOND — 설계서 slide445 영문 원문.
 // #입찰업체명 → splyBzentyNm, #보증금액 → 입찰보증금 목업값 치환.
 const GUARANTEE_LETTER: string[] = [
   'Name and address of Beneficiary',
@@ -37,25 +31,63 @@ const GUARANTEE_LETTER: string[] = [
   'We further agree that the DAPA is hereby authorized to deduct from any money due to us if we fail to make payment of such guaranteed amount.',
 ]
 
-export function Stp2({ detail }: { detail: MockBidPrgrsItem }) {
-  // 입찰업체 업체코드(splyBzentyCd) — dm_splyInfo 중 유일한 편집(E) 항목.
-  const [splyBzentyCd, setSplyBzentyCd] = useState(MOCK_SPLY_INFO.splyBzentyCd)
+export interface Stp2Handle {
+  /** 페이지 [다음으로]가 호출 — 검증 통과 시 onSubmit 실행. */
+  submit: () => void
+}
 
-  // 입찰업체(dm_splyInfo)
+export interface Stp2Props {
+  detail: MockBidPrgrsItem
+  /** 초기값 — 페이지가 보관한 확정값(되돌아올 때) 또는 SPLY_INFO_DEFAULT. */
+  defaultValues: OvsSplyInfoValues
+  /** 검증 통과 시 확정값 전달 — 페이지가 저장 후 다음 탭으로. */
+  onSubmit: (values: OvsSplyInfoValues) => void
+}
+
+const Stp2 = React.forwardRef<Stp2Handle, Stp2Props>(({ detail, defaultValues, onSubmit }, ref) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<OvsSplyInfoValues>({
+    resolver: zodResolver(ovsSplyInfoSchema),
+    mode: 'onSubmit',
+    reValidateMode: 'onBlur',
+    defaultValues,
+  })
+
+  React.useImperativeHandle(ref, () => ({
+    // 업체코드는 register 입력이라 실패 시 RHF shouldFocusError 가 자동 포커스.
+    submit: () => void handleSubmit(onSubmit)(),
+  }))
+
+  // 입찰업체(dm_splyInfo) — 업체코드(splyBzentyCd)만 편집(E).
   const splyRows: TableRow[] = [
     {
       label: '업체코드',
       type: 'combination',
       value: (
-        <InputBox
-          value={splyBzentyCd}
-          onChange={(e) => {
-            setSplyBzentyCd(e.target.value)
-            console.log('[M73] 입찰업체 업체코드 입력', { pbancNo: detail.pbancNo, splyBzentyCd: e.target.value })
-            // 추후 API: bdService.selectBzentyDtl(splyBzentyCd)
-          }}
-          placeholder="업체코드를 입력하세요."
-        />
+        <div id="field-splyBzentyCd" className="flex flex-col gap-krds-3">
+          <InputBox
+            id="ovsSply-splyBzentyCd"
+            placeholder="업체코드를 입력하세요."
+            maxLength={5}
+            error={!!errors.splyBzentyCd}
+            aria-invalid={!!errors.splyBzentyCd}
+            aria-describedby={errors.splyBzentyCd ? 'ovsSply-splyBzentyCd-error' : undefined}
+            {...register('splyBzentyCd', {
+              onChange: (e) => {
+                console.log('[T73] 입찰업체 업체코드 입력', { pbancNo: detail.pbancNo, splyBzentyCd: e.target.value })
+                // 추후 API: bdService.selectBzentyDtl(splyBzentyCd)
+              },
+            })}
+          />
+          {errors.splyBzentyCd && (
+            <InputMessage type="error" id="ovsSply-splyBzentyCd-error">
+              {errors.splyBzentyCd.message}
+            </InputMessage>
+          )}
+        </div>
       ),
     },
     { label: '업체명', value: MOCK_SPLY_INFO.splyBzentyNm },
@@ -68,7 +100,8 @@ export function Stp2({ detail }: { detail: MockBidPrgrsItem }) {
   ]
 
   return (
-    <>
+    // 폼 내 제출 버튼은 두지 않는다 — 페이지 액션바 [다음으로]가 ref.submit() 으로 제출.
+    <form onSubmit={handleSubmit(onSubmit)}>
       {/* 입찰업체 — dm_splyInfo. 탭명과 중복되는 큰 타이틀은 제거(260709) */}
       <SectionTitle as="h3" topDivider>
         입찰업체
@@ -77,7 +110,7 @@ export function Stp2({ detail }: { detail: MockBidPrgrsItem }) {
         <Table rows={splyRows} />
       </div>
 
-      {/* 입찰보증금 지급각서(영문) — 설계서 slide334 원문 */}
+      {/* 입찰보증금 지급각서(영문) — 설계서 slide445 원문 */}
       <SectionTitle as="h3" topDivider>
         LETTER OF GUARANTEE FOR PAYMENT OF BID BOND
       </SectionTitle>
@@ -93,7 +126,9 @@ export function Stp2({ detail }: { detail: MockBidPrgrsItem }) {
           ))}
         </div>
       </div>
-    </>
+    </form>
   )
-}
+})
 Stp2.displayName = 'Stp2'
+
+export { Stp2 }

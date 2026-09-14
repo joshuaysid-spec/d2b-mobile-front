@@ -23,7 +23,8 @@
 - **트리거 고정**: `useForm({ resolver: zodResolver(schema), mode: 'onSubmit', reValidateMode: 'onBlur' })` — 제출 시 전체 검증, 이후 에러 필드는 blur 재검증.
 - **연동**: 네이티브 입력(`InputBox`/`TextArea`) = `register`. **Radix 그룹**(`Checkbox`/`RadioButtonGroup`/`CheckboxGroup`)·마스킹 입력 = **`<Controller>`** (value/onChange/onBlur 수동 연결, Checkbox 는 `c === true` 정규화).
 - **에러 표시(KRDS 재사용)**: `<InputMessage type="error">{message}</InputMessage>` + `InputBox`의 `error` prop + `aria-invalid`/`aria-describedby`. 필수는 `InputLabel`의 `required`(`*`).
-- **첫 에러 포커스**: 입력류는 RHF `shouldFocusError` 자동. **Radix 그룹은 ref 없어 자동 안 됨** → 필드 블록을 `<div id={`field-${name}`}>`로 감싸고 `onInvalid`에서 `scrollIntoView`(main#app-scroll). `window.scrollTo` 금지.
+- **첫 에러 포커스**: 입력류는 RHF `shouldFocusError` 자동. **Radix 그룹·셀렉트·파일 행은 ref 없어 자동 안 됨** → 필드 블록을 `<div id={`field-${name}`}>`로 감싸고 `onInvalid`에서 `focusField('field-…')`(`src/utils/focusField.ts` — 블록 안 첫 포커스 가능 요소 포커스 + `scrollIntoView`, KWCAG 오류 정정). 한 폼에 두 종류가 섞이면 `shouldFocusError: false` 로 끄고 `focusField` 한 경로로 통일(포커스 이중 호출 방지). `window.scrollTo` 금지.
+- **스텝 마법사(탭=스텝) 폼 (2026-09-14 확정, 레퍼런스 `bd/ovsBidPrtcpAply`)**: 폼을 페이지로 올리지 말고 **탭마다 RHF** — 입력 탭이 자기 `useForm`+`*.schema.ts` 를 갖고 `ref.submit()` 을 노출, 페이지 [다음으로]가 현재 탭만 `submit()` → 통과 시 `onSubmit(값)` 으로 **페이지는 확정값만 보관**하고 다음 탭으로, 실패 시 이동 없이 탭 안 첫 에러 포커스. 되돌아오면 보관값을 `defaultValues` 로 재주입(탭 언마운트로 값 유실 방지). 조회 전용 탭은 검증 없이 통과. 탭별 스키마는 폴더 하나의 `Xxx.schema.ts` 에 모으고, 목업·초기값 상수는 컴포넌트 파일이 아닌 `xxxMock.ts` 에 둔다(react-refresh 경고 방지).
 - **서버 검증 대체 아님**: 프론트는 UX 사전검증. 권위 검증은 백엔드(eGovFrame).
 - **적용 예시**: `PrcmPlanDtlPage`(페이지가 `useForm` 소유) + `PrcmPlan_NotiAply`(`control` 받아 Controller) + `PrcmPlan_NotiAply.schema.ts`.
 

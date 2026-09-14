@@ -20,11 +20,16 @@ interface OvsProbWrotAgreProps {
   choice: string
   /** 동의 선택 변경 — 부모가 저장 버튼 활성화에 사용 */
   onChoiceChange: (choice: string) => void
+  /**
+   * 본문 단락 — 미지정 시 청렴 계약 이행 서약서(WROTS w_p03) 원문.
+   * 행정정보 공동이용 사전동의서(PC 개정 메모, 문구 미확보)처럼 다른 서약/동의서를 같은 레이아웃으로 띄울 때 주입.
+   */
+  body?: string[]
 }
 
-export function OvsProbWrotAgre({ resultInfo, choice, onChoiceChange }: OvsProbWrotAgreProps) {
-  // 본문은 국내 청렴 계약 이행 서약서(WROTS w_p03) 원문 재사용 — 설계서도 동일 원문(slide331).
-  const body = WROTS.find((w) => w.id === 'w_p03')?.body ?? []
+export function OvsProbWrotAgre({ resultInfo, choice, onChoiceChange, body: bodyProp }: OvsProbWrotAgreProps) {
+  // 본문은 기본 국내 청렴 계약 이행 서약서(WROTS w_p03) 원문 재사용 — 설계서도 동일 원문(slide442).
+  const body = bodyProp ?? WROTS.find((w) => w.id === 'w_p03')?.body ?? []
 
   return (
     <div className="flex flex-col gap-krds-7 py-2">
