@@ -1,17 +1,16 @@
 // 군수품무역대리업 신규(갱신) 작성 (MUI-CM-01-M17, DfEqpmntTradeAgncAplyPage).
-// Figma 정본 10020:83291(접힘)·10020:83358(펼침) 1:1. 설계서 00.공통 v0.84 slide182~185 항목명 준수.
-// 구성(위→아래, 260827 Figma 재대조): 최근 수신일자 카드(+갱신하기 유지)
-//   → 사업자정보 카드(InfoAccordionCard, 4행+더보기) → 첨부파일(총N건·+파일추가·안내·파일리스트)
-//   → 보안측정인원 카드(4행+더보기) + 안내 불릿 → 행정정보 공동이용 동의(P13) → 상태 안내 불릿
-//   → footer [저장하고 제출하기](→ 83451 시트) + [목록] (Figma 12종 재대조로 복원, 260827).
-// 신규/갱신은 같은 화면 — navigate state {mode:'new'|'renew'} 로 사업자정보 배지(신청구분) 토글. 데이터=목업, 동작=console.log + '// 추후 …'.
-// 폼 검증(제출 게이트)은 react-hook-form+zod — 조작값은 동의(agree)뿐(업체정보 ReadOnly). 첨부는 파일 상태로 관리.
+// 변경 작성(M18, DfEqpmntTradeAgncChgPage)과 1:1 동일 구조(2026-09-15 사용자 지시 — 신규/갱신·변경 디자인 어긋남을 변경 기준으로 정합).
+//   차이는 신청구분 배지(신규/갱신 — navigate state mode)·첨부서류 목록(등록신청서/이력서/청렴서약서/고용현황 + 기타)·API 스텁뿐.
+// 구성(위→아래): 나라장터(G2B) 갱신 밴드(수신일시+[갱신하기], 업체정보 상세 M02 UI 준용)
+//   → 사업자정보 카드([더보기]) → 첨부파일(총N건·+파일추가·안내·리스트) → 보안측정인원(테이블·[더보기]) + 안내 불릿
+//   → 행정정보 공동이용 동의(P13) → 상태 안내 불릿 → footer [저장하기][제출하기](v0.87 검토 46번 기획 결론과 일치).
+//   (구 260827 Figma 재대조 구성 — 최근 수신일자 카드·InfoAccordionCard·[저장하고 제출하기]+선택 시트+[목록] — 은 폐기.)
+// 파일 추가는 [공통] 파일 추가 시트(FileAdd, v0.87 검토46 — RaonK 업로드 내장). 데이터=목업(설계서 항목명), 동작=console.log + '// 추후 …'. 제출 게이트=RHF+zod(동의).
 import { useRef, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { ROUTES } from '@/constants/routes'
 import { fbQueries } from '@/queries/tss/fb/fbQueries'
 import { saveBlob } from '@/utils/download'
 import { Badge } from '@/ui/common/base/Badge'
@@ -24,13 +23,9 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import { FileAdd, type FileAddFile, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
-import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
+import { FileAdd, type FileAddDoneFile, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
+import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { Toast } from '@/ui/common/composites/Toast'
-import {
-  InfoAccordionCard,
-  type InfoCardRowInput,
-} from '@/ui/biz/cm/bzentyInfo/InfoAccordionCard'
 import {
   dfEqpmntTradeAgncAplySchema,
   type DfEqpmntTradeAgncAplyForm,
@@ -44,7 +39,7 @@ import type {
 // 나라장터(G2B) 조달업체정보 최근 수신 일시 — Figma m_noticebox 예시값(추후 API).
 const G2B_LAST_RECV_DT = '2000-12-31 12:00'
 
-// ── 사업자정보(dm_dfEqpmntTradAgncAplyInfo, Figma 10020:83358 예시값, ReadOnly) — 추후 API. ──
+// ── 사업자정보(dm_dfEqpmntTradAgncAplyInfo, ReadOnly) — 추후 API. ──
 const MOCK_INFO: MockDfEqpmntTradeAgncAplyInfo = {
   rcptNo: '2026-0020',
   rcptYmd: '2022-12-31',
@@ -62,7 +57,7 @@ const MOCK_INFO: MockDfEqpmntTradeAgncAplyInfo = {
   bzentyAddr: '대전광역시 서부 월평 종로 21 방위사업법',
 }
 
-// ── 첨부서류(dl_dfEqpmntTradAgncAplyAtchFileList, Figma 총 4건) — fileTtl 고정·fileNm 선택(Editable). 첨부일자(regYmd)는 Figma 표기. ──
+// ── 첨부서류(dl_dfEqpmntTradAgncAplyAtchFileList, 설계서 slide182) — 등록신청서*·이력서*·청렴서약서*·고용현황* (+기타 선택). ──
 const INITIAL_FILES: MockDfEqpmntTradeAgncAtchFile[] = [
   { id: '1', fileTtl: '등록신청서', fileNm: '첨부파일명.hwp', size: '786KB', regYmd: '2026-01-01', required: true },
   { id: '2', fileTtl: '이력서', fileNm: '첨부파일명.hwp', size: '786KB', regYmd: '2026-01-01', required: true },
@@ -72,7 +67,7 @@ const INITIAL_FILES: MockDfEqpmntTradeAgncAtchFile[] = [
 // 미첨부 시 파일 추가 시트에서 고를 수 있는 서류명(설계서 slide182). 기타는 선택.
 const DOC_TITLES = ['등록신청서', '이력서', '청렴서약서', '고용현황', '기타']
 
-// ── 보안측정인원(dl_scrtyMsrmtPrsnlList, Figma 예시값, ReadOnly) — 주민등록번호(rrno)는 Figma 표기(마스킹). ──
+// ── 보안측정인원(dl_scrtyMsrmtPrsnlList, ReadOnly) — 주민등록번호(rrno)는 Figma 표기(마스킹). ──
 const MOCK_SCRTY: MockDfEqpmntScrtyMsrmtPrsnl[] = [
   {
     id: '1',
@@ -85,13 +80,13 @@ const MOCK_SCRTY: MockDfEqpmntScrtyMsrmtPrsnl[] = [
   },
 ]
 
-// 행정정보 공동이용 동의서(MUI-CM-01-P13) 본문 — 설계서 slide183 '동의서 내용'.
+// 행정정보 공동이용 동의서(MUI-CM-01-P13) 본문 — 설계서 slide187 '동의서 내용'.
 const CONSENT_TEXT =
   '본인은 이 건 업무처리와 관련하여 담당 공무원이 "전자정부법" 제36조제1항에 따른 행정정보의 공동이용을 통하여 위의 담당공무원 확인사항 중 주민등록표 등본, 사업자등록증을 확인하는 것에 동의합니다. 동의하지 아니하는 경우에는 신청인이 직접 관련 서류를 제출하여야 합니다.'
 
 const AGREE_ITEM = [{ id: 'P13', title: '행정정보 공동이용 동의' }]
 
-// 페이지 내 불릿 안내(Figma disclosure) — ・ + muted 텍스트. (공통 HelpDisclosure 는 파란 '업무도움' 접힘 박스라 여기선 부적합)
+// 페이지 내 불릿 안내(Figma disclosure) — ・ + muted 텍스트.
 function Bullets({ items }: { items: React.ReactNode[] }) {
   return (
     <ul className="flex flex-col gap-krds-3">
@@ -105,19 +100,38 @@ function Bullets({ items }: { items: React.ReactNode[] }) {
   )
 }
 
+// 더보기/접기 토글(부분 펼침).
+function MoreToggle({ expanded, onClick }: { expanded: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-expanded={expanded}
+      className="flex w-full items-center justify-center gap-krds-3 text-[15px] leading-normal text-krds-text-muted"
+    >
+      {expanded ? '접기' : '더보기'}
+      <Icon
+        name="ExpandMore"
+        size={20}
+        className={expanded ? 'rotate-180 transition-transform' : 'transition-transform'}
+        aria-hidden
+      />
+    </button>
+  )
+}
+
 export function DfEqpmntTradeAgncAplyPage() {
-  // 신규/갱신 모드 — navigate state 로 전달(없으면 신규). 사업자정보 배지(신청구분) 토글.
-  const navigate = useNavigate()
+  // 신규/갱신 모드 — 목록(M15) 신청 시트에서 navigate state 로 전달(없으면 신규). 사업자정보 배지(신청구분) 토글.
   const mode = ((useLocation().state as { mode?: 'new' | 'renew' } | null)?.mode) ?? 'new'
   const kindLabel = mode === 'renew' ? '갱신' : '신규'
-
-  const [saveSubmitOpen, setSaveSubmitOpen] = useState(false) // 저장하고 제출하기 시트(83451)
+  const [bizExpanded, setBizExpanded] = useState(false)
+  const [scrtyExpanded, setScrtyExpanded] = useState(false)
   const [files, setFiles] = useState<MockDfEqpmntTradeAgncAtchFile[]>(INITIAL_FILES)
   const [addOpen, setAddOpen] = useState(false) // 파일 추가 시트([공통] 파일 추가, v0.87)
   const fileAddRef = useRef<FileAddHandle>(null)
-  const [deleteId, setDeleteId] = useState<string | null>(null) // 파일삭제 확인 모달(83442)
-  const [consentOpen, setConsentOpen] = useState(false) // 행정정보 공동이용 동의 시트(83444)
-  const [submitConfirmOpen, setSubmitConfirmOpen] = useState(false) // 제출 확인 모달(83449)
+  const [deleteId, setDeleteId] = useState<string | null>(null) // 파일삭제 확인(83442)
+  const [consentOpen, setConsentOpen] = useState(false) // 동의 시트(83444)
+  const [submitConfirmOpen, setSubmitConfirmOpen] = useState(false) // 제출 확인(83449)
   const [toastMsg, setToastMsg] = useState<string | null>(null)
 
   const { control, handleSubmit, setValue } = useForm<DfEqpmntTradeAgncAplyForm>({
@@ -138,29 +152,34 @@ export function DfEqpmntTradeAgncAplyPage() {
     }
   }
 
-  // ── 사업자정보 카드 rows(접힘 4행 + 더보기 4행 — InfoAccordionCard previewCount) ──
-  const bizRows: InfoCardRowInput[] = [
+  // ── 사업자정보 테이블 rows(요약 4행 + 더보기 4행) ──
+  const bizSummary: TableRow[] = [
     { label: '업태', value: MOCK_INFO.bzstatCdNm },
     { label: '상호', value: MOCK_INFO.bzentyNm },
     { label: '대표자성명', value: MOCK_INFO.rprsvNm },
     { label: '연락처', value: MOCK_INFO.bzentyTelno },
+  ]
+  const bizMore: TableRow[] = [
     { label: '팩스', value: MOCK_INFO.bzentyFxno },
     { label: '이메일', value: MOCK_INFO.bzentyEmlAddr },
     { label: '사업자번호', value: MOCK_INFO.brno },
     { label: '주소', value: MOCK_INFO.bzentyAddr },
   ]
+  const bizRows = bizExpanded ? [...bizSummary, ...bizMore] : bizSummary
 
-  // ── 보안측정인원 카드 rows(접힘 4행 + 더보기 1행 첨부파일 — Figma 83291 라벨 '등록일') ──
+  // ── 보안측정인원 테이블 rows(요약 5행 + 더보기 1행 첨부파일) ──
   const p = MOCK_SCRTY[0]
-  const scrtyRows: InfoCardRowInput[] = [
+  const scrtySummary: TableRow[] = [
     { label: '성명', value: p.taskHdlrNm },
     { label: '주민등록번호', value: p.rrno ?? '-' },
     { label: '적격여부', value: p.taskHdlrRsltCd },
-    { label: '등록일', value: p.taskHndlYmd },
+    { label: '보안측정일', value: p.taskHndlYmd },
+    { label: '구분', value: p.aprvSecdNm || '-' },
+  ]
+  const scrtyMore: TableRow[] = [
     {
       // 파일 UI FileDownloadList 통일(2026-09-01 사용자 확정) — 구 파일명+[보기] 버튼 대체.
       label: '첨부파일',
-      valueIsNode: true,
       value: (
         <FileDownloadList
           files={[
@@ -175,12 +194,14 @@ export function DfEqpmntTradeAgncAplyPage() {
       ),
     },
   ]
+  const scrtyRows = scrtyExpanded ? [...scrtySummary, ...scrtyMore] : scrtySummary
 
-  // ── 첨부파일 추가([공통] 파일 추가, v0.87)/삭제(83442) ──
+  // ── 첨부파일 추가([공통] 파일 추가, v0.87 검토46)/삭제(83442) ──
   const attachedCount = files.filter((f) => f.fileNm).length
   const openAddSheet = () => setAddOpen(true)
-  // [완료] — 선택 서류명 슬롯에 파일 반영(같은 서류명 슬롯 있으면 교체, 없으면 새 행). 실제 업로드는 FileAdd 경계(추후 fbService.upload).
-  const handleAttach = ({ docNm, files: picked }: { docNm: string; files: FileAddFile[] }) => {
+  // [완료] — 선택 서류명 슬롯에 업로드 완료 파일 반영(같은 서류명 슬롯 있으면 교체, 없으면 새 행).
+  //   업로드는 FileAdd 안에서 끝나며 f0.uploaded(guid 등)가 응답 통째 — 등록 API 전송 시 여기서 추출.
+  const handleAttach = ({ docNm, files: picked }: { docNm: string; files: FileAddDoneFile[] }) => {
     const f0 = picked[0]
     if (!f0) return
     setFiles((prev) => {
@@ -193,12 +214,11 @@ export function DfEqpmntTradeAgncAplyPage() {
       }
       return [
         ...prev,
-        { id: `${Date.now()}`, fileTtl: docNm, fileNm: f0.name, size: f0.size, regYmd: today, required: docNm !== '기타' },
+        { id: f0.id, fileTtl: docNm, fileNm: f0.name, size: f0.size, regYmd: today, required: docNm !== '기타' },
       ]
     })
-    console.log('[M17] 파일 추가', docNm, f0.name)
+    console.log('[M17] 파일 추가', docNm, f0.name, f0.uploaded)
   }
-  // X 클릭 → 삭제 확인 모달(83442) → 삭제 확정.
   const confirmDelete = () => {
     if (!deleteId) return
     setFiles((prev) => prev.map((f) => (f.id === deleteId ? { ...f, fileNm: '', size: undefined, regYmd: undefined } : f)))
@@ -225,7 +245,6 @@ export function DfEqpmntTradeAgncAplyPage() {
   }
   // 제출하기 → 제출 확인 모달(83449) 오픈.
   const openSubmitConfirm = () => setSubmitConfirmOpen(true)
-  // 제출 확인 [확인] — 검증(동의/필수첨부) 후 제출.
   const onSubmitValid = () => {
     const missing = files.filter((f) => f.required && !f.fileNm)
     if (missing.length > 0) {
@@ -241,38 +260,37 @@ export function DfEqpmntTradeAgncAplyPage() {
 
   return (
     <div className="flex w-full flex-col gap-krds-8 pb-4 pt-4">
-      {/* 최근 수신일자 카드 — Figma 10020:83291 상단(m_summary 미니, 아이콘 타일 + 라벨/값).
-          갱신하기 버튼은 리디자인에 없으나 설계서 기능(1일 1회)이라 우측 유지(업체정보 상세 M02 와 동일 처리). */}
-      <div className="mx-4 flex items-center gap-krds-7 rounded-[12px] border border-krds-border-divider bg-white p-krds-8 shadow-[0px_0px_5px_0px_rgba(23,43,77,0.1)]">
-        <div
-          aria-hidden
-          className="flex size-10 shrink-0 items-center justify-center rounded-krds-8 bg-krds-action-primary-active"
-        >
-          <Icon name="Apartment" size={24} className="text-white" aria-hidden />
-        </div>
-        <div className="flex min-w-px flex-1 flex-col gap-krds-3">
-          <span className="text-[13px] leading-normal text-krds-text-caption">최근 수신일자</span>
-          <span className="text-[17px] leading-normal text-krds-text-muted">
-            {G2B_LAST_RECV_DT} (나라장터)
-          </span>
-        </div>
-        <Button variant="secondary" size="sm" className="shrink-0" onClick={handleRefreshG2b}>
+      {/* 나라장터(G2B) 갱신 밴드 — 업체정보 상세(M02) UI 준용(사용자 확정 2026-08-24, 구 m_noticebox Notice 대체). */}
+      <div className="flex flex-col gap-krds-5 bg-krds-bg-primary-faint px-4 py-4">
+        <p className="text-[15px] leading-normal text-krds-text-muted wrap-break-word">
+          나라장터(G2B) 조달업체정보 최근 수신(갱신) 일시 : {G2B_LAST_RECV_DT}
+        </p>
+        <Button variant="secondary" className="w-full" onClick={handleRefreshG2b}>
           갱신하기
         </Button>
       </div>
 
-      {/* 사업자정보 카드 — 배지(신청구분)+접수번호 타이틀 + 정보행 + [더보기](Figma 83291, 업체정보 상세와 동일 카드). */}
-      <div className="px-4">
-        <InfoAccordionCard
-          title={
-            <span className="flex flex-col items-start gap-krds-3">
+      {/* 사업자정보 카드 — 배지(신청구분 신규/갱신) + 접수번호 + 테이블 + 더보기(M18 과 동일). */}
+      <div className="mx-4 flex flex-col gap-krds-7 rounded-krds-8 border border-krds-border-field bg-background p-krds-8 shadow-krds-card">
+        <div className="flex items-start gap-krds-5">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-krds-8 bg-krds-bg-primary-faint text-krds-text-primary-active">
+            <Icon name="Apartment" size={22} aria-hidden />
+          </span>
+          <div className="flex min-w-px flex-1 flex-col gap-krds-3">
+            <div className="flex items-center gap-krds-3">
+              <span className="text-[17px] font-medium leading-normal text-krds-text-muted">접수번호</span>
+              <span className="min-w-px flex-1 text-[17px] font-bold leading-normal text-krds-text-ink">
+                {MOCK_INFO.rcptNo}
+              </span>
+              <Icon name="Info" size={18} className="shrink-0 text-krds-text-disabled-soft" aria-hidden />
+            </div>
+            <div>
               <Badge color="yellow">{kindLabel}</Badge>
-              <span>접수번호 {MOCK_INFO.rcptNo}</span>
-            </span>
-          }
-          rows={bizRows}
-          previewCount={4}
-        />
+            </div>
+          </div>
+        </div>
+        <Table rows={bizRows} />
+        <MoreToggle expanded={bizExpanded} onClick={() => setBizExpanded((v) => !v)} />
       </div>
 
       {/* 첨부파일 — 섹션 타이틀(총 N건) + [+ 파일 추가] + 안내 불릿 + 파일 리스트(서류명·일자·삭제). */}
@@ -292,7 +310,6 @@ export function DfEqpmntTradeAgncAplyPage() {
               '파일 형식은 JPG, PDF만 첨부 가능 합니다',
             ]}
           />
-          {/* 파일 리스트 — 서류명 + 첨부일자(우) + FileDownloadList(파일명/용량 박스 + X 삭제). */}
           <div className="flex flex-col gap-krds-8">
             {files.filter((f) => f.fileNm).map((f) => (
               <div key={f.id} className="flex flex-col gap-krds-3">
@@ -309,15 +326,19 @@ export function DfEqpmntTradeAgncAplyPage() {
         </div>
       </section>
 
-      {/* 보안측정인원 — 섹션 카드(Figma 83291, 업체정보 상세와 동일) + [더보기](첨부파일) + 안내 불릿. */}
-      <section className="flex flex-col gap-krds-7 px-4">
-        <InfoAccordionCard title="보안측정인원" rows={scrtyRows} previewCount={4} />
-        <Bullets
-          items={[
-            '보안측정인원은 업체등록에서 등록하시기 바랍니다.',
-            '보안측정인원 등록경로 : 로그인 > 마이페이지 > 업체정보관리 > 업체추가정보등록',
-          ]}
-        />
+      {/* 보안측정인원 — 섹션 타이틀 + 테이블 + 더보기(첨부파일) + 안내 불릿. */}
+      <section className="flex flex-col">
+        <SectionTitle topDivider>보안측정인원</SectionTitle>
+        <div className="flex flex-col gap-krds-7 px-4 pt-krds-7">
+          <Table rows={scrtyRows} />
+          <MoreToggle expanded={scrtyExpanded} onClick={() => setScrtyExpanded((v) => !v)} />
+          <Bullets
+            items={[
+              '보안측정인원은 업체등록에서 등록하시기 바랍니다.',
+              '보안측정인원 등록경로 : 로그인 > 마이페이지 > 업체정보관리 > 업체추가정보등록',
+            ]}
+          />
+        </div>
       </section>
 
       {/* 행정정보 공동이용 동의서 — 동의 체크(box) + 본문 보기(P13 시트). */}
@@ -356,49 +377,19 @@ export function DfEqpmntTradeAgncAplyPage() {
         />
       </div>
 
-      {/* footer — [저장하고 제출하기](primary → 83451 선택 시트) / [목록](secondary → M15).
-          Figma 10020:83291·83451 재대조로 구 직접 버튼 2개 구성에서 복원(260827). */}
+      {/* footer — [저장하기](secondary) / [제출하기](primary). 목록 버튼 삭제(사용자 확정 2026-08-24). */}
       <div
         className="sticky bottom-0 z-30 border-t border-krds-border-divider bg-background px-4 pt-3"
         style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
       >
         <ButtonGroup
-          layout="vertical"
+          layout="asymmetric"
           items={[
-            { label: '저장하고 제출하기', variant: 'primary', onClick: () => setSaveSubmitOpen(true) },
-            { label: '목록', variant: 'secondary', onClick: () => navigate(ROUTES.DF_EQPMNT_TRADE_AGNC) },
+            { label: '저장하기', variant: 'secondary', onClick: handleSave },
+            { label: '제출하기', variant: 'primary', onClick: openSubmitConfirm },
           ]}
         />
       </div>
-
-      {/* 저장하고 제출하기 바텀시트(Figma 10020:83451) — [저장하기][제출하기] 이동 행 + [확인](닫기). */}
-      <BottomSheet
-        open={saveSubmitOpen}
-        onOpenChange={setSaveSubmitOpen}
-        title="저장하고 제출하기"
-        onConfirm={() => setSaveSubmitOpen(false)}
-      >
-        <NavigationItemList
-          items={[
-            {
-              id: 'save',
-              label: '저장하기',
-              onClick: () => {
-                setSaveSubmitOpen(false)
-                handleSave()
-              },
-            },
-            {
-              id: 'submit',
-              label: '제출하기',
-              onClick: () => {
-                setSaveSubmitOpen(false)
-                openSubmitConfirm()
-              },
-            },
-          ]}
-        />
-      </BottomSheet>
 
       {/* 파일 추가 바텀시트 — [공통] 파일 추가(v0.87 마지막 장, 구 83432 라디오 시트 대체).
           군수품 신청은 항목 지정 케이스 → 첨부서류명 셀렉트(DOC_TITLES). 서류명당 1파일이라 multiple=false. */}
@@ -441,7 +432,7 @@ export function DfEqpmntTradeAgncAplyPage() {
         primaryAction={{ label: '삭제', onClick: confirmDelete }}
       />
 
-      {/* 행정정보 공동이용 동의 바텀시트(Figma 10020:83444) — 본문 + [취소][동의하기]. 동의하기=agree 체크. */}
+      {/* 행정정보 공동이용 동의 바텀시트(Figma 10020:83444) — 본문 + [취소][동의하기]. */}
       <BottomSheet
         open={consentOpen}
         onOpenChange={setConsentOpen}
@@ -467,7 +458,8 @@ export function DfEqpmntTradeAgncAplyPage() {
         </p>
       </BottomSheet>
 
-      {/* 제출 확인 모달(Figma 10020:83449) — [취소][확인]. 확인=검증 후 제출. */}
+
+      {/* 제출 확인 모달(Figma 10020:83449) — [취소][확인]. */}
       <AlertModal
         open={submitConfirmOpen}
         onOpenChange={setSubmitConfirmOpen}

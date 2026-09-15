@@ -4,8 +4,9 @@
 //   구 m_noticebox Notice 대체) → 사업자정보 카드([더보기]) → 첨부파일(총N건·+파일추가·안내·리스트)
 //   → 보안측정인원(테이블·[더보기]) + 안내 불릿 → 행정정보 공동이용 동의(P13) → 상태 안내 불릿 → footer [저장하기][제출하기].
 //   (2026-08-24 사용자 확정 — 구 [저장하고 제출하기]→선택 시트 + [목록] 구성을 직접 버튼 2개로 대체, 목록 버튼 삭제.)
+//   파일 추가는 [공통] 파일 추가 시트(FileAdd, v0.87 검토46 — RaonK 업로드 내장). 신규/갱신(M17)은 이 화면과 1:1 동일 구조(2026-09-15 정합).
 // 데이터=목업(설계서 항목명 dm_dfEqpmntTradAgncAplyInfo / dl_*), 동작=console.log + '// 추후 …'. 제출 게이트=RHF+zod(동의).
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -21,7 +22,7 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
+import { FileAdd, type FileAddDoneFile, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { Toast } from '@/ui/common/composites/Toast'
 import {
@@ -120,8 +121,8 @@ export function DfEqpmntTradeAgncChgPage() {
   const [bizExpanded, setBizExpanded] = useState(false)
   const [scrtyExpanded, setScrtyExpanded] = useState(false)
   const [files, setFiles] = useState<MockDfEqpmntTradeAgncAtchFile[]>(INITIAL_FILES)
-  const [addOpen, setAddOpen] = useState(false) // 파일첨부 시트(83432)
-  const [addTarget, setAddTarget] = useState('')
+  const [addOpen, setAddOpen] = useState(false) // 파일 추가 시트([공통] 파일 추가, v0.87)
+  const fileAddRef = useRef<FileAddHandle>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null) // 파일삭제 확인(83442)
   const [consentOpen, setConsentOpen] = useState(false) // 동의 시트(83444)
   const [submitConfirmOpen, setSubmitConfirmOpen] = useState(false) // 제출 확인(83449)
@@ -189,29 +190,28 @@ export function DfEqpmntTradeAgncChgPage() {
   ]
   const scrtyRows = scrtyExpanded ? [...scrtySummary, ...scrtyMore] : scrtySummary
 
-  // ── 첨부파일 추가(83432)/삭제(83442) ──
+  // ── 첨부파일 추가([공통] 파일 추가, v0.87 검토46)/삭제(83442) ──
   const attachedCount = files.filter((f) => f.fileNm).length
-  const openAddSheet = () => {
-    setAddTarget(DOC_TITLES[0])
-    setAddOpen(true)
-  }
-  const handleAttach = () => {
-    if (!addTarget) return
+  const openAddSheet = () => setAddOpen(true)
+  // [완료] — 선택 서류명 슬롯에 업로드 완료 파일 반영(같은 서류명 슬롯 있으면 교체, 없으면 새 행).
+  //   업로드는 FileAdd 안에서 끝나며 f0.uploaded(guid 등)가 응답 통째 — 등록 API 전송 시 여기서 추출.
+  const handleAttach = ({ docNm, files: picked }: { docNm: string; files: FileAddDoneFile[] }) => {
+    const f0 = picked[0]
+    if (!f0) return
     setFiles((prev) => {
       const today = new Date().toISOString().slice(0, 10)
-      const slot = prev.find((f) => f.fileTtl === addTarget)
+      const slot = prev.find((f) => f.fileTtl === docNm)
       if (slot) {
         return prev.map((f) =>
-          f === slot ? { ...f, fileNm: '첨부파일명.hwp', size: '786KB', regYmd: today } : f,
+          f === slot ? { ...f, fileNm: f0.name, size: f0.size, regYmd: today } : f,
         )
       }
       return [
         ...prev,
-        { id: `${Date.now()}`, fileTtl: addTarget, fileNm: '첨부파일명.hwp', size: '786KB', regYmd: today },
+        { id: f0.id, fileTtl: docNm, fileNm: f0.name, size: f0.size, regYmd: today, required: docNm !== '기타' },
       ]
     })
-    console.log('[M18] 파일첨부하기', addTarget) // 추후: 파일 선택기 오픈 → fbService.upload
-    setAddOpen(false)
+    console.log('[M18] 파일 추가', docNm, f0.name, f0.uploaded)
   }
   const confirmDelete = () => {
     if (!deleteId) return
@@ -385,30 +385,35 @@ export function DfEqpmntTradeAgncChgPage() {
         />
       </div>
 
-      {/* 파일첨부 바텀시트(Figma 10020:83432) — 서류종류 라디오 + [파일첨부하기][나중에](세로). */}
+      {/* 파일 추가 바텀시트 — [공통] 파일 추가(v0.87 마지막 장, 구 83432 라디오 시트 대체).
+          군수품 신청은 항목 지정 케이스 → 첨부서류명 셀렉트(DOC_TITLES). 서류명당 1파일이라 multiple=false. */}
       <BottomSheet
         open={addOpen}
         onOpenChange={setAddOpen}
-        title="파일첨부"
+        title="파일 추가"
         footer={
           <ButtonGroup
-            layout="vertical"
             items={[
-              { label: '파일첨부하기', variant: 'primary', onClick: handleAttach },
-              { label: '나중에', variant: 'secondary', onClick: () => setAddOpen(false) },
+              { label: '취소', variant: 'secondary', onClick: () => setAddOpen(false) },
+              {
+                label: '완료',
+                variant: 'primary',
+                onClick: () => {
+                  if (fileAddRef.current?.complete()) setAddOpen(false)
+                },
+              },
             ]}
           />
         }
       >
-        <div className="py-krds-5">
-          <RadioButtonGroup
-            direction="vertical"
-            showIndicator
-            value={addTarget}
-            onValueChange={setAddTarget}
-            items={DOC_TITLES.map((t) => ({ value: t, label: t }))}
+        {addOpen && (
+          <FileAdd
+            ref={fileAddRef}
+            docNmOptions={DOC_TITLES}
+            multiple={false}
+            onComplete={handleAttach}
           />
-        </div>
+        )}
       </BottomSheet>
 
       {/* 파일삭제 확인 모달(Figma 10020:83442). */}
