@@ -22,6 +22,8 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { Toast } from '@/ui/common/composites/Toast'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 /** 진입 모드 — 'aply'=신청조회(M03) / 'rslt'=결과조회(M02). */
@@ -159,6 +161,7 @@ export function BfhdSrngRsltInqPage({ mode = 'rslt' }: { mode?: BfhdSrngInqMode 
 
   const downloadFile = fbQueries.useDownloadFile()
   const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
+  const oz = useOzReport() // 출력 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서)
 
   // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
   // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
@@ -186,7 +189,12 @@ export function BfhdSrngRsltInqPage({ mode = 'rslt' }: { mode?: BfhdSrngInqMode 
           <button
             type="button"
             aria-label="출력"
-            onClick={() => console.log('[M02-PQ] 출력')}
+            // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체) — 신청조회 M03 / 결과조회 M02
+            onClick={() =>
+              oz.open(mode === 'aply' ? 'MUI-BD-02-M03' : 'MUI-BD-02-M02', {
+                pbancNo: detail?.pbancNo,
+              })
+            }
             className="flex size-[37px] shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-field bg-background text-krds-text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring active:opacity-70"
           >
             <Icon name="Print" size={24} aria-hidden />
@@ -260,6 +268,7 @@ export function BfhdSrngRsltInqPage({ mode = 'rslt' }: { mode?: BfhdSrngInqMode 
       <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
         {toast}
       </Toast>
+      <OzReportFullPopup {...oz.popupProps} />
     </div>
   )
 }

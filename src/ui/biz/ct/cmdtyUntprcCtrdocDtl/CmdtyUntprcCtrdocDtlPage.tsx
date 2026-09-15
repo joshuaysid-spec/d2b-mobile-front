@@ -19,6 +19,8 @@ import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { CmdtyUntprcCtrdocDtl_Cn } from '@/ui/biz/ct/cmdtyUntprcCtrdocDtl/CmdtyUntprcCtrdocDtl_Cn'
 import { CmdtyUntprcCtrdocDtl_Ctrt } from '@/ui/biz/ct/cmdtyUntprcCtrdocDtl/CmdtyUntprcCtrdocDtl_Ctrt'
 import { CmdtyUntprcCtrdocDtl_Spcl } from '@/ui/biz/ct/cmdtyUntprcCtrdocDtl/CmdtyUntprcCtrdocDtl_Spcl'
@@ -48,6 +50,7 @@ export function CmdtyUntprcCtrdocDtlPage() {
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputModalOpen, setOutputModalOpen] = useState(false)
+  const oz = useOzReport()
 
   const { data: detail } = ctQueries.useSelectCmdtyCtrdocDtl(id, 'untprc')
   const steps = stepsByStg('계약')
@@ -129,7 +132,7 @@ export function CmdtyUntprcCtrdocDtlPage() {
       {/* FAB — 맨위로 */}
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />
 
-      {/* 출력 — 물품구매계약서 출력물(R39~R42 계열) OZ 리포트 스텁 */}
+      {/* 출력 — 물품구매계약서 출력물(R39~R42 계열) → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
       <AlertModal
         open={outputModalOpen}
         onOpenChange={setOutputModalOpen}
@@ -139,9 +142,12 @@ export function CmdtyUntprcCtrdocDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[CT-01-M08] 물품단가계약서 출력 → OZ 리포트 호출'),
+          // ⚠️ 리포트 코드 R39~R42 중 분기(단가제) 미확정 — 반입 시 확정
+          onClick: () =>
+            oz.open('R39', { ctrtNo: detail.ctrtNo, ctrtCycl: detail.ctrtCycl }, '물품단가계약서'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
     </div>
   )
 }

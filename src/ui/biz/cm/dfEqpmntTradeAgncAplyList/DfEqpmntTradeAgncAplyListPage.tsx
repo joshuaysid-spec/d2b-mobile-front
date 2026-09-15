@@ -21,6 +21,8 @@ import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { BzentyRegGuide } from '@/ui/biz/cm/dfEqpmntTradeAgncAplyList/BzentyRegGuide'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import type { MockDfEqpmntTradeAgncAplyItem } from '@/types/mock/cm'
 
 // 구분(regAplySecd)별 배지 색 — 신규=yellow / 갱신=green / 변경=blue(Figma 10020:83161).
@@ -67,8 +69,9 @@ export function DfEqpmntTradeAgncAplyListPage() {
   const [pageSize] = useState(10)
   const [page, setPage] = useState(1)
   const [guideOpen, setGuideOpen] = useState(false) // 업체등록안내 FullPopup
-  // 등록증 발급(OZPrint PVB021) — 상세(M16)에서 목록 상단 버튼으로 이동(2026-09-15). 추후: 등록증 발급 API/리포트 호출.
-  const handleIssue = () => console.log('[M15] 군수품무역대리업 등록증 발급(OZPrint PVB021)')
+  // 등록증 발급(리포트 PVB021) — 상세(M16)에서 목록 상단 버튼으로 이동(2026-09-15). 뷰어 실연동은 OzReportFullPopup 안에서.
+  const oz = useOzReport()
+  const handleIssue = () => oz.open('PVB021', undefined, '군수품무역대리업 등록증')
   const [aplyOpen, setAplyOpen] = useState(false) // 신청(신규/갱신/변경) 선택 시트
 
   const total = MOCK_LIST.length
@@ -174,6 +177,7 @@ export function DfEqpmntTradeAgncAplyListPage() {
 
       {/* 업체등록안내 FullPopup(Figma 10020:83204) — 컨테이너는 컴포넌트 소유, open 만 주입. */}
       <BzentyRegGuide open={guideOpen} onOpenChange={setGuideOpen} />
+      <OzReportFullPopup {...oz.popupProps} />
 
       {/* 신청 선택 바텀시트 — [신규][갱신][변경] 버튼형 라디오(설계서 slide188, Figma 83432 스타일) + [신청하기][취소]. */}
       <BottomSheet

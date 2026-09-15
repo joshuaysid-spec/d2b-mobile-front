@@ -19,6 +19,8 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { CmdtyMdfcnCtrdocDtl_Cn } from '@/ui/biz/ct/cmdtyMdfcnCtrdocDtl/CmdtyMdfcnCtrdocDtl_Cn'
 import { CmdtyMdfcnCtrdocDtl_MdfcnCtrt } from '@/ui/biz/ct/cmdtyMdfcnCtrdocDtl/CmdtyMdfcnCtrdocDtl_MdfcnCtrt'
 import { CmdtyMdfcnCtrdocDtl_Spcl } from '@/ui/biz/ct/cmdtyMdfcnCtrdocDtl/CmdtyMdfcnCtrdocDtl_Spcl'
@@ -51,6 +53,7 @@ export function CmdtyMdfcnCtrdocDtlPage() {
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기
   const [dtstOpen, setDtstOpen] = useState(false) // P13 물품수정계약명세서
   const [outputModalOpen, setOutputModalOpen] = useState(false)
+  const oz = useOzReport()
 
   const { data: detail } = ctQueries.useSelectCmdtyMdfcnCtrdocDtl(id)
   const steps = stepsByStg('계약')
@@ -165,7 +168,7 @@ export function CmdtyMdfcnCtrdocDtlPage() {
         />
       </BottomSheet>
 
-      {/* 출력 — 물품수정계약서(방위사업청) 출력물(R43, slide23) OZ 리포트 스텁 */}
+      {/* 출력 — 물품수정계약서(방위사업청) 출력물(R43, slide23) → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
       <AlertModal
         open={outputModalOpen}
         onOpenChange={setOutputModalOpen}
@@ -175,9 +178,11 @@ export function CmdtyMdfcnCtrdocDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[CT-01-M06] 물품수정계약서 출력(R43) → OZ 리포트 호출'),
+          onClick: () =>
+            oz.open('R43', { ctrtNo: detail.ctrtNo, ctrtCycl: detail.ctrtCycl }, '물품수정계약서'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
 
       {/* P13 물품수정계약명세서 */}
       <CmdtyMdfcnCtrdocDtstFullPopup id={id} open={dtstOpen} onOpenChange={setDtstOpen} />

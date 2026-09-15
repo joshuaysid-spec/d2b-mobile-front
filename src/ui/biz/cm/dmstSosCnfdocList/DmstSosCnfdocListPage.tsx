@@ -21,6 +21,8 @@ import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Toast } from '@/ui/common/composites/Toast'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { DmstSosCnfdocAply } from '@/ui/biz/cm/dmstSosCnfdocList/DmstSosCnfdocAply'
 import {
   dmstSosCnfdocAplySchema,
@@ -162,6 +164,7 @@ export function DmstSosCnfdocListPage() {
   const [toastOpen, setToastOpen] = useState(false)
   // 서류 출력 확인(MUI-BD-01-P14) — 신청 제출 성공 시 호출(사용자 확정 2026-08-25, 신청 즉시 발급이라 출력 확인으로 이어짐).
   const [outputOpen, setOutputOpen] = useState(false)
+  const oz = useOzReport() // 조달원 확인서 출력 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서)
   const {
     control,
     handleSubmit,
@@ -195,9 +198,9 @@ export function DmstSosCnfdocListPage() {
   // 카드 클릭 → 서류 출력 안내(MUI-BD-01-P14) 확인 후 OZ 리포트(v0.87 검토 26번 — 안내 팝업 배선).
   const [printTarget, setPrintTarget] = useState<MockDmstSosCnfdocItem | null>(null)
   const handleCardClick = (item: MockDmstSosCnfdocItem) => setPrintTarget(item)
+  // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체)
   const handlePrintConfirm = () => {
-    console.log('[DmstSosCnfdoc] 조달원 확인서 출력(OZ리포트)', printTarget?.aplyRcptNo)
-    // 추후: OZ 리포트 실행(뷰어 솔루션 연동)
+    oz.open('MUI-CM-01-M19', { aplyRcptNo: printTarget?.aplyRcptNo }, '조달원 확인서')
     setPrintTarget(null)
   }
   // 하단 [신청하기] → P20 신청 팝업 오픈(폼 초기화 후).
@@ -344,8 +347,9 @@ export function DmstSosCnfdocListPage() {
         onSearch={handleFilterSearch}
       />
 
-      {/* 서류 출력 확인 (MUI-BD-01-P14) — 신청 제출 성공 시 호출. 확인=OZ 리포트 조달원 확인서 출력(스텁).
-          국외 조달원등록증 목록(OvsSosCnfdocListPage)의 P14 인라인 AlertModal 패턴과 동일. */}
+      {/* 서류 출력 확인 (MUI-BD-01-P14) — 신청 제출 성공 시 호출. 확인=OZ 리포트 뷰어(조달원 확인서).
+          국외 조달원등록증 목록(OvsSosCnfdocListPage)의 P14 인라인 AlertModal 패턴과 동일.
+          접수번호는 신청 API 응답 확정 후 params 로 전달. */}
       <AlertModal
         open={outputOpen}
         onOpenChange={setOutputOpen}
@@ -355,12 +359,11 @@ export function DmstSosCnfdocListPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () =>
-            console.log('[DmstSosCnfdoc] 조달원 확인서 출력 — OZ 리포트 호출(스텁)'),
+          onClick: () => oz.open('MUI-CM-01-M19', undefined, '조달원 확인서'),
         }}
       />
 
-      {/* 카드 클릭 서류 출력 안내(MUI-BD-01-P14, v0.87 검토 26번) — 확인=OZ 리포트 출력(스텁). */}
+      {/* 카드 클릭 서류 출력 안내(MUI-BD-01-P14, v0.87 검토 26번) — 확인=OZ 리포트 뷰어. */}
       <AlertModal
         open={printTarget !== null}
         onOpenChange={(o) => !o && setPrintTarget(null)}
@@ -375,6 +378,7 @@ export function DmstSosCnfdocListPage() {
       <Toast open={toastOpen} onClose={() => setToastOpen(false)}>
         신청 되었습니다.
       </Toast>
+      <OzReportFullPopup {...oz.popupProps} />
     </div>
   )
 }

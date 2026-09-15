@@ -20,6 +20,8 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Button } from '@/ui/common/base/Button'
 import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { OvsElctrCtrtPrgrsDtlTab } from '@/ui/biz/ct/ovsElctrCtrtPrgrsDtl/OvsElctrCtrtPrgrsDtlTab'
 import { OvsBacntInfoTab } from '@/ui/biz/ct/ovsElctrCtrtPrgrsDtl/OvsBacntInfoTab'
 import { OvsWtgrTab } from '@/ui/biz/ct/ovsElctrCtrtPrgrsDtl/OvsWtgrTab'
@@ -56,6 +58,7 @@ export function OvsElctrCtrtPrgrsDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기
   const [outputModalOpen, setOutputModalOpen] = useState(false)
+  const oz = useOzReport()
 
   const { data: detail } = ctQueries.useSelectCtrdocDtl(id)
   const steps = stepsByStg('계약')
@@ -167,7 +170,7 @@ export function OvsElctrCtrtPrgrsDtlPage() {
         />
       </BottomSheet>
 
-      {/* 출력 — 상업계약서 출력물 OZ 리포트 스텁 */}
+      {/* 출력 — 상업계약서 출력물 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
       <AlertModal
         open={outputModalOpen}
         onOpenChange={setOutputModalOpen}
@@ -177,9 +180,12 @@ export function OvsElctrCtrtPrgrsDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[CT-01-M71] 국외 계약서 출력 → OZ 리포트 호출'),
+          // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체)
+          onClick: () =>
+            oz.open('MUI-CT-01-M71', { ctrtNo: detail.ctrtNo, ctrtCycl: detail.ctrtCycl }, '계약서'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
     </div>
   )
 }

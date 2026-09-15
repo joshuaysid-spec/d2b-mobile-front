@@ -26,6 +26,8 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { PrcmPlan_NotiAply } from '@/ui/biz/op/prcmPlanDtl/PrcmPlan_NotiAply'
 import {
   notiAplySchema,
@@ -126,9 +128,10 @@ export function PrcmPlanDtlPage() {
     },
   )
 
-  // 출력 버튼 — 서류 출력 확인 모달(MUI-BD-01-P14) 표시. 확인 시 OZ 리포트 호출(콘솔 스텁).
+  // 출력 버튼 — 서류 출력 확인 모달(MUI-BD-01-P14) 표시. 확인 시 OZ 리포트 뷰어(OzReportFullPopup) 열기.
   const [outputModalOpen, setOutputModalOpen] = useState(false)
   const handleOutput = () => setOutputModalOpen(true)
+  const oz = useOzReport()
 
   const { data: detail } = opQueries.useSelectPrcmPlanDtl(id, stateItem ?? undefined)
   // 진행단계(아이템 속성 prgrsStg) — detail 로 구동(없으면 '조달' fallback).
@@ -239,9 +242,11 @@ export function PrcmPlanDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[출력] 서류 출력 확인 → OZ 리포트 호출 (loginYn = y 상태)'),
+          // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체)
+          onClick: () => oz.open('MUI-OP-01-M03', { prcmNo: detail.prcmNo }),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
 
       {/* 플로팅 버튼 — 맨위로(항상) + 추가(품목명세서 탭: 출력물 바텀시트) */}
       <FloatingActionButton
@@ -251,7 +256,7 @@ export function PrcmPlanDtlPage() {
         plusLabel="출력물"
       />
 
-      {/* + 출력물 바텀시트 (MUI-BD-01-P17) — 출력물 명칭 버튼(품목명세서 출력 → OZ리포트 R10 연계 스텁).
+      {/* + 출력물 바텀시트 (MUI-BD-01-P17) — 출력물 명칭 버튼(품목명세서 출력 → OZ 리포트 R10 뷰어).
           액션 버튼은 footer 슬롯에 배치(스크롤 본문의 overflow 클리핑으로 하단 border 잘리는 문제 방지). */}
       <BottomSheet
         open={outputOpen}
@@ -262,8 +267,8 @@ export function PrcmPlanDtlPage() {
             variant="secondary"
             className="w-full"
             onClick={() => {
-              console.log('[M04] 품목명세서 출력(R10) OZ리포트 연계')
               setOutputOpen(false)
+              oz.open('R10', { prcmNo: detail.prcmNo }, '품목명세서')
             }}
           >
             품목명세서 출력

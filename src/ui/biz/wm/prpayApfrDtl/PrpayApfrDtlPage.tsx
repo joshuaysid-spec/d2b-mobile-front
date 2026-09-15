@@ -18,6 +18,8 @@ import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { PrpayApfrDtl } from '@/ui/biz/wm/prpayApfrDtl/PrpayApfrDtl'
 import { PrpayApfrDtl_AplyDtsm } from '@/ui/biz/wm/prpayApfrDtl/PrpayApfrDtl_AplyDtsm'
 import { PrpayDpsmnItrpyGiveStts } from '@/ui/biz/wm/prpayDpsmnItrpyGiveStts/PrpayDpsmnItrpyGiveStts'
@@ -48,6 +50,7 @@ export function PrpayApfrDtlPage() {
   const [tab, setTab] = useState('aply')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [printModalOpen, setPrintModalOpen] = useState(false)
+  const oz = useOzReport()
 
   const { data: detail } = wmQueries.useSelectPrpayClmAplyDtl(id)
   const steps = buildSteps()
@@ -74,7 +77,7 @@ export function PrpayApfrDtlPage() {
           subtitle={`계약번호 ${detail.ctrtNo} - ${detail.ctrtCycl}`}
           title={detail.ctrtNm}
           actions={
-            // 인쇄(slide28 이벤트) — 증명서출력(UI-WM-01-P30) OZ 리포트 연계 스텁.
+            // 인쇄(slide28 이벤트) — 증명서출력(UI-WM-01-P30) → 확인 모달 → OZ 리포트 뷰어.
             <SummaryUtilButton icon="Print" label="출력" onClick={() => setPrintModalOpen(true)} />
           }
           rows={[
@@ -125,7 +128,7 @@ export function PrpayApfrDtlPage() {
         {tab === 'give' && <PrpayDpsmnItrpyGiveStts id={id} />}
       </div>
 
-      {/* 인쇄 — 증명서 출력 확인 모달(스텁) */}
+      {/* 인쇄 — 증명서 출력 확인 모달 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
       <AlertModal
         open={printModalOpen}
         onOpenChange={setPrintModalOpen}
@@ -135,9 +138,12 @@ export function PrpayApfrDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[M02] 증명서출력(P30) OZ리포트 연계'),
+          // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체 — 증명서출력 P30)
+          onClick: () =>
+            oz.open('MUI-WM-01-P30', { ctrtNo: detail.ctrtNo, ctrtCycl: detail.ctrtCycl }, '증명서'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
 
       {/* 맨 위로 FAB */}
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />

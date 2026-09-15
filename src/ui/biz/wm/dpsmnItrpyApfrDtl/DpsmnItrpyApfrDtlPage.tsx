@@ -17,6 +17,8 @@ import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { DpsmnItrpyApfrDtl } from '@/ui/biz/wm/dpsmnItrpyApfrDtl/DpsmnItrpyApfrDtl'
 import { DpsmnItrpyApfrDtl_AplyDtsm } from '@/ui/biz/wm/dpsmnItrpyApfrDtl/DpsmnItrpyApfrDtl_AplyDtsm'
 import { PrpayDpsmnItrpyGiveStts } from '@/ui/biz/wm/prpayDpsmnItrpyGiveStts/PrpayDpsmnItrpyGiveStts'
@@ -47,6 +49,7 @@ export function DpsmnItrpyApfrDtlPage() {
   const [tab, setTab] = useState('aply')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [printModalOpen, setPrintModalOpen] = useState(false)
+  const oz = useOzReport()
 
   const { data: detail } = wmQueries.useSelectDpsmnItrpyAplyDtlDsctn(id)
   const steps = buildSteps()
@@ -123,7 +126,7 @@ export function DpsmnItrpyApfrDtlPage() {
         {tab === 'give' && <PrpayDpsmnItrpyGiveStts id={id} />}
       </div>
 
-      {/* 인쇄 — 증명서 출력 확인 모달(스텁) */}
+      {/* 인쇄 — 증명서 출력 확인 모달 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
       <AlertModal
         open={printModalOpen}
         onOpenChange={setPrintModalOpen}
@@ -133,9 +136,12 @@ export function DpsmnItrpyApfrDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[M03] 증명서출력 OZ리포트 연계'),
+          // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체)
+          onClick: () =>
+            oz.open('MUI-WM-01-M03', { ctrtNo: detail.ctrtNo, ctrtCycl: detail.ctrtCycl }, '증명서'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
 
       {/* 맨 위로 FAB */}
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />

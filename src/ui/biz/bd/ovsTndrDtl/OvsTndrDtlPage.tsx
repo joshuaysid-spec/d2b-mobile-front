@@ -21,6 +21,8 @@ import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { Tab2 } from '@/ui/biz/bd/ovsTndrDtl/Tab2'
 import { Tab3 } from '@/ui/biz/bd/ovsTndrDtl/Tab3'
 import { Tab4 } from '@/ui/biz/bd/ovsTndrDtl/Tab4'
@@ -140,6 +142,7 @@ export function OvsTndrDtlPage() {
   const [rtrcnOpen, setRtrcnOpen] = useState(false) // 입찰취소신청서작성(P81)
   // P81 은 바텀시트 콘텐츠 전용 — 컨테이너/footer 는 여기(부모)가 소유, 제출은 ref 핸들로 호출.
   const rtrcnRef = useRef<OvsBidRtrcnAplyHandle>(null)
+  const oz = useOzReport() // 출력 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서)
 
   useEffect(() => {
     console.log('[M75] 국외 입찰서 상세 조회', detail.intgRfrncNo) // 추후 API: bdService.selectTndr — 입찰서조회, 입찰서품목조회
@@ -226,7 +229,14 @@ export function OvsTndrDtlPage() {
             <button
               type="button"
               aria-label="출력"
-              onClick={() => console.log('[M75] 출력')}
+              // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체)
+              onClick={() =>
+                oz.open(
+                  'MUI-BD-06-M75',
+                  { pbancNo: detail.pbancNo, intgRfrncNo: detail.intgRfrncNo },
+                  '입찰서',
+                )
+              }
               className="flex size-[37px] shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-field bg-background text-krds-text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring active:opacity-70"
             >
               <Icon name="Print" size={24} aria-hidden />
@@ -337,6 +347,7 @@ export function OvsTndrDtlPage() {
       >
         <OvsBidRtrcnAply ref={rtrcnRef} detail={detail} onSubmitted={() => setRtrcnOpen(false)} />
       </BottomSheet>
+      <OzReportFullPopup {...oz.popupProps} />
     </div>
   )
 }

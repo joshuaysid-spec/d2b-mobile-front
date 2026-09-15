@@ -21,6 +21,8 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { CstrnElctrCtrtPrgrsDtl_Cn } from '@/ui/biz/ct/cstrnElctrCtrtPrgrsDtl/CstrnElctrCtrtPrgrsDtl_Cn'
 import { CstrnElctrCtrtPrgrsDtl_Artcl } from '@/ui/biz/ct/cstrnElctrCtrtPrgrsDtl/CstrnElctrCtrtPrgrsDtl_Artcl'
 import { CstrnElctrCtrtPrgrsDtl_Flw } from '@/ui/biz/ct/cstrnElctrCtrtPrgrsDtl/CstrnElctrCtrtPrgrsDtl_Flw'
@@ -60,6 +62,7 @@ export function CstrnElctrCtrtPrgrsDtlPage() {
   const [stmtxOpen, setStmtxOpen] = useState(false) // 인지세 확인(M74)
   const [prgrsSttsOpen, setPrgrsSttsOpen] = useState(false) // 계약진행상태(P17)
   const [outputModalOpen, setOutputModalOpen] = useState(false) // 출력 확인
+  const oz = useOzReport()
 
   const { data: detail } = ctQueries.useSelectCstrnCtrtPrgrsDtl(id)
   const steps = stepsByStg('계약')
@@ -190,7 +193,7 @@ export function CstrnElctrCtrtPrgrsDtlPage() {
         <NavigationItemList items={shortcuts} />
       </BottomSheet>
 
-      {/* 출력 — 서류 출력 확인 모달. 확인 시 OZ 리포트 호출(스텁, R35/R36) */}
+      {/* 출력 — 서류 출력 확인 모달 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
       <AlertModal
         open={outputModalOpen}
         onOpenChange={setOutputModalOpen}
@@ -200,9 +203,11 @@ export function CstrnElctrCtrtPrgrsDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[CT-01-M09] 공사도급계약서 출력(R35/R36) → OZ 리포트 호출'),
+          // ⚠️ 리포트 코드 R35(공사도급)/R36(기술용역) 분기 미확정 — 반입 시 확정
+          onClick: () => oz.open('R35', { ctrtNo: detail.ctrtNo, ctrtCycl: detail.ctrtCycl }, '계약서'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
 
       {/* 보증서 확인(M73) · 인지세 확인(M74) · 계약진행상태(P17) 풀팝업 — M03 컴포넌트 재사용 */}
       <GrnteCnfrmFullPopup id={id} open={grnteOpen} onOpenChange={setGrnteOpen} />

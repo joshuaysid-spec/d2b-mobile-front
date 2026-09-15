@@ -15,6 +15,8 @@ import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { CstrnCtrdocDtl_Cn } from '@/ui/biz/ct/cstrnCtrdocDtl/CstrnCtrdocDtl_Cn'
 import { CstrnCtrdocDtl_Grnte } from '@/ui/biz/ct/cstrnCtrdocDtl/CstrnCtrdocDtl_Grnte'
 import { CstrnCtrdocDtl_Flw } from '@/ui/biz/ct/cstrnCtrdocDtl/CstrnCtrdocDtl_Flw'
@@ -44,6 +46,7 @@ export function CstrnCtrdocDtlPage() {
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputModalOpen, setOutputModalOpen] = useState(false)
+  const oz = useOzReport()
 
   const { data: detail } = ctQueries.useSelectCstrnCtrdocDtl(id)
   const steps = stepsByStg('계약')
@@ -124,7 +127,7 @@ export function CstrnCtrdocDtlPage() {
       {/* FAB — 맨위로 */}
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />
 
-      {/* 출력 — 공사도급계약서(R35)/기술용역계약서(R36) 출력물 OZ 리포트 스텁 */}
+      {/* 출력 — 공사도급계약서(R35)/기술용역계약서(R36) 출력물 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
       <AlertModal
         open={outputModalOpen}
         onOpenChange={setOutputModalOpen}
@@ -134,9 +137,11 @@ export function CstrnCtrdocDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[CT-01-M10] 공사도급계약서 출력(R35/R36) → OZ 리포트 호출'),
+          // ⚠️ 리포트 코드 R35(공사도급)/R36(기술용역) 분기 미확정 — 반입 시 확정
+          onClick: () => oz.open('R35', { ctrtNo: detail.ctrtNo, ctrtCycl: detail.ctrtCycl }, '계약서'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
     </div>
   )
 }

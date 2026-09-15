@@ -17,6 +17,8 @@ import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { OvsEstmtRqdcDtl } from '@/ui/biz/ex/ovsEstmtRqdcDtl/OvsEstmtRqdcDtl'
 import { OvsEstmtRqdcDtl_CmdtyList } from '@/ui/biz/ex/ovsEstmtRqdcDtl/OvsEstmtRqdcDtl_CmdtyList'
 
@@ -44,6 +46,7 @@ export function OvsEstmtRqdcDtlPage() {
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [printModalOpen, setPrintModalOpen] = useState(false)
+  const oz = useOzReport()
 
   const { data: detail } = exQueries.useSelectOvsEstmtRqdcDtl(id)
   const steps = buildSteps()
@@ -69,7 +72,7 @@ export function OvsEstmtRqdcDtlPage() {
           subtitle={`견적번호 ${detail.clmSeq}`}
           title={detail.bizNm}
           actions={
-            // 출력(slide53) — 견적의뢰서출력물(R85) OZ 리포트 연계 스텁.
+            // 출력(slide53) — 견적의뢰서출력물(R85) → 확인 모달 → OZ 리포트 뷰어.
             <SummaryUtilButton icon="Print" label="출력" onClick={() => setPrintModalOpen(true)} />
           }
           rows={[
@@ -120,7 +123,7 @@ export function OvsEstmtRqdcDtlPage() {
         {tab === 'cmdty' && <OvsEstmtRqdcDtl_CmdtyList id={id} />}
       </div>
 
-      {/* 출력(R85) — 확인 모달 → OZ 리포트 연계 스텁 */}
+      {/* 출력(R85) — 확인 모달 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
       <AlertModal
         open={printModalOpen}
         onOpenChange={setPrintModalOpen}
@@ -130,9 +133,10 @@ export function OvsEstmtRqdcDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[M72] 견적의뢰서출력물(R85) OZ리포트 연계'),
+          onClick: () => oz.open('R85', { clmSeq: detail.clmSeq }, '견적의뢰서'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
 
       {/* 맨 위로 FAB */}
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />

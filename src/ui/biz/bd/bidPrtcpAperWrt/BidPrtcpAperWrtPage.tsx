@@ -22,6 +22,8 @@ import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { BidPrtcpAplyRjct, type BidPrtcpAplyRjctHandle } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAplyRjct'
 import { BidPrtcpAperWrtPage_Stp2 } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage_Stp2'
 import { BidPrtcpAperWrtPage_Stp3 } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage_Stp3'
@@ -99,6 +101,7 @@ export function BidPrtcpAperWrtPage() {
   const [rjctOpen, setRjctOpen] = useState(false) // 입찰참가등록반려 바텀시트(P07)
   const [attachedFiles, setAttachedFiles] = useState<UploadedFile[]>(INITIAL_ATTACHED_FILES) // 파일첨부 탭(Stp6) 업로드 목록 — 제출 시 fileGuids
   const rjctRef = useRef<BidPrtcpAplyRjctHandle>(null) // P07 apply 모드 제출 핸들
+  const oz = useOzReport() // P07 view 모드 [출력] → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서)
 
   // 일반정보(slide115 dmt_bidPbancInfo) — 공고 식별값은 상세 항목, 나머지 일반정보 목업.
   const pbancRows: TableRow[] = [
@@ -304,7 +307,13 @@ export function BidPrtcpAperWrtPage() {
             <ButtonGroup
               layout="asymmetric"
               items={[
-                { label: '출력', variant: 'secondary', onClick: () => console.log('[P07] 신청서 출력') },
+                {
+                  label: '출력',
+                  variant: 'secondary',
+                  // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체)
+                  onClick: () =>
+                    oz.open('MUI-BD-04-P07', { pbancNo: detail.pbancNo }, '입찰참가등록반려 신청서'),
+                },
                 { label: '닫기', variant: 'primary', onClick: () => setRjctOpen(false) },
               ]}
             />
@@ -313,6 +322,7 @@ export function BidPrtcpAperWrtPage() {
       >
         <BidPrtcpAplyRjct ref={rjctRef} detail={detail} onSubmitted={() => setRjctOpen(false)} />
       </BottomSheet>
+      <OzReportFullPopup {...oz.popupProps} />
     </div>
   )
 }

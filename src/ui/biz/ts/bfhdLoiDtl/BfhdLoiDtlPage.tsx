@@ -2,7 +2,7 @@
 // 사전의향서목록(M01) 카드 클릭 → /ts/bfhdLoiDtl 진입(식별자는 navigate state).
 // 구성: sticky(요약 SummaryInfo + 탭 TabList) + 탭(T01 상세내용 · T02 품목명세서) —
 //   업무지원 상세는 진행 단계(StepBar) 없음(slide12).
-// 타이틀 우측 출력 버튼 → 출력 가능 레포트 목록 바텀시트(slide12, OZ 연계 스텁).
+// 타이틀 우측 출력 버튼 → 출력 가능 레포트 목록 바텀시트(slide12) → OZ 리포트 뷰어(OzReportFullPopup).
 // 공지사항(업무도움)은 내역 확정 전 미표시. 데이터: useSelectBfhdLoiDtl — 조회 완료까지 PageLoading.
 import { useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
@@ -16,6 +16,8 @@ import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { BfhdLoiDtl } from '@/ui/biz/ts/bfhdLoiDtl/BfhdLoiDtl'
 import { BfhdLoiDtl_ItemList } from '@/ui/biz/ts/bfhdLoiDtl/BfhdLoiDtl_ItemList'
 
@@ -32,6 +34,7 @@ export function BfhdLoiDtlPage() {
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputOpen, setOutputOpen] = useState(false) // 출력 레포트 목록 바텀시트(slide12)
+  const oz = useOzReport()
 
   const { data: detail } = tsQueries.useSelectBfhdLoiDtl(id)
 
@@ -84,7 +87,7 @@ export function BfhdLoiDtlPage() {
         {tab === 'item' && <BfhdLoiDtl_ItemList id={id} expired={detail.expryYn === 'Y'} />}
       </div>
 
-      {/* 출력 레포트 목록 바텀시트(slide12) — OZ 리포트 연계 스텁 */}
+      {/* 출력 레포트 목록 바텀시트(slide12) → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
       <BottomSheet
         open={outputOpen}
         onOpenChange={setOutputOpen}
@@ -94,14 +97,16 @@ export function BfhdLoiDtlPage() {
             variant="secondary"
             className="w-full"
             onClick={() => {
-              console.log('[M02] 사전의향서 출력 OZ리포트 연계')
               setOutputOpen(false)
+              // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체)
+              oz.open('MUI-TS-01-M02', { id }, '사전의향서')
             }}
           >
             사전의향서 출력
           </Button>
         }
       />
+      <OzReportFullPopup {...oz.popupProps} />
 
       {/* 맨 위로 FAB */}
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />

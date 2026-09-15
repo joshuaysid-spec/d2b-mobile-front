@@ -17,6 +17,8 @@ import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { CmdtyCtrtCncltnRmvDtl_Cn } from '@/ui/biz/ct/cmdtyCtrtCncltnRmvDtl/CmdtyCtrtCncltnRmvDtl_Cn'
 import { CmdtyCtrtCncltnRmvDtl_Artcl } from '@/ui/biz/ct/cmdtyCtrtCncltnRmvDtl/CmdtyCtrtCncltnRmvDtl_Artcl'
 import { CmdtyCtrtCncltnRmvDtl_SpclCnd } from '@/ui/biz/ct/cmdtyCtrtCncltnRmvDtl/CmdtyCtrtCncltnRmvDtl_SpclCnd'
@@ -46,6 +48,7 @@ export function CmdtyCtrtCncltnRmvDtlPage() {
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputModalOpen, setOutputModalOpen] = useState(false)
+  const oz = useOzReport()
 
   const { data: detail } = ctQueries.useSelectCtrtCncltnRmvDtlInfoInq(id)
   const steps = stepsByStg('계약')
@@ -126,7 +129,7 @@ export function CmdtyCtrtCncltnRmvDtlPage() {
       {/* FAB — 맨위로 */}
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />
 
-      {/* 출력 — 서류 출력 확인 모달(OZ 리포트 스텁) */}
+      {/* 출력 — 서류 출력 확인 모달 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
       <AlertModal
         open={outputModalOpen}
         onOpenChange={setOutputModalOpen}
@@ -136,9 +139,16 @@ export function CmdtyCtrtCncltnRmvDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[CT-03-M02] 물품 해지/해제 계약서 출력 → OZ 리포트 호출'),
+          // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체)
+          onClick: () =>
+            oz.open(
+              'MUI-CT-03-M02',
+              { ctrtNo: detail.ctrtNo, ctrtCycl: detail.ctrtCycl },
+              '물품 해지/해제 계약서',
+            ),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
     </div>
   )
 }

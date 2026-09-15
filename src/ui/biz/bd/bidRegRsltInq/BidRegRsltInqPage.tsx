@@ -7,6 +7,8 @@ import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { Icon } from '@/ui/common/base/Icon'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 
 // 공동수급업체 1건(목업 타입) — dlt_jsdBzentyList 항목(설계서 slide75).
 interface JsdBzenty {
@@ -83,6 +85,7 @@ const RESULT_ROWS: TableRow[] = [
 ]
 
 export function BidRegRsltInqPage() {
+  const oz = useOzReport() // 출력 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서)
   return (
     <div className="flex w-full flex-col">
       {/* 요약 헤더 — badges + 공고번호(subtitle) + 출력 + 공고명(title) (Figma 9300-38197) */}
@@ -99,7 +102,8 @@ export function BidRegRsltInqPage() {
           <button
             type="button"
             aria-label="출력"
-            onClick={() => console.log('[M05] 출력')} // 추후 API: bdService.selectBidRegResult
+            // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체). 식별값은 상세 API(bdService.selectBidRegResult) 연동 후 params 로 전달.
+            onClick={() => oz.open('MUI-BD-03-M05')}
             className="flex size-[37px] shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-field bg-background text-krds-text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring active:opacity-70"
           >
             <Icon name="Print" size={24} aria-hidden />
@@ -141,6 +145,7 @@ export function BidRegRsltInqPage() {
           <Table rows={RESULT_ROWS} />
         </AccordionSection>
       </Accordion>
+      <OzReportFullPopup {...oz.popupProps} />
     </div>
   )
 }

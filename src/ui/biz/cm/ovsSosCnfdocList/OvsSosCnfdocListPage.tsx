@@ -1,7 +1,7 @@
 // 국외조달원등록증신청목록 — MUI-CM-04-M21. 설계서 00.공통 v0.84 slide331~333 (화면 목록 slide214).
 // 고객센터 > 민원서류발급신청(M04 허브) 하위. Figma 전용 프레임 없음 → 목록 컨벤션.
 // 기 신청 내역 카드 목록(진행상태 신청/반려/승인). **상세 화면 없음**.
-// 카드 클릭: 신청(P)/승인(A) → 서류 출력 확인 팝업(MUI-BD-01-P14, AlertModal 인라인) → OZ 리포트(스텁).
+// 카드 클릭: 신청(P)/승인(A) → 서류 출력 확인 팝업(MUI-BD-01-P14, AlertModal 인라인) → OZ 리포트 뷰어(OzReportFullPopup).
 //   반려(R) → 카드에 반려사유만 표시, 클릭 무동작(팝업/상세 없음). (2026-07-20 요청)
 // (+) FAB → 국외조달원등록증신청(MUI-CM-04-M22 OvsSosCnfdocRegPage) 페이지로 이동
 //   (2026-07-20 팝업→페이지 · 2026-07-31 하단 고정 [신청] 바 → FAB (+) 이동 요청).
@@ -21,6 +21,8 @@ import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { ROUTES } from '@/constants/routes'
 import type {
   SearchFilterSchema,
@@ -151,6 +153,7 @@ export function OvsSosCnfdocListPage() {
   const [page, setPage] = useState(1)
   const [outputOpen, setOutputOpen] = useState(false) // 서류 출력 확인(MUI-BD-01-P14)
   const [outputTarget, setOutputTarget] = useState<MockOvsSosCnfdocItem | null>(null)
+  const oz = useOzReport() // 등록증 출력 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서)
 
   const defaultValue = useMemo(() => buildDefaultValue(), [])
 
@@ -278,7 +281,7 @@ export function OvsSosCnfdocListPage() {
         onSearch={handleFilterSearch}
       />
 
-      {/* 서류 출력 확인 (MUI-BD-01-P14) — 신청/승인 카드 클릭 시 OZ 리포트 확인 후 등록증 발급(스텁) */}
+      {/* 서류 출력 확인 (MUI-BD-01-P14) — 신청/승인 카드 클릭 시 확인 후 등록증 OZ 리포트 뷰어 */}
       <AlertModal
         open={outputOpen}
         onOpenChange={setOutputOpen}
@@ -288,13 +291,12 @@ export function OvsSosCnfdocListPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
+          // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체)
           onClick: () =>
-            console.log(
-              '[OvsSosCnfdocList] 국외 조달원 등록증 발급 — OZ 리포트 호출(스텁)',
-              outputTarget?.aplyRcptNo,
-            ),
+            oz.open('MUI-CM-04-M21', { aplyRcptNo: outputTarget?.aplyRcptNo }, '국외 조달원 등록증'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
     </div>
   )
 }

@@ -22,6 +22,8 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SummaryInfo, type SummaryInfoBadge } from '@/ui/common/composites/SummaryInfo'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
 import { TechEvlRsltInq } from '@/ui/biz/bd/bfhdSrngRsltInq/TechEvlRsltInq'
 import { OvsTechEvlRslt } from '@/ui/biz/bd/ovsTndrDtl/OvsTechEvlRslt'
@@ -198,6 +200,7 @@ export function BidPrgsDtlInqPage() {
   const cancelRef = useRef<BidRtrcnAperInqHandle>(null)
   const prdcpRef = useRef<PrdctnAbltDcmntSbmsnHandle>(null)
   const ovsRtrcnRef = useRef<OvsBidRtrcnAplyHandle>(null)
+  const oz = useOzReport() // 출력 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서)
 
   // 업무구분(taskSeNm) 데이터 필드로 국내/국외 화면 분기 — 목록(M01)·상세(M02)는 국내외 공용(설계서 slide324).
   const isOvs = detail.taskSeNm === '국외'
@@ -363,7 +366,8 @@ export function BidPrgsDtlInqPage() {
           <button
             type="button"
             aria-label="출력"
-            onClick={() => console.log('[M02] 출력')}
+            // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체)
+            onClick={() => oz.open('MUI-BD-03-M02', { pbancNo: detail.pbancNo, prcmNo: detail.prcmNo })}
             className="flex size-[37px] shrink-0 items-center justify-center rounded-krds-8 border border-krds-border-field bg-background text-krds-text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring active:opacity-70"
           >
             <Icon name="Print" size={24} aria-hidden />
@@ -525,6 +529,7 @@ export function BidPrgsDtlInqPage() {
       >
         <BidRtrcnAperInqDtl detail={detail} />
       </BottomSheet>
+      <OzReportFullPopup {...oz.popupProps} />
     </div>
   )
 }

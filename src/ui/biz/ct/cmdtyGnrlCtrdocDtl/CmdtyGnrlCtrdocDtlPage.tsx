@@ -21,6 +21,8 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { CmdtyCtrtDtstFullPopup } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyCtrtDtstFullPopup'
 import type { MockCtrtIntgListItem } from '@/types/mock/ct'
 
@@ -42,6 +44,7 @@ export function CmdtyGnrlCtrdocDtlPage() {
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기
   const [dtstOpen, setDtstOpen] = useState(false) // P14 물품일반계약명세서
   const [outputModalOpen, setOutputModalOpen] = useState(false)
+  const oz = useOzReport()
 
   const { data: detail } = ctQueries.useSelectCtrdocDtlInq(id)
   const steps = stepsByStg('계약')
@@ -199,7 +202,7 @@ export function CmdtyGnrlCtrdocDtlPage() {
         />
       </BottomSheet>
 
-      {/* 출력 — 서류 출력 확인 모달(OZ 리포트 스텁) */}
+      {/* 출력 — 서류 출력 확인 모달 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
       <AlertModal
         open={outputModalOpen}
         onOpenChange={setOutputModalOpen}
@@ -209,9 +212,12 @@ export function CmdtyGnrlCtrdocDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[CT-01-M05] 물품일반계약서 출력 → OZ 리포트 호출'),
+          // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체)
+          onClick: () =>
+            oz.open('MUI-CT-01-M05', { ctrtNo: detail.ctrtNo, ctrtCycl: detail.ctrtCycl }, '물품일반계약서'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
 
       {/* P14 물품일반계약명세서 — P11 팝업 재사용(데이터영역 동일, title 교체) */}
       <CmdtyCtrtDtstFullPopup

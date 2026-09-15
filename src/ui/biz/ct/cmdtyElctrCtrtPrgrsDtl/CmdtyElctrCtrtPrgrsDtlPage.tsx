@@ -26,6 +26,8 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { NavigationItemList } from '@/ui/common/composites/NavigationItemList'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { CmdtyElctrCtrtPrgrsDtl_Cn } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyElctrCtrtPrgrsDtl_Cn'
 import { CmdtyElctrCtrtPrgrsDtl_Artcl } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyElctrCtrtPrgrsDtl_Artcl'
 import { CmdtyElctrCtrtPrgrsDtl_RjctRsn } from '@/ui/biz/ct/cmdtyElctrCtrtPrgrsDtl/CmdtyElctrCtrtPrgrsDtl_RjctRsn'
@@ -103,6 +105,7 @@ export function CmdtyElctrCtrtPrgrsDtlPage() {
   const [lastDtstOpen, setLastDtstOpen] = useState(false) // 물품최종계약명세서(P12 — 확정)
   const [prgrsSttsOpen, setPrgrsSttsOpen] = useState(false) // 계약진행상태(P17)
   const [outputModalOpen, setOutputModalOpen] = useState(false) // 출력 확인(MUI-BD-01-P14 패턴)
+  const oz = useOzReport()
 
   const { data: detail } = ctQueries.useSelectCtrtPrgrsDtl(id)
   // 진행 단계 — 계약 도메인 상세는 '계약' 단계(설계서 slide23 단계표시기).
@@ -269,7 +272,7 @@ export function CmdtyElctrCtrtPrgrsDtlPage() {
         <NavigationItemList items={shortcuts} />
       </BottomSheet>
 
-      {/* 출력 — 서류 출력 확인 모달(MUI-BD-01-P14 패턴). 확인 시 OZ 리포트 호출(스텁, R37~R46) */}
+      {/* 출력 — 서류 출력 확인 모달(MUI-BD-01-P14 패턴) → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
       <AlertModal
         open={outputModalOpen}
         onOpenChange={setOutputModalOpen}
@@ -279,9 +282,12 @@ export function CmdtyElctrCtrtPrgrsDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[CT-01-M03] 계약서표지 출력(R37~R46) → OZ 리포트 호출'),
+          // ⚠️ 리포트 코드 R37~R46 중 분기 미확정 — 반입 시 확정
+          onClick: () =>
+            oz.open('R37', { ctrtNo: detail.ctrtNo, ctrtCycl: detail.ctrtCycl }, '계약서표지'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
 
       {/* 보증서 확인(M73) · 인지세 확인(M74) · 물품계약명세서(P11) · 물품최종계약명세서(P12) 풀팝업 */}
       <GrnteCnfrmFullPopup id={id} open={grnteOpen} onOpenChange={setGrnteOpen} />

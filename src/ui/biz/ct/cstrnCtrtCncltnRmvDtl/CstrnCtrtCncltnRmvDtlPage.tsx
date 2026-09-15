@@ -16,6 +16,8 @@ import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { CstrnCtrtCncltnRmvDtl_Cn } from '@/ui/biz/ct/cstrnCtrtCncltnRmvDtl/CstrnCtrtCncltnRmvDtl_Cn'
 import { CstrnCtrtCncltnRmvDtl_Adoc } from '@/ui/biz/ct/cstrnCtrtCncltnRmvDtl/CstrnCtrtCncltnRmvDtl_Adoc'
 import type { MockCncltnRmvListItem } from '@/types/mock/ct'
@@ -43,6 +45,7 @@ export function CstrnCtrtCncltnRmvDtlPage() {
   const [tab, setTab] = useState('detail')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [outputModalOpen, setOutputModalOpen] = useState(false)
+  const oz = useOzReport()
 
   const { data: detail } = ctQueries.useSelectCstrnCncltnRmvDtl(id)
   const steps = stepsByStg('계약')
@@ -122,7 +125,7 @@ export function CstrnCtrtCncltnRmvDtlPage() {
       {/* FAB — 맨위로 */}
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />
 
-      {/* 출력 — 해지해제확정서 출력물(R21, slide140·144) OZ 리포트 스텁 */}
+      {/* 출력 — 해지해제확정서 출력물(R21, slide140·144) → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
       <AlertModal
         open={outputModalOpen}
         onOpenChange={setOutputModalOpen}
@@ -132,9 +135,11 @@ export function CstrnCtrtCncltnRmvDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[CT-03-M06] 해지해제확정서 출력물(R21) → OZ 리포트 호출'),
+          onClick: () =>
+            oz.open('R21', { ctrtNo: detail.ctrtNo, ctrtCycl: detail.ctrtCycl }, '해지해제확정서'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
     </div>
   )
 }

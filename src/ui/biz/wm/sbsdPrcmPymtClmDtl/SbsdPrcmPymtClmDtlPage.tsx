@@ -16,6 +16,8 @@ import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { SbsdPrcmPymtClmDtl_Ctrt } from '@/ui/biz/wm/sbsdPrcmPymtClmDtl/SbsdPrcmPymtClmDtl_Ctrt'
 import { SbsdPrcmPymtClmDtl_PymtBzenty } from '@/ui/biz/wm/sbsdPrcmPymtClmDtl/SbsdPrcmPymtClmDtl_PymtBzenty'
 import { SbsdPrcmPymtClmDtl_PymtAply } from '@/ui/biz/wm/sbsdPrcmPymtClmDtl/SbsdPrcmPymtClmDtl_PymtAply'
@@ -47,6 +49,7 @@ export function SbsdPrcmPymtClmDtlPage() {
   const [tab, setTab] = useState('ctrt')
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [printModalOpen, setPrintModalOpen] = useState(false)
+  const oz = useOzReport()
 
   const { data: detail } = wmQueries.useSelectSbsdPrcmPymtClmDtl(id)
   const steps = buildSteps()
@@ -71,7 +74,7 @@ export function SbsdPrcmPymtClmDtlPage() {
           subtitle={`계약번호 ${detail.ctrtNo} - ${detail.ctrtCycl}`}
           title={detail.ctrtNm}
           actions={
-            // 인쇄(slide54) — 대금청구신청서(R31/R32) OZ 리포트 연계 스텁.
+            // 인쇄(slide54) — 대금청구신청서(R31/R32) → 확인 모달 → OZ 리포트 뷰어.
             <SummaryUtilButton icon="Print" label="출력" onClick={() => setPrintModalOpen(true)} />
           }
           rows={[
@@ -129,9 +132,12 @@ export function SbsdPrcmPymtClmDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[M06] 대금청구신청서 출력(R31/R32) OZ리포트 연계'),
+          // ⚠️ 리포트 코드 R31/R32 중 분기 미확정 — 반입 시 확정(실연동은 OzReportFullPopup 안에서)
+          onClick: () =>
+            oz.open('R31', { ctrtNo: detail.ctrtNo, ctrtCycl: detail.ctrtCycl }, '대금청구신청서'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
 
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />
     </div>

@@ -3,7 +3,7 @@
 // 구성: 중요 안내(Notice urgent) + sticky(요약 SummaryInfo + 스텝 StepBar + 탭 TabList)
 //   + 탭 콘텐츠(T03 상세정보 InspDlvdocDtlSbsdPrcm · T04 물품목록 InspDlvdocDtlSbsdPrcm_CmdtyList)
 //   — 중앙조달(M02)과 셸 동일, 탭 콘텐츠(3섹션·증명문구)와 데이터가 다름(설계서 별도 화면 ID·폴더).
-// 인쇄 이벤트(slide26, R13 검사및납품조서): SummaryInfo 출력 버튼 → 확인 모달 → OZ 리포트 연계(스텁).
+// 인쇄 이벤트(slide26, R13 검사및납품조서): SummaryInfo 출력 버튼 → 확인 모달 → OZ 리포트 뷰어(OzReportFullPopup).
 // 데이터: exQueries.useSelectInspDlvdocSbsdDtl — 조회 완료까지 PageLoading(목록 state 는 필드 구성이 달라 placeholder 부적합).
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
@@ -19,6 +19,8 @@ import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { InspDlvdocDtlSbsdPrcm } from '@/ui/biz/ex/inspDlvdocDtlSbsdPrcm/InspDlvdocDtlSbsdPrcm'
 import { InspDlvdocDtlSbsdPrcm_CmdtyList } from '@/ui/biz/ex/inspDlvdocDtlSbsdPrcm/InspDlvdocDtlSbsdPrcm_CmdtyList'
 
@@ -48,6 +50,7 @@ export function InspDlvdocDtlSbsdPrcmPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   // 인쇄(R13) 확인 모달
   const [printModalOpen, setPrintModalOpen] = useState(false)
+  const oz = useOzReport()
 
   const { data: detail } = exQueries.useSelectInspDlvdocSbsdDtl(id)
   const steps = buildSteps()
@@ -125,7 +128,7 @@ export function InspDlvdocDtlSbsdPrcmPage() {
         {tab === 'cmdty' && <InspDlvdocDtlSbsdPrcm_CmdtyList id={id} />}
       </div>
 
-      {/* 인쇄(R13 검사및납품조서) — 확인 모달 → OZ 리포트 연계(스텁, slide26 인쇄 이벤트) */}
+      {/* 인쇄(R13 검사및납품조서) — 확인 모달 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
       <AlertModal
         open={printModalOpen}
         onOpenChange={setPrintModalOpen}
@@ -135,9 +138,10 @@ export function InspDlvdocDtlSbsdPrcmPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[M03] 검사및납품조서 출력(R13) OZ리포트 연계'),
+          onClick: () => oz.open('R13', { recrdPblcnNo: id, ctrtNo: detail.ctrtNo }, '검사및납품조서'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
 
       {/* 맨 위로 FAB */}
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />

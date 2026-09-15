@@ -13,6 +13,8 @@ import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { BfhdSpcfctDtl } from '@/ui/biz/op/bfhdSpcfctDtl/BfhdSpcfctDtl'
 import { BfhdSpcfctDtl_OpnnList } from '@/ui/biz/op/bfhdSpcfctDtl/BfhdSpcfctDtl_OpnnList'
 import { BfhdSpcfctDtl_Doc } from '@/ui/biz/op/bfhdSpcfctDtl/BfhdSpcfctDtl_Doc'
@@ -61,9 +63,10 @@ export function BfhdSpcfctDtlPage() {
   // 스크롤 시 상단 블록(요약+스텝+탭) 축소 + sticky 동작 — 로직은 훅에서. (overflow-anchor 진동방지 포함)
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
-  // 출력 버튼 — 서류 출력 확인 모달(MUI-BD-01-P14) 표시. 확인 시 OZ 리포트 호출(콘솔 스텁).
+  // 출력 버튼 — 서류 출력 확인 모달(MUI-BD-01-P14) 표시. 확인 시 OZ 리포트 뷰어(OzReportFullPopup) 열기.
   const [outputModalOpen, setOutputModalOpen] = useState(false)
   const handleOutput = () => setOutputModalOpen(true)
+  const oz = useOzReport()
 
   return (
     <div ref={rootRef} className="flex w-full flex-col">
@@ -135,9 +138,11 @@ export function BfhdSpcfctDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[출력] 서류 출력 확인 → OZ 리포트 호출 (loginYn = y 상태)'),
+          // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체). 식별값은 상세 API 연동 후 params 로 전달.
+          onClick: () => oz.open('MUI-OP-01-M11'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
 
       {/* 플로팅 버튼 — 맨위로(사전규격은 품목명세서 출력 FAB 없음). */}
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />

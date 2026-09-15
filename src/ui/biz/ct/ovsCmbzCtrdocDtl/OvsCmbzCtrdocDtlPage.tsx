@@ -17,6 +17,8 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Button } from '@/ui/common/base/Button'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { OvsCmbzCtrdocDtl_Stts } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrdocDtl_Stts'
 import { OvsCmbzCtrdocDtl_Ctrt } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrdocDtl_Ctrt'
 import { OvsCmbzCtrdocDtl_Trgt } from '@/ui/biz/ct/ovsCmbzCtrdocDtl/OvsCmbzCtrdocDtl_Trgt'
@@ -48,6 +50,7 @@ export function OvsCmbzCtrdocDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   const [dtstOpen, setDtstOpen] = useState(false) // P78 상업계약서명세서
   const [outputModalOpen, setOutputModalOpen] = useState(false)
+  const oz = useOzReport()
 
   const { data: detail } = ctQueries.useSelectCmbzCtrdocDtlInfo(id)
   const steps = stepsByStg('계약')
@@ -127,7 +130,7 @@ export function OvsCmbzCtrdocDtlPage() {
       {/* FAB — 맨위로 */}
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />
 
-      {/* 출력 — 상업계약서출력물(R84) OZ 리포트 스텁 */}
+      {/* 출력 — 상업계약서출력물(R84) → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
       <AlertModal
         open={outputModalOpen}
         onOpenChange={setOutputModalOpen}
@@ -137,9 +140,10 @@ export function OvsCmbzCtrdocDtlPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{
           label: '확인',
-          onClick: () => console.log('[CT-01-M77] 상업계약서 출력(R84) → OZ 리포트 호출'),
+          onClick: () => oz.open('R84', { ctrtNo: detail.ctrtNo }, '상업계약서'),
         }}
       />
+      <OzReportFullPopup {...oz.popupProps} />
 
       {/* P78 상업계약서명세서 — 계약명세서 탭 그룹 클릭 시(디자인 10020:154303 = 바텀시트) */}
       <BottomSheet
