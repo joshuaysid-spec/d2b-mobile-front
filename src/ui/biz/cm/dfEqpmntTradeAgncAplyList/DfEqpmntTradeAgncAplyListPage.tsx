@@ -1,6 +1,7 @@
 // 군수품무역대리업 신청 및 발급 목록 (MUI-CM-01-M15, DfEqpmntTradeAgncAplyListPage).
 // Figma 정본 10020:83161(데이터)·10020:83191(결과없음). 설계서 00.공통 v0.84 slide178 항목명 준수.
 // 구성(위→아래, Figma): 업무도움 HelpDisclosure(말소/실효 안내) → "업체 등록현황 : 적격" + [업체등록안내](FullPopup)
+//   → [군수품무역대리업 등록증 발급] 큰 버튼(상세 M16 footer 에서 이동, 2026-09-15 — 적격일 때만 활성)
 //   → m_card 리스트(배지[구분·진행상황] + 접수번호 + 요청/승인/실효말소/만료일자) → 더보기
 //   → FAB(맨위로 / + 신청 → 바텀시트 [신규][갱신][변경] 버튼형 라디오, 설계서 slide188·Figma 83432 스타일). 결과없음=CardList emptyText.
 //   (2026-08-24 사용자 확정 — 구 하단 sticky [신청] 바를 우하단 + 플로팅 버튼으로 대체.)
@@ -66,6 +67,8 @@ export function DfEqpmntTradeAgncAplyListPage() {
   const [pageSize] = useState(10)
   const [page, setPage] = useState(1)
   const [guideOpen, setGuideOpen] = useState(false) // 업체등록안내 FullPopup
+  // 등록증 발급(OZPrint PVB021) — 상세(M16)에서 목록 상단 버튼으로 이동(2026-09-15). 추후: 등록증 발급 API/리포트 호출.
+  const handleIssue = () => console.log('[M15] 군수품무역대리업 등록증 발급(OZPrint PVB021)')
   const [aplyOpen, setAplyOpen] = useState(false) // 신청(신규/갱신/변경) 선택 시트
 
   const total = MOCK_LIST.length
@@ -136,6 +139,14 @@ export function DfEqpmntTradeAgncAplyListPage() {
           업체등록안내
           <Icon name="ArrowForwardIos" size={16} aria-hidden />
         </button>
+      </div>
+
+      {/* 군수품무역대리업 등록증 발급 — 상세(M16) footer 에서 이동(사용자 지시 2026-09-15). 업체등록안내 아래·카드 목록 위 큰 버튼.
+          등록현황이 적격(승인)일 때만 활성 — 추후 등록현황 API 값으로 분기. */}
+      <div className="px-4 pb-krds-3">
+        <Button variant="primary" className="w-full" disabled={REG_STTS !== '적격'} onClick={handleIssue}>
+          군수품무역대리업 등록증 발급
+        </Button>
       </div>
 
       {/* 카드 목록 (px-4 인셋). 결과없음=emptyText(Figma 10020:83191). */}

@@ -5,7 +5,7 @@
 //   → 연락처 / 이메일(Table: 연락처/팩스/이메일)
 //   → 반려사유(TextArea ReadOnly — 반려 아니어도 영역 표시, Figma)
 //   → 첨부파일(총 N건 — 서류명·일자 + 다운로드)
-//   → footer [군수품무역대리업 등록증 발급](primary) 1종([신청하기]는 검토 45번으로 제외 — 신청은 목록 M15 하단 바에서).
+//   → footer 없음([신청하기]는 검토 45번으로 제외, [등록증 발급]은 목록 M15 상단 큰 버튼으로 이동 — 2026-09-15).
 // 상단은 목록에서 넘어온 항목(navigate state)으로 그리고(service 스텁 없음), 본문/첨부는 페이지 목업(설계서 항목명 준수).
 //   직접 URL 진입(state 없음) 대비 페이지 fallback 목업. 데이터 연동 시 목업만 실제 조회로 교체.
 import { useState } from 'react'
@@ -15,7 +15,6 @@ import { fbQueries } from '@/queries/tss/fb/fbQueries'
 import { saveBlob } from '@/utils/download'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { TextArea } from '@/ui/common/base/TextArea'
-import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -110,9 +109,6 @@ export function DfEqpmntTradeAgncAplyDtlPage() {
     onDownload: () => handleDownload(f.id, f.fileNm as string),
   }))
 
-  // ── 액션 스텁 ──
-  const handleIssue = () => console.log('[M16] 군수품무역대리업 등록증 발급(OZPrint PVB021)') // 추후: 등록증 발급(승인 시)
-
   return (
     <div className="flex w-full flex-col">
       {/* 상단 요약 — 구분 배지 + 접수번호 + 신청일자/처리일자(Figma 83224). */}
@@ -168,17 +164,8 @@ export function DfEqpmntTradeAgncAplyDtlPage() {
         ))}
       </div>
 
-      {/* 하단 액션 — [등록증 발급] 1종. [신청하기]는 제외(v0.87 검토 45번 기획 결론, 사용자 확정 2026-09-15 —
-          신규/갱신 신청은 목록(M15) 하단 바에서 진입). 반려사유 위치는 현행(Figma 83224) 유지. */}
-      <div
-        className="sticky bottom-0 z-30 border-t border-krds-border-divider bg-background px-4 pt-3"
-        style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
-      >
-        <ButtonGroup
-          layout="single"
-          items={[{ label: '군수품무역대리업 등록증 발급', variant: 'primary', onClick: handleIssue }]}
-        />
-      </div>
+      {/* 하단 액션 없음 — [신청하기]는 검토 45번으로 제외, [등록증 발급]은 목록(M15) 상단 큰 버튼으로 이동(사용자 지시 2026-09-15).
+          반려사유 위치는 현행(Figma 83224) 유지. */}
 
       {/* 다운로드 실패 토스트 */}
       <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
