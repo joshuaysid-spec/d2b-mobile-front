@@ -92,6 +92,19 @@ status: Draft
 폼 제출 → payload.fileGuids = files.map(guid)  (// 추후 API)
 ```
 
+**[공통] 파일 추가 시트(`biz/cm/fileAdd/FileAdd`, v0.87) — 2026-09-15 업로드 내장(사용자 확정 구조)**
+
+```
+FileAdd 파일 선택 → validateFile → fbQueries.useUploadFile (파일당 1요청 순차 큐, 실패 건별 재시도)
+  → UploadedFile 응답 통째를 FileAddFile.uploaded 에 보관, id = 응답 guid
+  → [완료] = 전부 업로드된 파일만 onComplete({ docNm, files })  (업로드 중/실패 건 있으면 차단)
+사용처 → files[].uploaded 에서 guid 등 필요한 값을 꺼내 등록 API 에 다른 정보(파일명·서류명)와 함께 전송 → 성공 응답
+시트 내 X 삭제 → useRemoveFile(guid) 서버 제거
+```
+- 응답 필드가 늘어나면 `types/file.ts` `UploadedFile` 만 확장(FileAdd·사용처 무수정 — "통으로 넘기고 사용처에서 추출").
+- 사용처 12곳 중 목록형(`{ id, name, size }`)은 `id` 가 곧 guid. 파일명 항목만 보관하는 화면(국외 입찰보증금 납부서·입찰내역 품목대체 첨부·공수협 품목대체)은 설계서 항목이 파일명이라 그대로 두고, 등록 API 항목에 GUID 가 확정되면 `uploaded.guid` 를 추가 전송.
+- 캐비닛 업로드는 캐비닛 파일 선택 팝업 연동 전 임시 응답으로 done 처리.
+
 ### 2.3 Dependencies
 
 | Component | Depends On | Purpose |

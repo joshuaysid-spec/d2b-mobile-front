@@ -14,6 +14,7 @@ import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { FileAdd, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 import type { MockScrtyMsrmtPrsn } from '@/types/mock/cm'
+import type { UploadedFile } from '@/types/file'
 
 /** 부모 footer([등록])가 호출하는 확정 동작. */
 export interface ScrtyMsrmtPrsnlRegHandle {
@@ -36,8 +37,8 @@ const ScrtyMsrmtPrsnlReg = forwardRef<ScrtyMsrmtPrsnlRegHandle, ScrtyMsrmtPrsnlR
     const [prsnNm, setPrsnNm] = useState('')
     const [qualYn, setQualYn] = useState('')
     const [scrtMsrYmd, setScrtMsrYmd] = useState('')
-    // 첨부파일 — [공통] 파일 추가 시트(v0.87)로 추가. 목업으로 파일명만 관리.
-    const [files, setFiles] = useState<FileDownloadItem[]>([])
+    // 첨부파일 — 파일 추가 시트에서 업로드 완료된 건(응답 통째 uploaded + 입력한 첨부서류명 docNm, v0.87 검토 39번).
+    const [files, setFiles] = useState<(FileDownloadItem & { docNm: string; uploaded: UploadedFile })[]>([])
     // 파일 추가 시트 — P10 자체가 시트 콘텐츠라 중첩 컨테이너는 여기서 소유(부모 M23 은 관여 X, 설계서 "공통 파일첨부 사용").
     const [fileAddOpen, setFileAddOpen] = useState(false)
     const fileAddRef = useRef<FileAddHandle>(null)
@@ -55,6 +56,8 @@ const ScrtyMsrmtPrsnlReg = forwardRef<ScrtyMsrmtPrsnlRegHandle, ScrtyMsrmtPrsnlR
             qualYn,
             scrtMsrYmd,
             fileName: files[0]?.name ?? '',
+            docNm: files[0]?.docNm, // 첨부서류명(v0.87 검토 39번)
+            uploaded: files[0]?.uploaded, // 업로드 응답 통째 — 등록 API 에서 guid 등 추출
           }),
       }),
       [onRegister, prsnNm, qualYn, scrtMsrYmd, files],
@@ -126,10 +129,11 @@ const ScrtyMsrmtPrsnlReg = forwardRef<ScrtyMsrmtPrsnlRegHandle, ScrtyMsrmtPrsnlR
           {fileAddOpen && (
             <FileAdd
               ref={fileAddRef}
-              onComplete={({ files: picked }) =>
+              onComplete={({ docNm, files: picked }) =>
+                // 업로드 완료분(id=guid, uploaded=응답 통째) + 입력한 첨부서류명 보관 → [등록] 시 부모로.
                 setFiles((prev) => [
                   ...prev,
-                  ...picked.map((p) => ({ id: p.id, name: p.name, size: p.size })),
+                  ...picked.map((p) => ({ id: p.id, name: p.name, size: p.size, docNm, uploaded: p.uploaded })),
                 ])
               }
             />

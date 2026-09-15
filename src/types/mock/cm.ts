@@ -2,6 +2,7 @@
 // cm 하위 화면(인증서·FAQ·공지사항/자료실·마이페이지)의 공유 타입을 한 파일에 모은다.
 // (과거 types/cert.ts·faq.ts·notice.ts·mypage.ts 를 도메인 단위로 통합 — CLAUDE.md "타입 정의" 규칙.)
 import type { DateRangeValue } from '@/types/search-filter'
+import type { UploadedFile } from '@/types/file'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 인증서 관리 (MUI-CM-04-M14 / 삭제 P15). 설계서 00.공통 v0.83 slide337·338.
@@ -2002,6 +2003,10 @@ export interface MockScrtyMsrmtPrsn {
   scrtMsrYmd: string
   /** 첨부파일명(fileName) — 예 '증명서.pdf'. ⚠️ 잠정. */
   fileName: string
+  /** 첨부서류명(docNm) — 파일 추가 시트에서 입력한 서류명(v0.87 검토 39번). ⚠️ 잠정. */
+  docNm?: string
+  /** 파일 업로드 응답 통째(RaonK — guid 등). 등록 API 전송 시 여기서 필요한 값을 꺼낸다. 업로드 후 확정. */
+  uploaded?: UploadedFile
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
