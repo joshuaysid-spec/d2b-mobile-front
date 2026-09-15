@@ -2,7 +2,8 @@
 // 앱 메인 홈에서 노출되는 중요 공지사항·시스템 안내 팝업.
 //
 // 설계서(slide26) 동작:
-//   - 제목: 볼드로 한 줄 표시(초과 시 말줄임) · 내용: 최대 5줄 표시(초과 시 …말줄임).
+//   - 제목: 볼드로 한 줄 표시(초과 시 말줄임) · 내용: 설계서는 최대 5줄 말줄임이나 **에디터 HTML 본문(텍스트+이미지)을
+//     그대로 표시**로 변경(2026-09-15 사용자 확정) — 게시판 상세와 같은 sanitizeHtml 렌더, 길면 본문 영역만 스크롤.
 //   - 중요 공지사항/시스템 안내는 동일 팝업에서 내용만 교체되어 표시(type 으로 구분).
 //     최신 등록된 중요 공지 1종, 시스템 안내 1종만 노출. z-index 는 시스템 안내가 상단.
 //   - [더 이상 안보기] 현재 노출 공지를 더 이상 표시 안 함 + 창 닫힘.
@@ -15,6 +16,7 @@
 //   2) Figma 우상단 닫기(X) 버튼을 AlertModal 은 제공하지 않음 → dismissable(외부탭/Esc)로 닫힘 근사.
 //   → 두 항목 보고 대상.
 import { AlertModal } from '@/ui/common/composites/AlertModal'
+import { sanitizeHtml } from '@/utils/sanitizeHtml'
 
 /** 팝업 종류: 중요 공지사항 | 시스템 안내 (동일 팝업, 내용만 교체). */
 export type SysExplnType = 'notice' | 'system'
@@ -23,6 +25,7 @@ export type SysExplnType = 'notice' | 'system'
 //   임시 필드명(title/content) 사용. API 연동 시 공지(board) 도메인 항목명으로 교체.
 export interface SysExplnData {
   title: string
+  /** 본문 — 에디터 HTML(게시판 bbsCn 과 동일 형식). sanitizeHtml 후 삽입. */
   content: string
 }
 
@@ -31,16 +34,17 @@ const MOCK_DATA: Record<SysExplnType, SysExplnData> = {
   notice: {
     title: '제목을 표시합니다. 최대 1줄까지 표시 후 말줄임 처리됩니다.',
     content:
-      '공지사항 중에서 중요 공지로 등록한 최신 한가지를 노출합니다.\n' +
-      '중요 공지사항 메인홈에서 노출되는 것은 1종입니다.\n' +
-      '표시되는 텍스트의 길이는 최대 5줄로 표시하고, 이후 내용이 더 있는 경우는 …(말줄임) 표시를 통해서 내용을 숨김처리 합니다.',
+      '<p>공지사항 중에서 중요 공지로 등록한 최신 한가지를 노출합니다.</p>' +
+      '<p><strong>중요 공지사항 메인홈에서 노출되는 것은 1종입니다.</strong></p>' +
+      '<p>본문은 게시판 에디터 HTML 을 그대로 표시합니다(텍스트+이미지).</p>' +
+      '<p>문의사항은 고객센터(<a href="tel:1577-1118">1577-1118</a>)로 연락 주시기 바랍니다.</p>',
   },
   system: {
     title: '시스템 점검 안내입니다. 최대 1줄까지 표시 후 말줄임 처리됩니다.',
     content:
-      '시스템 안내 중에서 등록한 최신 한가지를 노출합니다.\n' +
-      '시스템 안내 메인홈에서 노출되는 것은 1종입니다.\n' +
-      '표시되는 텍스트의 길이는 최대 5줄로 표시하고, 이후 내용이 더 있는 경우는 …(말줄임) 표시를 통해서 내용을 숨김처리 합니다.',
+      '<p>시스템 안내 중에서 등록한 최신 한가지를 노출합니다.</p>' +
+      '<p><strong>시스템 안내 메인홈에서 노출되는 것은 1종입니다.</strong></p>' +
+      '<p>3월 15일(토) 00:00~06:00 시스템 점검이 예정되어 있습니다. 이용에 참고 바랍니다.</p>',
   },
 }
 
@@ -118,9 +122,12 @@ export function SysExpln({
           </span>
           <span className="flex flex-col gap-krds-2">
             <span className="text-krds-body-sm text-krds-text-muted">내용</span>
-            <span className="line-clamp-5 whitespace-pre-line text-krds-body-md text-krds-text-ink">
-              {item.content}
-            </span>
+            {/* 에디터 HTML — AlertModal description 이 <p> 라 React 자식으론 블록을 못 넣음 → innerHTML 로 삽입(DOM API 는 허용).
+                게시판 상세(NoticeDtlPage)와 동일 클래스. 긴 본문은 이 영역만 스크롤. */}
+            <span
+              className="block max-h-[40vh] overflow-y-auto text-krds-body-md text-krds-text-ink wrap-break-word [&_img]:h-auto [&_img]:max-w-full"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.content) }}
+            />
           </span>
         </span>
       }
