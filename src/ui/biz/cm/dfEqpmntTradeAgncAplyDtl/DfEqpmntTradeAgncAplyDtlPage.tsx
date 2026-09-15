@@ -5,7 +5,7 @@
 //   → 연락처 / 이메일(Table: 연락처/팩스/이메일)
 //   → 반려사유(TextArea ReadOnly — 반려 아니어도 영역 표시, Figma)
 //   → 첨부파일(총 N건 — 서류명·일자 + 다운로드)
-//   → footer [군수품무역대리업 등록증 발급](primary) + [군수품무역대리업 신청하기](secondary → M17).
+//   → footer [군수품무역대리업 등록증 발급](primary) 1종([신청하기]는 검토 45번으로 제외 — 신청은 목록 M15 하단 바에서).
 // 상단은 목록에서 넘어온 항목(navigate state)으로 그리고(service 스텁 없음), 본문/첨부는 페이지 목업(설계서 항목명 준수).
 //   직접 URL 진입(state 없음) 대비 페이지 fallback 목업. 데이터 연동 시 목업만 실제 조회로 교체.
 import { useState } from 'react'
