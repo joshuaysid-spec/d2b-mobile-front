@@ -108,9 +108,9 @@ export function DfEqpmntTradeAgncAplyListPage() {
       </>
     ),
     // 정보행 라벨 — 설계서 v0.86 slide183 카드·slide185 항목설명 그대로(2026-08-24 대조):
-    //   요청일자(rcptYmd, 구 '신청일자') · 승인일자 · 실효, 말소 일자(구 '실효말소일자') · 만료일자.
+    //   신청일자(rcptYmd, 구 '신청일자') · 승인일자 · 실효, 말소 일자(구 '실효말소일자') · 만료일자.
     rows: [
-      { label: '요청일자', value: it.rcptYmd || '-' },
+      { label: '신청일자', value: it.rcptYmd || '-' },
       { label: '승인일자', value: it.aprvYmd || '-' },
       { label: '실효, 말소 일자', value: it.ersrYmd || '-' },
       { label: '만료일자', value: it.expryYmd || '-' },

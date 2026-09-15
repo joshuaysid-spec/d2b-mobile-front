@@ -1803,7 +1803,7 @@ export interface MockDfEqpmntTradeAgncAplyItem {
   regAplySecd: string
   /** 접수번호(rcptNo) — 접수년도(4)+접수일련번호(4). 예 '2026-0020'. */
   rcptNo: string
-  /** 요청일자(rcptYmd) — 'YYYY-MM-DD'. 8자. */
+  /** 신청일자(rcptYmd) — 'YYYY-MM-DD'. 8자. */
   rcptYmd: string
   /** 승인일자(aprvYmd) — 'YYYY-MM-DD'. 없으면 ''. */
   aprvYmd: string

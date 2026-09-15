@@ -9,9 +9,8 @@
 // 상단은 목록에서 넘어온 항목(navigate state)으로 그리고(service 스텁 없음), 본문/첨부는 페이지 목업(설계서 항목명 준수).
 //   직접 URL 진입(state 없음) 대비 페이지 fallback 목업. 데이터 연동 시 목업만 실제 조회로 교체.
 import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
-import { ROUTES } from '@/constants/routes'
 import { fbQueries } from '@/queries/tss/fb/fbQueries'
 import { saveBlob } from '@/utils/download'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
@@ -88,7 +87,6 @@ function contactRows(info: MockDfEqpmntTradeAgncAplyInfo): TableRow[] {
 }
 
 export function DfEqpmntTradeAgncAplyDtlPage() {
-  const navigate = useNavigate()
   // 목록에서 넘어온 항목으로 상단을 그린다. 직접 진입(state 없음)이면 페이지 fallback 목업.
   const item = (useLocation().state as MockDfEqpmntTradeAgncAplyItem | null) ?? FALLBACK_ITEM
 
@@ -114,7 +112,6 @@ export function DfEqpmntTradeAgncAplyDtlPage() {
 
   // ── 액션 스텁 ──
   const handleIssue = () => console.log('[M16] 군수품무역대리업 등록증 발급(OZPrint PVB021)') // 추후: 등록증 발급(승인 시)
-  const handleApply = () => navigate(ROUTES.DF_EQPMNT_TRADE_AGNC_APLY, { state: { mode: 'new' } })
 
   return (
     <div className="flex w-full flex-col">
@@ -171,17 +168,15 @@ export function DfEqpmntTradeAgncAplyDtlPage() {
         ))}
       </div>
 
-      {/* 하단 액션 — [등록증 발급](primary) + [신청하기](secondary → M17, Figma 83224 — 260827 재대조로 복원). */}
+      {/* 하단 액션 — [등록증 발급] 1종. [신청하기]는 제외(v0.87 검토 45번 기획 결론, 사용자 확정 2026-09-15 —
+          신규/갱신 신청은 목록(M15) 하단 바에서 진입). 반려사유 위치는 현행(Figma 83224) 유지. */}
       <div
         className="sticky bottom-0 z-30 border-t border-krds-border-divider bg-background px-4 pt-3"
         style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
       >
         <ButtonGroup
-          layout="vertical"
-          items={[
-            { label: '군수품무역대리업 등록증 발급', variant: 'primary', onClick: handleIssue },
-            { label: '군수품무역대리업 신청하기', variant: 'secondary', onClick: handleApply },
-          ]}
+          layout="single"
+          items={[{ label: '군수품무역대리업 등록증 발급', variant: 'primary', onClick: handleIssue }]}
         />
       </div>
 
