@@ -2120,7 +2120,7 @@ export interface MockSatisfactionPayload {
   content: string
 }
 
-// ── FAQ / 게시판 (FaqListPage, BoardListView) ──
+// ── FAQ / 게시판 (FaqListPage, 공지·자료실 목록 페이지) ──
 /** FAQ 목록 조회 요청 — 검색어(제목/내용)·구분·페이징. */
 export interface MockFaqListRequest {
   /** 제목(qstnTtl) 부분검색(선택). */

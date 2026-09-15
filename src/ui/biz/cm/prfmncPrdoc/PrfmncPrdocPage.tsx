@@ -198,7 +198,7 @@ export function PrfmncPrdocPage() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false) // 검색필터 풀팝업
   const [aplySheetOpen, setAplySheetOpen] = useState(false) // (+) 실적증명서 신청 바텀시트
-  // 스프레드 — 인터페이스(MockPrfmncPrdocSearchFilter)를 SearchFilterValue(Record)로 넘기기 위함(BoardListView 동일).
+  // 스프레드 — 인터페이스(MockPrfmncPrdocSearchFilter)를 SearchFilterValue(Record)로 넘기기 위함(게시판 목록 페이지와 동일).
   const [filter, setFilter] = useState<SearchFilterValue>(() => ({ ...buildDefaultValue() }))
   const [keyword, setKeyword] = useState('') // 빠른검색어(입력 중)
   const [targets, setTargets] = useState<string[]>(['ctrtNo'])
