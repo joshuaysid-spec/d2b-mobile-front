@@ -8,5 +8,5 @@ import { navigation } from './handlers/navigation'
 // 컴포넌트에서 `import { bridge } from '@/bridge'` 로 사용.
 export const bridge = { camera, auth, push, storage, navigation }
 
-export { detectOS } from './native'
+export { detectOS, isNativeApp } from './native'
 export type { BridgeMessage, NativeOS } from './types'

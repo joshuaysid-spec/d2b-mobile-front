@@ -30,6 +30,7 @@ import {
   AppSrvcExplnPage,
   APP_SRVC_EXPLN_SEEN_KEY,
 } from '@/ui/biz/cm/appSrvcExpln/AppSrvcExplnPage'
+import { isNativeApp } from '@/bridge'
 import type { SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
 import { ROUTES } from '@/constants/routes'
 import opIcon from '@/assets/images/opIcon.svg'
@@ -158,13 +159,12 @@ export function HomePage() {
   // 홈 첫 진입 흐름: 앱 이용안내(MUI-MS-01-M06) → 중요 공지(MUI-MS-01-P08).
   // 첫 진입이면 M06 먼저(오버레이) → 닫으면 P08. 이미 봤으면 바로 P08.
   // 저장은 localStorage(설계서 "이후 기동 시 앱 이용안내 화면 미노출") — 키 소유자는 AppSrvcExplnPage.
-  const [guideOpen, setGuideOpen] = useState(
-    () => !localStorage.getItem(APP_SRVC_EXPLN_SEEN_KEY),
-  )
-  // 공지는 [더 이상 안보기] 처리된 공지(SysExpln 이 localStorage 에 기록)면 스킵.
-  const [noticeOpen, setNoticeOpen] = useState(
-    () => !!localStorage.getItem(APP_SRVC_EXPLN_SEEN_KEY) && !isSysExplnDismissed('notice'),
-  )
+  // 온보딩은 앱(WebView) 안에서만 — 브라우저 접속은 스킵(2026-09-15 사용자 확정). 판정은 bridge.isNativeApp(브리지 객체 유무).
+  //   WebView 도 앱 전용 localStorage 를 가지므로 [다시 보지 않기] 영속은 그대로 localStorage.
+  const guideNeeded = isNativeApp() && !localStorage.getItem(APP_SRVC_EXPLN_SEEN_KEY)
+  const [guideOpen, setGuideOpen] = useState(guideNeeded)
+  // 공지는 [더 이상 안보기] 처리된 공지(SysExpln 이 localStorage 에 기록)면 스킵. 온보딩이 먼저면 닫힌 뒤 노출.
+  const [noticeOpen, setNoticeOpen] = useState(() => !guideNeeded && !isSysExplnDismissed('notice'))
   // 안내 종료([다시 보지 않기]) — 저장은 AppSrvcExplnPage 가 하고, 여기선 오버레이만 닫고 공지로 넘긴다.
   const handleGuideClose = () => {
     setGuideOpen(false)
