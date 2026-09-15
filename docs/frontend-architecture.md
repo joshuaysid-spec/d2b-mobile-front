@@ -235,6 +235,7 @@ src/
 | 파일/폴더 | 역할 |
 |----------|------|
 | `bridge/native.ts` | OS 감지 + postMessage 추상화. iOS의 `webkit.messageHandlers`, Android의 `AndroidBridge` 차이를 흡수. |
+| `bridge/native.ts` → `isNativeApp()` | **앱(WebView) 안인지 판정** — 앱이 주입하는 브리지 객체(`AndroidBridge` / `webkit.messageHandlers`) 유무. 브라우저는 false. 앱에서만 보일 UI(최초 기동 온보딩 M06 등)의 게이트. DEV 는 `?app=1` 로 앱 간주. 앱이 브리지를 늦게 주입하면 UA 토큰 합의 후 조건 추가. |
 | `bridge/handlers/camera.ts` | 카메라 호출 인터페이스. `bridge.camera.take()` 형태로 노출. |
 | `bridge/handlers/auth.ts` | 생체인증(지문/얼굴) 호출. |
 | `bridge/handlers/push.ts` | 푸시 알림 토큰 조회/등록. |

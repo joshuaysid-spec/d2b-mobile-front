@@ -91,6 +91,11 @@
     CT 6: 물품일반계약서·국외 전자계약·해지해제 4 / OP 2: 사전규격·조달계획 출력모달 / TS 사전의향서 / WM 2: 예치금이자·선금) ·
     분기 미확정 6곳(계약서표지 R37~R46 · 총액/단가 R39~R42 · 시설 R35/R36 · 대금청구 R31/R32 — 대표 코드로 호출, 조건 확정 시 분기).
   - 제외: 입찰공고 상세 Tacpg03(출력 버튼 자체 없음, PDB025BC/BD.ozr) · 세금계산서 상세 Window print 스텁(OZ 아님).
+- [ ] **앱 전용 UI 판정·WebView 저장소 (앱 팀 확인, 2026-09-15)**: 최초 기동 온보딩(M06)은 `bridge.isNativeApp()`(앱이 주입하는
+  `AndroidBridge`/`webkit.messageHandlers` 유무)이 true 일 때만 노출, 브라우저는 스킵. 확인 ① 앱이 **페이지 로드 전에** 브리지
+  객체를 주입하는지(아니면 UA 토큰 예 `D2BApp/1.0` 합의 → `isNativeApp` 조건 추가) ② Android WebView `domStorageEnabled=true`
+  (온보딩 [다시 보지 않기]·공지 [더 이상 안보기]가 WebView localStorage 에 저장 — 앱 삭제/데이터 초기화 시 리셋, 재설치 후 유지가
+  요건이면 `bridge.storage` 네이티브 저장으로 교체).
 - [ ] **PC QR 로그인 (MS-01-M12 햄버거메뉴, v0.87 인쇄본 29쪽 추가)**: 버튼은 구현(로그아웃 옆,
   `MenuPage`), 동작은 스텁. QR 스캔에 하이브리드 앱 브리지(카메라) API 와 PC 세션 승인 API 가 필요 —
   QR 상세 설계·브리지 규격 확정 시 배선(`// 추후: 앱 브리지 QR 스캐너 호출`).
