@@ -4,6 +4,7 @@
 //   서비스로 배선하는 시점에 그 페이지의 대표 샘플을 이 파일로 옮긴다(여기 값이 단일 진실원천).
 // ⚠️ 폐쇄망 반입 후 실백엔드 연동 시 이 파일은 사용되지 않는다(서비스가 apiClient 분기).
 // src/ui/** 를 import 하지 않는다(순수 데이터).
+import sampleImage from '@/assets/images/mainBanner1.svg' // 게시판 본문 이미지 더미(에디터 업로드 이미지 대체)
 import type {
   // 통합검색
   MockSearchResult,
@@ -163,9 +164,24 @@ const NOTICE_DETAIL: MockNoticeDetail = {
   bizFldCd: '01',
   pstgBgngYmd: '2026-03-10',
   pstgEndYmd: '2026-03-31',
-  bbsCn: '3월 15일(토) 00:00~06:00 시스템 점검이 예정되어 있습니다. 이용에 참고 바랍니다.',
+  // 에디터 HTML(텍스트+이미지) — 상세에서 sanitizeHtml 후 삽입.
+  bbsCn:
+    '<p>안녕하세요. 국방전자조달시스템 담당자입니다.</p>' +
+    '<p><strong>3월 15일(토) 00:00~06:00 시스템 점검</strong>이 예정되어 있습니다. 이용에 참고 바랍니다.</p>' +
+    `<p><img src="${sampleImage}" alt="안내 이미지" /></p>` +
+    '<p>문의사항은 고객센터(<a href="tel:1577-1118">1577-1118</a>)로 연락 주시기 바랍니다.</p>',
   files: [{ fileSn: '1', fileName: '점검안내.hwp', fileSize: '786KB' }],
 }
+// 목록 100건 부풀리기 — 서비스 배선 후에도 더보기/검색 데모 유지. contsNo/no 고유화, 첫 건만 상위고정.
+const NOTICE_LIST_FULL: MockNoticeListItem[] = Array.from({ length: 100 }, (_, i) => {
+  const base = NOTICE_LIST[i % NOTICE_LIST.length]
+  return {
+    ...base,
+    no: i + 1,
+    contsNo: String(101 + i).padStart(6, '0'),
+    upFix: i === 0 ? base.upFix : 'N',
+  }
+})
 const RPSTR_DETAIL: MockRpstrDetail = {
   contsNo: '000401',
   rpstrTtl: '입찰참가신청서 서식 (2026 개정)',
@@ -455,7 +471,12 @@ const DOC_BOX_LIST: MockDocBoxItem[] = [
 const DOC_BOX_DETAIL: MockDocBoxDetail = {
   docCn: '2026년 K5방독면 구매 계약 체결을 통보합니다. 상세 내용은 첨부문서를 확인해 주세요.',
   atchList: [
-    { fileTtl: '계약통보서', fileNm: '계약통보서.hwp', fileSize: '786KB', edmsDocId: 'EDMS20260310001' },
+    {
+      fileTtl: '계약통보서',
+      fileNm: '계약통보서.hwp',
+      fileSize: '786KB',
+      edmsDocId: 'EDMS20260310001',
+    },
   ],
 }
 const INDV_RCOFC_LIST: MockIndvRcofcItem[] = [
@@ -647,7 +668,7 @@ export const MOCK_CM = {
   autocomplete: AUTOCOMPLETE,
   // FAQ / 게시판
   faqList: FAQ_LIST,
-  noticeList: NOTICE_LIST,
+  noticeList: NOTICE_LIST_FULL,
   rpstrList: RPSTR_LIST,
   sysImpvList: SYS_IMPV_LIST,
   noticeDetail: NOTICE_DETAIL,

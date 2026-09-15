@@ -2,7 +2,9 @@
 // 목록 마크업·검색/페이징 상태는 이 페이지가 직접 소유한다(공용 BoardListView 폐기 — 2026-09-15 사용자 확정, 상세와 동일 원칙).
 // 구성(위→아래): 검색영역(SearchCondition: 대상칩 제목/내용 + 필터버튼 / 입력 / 검색)
 //   → 목록헤더(ListSectionHeader 총건수·표시개수) → 카드 리스트(CardList) → 더보기 → 맨위로 FAB
-//   → 검색필터 풀팝업(SearchFilter 셸). 목록은 목업 — 추후 tssCmQueries 훅(data)으로 교체.
+//   → 검색필터 풀팝업(SearchFilter 셸).
+// 데이터: tssCmQueries.useSelectNoticeList(no.925) — 목업 모드에선 서비스가 mocks/cm 목업을 반환(2026-09-15 배선).
+//   검색어/상세필터/페이징은 아직 클라이언트에서 거른다(⚠️ 블록). 서버 페이징 전환 시 확정값을 훅 파라미터로 넘기고 그 블록만 제거.
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -13,6 +15,7 @@ import { SearchCondition } from '@/ui/common/composites/SearchCondition'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
+import { tssCmQueries } from '@/queries/tss/cm/tssCmQueries'
 import {
   NOTICE_SEARCH_SCHEMA_WITH_CATEGORY,
   NOTICE_SEARCH_TARGETS,
@@ -22,12 +25,11 @@ import {
   noticeMatchFilter,
   noticeIsPinned,
 } from './noticeBoard'
-import { NOTICE_MOCK } from './noticeMock'
 import type { SearchFilterValue } from '@/types/search-filter'
 
 export function NoticeListPage() {
   const navigate = useNavigate()
-  const list = NOTICE_MOCK // 추후 tssCmQueries 훅 data 로 교체
+  const { data: list = [], isLoading } = tssCmQueries.useSelectNoticeList({})
   const [filterOpen, setFilterOpen] = useState(false) // 검색필터 풀팝업
   const [filter, setFilter] = useState<SearchFilterValue>(() => ({
     ...NOTICE_DEFAULT_WITH_CATEGORY,
@@ -106,7 +108,7 @@ export function NoticeListPage() {
 
       {/* 카드 목록 (px-4 인셋) */}
       <div className="flex flex-col gap-krds-7 px-4 pb-4 pt-krds-7">
-        <CardList items={cardItems} emptyText="공지사항이 없습니다." />
+        <CardList items={cardItems} loading={isLoading} emptyText="공지사항이 없습니다." />
       </div>
 
       {/* 더보기 — 모두 노출되면 숨김. */}

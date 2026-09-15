@@ -12,6 +12,7 @@ import type {
   MockFaqListItem,
   MockFaqListRequest,
   MockNoticeDetail,
+  MockNoticeListItem,
   MockRpstrDetail,
 } from '@/types/mock/cm'
 
@@ -22,27 +23,37 @@ export const tssCmService = {
   /** no.935 자주묻는질문목록조회 — MUI-CM-04-M03 (faqList/FaqListPage). */
   async selectFaqList(params: MockFaqListRequest): Promise<MockFaqListItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.faqList)
-    return apiClient.post<MockFaqListItem[], MockFaqListItem[]>('/tss/cm/board/selectFaqList.do', params)
+    return apiClient.post<MockFaqListItem[], MockFaqListItem[]>(
+      '/tss/cm/board/selectFaqList.do',
+      params,
+    )
   },
 
   /** no.936 자주묻는질문상세 — MUI-CM-04-M03 아코디언 본문(목록 응답에 포함 시 미사용). 소비처 대기. */
   async selectFaqDtl(contsNo: string): Promise<MockFaqListItem> {
     if (USE_MOCK) return mockDelay(MOCK_CM.faqList[0])
-    return apiClient.post<MockFaqListItem, MockFaqListItem>('/tss/cm/board/selectFaqDtl.do', { contsNo })
+    return apiClient.post<MockFaqListItem, MockFaqListItem>('/tss/cm/board/selectFaqDtl.do', {
+      contsNo,
+    })
   },
 
-  /** no.925 공지사항목록조회 — MUI-CM-04-M01 (noticeList). 구 `selectBoardList('notice')`. */
-  async selectNoticeList(params: MockBoardListRequest): Promise<MockBoardListItem[]> {
+  /** no.925 공지사항목록조회 — MUI-CM-04-M01 (noticeList). 구 `selectBoardList('notice')`.
+   *  ⚠️ 반입 시: URL 을 실경로(/v1/tss/cm/board/…)로, params 를 실규격 명명 맵(dml_srchMap·페이징)으로 조립. */
+  async selectNoticeList(params: MockBoardListRequest): Promise<MockNoticeListItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.noticeList)
-    return apiClient.post<MockBoardListItem[], MockBoardListItem[]>(
+    return apiClient.post<MockNoticeListItem[], MockNoticeListItem[]>(
       '/tss/cm/board/selectNoticeList.do',
       params,
     )
   },
 
-  /** no.926 공지사항상세조회 — MUI-CM-04-M02. 구 `selectNoticeDetail`. */
+  /** no.926 공지사항상세조회 — MUI-CM-04-M02. 구 `selectNoticeDetail`.
+   *  목업: 목록 목업에서 contsNo 로 찾은 항목(제목·작성자 등) + 상세 본문/첨부 합성 → 클릭한 글과 상세가 일치. */
   async selectNoticeDtl(contsNo: string): Promise<MockNoticeDetail> {
-    if (USE_MOCK) return mockDelay(MOCK_CM.noticeDetail)
+    if (USE_MOCK) {
+      const item = MOCK_CM.noticeList.find((x) => x.contsNo === contsNo)
+      return mockDelay({ ...MOCK_CM.noticeDetail, ...item, contsNo })
+    }
     return apiClient.post<MockNoticeDetail, MockNoticeDetail>('/tss/cm/board/selectNoticeDtl.do', {
       contsNo,
     })
@@ -60,7 +71,9 @@ export const tssCmService = {
   /** no.931 자료실상세조회 — MUI-CM-04-M30. 구 `selectRpstrDetail`. */
   async selectRpstrDtl(contsNo: string): Promise<MockRpstrDetail> {
     if (USE_MOCK) return mockDelay(MOCK_CM.rpstrDetail)
-    return apiClient.post<MockRpstrDetail, MockRpstrDetail>('/tss/cm/board/selectRpstrDtl.do', { contsNo })
+    return apiClient.post<MockRpstrDetail, MockRpstrDetail>('/tss/cm/board/selectRpstrDtl.do', {
+      contsNo,
+    })
   },
 
   /**
@@ -69,6 +82,9 @@ export const tssCmService = {
    */
   async selectSysImpvList(params: MockBoardListRequest): Promise<MockBoardListItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.sysImpvList)
-    return apiClient.post<MockBoardListItem[], MockBoardListItem[]>('/v1/cms/boards/sysImpv', params)
+    return apiClient.post<MockBoardListItem[], MockBoardListItem[]>(
+      '/v1/cms/boards/sysImpv',
+      params,
+    )
   },
 }
