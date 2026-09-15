@@ -90,6 +90,10 @@ export function DfEqpmntTradeAgncAplyListPage() {
   }
   // 신청 시트 — [신규][갱신][변경] 버튼형 라디오(설계서 slide188·Figma 10020:83432 스타일, 260828 사용자 확정).
   //   실효·말소 상태면 [변경] Dim. [신청하기] → 선택 구분으로 이동(신규/갱신=M17 mode, 변경=M18).
+  // ⚠️ 기획 확인 대기(2026-09-15): 업체당 자격 1개 규칙(자격 없음=신규만 / 만료 1개월 미만=갱신 / 유효=변경)으로
+  //   구분 버튼을 상태별 활성/비활성 하려 하나, 설계서 v0.87 slide188 규칙은 "실효·말소면 [변경] Dim" 하나뿐이고
+  //   자격 상태값(유효/만료임박/실효/말소/없음)도 응답 항목에 없음. 확정되면 아래 disabled 조건만 교체:
+  //   신규 = 유효 승인 건 있으면 비활성 · 갱신 = 승인 건 만료일자(expryYmd) 1개월 이내만 활성 · 변경 = 유효 승인 건 있을 때만 활성.
   const [aplyKind, setAplyKind] = useState<'new' | 'renew' | 'change'>('new')
   const latestStatus = dl_dfEqpmntTradAgncAplyList[0]?.aprvSecdNm ?? ''
   const changeDisabled = latestStatus === '실효' || latestStatus === '말소'
