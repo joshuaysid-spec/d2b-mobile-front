@@ -600,7 +600,6 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
           <FileAdd
             ref={fileAddRef}
             fixedDocNm="품목대체첨부문서"
-            multiple={false}
             onComplete={({ files }) => {
               // 추후 API: bdService.uploadOvsBidCnDoc(...)
               patchRow(uploadFor, 'itemSbstDocEn', files[0]?.name ?? '')

@@ -416,7 +416,6 @@ export function DfEqpmntTradeAgncAplyPage() {
           <FileAdd
             ref={fileAddRef}
             docNmOptions={DOC_TITLES}
-            multiple={false}
             onComplete={handleAttach}
           />
         )}

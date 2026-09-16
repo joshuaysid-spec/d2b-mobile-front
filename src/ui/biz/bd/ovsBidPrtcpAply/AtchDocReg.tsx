@@ -158,7 +158,6 @@ export function AtchDocReg({ detail }: { detail: MockBidPrgrsItem }) {
           <FileAdd
             ref={fileAddRef}
             docNmOptions={DOC_NM_OPTIONS}
-            multiple={false}
             onComplete={handleAttach}
           />
         )}

@@ -20,8 +20,6 @@ import type { UploadedFile } from '@/types/file'
 export interface CabinetPickFullPopupProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  /** 여러 건 선택 허용(기본 true). false 면 마지막 선택 1건만 유지. */
-  multiple?: boolean
   /** [선택 파일 첨부] — 선택분을 업로드 응답 형태로 반환(캐비닛 파일은 이미 서버에 있어 재업로드 없음). */
   onPick: (files: UploadedFile[]) => void
 }
@@ -36,12 +34,7 @@ function parseSize(display: string): number {
   return Math.round(Number(m[1]) * mul)
 }
 
-export function CabinetPickFullPopup({
-  open,
-  onOpenChange,
-  multiple = true,
-  onPick,
-}: CabinetPickFullPopupProps) {
+export function CabinetPickFullPopup({ open, onOpenChange, onPick }: CabinetPickFullPopupProps) {
   // 탐색 단계 — 폴더 목록 → (폴더 선택) → 파일 목록. 라우트가 아니라 팝업 내부 state.
   const [step, setStep] = useState<'folders' | 'files'>('folders')
   // 선택한 폴더 — 파일 단계 타이틀에 쓰고, 추후 폴더별 파일목록 조회 키(fldrSn)로 쓴다.
@@ -63,13 +56,9 @@ export function CabinetPickFullPopup({
     setStep('files')
   }
 
+  // 단건 선택 — 첨부서류명 1건 = 파일 1건(2026-09-16 사용자 확정). 다시 누르면 해제.
   const handleToggle = (file: MockDigitalCabinetFile) => {
-    setSelected((prev) => {
-      if (!multiple) return prev.some((f) => f.fileId === file.fileId) ? [] : [file]
-      return prev.some((f) => f.fileId === file.fileId)
-        ? prev.filter((f) => f.fileId !== file.fileId)
-        : [...prev, file]
-    })
+    setSelected((prev) => (prev.some((f) => f.fileId === file.fileId) ? [] : [file]))
   }
 
   const handleAttach = () => {

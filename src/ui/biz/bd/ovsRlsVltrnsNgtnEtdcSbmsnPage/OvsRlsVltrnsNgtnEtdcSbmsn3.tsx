@@ -282,7 +282,6 @@ const ItemCard = React.memo(function ItemCard({
           <FileAdd
             ref={fileAddRef}
             fixedDocNm="품목대체첨부문서"
-            multiple={false}
             // ⚠️ 폼에는 파일명만 보관 — 업로드 GUID 항목명 확정 시 uploaded.guid 로 교체. 추후: bdService.uploadEtdcItemSbstDoc
             onComplete={({ files }) => setDocNm(index, files[0]?.name ?? '')}
           />

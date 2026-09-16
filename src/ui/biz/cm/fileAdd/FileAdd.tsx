@@ -61,8 +61,6 @@ export interface FileAddProps {
    * 첨부파일명 입력/선택 필드를 숨기고 이 값으로 확정한다. docNmOptions 보다 우선.
    */
   fixedDocNm?: string
-  /** 여러 파일 추가 허용(기본 true). false 면 새로 고른 파일이 기존을 교체. */
-  multiple?: boolean
   /** [완료] 확정 — 첨부서류명 + 업로드 완료 파일 목록(uploaded 응답 포함) 반환. 부모가 목록 반영 → 등록 API 전송. */
   onComplete: (result: { docNm: string; files: FileAddDoneFile[] }) => void
 }
@@ -74,7 +72,7 @@ function formatSize(bytes: number): string {
 }
 
 const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
-  ({ docNmOptions, fixedDocNm, multiple = true, onComplete }, ref) => {
+  ({ docNmOptions, fixedDocNm, onComplete }, ref) => {
     const [docNm, setDocNm] = useState(fixedDocNm ?? '')
     const [files, setFiles] = useState<FileAddFile[]>([])
     const [error, setError] = useState<string | null>(null)
@@ -109,11 +107,11 @@ const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
       queueRef.current = queueRef.current.then(() => uploadOne(item))
     }
 
+    // 첨부서류명 1건 = 파일 1건(2026-09-16 사용자 확정) — 새로 고른 파일이 기존을 교체하고,
+    //   교체되는 업로드분은 서버에서도 제거한다.
     const appendFiles = (next: FileAddFile[]) => {
       setError(null)
       setFiles((prev) => {
-        if (multiple) return [...prev, ...next]
-        // 단일 파일: 기존 업로드분은 서버에서도 제거 후 교체.
         prev.forEach((f) => f.uploaded && removeFile.mutate(f.uploaded.guid))
         return next.slice(0, 1)
       })
@@ -136,8 +134,7 @@ const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
         status: 'uploading',
       }))
       appendFiles(items)
-      const toUpload = multiple ? items : items.slice(0, 1)
-      toUpload.forEach(enqueue)
+      items.slice(0, 1).forEach(enqueue)
     }
 
     // 캐비닛 업로드 — 디지털 캐비닛 파일 선택 팝업 열기.
@@ -220,7 +217,6 @@ const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
           <input
             ref={inputRef}
             type="file"
-            multiple={multiple}
             className="hidden"
             onChange={(e) => {
               handlePickDevice(e.target.files)
@@ -284,7 +280,6 @@ const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
         <CabinetPickFullPopup
           open={cabinetOpen}
           onOpenChange={setCabinetOpen}
-          multiple={multiple}
           onPick={handleCabinetPick}
         />
       </div>

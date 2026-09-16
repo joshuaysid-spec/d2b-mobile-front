@@ -391,7 +391,6 @@ const Stp3 = React.forwardRef<Stp3Handle, Stp3Props>(({ detail, defaultValues, o
           <FileAdd
             ref={fileAddRef}
             fixedDocNm={fileAddFor.docNm}
-            multiple={false}
             onComplete={({ files }) =>
               patchRow(fileAddFor.index, { [fileAddFor.field]: files[0]?.name ?? '' })
             }
