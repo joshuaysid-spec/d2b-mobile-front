@@ -2211,3 +2211,60 @@ export interface MockOvsTndrItitbItem {
   /** 달러금액 (25) — 상세(M77) 화면 전용 */
   bdngUsdAmt?: string
 }
+
+/**
+ * 국외 입찰서 제출 - 입찰참여품목(단가제) 1건 (MUI-BD-06-T72, 설계서 slide371 dl_ititbBidCnList).
+ * 항목명 = 설계서 데이터영역 영문. 입찰단가(bdngTccrUntprc, E)는 폼 값(ovsTndrItemSchema)으로 따로 보관.
+ */
+export interface MockOvsItitbBidCnItem {
+  /** 항목번호 (frcptlArtclNo, 5) */
+  frcptlArtclNo: string
+  /** 재고번호 (invtNo, 9) */
+  invtNo: string
+  /** 부품번호 (prtsNo, 32) */
+  prtsNo: string
+  /** 입찰업체 (splyBzentyNm, 200) */
+  splyBzentyNm: string
+  /** 품명 (itemNm, 200) */
+  itemNm: string
+  /** 단위 (unitNm, 2) */
+  unitNm: string
+  /** 수량 (qty, 15) */
+  qty: string
+  /** 지시단가 (drctnUntprc, 25) */
+  drctnUntprc: string
+  /** 화폐단위 (crncNm, 100) */
+  crncNm: string
+  /** 품목대체구분 (itemSbstSe, 1) — As it is / Replace */
+  itemSbstSe: 'As it is' | 'Replace'
+  /** 품목대체첨부문서 (itemSbstDocEn, 1) — 있으면 'O', 없으면 표시 없음 */
+  itemSbstDocEn: 'O' | ''
+  /** 수정재고번호 (mdfcnInvtNo, 13) */
+  mdfcnInvtNo: string
+  /** 수정부품번호 (mdfcnPrtsNo, 32) */
+  mdfcnPrtsNo: string
+  /** 납기(본조) (bscbgtDudtYmd, 8) */
+  bscbgtDudtYmd: string
+  /** 납기(당국) (athrtDudtYmd, 8) */
+  athrtDudtYmd: string
+  /** 납기(장국) (ltbndDudtYmd, 8) */
+  ltbndDudtYmd: string
+  /** 달러환산율 (usdExrt, 15) */
+  usdExrt: string
+}
+
+/** 국외 입찰서 제출 - 입찰품목(총액제) 1건 (MUI-BD-06-T73, 설계서 slide372 dl_alonbsItemList). 읽기전용. */
+export interface MockOvsAlonbsItem {
+  /** 항목번호 (frcptlArtclNo, 5) */
+  frcptlArtclNo: string
+  /** 재고번호 (invtNo, 9) */
+  invtNo: string
+  /** 부품번호 (prtsNo, 32) */
+  prtsNo: string
+  /** 품명 (itemNm, 200) */
+  itemNm: string
+  /** 단위 (unitNm, 2) */
+  unitNm: string
+  /** 수량 (qty, 15) */
+  qty: string
+}

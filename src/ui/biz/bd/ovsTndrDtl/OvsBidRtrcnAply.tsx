@@ -6,14 +6,20 @@
 // 구성: 취소신청내역(dl_resultInfo — 공고/신청업체/입찰업체/취소 신청건 품목)
 //    + 취소사유(dl_sbmsnInfo.rsn, 필수·4000자) + 서약문 박스 + 제출확인(AlertModal).
 //    (상단 요약 SummaryInfo 는 삭제 — 사용자 지시 2026-08-26)
+// 폼: RHF+zod — 사유 필수, submit() 시 검증 후 확인 모달.
 import { forwardRef, useImperativeHandle, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { InputLabel } from '@/ui/common/base/InputLabel'
+import { InputMessage } from '@/ui/common/base/InputMessage'
 import { TextArea } from '@/ui/common/base/TextArea'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { MockOvsTndrDtlItem } from '@/types/mock/bd'
+import { focusField } from '@/utils/focusField'
 
 export interface OvsBidRtrcnAplyHandle {
   /** 부모 BottomSheet footer '제출하기' 가 호출 — 제출확인 모달을 띄운다 */
@@ -29,6 +35,15 @@ export interface OvsBidRtrcnAplyProps {
 
 // 취소사유(rsn) — 필수, 자리수 4000 (설계서 slide391 dl_sbmsnInfo).
 const BID_RTRCN_RSN_MAX = 4000
+
+// 취소사유 검증 — 공백만 입력은 미입력으로 본다(trim). maxLength 는 타이핑만 막으므로 .max 가 최종 방어.
+const rsnSchema = z.object({
+  rsn: z
+    .string()
+    .trim()
+    .min(1, { error: '취소사유를 입력해주세요.' })
+    .max(BID_RTRCN_RSN_MAX, { error: `취소사유는 ${BID_RTRCN_RSN_MAX}자 이내로 입력해주세요.` }),
+})
 
 // 신청업체 (dl_resultInfo sbt*, 설계서 slide391) — 로그인 업체 정보라 목업.
 const MOCK_SBT_INFO = {
@@ -87,15 +102,38 @@ const OvsBidRtrcnAply = forwardRef<OvsBidRtrcnAplyHandle, OvsBidRtrcnAplyProps>(
       { label: '사업자번호 (DUNS NUM)', value: MOCK_SPLY_INFO.splyBzmnNo },
     ]
 
-    // 취소사유(rsn) — 필수, 최대 4000자.
-    const [rsn, setRsn] = useState('')
+    // 취소사유(rsn) — 필수, 최대 4000자. shouldFocusError 끄고 focusField 한 경로로 포커스(forms.md).
+    const {
+      register,
+      handleSubmit,
+      getValues,
+      watch,
+      formState: { errors },
+    } = useForm<{ rsn: string }>({
+      resolver: zodResolver(rsnSchema),
+      mode: 'onSubmit',
+      reValidateMode: 'onChange',
+      shouldFocusError: false,
+      defaultValues: { rsn: '' },
+    })
+    const rsn = watch('rsn')
     const [confirmOpen, setConfirmOpen] = useState(false)
 
-    // footer '제출하기' → 제출확인 모달 오픈
-    useImperativeHandle(ref, () => ({ submit: () => setConfirmOpen(true) }), [])
+    // footer '제출하기' → 검증 통과 시 제출확인 모달 오픈, 실패 시 사유 필드 포커스
+    useImperativeHandle(
+      ref,
+      () => ({
+        submit: () =>
+          void handleSubmit(
+            () => setConfirmOpen(true),
+            () => focusField('field-rsn'),
+          )(),
+      }),
+      [handleSubmit],
+    )
 
     const handleConfirm = () => {
-      console.log('[P81] 입찰취소 신청서 제출', { rsn }) // 추후 API: bdService.insertAplyBdngRtrcn — 투찰취소신청
+      console.log('[P81] 입찰취소 신청서 제출', { rsn: getValues('rsn') }) // 추후 API: bdService.insertAplyBdngRtrcn — 투찰취소신청
       setConfirmOpen(false)
       onSubmitted()
     }
@@ -128,17 +166,24 @@ const OvsBidRtrcnAply = forwardRef<OvsBidRtrcnAplyHandle, OvsBidRtrcnAplyProps>(
           </Accordion>
 
           {/* 취소사유 — 좌우 패딩은 시트 본문(px-16)이 제공, 여기선 상하 간격만 */}
-          <div className="flex flex-col gap-krds-5 py-krds-8">
+          <div id="field-rsn" className="flex flex-col gap-krds-5 py-krds-8">
             <InputLabel htmlFor="ovsBidRtrcnRsn" required>
               취소사유
             </InputLabel>
             <TextArea
               id="ovsBidRtrcnRsn"
-              value={rsn}
-              onChange={(e) => setRsn(e.target.value)}
               maxLength={BID_RTRCN_RSN_MAX}
               placeholder="내용을 입력하세요."
+              error={!!errors.rsn}
+              aria-invalid={!!errors.rsn}
+              aria-describedby={errors.rsn ? 'ovsBidRtrcnRsn-error' : undefined}
+              {...register('rsn')}
             />
+            {errors.rsn && (
+              <InputMessage type="error" id="ovsBidRtrcnRsn-error">
+                {errors.rsn.message}
+              </InputMessage>
+            )}
             <div className="text-right text-krds-body-sm text-krds-text-muted tabular-nums">
               {rsn.length} / {BID_RTRCN_RSN_MAX}
             </div>

@@ -3,10 +3,15 @@
 // 구성: 취소신청내역(dl_resultInfo — 공고/사업/신청업체/입찰업체) + 취소사유(rsn, 최대 4000자)
 //   + 서약문 + 제출확인 AlertModal. footer '제출하기' 는 부모가 ref(useImperativeHandle)로 submit() 호출.
 // 개별 건(탭3 개별 입찰참가취소) / 전체 건(플로팅 전체 입찰참가취소) 모두 targets 배열로 받는다.
+// 폼: RHF+zod — 사유 필수, submit() 시 검증 후 확인 모달.
 import { forwardRef, useImperativeHandle, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { InputLabel } from '@/ui/common/base/InputLabel'
+import { InputMessage } from '@/ui/common/base/InputMessage'
 import { TextArea } from '@/ui/common/base/TextArea'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -16,6 +21,7 @@ import type {
   MockOvsSbtInfo,
   MockOvsSplyInfo,
 } from '@/types/mock/bd'
+import { focusField } from '@/utils/focusField'
 
 export interface OvsBidPrtcpRtrcnAplyHandle {
   /** 부모 BottomSheet footer '제출하기' 가 호출 — 제출확인 모달을 띄운다 */
@@ -38,25 +44,57 @@ interface OvsBidPrtcpRtrcnAplyProps {
 // 취소사유(rsn) 최대 길이 — 설계서 slide358 자리수 4000.
 const RTRCN_RSN_MAX = 4000
 
+// 취소사유 검증 — 공백만 입력은 미입력으로 본다(trim). maxLength 는 타이핑만 막으므로 .max 가 최종 방어.
+const rsnSchema = z.object({
+  rsn: z
+    .string()
+    .trim()
+    .min(1, { error: '취소사유를 입력해주세요.' })
+    .max(RTRCN_RSN_MAX, { error: `취소사유는 ${RTRCN_RSN_MAX}자 이내로 입력해주세요.` }),
+})
+
 // 대상이 여러 건이면 '첫 값 외 N건' 으로 요약 표기.
 const summarize = (values: string[]) =>
   values.length > 1 ? `${values[0]} 외 ${values.length - 1}건` : (values[0] ?? '-')
 
 const OvsBidPrtcpRtrcnAply = forwardRef<OvsBidPrtcpRtrcnAplyHandle, OvsBidPrtcpRtrcnAplyProps>(
   ({ detail, sbtInfo, splyInfo, targets, onSubmitted }, ref) => {
-    // 취소사유(dl_sbmsnInfo.rsn) — 필수 입력.
-    const [rsn, setRsn] = useState('')
+    // 취소사유(dl_sbmsnInfo.rsn) — 필수 입력. shouldFocusError 끄고 focusField 한 경로로 포커스(forms.md).
+    const {
+      register,
+      handleSubmit,
+      getValues,
+      watch,
+      formState: { errors },
+    } = useForm<{ rsn: string }>({
+      resolver: zodResolver(rsnSchema),
+      mode: 'onSubmit',
+      reValidateMode: 'onChange',
+      shouldFocusError: false,
+      defaultValues: { rsn: '' },
+    })
+    const rsn = watch('rsn')
     const [confirmOpen, setConfirmOpen] = useState(false)
 
-    // footer '제출하기' → 제출확인 모달 오픈
-    useImperativeHandle(ref, () => ({ submit: () => setConfirmOpen(true) }), [])
+    // footer '제출하기' → 검증 통과 시 제출확인 모달 오픈, 실패 시 사유 필드 포커스
+    useImperativeHandle(
+      ref,
+      () => ({
+        submit: () =>
+          void handleSubmit(
+            () => setConfirmOpen(true),
+            () => focusField('field-rsn'),
+          )(),
+      }),
+      [handleSubmit],
+    )
 
     const handleConfirm = () => {
       console.log('[P82] 입찰참가신청서취소 제출', {
         pbancNo: detail.pbancNo,
         pbancOd: detail.pbancOd,
         targets: targets.map((t) => t.prchsDmndNo),
-        rsn,
+        rsn: getValues('rsn'),
       })
       // 추후 API: bdService.inserBidPrtcpRtrcnAply
       setConfirmOpen(false)
@@ -108,17 +146,24 @@ const OvsBidPrtcpRtrcnAply = forwardRef<OvsBidPrtcpRtrcnAplyHandle, OvsBidPrtcpR
         </Accordion>
 
         {/* 취소사유(rsn) — 좌우 패딩은 시트 본문(px-16) 제공, 여기선 상하 간격만 */}
-        <div className="flex flex-col gap-krds-5 py-krds-8">
+        <div id="field-rsn" className="flex flex-col gap-krds-5 py-krds-8">
           <InputLabel htmlFor="rsn" required>
             취소사유
           </InputLabel>
           <TextArea
             id="rsn"
-            value={rsn}
-            onChange={(e) => setRsn(e.target.value)}
             maxLength={RTRCN_RSN_MAX}
             placeholder="내용을 입력하세요."
+            error={!!errors.rsn}
+            aria-invalid={!!errors.rsn}
+            aria-describedby={errors.rsn ? 'rsn-error' : undefined}
+            {...register('rsn')}
           />
+          {errors.rsn && (
+            <InputMessage type="error" id="rsn-error">
+              {errors.rsn.message}
+            </InputMessage>
+          )}
           <div className="text-right text-krds-body-sm text-krds-text-muted tabular-nums">
             {rsn.length} / {RTRCN_RSN_MAX}
           </div>

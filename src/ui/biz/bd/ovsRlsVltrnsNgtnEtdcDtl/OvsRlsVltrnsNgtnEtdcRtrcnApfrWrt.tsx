@@ -5,14 +5,20 @@
 //    footer '제출하기' 는 부모가 ref(useImperativeHandle)로 submit() 호출 → 제출확인 모달(내부 소유).
 // 섹션은 아코디언이 아니라 SectionTitle + Table 구조 — 시트 본문(px-16) 안이라 자체 좌우 패딩은 제거(px-0).
 //    항목명 = 설계서 데이터영역 영문(dm_rtrcnAplyDsctn).
+// 폼: RHF+zod — 사유 필수, submit() 시 검증 후 확인 모달.
 import { forwardRef, useImperativeHandle, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 
 import { InputLabel } from '@/ui/common/base/InputLabel'
+import { InputMessage } from '@/ui/common/base/InputMessage'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { TextArea } from '@/ui/common/base/TextArea'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import type { MockOvsRlsVltrnsSummary } from '@/types/mock/bd'
+import { focusField } from '@/utils/focusField'
 
 export interface OvsRlsVltrnsNgtnEtdcRtrcnApfrWrtHandle {
   /** 부모 BottomSheet footer '제출하기' 가 호출 — 제출확인 모달을 띄운다 */
@@ -28,6 +34,15 @@ export interface OvsRlsVltrnsNgtnEtdcRtrcnApfrWrtProps {
 
 // 취소사유(rsn) — 필수, 자리수 4000 (설계서 slide439 dm_rtrcnAplyDsctn).
 const RTRCN_RSN_MAX = 4000
+
+// 취소사유 검증 — 공백만 입력은 미입력으로 본다(trim). maxLength 는 타이핑만 막으므로 .max 가 최종 방어.
+const rsnSchema = z.object({
+  rsn: z
+    .string()
+    .trim()
+    .min(1, { error: '취소사유를 입력해주세요.' })
+    .max(RTRCN_RSN_MAX, { error: `취소사유는 ${RTRCN_RSN_MAX}자 이내로 입력해주세요.` }),
+})
 
 // 신청업체 (sbt*, 설계서 slide438~439) — 로그인 업체 정보라 목업.
 const MOCK_SBT_INFO = {
@@ -57,10 +72,35 @@ const OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt = forwardRef<
   OvsRlsVltrnsNgtnEtdcRtrcnApfrWrtHandle,
   OvsRlsVltrnsNgtnEtdcRtrcnApfrWrtProps
 >(({ detail, onSubmitted }, ref) => {
-  const [rsn, setRsn] = useState('')
+  // 취소사유(rsn) — 필수 입력. shouldFocusError 끄고 focusField 한 경로로 포커스(forms.md).
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    watch,
+    formState: { errors },
+  } = useForm<{ rsn: string }>({
+    resolver: zodResolver(rsnSchema),
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
+    shouldFocusError: false,
+    defaultValues: { rsn: '' },
+  })
+  const rsn = watch('rsn')
   const [confirmOpen, setConfirmOpen] = useState(false)
 
-  useImperativeHandle(ref, () => ({ submit: () => setConfirmOpen(true) }), [])
+  // footer '제출하기' → 검증 통과 시 제출확인 모달 오픈, 실패 시 사유 필드 포커스
+  useImperativeHandle(
+    ref,
+    () => ({
+      submit: () =>
+        void handleSubmit(
+          () => setConfirmOpen(true),
+          () => focusField('field-rsn'),
+        )(),
+    }),
+    [handleSubmit],
+  )
 
   // 취소신청내역 — 공고 식별값(pbancNo/bizNm/prchsDmndNo/intgRfrncNo)은 상세 요약으로 구동.
   const pbancRows: TableRow[] = [
@@ -83,7 +123,7 @@ const OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt = forwardRef<
   ]
 
   const handleConfirm = () => {
-    console.log('[P82] 견적서 취소 신청서 제출', { rsn }) // 추후 API: bdService.cancelEtdcRtrcnApfrSbmsn
+    console.log('[P82] 견적서 취소 신청서 제출', { rsn: getValues('rsn') }) // 추후 API: bdService.cancelEtdcRtrcnApfrSbmsn
     setConfirmOpen(false)
     onSubmitted()
   }
@@ -114,17 +154,24 @@ const OvsRlsVltrnsNgtnEtdcRtrcnApfrWrt = forwardRef<
       </div>
 
       {/* 취소사유 — 필수, 최대 4000자 */}
-      <div className="flex flex-col gap-krds-5 py-4">
+      <div id="field-rsn" className="flex flex-col gap-krds-5 py-4">
         <InputLabel htmlFor="ovsEtdcRtrcnRsn" required>
           취소사유
         </InputLabel>
         <TextArea
           id="ovsEtdcRtrcnRsn"
-          value={rsn}
-          onChange={(e) => setRsn(e.target.value)}
           maxLength={RTRCN_RSN_MAX}
           placeholder="내용을 입력하세요."
+          error={!!errors.rsn}
+          aria-invalid={!!errors.rsn}
+          aria-describedby={errors.rsn ? 'ovsEtdcRtrcnRsn-error' : undefined}
+          {...register('rsn')}
         />
+        {errors.rsn && (
+          <InputMessage type="error" id="ovsEtdcRtrcnRsn-error">
+            {errors.rsn.message}
+          </InputMessage>
+        )}
         <div className="text-right text-krds-body-sm text-krds-text-muted tabular-nums">
           {rsn.length} / {RTRCN_RSN_MAX}
         </div>

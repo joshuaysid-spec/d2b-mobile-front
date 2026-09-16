@@ -11,7 +11,10 @@
 //   마지막 탭(첨부파일) 하단에 동의 목록(AgreementList, [필수]) + 동의서 상세 바텀시트(본문 + 동의 선택, 페이지 소유).
 //   [신청하기] 시 동의 필수 검증(페이지 소형 RHF 폼 ovsTndrAgreSchema) — 미동의면 차단 + 목록 아래 에러 + 포커스.
 //   본문 문구 미확보 → ADM_INFO_AGRE_BODY 자리 문구, 수령 시 교체.
-import { useState } from 'react'
+// [다음으로] 검증(2026-09-16 사용자 지시, forms.md 스텝 마법사 규칙): 입력 탭(입찰참여품목 T72/T73)은 자기 useForm+zod 를 갖고
+//   ref.submit() 으로 제출, 페이지는 현재 탭만 검증 → 통과 시 확정값(itemValues) 보관 후 다음 탭(되돌아오면 재주입).
+//   조회 탭(일반정보)은 통과, 첨부파일 탭은 서류별 필수 규칙 미기재로 검증 없음(국외 참가신청 선례).
+import { useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -30,12 +33,14 @@ import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import { OvsTndrSbmsnPage_Stp2 } from '@/ui/biz/bd/ovsTndrSbmsn/Stp2'
+import { OvsTndrSbmsnPage_Stp2, type OvsTndrStp2Handle } from '@/ui/biz/bd/ovsTndrSbmsn/Stp2'
+import { ovsTndrItemDefault } from '@/ui/biz/bd/ovsTndrSbmsn/ovsTndrSbmsnMock'
 import { OvsTndrSbmsnPage_Stp3 } from '@/ui/biz/bd/ovsTndrSbmsn/Stp3'
 import {
   ADM_INFO_AGRE_ID,
   ovsTndrAgreSchema,
   type OvsTndrAgreValues,
+  type OvsTndrItemValues,
 } from '@/ui/biz/bd/ovsTndrSbmsn/OvsTndrSbmsn.schema'
 import type { MockBidPrgrsItem, MockOvsTndrSbmsnDetail } from '@/types/mock/bd'
 
@@ -90,18 +95,23 @@ export function OvsTndrSbmsnPage() {
   // 목록(국외 입찰진행)에서 넘어온 항목으로 상단을 그린다 — 넘어온 항목에 없는 항목(담당자 등)은 목업 보완.
   // 직접 URL 진입(새로고침) 시에도 화면이 완전히 그려지도록 목업과 병합.
   //   rNum(진행 항목 번호)은 URL 미포함 — 진입 화면이 state 로 함께 넘긴다(신청완료 요약 구동용).
-  const stateItem = (location.state ?? null) as (Partial<MockOvsTndrSbmsnDetail> & { rNum?: string }) | null
+  const stateItem = (location.state ?? null) as
+    | (Partial<MockOvsTndrSbmsnDetail> & { rNum?: string })
+    | null
   // 테스트용 입찰방법 오버라이드 — ?bidMthdNm=총액제 로 직접 진입해 M73(총액제) 확인 가능.
   const bidMthdParam = new URLSearchParams(location.search).get('bidMthdNm')
   const detail: MockOvsTndrSbmsnDetail = {
     ...MOCK_OVS_TNDR_DETAIL,
     ...stateItem,
-    ...(bidMthdParam === '단가제' || bidMthdParam === '총액제'
-      ? { bidMthdNm: bidMthdParam }
-      : {}),
+    ...(bidMthdParam === '단가제' || bidMthdParam === '총액제' ? { bidMthdNm: bidMthdParam } : {}),
   }
 
   const [tab, setTab] = useState('일반정보')
+  // 입찰참여품목 탭 확정값 — 페이지가 보관, 탭이 언마운트돼도 유지(되돌아올 때 defaultValues 로 재주입).
+  const [itemValues, setItemValues] = useState<OvsTndrItemValues>(() =>
+    ovsTndrItemDefault((detail.bidMthdNm ?? '단가제') === '단가제' ? '단가제' : '총액제'),
+  )
+  const stp2Ref = useRef<OvsTndrStp2Handle>(null)
 
   // ── 사전동의서 동의 폼(페이지 소유) — [신청하기] 때 필수 동의 검증. AgreementList 는 RHF ref 없음 → focusField. ──
   const agreeForm = useForm<OvsTndrAgreValues>({
@@ -123,7 +133,9 @@ export function OvsTndrSbmsnPage() {
   // 저장 후 닫기 — '동의함'일 때만 활성(국외 서약서 P03 패턴). 목록 체크 반영 + 재검증으로 에러 해제.
   const saveAgreement = () => {
     const prev = agreeForm.getValues('agreed')
-    agreeForm.setValue('agreed', [...new Set([...prev, ADM_INFO_AGRE_ID])], { shouldValidate: true })
+    agreeForm.setValue('agreed', [...new Set([...prev, ADM_INFO_AGRE_ID])], {
+      shouldValidate: true,
+    })
     setAgreeOpen(false)
     console.log('[M71] 사전동의서 저장(동의)', ADM_INFO_AGRE_ID) // 추후 API: bdService.saveAgreement
   }
@@ -159,6 +171,10 @@ export function OvsTndrSbmsnPage() {
     document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
   }
   const handleNext = () => {
+    if (tab === '입찰참여품목') {
+      stp2Ref.current?.submit() // 현재 탭만 검증 → 통과 시 onSubmit 에서 보관 + 다음 탭, 실패 시 이동 없이 첫 에러 포커스
+      return
+    }
     if (!isLastTab) {
       goTab(tabOrder[tabIdx + 1])
       return
@@ -168,7 +184,7 @@ export function OvsTndrSbmsnPage() {
   }
   const submitTndr = () => {
     // 신청하기(설계서 slide369·373 투찰 클릭) — 입찰 작성내역 암호화 저장(모의입찰 상태면 모의투찰).
-    console.log('[M74] 국외 입찰서 제출(투찰)', detail.pbancNo, detail.pbancOd)
+    console.log('[M74] 국외 입찰서 제출(투찰)', detail.pbancNo, detail.pbancOd, itemValues)
     // 추후 API: bdService.insertOvsTndrSbmsn(pbancNo, pbancOd, ...)
     // 신청완료(M08) 요약 헤더 구동용 — 기존 AplyCmptnPage(MockBidPrgrsItem 기반) 재사용을 위한 매핑.
     const aplyDetail: MockBidPrgrsItem = {
@@ -212,7 +228,17 @@ export function OvsTndrSbmsnPage() {
   const renderTab = () => {
     switch (tab) {
       case '입찰참여품목':
-        return <OvsTndrSbmsnPage_Stp2 detail={detail} />
+        return (
+          <OvsTndrSbmsnPage_Stp2
+            ref={stp2Ref}
+            detail={detail}
+            defaultValues={itemValues}
+            onSubmit={(values) => {
+              setItemValues(values)
+              goTab(tabOrder[tabIdx + 1])
+            }}
+          />
+        )
       case '첨부파일':
         return <OvsTndrSbmsnPage_Stp3 detail={detail} />
       default:
@@ -279,7 +305,9 @@ export function OvsTndrSbmsnPage() {
               render={({ field }) => (
                 <AgreementList
                   checkAll={false}
-                  items={[{ id: ADM_INFO_AGRE_ID, title: ADM_INFO_AGRE_TITLE, requirement: 'required' }]}
+                  items={[
+                    { id: ADM_INFO_AGRE_ID, title: ADM_INFO_AGRE_TITLE, requirement: 'required' },
+                  ]}
                   checked={field.value}
                   onToggle={(id, on) =>
                     field.onChange(
