@@ -48,3 +48,7 @@ docs/_local/
 .claude/
 .bkit/
 .omc/
+
+# 에이전트 스킬 설치물(npx skills add) — 레포에 포함하지 않음
+.agents/
+skills-lock.json
