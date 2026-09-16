@@ -30,7 +30,10 @@ import { BidPbancDtl_Tacpg06 } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl_Tacpg06
 import { BidPbancDtl_Tacpg07 } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl_Tacpg07'
 import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
 import { BidAbndAperWrt, type BidAbndAperWrtHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidAbndAperWrt'
-import { BidRtrcnAperInq, type BidRtrcnAperInqHandle } from '@/ui/biz/bd/bidPrgsDtlInq/BidRtrcnAperInq'
+import {
+  BidRtrcnAperInq,
+  type BidRtrcnAperInqHandle,
+} from '@/ui/biz/bd/bidPrgsDtlInq/BidRtrcnAperInq'
 
 // ── 탭 (설계서 2.1 화면목록) ─────────────────────────────────────────────────
 //  일반정보(고정) · 기초예비가격(경쟁입찰) · 품목명세서(업무구분 물품) · 계약특수조건 · 공고문안 · 입찰진행현황
@@ -90,7 +93,10 @@ export function BidPbancDtlPage() {
   const [loginGuideOpen, setLoginGuideOpen] = useState(false) // 로그인 안내(MUI-MS-03-P15)
   const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보 조회 풀팝업(MUI-BD-01-M74)
   // 관심공고 등록/제외 토스트(MUI-BD-01-P13)
-  const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
+  const [toast, setToast] = useState<{ open: boolean; message: string }>({
+    open: false,
+    message: '',
+  })
 
   // 로그인 필요 동작 — 비로그인 시 로그인 안내(P15) 노출하고 동작 차단. authStore 직접 구독.
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
@@ -130,7 +136,11 @@ export function BidPbancDtlPage() {
 
   // 바로가기 바텀시트 항목 (Figma 9300-36775) — 각 신청서 작성/환율정보 이동.
   // 버튼 색: 작성류 상위 3개 primary · 포기/취소 2개 secondary · 환율정보 1개 tertiary(라인).
-  const shortcutItems: { id: string; label: string; variant: 'primary' | 'secondary' | 'tertiary' }[] = [
+  const shortcutItems: {
+    id: string
+    label: string
+    variant: 'primary' | 'secondary' | 'tertiary'
+  }[] = [
     { id: 'pq', label: '사전심사(PQ)신청서 작성하기', variant: 'primary' },
     { id: 'bid', label: '입찰서(견적서) 작성하기', variant: 'primary' },
     { id: 'apply', label: '입찰참가신청서 작성하기', variant: 'primary' },
@@ -200,9 +210,9 @@ export function BidPbancDtlPage() {
         <SummaryInfo
           collapsed={collapsed}
           badges={[
-            ...(detail?.taskSeNm ? [{ key: 'taskSeNm', label: detail.taskSeNm }] : []),
-            ...(detail?.bidSeNm ? [{ key: 'bidSeNm', label: detail.bidSeNm }] : []),
-            { key: 'pbancSeNm', label: detail?.pbancSeNm ?? '' },
+            { key: 'taskSeNm', label: detail?.taskSeNm },
+            { key: 'bidSeNm', label: detail?.bidSeNm },
+            { key: 'pbancSeNm', label: detail?.pbancSeNm },
           ]}
           subtitle={`공고번호 ${detail?.g2bPbancNoOd ?? ''}`}
           title={detail?.bizNm ?? ''}
@@ -216,8 +226,14 @@ export function BidPbancDtlPage() {
           }
           rows={[
             { label: '발주기관', value: detail?.deptNm ?? '-' },
-            { label: '기초예가금액', value: detail ? `${Number(detail.bsicExpt).toLocaleString()} 원` : '-' },
-            { label: '생산능력 제출 마감일시', value: detail?.prdcpIdntySmdocDdlnDt?.slice(0, 10) ?? '-' },
+            {
+              label: '기초예가금액',
+              value: detail ? `${Number(detail.bsicExpt).toLocaleString()} 원` : '-',
+            },
+            {
+              label: '생산능력 제출 마감일시',
+              value: detail?.prdcpIdntySmdocDdlnDt?.slice(0, 10) ?? '-',
+            },
             { label: '입찰참가등록 마감일시', value: detail?.bidRegDdlnDt?.slice(0, 10) ?? '-' },
             { label: '입찰서제출 마감일시', value: detail?.tndrSbmsnDdlnDt?.slice(0, 10) ?? '-' },
           ]}
@@ -235,7 +251,9 @@ export function BidPbancDtlPage() {
               <StepBar
                 orientation="horizontal"
                 items={steps}
-                sheetItems={buildProgressSheet(detail.prgrsStg ?? '입찰', (substep, prgrsStg) => navigate('/anl-prgrs', { state: { substep, prgrsStg } }))}
+                sheetItems={buildProgressSheet(detail.prgrsStg ?? '입찰', (substep, prgrsStg) =>
+                  navigate('/anl-prgrs', { state: { substep, prgrsStg } }),
+                )}
                 className="bg-transparent"
               />
             </div>
@@ -312,12 +330,20 @@ export function BidPbancDtlPage() {
             layout="asymmetric"
             items={[
               { label: '취소', variant: 'secondary', onClick: () => setAbandonOpen(false) },
-              { label: '제출하기', variant: 'primary', onClick: () => abandonRef.current?.submit() },
+              {
+                label: '제출하기',
+                variant: 'primary',
+                onClick: () => abandonRef.current?.submit(),
+              },
             ]}
           />
         }
       >
-        <BidAbndAperWrt ref={abandonRef} detail={prgrsDetail} onSubmitted={() => setAbandonOpen(false)} />
+        <BidAbndAperWrt
+          ref={abandonRef}
+          detail={prgrsDetail}
+          onSubmitted={() => setAbandonOpen(false)}
+        />
       </BottomSheet>
 
       {/* 입찰취소신청서(P04) — 바텀시트(제출확인 모달은 콘텐츠 내부) */}
@@ -335,7 +361,11 @@ export function BidPbancDtlPage() {
           />
         }
       >
-        <BidRtrcnAperInq ref={cancelRef} detail={prgrsDetail} onSubmitted={() => setCancelOpen(false)} />
+        <BidRtrcnAperInq
+          ref={cancelRef}
+          detail={prgrsDetail}
+          onSubmitted={() => setCancelOpen(false)}
+        />
       </BottomSheet>
     </div>
   )

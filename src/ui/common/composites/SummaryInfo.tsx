@@ -83,6 +83,12 @@ function SummaryInfo({
   // collapsed 시 카드 전체를 grid-rows 0fr 로 접는다(높이 0). 핵심 3겹 구조:
   //   ① grid(높이 컨트롤러, padding 없음) → ② overflow-hidden(클리핑) → ③ 실제 내용+padding(함께 접힘).
   // padding 을 ③ 안쪽에 둬야 접힐 때 잔여 높이 없이 0 이 된다.
+  // 라벨이 빈 배지는 렌더하지 않는다 — 상세 화면들이 `label: detail?.xxx ?? ''` 로 넘기는 탓에
+  //   값이 없을 때 빈 알약이 보이던 문제(2026-09-16). 배지가 전부 비면 배지 줄 자체를 숨긴다.
+  const shownBadges = (badges ?? []).filter(
+    (b) => !(b.label == null || b.label === '' || b.label === false),
+  )
+
   return (
     <div
       // aria-hidden 은 collapse(true)일 때만 — false 를 DOM 에 내보내면 일부 보조기술(iOS VoiceOver) 오작동.
@@ -96,14 +102,11 @@ function SummaryInfo({
     >
       <div className="overflow-hidden">
         <div
-          className={cn(
-            'flex w-full flex-col gap-krds-8 py-krds-8',
-            flushX ? 'px-0' : 'px-krds-8',
-          )}
+          className={cn('flex w-full flex-col gap-krds-8 py-krds-8', flushX ? 'px-0' : 'px-krds-8')}
         >
-          {badges && badges.length > 0 && (
+          {shownBadges.length > 0 && (
             <BadgeSwipeRow>
-              {badges.map((badge, i) => (
+              {shownBadges.map((badge, i) => (
                 <Badge key={badge.key ?? i} type={badge.type} color={badge.color}>
                   {badge.label}
                 </Badge>
