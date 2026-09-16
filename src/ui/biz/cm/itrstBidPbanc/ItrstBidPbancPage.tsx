@@ -15,7 +15,6 @@ import { Checkbox } from '@/ui/common/base/Checkbox'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
-import { Toast } from '@/ui/common/composites/Toast'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { ItrstBidPbancCard } from '@/ui/biz/cm/itrstBidPbanc/ItrstBidPbancCard'
 import type {
@@ -27,7 +26,7 @@ import type { MockItrstBidPbancItem } from '@/types/mock/cm'
 import { TASK_SE_CD } from '@/constants/codes'
 import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import { cmQueries } from '@/queries/cbs/cm/cmQueries'
-import { useAuthStore } from '@/stores/authStore'
+import { useAuthStore, showToast } from '@/stores/authStore'
 
 // ── 검색필터 schema (설계서 slide82 검색조건 dm_searchInfo) ────────────────────
 // 개찰일자(FROM/TO 범위) + 통합참조번호 + 공고번호 + 입찰건명/사업명.
@@ -48,9 +47,19 @@ const SEARCH_SCHEMA: SearchFilterSchema = {
       key: 'keyword',
       title: '검색어 (일부 입력 가능)',
       fields: [
-        { type: 'text', key: 'intgRfrncNo', label: '통합참조번호', placeholder: '통합참조번호를 입력하세요.' },
+        {
+          type: 'text',
+          key: 'intgRfrncNo',
+          label: '통합참조번호',
+          placeholder: '통합참조번호를 입력하세요.',
+        },
         { type: 'text', key: 'pbancNo', label: '공고번호', placeholder: '공고번호를 입력하세요.' },
-        { type: 'text', key: 'pbancItemNm', label: '입찰건명/사업명', placeholder: '입찰건명을 입력하세요.' },
+        {
+          type: 'text',
+          key: 'pbancItemNm',
+          label: '입찰건명/사업명',
+          placeholder: '입찰건명을 입력하세요.',
+        },
       ],
     },
   ],
@@ -149,7 +158,6 @@ export function ItrstBidPbancPage() {
   // 해제 확인 대상 id(모달 open) · 토스트 · '다음부터 묻지 않기' 체크값.
   const [confirmId, setConfirmId] = useState<string | null>(null)
   const [dontAskChecked, setDontAskChecked] = useState(false)
-  const [toastOpen, setToastOpen] = useState(false)
 
   const total = items.length
   const loaded = Math.min(page * pageSize, total)
@@ -174,8 +182,7 @@ export function ItrstBidPbancPage() {
   }
   const handleOpen = (item: MockItrstBidPbancItem) => {
     // 클릭한 항목을 state 로 전달 — 업무구분코드(GTSA0001)로 국내(M02)/국외(M71) 상세 분기(통합목록과 동일 규칙).
-    const to =
-      item.taskSeCd === TASK_SE_CD.OVERSEAS ? '/bd/ovsBidPbancDtl' : '/bd/bidPbancDtl'
+    const to = item.taskSeCd === TASK_SE_CD.OVERSEAS ? '/bd/ovsBidPbancDtl' : '/bd/bidPbancDtl'
     navigate(to, { state: item })
   }
 
@@ -191,7 +198,7 @@ export function ItrstBidPbancPage() {
 
   const unfavorite = (id: string) => {
     setItrst(id, false)
-    setToastOpen(true) // 설계서: 즐겨찾기 해제 시 토스트("관심공고에서 제외 되었습니다.")
+    showToast('관심공고에서 제외 되었습니다.') // 설계서: 즐겨찾기 해제 시 토스트("관심공고에서 제외 되었습니다.")
     // ⚠️ 식별자: 목업은 id — 실응답 확정 시 공고번호(pbancNoCycl 분해 등)로 교체 확인.
     deleteItrst.mutate(id, { onError: () => setItrst(id, true) }) // no.758 — 실패 시 별 롤백
   }
@@ -291,7 +298,9 @@ export function ItrstBidPbancPage() {
         description={
           <span className="flex flex-col items-start gap-krds-7">
             <span className="whitespace-pre-line">
-              {'관심공고를 해제하면 관심입찰공고 목록과 업무 캘린더에서 선택하신 입찰공고가 사라집니다.\n정말 관심공고를 해제할까요?'}
+              {
+                '관심공고를 해제하면 관심입찰공고 목록과 업무 캘린더에서 선택하신 입찰공고가 사라집니다.\n정말 관심공고를 해제할까요?'
+              }
             </span>
             <Checkbox
               variant="box"
@@ -305,11 +314,6 @@ export function ItrstBidPbancPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{ label: '해제', onClick: handleConfirmUnfavorite }}
       />
-
-      {/* 해제 완료 토스트 (설계서 slide81 상태 4) */}
-      <Toast open={toastOpen} onClose={() => setToastOpen(false)} duration={2000}>
-        관심공고에서 제외 되었습니다.
-      </Toast>
     </div>
   )
 }

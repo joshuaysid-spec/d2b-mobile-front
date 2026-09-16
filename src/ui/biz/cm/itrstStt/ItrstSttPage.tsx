@@ -12,7 +12,7 @@ import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import type { MockItrstSttItem } from '@/types/mock/cm'
 
 // ── 목업 (설계서 slide105 예시 + 데이터영역 dl_itrstSttList 항목명/형식) ─────────────
@@ -58,8 +58,6 @@ export function ItrstSttPage() {
   const [page, setPage] = useState(1)
   // 관심(별) 상태 — 해제해도 페이지 유지 중엔 목록에 남고 별만 off(설계서 slide105).
   const [items, setItems] = useState<MockItrstSttItem[]>(MOCK_LIST)
-  // 해제 토스트(사용자 확정 2026-08-24)
-  const [toastOpen, setToastOpen] = useState(false)
 
   const total = items.length
   const loaded = Math.min(page * pageSize, total)
@@ -83,7 +81,7 @@ export function ItrstSttPage() {
   const handleToggleStar = (it: MockItrstSttItem) => {
     // 별표 하이라이트만 토글 — 현재 페이지에서는 목록 유지. 해제(on→off) 시에만 토스트 노출.
     setItems((prev) => prev.map((x) => (x.id === it.id ? { ...x, itrst: !x.itrst } : x)))
-    if (it.itrst) setToastOpen(true)
+    if (it.itrst) showToast('해제되었습니다.')
     console.log('[ItrstStt] 관심 토글', it.id) // 추후: cmService.cancelBkmSttInfo(id)
   }
 
@@ -172,11 +170,6 @@ export function ItrstSttPage() {
           document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
         }
       />
-
-      {/* 관심 해제 토스트(사용자 확정 2026-08-24) */}
-      <Toast open={toastOpen} onClose={() => setToastOpen(false)}>
-        해제되었습니다.
-      </Toast>
     </div>
   )
 }

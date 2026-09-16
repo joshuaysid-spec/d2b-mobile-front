@@ -13,7 +13,7 @@ import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { BzentySummaryCard } from '@/ui/biz/cm/bzentyInfo/BzentySummaryCard'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { Button } from '@/ui/common/base/Button'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { BzentyGnrlInfoDtl_Gnrl } from '@/ui/biz/cm/bzentyGnrlInfoDtl/BzentyGnrlInfoDtl_Gnrl'
 import { BzentyGnrlInfoDtl_Cmdty } from '@/ui/biz/cm/bzentyGnrlInfoDtl/BzentyGnrlInfoDtl_Cmdty'
 import { BzentyGnrlInfoDtl_Fclt } from '@/ui/biz/cm/bzentyGnrlInfoDtl/BzentyGnrlInfoDtl_Fclt'
@@ -63,15 +63,14 @@ export function BzentyGnrlInfoDtlPage() {
 
   // 나라장터(G2B) 갱신 — 1일 1회 제한(설계서 slide115/121). 로컬 플래그 스텁.
   const [refreshedToday, setRefreshedToday] = useState(false)
-  const [toastMsg, setToastMsg] = useState<string | null>(null)
   const handleRefreshG2b = () => {
     if (refreshedToday) {
-      setToastMsg('갱신은 1일 1회로 제한됩니다.')
+      showToast('갱신은 1일 1회로 제한됩니다.')
       return
     }
     console.log('[M02] 나라장터(G2B) 조달업체정보 갱신') // 추후 API: cmService.refreshG2b
     setRefreshedToday(true)
-    setToastMsg('갱신되었습니다.')
+    showToast('갱신되었습니다.')
   }
 
   return (
@@ -130,11 +129,6 @@ export function BzentyGnrlInfoDtlPage() {
 
       {/* 맨위로 FAB */}
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />
-
-      {/* 갱신 결과/제한 토스트 (설계서 slide115) */}
-      <Toast open={toastMsg !== null} onClose={() => setToastMsg(null)} duration={2000}>
-        {toastMsg}
-      </Toast>
     </div>
   )
 }

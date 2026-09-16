@@ -17,7 +17,7 @@ import { Card } from '@/ui/common/composites/Card'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { RadioButtonGroup } from '@/ui/common/composites/RadioButtonGroup'
 import type { TableRow } from '@/ui/common/composites/Table'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import type {
   MockOvsBidBizExmptnItem,
   MockOvsBidBizItem,
@@ -65,12 +65,20 @@ function bizRows(item: MockOvsBidBizItem, no: number, onDownload: DownloadFn): T
     { label: '보증금납부방법', value: item.grntePayMth },
     { label: '보증금증권번호', value: item.wtgrNo },
     { label: '보증기관명', value: item.grnteInstNm },
-    { label: '입찰보증금납부서', value: fileCell(item.grntePyslDocNo, '입찰보증금납부서', onDownload), type: 'combination' },
+    {
+      label: '입찰보증금납부서',
+      value: fileCell(item.grntePyslDocNo, '입찰보증금납부서', onDownload),
+      type: 'combination',
+    },
   ]
 }
 
 // 보증금면제(dl_bizExmptnList) 사업 1건 → Table rows
-function bizExmptnRows(item: MockOvsBidBizExmptnItem, no: number, onDownload: DownloadFn): TableRow[] {
+function bizExmptnRows(
+  item: MockOvsBidBizExmptnItem,
+  no: number,
+  onDownload: DownloadFn,
+): TableRow[] {
   return [
     { label: '순번', value: String(no), type: 'number' },
     { label: '구매요청번호', value: item.prchsDmndNo },
@@ -79,8 +87,16 @@ function bizExmptnRows(item: MockOvsBidBizExmptnItem, no: number, onDownload: Do
     { label: '입찰금액', value: `US$ ${fmtUsd(item.bdngTccrAmt)}`, type: 'number' },
     { label: '입찰보증금', value: `US$ ${fmtUsd(item.bidGrnteAmt)}`, type: 'number' },
     { label: '입찰보증금(확인입력)', value: `US$ ${fmtUsd(item.chckBidGrnteAmt)}`, type: 'number' },
-    { label: '연대보증서', value: fileCell(item.gurnAgreDocNo, '연대보증서', onDownload), type: 'combination' },
-    { label: '지급각서', value: fileCell(item.giveWrtprmDocNo, '지급각서', onDownload), type: 'combination' },
+    {
+      label: '연대보증서',
+      value: fileCell(item.gurnAgreDocNo, '연대보증서', onDownload),
+      type: 'combination',
+    },
+    {
+      label: '지급각서',
+      value: fileCell(item.giveWrtprmDocNo, '지급각서', onDownload),
+      type: 'combination',
+    },
   ]
 }
 
@@ -106,14 +122,13 @@ export function OvsBidPrtcpApfrDtlPage_Tab3({
   const isExmptn = grnteExmptnSe === 'Y'
 
   const downloadFile = fbQueries.useDownloadFile()
-  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
 
   // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
   const handleDownload = async (guid: string, fileNm: string) => {
     try {
       saveBlob(await downloadFile.mutateAsync(guid), fileNm)
     } catch {
-      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -138,7 +153,11 @@ export function OvsBidPrtcpApfrDtlPage_Tab3({
   const handleRtrcnAll = () => {
     setCheckedNos(list.map((b) => b.prchsDmndNo))
     onRtrcn(
-      list.map((b) => ({ prchsDmndNo: b.prchsDmndNo, bizNm: b.bizNm, rtrcnItemQty: b.bdngItemQty })),
+      list.map((b) => ({
+        prchsDmndNo: b.prchsDmndNo,
+        bizNm: b.bizNm,
+        rtrcnItemQty: b.bdngItemQty,
+      })),
     )
   }
 
@@ -210,15 +229,10 @@ export function OvsBidPrtcpApfrDtlPage_Tab3({
               disabled: checkedNos.length === 0,
               onClick: handleRtrcnChecked,
             },
-              { label: '전체 입찰취소', variant: 'primary', onClick: handleRtrcnAll },
+            { label: '전체 입찰취소', variant: 'primary', onClick: handleRtrcnAll },
           ]}
         />
       </div>
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
     </>
   )
 }

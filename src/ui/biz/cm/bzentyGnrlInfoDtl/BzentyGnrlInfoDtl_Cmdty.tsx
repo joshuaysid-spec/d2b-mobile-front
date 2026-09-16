@@ -15,16 +15,13 @@ import { Button } from '@/ui/common/base/Button'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { DmstSosCnfdocAply } from '@/ui/biz/cm/dmstSosCnfdocList/DmstSosCnfdocAply'
 import {
   dmstSosCnfdocAplySchema,
   type DmstSosCnfdocAplyForm,
 } from '@/ui/biz/cm/dmstSosCnfdocList/DmstSosCnfdocAply.schema'
-import {
-  InfoAccordionCard,
-  type InfoCardRowInput,
-} from '@/ui/biz/cm/bzentyInfo/InfoAccordionCard'
+import { InfoAccordionCard, type InfoCardRowInput } from '@/ui/biz/cm/bzentyInfo/InfoAccordionCard'
 
 // ── 등록품목명세 (dl_regTrgtItemList) — 설계서 slide132/133 예시값 ────────────
 const REG_ITEMS: MockRegTrgtItem[] = [
@@ -108,8 +105,11 @@ export function BzentyGnrlInfoDtl_Cmdty() {
   //   신청 완료 시 국내조달원확인서신청목록(M19)으로 이동(사용자 확정 260828 — 시트 신청 → 목록 확인).
   const navigate = useNavigate()
   const [aplyOpen, setAplyOpen] = useState(false)
-  const [toastOpen, setToastOpen] = useState(false)
-  const { control, handleSubmit, reset: resetForm } = useForm<DmstSosCnfdocAplyForm>({
+  const {
+    control,
+    handleSubmit,
+    reset: resetForm,
+  } = useForm<DmstSosCnfdocAplyForm>({
     resolver: zodResolver(dmstSosCnfdocAplySchema),
     mode: 'onSubmit',
     reValidateMode: 'onBlur',
@@ -121,14 +121,16 @@ export function BzentyGnrlInfoDtl_Cmdty() {
   }
   const onAplySubmit = (values: DmstSosCnfdocAplyForm) => {
     setAplyOpen(false)
-    setToastOpen(true)
+    showToast('조달원 확인서 신청이 완료되었습니다.')
     console.log('[T02] 조달원확인서 신청', { ...APPLICANT, aplyRsn: values.aplyRsn })
     // 추후: cmService.insertDmstSosCnfdocAply({ aplcntNm, aplcntTelno, aplyRsn })
     // 완료 토스트 노출 후 목록(M19) 이동 — M05 신청 완료 이동과 동일 패턴.
     window.setTimeout(() => navigate(ROUTES.DMST_SOS_CNFDOC), 1200)
   }
   const onAplyInvalid = () => {
-    document.getElementById('field-aplyRsn')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    document
+      .getElementById('field-aplyRsn')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
   return (
@@ -161,7 +163,11 @@ export function BzentyGnrlInfoDtl_Cmdty() {
           <ButtonGroup
             items={[
               { label: '취소', variant: 'secondary', onClick: () => setAplyOpen(false) },
-              { label: '신청하기', variant: 'primary', onClick: handleSubmit(onAplySubmit, onAplyInvalid) },
+              {
+                label: '신청하기',
+                variant: 'primary',
+                onClick: handleSubmit(onAplySubmit, onAplyInvalid),
+              },
             ]}
           />
         }
@@ -172,11 +178,6 @@ export function BzentyGnrlInfoDtl_Cmdty() {
           aplcntTelno={APPLICANT.aplcntTelno}
         />
       </BottomSheet>
-
-      {/* 신청 완료 토스트 */}
-      <Toast open={toastOpen} onClose={() => setToastOpen(false)} duration={2000}>
-        조달원 확인서 신청이 완료되었습니다.
-      </Toast>
     </>
   )
 }

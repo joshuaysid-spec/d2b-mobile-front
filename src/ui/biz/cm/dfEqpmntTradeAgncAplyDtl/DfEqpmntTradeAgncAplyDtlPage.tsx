@@ -8,7 +8,6 @@
 //   → footer 없음([신청하기]는 검토 45번으로 제외, [등록증 발급]은 목록 M15 상단 큰 버튼으로 이동 — 2026-09-15).
 // 상단은 목록에서 넘어온 항목(navigate state)으로 그리고(service 스텁 없음), 본문/첨부는 페이지 목업(설계서 항목명 준수).
 //   직접 URL 진입(state 없음) 대비 페이지 fallback 목업. 데이터 연동 시 목업만 실제 조회로 교체.
-import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { fbQueries } from '@/queries/tss/fb/fbQueries'
@@ -18,7 +17,7 @@ import { TextArea } from '@/ui/common/base/TextArea'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import type {
   MockDfEqpmntTradeAgncAplyInfo,
   MockDfEqpmntTradeAgncAplyItem,
@@ -90,7 +89,6 @@ export function DfEqpmntTradeAgncAplyDtlPage() {
   const item = (useLocation().state as MockDfEqpmntTradeAgncAplyItem | null) ?? FALLBACK_ITEM
 
   const downloadFile = fbQueries.useDownloadFile()
-  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
 
   // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
   // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
@@ -98,7 +96,7 @@ export function DfEqpmntTradeAgncAplyDtlPage() {
     try {
       saveBlob(await downloadFile.mutateAsync(guid), fileNm)
     } catch {
-      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -156,8 +154,12 @@ export function DfEqpmntTradeAgncAplyDtlPage() {
         {MOCK_FILES.map((f) => (
           <div key={f.id} className="flex flex-col gap-krds-3">
             <div className="flex items-center justify-between gap-krds-5">
-              <span className="text-[17px] font-bold leading-normal text-krds-text-ink">{f.fileTtl}</span>
-              <span className="shrink-0 text-[15px] leading-normal text-krds-text-muted">{f.regYmd}</span>
+              <span className="text-[17px] font-bold leading-normal text-krds-text-ink">
+                {f.fileTtl}
+              </span>
+              <span className="shrink-0 text-[15px] leading-normal text-krds-text-muted">
+                {f.regYmd}
+              </span>
             </div>
             <FileDownloadList files={downloadFiles.filter((d) => d.id === f.id)} />
           </div>
@@ -166,11 +168,6 @@ export function DfEqpmntTradeAgncAplyDtlPage() {
 
       {/* 하단 액션 없음 — [신청하기]는 검토 45번으로 제외, [등록증 발급]은 목록(M15) 상단 큰 버튼으로 이동(사용자 지시 2026-09-15).
           반려사유 위치는 현행(Figma 83224) 유지. */}
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
     </div>
   )
 }

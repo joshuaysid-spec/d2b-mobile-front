@@ -2,7 +2,6 @@
 // 화면목록(slide10)상 명칭은 '특수조건'이나, 레이아웃(slide111)은 해지해제 통보내용 + 참조서류(다운로드).
 // 데이터: ctQueries.useSelectCmdtyCncltnRmvNoti — 목업/실연동은 ctService(USE_MOCK)가 전환.
 // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — 물품 T04(CmdtyElctrCtrtPrgrsDtl_Adoc) 패턴 복제.
-import { useState } from 'react'
 
 import { ctQueries } from '@/queries/cts/ct/ctQueries'
 import { fbQueries } from '@/queries/tss/fb/fbQueries'
@@ -10,7 +9,7 @@ import { saveBlob } from '@/utils/download'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import type { MockCncltnRmvNoti, MockCtrtAdocFile } from '@/types/mock/ct'
 
 // 통보내용 1건 → 표 행(slide113 1.5).
@@ -48,19 +47,18 @@ export function CmdtyCtrtCncltnRmvDtl_SpclCnd({ id }: { id: string }) {
   const adocs = data?.adocs ?? []
 
   const downloadFile = fbQueries.useDownloadFile()
-  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패/안내 토스트(null=닫힘)
 
   // 다운로드 — guid 로 Blob 수신 → 원본 파일명으로 저장. 실패는 토스트 안내(slide111 5]).
   // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
   const handleDownload = async (doc: MockCtrtAdocFile) => {
     if (!doc.fileNm || doc.fileNm === '-') {
-      setToast('첨부된 파일이 없습니다.')
+      showToast('첨부된 파일이 없습니다.')
       return
     }
     try {
       saveBlob(await downloadFile.mutateAsync(doc.id), doc.fileNm)
     } catch {
-      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -89,11 +87,6 @@ export function CmdtyCtrtCncltnRmvDtl_SpclCnd({ id }: { id: string }) {
           ))}
         </div>
       </section>
-
-      {/* 다운로드 실패/안내 토스트 */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
     </div>
   )
 }

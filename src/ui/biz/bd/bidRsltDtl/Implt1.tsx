@@ -1,14 +1,13 @@
 // 이행/적격심사상세 - '일반정보' 탭 (MUI-BD-10-T01(구 M01 탭 — v1.83 재편), 설계서 02입찰 slide163 / 데이터영역 slide166~167).
 // 공고정보(dmt_pbancInfo) 표 + 참고서류(dlt_refDcmnt) 다운로드 + 법 위반 처벌이력 확인서 양식.
 // 데이터는 목업(추후 API: scwin.getImpltElgbSrngDtlInfo). 항목명은 설계서 그대로.
-import { useState } from 'react'
 
 import { fbQueries } from '@/queries/tss/fb/fbQueries'
 import { saveBlob } from '@/utils/download'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import type { MockImpltElgbSrngPbancInfo } from '@/types/mock/bd'
 
 // 공고정보 목업 (설계서 slide163 값·slide166 항목명) — 추후 API 매핑.
@@ -56,7 +55,6 @@ const pbancRows = (it: MockImpltElgbSrngPbancInfo): TableRow[] => [
 
 export function Implt1() {
   const downloadFile = fbQueries.useDownloadFile()
-  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
 
   // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
   // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
@@ -64,7 +62,7 @@ export function Implt1() {
     try {
       saveBlob(await downloadFile.mutateAsync(guid), fileNm)
     } catch {
-      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -76,15 +74,13 @@ export function Implt1() {
         </AccordionSection>
         <AccordionSection value="ref" title={`참고서류 (총 ${REF_DOCS.length}건)`}>
           <FileDownloadList
-            files={REF_DOCS.map((f) => ({ ...f, onDownload: () => handleDownload(String(f.id), f.name) }))}
+            files={REF_DOCS.map((f) => ({
+              ...f,
+              onDownload: () => handleDownload(String(f.id), f.name),
+            }))}
           />
         </AccordionSection>
       </Accordion>
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
     </>
   )
 }

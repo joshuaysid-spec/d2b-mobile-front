@@ -9,7 +9,7 @@ import { Button } from '@/ui/common/base/Button'
 import { InputBox } from '@/ui/common/base/InputBox'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { CertCard } from '@/ui/biz/cm/crtfMng/CertCard'
 import { CertInfoBox } from '@/ui/biz/cm/crtfMng/CertInfoBox'
 import { MOCK_CERTS } from '@/ui/biz/cm/crtfMng/certMock'
@@ -31,10 +31,6 @@ export function CrtfSendPage() {
   const [pendingCert, setPendingCert] = useState<MockCertItem | null>(null) // P18 열림 = 비밀번호 확인 대기 인증서
   const [password, setPassword] = useState('')
   const [pswdError, setPswdError] = useState<string | null>(null)
-  const [toast, setToast] = useState<{ open: boolean; message: string }>({
-    open: false,
-    message: '',
-  })
 
   // ① 인증서 클릭 → 비밀번호 확인 시트(P18) 열기.
   const openPswd = (cert: MockCertItem) => {
@@ -63,7 +59,7 @@ export function CrtfSendPage() {
     console.log('[CrtfSend] 인증서 비밀번호 확인 완료', pendingCert.id)
     setSelected(pendingCert)
     closePswd()
-    setToast({ open: true, message: '인증 되었습니다.' }) // P19 토스트
+    showToast('인증 되었습니다.') // P19 토스트
   }
 
   // 인증번호(12자리) 클립보드 복사 + 토스트.
@@ -74,7 +70,7 @@ export function CrtfSendPage() {
     } catch {
       // 클립보드 API 미지원/거부 시에도 안내는 노출(WebView 환경 대응).
     }
-    setToast({ open: true, message: '인증번호를 복사했습니다.' }) // 설계서 slide354 토스트 문구
+    showToast('인증번호를 복사했습니다.') // 설계서 slide354 토스트 문구
     console.log('[CrtfSend] 인증번호 복사', code)
   }
 
@@ -163,11 +159,6 @@ export function CrtfSendPage() {
           errorMessage={pswdError}
         />
       </BottomSheet>
-
-      {/* 인증 결과/복사 안내 토스트 — MUI-CM-04-P19(설계서 slide356). */}
-      <Toast open={toast.open} onClose={() => setToast((t) => ({ ...t, open: false }))} duration={2000}>
-        {toast.message}
-      </Toast>
     </div>
   )
 }

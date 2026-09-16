@@ -20,7 +20,7 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { OvsExchrtListFullPopup } from '@/ui/biz/bd/ovsExchrtList/OvsExchrtListFullPopup'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { SummaryInfo, type SummaryInfoRow } from '@/ui/common/composites/SummaryInfo'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
@@ -48,7 +48,6 @@ function stepsByStg(prgrsStg: string): StepItem[] {
     state: cur < 0 ? 'todo' : i < cur ? 'done' : i === cur ? 'doing' : 'todo',
   }))
 }
-
 
 // ── 일반정보 탭(M01) 데이터 (설계서 slide152~153) — 라벨은 설계서 순서 그대로, 값은 목업 ──
 const GENERAL_ROWS: TableRow[] = [
@@ -134,7 +133,6 @@ function GeneralInfo({ item }: { item: MockBdopnItem }) {
   const srngAbnd = item.impltElgbSrngStatNm === '심사포기'
 
   const downloadFile = fbQueries.useDownloadFile()
-  const [dlToast, setDlToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
 
   // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
   // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
@@ -142,7 +140,7 @@ function GeneralInfo({ item }: { item: MockBdopnItem }) {
     try {
       saveBlob(await downloadFile.mutateAsync(guid), fileNm)
     } catch {
-      setDlToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -154,7 +152,10 @@ function GeneralInfo({ item }: { item: MockBdopnItem }) {
         </AccordionSection>
         <AccordionSection value="attach" title={`첨부서류 (총 ${ATTACH_FILES.length}건)`}>
           <FileDownloadList
-            files={ATTACH_FILES.map((f) => ({ ...f, onDownload: () => handleDownload(String(f.id), f.name) }))}
+            files={ATTACH_FILES.map((f) => ({
+              ...f,
+              onDownload: () => handleDownload(String(f.id), f.name),
+            }))}
           />
         </AccordionSection>
         <AccordionSection value="contact" title="담당자 정보">
@@ -174,13 +175,15 @@ function GeneralInfo({ item }: { item: MockBdopnItem }) {
             {
               label: srngAbnd ? '이행/적격심사 포기신청 조회' : '이행/적격심사 포기하기',
               variant: 'secondary',
-              itemClassName: 'h-auto min-h-12 whitespace-normal break-keep py-2 text-center leading-tight',
+              itemClassName:
+                'h-auto min-h-12 whitespace-normal break-keep py-2 text-center leading-tight',
               onClick: () => setAbndOpen(true),
             },
             {
               label: '이행/적격심사 신청하기',
               variant: 'primary',
-              itemClassName: 'h-auto min-h-12 whitespace-normal break-keep py-2 text-center leading-tight',
+              itemClassName:
+                'h-auto min-h-12 whitespace-normal break-keep py-2 text-center leading-tight',
               onClick: () => navigate('/bd/implt', { state: item }),
             },
           ]}
@@ -191,7 +194,8 @@ function GeneralInfo({ item }: { item: MockBdopnItem }) {
             {
               label: '이행/적격심사 제출내용 확인',
               variant: 'primary',
-              itemClassName: 'h-auto min-h-12 whitespace-normal break-keep py-2 text-center leading-tight',
+              itemClassName:
+                'h-auto min-h-12 whitespace-normal break-keep py-2 text-center leading-tight',
               onClick: () => console.log('[BidRsltDtl] 이행/적격심사 제출내용 확인'),
             },
           ]}
@@ -205,11 +209,6 @@ function GeneralInfo({ item }: { item: MockBdopnItem }) {
         detail={item}
         readOnly={srngAbnd}
       />
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={dlToast !== null} onClose={() => setDlToast(null)} duration={2000}>
-        {dlToast}
-      </Toast>
     </>
   )
 }
@@ -235,13 +234,15 @@ export function BidRsltDtlPage() {
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
   // 관심공고(즐겨찾기) 등록 여부 — 추후 bdService 응답으로 초기화. 현재 mock false.
   const [favorite, setFavorite] = useState(false)
-  // 관심공고 등록/제외 토스트.
-  const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
   const [shortcutOpen, setShortcutOpen] = useState(false) // + 버튼 → 바로가기 바텀시트(입찰공고 상세와 동일)
   const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보 조회 풀팝업(MUI-BD-01-M74)
 
   // 바로가기 바텀시트 항목 — 입찰공고 상세(BidPbancDtlPage)와 동일. 작성류 primary · 포기/취소 secondary · 환율정보 tertiary.
-  const shortcutItems: { id: string; label: string; variant: 'primary' | 'secondary' | 'tertiary' }[] = [
+  const shortcutItems: {
+    id: string
+    label: string
+    variant: 'primary' | 'secondary' | 'tertiary'
+  }[] = [
     { id: 'pq', label: '사전심사(PQ)신청서 작성하기', variant: 'primary' },
     { id: 'bid', label: '입찰서(견적서) 작성하기', variant: 'primary' },
     { id: 'apply', label: '입찰참가신청서 작성하기', variant: 'primary' },
@@ -254,10 +255,7 @@ export function BidRsltDtlPage() {
   const handleToggleFavorite = () => {
     const next = !favorite
     setFavorite(next)
-    setToast({
-      open: true,
-      message: next ? '관심공고에 등록 되었습니다.' : '관심공고에서 제외 되었습니다.',
-    })
+    showToast(next ? '관심공고에 등록 되었습니다.' : '관심공고에서 제외 되었습니다.')
     console.log('[BidRsltDtl] 관심공고', next ? '등록' : '제외', id) // 추후 API: bdService.insertItrstPbanc
   }
 
@@ -265,7 +263,10 @@ export function BidRsltDtlPage() {
   //   입찰진행현황 탭의 '입찰결과 바로가기' 는 id 만 넘기므로 조회 완료까지 PageLoading.
   const stateItem = useLocation().state as MockBdopnItem | { id: string } | null
   const id = stateItem?.id ?? ''
-  const { data: item } = bdQueries.useSelctBidRsltInfo(id, stateItem && 'bidPbancNo' in stateItem ? stateItem : undefined)
+  const { data: item } = bdQueries.useSelctBidRsltInfo(
+    id,
+    stateItem && 'bidPbancNo' in stateItem ? stateItem : undefined,
+  )
   // 진행단계(prgrsStg) — 입찰결과상세이므로 '입찰'(개찰/낙찰). 추후 bdService 응답으로 대체.
   const [prgrsStg] = useState('입찰')
   const steps = stepsByStg(prgrsStg)
@@ -320,7 +321,9 @@ export function BidRsltDtlPage() {
               <StepBar
                 orientation="horizontal"
                 items={steps}
-                sheetItems={buildProgressSheet(prgrsStg, (substep, prgrsStg) => navigate('/anl-prgrs', { state: { substep, prgrsStg } }))}
+                sheetItems={buildProgressSheet(prgrsStg, (substep, prgrsStg) =>
+                  navigate('/anl-prgrs', { state: { substep, prgrsStg } }),
+                )}
                 className="bg-transparent"
               />
             </div>
@@ -373,11 +376,6 @@ export function BidRsltDtlPage() {
 
       {/* 환율정보 조회 풀팝업 (MUI-BD-01-M74) — 바로가기 '환율정보 바로가기' 로 진입 */}
       <OvsExchrtListFullPopup open={exchrtOpen} onOpenChange={setExchrtOpen} />
-
-      {/* 관심공고 등록/제외 토스트 */}
-      <Toast open={toast.open} onClose={() => setToast((t) => ({ ...t, open: false }))}>
-        {toast.message}
-      </Toast>
     </div>
   )
 }

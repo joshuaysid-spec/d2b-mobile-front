@@ -16,7 +16,7 @@ import { TextArea } from '@/ui/common/base/TextArea'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { Notice } from '@/ui/common/composites/Notice'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import {
   mbWithdrawalSchema,
   type MbWithdrawalForm,
@@ -31,7 +31,6 @@ const MOCK_USER = {
 export function MbWithdrawalPage() {
   const navigate = useNavigate()
   const [confirmOpen, setConfirmOpen] = useState(false) // 회원탈퇴 확인 팝업
-  const [toastOpen, setToastOpen] = useState(false) // 탈퇴 완료 토스트
 
   const {
     register,
@@ -49,7 +48,7 @@ export function MbWithdrawalPage() {
 
   // 확인 팝업 [확인] — 실제 탈퇴 처리. 현재 스텁.
   const handleWithdraw = handleSubmit(() => {
-    setToastOpen(true)
+    showToast('회원 탈퇴 되었습니다.')
     // 추후: authStore 로그아웃 + navigate('/')
     console.log('[MbWithdrawal] 회원탈퇴 처리 → 메인 이동 + 로그아웃')
   })
@@ -133,11 +132,6 @@ export function MbWithdrawalPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{ label: '확인', onClick: handleWithdraw }}
       />
-
-      {/* 탈퇴 완료 토스트. */}
-      <Toast open={toastOpen} onClose={() => setToastOpen(false)} duration={2000}>
-        회원 탈퇴 되었습니다.
-      </Toast>
     </div>
   )
 }

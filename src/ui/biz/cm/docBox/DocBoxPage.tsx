@@ -32,7 +32,7 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { Table } from '@/ui/common/composites/Table'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { TASK_SE_CD } from '@/constants/codes'
 import { docBadges, docOrgLine, docDateRows } from '@/ui/biz/cm/docBox/docBoxView'
@@ -221,14 +221,25 @@ const MOCK_DOCS: MockDocBoxItem[] = (Object.keys(DOC_SAMPLES) as MockDocBoxSeCd[
 
 // 첨부파일 바텀시트 목업 — 첨부문서다운로드 데이터영역(dl_atchDocList) 형식. 추후 edmsDocId 로 조회.
 const MOCK_ATCH_FILES: MockDocBoxAtchFile[] = [
-  { fileTtl: '계약통보서', fileNm: '계약통보서.hwp', fileSize: '786KB', edmsDocId: 'EDMS20260310001-1' },
-  { fileTtl: '품목명세서', fileNm: '품목명세서.pdf', fileSize: '1.2MB', edmsDocId: 'EDMS20260310001-2' },
+  {
+    fileTtl: '계약통보서',
+    fileNm: '계약통보서.hwp',
+    fileSize: '786KB',
+    edmsDocId: 'EDMS20260310001-1',
+  },
+  {
+    fileTtl: '품목명세서',
+    fileNm: '품목명세서.pdf',
+    fileSize: '1.2MB',
+    edmsDocId: 'EDMS20260310001-2',
+  },
 ]
 
 export function DocBoxPage() {
   const navigate = useNavigate()
   // 마이페이지에서 넘어온 초기 문서구분(받은/보낸/반려/임시저장). 없으면 '받은 문서'.
-  const initTab = (useLocation().state as { docType?: MockDocBoxSeCd } | null)?.docType ?? 'received'
+  const initTab =
+    (useLocation().state as { docType?: MockDocBoxSeCd } | null)?.docType ?? 'received'
   const [tab, setTab] = useState<MockDocBoxSeCd>(initTab)
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
@@ -237,7 +248,6 @@ export function DocBoxPage() {
   // 첨언/첨부파일 바텀시트 — 카드 하단 버튼이 연다(해당 데이터가 있는 카드에서만 버튼 노출).
   const [addCnItem, setAddCnItem] = useState<MockDocBoxItem | null>(null)
   const [atchOpen, setAtchOpen] = useState(false)
-  const [dlToast, setDlToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
   // 반려 상세보기(P23) 바텀시트 — 반려 문서 카드의 [반려사유] 버튼이 연다.
   const [rjctItem, setRjctItem] = useState<MockDocBoxItem | null>(null)
 
@@ -351,7 +361,7 @@ export function DocBoxPage() {
     try {
       saveBlob(await downloadFile.mutateAsync(guid), fileNm)
     } catch {
-      setDlToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -402,7 +412,9 @@ export function DocBoxPage() {
       {/* 맨 위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main). */}
       <FloatingActionButton
         className="fixed bottom-0 right-4 z-40"
-        onTop={() => document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })}
+        onTop={() =>
+          document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
+        }
       />
 
       {/* 검색필터 풀팝업(slide96) — 공통 SearchFilter 셸. 첨언·첨부 여부 → 기간 설정 → 문서 구분. */}
@@ -452,18 +464,15 @@ export function DocBoxPage() {
             ]}
           />
           <div className="flex flex-col gap-krds-4">
-            <span className="text-[17px] font-bold leading-normal text-krds-text-ink">반려사유</span>
+            <span className="text-[17px] font-bold leading-normal text-krds-text-ink">
+              반려사유
+            </span>
             <p className="whitespace-pre-line text-krds-body-md leading-relaxed text-krds-text-ink">
               {rjctItem?.rjctRsn}
             </p>
           </div>
         </div>
       </BottomSheet>
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={dlToast !== null} onClose={() => setDlToast(null)} duration={2000}>
-        {dlToast}
-      </Toast>
     </div>
   )
 }

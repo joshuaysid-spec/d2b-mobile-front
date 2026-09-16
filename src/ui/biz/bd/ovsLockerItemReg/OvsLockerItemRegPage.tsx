@@ -16,7 +16,7 @@ import { Card } from '@/ui/common/composites/Card'
 import { CardList } from '@/ui/common/composites/CardList'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import type {
   DateRangePresetDef,
@@ -105,8 +105,18 @@ const ITEM_FILTER_SCHEMA: SearchFilterSchema = {
       key: 'keyword',
       title: '검색어 (일부 입력 가능)',
       fields: [
-        { type: 'text', key: 'intgRfrncNo', label: '통합참조번호', placeholder: '번호를 입력하세요.' },
-        { type: 'text', key: 'prchsDmndNo', label: '구매요청번호', placeholder: '번호를 입력하세요.' },
+        {
+          type: 'text',
+          key: 'intgRfrncNo',
+          label: '통합참조번호',
+          placeholder: '번호를 입력하세요.',
+        },
+        {
+          type: 'text',
+          key: 'prchsDmndNo',
+          label: '구매요청번호',
+          placeholder: '번호를 입력하세요.',
+        },
         { type: 'text', key: 'invtNo', label: '재고번호', placeholder: '번호를 입력하세요.' },
         { type: 'text', key: 'prtsNo', label: '부품번호', placeholder: '번호를 입력하세요.' },
       ],
@@ -153,12 +163,47 @@ function buildMockItems(pbanc: MockOvsLockerPbanItem | null): OvsLockerBidItem[]
     prchsDmndNo: pbanc?.prchsDmndNo ?? 'BDF01823-002',
   }
   const seeds: Array<
-    Pick<OvsLockerBidItem, 'itemNm' | 'prtsNo' | 'unitNm' | 'qty' | 'drctnUntprc' | 'lockerYn' | 'tmprBidCnEn'>
+    Pick<
+      OvsLockerBidItem,
+      'itemNm' | 'prtsNo' | 'unitNm' | 'qty' | 'drctnUntprc' | 'lockerYn' | 'tmprBidCnEn'
+    >
   > = [
-    { itemNm: 'RECOIL', prtsNo: 'A46MSB0', unitNm: 'EA', qty: '2', drctnUntprc: 20767.85, lockerYn: 'Y', tmprBidCnEn: 'N' },
-    { itemNm: 'RECOIL', prtsNo: 'A46MSB1', unitNm: 'EA', qty: '2', drctnUntprc: 20767.85, lockerYn: 'N', tmprBidCnEn: 'N' },
-    { itemNm: 'BREECH ASSEMBLY', prtsNo: 'B12KTA7-01', unitNm: 'EA', qty: '16', drctnUntprc: 608000.0, lockerYn: 'Y', tmprBidCnEn: 'Y' },
-    { itemNm: 'SEAL RING KIT', prtsNo: 'C03QRS22', unitNm: 'SE', qty: '40', drctnUntprc: 132.5, lockerYn: 'N', tmprBidCnEn: 'N' },
+    {
+      itemNm: 'RECOIL',
+      prtsNo: 'A46MSB0',
+      unitNm: 'EA',
+      qty: '2',
+      drctnUntprc: 20767.85,
+      lockerYn: 'Y',
+      tmprBidCnEn: 'N',
+    },
+    {
+      itemNm: 'RECOIL',
+      prtsNo: 'A46MSB1',
+      unitNm: 'EA',
+      qty: '2',
+      drctnUntprc: 20767.85,
+      lockerYn: 'N',
+      tmprBidCnEn: 'N',
+    },
+    {
+      itemNm: 'BREECH ASSEMBLY',
+      prtsNo: 'B12KTA7-01',
+      unitNm: 'EA',
+      qty: '16',
+      drctnUntprc: 608000.0,
+      lockerYn: 'Y',
+      tmprBidCnEn: 'Y',
+    },
+    {
+      itemNm: 'SEAL RING KIT',
+      prtsNo: 'C03QRS22',
+      unitNm: 'SE',
+      qty: '40',
+      drctnUntprc: 132.5,
+      lockerYn: 'N',
+      tmprBidCnEn: 'N',
+    },
   ]
   return Array.from({ length: TOTAL }, (_, i) => {
     const seed = seeds[i % seeds.length]
@@ -198,7 +243,6 @@ export function OvsLockerItemRegPage() {
   const [appliedSearch, setAppliedSearch] = useState<{ keyword: string; target: string } | null>(
     null,
   )
-  const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
 
   // ── API 경계 스텁 (백엔드 연동 시 services/bd 로 대체) ──
   const handleFilterSearch = (value: SearchFilterValue) => {
@@ -232,10 +276,7 @@ export function OvsLockerItemRegPage() {
     setItems((prev) =>
       prev.map((it) => (it.id === target.id ? { ...it, lockerYn: adding ? 'Y' : 'N' } : it)),
     )
-    setToast({
-      open: true,
-      message: adding ? '보관함에 추가되었습니다.' : '보관함에서 삭제되었습니다.',
-    })
+    showToast(adding ? '보관함에 추가되었습니다.' : '보관함에서 삭제되었습니다.')
     console.log('[OvsLockerItem]', adding ? '보관함 추가' : '보관함 삭제', target.id)
     // 추후 API: bdService.insertItemToLocker / bdService.deleteItemFromLocker
   }
@@ -294,14 +335,20 @@ export function OvsLockerItemRegPage() {
                 badges={
                   <>
                     {it.lockerYn === 'Y' ? (
-                      <Badge type="solid" color="blue">보관함 보관</Badge>
+                      <Badge type="solid" color="blue">
+                        보관함 보관
+                      </Badge>
                     ) : (
                       <Badge>보관함 미보관</Badge>
                     )}
                     {it.tmprBidCnEn === 'Y' ? (
-                      <Badge type="solid" color="green">입찰내역 작성</Badge>
+                      <Badge type="solid" color="green">
+                        입찰내역 작성
+                      </Badge>
                     ) : (
-                      <Badge type="pastel" color="yellow">입찰내역 미작성</Badge>
+                      <Badge type="pastel" color="yellow">
+                        입찰내역 미작성
+                      </Badge>
                     )}
                   </>
                 }
@@ -311,7 +358,10 @@ export function OvsLockerItemRegPage() {
                   { label: '구매요청번호', value: it.prchsDmndNo },
                   { label: '재고번호', value: it.invtNo },
                   { label: '부품번호', value: it.prtsNo },
-                  { label: '수량 / 단위', value: `${Number(it.qty).toLocaleString()} ${it.unitNm}` },
+                  {
+                    label: '수량 / 단위',
+                    value: `${Number(it.qty).toLocaleString()} ${it.unitNm}`,
+                  },
                   { label: '지시단가 / 화폐단위', value: formatUntprc(it) },
                   { label: '보관함 여부', value: it.lockerYn === 'Y' ? 'O' : 'X' },
                   { label: '입찰내역 작성 여부', value: it.tmprBidCnEn === 'Y' ? 'O' : 'X' },
@@ -343,7 +393,6 @@ export function OvsLockerItemRegPage() {
         </div>
       )}
 
-
       {/* 맨 위로 FAB */}
       <FloatingActionButton
         className="fixed bottom-0 right-4 z-40"
@@ -361,11 +410,6 @@ export function OvsLockerItemRegPage() {
         defaultValue={DEFAULT_FILTER}
         onSearch={handleFilterSearch}
       />
-
-      {/* 보관함 추가/삭제 토스트 */}
-      <Toast open={toast.open} onClose={() => setToast((t) => ({ ...t, open: false }))}>
-        {toast.message}
-      </Toast>
     </div>
   )
 }

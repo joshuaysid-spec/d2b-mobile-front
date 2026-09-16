@@ -5,12 +5,12 @@
 // 카드 = Figma m_card type3(제목 19 Bold + 레이블 13 #717171 / 값 17 muted 블록 + divider #d1d7e0).
 // 서식 다운로드 — 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정), CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
 //   프리미티브는 안내 페이지 계열 컨벤션대로 페이지 소유.
-import { useState, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 import { fbQueries } from '@/queries/tss/fb/fbQueries'
 import { saveBlob } from '@/utils/download'
 import { Icon } from '@/ui/common/base/Icon'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 
 // ● 불릿 항목 — Figma m_list: 20px 불릿 슬롯 + 4px gap, 본문 17 Regular ink.
 function Bullet({ children }: { children: ReactNode }) {
@@ -158,7 +158,6 @@ const DCC_CONTACTS = [
 
 export function Foreign02Page() {
   const downloadFile = fbQueries.useDownloadFile()
-  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
 
   // 서식 다운로드 — guid 로 Blob 수신 → 서식명.hwp 로 저장. 실패는 토스트 안내.
   // ⚠️ 임시 GUID(서식명) — 서식 파일 저장소/GUID 확정 시 교체.
@@ -166,7 +165,7 @@ export function Foreign02Page() {
     try {
       saveBlob(await downloadFile.mutateAsync(doc), `${doc}.hwp`)
     } catch {
-      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -178,7 +177,9 @@ export function Foreign02Page() {
           우수한 업체가 상시 경쟁입찰에 참여 할 수 있도록 신규등록 및 등록업체의 정보 변경 안내
         </p>
         <Bullet>국가를 당사자로 하는 계약에 관한 법률 시행령 제12조(경쟁입찰의 참가자격)</Bullet>
-        <Bullet>국가를 당사자로 하는 계약에 관한 법률 시행령 제78조(부정당업자의 입찰참가 자격제한)</Bullet>
+        <Bullet>
+          국가를 당사자로 하는 계약에 관한 법률 시행령 제78조(부정당업자의 입찰참가 자격제한)
+        </Bullet>
       </div>
 
       {/* 1. 국외소재상사 */}
@@ -192,8 +193,14 @@ export function Foreign02Page() {
               content: (
                 <>
                   <Val>Application for Registration</Val>
-                  <DownloadButton doc="Application for Registration(국문)" onDownload={handleDownload} />
-                  <DownloadButton doc="Application for Registration(영문)" onDownload={handleDownload} />
+                  <DownloadButton
+                    doc="Application for Registration(국문)"
+                    onDownload={handleDownload}
+                  />
+                  <DownloadButton
+                    doc="Application for Registration(영문)"
+                    onDownload={handleDownload}
+                  />
                 </>
               ),
             },
@@ -241,8 +248,14 @@ export function Foreign02Page() {
               content: (
                 <>
                   <Val>Application for Amendment in Registration</Val>
-                  <DownloadButton doc="Application for Amendment in Registration(국문)" onDownload={handleDownload} />
-                  <DownloadButton doc="Application for Amendment in Registration(영문)" onDownload={handleDownload} />
+                  <DownloadButton
+                    doc="Application for Amendment in Registration(국문)"
+                    onDownload={handleDownload}
+                  />
+                  <DownloadButton
+                    doc="Application for Amendment in Registration(영문)"
+                    onDownload={handleDownload}
+                  />
                 </>
               ),
             },
@@ -275,8 +288,14 @@ export function Foreign02Page() {
               content: (
                 <>
                   <Val>Application for Amendment in Registration</Val>
-                  <DownloadButton doc="Application for Amendment in Registration(국문)" onDownload={handleDownload} />
-                  <DownloadButton doc="Application for Amendment in Registration(영문)" onDownload={handleDownload} />
+                  <DownloadButton
+                    doc="Application for Amendment in Registration(국문)"
+                    onDownload={handleDownload}
+                  />
+                  <DownloadButton
+                    doc="Application for Amendment in Registration(영문)"
+                    onDownload={handleDownload}
+                  />
                 </>
               ),
             },
@@ -397,11 +416,6 @@ export function Foreign02Page() {
           ]}
         />
       </Section>
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
     </div>
   )
 }

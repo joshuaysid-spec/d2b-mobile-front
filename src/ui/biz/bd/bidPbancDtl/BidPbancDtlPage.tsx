@@ -9,7 +9,7 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
-import { useAuthStore } from '@/stores/authStore'
+import { useAuthStore, showToast } from '@/stores/authStore'
 import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import type { MockBidPbancItem, MockBidPrgrsItem } from '@/types/mock/bd'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
@@ -19,7 +19,6 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
-import { Toast } from '@/ui/common/composites/Toast'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { BidPbancDtl } from '@/ui/biz/bd/bidPbancDtl/BidPbancDtl'
@@ -92,11 +91,6 @@ export function BidPbancDtlPage() {
   const [favorite, setFavorite] = useState(false)
   const [loginGuideOpen, setLoginGuideOpen] = useState(false) // 로그인 안내(MUI-MS-03-P15)
   const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보 조회 풀팝업(MUI-BD-01-M74)
-  // 관심공고 등록/제외 토스트(MUI-BD-01-P13)
-  const [toast, setToast] = useState<{ open: boolean; message: string }>({
-    open: false,
-    message: '',
-  })
 
   // 로그인 필요 동작 — 비로그인 시 로그인 안내(P15) 노출하고 동작 차단. authStore 직접 구독.
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
@@ -117,10 +111,7 @@ export function BidPbancDtlPage() {
     }
     const next = !favorite
     setFavorite(next)
-    setToast({
-      open: true,
-      message: next ? '관심공고에 등록 되었습니다.' : '관심공고에서 제외 되었습니다.',
-    })
+    showToast(next ? '관심공고에 등록 되었습니다.' : '관심공고에서 제외 되었습니다.')
     try {
       await insertItrstPbanc.mutateAsync({ id, favorite: next })
     } catch {
@@ -314,11 +305,6 @@ export function BidPbancDtlPage() {
           onClick: () => console.log('[BidDetail] 로그인 화면 이동'), // 추후: 로그인 화면(cm/auth) 이동
         }}
       />
-
-      {/* 관심공고 등록/제외 토스트 (MUI-BD-01-P13) */}
-      <Toast open={toast.open} onClose={() => setToast((t) => ({ ...t, open: false }))}>
-        {toast.message}
-      </Toast>
 
       {/* 입찰포기신청서(P03) — 바텀시트(컨테이너/footer 부모 소유, 콘텐츠는 ref 핸들 · 진행상세와 동일 조립) */}
       <BottomSheet

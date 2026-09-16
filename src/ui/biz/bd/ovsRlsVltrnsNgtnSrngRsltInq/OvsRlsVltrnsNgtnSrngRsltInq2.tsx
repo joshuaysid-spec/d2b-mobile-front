@@ -12,12 +12,15 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { cn } from '@/utils/cn'
 import type { MockOvsRlsVltrnsSrngRsltItem } from '@/types/mock/bd'
 
 // 조회결과 목업 — 설계서 slide443 값. 첫 건 낙찰(+계약포기), 이후 탈락. 추후 bdService.selectOvsRlsVltrnsSrngRslt 매핑.
-const ITEM_BASE: Omit<MockOvsRlsVltrnsSrngRsltItem, 'no' | 'rnk' | 'scsbdYn' | 'rsn' | 'abndDt' | 'abndRsn'> = {
+const ITEM_BASE: Omit<
+  MockOvsRlsVltrnsSrngRsltItem,
+  'no' | 'rnk' | 'scsbdYn' | 'rsn' | 'abndDt' | 'abndRsn'
+> = {
   sbtBzentyCd: '7001F',
   sbtBzentyNm: 'A 무역대리점',
   splyBzentyCd: '7004F',
@@ -75,7 +78,11 @@ const BidRsltItemCard = memo(function BidRsltItemCard({
           <div className="flex w-full items-center justify-between gap-krds-5">
             <span>{item.docSbmsnYn}</span>
             {item.docSbmsnYn === 'O' && (
-              <Button variant="secondary" className="h-9 px-krds-6 text-krds-body-sm" onClick={onViewDocs}>
+              <Button
+                variant="secondary"
+                className="h-9 px-krds-6 text-krds-body-sm"
+                onClick={onViewDocs}
+              >
                 보기
               </Button>
             )}
@@ -120,7 +127,6 @@ export function OvsRlsVltrnsNgtnSrngRsltInq2() {
   const [docsOpen, setDocsOpen] = useState(false) // 제출서류 첨부파일 바텀시트
 
   const downloadFile = fbQueries.useDownloadFile()
-  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
 
   // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
   // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
@@ -128,7 +134,7 @@ export function OvsRlsVltrnsNgtnSrngRsltInq2() {
     try {
       saveBlob(await downloadFile.mutateAsync(guid), fileNm)
     } catch {
-      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -177,14 +183,12 @@ export function OvsRlsVltrnsNgtnSrngRsltInq2() {
       {/* 제출서류 첨부파일 — 다운로드 전용 바텀시트(이 탭이 컨테이너 소유) */}
       <BottomSheet open={docsOpen} onOpenChange={setDocsOpen} title="제출서류">
         <FileDownloadList
-          files={SUBMITTED_DOCS.map((f) => ({ ...f, onDownload: () => handleDownload(String(f.id), f.name) }))}
+          files={SUBMITTED_DOCS.map((f) => ({
+            ...f,
+            onDownload: () => handleDownload(String(f.id), f.name),
+          }))}
         />
       </BottomSheet>
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
     </div>
   )
 }

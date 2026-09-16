@@ -9,7 +9,7 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { CertInfoBox } from '@/ui/biz/cm/crtfMng/CertInfoBox'
 import { CrtfPswd } from '@/ui/biz/cm/crtfSend/CrtfPswd'
 
@@ -27,10 +27,6 @@ export function CrtfReceivePage() {
   const [pswdOpen, setPswdOpen] = useState(false) // P18 인증서 비밀번호 확인 시트
   const [password, setPassword] = useState('')
   const [pswdError, setPswdError] = useState<string | null>(null)
-  const [toast, setToast] = useState<{ open: boolean; message: string }>({
-    open: false,
-    message: '',
-  })
   const code = blocks.join('')
 
   const setBlock = (i: number, v: string) => {
@@ -41,11 +37,11 @@ export function CrtfReceivePage() {
   const handleImport = () => {
     // 미입력 → 토스트 안내.
     if (code.trim() === '') {
-      setToast({ open: true, message: '인증번호를 입력해주세요.' })
+      showToast('인증번호를 입력해주세요.')
       return
     }
     if (code !== MOCK_AUTH_CODE) {
-      setToast({ open: true, message: '인증번호가 틀렸습니다.' }) // P19 토스트
+      showToast('인증번호가 틀렸습니다.') // P19 토스트
       return
     }
     setPassword('')
@@ -73,7 +69,7 @@ export function CrtfReceivePage() {
     console.log('[CrtfReceive] 인증서 가져오기 성공')
     closePswd()
     setBlocks(['', '', ''])
-    setToast({ open: true, message: '인증서를 복사하였습니다.' }) // P19 토스트
+    showToast('인증서를 복사하였습니다.') // P19 토스트
   }
 
   return (
@@ -134,15 +130,6 @@ export function CrtfReceivePage() {
           errorMessage={pswdError}
         />
       </BottomSheet>
-
-      {/* 인증 결과 안내 토스트 — MUI-CM-04-P19(설계서 slide355). */}
-      <Toast
-        open={toast.open}
-        onClose={() => setToast((t) => ({ ...t, open: false }))}
-        duration={2000}
-      >
-        {toast.message}
-      </Toast>
     </div>
   )
 }

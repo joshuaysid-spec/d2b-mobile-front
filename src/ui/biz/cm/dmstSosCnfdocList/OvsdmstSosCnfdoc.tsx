@@ -2,17 +2,23 @@
 //   웹경로: 메인 홈 > 마이페이지 > 업체정보관리 > 업체정보 조회/추가정보 진입 안내. (진입점 M01 미구현 → 라우트만 등록)
 //   구성(Figma 1:1): 처리절차(문서 아이콘 + 안내) · 양식 다운로드(첨부파일명 + FileDownloadList) · 신청서 확인사항(번호목록 + 링크).
 //   바텀시트 임베드 시 padded=false(시트 본문 px-16 소유 — 이중 패딩 방지). 헤더(m_popup_header '국외조달원등록증신청안내')는 AppLayout sub 헤더가 담당(router handle).
-import { type ComponentProps, useState } from 'react'
+import { type ComponentProps } from 'react'
 
 import { fbQueries } from '@/queries/tss/fb/fbQueries'
 import { saveBlob } from '@/utils/download'
 import { Icon } from '@/ui/common/base/Icon'
 import { cn } from '@/utils/cn'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 
 // 섹션 헤더 — 아이콘(24) + 19px Bold 제목 (Figma list row).
-function SectionHead({ icon, title }: { icon: ComponentProps<typeof Icon>['name']; title: string }) {
+function SectionHead({
+  icon,
+  title,
+}: {
+  icon: ComponentProps<typeof Icon>['name']
+  title: string
+}) {
   return (
     <div className="flex w-full items-center gap-1">
       <Icon name={icon} size={24} className="shrink-0 text-krds-text-ink" aria-hidden />
@@ -40,7 +46,6 @@ function ExtLink({ href }: { href: string }) {
 
 export function OvsdmstSosCnfdoc({ padded = true }: { padded?: boolean } = {}) {
   const downloadFile = fbQueries.useDownloadFile()
-  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
 
   // 양식 다운로드 — 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정), CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
   // ⚠️ 임시 GUID(파일 슬롯 id 'form') — 양식 파일 GUID 확정 시 교체(추후 cmService.downloadOvsSosForm).
@@ -48,7 +53,7 @@ export function OvsdmstSosCnfdoc({ padded = true }: { padded?: boolean } = {}) {
     try {
       saveBlob(await downloadFile.mutateAsync('form'), '첨부파일명.hwp')
     } catch {
-      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -59,7 +64,9 @@ export function OvsdmstSosCnfdoc({ padded = true }: { padded?: boolean } = {}) {
         <SectionHead icon="Download" title="양식 다운로드" />
         <span className="text-[17px] font-bold leading-normal text-krds-text-ink">첨부파일명</span>
         <FileDownloadList
-          files={[{ id: 'form', name: '첨부파일명.hwp', size: '786KB', onDownload: handleDownload }]}
+          files={[
+            { id: 'form', name: '첨부파일명.hwp', size: '786KB', onDownload: handleDownload },
+          ]}
         />
       </section>
 
@@ -67,7 +74,8 @@ export function OvsdmstSosCnfdoc({ padded = true }: { padded?: boolean } = {}) {
       <section className={cn('flex flex-col gap-1 py-4', padded && 'px-4')}>
         <SectionHead icon="Description" title="처리절차" />
         <p className="text-[17px] leading-normal text-krds-text-ink">
-          국외조달원 등록증 발급 신청서 양식을 출력하여 수기로 작성 후 팩스 또는 직접 방문 접수합니다.
+          국외조달원 등록증 발급 신청서 양식을 출력하여 수기로 작성 후 팩스 또는 직접 방문
+          접수합니다.
         </p>
       </section>
 
@@ -79,7 +87,9 @@ export function OvsdmstSosCnfdoc({ padded = true }: { padded?: boolean } = {}) {
           <div className="flex flex-col gap-1">
             <p className="flex gap-1 text-[17px] font-bold leading-normal text-krds-text-ink">
               <span className="shrink-0">1.</span>
-              <span className="min-w-px flex-1">마이페이지 &gt; 업체정보관리 &gt; 업체정보 조회</span>
+              <span className="min-w-px flex-1">
+                마이페이지 &gt; 업체정보관리 &gt; 업체정보 조회
+              </span>
             </p>
             <p className="text-[17px] leading-normal text-krds-text-ink">
               에서 영문상호명이 있어야 하며, 빈 값인 경우 조달청에서 등록하세요.
@@ -91,8 +101,10 @@ export function OvsdmstSosCnfdoc({ padded = true }: { padded?: boolean } = {}) {
                 aria-hidden
               />
               <p className="min-w-px flex-1 text-[17px] leading-normal text-krds-text-ink">
-                업체정보(대표자 주소 등) 변경사항이 있는 경우 나라장터(<ExtLink href="https://www.g2b.go.kr" />
-                )에 변경 요청하여 승인 처리되면 다음 날 국방전자조달(<ExtLink href="https://www.d2b.go.kr" />
+                업체정보(대표자 주소 등) 변경사항이 있는 경우 나라장터(
+                <ExtLink href="https://www.g2b.go.kr" />
+                )에 변경 요청하여 승인 처리되면 다음 날 국방전자조달(
+                <ExtLink href="https://www.d2b.go.kr" />
                 )에 자동 반영
               </p>
             </div>
@@ -107,16 +119,12 @@ export function OvsdmstSosCnfdoc({ padded = true }: { padded?: boolean } = {}) {
               </span>
             </p>
             <p className="text-[17px] leading-normal text-krds-text-ink">
-              버튼 클릭 후 일반정보에 대표자명(영문), 주소(영문)은 필수입니다. 빈 값인경우 추가정보등록 후 신청하세요.
+              버튼 클릭 후 일반정보에 대표자명(영문), 주소(영문)은 필수입니다. 빈 값인경우
+              추가정보등록 후 신청하세요.
             </p>
           </div>
         </div>
       </section>
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
     </div>
   )
 }

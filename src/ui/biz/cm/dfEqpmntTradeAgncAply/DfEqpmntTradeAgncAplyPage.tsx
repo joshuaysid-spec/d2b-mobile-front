@@ -25,7 +25,7 @@ import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { FileAdd, type FileAddDoneFile, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import {
   dfEqpmntTradeAgncAplySchema,
   type DfEqpmntTradeAgncAplyForm,
@@ -59,10 +59,38 @@ const MOCK_INFO: MockDfEqpmntTradeAgncAplyInfo = {
 
 // ── 첨부서류(dl_dfEqpmntTradAgncAplyAtchFileList, 설계서 slide182) — 등록신청서*·이력서*·청렴서약서*·고용현황* (+기타 선택). ──
 const INITIAL_FILES: MockDfEqpmntTradeAgncAtchFile[] = [
-  { id: '1', fileTtl: '등록신청서', fileNm: '첨부파일명.hwp', size: '786KB', regYmd: '2026-01-01', required: true },
-  { id: '2', fileTtl: '이력서', fileNm: '첨부파일명.hwp', size: '786KB', regYmd: '2026-01-01', required: true },
-  { id: '3', fileTtl: '청렴서약서', fileNm: '첨부파일명.hwp', size: '786KB', regYmd: '2026-01-01', required: true },
-  { id: '4', fileTtl: '고용현황', fileNm: '첨부파일명.hwp', size: '786KB', regYmd: '2026-01-01', required: true },
+  {
+    id: '1',
+    fileTtl: '등록신청서',
+    fileNm: '첨부파일명.hwp',
+    size: '786KB',
+    regYmd: '2026-01-01',
+    required: true,
+  },
+  {
+    id: '2',
+    fileTtl: '이력서',
+    fileNm: '첨부파일명.hwp',
+    size: '786KB',
+    regYmd: '2026-01-01',
+    required: true,
+  },
+  {
+    id: '3',
+    fileTtl: '청렴서약서',
+    fileNm: '첨부파일명.hwp',
+    size: '786KB',
+    regYmd: '2026-01-01',
+    required: true,
+  },
+  {
+    id: '4',
+    fileTtl: '고용현황',
+    fileNm: '첨부파일명.hwp',
+    size: '786KB',
+    regYmd: '2026-01-01',
+    required: true,
+  },
 ]
 // 미첨부 시 파일 추가 시트에서 고를 수 있는 서류명(설계서 slide182). 기타는 선택.
 const DOC_TITLES = ['등록신청서', '이력서', '청렴서약서', '고용현황', '기타']
@@ -92,7 +120,10 @@ function Bullets({ items }: { items: React.ReactNode[] }) {
     <ul className="flex flex-col gap-krds-3">
       {items.map((it, i) => (
         <li key={i} className="flex gap-krds-3 text-[15px] leading-normal text-krds-text-muted">
-          <span aria-hidden className="mt-[0.5em] size-1 shrink-0 rounded-full bg-krds-text-muted" />
+          <span
+            aria-hidden
+            className="mt-[0.5em] size-1 shrink-0 rounded-full bg-krds-text-muted"
+          />
           <span className="min-w-px flex-1 wrap-break-word">{it}</span>
         </li>
       ))}
@@ -122,7 +153,7 @@ function MoreToggle({ expanded, onClick }: { expanded: boolean; onClick: () => v
 
 export function DfEqpmntTradeAgncAplyPage() {
   // 신규/갱신 모드 — 목록(M15) 신청 시트에서 navigate state 로 전달(없으면 신규). 사업자정보 배지(신청구분) 토글.
-  const mode = ((useLocation().state as { mode?: 'new' | 'renew' } | null)?.mode) ?? 'new'
+  const mode = (useLocation().state as { mode?: 'new' | 'renew' } | null)?.mode ?? 'new'
   const kindLabel = mode === 'renew' ? '갱신' : '신규'
   const [bizExpanded, setBizExpanded] = useState(false)
   const [scrtyExpanded, setScrtyExpanded] = useState(false)
@@ -132,7 +163,6 @@ export function DfEqpmntTradeAgncAplyPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null) // 파일삭제 확인(83442)
   const [consentOpen, setConsentOpen] = useState(false) // 동의 시트(83444)
   const [submitConfirmOpen, setSubmitConfirmOpen] = useState(false) // 제출 확인(83449)
-  const [toastMsg, setToastMsg] = useState<string | null>(null)
 
   const { control, handleSubmit, setValue } = useForm<DfEqpmntTradeAgncAplyForm>({
     resolver: zodResolver(dfEqpmntTradeAgncAplySchema),
@@ -148,7 +178,7 @@ export function DfEqpmntTradeAgncAplyPage() {
     try {
       saveBlob(await downloadFileMut.mutateAsync(guid), fileNm)
     } catch {
-      setToastMsg('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -214,14 +244,25 @@ export function DfEqpmntTradeAgncAplyPage() {
       }
       return [
         ...prev,
-        { id: f0.id, fileTtl: docNm, fileNm: f0.name, size: f0.size, regYmd: today, required: docNm !== '기타' },
+        {
+          id: f0.id,
+          fileTtl: docNm,
+          fileNm: f0.name,
+          size: f0.size,
+          regYmd: today,
+          required: docNm !== '기타',
+        },
       ]
     })
     console.log('[M17] 파일 추가', docNm, f0.name, f0.uploaded)
   }
   const confirmDelete = () => {
     if (!deleteId) return
-    setFiles((prev) => prev.map((f) => (f.id === deleteId ? { ...f, fileNm: '', size: undefined, regYmd: undefined } : f)))
+    setFiles((prev) =>
+      prev.map((f) =>
+        f.id === deleteId ? { ...f, fileNm: '', size: undefined, regYmd: undefined } : f,
+      ),
+    )
     console.log('[M17] 첨부 삭제', deleteId)
     setDeleteId(null)
   }
@@ -230,17 +271,17 @@ export function DfEqpmntTradeAgncAplyPage() {
   const [refreshedToday, setRefreshedToday] = useState(false)
   const handleRefreshG2b = () => {
     if (refreshedToday) {
-      setToastMsg('갱신은 1일 1회로 제한됩니다.')
+      showToast('갱신은 1일 1회로 제한됩니다.')
       return
     }
     console.log('[M17] 나라장터(G2B) 조달업체정보 갱신') // 추후 API: cmService.refreshG2b
     setRefreshedToday(true)
-    setToastMsg('갱신되었습니다.')
+    showToast('갱신되었습니다.')
   }
 
   // ── 저장/제출 — footer 직접 버튼(구 83451 선택 시트 폐기, 사용자 확정 2026-08-24) ──
   const handleSave = () => {
-    setToastMsg('저장되었습니다.')
+    showToast('저장되었습니다.')
     console.log('[M17] 저장하기', { mode, files }) // 추후: cmService.saveDfEqpmntTradeAgnc(payload)
   }
   // 제출하기 → 제출 확인 모달(83449) 오픈.
@@ -248,10 +289,10 @@ export function DfEqpmntTradeAgncAplyPage() {
   const onSubmitValid = () => {
     const missing = files.filter((f) => f.required && !f.fileNm)
     if (missing.length > 0) {
-      setToastMsg(`필수 첨부서류를 첨부해주세요. (${missing.map((m) => m.fileTtl).join(', ')})`)
+      showToast(`필수 첨부서류를 첨부해주세요. (${missing.map((m) => m.fileTtl).join(', ')})`)
       return
     }
-    setToastMsg('제출되었습니다.')
+    showToast('제출되었습니다.')
     console.log('[M17] 제출하기', { mode, files }) // 추후: cmService.submitDfEqpmntTradeAgncAply(payload)
   }
   const onInvalid = () => {
@@ -278,11 +319,18 @@ export function DfEqpmntTradeAgncAplyPage() {
           </span>
           <div className="flex min-w-px flex-1 flex-col gap-krds-3">
             <div className="flex items-center gap-krds-3">
-              <span className="text-[17px] font-medium leading-normal text-krds-text-muted">접수번호</span>
+              <span className="text-[17px] font-medium leading-normal text-krds-text-muted">
+                접수번호
+              </span>
               <span className="min-w-px flex-1 text-[17px] font-bold leading-normal text-krds-text-ink">
                 {MOCK_INFO.rcptNo}
               </span>
-              <Icon name="Info" size={18} className="shrink-0 text-krds-text-disabled-soft" aria-hidden />
+              <Icon
+                name="Info"
+                size={18}
+                className="shrink-0 text-krds-text-disabled-soft"
+                aria-hidden
+              />
             </div>
             <div>
               <Badge color="yellow">{kindLabel}</Badge>
@@ -311,17 +359,30 @@ export function DfEqpmntTradeAgncAplyPage() {
             ]}
           />
           <div className="flex flex-col gap-krds-8">
-            {files.filter((f) => f.fileNm).map((f) => (
-              <div key={f.id} className="flex flex-col gap-krds-3">
-                <div className="flex items-center justify-between gap-krds-5">
-                  <span className="text-[17px] font-medium leading-normal text-krds-text-ink">{f.fileTtl}</span>
-                  <span className="shrink-0 text-[15px] leading-normal text-krds-text-muted">{f.regYmd}</span>
+            {files
+              .filter((f) => f.fileNm)
+              .map((f) => (
+                <div key={f.id} className="flex flex-col gap-krds-3">
+                  <div className="flex items-center justify-between gap-krds-5">
+                    <span className="text-[17px] font-medium leading-normal text-krds-text-ink">
+                      {f.fileTtl}
+                    </span>
+                    <span className="shrink-0 text-[15px] leading-normal text-krds-text-muted">
+                      {f.regYmd}
+                    </span>
+                  </div>
+                  <FileDownloadList
+                    files={[
+                      {
+                        id: f.id,
+                        name: f.fileNm as string,
+                        size: f.size,
+                        onRemove: () => setDeleteId(f.id),
+                      },
+                    ]}
+                  />
                 </div>
-                <FileDownloadList
-                  files={[{ id: f.id, name: f.fileNm as string, size: f.size, onRemove: () => setDeleteId(f.id) }]}
-                />
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </section>
@@ -413,11 +474,7 @@ export function DfEqpmntTradeAgncAplyPage() {
         }
       >
         {addOpen && (
-          <FileAdd
-            ref={fileAddRef}
-            docNmOptions={DOC_TITLES}
-            onComplete={handleAttach}
-          />
+          <FileAdd ref={fileAddRef} docNmOptions={DOC_TITLES} onComplete={handleAttach} />
         )}
       </BottomSheet>
 
@@ -457,7 +514,6 @@ export function DfEqpmntTradeAgncAplyPage() {
         </p>
       </BottomSheet>
 
-
       {/* 제출 확인 모달(Figma 10020:83449) — [취소][확인]. */}
       <AlertModal
         open={submitConfirmOpen}
@@ -467,11 +523,6 @@ export function DfEqpmntTradeAgncAplyPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{ label: '확인', onClick: handleSubmit(onSubmitValid, onInvalid) }}
       />
-
-      {/* 저장/제출 결과 토스트. */}
-      <Toast open={toastMsg !== null} onClose={() => setToastMsg(null)} duration={2000}>
-        {toastMsg}
-      </Toast>
     </div>
   )
 }

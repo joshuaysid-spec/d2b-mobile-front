@@ -32,10 +32,13 @@ import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { Infobox } from '@/ui/common/composites/Infobox'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { KnditmChc } from '@/ui/biz/cm/dmstLctnColInfoAddReg/KnditmChc'
 import { AsctGrpChc } from '@/ui/biz/cm/dmstLctnColInfoAddReg/AsctGrpChc'
-import { RegTrgtItemChc, type RegTrgtItemChcHandle } from '@/ui/biz/cm/dmstLctnColInfoAddReg/RegTrgtItemChc'
+import {
+  RegTrgtItemChc,
+  type RegTrgtItemChcHandle,
+} from '@/ui/biz/cm/dmstLctnColInfoAddReg/RegTrgtItemChc'
 import { ItemInq } from '@/ui/biz/cm/dmstLctnColInfoAddReg/ItemInq'
 import { AgreementList } from '@/ui/common/composites/AgreementList'
 import { PbamdsInfoJntUtztnBfhdWtcs } from '@/ui/biz/cm/dmstLctnColInfoAddReg/PbamdsInfoJntUtztnBfhdWtcs'
@@ -175,7 +178,6 @@ export function DmstLctnColInfoAddRegPage() {
   const [agreed, setAgreed] = useState(false) // 조회 동의여부
   const [warnOpen, setWarnOpen] = useState(false) // 미동의 경고 모달
   const [confirmOpen, setConfirmOpen] = useState(false) // P14 확인
-  const [toastMsg, setToastMsg] = useState<string | null>(null)
   const regTrgtRef = useRef<RegTrgtItemChcHandle>(null)
 
   // 등록품목 검색(목업 필터, slide157 '아래 목록에서 검색') — 품명/품목코드 부분일치 + 적격상태.
@@ -211,11 +213,14 @@ export function DmstLctnColInfoAddRegPage() {
       })),
     ])
     setSheet(null)
-    console.log('[M05] 등록대상 품목 추가', picked.map((p) => p.itemCd))
+    console.log(
+      '[M05] 등록대상 품목 추가',
+      picked.map((p) => p.itemCd),
+    )
   }
   const handleDeleteSelected = () => {
     if (selectedIds.length === 0) {
-      setToastMsg('선택 항목이 없습니다.')
+      showToast('선택 항목이 없습니다.')
       return
     }
     setItems((prev) => prev.filter((it) => !selectedIds.includes(it.id)))
@@ -224,7 +229,7 @@ export function DmstLctnColInfoAddRegPage() {
   }
   const handleRenewSelected = () => {
     if (selectedIds.length === 0) {
-      setToastMsg('선택 항목이 없습니다.')
+      showToast('선택 항목이 없습니다.')
       return
     }
     // 선택 갱신 — 접수상태 임시 변경(slide151 '임시 변경, 갱신 접수 신청 필요').
@@ -237,7 +242,7 @@ export function DmstLctnColInfoAddRegPage() {
   const handleResetItems = () => {
     setItems(INITIAL_ITEMS)
     setSelectedIds([])
-    setToastMsg('초기화 되었습니다.')
+    showToast('초기화 되었습니다.')
     console.log('[M05] 등록품목명세 초기화')
   }
   // 품목코드 클릭 → 품목 조회(P09) 시트. 업종코드/명은 잠정 목업(설계서 slide167 표기).
@@ -265,9 +270,19 @@ export function DmstLctnColInfoAddRegPage() {
   }
   // P14 확인 — 신청 접수(스텁) → 완료 토스트 → 목록 이동.
   const handleConfirmApply = () => {
-    console.log('[M05] 추가 등록 신청', { bplcSecd, isoYn, rprsvEngNm, addrEng, knditm, bzstat, asctGrp, items, agreed })
+    console.log('[M05] 추가 등록 신청', {
+      bplcSecd,
+      isoYn,
+      rprsvEngNm,
+      addrEng,
+      knditm,
+      bzstat,
+      asctGrp,
+      items,
+      agreed,
+    })
     // 추후 API: cmService.insertBzentyDmscptInfoAddReg({ ... })
-    setToastMsg('신청 완료되었습니다.')
+    showToast('신청 완료되었습니다.')
     window.setTimeout(() => navigate(-1), 1200)
   }
 
@@ -465,7 +480,11 @@ export function DmstLctnColInfoAddRegPage() {
                     }
                     rows={itemRows(it, i + 1)}
                     footer={
-                      <Button variant="secondary" className="w-full" onClick={() => openItemInq(it)}>
+                      <Button
+                        variant="secondary"
+                        className="w-full"
+                        onClick={() => openItemInq(it)}
+                      >
                         보기
                       </Button>
                     }
@@ -480,7 +499,11 @@ export function DmstLctnColInfoAddRegPage() {
             </div>
 
             {/* 더보기 (loaded/258 — 스텁) */}
-            <Button variant="secondary" className="w-full" onClick={() => console.log('[M05] 더보기')}>
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={() => console.log('[M05] 더보기')}
+            >
               더보기 ({Math.min(items.length, 10)}/{TOTAL_ITEMS})
             </Button>
           </div>
@@ -547,7 +570,11 @@ export function DmstLctnColInfoAddRegPage() {
 
       {/* ── 소유 팝업 ── */}
       {/* P06 품류선택 — 결과 클릭 시 반환 + 시트 닫힘 */}
-      <BottomSheet open={sheet === 'knditm'} onOpenChange={(o) => !o && setSheet(null)} title="품류 선택">
+      <BottomSheet
+        open={sheet === 'knditm'}
+        onOpenChange={(o) => !o && setSheet(null)}
+        title="품류 선택"
+      >
         <KnditmChc
           onSelect={(item) => {
             setKnditm(item)
@@ -557,7 +584,11 @@ export function DmstLctnColInfoAddRegPage() {
       </BottomSheet>
 
       {/* P07 조합/단체 선택 */}
-      <BottomSheet open={sheet === 'asct'} onOpenChange={(o) => !o && setSheet(null)} title="조합/단체 선택">
+      <BottomSheet
+        open={sheet === 'asct'}
+        onOpenChange={(o) => !o && setSheet(null)}
+        title="조합/단체 선택"
+      >
         <AsctGrpChc
           onSelect={(item) => {
             setAsctGrp(item)
@@ -606,7 +637,11 @@ export function DmstLctnColInfoAddRegPage() {
       </BottomSheet>
 
       {/* P13 행정정보공동이용 사전동의서 (FullPopup) */}
-      <PbamdsInfoJntUtztnBfhdWtcs open={agreeOpen} onOpenChange={setAgreeOpen} onAgree={handleAgreeAndApply} />
+      <PbamdsInfoJntUtztnBfhdWtcs
+        open={agreeOpen}
+        onOpenChange={setAgreeOpen}
+        onAgree={handleAgreeAndApply}
+      />
 
       {/* 미동의 경고 모달 (slide152) — [그대로 신청][닫기] */}
       <AlertModal
@@ -634,11 +669,6 @@ export function DmstLctnColInfoAddRegPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{ label: '확인', onClick: handleConfirmApply }}
       />
-
-      {/* 토스트(초기화/신청 완료/선택 없음) */}
-      <Toast open={toastMsg !== null} onClose={() => setToastMsg(null)}>
-        {toastMsg}
-      </Toast>
     </div>
   )
 }

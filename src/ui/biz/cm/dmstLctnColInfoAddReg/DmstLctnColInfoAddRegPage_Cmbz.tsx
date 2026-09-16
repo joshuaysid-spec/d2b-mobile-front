@@ -28,8 +28,11 @@ import { PbamdsInfoJntUtztnBfhdWtcs } from '@/ui/biz/cm/dmstLctnColInfoAddReg/Pb
 // 조회 동의 항목 — 서약서 동의(AgreementList) 레이아웃(v0.87 검토 34번). [보기] = P13 사전동의서.
 const AGREE_ITEM = [{ id: 'P13', title: '공장등록증명서 또는 사업자등록증명원 조회 동의' }]
 import { Infobox } from '@/ui/common/composites/Infobox'
-import { Toast } from '@/ui/common/composites/Toast'
-import { ScrtyMsrmtPrsnlReg, type ScrtyMsrmtPrsnlRegHandle } from '@/ui/biz/cm/dmstLctnColInfoAddReg/ScrtyMsrmtPrsnlReg'
+import { showToast } from '@/stores/authStore'
+import {
+  ScrtyMsrmtPrsnlReg,
+  type ScrtyMsrmtPrsnlRegHandle,
+} from '@/ui/biz/cm/dmstLctnColInfoAddReg/ScrtyMsrmtPrsnlReg'
 import { FSCChc, type FSCChcHandle } from '@/ui/biz/cm/dmstLctnColInfoAddReg/FSCChc'
 import { BankChc } from '@/ui/biz/cm/dmstLctnColInfoAddReg/BankChc'
 import type { MockScrtyMsrmtPrsn, MockDmsAgtFscCode, MockBankChcItem } from '@/types/mock/cm'
@@ -102,7 +105,6 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
   const [agreed, setAgreed] = useState(false)
   const [warnOpen, setWarnOpen] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
-  const [toastMsg, setToastMsg] = useState<string | null>(null)
   const scrtRef = useRef<ScrtyMsrmtPrsnlRegHandle>(null)
   const fscRef = useRef<FSCChcHandle>(null)
 
@@ -118,14 +120,14 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
     console.log('[M23] 보안측정인원 추가', person)
   }
   const handleDeletePersons = () => {
-    if (selectedPrsnIds.length === 0) return setToastMsg('선택 항목이 없습니다.')
+    if (selectedPrsnIds.length === 0) return showToast('선택 항목이 없습니다.')
     setPersons((prev) => prev.filter((p) => !selectedPrsnIds.includes(p.id)))
     setSelectedPrsnIds([])
   }
   const handleResetPersons = () => {
     setPersons(INITIAL_PERSONS)
     setSelectedPrsnIds([])
-    setToastMsg('초기화 되었습니다.')
+    showToast('초기화 되었습니다.')
   }
 
   // FSC 버튼(slide157)
@@ -135,10 +137,13 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
       return [...prev, ...picked.filter((p) => !existing.has(p.fscCd))]
     })
     setSheet(null)
-    console.log('[M23] FSC 추가', picked.map((p) => p.fscCd))
+    console.log(
+      '[M23] FSC 추가',
+      picked.map((p) => p.fscCd),
+    )
   }
   const handleDeleteFsc = () => {
-    if (selectedFscCds.length === 0) return setToastMsg('선택 항목이 없습니다.')
+    if (selectedFscCds.length === 0) return showToast('선택 항목이 없습니다.')
     setFscList((prev) => prev.filter((f) => !selectedFscCds.includes(f.fscCd)))
     setSelectedFscCds([])
   }
@@ -162,13 +167,35 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
   }
   const handleConfirmApply = () => {
     console.log('[M23] 추가 등록 신청', {
-      bplcSecd, isoYn, rprsvEngNm, addrEng, corpIndvSe, corpRgstOrgnNm, corpRgstYmd, corpRgstPrps,
-      hdlItemNm, bzstatNm, bzrnoRgstOrgnNm, scrtMsrUnitNm, scrtMsrYmd, scrtMsrRslt,
-      persons, fscList, anlSaleAmt, astScl, lncLmt, bank, brnchNm, mlsplyFrstPtcpYmd,
-      trnsPrdFrom, trnsPrdTo, dunsNo, agreed,
+      bplcSecd,
+      isoYn,
+      rprsvEngNm,
+      addrEng,
+      corpIndvSe,
+      corpRgstOrgnNm,
+      corpRgstYmd,
+      corpRgstPrps,
+      hdlItemNm,
+      bzstatNm,
+      bzrnoRgstOrgnNm,
+      scrtMsrUnitNm,
+      scrtMsrYmd,
+      scrtMsrRslt,
+      persons,
+      fscList,
+      anlSaleAmt,
+      astScl,
+      lncLmt,
+      bank,
+      brnchNm,
+      mlsplyFrstPtcpYmd,
+      trnsPrdFrom,
+      trnsPrdTo,
+      dunsNo,
+      agreed,
     })
     // 추후 API: cmService.insertBzentyDmstLctnCoInfoAddReg({ ... })
-    setToastMsg('신청 완료되었습니다.')
+    showToast('신청 완료되었습니다.')
     window.setTimeout(() => navigate(-1), 1200)
   }
 
@@ -179,7 +206,7 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
     try {
       saveBlob(await downloadFileMut.mutateAsync(guid), fileNm)
     } catch {
-      setToastMsg('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -213,13 +240,22 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
 
   return (
     <div className="flex w-full flex-col">
-      <Accordion type="multiple" defaultValue={['gnrl', 'corp', 'scrt', 'fsc', 'sale']} className="w-full">
+      <Accordion
+        type="multiple"
+        defaultValue={['gnrl', 'corp', 'scrt', 'fsc', 'sale']}
+        className="w-full"
+      >
         {/* ── 일반정보 ── */}
         <AccordionSection value="gnrl" title="일반정보" borderTop={false}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-krds-5">
               <InputLabel required>본/지사</InputLabel>
-              <SelectBox placeholder="선택해주세요." value={bplcSecd} onValueChange={setBplcSecd} items={BPLC_OPTIONS} />
+              <SelectBox
+                placeholder="선택해주세요."
+                value={bplcSecd}
+                onValueChange={setBplcSecd}
+                items={BPLC_OPTIONS}
+              />
             </div>
             <div className="flex flex-col gap-krds-5">
               <InputLabel>본사 사업자번호</InputLabel>
@@ -239,11 +275,25 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
             </div>
             <div className="flex flex-col gap-krds-5">
               <InputLabel htmlFor="m23-rprsvEng">대표자명(영문)</InputLabel>
-              <InputBox id="m23-rprsvEng" inputType="english" value={rprsvEngNm} placeholder="입력해주세요." onChange={(e) => setRprsvEngNm(e.target.value)} onClear={() => setRprsvEngNm('')} />
+              <InputBox
+                id="m23-rprsvEng"
+                inputType="english"
+                value={rprsvEngNm}
+                placeholder="입력해주세요."
+                onChange={(e) => setRprsvEngNm(e.target.value)}
+                onClear={() => setRprsvEngNm('')}
+              />
             </div>
             <div className="flex flex-col gap-krds-5">
               <InputLabel htmlFor="m23-addrEng">주소(영문)</InputLabel>
-              <InputBox id="m23-addrEng" inputType="english" value={addrEng} placeholder="입력해주세요." onChange={(e) => setAddrEng(e.target.value)} onClear={() => setAddrEng('')} />
+              <InputBox
+                id="m23-addrEng"
+                inputType="english"
+                value={addrEng}
+                placeholder="입력해주세요."
+                onChange={(e) => setAddrEng(e.target.value)}
+                onClear={() => setAddrEng('')}
+              />
             </div>
           </div>
         </AccordionSection>
@@ -267,45 +317,109 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
               <>
                 <div className="flex flex-col gap-krds-5">
                   <InputLabel htmlFor="m23-corpOrgn">법인등기기관</InputLabel>
-                  <InputBox id="m23-corpOrgn" value={corpRgstOrgnNm} placeholder="입력해주세요." onChange={(e) => setCorpRgstOrgnNm(e.target.value)} onClear={() => setCorpRgstOrgnNm('')} />
+                  <InputBox
+                    id="m23-corpOrgn"
+                    value={corpRgstOrgnNm}
+                    placeholder="입력해주세요."
+                    onChange={(e) => setCorpRgstOrgnNm(e.target.value)}
+                    onClear={() => setCorpRgstOrgnNm('')}
+                  />
                 </div>
                 <div className="flex flex-col gap-krds-5">
                   <InputLabel htmlFor="m23-corpYmd">법인등기일자</InputLabel>
-                  <InputBox id="m23-corpYmd" value={corpRgstYmd} placeholder="yyyy-MM-dd" onChange={(e) => setCorpRgstYmd(e.target.value)} onClear={() => setCorpRgstYmd('')} />
+                  <InputBox
+                    id="m23-corpYmd"
+                    value={corpRgstYmd}
+                    placeholder="yyyy-MM-dd"
+                    onChange={(e) => setCorpRgstYmd(e.target.value)}
+                    onClear={() => setCorpRgstYmd('')}
+                  />
                 </div>
                 <div className="flex flex-col gap-krds-5">
                   <InputLabel htmlFor="m23-corpPrps">법인등기목적</InputLabel>
-                  <InputBox id="m23-corpPrps" value={corpRgstPrps} placeholder="입력해주세요." onChange={(e) => setCorpRgstPrps(e.target.value)} onClear={() => setCorpRgstPrps('')} />
+                  <InputBox
+                    id="m23-corpPrps"
+                    value={corpRgstPrps}
+                    placeholder="입력해주세요."
+                    onChange={(e) => setCorpRgstPrps(e.target.value)}
+                    onClear={() => setCorpRgstPrps('')}
+                  />
                 </div>
               </>
             )}
             <div className="flex flex-col gap-krds-5">
-              <InputLabel required htmlFor="m23-hdlItem">사업등록(취급)종목</InputLabel>
-              <InputBox id="m23-hdlItem" value={hdlItemNm} placeholder="입력해주세요." onChange={(e) => setHdlItemNm(e.target.value)} onClear={() => setHdlItemNm('')} />
+              <InputLabel required htmlFor="m23-hdlItem">
+                사업등록(취급)종목
+              </InputLabel>
+              <InputBox
+                id="m23-hdlItem"
+                value={hdlItemNm}
+                placeholder="입력해주세요."
+                onChange={(e) => setHdlItemNm(e.target.value)}
+                onClear={() => setHdlItemNm('')}
+              />
             </div>
             <div className="flex flex-col gap-krds-5">
               <InputLabel required>업태</InputLabel>
-              <SelectBox placeholder="선택해주세요." value={bzstatNm} onValueChange={setBzstatNm} items={BZSTAT_OPTIONS} />
+              <SelectBox
+                placeholder="선택해주세요."
+                value={bzstatNm}
+                onValueChange={setBzstatNm}
+                items={BZSTAT_OPTIONS}
+              />
             </div>
             <div className="flex flex-col gap-krds-5">
-              <InputLabel required htmlFor="m23-bzrnoOrgn">사업자등록기관</InputLabel>
-              <InputBox id="m23-bzrnoOrgn" value={bzrnoRgstOrgnNm} placeholder="입력해주세요." onChange={(e) => setBzrnoRgstOrgnNm(e.target.value)} onClear={() => setBzrnoRgstOrgnNm('')} />
+              <InputLabel required htmlFor="m23-bzrnoOrgn">
+                사업자등록기관
+              </InputLabel>
+              <InputBox
+                id="m23-bzrnoOrgn"
+                value={bzrnoRgstOrgnNm}
+                placeholder="입력해주세요."
+                onChange={(e) => setBzrnoRgstOrgnNm(e.target.value)}
+                onClear={() => setBzrnoRgstOrgnNm('')}
+              />
             </div>
             <div className="flex flex-col gap-krds-5">
-              <InputLabel required htmlFor="m23-scrtUnit">보안측정부대</InputLabel>
-              <InputBox id="m23-scrtUnit" value={scrtMsrUnitNm} placeholder="입력해주세요." onChange={(e) => setScrtMsrUnitNm(e.target.value)} onClear={() => setScrtMsrUnitNm('')} />
+              <InputLabel required htmlFor="m23-scrtUnit">
+                보안측정부대
+              </InputLabel>
+              <InputBox
+                id="m23-scrtUnit"
+                value={scrtMsrUnitNm}
+                placeholder="입력해주세요."
+                onChange={(e) => setScrtMsrUnitNm(e.target.value)}
+                onClear={() => setScrtMsrUnitNm('')}
+              />
             </div>
             <div className="flex flex-col gap-krds-5">
-              <InputLabel required htmlFor="m23-scrtYmd">보안측정일자</InputLabel>
-              <InputBox id="m23-scrtYmd" value={scrtMsrYmd} placeholder="yyyy-MM-dd" onChange={(e) => setScrtMsrYmd(e.target.value)} onClear={() => setScrtMsrYmd('')} />
+              <InputLabel required htmlFor="m23-scrtYmd">
+                보안측정일자
+              </InputLabel>
+              <InputBox
+                id="m23-scrtYmd"
+                value={scrtMsrYmd}
+                placeholder="yyyy-MM-dd"
+                onChange={(e) => setScrtMsrYmd(e.target.value)}
+                onClear={() => setScrtMsrYmd('')}
+              />
             </div>
             <div className="flex flex-col gap-krds-5">
-              <InputLabel required htmlFor="m23-scrtRslt">보안측정결과</InputLabel>
-              <InputBox id="m23-scrtRslt" value={scrtMsrRslt} placeholder="입력해주세요." onChange={(e) => setScrtMsrRslt(e.target.value)} onClear={() => setScrtMsrRslt('')} />
+              <InputLabel required htmlFor="m23-scrtRslt">
+                보안측정결과
+              </InputLabel>
+              <InputBox
+                id="m23-scrtRslt"
+                value={scrtMsrRslt}
+                placeholder="입력해주세요."
+                onChange={(e) => setScrtMsrRslt(e.target.value)}
+                onClear={() => setScrtMsrRslt('')}
+              />
             </div>
             {/* 보안측정 비대상 안내(slide156) */}
             <p className="text-[15px] leading-relaxed text-krds-text-muted">
-              보안측정 비대상 품목 취급업체는 부대명란에 “보안측정 비대상”, 측정일자란은 “입력당일일자”로 입력해 주십시오.
+              보안측정 비대상 품목 취급업체는 부대명란에 “보안측정 비대상”, 측정일자란은
+              “입력당일일자”로 입력해 주십시오.
             </p>
           </div>
         </AccordionSection>
@@ -341,7 +455,9 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
                 />
               ))}
               {persons.length === 0 && (
-                <p className="py-6 text-center text-krds-body-md text-krds-text-subtle">보안측정인원이 없습니다.</p>
+                <p className="py-6 text-center text-krds-body-md text-krds-text-subtle">
+                  보안측정인원이 없습니다.
+                </p>
               )}
             </div>
           </div>
@@ -376,7 +492,9 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
                 />
               ))}
               {fscList.length === 0 && (
-                <p className="py-6 text-center text-krds-body-md text-krds-text-subtle">FSC가 없습니다.</p>
+                <p className="py-6 text-center text-krds-body-md text-krds-text-subtle">
+                  FSC가 없습니다.
+                </p>
               )}
             </div>
           </div>
@@ -387,42 +505,105 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-krds-5">
               <InputLabel htmlFor="m23-anlSale">연간매출액 (천원)</InputLabel>
-              <InputBox id="m23-anlSale" inputType="numeric" format={comma} value={anlSaleAmt} placeholder="입력해주세요." onChange={(e) => setAnlSaleAmt(e.target.value)} onClear={() => setAnlSaleAmt('')} />
+              <InputBox
+                id="m23-anlSale"
+                inputType="numeric"
+                format={comma}
+                value={anlSaleAmt}
+                placeholder="입력해주세요."
+                onChange={(e) => setAnlSaleAmt(e.target.value)}
+                onClear={() => setAnlSaleAmt('')}
+              />
             </div>
             <div className="flex flex-col gap-krds-5">
-              <InputLabel required htmlFor="m23-astScl">자산규모 (천원)</InputLabel>
-              <InputBox id="m23-astScl" inputType="numeric" format={comma} value={astScl} placeholder="입력해주세요." onChange={(e) => setAstScl(e.target.value)} onClear={() => setAstScl('')} />
+              <InputLabel required htmlFor="m23-astScl">
+                자산규모 (천원)
+              </InputLabel>
+              <InputBox
+                id="m23-astScl"
+                inputType="numeric"
+                format={comma}
+                value={astScl}
+                placeholder="입력해주세요."
+                onChange={(e) => setAstScl(e.target.value)}
+                onClear={() => setAstScl('')}
+              />
             </div>
             <div className="flex flex-col gap-krds-5">
               <InputLabel htmlFor="m23-lncLmt">여신한도 (천원)</InputLabel>
-              <InputBox id="m23-lncLmt" inputType="numeric" format={comma} value={lncLmt} placeholder="입력해주세요." onChange={(e) => setLncLmt(e.target.value)} onClear={() => setLncLmt('')} />
+              <InputBox
+                id="m23-lncLmt"
+                inputType="numeric"
+                format={comma}
+                value={lncLmt}
+                placeholder="입력해주세요."
+                onChange={(e) => setLncLmt(e.target.value)}
+                onClear={() => setLncLmt('')}
+              />
             </div>
             {/* 주거래은행* — 선택 트리거(→ P12) + 지점 */}
             <div className="flex flex-col gap-krds-5">
               <InputLabel required>주거래은행</InputLabel>
               <div className="flex items-end gap-krds-5">
-                <InputBox readOnly className="flex-1" value={bank ? bank.bankNm : ''} placeholder="은행 선택" onChange={() => {}} />
+                <InputBox
+                  readOnly
+                  className="flex-1"
+                  value={bank ? bank.bankNm : ''}
+                  placeholder="은행 선택"
+                  onChange={() => {}}
+                />
                 <Button variant="secondary" onClick={() => setSheet('bank')}>
                   선택
                 </Button>
               </div>
-              <InputBox value={brnchNm} placeholder="지점" onChange={(e) => setBrnchNm(e.target.value)} onClear={() => setBrnchNm('')} />
+              <InputBox
+                value={brnchNm}
+                placeholder="지점"
+                onChange={(e) => setBrnchNm(e.target.value)}
+                onClear={() => setBrnchNm('')}
+              />
             </div>
             <div className="flex flex-col gap-krds-5">
               <InputLabel htmlFor="m23-mlsply">군납최초참여일</InputLabel>
-              <InputBox id="m23-mlsply" value={mlsplyFrstPtcpYmd} placeholder="yyyy-MM-dd" onChange={(e) => setMlsplyFrstPtcpYmd(e.target.value)} onClear={() => setMlsplyFrstPtcpYmd('')} />
+              <InputBox
+                id="m23-mlsply"
+                value={mlsplyFrstPtcpYmd}
+                placeholder="yyyy-MM-dd"
+                onChange={(e) => setMlsplyFrstPtcpYmd(e.target.value)}
+                onClear={() => setMlsplyFrstPtcpYmd('')}
+              />
             </div>
             <div className="flex flex-col gap-krds-5">
               <InputLabel>거래기간</InputLabel>
               <div className="flex items-center gap-krds-4">
-                <InputBox className="flex-1" value={trnsPrdFrom} placeholder="yyyy-MM-dd" onChange={(e) => setTrnsPrdFrom(e.target.value)} onClear={() => setTrnsPrdFrom('')} />
-                <span aria-hidden className="text-krds-text-muted">~</span>
-                <InputBox className="flex-1" value={trnsPrdTo} placeholder="yyyy-MM-dd" onChange={(e) => setTrnsPrdTo(e.target.value)} onClear={() => setTrnsPrdTo('')} />
+                <InputBox
+                  className="flex-1"
+                  value={trnsPrdFrom}
+                  placeholder="yyyy-MM-dd"
+                  onChange={(e) => setTrnsPrdFrom(e.target.value)}
+                  onClear={() => setTrnsPrdFrom('')}
+                />
+                <span aria-hidden className="text-krds-text-muted">
+                  ~
+                </span>
+                <InputBox
+                  className="flex-1"
+                  value={trnsPrdTo}
+                  placeholder="yyyy-MM-dd"
+                  onChange={(e) => setTrnsPrdTo(e.target.value)}
+                  onClear={() => setTrnsPrdTo('')}
+                />
               </div>
             </div>
             <div className="flex flex-col gap-krds-5">
               <InputLabel htmlFor="m23-duns">Dun's Number</InputLabel>
-              <InputBox id="m23-duns" value={dunsNo} placeholder="입력해주세요." onChange={(e) => setDunsNo(e.target.value)} onClear={() => setDunsNo('')} />
+              <InputBox
+                id="m23-duns"
+                value={dunsNo}
+                placeholder="입력해주세요."
+                onChange={(e) => setDunsNo(e.target.value)}
+                onClear={() => setDunsNo('')}
+              />
             </div>
           </div>
         </AccordionSection>
@@ -433,10 +614,7 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
         <Infobox
           title="내자업체 제출서류 안내"
           collapsible={false}
-          items={[
-            '보안측정결과서 - 1부 (해당품목 제출)',
-            '(전화) 02-2079-6915,6925',
-          ]}
+          items={['보안측정결과서 - 1부 (해당품목 제출)', '(전화) 02-2079-6915,6925']}
         />
       </div>
 
@@ -503,7 +681,11 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
       </BottomSheet>
 
       {/* P12 주거래은행 선택 — 결과 클릭 시 반환 + 시트 닫힘 */}
-      <BottomSheet open={sheet === 'bank'} onOpenChange={(o) => !o && setSheet(null)} title="주거래은행 선택">
+      <BottomSheet
+        open={sheet === 'bank'}
+        onOpenChange={(o) => !o && setSheet(null)}
+        title="주거래은행 선택"
+      >
         <BankChc
           onSelect={(item) => {
             setBank(item)
@@ -513,7 +695,11 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
       </BottomSheet>
 
       {/* P13 행정정보공동이용 사전동의서 (FullPopup) — M05 와 공유 */}
-      <PbamdsInfoJntUtztnBfhdWtcs open={agreeOpen} onOpenChange={setAgreeOpen} onAgree={handleAgreeAndApply} />
+      <PbamdsInfoJntUtztnBfhdWtcs
+        open={agreeOpen}
+        onOpenChange={setAgreeOpen}
+        onAgree={handleAgreeAndApply}
+      />
 
       {/* 미동의 경고 모달 — [그대로 신청][닫기] */}
       <AlertModal
@@ -541,11 +727,6 @@ export function DmstLctnColInfoAddRegPage_Cmbz() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{ label: '확인', onClick: handleConfirmApply }}
       />
-
-      {/* 토스트(초기화/신청 완료/선택 없음) */}
-      <Toast open={toastMsg !== null} onClose={() => setToastMsg(null)}>
-        {toastMsg}
-      </Toast>
     </div>
   )
 }

@@ -9,7 +9,7 @@ import { Button } from '@/ui/common/base/Button'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { OvsBidPbanc_AtchFileInq } from '@/ui/biz/bd/ovsBidPbancDtl/OvsBidPbanc_AtchFileInq'
 import { WarSplList_Inq } from '@/ui/biz/op/warSplList_Inq/WarSplList_Inq'
 import type { MockOvsAtchDoc, MockOvsBidItem } from '@/types/mock/bd'
@@ -21,18 +21,126 @@ type OvsBidItemBase = Pick<
   'artclNo' | 'itemNm' | 'invtNo' | 'prtsNo' | 'spcfctNo' | 'lockerYn' | 'docYn' | 'inspShpCd'
 >
 const MOCK_ITEM_BASE: OvsBidItemBase[] = [
-  { artclNo: '1', itemNm: 'BLADE ASSY, MAIN ROTOR', invtNo: '153200369', prtsNo: 'A2093-211112', spcfctNo: '369A2093', lockerYn: 'Y', docYn: 'Y', inspShpCd: '일반' },
-  { artclNo: '2', itemNm: 'HUB ASSY, MAIN ROTOR', invtNo: '153200370', prtsNo: 'A2093-211113', spcfctNo: '369A2094', lockerYn: 'N', docYn: 'Y', inspShpCd: '일반' },
-  { artclNo: '3', itemNm: 'GEARBOX ASSY, TAIL ROTOR', invtNo: '162000371', prtsNo: 'A2093-211114', spcfctNo: '369A2095', lockerYn: 'N', docYn: 'N', inspShpCd: '정밀' },
-  { artclNo: '4', itemNm: 'SERVO CYLINDER ASSY', invtNo: '165000372', prtsNo: 'A2093-211115', spcfctNo: '369A2096', lockerYn: 'Y', docYn: 'N', inspShpCd: '일반' },
-  { artclNo: '5', itemNm: 'PUMP, FUEL, ENGINE', invtNo: '291500373', prtsNo: 'A2093-211116', spcfctNo: '369A2097', lockerYn: 'N', docYn: 'Y', inspShpCd: '정밀' },
-  { artclNo: '6', itemNm: 'FILTER ELEMENT, FLUID', invtNo: '294000374', prtsNo: 'A2093-211117', spcfctNo: '369A2098', lockerYn: 'N', docYn: 'N', inspShpCd: '일반' },
-  { artclNo: '7', itemNm: 'BEARING, ROLLER, CYLINDRICAL', invtNo: '311000375', prtsNo: 'A2093-211118', spcfctNo: '369A2099', lockerYn: 'N', docYn: 'N', inspShpCd: '일반' },
-  { artclNo: '8', itemNm: 'VALVE, CHECK', invtNo: '481000376', prtsNo: 'A2093-211119', spcfctNo: '369A2100', lockerYn: 'N', docYn: 'Y', inspShpCd: '정밀' },
-  { artclNo: '9', itemNm: 'INDICATOR, AIRSPEED', invtNo: '661000377', prtsNo: 'A2093-211120', spcfctNo: '369A2101', lockerYn: 'N', docYn: 'N', inspShpCd: '일반' },
-  { artclNo: '10', itemNm: 'ANTENNA, RADIO', invtNo: '598500378', prtsNo: 'A2093-211121', spcfctNo: '369A2102', lockerYn: 'N', docYn: 'N', inspShpCd: '일반' },
-  { artclNo: '11', itemNm: 'CABLE ASSY, POWER', invtNo: '614500379', prtsNo: 'A2093-211122', spcfctNo: '369A2103', lockerYn: 'N', docYn: 'Y', inspShpCd: '일반' },
-  { artclNo: '12', itemNm: 'SWITCH, TOGGLE', invtNo: '593000380', prtsNo: 'A2093-211123', spcfctNo: '369A2104', lockerYn: 'N', docYn: 'N', inspShpCd: '일반' },
+  {
+    artclNo: '1',
+    itemNm: 'BLADE ASSY, MAIN ROTOR',
+    invtNo: '153200369',
+    prtsNo: 'A2093-211112',
+    spcfctNo: '369A2093',
+    lockerYn: 'Y',
+    docYn: 'Y',
+    inspShpCd: '일반',
+  },
+  {
+    artclNo: '2',
+    itemNm: 'HUB ASSY, MAIN ROTOR',
+    invtNo: '153200370',
+    prtsNo: 'A2093-211113',
+    spcfctNo: '369A2094',
+    lockerYn: 'N',
+    docYn: 'Y',
+    inspShpCd: '일반',
+  },
+  {
+    artclNo: '3',
+    itemNm: 'GEARBOX ASSY, TAIL ROTOR',
+    invtNo: '162000371',
+    prtsNo: 'A2093-211114',
+    spcfctNo: '369A2095',
+    lockerYn: 'N',
+    docYn: 'N',
+    inspShpCd: '정밀',
+  },
+  {
+    artclNo: '4',
+    itemNm: 'SERVO CYLINDER ASSY',
+    invtNo: '165000372',
+    prtsNo: 'A2093-211115',
+    spcfctNo: '369A2096',
+    lockerYn: 'Y',
+    docYn: 'N',
+    inspShpCd: '일반',
+  },
+  {
+    artclNo: '5',
+    itemNm: 'PUMP, FUEL, ENGINE',
+    invtNo: '291500373',
+    prtsNo: 'A2093-211116',
+    spcfctNo: '369A2097',
+    lockerYn: 'N',
+    docYn: 'Y',
+    inspShpCd: '정밀',
+  },
+  {
+    artclNo: '6',
+    itemNm: 'FILTER ELEMENT, FLUID',
+    invtNo: '294000374',
+    prtsNo: 'A2093-211117',
+    spcfctNo: '369A2098',
+    lockerYn: 'N',
+    docYn: 'N',
+    inspShpCd: '일반',
+  },
+  {
+    artclNo: '7',
+    itemNm: 'BEARING, ROLLER, CYLINDRICAL',
+    invtNo: '311000375',
+    prtsNo: 'A2093-211118',
+    spcfctNo: '369A2099',
+    lockerYn: 'N',
+    docYn: 'N',
+    inspShpCd: '일반',
+  },
+  {
+    artclNo: '8',
+    itemNm: 'VALVE, CHECK',
+    invtNo: '481000376',
+    prtsNo: 'A2093-211119',
+    spcfctNo: '369A2100',
+    lockerYn: 'N',
+    docYn: 'Y',
+    inspShpCd: '정밀',
+  },
+  {
+    artclNo: '9',
+    itemNm: 'INDICATOR, AIRSPEED',
+    invtNo: '661000377',
+    prtsNo: 'A2093-211120',
+    spcfctNo: '369A2101',
+    lockerYn: 'N',
+    docYn: 'N',
+    inspShpCd: '일반',
+  },
+  {
+    artclNo: '10',
+    itemNm: 'ANTENNA, RADIO',
+    invtNo: '598500378',
+    prtsNo: 'A2093-211121',
+    spcfctNo: '369A2102',
+    lockerYn: 'N',
+    docYn: 'N',
+    inspShpCd: '일반',
+  },
+  {
+    artclNo: '11',
+    itemNm: 'CABLE ASSY, POWER',
+    invtNo: '614500379',
+    prtsNo: 'A2093-211122',
+    spcfctNo: '369A2103',
+    lockerYn: 'N',
+    docYn: 'Y',
+    inspShpCd: '일반',
+  },
+  {
+    artclNo: '12',
+    itemNm: 'SWITCH, TOGGLE',
+    invtNo: '593000380',
+    prtsNo: 'A2093-211123',
+    spcfctNo: '369A2104',
+    lockerYn: 'N',
+    docYn: 'N',
+    inspShpCd: '일반',
+  },
 ]
 const MOCK_ITEM_LIST: MockOvsBidItem[] = MOCK_ITEM_BASE.map((it) => ({
   ...it,
@@ -58,15 +166,24 @@ const PAGE_STEP = 10 // 더보기 10개씩(설계서)
 // 첨부파일조회(MUI-BD-01-P76) 목업 — 선택 품목의 첨부서류 목록(IResultAttach 형태).
 // 설계서 slide15 Layout(순번·첨부서류명 + 첨부파일명.hwp [파일크기]) 그대로. 추후 API: bdService.selectOvsItemAtchFileList
 const buildAtchDocs = (item: MockOvsBidItem): MockOvsAtchDoc[] => [
-  { docTitl: '규격서', fileNm: `규격서(${item.spcfctNo}).hwp`, fileSz: 804_864, fileId: `${item.docId}-1` },
-  { docTitl: '도면', fileNm: `도면(${item.prtsNo}).pdf`, fileSz: 1_258_291, fileId: `${item.docId}-2` },
+  {
+    docTitl: '규격서',
+    fileNm: `규격서(${item.spcfctNo}).hwp`,
+    fileSz: 804_864,
+    fileId: `${item.docId}-1`,
+  },
+  {
+    docTitl: '도면',
+    fileNm: `도면(${item.prtsNo}).pdf`,
+    fileSz: 1_258_291,
+    fileId: `${item.docId}-2`,
+  },
 ]
 
 export function OvsBidPbancDtl() {
   // 보관함 추가/삭제 로컬 토글 — 추후 API 연동 시 서버 상태로 교체.
   const [items, setItems] = useState<MockOvsBidItem[]>(MOCK_ITEM_LIST)
   const [visible, setVisible] = useState(PAGE_STEP)
-  const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
 
   const total = items.length
   const visibleItems = items.slice(0, visible)
@@ -77,10 +194,7 @@ export function OvsBidPbancDtl() {
     setItems((prev) =>
       prev.map((it) => (it.artclNo === item.artclNo ? { ...it, lockerYn: next } : it)),
     )
-    setToast({
-      open: true,
-      message: next === 'Y' ? '보관함에 추가 되었습니다.' : '보관함에서 삭제 되었습니다.',
-    })
+    showToast(next === 'Y' ? '보관함에 추가 되었습니다.' : '보관함에서 삭제 되었습니다.')
     // 추후 API: bdService.insertItemToLocker / bdService.deleteItemFromLocker
     console.log('[M72] 보관함', next === 'Y' ? '추가' : '삭제', item.artclNo)
   }
@@ -141,7 +255,11 @@ export function OvsBidPbancDtl() {
     { label: '장국예산', value: `${it.jangSumDrctnUsdAmt} USD`, type: 'number' },
     { label: '수량합계', value: it.sumDrctnQty, type: 'number' },
     { label: '화폐단위', value: it.crncCd },
-    { label: '지시단가', value: `${it.drctnUntprc.toLocaleString('en-US', { minimumFractionDigits: 2 })} USD`, type: 'number' },
+    {
+      label: '지시단가',
+      value: `${it.drctnUntprc.toLocaleString('en-US', { minimumFractionDigits: 2 })} USD`,
+      type: 'number',
+    },
     { label: '지시금액', value: `${it.sumDrctnUsdAmt} USD`, type: 'number' },
     { label: '장비부호', value: it.aplcnEqpmntCd },
     { label: '장비명', value: it.aplcnEqpmntNm },
@@ -219,11 +337,6 @@ export function OvsBidPbancDtl() {
       >
         {warSplInvtNo !== null && <WarSplList_Inq planId={warSplInvtNo} />}
       </BottomSheet>
-
-      {/* 보관함 추가/삭제 토스트 */}
-      <Toast open={toast.open} onClose={() => setToast((t) => ({ ...t, open: false }))}>
-        {toast.message}
-      </Toast>
     </>
   )
 }

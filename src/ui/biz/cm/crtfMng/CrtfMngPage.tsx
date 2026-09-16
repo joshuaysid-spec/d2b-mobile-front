@@ -8,7 +8,7 @@ import { useState } from 'react'
 import { Button } from '@/ui/common/base/Button'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { CertCard } from '@/ui/biz/cm/crtfMng/CertCard'
 import { MOCK_CERTS } from '@/ui/biz/cm/crtfMng/certMock'
 import { CrtfDelPage } from '@/ui/biz/cm/crtfDel/CrtfDelPage'
@@ -21,10 +21,6 @@ export function CrtfMngPage() {
   const [certs, setCerts] = useState<MockCertItem[]>(MOCK_CERTS)
   const [target, setTarget] = useState<MockCertItem | null>(null) // 삭제 대상(=BottomSheet 열림)
   const [password, setPassword] = useState('')
-  const [toast, setToast] = useState<{ open: boolean; message: string }>({
-    open: false,
-    message: '',
-  })
 
   const closeSheet = () => {
     setTarget(null)
@@ -34,18 +30,18 @@ export function CrtfMngPage() {
     if (!target) return
     // 비밀번호 미입력 → 토스트 안내.
     if (password.trim() === '') {
-      setToast({ open: true, message: '인증서 비밀번호를 입력해주세요.' })
+      showToast('인증서 비밀번호를 입력해주세요.')
       return
     }
     // 추후: 스마트PKI 솔루션으로 비밀번호 검증. 데모는 고정값 비교.
     if (password !== MOCK_PASSWORD) {
-      setToast({ open: true, message: '인증서 비밀번호 입력이 틀렸습니다.' })
+      showToast('인증서 비밀번호 입력이 틀렸습니다.')
       return
     }
     setCerts((prev) => prev.filter((c) => c.id !== target.id))
     console.log('[CrtfMng] 인증서 삭제', target.id)
     closeSheet()
-    setToast({ open: true, message: '인증서를 삭제하였습니다.' })
+    showToast('인증서를 삭제하였습니다.')
   }
 
   return (
@@ -85,19 +81,8 @@ export function CrtfMngPage() {
           />
         }
       >
-        {target && (
-          <CrtfDelPage cert={target} password={password} onPasswordChange={setPassword} />
-        )}
+        {target && <CrtfDelPage cert={target} password={password} onPasswordChange={setPassword} />}
       </BottomSheet>
-
-      {/* 결과 토스트(성공/실패) — 삭제 반영 후 인증서 관리 화면에 표시(설계서 slide338). */}
-      <Toast
-        open={toast.open}
-        onClose={() => setToast((t) => ({ ...t, open: false }))}
-        duration={2000}
-      >
-        {toast.message}
-      </Toast>
     </div>
   )
 }

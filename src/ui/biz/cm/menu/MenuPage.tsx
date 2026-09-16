@@ -15,7 +15,7 @@ import { InputBox } from '@/ui/common/base/InputBox'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { Image } from '@/ui/common/base/Image'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import {
   MenuAccordion,
   type MenuItem as MenuAccordionItem,
@@ -252,8 +252,6 @@ const MENU_ROUTES: Record<string, string> = {
 function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: MenuPageProps) {
   const navigate = useNavigate()
   const [keyword, setKeyword] = useState('')
-  // 검색 결과 없음 토스트.
-  const [emptyToastOpen, setEmptyToastOpen] = useState(false)
   // 검색 진행 중 — 연타/중복 호출 방어.
   const [searching, setSearching] = useState(false)
   const searchAll = cmQueries.useSelectSearchAll()
@@ -310,7 +308,7 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
     try {
       const results = await searchAll.mutateAsync(trimmed)
       if (results.length === 0) {
-        setEmptyToastOpen(true)
+        showToast('검색 결과가 없습니다.')
         return
       }
       console.log('[menu] 통합검색 결과', results.length)
@@ -456,11 +454,6 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
       <div data-coach="menu-accordion" className="px-krds-8 py-krds-8">
         <MenuAccordion items={menuItems} defaultOpenIds={ALL_OPEN_IDS} />
       </div>
-
-      {/* 검색 결과 없음 토스트(Figma 9623-17911) — 공통 Toast 재사용. */}
-      <Toast open={emptyToastOpen} onClose={() => setEmptyToastOpen(false)} duration={2000}>
-        검색 결과가 없습니다.
-      </Toast>
     </FullPopup>
   )
 }

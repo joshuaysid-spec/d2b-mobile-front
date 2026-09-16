@@ -19,7 +19,7 @@ import { SearchCondition } from '@/ui/common/composites/SearchCondition'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import type {
   DateRangePresetDef,
@@ -71,8 +71,19 @@ const PRGRS_FILTER_SCHEMA: SearchFilterSchema = {
       fields: [
         { type: 'text', key: 'bidNm', label: '입찰건명', placeholder: '입찰건명을 입력하세요.' },
         // 발주기관 → 발주부서(기관)검색(공통 시트)
-        { type: 'selectionField', key: 'orderInstNm', label: '발주기관', placeholder: '발주기관을 입력하세요.', searchSheet: 'dept' },
-        { type: 'text', key: 'rfrncNo', label: '통합참조번호', placeholder: '통합참조번호를 입력하세요.' },
+        {
+          type: 'selectionField',
+          key: 'orderInstNm',
+          label: '발주기관',
+          placeholder: '발주기관을 입력하세요.',
+          searchSheet: 'dept',
+        },
+        {
+          type: 'text',
+          key: 'rfrncNo',
+          label: '통합참조번호',
+          placeholder: '통합참조번호를 입력하세요.',
+        },
       ],
     },
   ],
@@ -103,15 +114,16 @@ function aplyBadges(it: MockBidPrgrsItem): string[] {
 //   ② 입찰 진행 이력 없음 = 신청유형 플래그(입찰참가/입찰서/사전심사/기술평가/생산능력서류)가 모두 false.
 function entryBlockMessage(it: MockBidPrgrsItem): string | null {
   if (it.pbancYmd && dayjs(it.pbancYmd).isAfter(dayjs(), 'day')) return '입찰 진행 일이 아닙니다.'
-  const hasHistory =
-    it.bidPrgrsApfr || it.tndr || it.bfhdSrng || it.techEvl || it.prdcpDcmntSbms
+  const hasHistory = it.bidPrgrsApfr || it.tndr || it.bfhdSrng || it.techEvl || it.prdcpDcmntSbms
   if (!hasHistory) return '입찰 진행 이력이 없습니다.'
   return null
 }
 
 // 진행상태 배지(타이틀 영역에서 상태를 알 수 있게) — 색으로 상태 강조.
 //   반려신청(미동의/반려후)=red · 등록확정/완료=green · 그 외(신청/제출)=blue.
-function statusBadge(it: MockBidPrgrsItem): { label: string; color: 'blue' | 'green' | 'red' } | null {
+function statusBadge(
+  it: MockBidPrgrsItem,
+): { label: string; color: 'blue' | 'green' | 'red' } | null {
   if (it.regRjctYn) return { label: '입찰참가등록반려', color: 'red' }
   if (it.tndrStatNm === '완료') return { label: '입찰서 완료', color: 'green' }
   if (it.tndrStatNm === '제출') return { label: '입찰서 제출', color: 'blue' }
@@ -131,7 +143,6 @@ export function BidPrgrsListForBzentyPage() {
   const [appliedSearch, setAppliedSearch] = useState<{ keyword: string; target: string } | null>(
     null,
   )
-  const [toastMsg, setToastMsg] = useState<string | null>(null) // 진입 제한 안내(null=닫힘)
 
   // 목록 조회 — 전체 목록(목업/실연동은 bdService.selectBidPrgrsListForBzenty 의 USE_MOCK 분기가 전환).
   const { data } = bdQueries.useSelectBidPrgrsListForBzenty()
@@ -159,7 +170,7 @@ export function BidPrgrsListForBzentyPage() {
   const handleCardClick = (it: MockBidPrgrsItem) => {
     const blocked = entryBlockMessage(it)
     if (blocked) {
-      setToastMsg(blocked)
+      showToast(blocked)
       return
     }
     navigate('/bd/bidPrgsDtlInq', { state: it })
@@ -183,33 +194,33 @@ export function BidPrgrsListForBzentyPage() {
   const cardItems: CardListItem[] = visibleList.map((it) => {
     const status = statusBadge(it)
     return {
-    id: it.rNum,
-    badges: (
-      <>
-        {/* 진행상태 — 색으로 강조해 타이틀 영역에서 바로 상태 파악 */}
-        {status && (
-          <Badge type="solid" color={status.color}>
-            {status.label}
-          </Badge>
-        )}
-        <Badge>{it.taskSeNm}</Badge>
-        <Badge>{it.ctrtMthdNm}</Badge>
-        {aplyBadges(it).map((b) => (
-          <Badge key={b}>{b}</Badge>
-        ))}
-      </>
-    ),
-    subtitle: `공고번호 ${it.pbancNo}`, // 입찰공고 통합목록(BidPbancIntgListPage)과 동일 표기 유지
-    title: it.bidNm,
-    // 정보행 — 설계서 slide69 카드 4행 그대로(라벨 '일참서제출마감일시'는 설계서 오타로 보고
-    // 데이터영역 항목설명(tndrSbmsnDdlnDt='입찰서제출마감일시') 표기를 따른다).
-    rows: [
-      { label: '공고일자', value: it.pbancYmd ?? '-' },
-      { label: '입찰참가신청 마감일시', value: it.bidClrsDt },
-      { label: '입찰서제출마감일시', value: it.tndrSbmsnDdlnDt },
-      { label: '개찰일시', value: it.bdopnDt ?? '-' },
-    ],
-    onClick: () => handleCardClick(it),
+      id: it.rNum,
+      badges: (
+        <>
+          {/* 진행상태 — 색으로 강조해 타이틀 영역에서 바로 상태 파악 */}
+          {status && (
+            <Badge type="solid" color={status.color}>
+              {status.label}
+            </Badge>
+          )}
+          <Badge>{it.taskSeNm}</Badge>
+          <Badge>{it.ctrtMthdNm}</Badge>
+          {aplyBadges(it).map((b) => (
+            <Badge key={b}>{b}</Badge>
+          ))}
+        </>
+      ),
+      subtitle: `공고번호 ${it.pbancNo}`, // 입찰공고 통합목록(BidPbancIntgListPage)과 동일 표기 유지
+      title: it.bidNm,
+      // 정보행 — 설계서 slide69 카드 4행 그대로(라벨 '일참서제출마감일시'는 설계서 오타로 보고
+      // 데이터영역 항목설명(tndrSbmsnDdlnDt='입찰서제출마감일시') 표기를 따른다).
+      rows: [
+        { label: '공고일자', value: it.pbancYmd ?? '-' },
+        { label: '입찰참가신청 마감일시', value: it.bidClrsDt },
+        { label: '입찰서제출마감일시', value: it.tndrSbmsnDdlnDt },
+        { label: '개찰일시', value: it.bdopnDt ?? '-' },
+      ],
+      onClick: () => handleCardClick(it),
     }
   })
 
@@ -272,11 +283,6 @@ export function BidPrgrsListForBzentyPage() {
         defaultValue={DEFAULT_FILTER}
         onSearch={handleFilterSearch}
       />
-
-      {/* 상세 진입 제한 안내(설계서 slide69 주석 ②) */}
-      <Toast open={toastMsg !== null} onClose={() => setToastMsg(null)} duration={2000}>
-        {toastMsg}
-      </Toast>
     </div>
   )
 }

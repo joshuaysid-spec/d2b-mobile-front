@@ -10,7 +10,7 @@ import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { cn } from '@/utils/cn'
 import type { MockOvsRlsVltrnsItem } from '@/types/mock/bd'
 
@@ -141,10 +141,12 @@ export function OvsRlsVltrnsNgtnPlanDtl2() {
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(1)
   // 첨부문서 보기 바텀시트 — 클릭한 품목의 항목번호로 타이틀 표기.
-  const [docSheet, setDocSheet] = useState<{ open: boolean; clsfNo: string }>({ open: false, clsfNo: '' })
+  const [docSheet, setDocSheet] = useState<{ open: boolean; clsfNo: string }>({
+    open: false,
+    clsfNo: '',
+  })
 
   const downloadFile = fbQueries.useDownloadFile()
-  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
 
   // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
   // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
@@ -152,7 +154,7 @@ export function OvsRlsVltrnsNgtnPlanDtl2() {
     try {
       saveBlob(await downloadFile.mutateAsync(guid), fileNm)
     } catch {
-      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
   const loaded = Math.min(page * pageSize, TOTAL)
@@ -206,14 +208,12 @@ export function OvsRlsVltrnsNgtnPlanDtl2() {
         title={`첨부문서${docSheet.clsfNo ? ` (항목번호 ${docSheet.clsfNo})` : ''}`}
       >
         <FileDownloadList
-          files={MOCK_DOC_FILES.map((f) => ({ ...f, onDownload: () => handleDownload(String(f.id), f.name) }))}
+          files={MOCK_DOC_FILES.map((f) => ({
+            ...f,
+            onDownload: () => handleDownload(String(f.id), f.name),
+          }))}
         />
       </BottomSheet>
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
     </div>
   )
 }

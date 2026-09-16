@@ -20,7 +20,7 @@ import { Calendar } from '@/ui/common/base/Calendar'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { TaskCldrDtl } from '@/ui/biz/cm/taskCldr/TaskCldrDtl'
 import { TaskCldrReg, type TaskCldrRegHandle } from '@/ui/biz/cm/taskCldr/TaskCldrReg'
 import type { TaskCldrRegSchemaValues } from '@/ui/biz/cm/taskCldr/TaskCldrReg.schema'
@@ -130,7 +130,6 @@ export function TaskCldrPage() {
   const [detailItem, setDetailItem] = useState<MockTaskCldrItem | null>(null) // M07 상세
   const [regSheet, setRegSheet] = useState<{ mode: 'reg' | 'edit'; target: MockTaskCldrItem | null } | null>(null) // M08 등록/수정
   const [deleteTarget, setDeleteTarget] = useState<MockTaskCldrItem | null>(null) // M09 삭제 확인
-  const [toast, setToast] = useState<string | null>(null)
   const regRef = useRef<TaskCldrRegHandle>(null)
 
   const scheduledDates = useMemo(() => items.map((it) => it.schdlDt), [items])
@@ -194,7 +193,7 @@ export function TaskCldrPage() {
     setItems((prev) => prev.filter((it) => it.id !== id))
     console.log('[TaskCldr] 일정 삭제', id) // 추후: cmService.deleteSchdl(id)
     setDeleteTarget(null)
-    setToast('삭제되었습니다.')
+    showToast('삭제되었습니다.')
   }
 
   const regDefaultValues: TaskCldrRegSchemaValues = regSheet?.target
@@ -298,11 +297,6 @@ export function TaskCldrPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{ label: '삭제', onClick: handleConfirmDelete }}
       />
-
-      {/* 삭제 완료 토스트 (설계서 slide86) */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
     </div>
   )
 }

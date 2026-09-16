@@ -6,13 +6,12 @@
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
 
 import { InputBox } from '@/ui/common/base/InputBox'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { InputMessage } from '@/ui/common/base/InputMessage'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import {
   dmstLctnColInfoAddRegPicSchema,
   type DmstLctnColInfoAddRegPicForm,
@@ -28,11 +27,7 @@ const DEFAULT_VALUES: DmstLctnColInfoAddRegPicForm = {
 
 export function DmstLctnColInfoAddRegPage_Pic() {
   const navigate = useNavigate()
-  const [toastOpen, setToastOpen] = useState(false)
-  const {
-    control,
-    handleSubmit,
-  } = useForm<DmstLctnColInfoAddRegPicForm>({
+  const { control, handleSubmit } = useForm<DmstLctnColInfoAddRegPicForm>({
     resolver: zodResolver(dmstLctnColInfoAddRegPicSchema),
     mode: 'onSubmit',
     reValidateMode: 'onBlur',
@@ -42,13 +37,16 @@ export function DmstLctnColInfoAddRegPage_Pic() {
   // [저장] — 승인 없이 즉시 완료(slide149). 성공 → 토스트 후 목록(이전 화면)으로.
   const onSubmit = (values: DmstLctnColInfoAddRegPicForm) => {
     console.log('[M22] 담당자 정보 저장', values) // 추후 API: cmService.savePicInfo(values)
-    setToastOpen(true)
+    showToast('저장되었습니다.')
     window.setTimeout(() => navigate(-1), 1200)
   }
   // 제출 실패 — 첫 에러 필드로 스크롤(입력류는 RHF shouldFocusError 자동, 컨테이너 정렬만 보조).
   const onInvalid = (errors: Record<string, unknown>) => {
     const first = Object.keys(errors)[0]
-    if (first) document.getElementById(`field-${first}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    if (first)
+      document
+        .getElementById(`field-${first}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
   return (
@@ -78,7 +76,9 @@ export function DmstLctnColInfoAddRegPage_Pic() {
                 error={!!fieldState.error}
                 aria-invalid={fieldState.error ? true : undefined}
               />
-              {fieldState.error && <InputMessage type="error">{fieldState.error.message}</InputMessage>}
+              {fieldState.error && (
+                <InputMessage type="error">{fieldState.error.message}</InputMessage>
+              )}
             </div>
           )}
         />
@@ -104,7 +104,9 @@ export function DmstLctnColInfoAddRegPage_Pic() {
                 error={!!fieldState.error}
                 aria-invalid={fieldState.error ? true : undefined}
               />
-              {fieldState.error && <InputMessage type="error">{fieldState.error.message}</InputMessage>}
+              {fieldState.error && (
+                <InputMessage type="error">{fieldState.error.message}</InputMessage>
+              )}
             </div>
           )}
         />
@@ -128,7 +130,9 @@ export function DmstLctnColInfoAddRegPage_Pic() {
                 error={!!fieldState.error}
                 aria-invalid={fieldState.error ? true : undefined}
               />
-              {fieldState.error && <InputMessage type="error">{fieldState.error.message}</InputMessage>}
+              {fieldState.error && (
+                <InputMessage type="error">{fieldState.error.message}</InputMessage>
+              )}
             </div>
           )}
         />
@@ -154,7 +158,9 @@ export function DmstLctnColInfoAddRegPage_Pic() {
                 error={!!fieldState.error}
                 aria-invalid={fieldState.error ? true : undefined}
               />
-              {fieldState.error && <InputMessage type="error">{fieldState.error.message}</InputMessage>}
+              {fieldState.error && (
+                <InputMessage type="error">{fieldState.error.message}</InputMessage>
+              )}
             </div>
           )}
         />
@@ -169,15 +175,14 @@ export function DmstLctnColInfoAddRegPage_Pic() {
         <ButtonGroup
           items={[
             { label: '취소', variant: 'secondary', onClick: () => navigate(-1) },
-            { label: '담당자 정보 저장', variant: 'primary', onClick: handleSubmit(onSubmit, onInvalid) },
+            {
+              label: '담당자 정보 저장',
+              variant: 'primary',
+              onClick: handleSubmit(onSubmit, onInvalid),
+            },
           ]}
         />
       </div>
-
-      {/* 저장 완료 토스트(slide149 '저장되었습니다.') */}
-      <Toast open={toastOpen} onClose={() => setToastOpen(false)}>
-        저장되었습니다.
-      </Toast>
     </div>
   )
 }

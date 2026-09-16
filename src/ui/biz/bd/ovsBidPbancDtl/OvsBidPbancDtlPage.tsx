@@ -10,7 +10,7 @@ import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useCollapsibleHeader } from '@/hooks/useCollapsibleHeader'
-import { useAuthStore } from '@/stores/authStore'
+import { useAuthStore, showToast } from '@/stores/authStore'
 import type { MockBidPbancItem, MockOvsBidPbancDetail, MockOvsBidPbancNtc } from '@/types/mock/bd'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
@@ -20,7 +20,6 @@ import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButto
 import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
-import { Toast } from '@/ui/common/composites/Toast'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Infobox } from '@/ui/common/composites/Infobox'
@@ -123,7 +122,8 @@ const MOCK_OVS_BID_PBANC_DETAIL: MockOvsBidPbancDetail = {
 const MOCK_NTC_LIST: MockOvsBidPbancNtc[] = [
   {
     ntcDt: '2025-12-22',
-    ntcCn: '본 공고는 국외경쟁입찰 공고입니다. 입찰참가등록 및 입찰서 제출 마감일시를 반드시 확인하시기 바랍니다.',
+    ntcCn:
+      '본 공고는 국외경쟁입찰 공고입니다. 입찰참가등록 및 입찰서 제출 마감일시를 반드시 확인하시기 바랍니다.',
   },
 ]
 
@@ -173,10 +173,7 @@ function GeneralInfoTab({ detail }: { detail: MockOvsBidPbancDetail }) {
     <>
       {/* 공지사항 (dm_ntcInfo) — 국외경쟁입찰 공지 영역. 탭 경계와 붙지 않게 상단 여백(2026-08-24 요청) */}
       <div className="px-4 pb-2 pt-4">
-        <Infobox
-          title="공지사항"
-          items={MOCK_NTC_LIST.map((n) => `[${n.ntcDt}] ${n.ntcCn}`)}
-        />
+        <Infobox title="공지사항" items={MOCK_NTC_LIST.map((n) => `[${n.ntcDt}] ${n.ntcCn}`)} />
       </div>
       <Accordion type="multiple" defaultValue={['general', 'contact']} className="w-full">
         <AccordionSection value="general" title="일반정보" borderTop={false}>
@@ -200,8 +197,6 @@ export function OvsBidPbancDtlPage() {
   const [loginGuideOpen, setLoginGuideOpen] = useState(false) // 로그인 안내(MUI-MS-03-P15)
   const [exchrtOpen, setExchrtOpen] = useState(false) // 환율정보조회 풀팝업(MUI-BD-01-M74, UI-BD-01-P73)
   const [bfrBidOpen, setBfrBidOpen] = useState(false) // 이전공고입찰내역등록 풀팝업(MUI-BD-01-P79)
-  // 관심공고 등록/제외 토스트(MUI-BD-01-P13)
-  const [toast, setToast] = useState<{ open: boolean; message: string }>({ open: false, message: '' })
 
   // 로그인 필요 동작(업체담당자 노출 버튼) — 비로그인 시 로그인 안내(P15) 노출하고 동작 차단.
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
@@ -223,10 +218,7 @@ export function OvsBidPbancDtlPage() {
     }
     const next = !favorite
     setFavorite(next)
-    setToast({
-      open: true,
-      message: next ? '관심공고에 등록 되었습니다.' : '관심공고에서 제외 되었습니다.',
-    })
+    showToast(next ? '관심공고에 등록 되었습니다.' : '관심공고에서 제외 되었습니다.')
     console.log('[M71] 관심공고', next ? '등록' : '제외', id) // 추후 API: bdService.insertItrstPbanc
   }
 
@@ -328,7 +320,9 @@ export function OvsBidPbancDtlPage() {
               <StepBar
                 orientation="horizontal"
                 items={steps}
-                sheetItems={buildProgressSheet(passed.prgrsStg ?? '입찰', (substep, prgrsStg) => navigate('/anl-prgrs', { state: { substep, prgrsStg } }))}
+                sheetItems={buildProgressSheet(passed.prgrsStg ?? '입찰', (substep, prgrsStg) =>
+                  navigate('/anl-prgrs', { state: { substep, prgrsStg } }),
+                )}
                 className="bg-transparent"
               />
             </div>
@@ -381,7 +375,6 @@ export function OvsBidPbancDtlPage() {
         lockerId={passed.intgRfrncNo}
       />
 
-
       {/* 로그인 안내 (MUI-MS-03-P15) — 업체담당자 전용 동작을 비로그인 사용자가 시도할 때. */}
       <AlertModal
         open={loginGuideOpen}
@@ -395,11 +388,6 @@ export function OvsBidPbancDtlPage() {
           onClick: () => console.log('[M71] 로그인 화면 이동'), // 추후: 로그인 화면(cm/auth) 이동
         }}
       />
-
-      {/* 관심공고 등록/제외 토스트 (MUI-BD-01-P13) */}
-      <Toast open={toast.open} onClose={() => setToast((t) => ({ ...t, open: false }))}>
-        {toast.message}
-      </Toast>
     </div>
   )
 }

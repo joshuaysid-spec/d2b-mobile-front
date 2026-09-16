@@ -5,13 +5,12 @@
 // 구성(설계서 Layout): "첨부서류 - 총 N건" + 순번·첨부서류명 + 첨부파일명.hwp [파일크기] + 다운로드.
 // 파일명 클릭 = 뷰어 솔루션 호출(추후 연동).
 // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제. 키 = fileId.
-import { useState } from 'react'
 
 import { fbQueries } from '@/queries/tss/fb/fbQueries'
 import { saveBlob } from '@/utils/download'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { formatFileSize } from '@/utils/format'
 import type { MockOvsAtchDoc } from '@/types/mock/bd'
 
@@ -22,14 +21,13 @@ interface OvsBidPbanc_AtchFileInqProps {
 
 export function OvsBidPbanc_AtchFileInq({ docs }: OvsBidPbanc_AtchFileInqProps) {
   const downloadFile = fbQueries.useDownloadFile()
-  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
 
   // 다운로드 — fileId(GUID) 로 Blob 수신 → 원본 파일명으로 저장. 실패는 토스트 안내.
   const handleDownload = async (guid: string, fileNm: string) => {
     try {
       saveBlob(await downloadFile.mutateAsync(guid), fileNm)
     } catch {
-      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -60,11 +58,6 @@ export function OvsBidPbanc_AtchFileInq({ docs }: OvsBidPbanc_AtchFileInqProps) 
           </div>
         ))}
       </div>
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
     </div>
   )
 }

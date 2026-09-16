@@ -5,7 +5,6 @@
 // 데이터: tssCmQueries.useSelectNoticeDtl(contsNo, no.926) — state 로 받은 목록 항목으로 상단을 먼저 그리고 본문/첨부는 조회 후 표시.
 // 이전글/다음글: 목록 훅 캐시(useSelectNoticeList({}))에서 계산 — ⚠️ 상세 응답에 이전/다음 글 항목이 확정되면 그걸로 교체.
 // URL 에 식별자를 두지 않는다(보안 정책) — 대상 글은 목록이 넘긴 navigate state 로만 받는다.
-import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/constants/routes'
@@ -16,13 +15,12 @@ import { sanitizeHtml } from '@/utils/sanitizeHtml'
 import { Badge } from '@/ui/common/base/Badge'
 import { SectionDivider } from '@/ui/common/base/SectionDivider'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import type { MockNoticeListItem } from '@/types/mock/cm'
 
 export function NoticeDtlPage() {
   const navigate = useNavigate()
   const downloadFile = fbQueries.useDownloadFile()
-  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
   // 목록에서 넘어온 항목(state). 직접 URL/새로고침이면 대상을 알 수 없어 목록으로 되돌린다.
   const item = useLocation().state as MockNoticeListItem | null
   // 훅은 early return 앞에 — contsNo 없으면 enabled=false 라 요청이 나가지 않는다.
@@ -41,7 +39,7 @@ export function NoticeDtlPage() {
     try {
       saveBlob(await downloadFile.mutateAsync(guid), fileNm)
     } catch {
-      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
   const files: FileDownloadItem[] = (detail?.files ?? []).map((f) => ({
@@ -158,11 +156,6 @@ export function NoticeDtlPage() {
           )}
         </div>
       </div>
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
     </div>
   )
 }

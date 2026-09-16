@@ -21,7 +21,7 @@ import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { FullPopup } from '@/ui/common/composites/FullPopup'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { FileAdd, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 import {
   ABND_RSN_ETC,
@@ -87,7 +87,6 @@ export function ImpltElgbSrngAbndAply({
   const removeFile = (id: string) => setFiles((fs) => fs.filter((f) => f.id !== id))
 
   const downloadFile = fbQueries.useDownloadFile()
-  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
 
   // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
   // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체(slide273 scwin.btn_atchFileNm_onclick).
@@ -95,7 +94,7 @@ export function ImpltElgbSrngAbndAply({
     try {
       saveBlob(await downloadFile.mutateAsync(guid), fileNm)
     } catch {
-      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -122,7 +121,9 @@ export function ImpltElgbSrngAbndAply({
       // 첫 에러 필드로 스크롤(Radix 그룹은 자동 포커스 불가 → 수동). main#app-scroll 셸 기준.
       const first = Object.keys(errs)[0]
       requestAnimationFrame(() =>
-        document.getElementById(`field-${first}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
+        document
+          .getElementById(`field-${first}`)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
       )
     },
   )
@@ -154,7 +155,11 @@ export function ImpltElgbSrngAbndAply({
       {detail && (
         <SummaryInfo
           className="border-b border-krds-border-divider"
-          badges={[{ label: detail.pbancStasNm }, { label: detail.taskSeNm }, { label: detail.bidMthdNm }]}
+          badges={[
+            { label: detail.pbancStasNm },
+            { label: detail.taskSeNm },
+            { label: detail.bidMthdNm },
+          ]}
           subtitle={`입찰공고번호 ${detail.bidPbancNo}`}
           title={detail.bidPbancNm}
         />
@@ -285,11 +290,6 @@ export function ImpltElgbSrngAbndAply({
           />
         )}
       </BottomSheet>
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
     </FullPopup>
   )
 }

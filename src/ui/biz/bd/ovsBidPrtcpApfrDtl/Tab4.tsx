@@ -3,13 +3,12 @@
 // 구성: 첨부파일 목록(dl_docList — 첨부서류명 + 첨부파일명[파일크기] + 다운로드, FileDownloadList 재사용)
 //   + 하단 확약문·구비서류 안내문구('입찰 확약 및 구비서류 안내' 타이틀 삭제 — 사용자 지시 2026-08-26,
 //     작성 화면(T75, AtchDocReg)과 동일한 타이틀 없는 본문 + ※ 색 강조).
-import { useState } from 'react'
 
 import { fbQueries } from '@/queries/tss/fb/fbQueries'
 import { saveBlob } from '@/utils/download'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import type { OvsAtchDocItem } from '@/ui/biz/bd/ovsBidPrtcpApfrDtl/OvsBidPrtcpApfrDtlPage'
 
 interface OvsBidPrtcpApfrDtlPage_Tab4Props {
@@ -19,7 +18,6 @@ interface OvsBidPrtcpApfrDtlPage_Tab4Props {
 
 export function OvsBidPrtcpApfrDtlPage_Tab4({ docList }: OvsBidPrtcpApfrDtlPage_Tab4Props) {
   const downloadFile = fbQueries.useDownloadFile()
-  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
 
   // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
   // ⚠️ 임시 GUID(행 키 atchDocNm) — 백엔드 응답에 파일 GUID 확정 시 교체.
@@ -27,13 +25,12 @@ export function OvsBidPrtcpApfrDtlPage_Tab4({ docList }: OvsBidPrtcpApfrDtlPage_
     try {
       saveBlob(await downloadFile.mutateAsync(guid), fileNm)
     } catch {
-      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
   return (
     <>
-
       {/* 첨부파일 — 총 N건 (slide352). 서류명(항목번호) + 파일명[크기] + 다운로드 */}
       <SectionTitle topDivider>
         첨부파일<span>총 {docList.length}건</span>
@@ -89,11 +86,6 @@ export function OvsBidPrtcpApfrDtlPage_Tab4({ docList }: OvsBidPrtcpApfrDtlPage_
           ※ 입찰참가신청서 작성 후 입찰 담당관의 심사를 받으셔야 입찰서제출이 가능합니다.
         </p>
       </div>
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
     </>
   )
 }

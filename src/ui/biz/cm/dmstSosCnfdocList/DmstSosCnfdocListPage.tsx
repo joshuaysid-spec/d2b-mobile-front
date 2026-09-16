@@ -19,7 +19,7 @@ import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
 import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
@@ -51,7 +51,11 @@ const SEARCH_SCHEMA: SearchFilterSchema = {
       key: 'date',
       title: '기간 설정',
       fields: [
-        { type: 'segment', key: 'dateType', options: [{ value: 'edpPrcsYmd', label: '검색 기간' }] },
+        {
+          type: 'segment',
+          key: 'dateType',
+          options: [{ value: 'edpPrcsYmd', label: '검색 기간' }],
+        },
         { type: 'dateRange', key: 'edpPrcsYmd', required: true, presets: DATE_PRESETS },
       ],
     },
@@ -143,7 +147,11 @@ const dl_resultList: MockDmstSosCnfdocItem[] = [
 const TOTAL = 258
 const MOCK_LIST: MockDmstSosCnfdocItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dl_resultList[i % dl_resultList.length]
-  return { ...base, id: String(i + 1), aplyRcptNo: `${base.aplyRcptNo}${String(i + 1).padStart(2, '0')}`.slice(0, 12) }
+  return {
+    ...base,
+    id: String(i + 1),
+    aplyRcptNo: `${base.aplyRcptNo}${String(i + 1).padStart(2, '0')}`.slice(0, 12),
+  }
 })
 
 export function DmstSosCnfdocListPage() {
@@ -161,7 +169,6 @@ export function DmstSosCnfdocListPage() {
 
   // P20 신청 팝업(BottomSheet) — 컨테이너/폼은 페이지가 소유(설계서 slide133).
   const [aplyOpen, setAplyOpen] = useState(false)
-  const [toastOpen, setToastOpen] = useState(false)
   // 서류 출력 확인(MUI-BD-01-P14) — 신청 제출 성공 시 호출(사용자 확정 2026-08-25, 신청 즉시 발급이라 출력 확인으로 이어짐).
   const [outputOpen, setOutputOpen] = useState(false)
   const oz = useOzReport() // 조달원 확인서 출력 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서)
@@ -212,14 +219,16 @@ export function DmstSosCnfdocListPage() {
   // (사용자 확정 2026-08-25 — 신청 시 바로 발급(설계서 slide134 비고)이라 출력 확인으로 이어짐).
   const onAplySubmit = (values: DmstSosCnfdocAplyForm) => {
     setAplyOpen(false)
-    setToastOpen(true)
+    showToast('신청 되었습니다.')
     setOutputOpen(true)
     console.log('[DmstSosCnfdoc] 신청', { ...APPLICANT, aplyRsn: values.aplyRsn })
     // cmService.insertDmstSosCnfdocAply({ aplcntNm, aplcntTelno, aplyRsn }) → 성공 시 목록 재조회
   }
   // 제출 실패(신청사유 미입력) — 시트 스크롤 컨테이너에서 첫 에러 필드로 스크롤.
   const onAplyInvalid = () => {
-    document.getElementById('field-aplyRsn')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    document
+      .getElementById('field-aplyRsn')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
   // ── ⚠️ 임시 목업 검색/페이징 (API 연동 시 이 블록 통째로 삭제 후 재작성) ⚠️ ──────────
@@ -325,7 +334,11 @@ export function DmstSosCnfdocListPage() {
           <ButtonGroup
             items={[
               { label: '취소', variant: 'secondary', onClick: () => setAplyOpen(false) },
-              { label: '신청하기', variant: 'primary', onClick: handleSubmit(onAplySubmit, onAplyInvalid) },
+              {
+                label: '신청하기',
+                variant: 'primary',
+                onClick: handleSubmit(onAplySubmit, onAplyInvalid),
+              },
             ]}
           />
         }
@@ -373,11 +386,6 @@ export function DmstSosCnfdocListPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{ label: '확인', onClick: handlePrintConfirm }}
       />
-
-      {/* 신청 완료 토스트(설계서 slide139 '신청 되었습니다.') */}
-      <Toast open={toastOpen} onClose={() => setToastOpen(false)}>
-        신청 되었습니다.
-      </Toast>
       <OzReportFullPopup {...oz.popupProps} />
     </div>
   )

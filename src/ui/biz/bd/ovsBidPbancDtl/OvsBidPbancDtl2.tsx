@@ -3,33 +3,41 @@
 // 행별 넘버링·서류명 라벨과 타이틀 topDivider 는 두지 않는다(사용자 확정 2026-08-24).
 // 데이터는 목업(추후 bdService.selectAtchDocList).
 // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제. 키 = fileId.
-import { useState } from 'react'
 
 import { fbQueries } from '@/queries/tss/fb/fbQueries'
 import { saveBlob } from '@/utils/download'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { formatFileSize } from '@/utils/format'
 import type { MockOvsAtchDoc } from '@/types/mock/bd'
 
 // 첨부서류 목업 — PC 실 인터페이스(ovsBidPbancDtl.IResultAttach) 키. 설계서 slide292 Layout 값 기반.
 const MOCK_DOC_LIST: MockOvsAtchDoc[] = [
-  { docTitl: '입찰공고문', fileNm: '입찰공고문(EFD0007-2).hwp', fileSz: 804_864, fileId: 'ATCH-1001' },
+  {
+    docTitl: '입찰공고문',
+    fileNm: '입찰공고문(EFD0007-2).hwp',
+    fileSz: 804_864,
+    fileId: 'ATCH-1001',
+  },
   { docTitl: '입찰유의서', fileNm: '국외입찰유의서.hwp', fileSz: 1_258_291, fileId: 'ATCH-1002' },
-  { docTitl: '계약특수조건', fileNm: '계약특수조건(500MD부품).pdf', fileSz: 2_516_582, fileId: 'ATCH-1003' },
+  {
+    docTitl: '계약특수조건',
+    fileNm: '계약특수조건(500MD부품).pdf',
+    fileSz: 2_516_582,
+    fileId: 'ATCH-1003',
+  },
 ]
 
 export function OvsBidPbancDtl2() {
   const downloadFile = fbQueries.useDownloadFile()
-  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
 
   // 다운로드 — fileId(GUID) 로 Blob 수신 → 원본 파일명으로 저장. 실패는 토스트 안내.
   const handleDownload = async (guid: string, fileNm: string) => {
     try {
       saveBlob(await downloadFile.mutateAsync(guid), fileNm)
     } catch {
-      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -51,11 +59,6 @@ export function OvsBidPbancDtl2() {
           }))}
         />
       </div>
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
     </>
   )
 }

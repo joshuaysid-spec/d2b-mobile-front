@@ -9,7 +9,6 @@
 //   ②-1 공고일반의 '공사번호'는 용역인 경우 '조달번호'로 표기(prcmNo 동일 항목).
 //   ⑤ 사전심사결과는 심사 완료면 합격/불합격, 심사중이면 '심사중'(점수·확정일시는 '-')
 //      — v1.83 의 '결과 전 숨김'에서 v1.86 으로 변경됨.
-import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { fbQueries } from '@/queries/tss/fb/fbQueries'
@@ -21,7 +20,7 @@ import { Infobox } from '@/ui/common/composites/Infobox'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
 import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import type { MockBidPrgrsItem } from '@/types/mock/bd'
@@ -160,7 +159,6 @@ export function BfhdSrngRsltInqPage({ mode = 'rslt' }: { mode?: BfhdSrngInqMode 
   const screenNm = mode === 'aply' ? '사전심사(PQ) 신청조회' : '사전심사(PQ) 결과조회'
 
   const downloadFile = fbQueries.useDownloadFile()
-  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
   const oz = useOzReport() // 출력 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서)
 
   // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
@@ -169,7 +167,7 @@ export function BfhdSrngRsltInqPage({ mode = 'rslt' }: { mode?: BfhdSrngInqMode 
     try {
       saveBlob(await downloadFile.mutateAsync(guid), fileNm)
     } catch {
-      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -248,9 +246,7 @@ export function BfhdSrngRsltInqPage({ mode = 'rslt' }: { mode?: BfhdSrngInqMode 
                       name: f.fileNm,
                       size: f.fileSz,
                       onDownload:
-                        mode === 'rslt'
-                          ? () => handleDownload(f.id, f.fileNm)
-                          : undefined,
+                        mode === 'rslt' ? () => handleDownload(f.id, f.fileNm) : undefined,
                     },
                   ]}
                 />
@@ -263,11 +259,6 @@ export function BfhdSrngRsltInqPage({ mode = 'rslt' }: { mode?: BfhdSrngInqMode 
           <Table rows={rsltRows} />
         </AccordionSection>
       </Accordion>
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
       <OzReportFullPopup {...oz.popupProps} />
     </div>
   )

@@ -4,14 +4,13 @@
 //   ⚠️ slide183 은 탭 하이라이트가 '1. 일반정보' 인 연속 슬라이드라 업체내역·입찰공고 첨부서류를 이 탭에 둔다
 //      (슬라이드 머리글의 T02 표기는 구간 표기 오기로 판단).
 // 항목명/형식은 작성판 일반정보(M05, dmt_bidPbancInfo·dmt_bzentyInfo)와 동일 — 조회판은 값 표시만 한다.
-import { useState } from 'react'
 
 import { fbQueries } from '@/queries/tss/fb/fbQueries'
 import { saveBlob } from '@/utils/download'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { FileDownloadList, type FileDownloadItem } from '@/ui/common/composites/FileDownloadList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 입찰공고 첨부서류(설계서 slide183) — 다운로드 전용.
@@ -22,7 +21,6 @@ const PBANC_FILES: FileDownloadItem[] = [
 
 export function BidPrtcpAperDtl_Tab1({ detail }: { detail: MockBidPrgrsItem }) {
   const downloadFile = fbQueries.useDownloadFile()
-  const [toast, setToast] = useState<string | null>(null) // 다운로드 실패 토스트(null=닫힘)
 
   // 다운로드 실배선(목업 GUID, 2026-09-02 사용자 확정) — CmdtyElctrCtrtPrgrsDtl_Adoc 패턴 복제.
   // ⚠️ 임시 GUID(행 id) — 백엔드 응답에 파일 GUID 확정 시 교체.
@@ -30,7 +28,7 @@ export function BidPrtcpAperDtl_Tab1({ detail }: { detail: MockBidPrgrsItem }) {
     try {
       saveBlob(await downloadFile.mutateAsync(guid), fileNm)
     } catch {
-      setToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -89,11 +87,6 @@ export function BidPrtcpAperDtl_Tab1({ detail }: { detail: MockBidPrgrsItem }) {
           }))}
         />
       </div>
-
-      {/* 다운로드 실패 토스트 */}
-      <Toast open={toast !== null} onClose={() => setToast(null)} duration={2000}>
-        {toast}
-      </Toast>
     </>
   )
 }

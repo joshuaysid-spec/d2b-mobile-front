@@ -18,7 +18,7 @@ import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { CertCard } from '@/ui/biz/cm/crtfMng/CertCard'
 import { MOCK_CERTS } from '@/ui/biz/cm/crtfMng/certMock'
 import { IndvIdntIdnty_CrtfCnfrm } from '@/ui/biz/cm/indvIdntIdnty/IndvIdntIdnty_CrtfCnfrm'
@@ -32,10 +32,6 @@ export function IndvIdntIdntyPage() {
   const [confirmCert, setConfirmCert] = useState<MockCertItem | null>(null) // 선택된 인증서(=확인 시트 열림, slide201)
   const [password, setPassword] = useState('')
   const [authError, setAuthError] = useState<string | null>(null)
-  const [toast, setToast] = useState<{ open: boolean; message: string }>({
-    open: false,
-    message: '',
-  })
 
   // 인증서 선택(slide200) → 확인 시트(slide201) 로 전환.
   const handleSelectCert = (cert: MockCertItem) => {
@@ -61,7 +57,7 @@ export function IndvIdntIdntyPage() {
     }
     console.log('[IndvIdntIdnty] 개인 신원 확인 완료', confirmCert.id)
     closeConfirm()
-    setToast({ open: true, message: '인증이 완료되었습니다.' })
+    showToast('인증이 완료되었습니다.')
   }
 
   return (
@@ -70,7 +66,13 @@ export function IndvIdntIdntyPage() {
       <div className="flex flex-1 flex-col items-center justify-center gap-krds-7 px-4 py-8">
         {/* 아이콘 박스 — 80px, rounded-27, border-field, 흰 bg */}
         <div className="flex size-20 items-center justify-center rounded-[27px] border-[1.333px] border-krds-border-field bg-background p-krds-7">
-          <Icon name="VerifiedUser" size={40} fill={1} aria-hidden className="text-krds-text-primary" />
+          <Icon
+            name="VerifiedUser"
+            size={40}
+            fill={1}
+            aria-hidden
+            className="text-krds-text-primary"
+          />
         </div>
         {/* 안내문 — 24px Bold 중앙 */}
         <p className="text-center text-[24px] font-bold leading-normal text-krds-text-ink">
@@ -129,11 +131,6 @@ export function IndvIdntIdntyPage() {
           />
         )}
       </BottomSheet>
-
-      {/* 인증 완료 토스트 — 랜딩 복귀 후 표시. */}
-      <Toast open={toast.open} onClose={() => setToast((t) => ({ ...t, open: false }))} duration={2000}>
-        {toast.message}
-      </Toast>
     </div>
   )
 }

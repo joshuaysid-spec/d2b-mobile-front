@@ -15,7 +15,7 @@ import { ROUTES } from '@/constants/routes'
 import { Notice } from '@/ui/common/composites/Notice'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { CabinetHelpDisclosure } from '@/ui/biz/cm/digitalCabinet/CabinetHelpDisclosure'
 import { CabinetFolderList } from '@/ui/biz/cm/digitalCabinet/CabinetFolderList'
@@ -31,7 +31,6 @@ export function DigitalCabinetPage() {
   // P15 권한설정 시트 — 대상 폴더 + 편집 중 권한값(userNm → authrtSe). 페이지가 소유(저장이 footer).
   const [permFolder, setPermFolder] = useState<MockDigitalCabinetFldr | null>(null)
   const [permDraft, setPermDraft] = useState<Record<string, MockDigitalCabinetAuthrtSe>>({})
-  const [toastOpen, setToastOpen] = useState(false)
 
   const showPermBtn = MOCK_IS_REPRESENTATIVE
 
@@ -50,7 +49,7 @@ export function DigitalCabinetPage() {
   const handleSavePerm = () => {
     console.log('[DigitalCabinet] 권한 저장', permFolder?.fldrSn, permDraft) // 추후: cmService.saveAuthrt(...)
     setPermFolder(null)
-    setToastOpen(true) // 설계서 slide109: 저장 시 토스트("변경 저장 되었습니다.")
+    showToast('변경 저장 되었습니다.') // 설계서 slide109: 저장 시 토스트("변경 저장 되었습니다.")
   }
 
   return (
@@ -104,11 +103,6 @@ export function DigitalCabinetPage() {
           />
         )}
       </BottomSheet>
-
-      {/* 저장 완료 토스트 (설계서 slide109) */}
-      <Toast open={toastOpen} onClose={() => setToastOpen(false)} duration={2000}>
-        변경 저장 되었습니다.
-      </Toast>
     </div>
   )
 }

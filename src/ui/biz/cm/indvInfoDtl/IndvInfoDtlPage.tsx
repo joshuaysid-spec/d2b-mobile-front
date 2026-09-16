@@ -22,7 +22,7 @@ import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { Switch } from '@/ui/common/base/Switch'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { HelpDisclosure } from '@/ui/common/composites/HelpDisclosure'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { formatPhoneInput } from '@/utils/format'
 import {
   indvInfoMdfcnSchema,
@@ -57,7 +57,6 @@ export function IndvInfoDtlPage() {
   const [editMode, setEditMode] = useState(false)
   // 저장된 수정 가능 항목 값 — 저장 시 갱신(추후 API 응답으로 교체).
   const [info, setInfo] = useState<IndvInfoMdfcnForm>(INITIAL_EDITABLE)
-  const [toastOpen, setToastOpen] = useState(false)
 
   // 수신 설정 — 상세에선 조회만, 수정 상태에서 토글 가능(설계서 slide200 수신 설정 포함).
   const [recv, setRecv] = useState({ mbtlnum: true, email: true })
@@ -83,11 +82,13 @@ export function IndvInfoDtlPage() {
   const onSaveValid = (values: IndvInfoMdfcnForm) => {
     setInfo(values)
     setEditMode(false)
-    setToastOpen(true)
+    showToast('개인정보를 수정하였습니다.')
     console.log('[IndvInfoDtl] 개인정보 수정 저장', { ...values, recv }) // 추후 API: cmService.updateIndvInfo
   }
   const onSaveInvalid = () => {
-    document.getElementById('field-emlAddr')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    document
+      .getElementById('field-emlAddr')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
   // 수정 가능 필드 공통 렌더 — Controller + InputBox(에러 표시는 InputMessage).
@@ -214,11 +215,6 @@ export function IndvInfoDtlPage() {
           </div>
         </>
       )}
-
-      {/* 저장 완료 토스트(설계서 slide200 '개인정보를 수정하였습니다.') */}
-      <Toast open={toastOpen} onClose={() => setToastOpen(false)}>
-        개인정보를 수정하였습니다.
-      </Toast>
     </div>
   )
 }

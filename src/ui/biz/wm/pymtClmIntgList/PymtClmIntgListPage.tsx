@@ -19,7 +19,7 @@ import { ListSectionHeader } from '@/ui/common/composites/ListSectionHeader'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
 import { PymtClmIntgAplyList } from '@/ui/biz/wm/pymtClmIntgList/PymtClmIntgAplyList'
 import { PymtClmGdntcFullPopup } from '@/ui/biz/wm/centerPrcmPymtClmDtl/PymtClmGdntcFullPopup'
@@ -135,8 +135,6 @@ export function PymtClmIntgListPage() {
   )
   // P13 신청목록 바텀시트 — 선택한 계약(진행중 청구 보유 건). null=닫힘.
   const [pickedCtrt, setPickedCtrt] = useState<MockPymtClmListItem | null>(null)
-  // 진행중 청구 없음 토스트(slide17)
-  const [toastOpen, setToastOpen] = useState(false)
   // 대금청구 안내문(MUI-WM-01-P09) 풀팝업
   const [gdntcOpen, setGdntcOpen] = useState(false)
 
@@ -160,7 +158,7 @@ export function PymtClmIntgListPage() {
   // 카드 클릭(slide17) — 진행중 청구 있으면 P13 바텀시트, 없으면 토스트.
   const handleCardClick = (item: MockPymtClmListItem) => {
     if (item.pymtClmExstYn !== 'Y') {
-      setToastOpen(true)
+      showToast('진행중인 대금청구건이 없는 계약입니다.')
       return
     }
     setPickedCtrt(item)
@@ -247,7 +245,12 @@ export function PymtClmIntgListPage() {
           onSearch={handleQuickSearch}
         />
         {/* 안내문(MUI-WM-01-P09 대금청구 안내문, slide16 6]) */}
-        <Button variant="secondary" size="sm" className="self-end" onClick={() => setGdntcOpen(true)}>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="self-end"
+          onClick={() => setGdntcOpen(true)}
+        >
           안내문
         </Button>
       </div>
@@ -321,11 +324,6 @@ export function PymtClmIntgListPage() {
 
       {/* 대금청구 안내문(MUI-WM-01-P09) 풀팝업 */}
       <PymtClmGdntcFullPopup open={gdntcOpen} onOpenChange={setGdntcOpen} />
-
-      {/* 진행중 청구 없음 토스트(slide17) */}
-      <Toast open={toastOpen} onClose={() => setToastOpen(false)} duration={2000}>
-        진행중인 대금청구건이 없는 계약입니다.
-      </Toast>
     </div>
   )
 }

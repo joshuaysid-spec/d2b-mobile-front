@@ -24,7 +24,7 @@ import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { FileAdd, type FileAddDoneFile, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import { Toast } from '@/ui/common/composites/Toast'
+import { showToast } from '@/stores/authStore'
 import {
   dfEqpmntTradeAgncChgSchema,
   type DfEqpmntTradeAgncChgForm,
@@ -58,8 +58,20 @@ const MOCK_INFO: MockDfEqpmntTradeAgncAplyInfo = {
 
 // ── 변경 첨부서류(dl_dfEqpmntTradAgncAplyAtchFileList, 설계서 slide186) — 증빙서류*·등록증*·기타. 초기: 증빙서류만 첨부. ──
 const INITIAL_FILES: MockDfEqpmntTradeAgncAtchFile[] = [
-  { id: '1', fileTtl: '변경사항을 입증할 수 있는 증빙서류', fileNm: '첨부파일명.hwp', size: '786KB', regYmd: '2026-01-01', required: true },
-  { id: '2', fileTtl: '등록증(등록증 기재사항을 변경하는 경우만 해당)', fileNm: '', required: true },
+  {
+    id: '1',
+    fileTtl: '변경사항을 입증할 수 있는 증빙서류',
+    fileNm: '첨부파일명.hwp',
+    size: '786KB',
+    regYmd: '2026-01-01',
+    required: true,
+  },
+  {
+    id: '2',
+    fileTtl: '등록증(등록증 기재사항을 변경하는 경우만 해당)',
+    fileNm: '',
+    required: true,
+  },
   { id: '3', fileTtl: '기타(파일이 여러 개일 경우 압축해서 첨부 가능)', fileNm: '' },
 ]
 const DOC_TITLES = INITIAL_FILES.map((f) => f.fileTtl)
@@ -89,7 +101,10 @@ function Bullets({ items }: { items: React.ReactNode[] }) {
     <ul className="flex flex-col gap-krds-3">
       {items.map((it, i) => (
         <li key={i} className="flex gap-krds-3 text-[15px] leading-normal text-krds-text-muted">
-          <span aria-hidden className="mt-[0.5em] size-1 shrink-0 rounded-full bg-krds-text-muted" />
+          <span
+            aria-hidden
+            className="mt-[0.5em] size-1 shrink-0 rounded-full bg-krds-text-muted"
+          />
           <span className="min-w-px flex-1 wrap-break-word">{it}</span>
         </li>
       ))}
@@ -126,7 +141,6 @@ export function DfEqpmntTradeAgncChgPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null) // 파일삭제 확인(83442)
   const [consentOpen, setConsentOpen] = useState(false) // 동의 시트(83444)
   const [submitConfirmOpen, setSubmitConfirmOpen] = useState(false) // 제출 확인(83449)
-  const [toastMsg, setToastMsg] = useState<string | null>(null)
 
   const { control, handleSubmit, setValue } = useForm<DfEqpmntTradeAgncChgForm>({
     resolver: zodResolver(dfEqpmntTradeAgncChgSchema),
@@ -142,7 +156,7 @@ export function DfEqpmntTradeAgncChgPage() {
     try {
       saveBlob(await downloadFileMut.mutateAsync(guid), fileNm)
     } catch {
-      setToastMsg('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      showToast('파일 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.')
     }
   }
 
@@ -208,14 +222,25 @@ export function DfEqpmntTradeAgncChgPage() {
       }
       return [
         ...prev,
-        { id: f0.id, fileTtl: docNm, fileNm: f0.name, size: f0.size, regYmd: today, required: docNm !== '기타' },
+        {
+          id: f0.id,
+          fileTtl: docNm,
+          fileNm: f0.name,
+          size: f0.size,
+          regYmd: today,
+          required: docNm !== '기타',
+        },
       ]
     })
     console.log('[M18] 파일 추가', docNm, f0.name, f0.uploaded)
   }
   const confirmDelete = () => {
     if (!deleteId) return
-    setFiles((prev) => prev.map((f) => (f.id === deleteId ? { ...f, fileNm: '', size: undefined, regYmd: undefined } : f)))
+    setFiles((prev) =>
+      prev.map((f) =>
+        f.id === deleteId ? { ...f, fileNm: '', size: undefined, regYmd: undefined } : f,
+      ),
+    )
     console.log('[M18] 첨부 삭제', deleteId)
     setDeleteId(null)
   }
@@ -224,17 +249,17 @@ export function DfEqpmntTradeAgncChgPage() {
   const [refreshedToday, setRefreshedToday] = useState(false)
   const handleRefreshG2b = () => {
     if (refreshedToday) {
-      setToastMsg('갱신은 1일 1회로 제한됩니다.')
+      showToast('갱신은 1일 1회로 제한됩니다.')
       return
     }
     console.log('[M18] 나라장터(G2B) 조달업체정보 갱신') // 추후 API: cmService.refreshG2b
     setRefreshedToday(true)
-    setToastMsg('갱신되었습니다.')
+    showToast('갱신되었습니다.')
   }
 
   // ── 저장/제출 — footer 직접 버튼(구 83451 선택 시트 폐기, 사용자 확정 2026-08-24) ──
   const handleSave = () => {
-    setToastMsg('저장되었습니다.')
+    showToast('저장되었습니다.')
     console.log('[M18] 저장하기', { files }) // 추후: cmService.updateDfEqpmntTradeAgnc(payload)
   }
   // 제출하기 → 제출 확인 모달(83449) 오픈.
@@ -242,10 +267,10 @@ export function DfEqpmntTradeAgncChgPage() {
   const onSubmitValid = () => {
     const missing = files.filter((f) => f.required && !f.fileNm)
     if (missing.length > 0) {
-      setToastMsg(`필수 첨부서류를 첨부해주세요. (${missing.map((m) => m.fileTtl).join(', ')})`)
+      showToast(`필수 첨부서류를 첨부해주세요. (${missing.map((m) => m.fileTtl).join(', ')})`)
       return
     }
-    setToastMsg('제출되었습니다.')
+    showToast('제출되었습니다.')
     console.log('[M18] 제출하기', { files }) // 추후: cmService.submitDfEqpmntTradeAgncChg(payload)
   }
   const onInvalid = () => {
@@ -272,11 +297,18 @@ export function DfEqpmntTradeAgncChgPage() {
           </span>
           <div className="flex min-w-px flex-1 flex-col gap-krds-3">
             <div className="flex items-center gap-krds-3">
-              <span className="text-[17px] font-medium leading-normal text-krds-text-muted">접수번호</span>
+              <span className="text-[17px] font-medium leading-normal text-krds-text-muted">
+                접수번호
+              </span>
               <span className="min-w-px flex-1 text-[17px] font-bold leading-normal text-krds-text-ink">
                 {MOCK_INFO.rcptNo}
               </span>
-              <Icon name="Info" size={18} className="shrink-0 text-krds-text-disabled-soft" aria-hidden />
+              <Icon
+                name="Info"
+                size={18}
+                className="shrink-0 text-krds-text-disabled-soft"
+                aria-hidden
+              />
             </div>
             <div>
               <Badge color="yellow">변경</Badge>
@@ -305,17 +337,30 @@ export function DfEqpmntTradeAgncChgPage() {
             ]}
           />
           <div className="flex flex-col gap-krds-8">
-            {files.filter((f) => f.fileNm).map((f) => (
-              <div key={f.id} className="flex flex-col gap-krds-3">
-                <div className="flex items-center justify-between gap-krds-5">
-                  <span className="text-[17px] font-medium leading-normal text-krds-text-ink">{f.fileTtl}</span>
-                  <span className="shrink-0 text-[15px] leading-normal text-krds-text-muted">{f.regYmd}</span>
+            {files
+              .filter((f) => f.fileNm)
+              .map((f) => (
+                <div key={f.id} className="flex flex-col gap-krds-3">
+                  <div className="flex items-center justify-between gap-krds-5">
+                    <span className="text-[17px] font-medium leading-normal text-krds-text-ink">
+                      {f.fileTtl}
+                    </span>
+                    <span className="shrink-0 text-[15px] leading-normal text-krds-text-muted">
+                      {f.regYmd}
+                    </span>
+                  </div>
+                  <FileDownloadList
+                    files={[
+                      {
+                        id: f.id,
+                        name: f.fileNm as string,
+                        size: f.size,
+                        onRemove: () => setDeleteId(f.id),
+                      },
+                    ]}
+                  />
                 </div>
-                <FileDownloadList
-                  files={[{ id: f.id, name: f.fileNm as string, size: f.size, onRemove: () => setDeleteId(f.id) }]}
-                />
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </section>
@@ -407,11 +452,7 @@ export function DfEqpmntTradeAgncChgPage() {
         }
       >
         {addOpen && (
-          <FileAdd
-            ref={fileAddRef}
-            docNmOptions={DOC_TITLES}
-            onComplete={handleAttach}
-          />
+          <FileAdd ref={fileAddRef} docNmOptions={DOC_TITLES} onComplete={handleAttach} />
         )}
       </BottomSheet>
 
@@ -451,7 +492,6 @@ export function DfEqpmntTradeAgncChgPage() {
         </p>
       </BottomSheet>
 
-
       {/* 제출 확인 모달(Figma 10020:83449) — [취소][확인]. */}
       <AlertModal
         open={submitConfirmOpen}
@@ -461,11 +501,6 @@ export function DfEqpmntTradeAgncChgPage() {
         secondaryAction={{ label: '취소' }}
         primaryAction={{ label: '확인', onClick: handleSubmit(onSubmitValid, onInvalid) }}
       />
-
-      {/* 저장/제출 결과 토스트. */}
-      <Toast open={toastMsg !== null} onClose={() => setToastMsg(null)} duration={2000}>
-        {toastMsg}
-      </Toast>
     </div>
   )
 }
