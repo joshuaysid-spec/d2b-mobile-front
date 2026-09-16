@@ -7,6 +7,7 @@ import type { MockUser } from '@/types/mock/domain'
 // 인증(토큰/로그인) · 사용자 프로필 · 알림 배지를 한 store 로 관리한다.
 // BottomNav 등 범용 컴포넌트는 이 store 를 직접 import 하지 않는다 — AppLayout 이 구독해 prop 으로 주입.
 // 알림 갱신 소스(초기 조회 / 네이티브 푸시 브리지 / 읽음 처리)가 여러 개라 setter 를 함께 둠.
+// 전역 토스트도 여기 둔다 — 화면별 store 분리 금지 규칙에 따라 store 는 이 하나로 유지.
 interface AuthState {
   // --- 인증 ---
   accessToken: string | null
@@ -25,6 +26,20 @@ interface AuthState {
   setHasUnread: (hasUnread: boolean) => void
   /** 알림 화면 진입 등 읽음 처리 시 dot 제거용 단축 setter. */
   markAllRead: () => void
+
+  // --- 전역 토스트 ---
+  /** 현재 안내 토스트(null=없음). 렌더는 App 최상위의 GlobalToast 하나가 담당. */
+  toast: ToastState | null
+  /** 토스트 띄우기 — 화면·훅 어디서든. 모듈 함수 showToast 로도 호출된다. */
+  showToast: (message: string, duration?: number) => void
+  hideToast: () => void
+}
+
+/** 전역 토스트 1건. seq 는 같은 문구 연속 호출도 다시 뜨게 하는 구분자. */
+interface ToastState {
+  message: string
+  duration?: number
+  seq: number
 }
 
 // 목업 모드: 로그인 상태 기본값 — 업체담당자 전용 화면(국외 보관함 등) 테스트용.
@@ -59,4 +74,17 @@ export const useAuthStore = create<AuthState>((set) => ({
   hasUnread: false,
   setHasUnread: (hasUnread) => set({ hasUnread }),
   markAllRead: () => set({ hasUnread: false }),
+
+  toast: null,
+  showToast: (message, duration) =>
+    set((s) => ({ toast: { message, duration, seq: (s.toast?.seq ?? 0) + 1 } })),
+  hideToast: () => set({ toast: null }),
 }))
+
+/**
+ * 전역 토스트 단축 호출 — React 컴포넌트 밖(쿼리 훅 onSuccess, 이벤트 핸들러)에서도 쓴다.
+ *   showToast('저장되었습니다.')
+ * 화면마다 useState + <Toast> 를 두지 않는다(렌더는 GlobalToast 하나).
+ */
+export const showToast = (message: string, duration?: number) =>
+  useAuthStore.getState().showToast(message, duration)
