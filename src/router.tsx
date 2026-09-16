@@ -1043,6 +1043,11 @@ const ComponentGuidePage = lazy(() =>
     default: m.ComponentGuidePage,
   })),
 )
+const UsageGuidePage = lazy(() =>
+  import('@/ui/dev/UsageGuidePage').then((m) => ({
+    default: m.UsageGuidePage,
+  })),
+)
 
 // '/' 레이아웃 라우트 아래에 페이지들을 children 으로 배치.
 // Suspense(로딩)는 AppLayout 내부에서, 에러(청크 로드 실패·렌더 throw·404)는
@@ -2460,6 +2465,16 @@ export const router = createBrowserRouter([
     element: (
       <Suspense fallback={<PageLoading />}>
         <ComponentGuidePage />
+      </Suspense>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  // 개발자용 사용 가이드(공통 컴포넌트 사용 규약) — 위 카탈로그와 같은 조건(셸 밖, PC 전용).
+  {
+    path: ROUTES.GUIDE_USAGE,
+    element: (
+      <Suspense fallback={<PageLoading />}>
+        <UsageGuidePage />
       </Suspense>
     ),
     errorElement: <ErrorPage />,

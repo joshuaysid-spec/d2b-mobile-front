@@ -277,6 +277,8 @@ export const ROUTES = {
   SETTINGS: '/settings',
   /** 개발자용 컴포넌트 가이드 (PC 해상도, 모바일 셸 미적용). */
   GUIDE: '/guide',
+  /** 개발자용 사용 가이드 — 공통 컴포넌트 사용 규약/코드 (PC 해상도, 모바일 셸 미적용). */
+  GUIDE_USAGE: '/guide/usage',
 } as const
 
 export type RouteKey = keyof typeof ROUTES

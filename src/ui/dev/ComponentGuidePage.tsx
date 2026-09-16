@@ -4,7 +4,9 @@
  * base / composites 컴포넌트의 variant/size/state 를 한눈에 확인하기 위한 개발 참고 화면.
  */
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
+import { ROUTES } from '@/constants/routes'
 import { cn } from '@/utils/cn'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { Badge } from '@/ui/common/base/Badge'
@@ -219,6 +221,23 @@ export function ComponentGuidePage() {
         <div className="mx-auto flex max-w-[1200px] items-baseline gap-3 px-8 py-5">
           <h1 className="text-krds-heading-md font-bold text-foreground">D2B 컴포넌트 가이드</h1>
           <span className="text-krds-body-sm text-krds-text-muted">개발자용 컴포넌트 카탈로그</span>
+          {/* 카탈로그(이 화면) ↔ 사용 가이드 상호 이동. */}
+          <nav className="ml-auto flex items-center gap-1 self-center">
+            <Link
+              to={ROUTES.GUIDE}
+              aria-current="page"
+              className="rounded-krds-sm bg-krds-bg-primary-subtle px-3 py-1 text-krds-body-sm font-bold text-krds-text-primary"
+            >
+              카탈로그
+            </Link>
+            <span className="text-krds-text-disabled">|</span>
+            <Link
+              to={ROUTES.GUIDE_USAGE}
+              className="rounded-krds-sm px-3 py-1 text-krds-body-sm text-krds-text-muted hover:bg-muted hover:text-krds-text-primary"
+            >
+              사용 가이드
+            </Link>
+          </nav>
         </div>
       </header>
 
