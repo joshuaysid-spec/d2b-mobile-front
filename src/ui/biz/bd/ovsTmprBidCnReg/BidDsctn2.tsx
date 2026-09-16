@@ -9,6 +9,7 @@
 // 이벤트(설계서 slide319): 입찰금액 변경 → 달러금액 계산 · 화폐단위 변경 → 달러금액/달러환산율 계산
 //   (폼 값이 아니라 입력값에서 매 렌더 파생 계산 — calcAlonbsBidCn).
 import * as React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Controller, useForm, type FieldErrors } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -99,6 +100,8 @@ export function BidDsctn2({ detail }: { detail: MockBscPbancInfo }) {
     })
   }, [saved, reset])
 
+  const navigate = useNavigate()
+  // 저장 완료 안내 — 확인 시 국외 보관함 목록으로(설계서 slide424 '저장 후 목록 이동').
   const [savedOpen, setSavedOpen] = React.useState(false)
   const [deleteOpen, setDeleteOpen] = React.useState(false)
 
@@ -249,7 +252,7 @@ export function BidDsctn2({ detail }: { detail: MockBscPbancInfo }) {
         onOpenChange={setSavedOpen}
         variant="check"
         title="입찰내역이 저장되었습니다."
-        primaryAction={{ label: '확인' }}
+        primaryAction={{ label: '확인', onClick: () => navigate('/bd/ovs/locker') }}
       />
 
       {/* 삭제 확인 모달 — 작성한 입찰내역 초기화 */}

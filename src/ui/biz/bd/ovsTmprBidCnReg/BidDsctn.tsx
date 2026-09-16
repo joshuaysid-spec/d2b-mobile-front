@@ -15,6 +15,7 @@
 //     (폼 값이 아니라 입력값에서 매 렌더 파생 계산 — calcItitbBidCn)
 //   - 업로드 클릭 → 첨부문서업로드 팝업(UI-BD-04-P75) 호출 — 목업은 console.log + 파일명 스텁
 import * as React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Controller, useForm, type FieldErrors } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -195,6 +196,10 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
 
   // ── 입찰내역 저장 — 필수값(입찰업체·화폐단위·입찰단가) + 조건부 필수(Replace) 는 zod 스키마가 검증 ──
   //   2026-09-01 사용자 확정: 필수값이 모두 입력되어야 저장 가능.
+  const navigate = useNavigate()
+  // 저장 완료 안내 — 확인 시 국외 보관함 목록으로(설계서 slide423 '저장 후 목록 이동').
+  const [savedOpen, setSavedOpen] = React.useState(false)
+
   const handleSave = (values: ItitbBidCnValues) => {
     // 저장 payload — 품목 기본정보 + 편집값 + 파생 계산값(입찰금액/달러환산율/달러단가/달러금액).
     const payload: MockItitbBidCnItem[] = items.map((item, i) => ({
@@ -205,7 +210,7 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
     }))
     console.log('[T75] 입찰내역 저장(암호화)', detail.intgRfrncNo, payload)
     // 추후 API: bdService.saveTmprBidCn(intgRfrncNo, payload) — 임시입찰내용저장
-    setNotice({ open: true, variant: 'check', title: '입찰내역이 저장되었습니다.' })
+    setSavedOpen(true)
   }
 
   // 실패 시: 첫 에러 품목이 더보기 범위 밖이면 그 페이지까지 늘리고, 카드를 펼친 뒤(렌더 후) 앵커로 포커스+스크롤.
@@ -554,6 +559,15 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
       </div>
 
       {/* 안내/저장완료 모달 — 필수 미입력은 항목별 InputMessage 로 표시(모달 안내 폐기, 2026-09-16) */}
+      {/* 저장완료 — 확인 시 국외 보관함 목록(MUI-CM-01-M71)으로 이동(설계서 slide423). */}
+      <AlertModal
+        open={savedOpen}
+        onOpenChange={setSavedOpen}
+        variant="check"
+        title="입찰내역이 저장되었습니다."
+        primaryAction={{ label: '확인', onClick: () => navigate('/bd/ovs/locker') }}
+      />
+
       <AlertModal
         open={notice.open}
         onOpenChange={(o) => setNotice((m) => ({ ...m, open: o }))}
