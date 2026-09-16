@@ -1,8 +1,11 @@
 // 국외 공개수의협상 견적서 작성(제출) 마법사 - 스탭1 일반정보 + 셸 (MUI-BD-12-M74 컨테이너 · 스탭1 일반정보 T74(구 M74 탭 — v1.83 재편), 설계서 slide419~420).
 // 진입: 공개수의협상계획상세 > 우측 하단 + 바로가기 > 견적서 작성. 레퍼런스: OvsTndrSbmsnPage.
 // 셸: SummaryInfo + StepBar(신청서/서명/제출) + TabList(4스텝) + 스텝콘텐츠 + 하단 액션바(asymmetric). FAB 없음.
+// 검증(2026-09-16 사용자 확정 "다음 누를 때 검증"): 입력 탭(T76 입찰품목)은 자기 useForm+zod 를 갖고 ref.submit() 으로 제출,
+//   페이지 [다음으로]는 현재 탭만 검증 → 통과 시 확정값 보관 후 다음 탭(되돌아오면 defaultValues 재주입). 조회 탭(T74·T75)은 통과.
+//   T77 첨부는 서류별 필수 규칙 설계서 미기재 → 검증 없음(국외 참가신청 T75 선례). 규칙 확정 시 같은 패턴으로 추가.
 // ⚠️ 페이지(헤더) 타이틀 = '견적서 작성'(라우트 handle). 설계서 우선.
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
@@ -14,7 +17,12 @@ import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsRlsVltrnsNgtnEtdcSbmsn2 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcSbmsnPage/OvsRlsVltrnsNgtnEtdcSbmsn2'
-import { OvsRlsVltrnsNgtnEtdcSbmsn3 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcSbmsnPage/OvsRlsVltrnsNgtnEtdcSbmsn3'
+import {
+  OvsRlsVltrnsNgtnEtdcSbmsn3,
+  type EtdcStp3Handle,
+} from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcSbmsnPage/OvsRlsVltrnsNgtnEtdcSbmsn3'
+import { ETDC_ITEMS_DEFAULT } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcSbmsnPage/ovsRlsVltrnsNgtnEtdcSbmsnMock'
+import type { EtdcItemsValues } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcSbmsnPage/OvsRlsVltrnsNgtnEtdcSbmsn.schema'
 import { OvsRlsVltrnsNgtnEtdcSbmsn4 } from '@/ui/biz/bd/ovsRlsVltrnsNgtnEtdcSbmsnPage/OvsRlsVltrnsNgtnEtdcSbmsn4'
 import type { MockOvsRlsVltrnsGeneral, MockOvsRlsVltrnsSummary } from '@/types/mock/bd'
 
@@ -66,12 +74,16 @@ const MOCK_GENERAL: MockOvsRlsVltrnsGeneral = {
   picMblTelno: '010-1234-5678',
 }
 
-const scrollTop = () => document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
+const scrollTop = () =>
+  document.getElementById('app-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
 
 export function OvsRlsVltrnsNgtnEtdcSbmsnPage() {
   const navigate = useNavigate()
   const summary = (useLocation().state as MockOvsRlsVltrnsSummary | null) ?? MOCK_SUMMARY
   const [tab, setTab] = useState('general')
+  // 입력 탭 확정값 — 페이지가 보관, 탭이 언마운트돼도 유지(되돌아올 때 defaultValues 로 재주입).
+  const [itemValues, setItemValues] = useState<EtdcItemsValues>(ETDC_ITEMS_DEFAULT)
+  const stp3Ref = useRef<EtdcStp3Handle>(null)
 
   const tabOrder = TABS.map((t) => t.value)
   const tabIdx = tabOrder.indexOf(tab)
@@ -82,12 +94,17 @@ export function OvsRlsVltrnsNgtnEtdcSbmsnPage() {
     scrollTop()
   }
   const handlePrev = () => (isFirst ? navigate(-1) : goTab(tabOrder[tabIdx - 1]))
+  const goNextTab = () => goTab(tabOrder[tabIdx + 1])
   const handleNext = () => {
-    if (!isLast) {
-      goTab(tabOrder[tabIdx + 1])
+    if (tab === 'item') {
+      stp3Ref.current?.submit() // 현재 탭만 검증 → 통과 시 onSubmit 에서 보관 + 다음 탭, 실패 시 이동 없이 첫 에러 포커스
       return
     }
-    console.log('[M74] 공개수의협상 견적서 제출', summary.intgRfrncNo) // 추후 API: bdService.insertEtdcSbmsn
+    if (!isLast) {
+      goNextTab()
+      return
+    }
+    console.log('[M74] 공개수의협상 견적서 제출', summary.intgRfrncNo, itemValues) // 추후 API: bdService.insertEtdcSbmsn
   }
 
   // 스탭1 일반정보 표 (slide420) — 계획상세 일반정보와 동일.
@@ -126,17 +143,30 @@ export function OvsRlsVltrnsNgtnEtdcSbmsnPage() {
       case 'bzenty':
         return <OvsRlsVltrnsNgtnEtdcSbmsn2 />
       case 'item':
-        return <OvsRlsVltrnsNgtnEtdcSbmsn3 />
+        return (
+          <OvsRlsVltrnsNgtnEtdcSbmsn3
+            ref={stp3Ref}
+            defaultValues={itemValues}
+            onSubmit={(values) => {
+              setItemValues(values)
+              goNextTab()
+            }}
+          />
+        )
       case 'file':
         return <OvsRlsVltrnsNgtnEtdcSbmsn4 />
       default:
         return (
           <>
-            <SectionTitle as="h3" topDivider>담당자 정보</SectionTitle>
+            <SectionTitle as="h3" topDivider>
+              담당자 정보
+            </SectionTitle>
             <div className="px-4 py-4">
               <Table rows={picRows} />
             </div>
-            <SectionTitle as="h3" topDivider>일반정보</SectionTitle>
+            <SectionTitle as="h3" topDivider>
+              일반정보
+            </SectionTitle>
             <div className="px-4 py-4">
               <Table rows={generalRows} />
             </div>
@@ -148,7 +178,10 @@ export function OvsRlsVltrnsNgtnEtdcSbmsnPage() {
   return (
     <div className="flex w-full flex-col">
       <SummaryInfo
-        badges={[{ key: 'task', label: summary.taskSeNm }, { key: 'ctrt', label: summary.ctrtMthdNm }]}
+        badges={[
+          { key: 'task', label: summary.taskSeNm },
+          { key: 'ctrt', label: summary.ctrtMthdNm },
+        ]}
         subtitle={`통합참조번호 ${summary.intgRfrncNo} / 공고번호 ${summary.pbancNo}`}
         title={summary.bizNm}
       />
@@ -163,7 +196,9 @@ export function OvsRlsVltrnsNgtnEtdcSbmsnPage() {
       <div className="px-4 pb-2 pt-4">
         <Infobox
           title="공지사항"
-          items={['[2025-12-22] 견적서 제출 전 공개수의협상 공고문 및 견적 유의사항을 반드시 확인하시기 바랍니다.']}
+          items={[
+            '[2025-12-22] 견적서 제출 전 공개수의협상 공고문 및 견적 유의사항을 반드시 확인하시기 바랍니다.',
+          ]}
         />
       </div>
 
