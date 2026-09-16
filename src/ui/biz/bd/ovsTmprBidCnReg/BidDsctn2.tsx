@@ -23,6 +23,7 @@ import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
+import { Toast } from '@/ui/common/composites/Toast'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import {
@@ -101,8 +102,8 @@ export function BidDsctn2({ detail }: { detail: MockBscPbancInfo }) {
   }, [saved, reset])
 
   const navigate = useNavigate()
-  // 저장 완료 안내 — 확인 시 국외 보관함 목록으로(설계서 slide424 '저장 후 목록 이동').
-  const [savedOpen, setSavedOpen] = React.useState(false)
+  // 저장 완료 토스트 — 닫히면 국외 보관함 목록으로(설계서 slide424 '토스트 후 목록 이동').
+  const [savedToast, setSavedToast] = React.useState(false)
   const [deleteOpen, setDeleteOpen] = React.useState(false)
 
   // 파생값(ReadOnly) — 입찰금액/화폐단위에서 매 렌더 계산(slide319 이벤트).
@@ -137,7 +138,7 @@ export function BidDsctn2({ detail }: { detail: MockBscPbancInfo }) {
     }
     console.log('[T76] 입찰내역 저장(암호화)', detail.intgRfrncNo, payload)
     // 추후 API: bdService.saveTmprBidCn(intgRfrncNo, payload) — 임시입찰내용저장
-    setSavedOpen(true)
+    setSavedToast(true)
   }
 
   // 실패 시 화면 순서대로 첫 에러 필드 포커스+스크롤.
@@ -246,14 +247,17 @@ export function BidDsctn2({ detail }: { detail: MockBscPbancInfo }) {
         />
       </div>
 
-      {/* 저장완료 모달 — 필수 미입력은 항목별 InputMessage 로 표시(모달 안내 폐기, 2026-09-16) */}
-      <AlertModal
-        open={savedOpen}
-        onOpenChange={setSavedOpen}
-        variant="check"
-        title="입찰내역이 저장되었습니다."
-        primaryAction={{ label: '확인', onClick: () => navigate('/bd/ovs/locker') }}
-      />
+      {/* 저장완료 — 설계서 slide423·424: 토스트 '저장되었습니다' 후 국외 보관함 목록(MUI-CM-01-M71)으로 이동. */}
+      <Toast
+        open={savedToast}
+        onClose={() => {
+          setSavedToast(false)
+          navigate('/bd/ovs/locker')
+        }}
+        duration={1500}
+      >
+        저장되었습니다.
+      </Toast>
 
       {/* 삭제 확인 모달 — 작성한 입찰내역 초기화 */}
       <AlertModal

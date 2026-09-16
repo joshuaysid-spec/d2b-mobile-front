@@ -31,6 +31,7 @@ import { InputMessage } from '@/ui/common/base/InputMessage'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
+import { Toast } from '@/ui/common/composites/Toast'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { Card } from '@/ui/common/composites/Card'
@@ -197,8 +198,8 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
   // ── 입찰내역 저장 — 필수값(입찰업체·화폐단위·입찰단가) + 조건부 필수(Replace) 는 zod 스키마가 검증 ──
   //   2026-09-01 사용자 확정: 필수값이 모두 입력되어야 저장 가능.
   const navigate = useNavigate()
-  // 저장 완료 안내 — 확인 시 국외 보관함 목록으로(설계서 slide423 '저장 후 목록 이동').
-  const [savedOpen, setSavedOpen] = React.useState(false)
+  // 저장 완료 토스트 — 닫히면 국외 보관함 목록으로(설계서 slide423 '토스트 후 목록 이동').
+  const [savedToast, setSavedToast] = React.useState(false)
 
   const handleSave = (values: ItitbBidCnValues) => {
     // 저장 payload — 품목 기본정보 + 편집값 + 파생 계산값(입찰금액/달러환산율/달러단가/달러금액).
@@ -210,7 +211,7 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
     }))
     console.log('[T75] 입찰내역 저장(암호화)', detail.intgRfrncNo, payload)
     // 추후 API: bdService.saveTmprBidCn(intgRfrncNo, payload) — 임시입찰내용저장
-    setSavedOpen(true)
+    setSavedToast(true)
   }
 
   // 실패 시: 첫 에러 품목이 더보기 범위 밖이면 그 페이지까지 늘리고, 카드를 펼친 뒤(렌더 후) 앵커로 포커스+스크롤.
@@ -558,15 +559,18 @@ export function BidDsctn({ detail }: { detail: MockBscPbancInfo }) {
         />
       </div>
 
-      {/* 안내/저장완료 모달 — 필수 미입력은 항목별 InputMessage 로 표시(모달 안내 폐기, 2026-09-16) */}
-      {/* 저장완료 — 확인 시 국외 보관함 목록(MUI-CM-01-M71)으로 이동(설계서 slide423). */}
-      <AlertModal
-        open={savedOpen}
-        onOpenChange={setSavedOpen}
-        variant="check"
-        title="입찰내역이 저장되었습니다."
-        primaryAction={{ label: '확인', onClick: () => navigate('/bd/ovs/locker') }}
-      />
+      {/* 안내 모달 — 필수 미입력은 항목별 InputMessage 로 표시(모달 안내 폐기, 2026-09-16) */}
+      {/* 저장완료 — 설계서 slide423·424: 토스트 '저장되었습니다' 후 국외 보관함 목록(MUI-CM-01-M71)으로 이동. */}
+      <Toast
+        open={savedToast}
+        onClose={() => {
+          setSavedToast(false)
+          navigate('/bd/ovs/locker')
+        }}
+        duration={1500}
+      >
+        저장되었습니다.
+      </Toast>
 
       <AlertModal
         open={notice.open}
