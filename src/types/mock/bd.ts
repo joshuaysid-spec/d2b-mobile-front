@@ -1896,13 +1896,6 @@ export interface MockRegBzentyRow {
   bizNm: string
 }
 
-/** 캐비닛(디지털 문서함) 파일 1건 (MUI-BD-04-P13). */
-export interface MockCabinetFile {
-  id: string
-  fileNm: string
-  fileSz: number
-}
-
 /** 동의서 1건 (MUI-BD-04-M14 입찰참가신청 · MUI-BD-06-M07 입찰서). */
 export interface MockAgreementDoc {
   id: string

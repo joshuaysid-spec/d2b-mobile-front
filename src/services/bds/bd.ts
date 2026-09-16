@@ -56,7 +56,6 @@ import type {
   MockBidSelectOption,
   MockBfrPbancBidCnItem,
   MockBfrPbancInfoItem,
-  MockCabinetFile,
   MockCnstwkLcnsRow,
   MockCrncOption,
   MockElsgnCert,
@@ -154,9 +153,12 @@ export const bdService = {
    */
   async selectBidPbancDtl(id: string): Promise<MockBidPrgrsItem> {
     if (USE_MOCK) return mockDelay(MOCK_BD.prgrsDetail)
-    return apiClient.post<MockBidPrgrsItem, MockBidPrgrsItem>('/bds/bd/bidPbanc/selectPbancGnrlInfo.do', {
-      pbancNo: id,
-    })
+    return apiClient.post<MockBidPrgrsItem, MockBidPrgrsItem>(
+      '/bds/bd/bidPbanc/selectPbancGnrlInfo.do',
+      {
+        pbancNo: id,
+      },
+    )
   },
 
   /**
@@ -192,7 +194,10 @@ export const bdService = {
    */
   async selectBdopnList(params?: MockBidListSearchRequest): Promise<MockBdopnItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.bdopnList)
-    return apiClient.post<MockBdopnItem[], MockBdopnItem[]>('/bds/bd/bidEnfrc/selectBdopnList.do', params)
+    return apiClient.post<MockBdopnItem[], MockBdopnItem[]>(
+      '/bds/bd/bidEnfrc/selectBdopnList.do',
+      params,
+    )
   },
 
   /**
@@ -215,10 +220,13 @@ export const bdService = {
    */
   async selectBidRslt(id: string, page: number): Promise<MockBidRsltRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.bidRsltList)
-    return apiClient.post<MockBidRsltRow[], MockBidRsltRow[]>('/bds/bd/bidRslt/selctBidRsltInfo.do', {
-      pbancNo: id,
-      page,
-    })
+    return apiClient.post<MockBidRsltRow[], MockBidRsltRow[]>(
+      '/bds/bd/bidRslt/selctBidRsltInfo.do',
+      {
+        pbancNo: id,
+        page,
+      },
+    )
   },
 
   /**
@@ -228,10 +236,13 @@ export const bdService = {
    */
   async selectNegoRslt(id: string, page: number): Promise<MockNegoRsltRow[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.negoList)
-    return apiClient.post<MockNegoRsltRow[], MockNegoRsltRow[]>('/bds/bd/bidRslt/selctBidRsltInfo.do', {
-      pbancNo: id,
-      page,
-    })
+    return apiClient.post<MockNegoRsltRow[], MockNegoRsltRow[]>(
+      '/bds/bd/bidRslt/selctBidRsltInfo.do',
+      {
+        pbancNo: id,
+        page,
+      },
+    )
   },
 
   /**
@@ -255,7 +266,9 @@ export const bdService = {
    */
   async selectPlrlRsrvPrcInfo(id: string): Promise<MockPlrlRsrvPrcInfo> {
     if (USE_MOCK) return mockDelay(MOCK_BD.plrlRsrvPrcInfo)
-    return apiClient.post<MockPlrlRsrvPrcInfo, MockPlrlRsrvPrcInfo>(`/v1/bds/bdopns/${id}/reserve-prices`)
+    return apiClient.post<MockPlrlRsrvPrcInfo, MockPlrlRsrvPrcInfo>(
+      `/v1/bds/bdopns/${id}/reserve-prices`,
+    )
   },
 
   /**
@@ -388,7 +401,9 @@ export const bdService = {
    * (bidPrgrsListForBzenty/BidPrgrsListForBzentyPage). 구 `selectProgressList`.
    * 목업은 전체 반환(페이지 클라이언트 필터/페이징).
    */
-  async selectBidPrgrsListForBzenty(params?: MockBidListSearchRequest): Promise<MockBidPrgrsItem[]> {
+  async selectBidPrgrsListForBzenty(
+    params?: MockBidListSearchRequest,
+  ): Promise<MockBidPrgrsItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.prgrsList)
     return apiClient.post<MockBidPrgrsItem[], MockBidPrgrsItem[]>(
       '/bds/bd/bidPrgrs/selectBidPrgrsListForBzenty.do',
@@ -400,7 +415,9 @@ export const bdService = {
    * no.74 입찰진행조회(발주기관) — 모바일은 업체용(no.73)만 소비. 화면 미배선(훅 없음).
    * 응답은 업체용과 같은 진행 아이템으로 잠정 사용.
    */
-  async selectBidPrgrsListForOfcctr(params?: MockBidListSearchRequest): Promise<MockBidPrgrsItem[]> {
+  async selectBidPrgrsListForOfcctr(
+    params?: MockBidListSearchRequest,
+  ): Promise<MockBidPrgrsItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.prgrsList)
     return apiClient.post<MockBidPrgrsItem[], MockBidPrgrsItem[]>(
       '/bds/bd/bidPrgrs/selectBidPrgrsListForOfcctr.do',
@@ -590,16 +607,6 @@ export const bdService = {
   },
 
   /**
-   * 캐비닛(디지털 문서함) 파일 목록 조회
-   * — MUI-BD-04-P13 (bidPrtcpAperWrt/CabinetLink).
-   * TODO(실API 미매핑): 대응 항목 없음(공통 문서함은 cm 도메인 소관 가능성). URL 임시.
-   */
-  async linkCabinet(): Promise<MockCabinetFile[]> {
-    if (USE_MOCK) return mockDelay(MOCK_BD.cabinetFiles)
-    return apiClient.post<MockCabinetFile[], MockCabinetFile[]>('/v1/bds/cabinet-files')
-  },
-
-  /**
    * 동의서 조회(입찰참가신청 M14 · 입찰서 M07 공용)
    * — MUI-BD-04-M14 · MUI-BD-06-M07 (bidPrtcpAperWrt · tndrWrt AgreementForm).
    * TODO(실API 미매핑): 대응 항목 없음. URL 임시.
@@ -637,7 +644,10 @@ export const bdService = {
    */
   async signElsgn(certId: string, pbancNo: string): Promise<MockBidAplyReceipt> {
     if (USE_MOCK) return mockDelay(MOCK_BD.receipt)
-    return apiClient.post<MockBidAplyReceipt, MockBidAplyReceipt>('/v1/bds/elsgn/sign', { certId, pbancNo })
+    return apiClient.post<MockBidAplyReceipt, MockBidAplyReceipt>('/v1/bds/elsgn/sign', {
+      certId,
+      pbancNo,
+    })
   },
 
   // ── 견적서/입찰서 작성 (MUI-BD-06) ─────────────────────────────────────────
@@ -770,9 +780,12 @@ export const bdService = {
    */
   async selectBidItemList(id: string): Promise<MockOvsBidItem[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsBidItemList)
-    return apiClient.post<MockOvsBidItem[], MockOvsBidItem[]>('/bds/bd/ovsBidPbanc/selectBidItemList.do', {
-      pbancNo: id,
-    })
+    return apiClient.post<MockOvsBidItem[], MockOvsBidItem[]>(
+      '/bds/bd/ovsBidPbanc/selectBidItemList.do',
+      {
+        pbancNo: id,
+      },
+    )
   },
 
   /**
@@ -781,9 +794,12 @@ export const bdService = {
    */
   async selectAtchDocList(id: string): Promise<MockOvsAtchDoc[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsAtchDocList)
-    return apiClient.post<MockOvsAtchDoc[], MockOvsAtchDoc[]>('/bds/bd/ovsBidPbanc/selectAtchDocList.do', {
-      pbancNo: id,
-    })
+    return apiClient.post<MockOvsAtchDoc[], MockOvsAtchDoc[]>(
+      '/bds/bd/ovsBidPbanc/selectAtchDocList.do',
+      {
+        pbancNo: id,
+      },
+    )
   },
 
   /**
@@ -794,9 +810,12 @@ export const bdService = {
    */
   async selectOvsItemAtchFileList(frcptlArtclNo: string): Promise<MockOvsAtchDoc[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsAtchDocList)
-    return apiClient.post<MockOvsAtchDoc[], MockOvsAtchDoc[]>('/bds/bd/ovsBidPbanc/selectAtchDocList.do', {
-      frcptlArtclNo,
-    })
+    return apiClient.post<MockOvsAtchDoc[], MockOvsAtchDoc[]>(
+      '/bds/bd/ovsBidPbanc/selectAtchDocList.do',
+      {
+        frcptlArtclNo,
+      },
+    )
   },
 
   /** 국외 품목 첨부파일 다운로드 — MUI-BD-01-P76. 실목록 외(file 도메인) — URL 임시. 식별자는 IResultAttach.fileId. */
@@ -886,10 +905,7 @@ export const bdService = {
     rsn: string
   }): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
-    return apiClient.post<void, void>(
-      '/bds/bd/ovsBidPrtcpAply/inserBidPrtcpRtrcnAply.do',
-      payload,
-    )
+    return apiClient.post<void, void>('/bds/bd/ovsBidPrtcpAply/inserBidPrtcpRtrcnAply.do', payload)
   },
 
   /**
@@ -1116,7 +1132,10 @@ export const bdService = {
    * (ovsBidRsltDtl/OvsBidRsltDtlPage 일반정보 탭).
    * 같은 메서드명이 여러 Ovs 컨트롤러에 있어 컨트롤러명을 접두. 화면 미배선 — 소비처 생기면 훅 추가.
    */
-  async selectOvsBidRsltBidPbancDtl(pbancNo: string, pbancOd: string): Promise<MockOvsBidPbancDetail> {
+  async selectOvsBidRsltBidPbancDtl(
+    pbancNo: string,
+    pbancOd: string,
+  ): Promise<MockOvsBidPbancDetail> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsBidPbancDetail)
     return apiClient.post<MockOvsBidPbancDetail, MockOvsBidPbancDetail>(
       '/bds/bd/ovsBidRslt/selectBidPbancDtl.do',
@@ -1330,7 +1349,9 @@ export const bdService = {
   ): Promise<MockItitbBidCnItem[] | MockAlonbsBidCnInfo> {
     // 기존 저장분 조회(2026-09-02 배선) — 단가제=행 배열 · 총액제=단건.
     if (USE_MOCK)
-      return mockDelay(bidMthdNm === '총액제' ? MOCK_BD.tmprAlonbsBidCn : MOCK_BD.tmprItitbBidCnList)
+      return mockDelay(
+        bidMthdNm === '총액제' ? MOCK_BD.tmprAlonbsBidCn : MOCK_BD.tmprItitbBidCnList,
+      )
     return apiClient.post<
       MockItitbBidCnItem[] | MockAlonbsBidCnInfo,
       MockItitbBidCnItem[] | MockAlonbsBidCnInfo
@@ -1420,7 +1441,9 @@ export const bdService = {
    */
   async selectCrncUnitList(): Promise<MockCrncOption[]> {
     if (USE_MOCK) return mockDelay(MOCK_BD.crncOptions)
-    return apiClient.post<MockCrncOption[], MockCrncOption[]>('/bds/bd/ovsBidPbanc/selectCrncUnitList.do')
+    return apiClient.post<MockCrncOption[], MockCrncOption[]>(
+      '/bds/bd/ovsBidPbanc/selectCrncUnitList.do',
+    )
   },
 
   /**
@@ -1460,9 +1483,12 @@ export const bdService = {
   /** no.134 입찰서조회 — MUI-BD-06-M75 (ovsTndrDtl/OvsTndrDtlPage). 구 `selectOvsTndrDtl`. */
   async selectTndr(id: string): Promise<MockOvsTndrDtlItem> {
     if (USE_MOCK) return mockDelay(MOCK_BD.ovsTndrDetail)
-    return apiClient.post<MockOvsTndrDtlItem, MockOvsTndrDtlItem>('/bds/bd/ovsTndrSbmsn/selectTndr.do', {
-      intgRfrncNo: id,
-    })
+    return apiClient.post<MockOvsTndrDtlItem, MockOvsTndrDtlItem>(
+      '/bds/bd/ovsTndrSbmsn/selectTndr.do',
+      {
+        intgRfrncNo: id,
+      },
+    )
   },
 
   /**

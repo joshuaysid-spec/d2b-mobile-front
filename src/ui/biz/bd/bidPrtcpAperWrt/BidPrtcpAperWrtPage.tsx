@@ -24,15 +24,20 @@ import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
 import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
-import { BidPrtcpAplyRjct, type BidPrtcpAplyRjctHandle } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAplyRjct'
+import {
+  BidPrtcpAplyRjct,
+  type BidPrtcpAplyRjctHandle,
+} from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAplyRjct'
 import { BidPrtcpAperWrtPage_Stp2 } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage_Stp2'
 import { BidPrtcpAperWrtPage_Stp3 } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage_Stp3'
 import { BidPrtcpAperWrtPage_Stp4 } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage_Stp4'
 import { BidPrtcpAperWrtPage_Stp5 } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage_Stp5'
-import { BidPrtcpAperWrtPage_Stp6 } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage_Stp6'
+import {
+  BidPrtcpAperWrtPage_Stp6,
+  type BidPrtcpAperAtchFile,
+} from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage_Stp6'
 import { BidPrtcpAperWrtPage_Stp7 } from '@/ui/biz/bd/bidPrtcpAperWrt/BidPrtcpAperWrtPage_Stp7'
 import type { MockBidPrgrsItem } from '@/types/mock/bd'
-import type { UploadedFile } from '@/types/file'
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 항목명/형식 그대로.
 const MOCK_DETAIL: MockBidPrgrsItem = {
@@ -84,12 +89,22 @@ const PBANC_FILES: FileDownloadItem[] = [
 
 // 파일첨부 탭(Stp6) 초기 업로드 목록 목업 — 설계서 slide107 서류. guid 는 잠정 목업값(UUID형).
 // 상태를 호스트가 소유 → 제출(전자서명) 시 fileGuids 로 전달.
-const INITIAL_ATTACHED_FILES: UploadedFile[] = [
-  { guid: '11111111-1111-4111-8111-att1att1att1', orgnlFileNm: '청렴서약서.hwp', fileSz: 512 * 1024 },
+const INITIAL_ATTACHED_FILES: BidPrtcpAperAtchFile[] = [
   {
-    guid: '22222222-2222-4222-8222-att2att2att2',
-    orgnlFileNm: '법인등기부등본.pdf',
-    fileSz: Math.round(1.2 * 1024 * 1024),
+    docNm: '청렴서약서',
+    uploaded: {
+      guid: '11111111-1111-4111-8111-att1att1att1',
+      orgnlFileNm: '청렴서약서.hwp',
+      fileSz: 512 * 1024,
+    },
+  },
+  {
+    docNm: '법인등기부등본',
+    uploaded: {
+      guid: '22222222-2222-4222-8222-att2att2att2',
+      orgnlFileNm: '법인등기부등본.pdf',
+      fileSz: Math.round(1.2 * 1024 * 1024),
+    },
   },
 ]
 
@@ -99,7 +114,7 @@ export function BidPrtcpAperWrtPage() {
   const [tab, setTab] = useState('일반정보')
   const [shortcutOpen, setShortcutOpen] = useState(false) // 플로팅 바로가기 시트
   const [rjctOpen, setRjctOpen] = useState(false) // 입찰참가등록반려 바텀시트(P07)
-  const [attachedFiles, setAttachedFiles] = useState<UploadedFile[]>(INITIAL_ATTACHED_FILES) // 파일첨부 탭(Stp6) 업로드 목록 — 제출 시 fileGuids
+  const [attachedFiles, setAttachedFiles] = useState<BidPrtcpAperAtchFile[]>(INITIAL_ATTACHED_FILES) // 파일첨부 탭(Stp6) 업로드 목록 — 제출 시 fileGuids
   const rjctRef = useRef<BidPrtcpAplyRjctHandle>(null) // P07 apply 모드 제출 핸들
   const oz = useOzReport() // P07 view 모드 [출력] → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서)
 
@@ -150,7 +165,7 @@ export function BidPrtcpAperWrtPage() {
     }
     // 마지막 탭(문의및동의) 다음 = 전자서명(MUI-BD-04-M21). 실제 신청 제출은 전자서명(elsgn) 단계에서
     // bdService.signElsgn 으로 확정된다 — 첨부 GUID 목록(fileGuids)을 그 화면으로 넘긴다.
-    const fileGuids = attachedFiles.map((f) => f.guid)
+    const fileGuids = attachedFiles.map((f) => f.uploaded.guid)
     navigate('/bd/elsgn', { state: { detail, aplyType: 'apfr', fileGuids } })
   }
   const handlePrev = () => {
@@ -202,7 +217,12 @@ export function BidPrtcpAperWrtPage() {
             </div>
 
             {/* 입찰공고 첨부서류 섹션 — 다운로드(읽기) */}
-            <SectionTitle as="h3" topDivider info={`총 ${PBANC_FILES.length}건`} className="bg-white">
+            <SectionTitle
+              as="h3"
+              topDivider
+              info={`총 ${PBANC_FILES.length}건`}
+              className="bg-white"
+            >
               입찰공고 첨부서류
             </SectionTitle>
             <div className="px-4 py-4">
@@ -233,13 +253,20 @@ export function BidPrtcpAperWrtPage() {
 
       {/* 진행단계 표시기 — Figma: 배경 #ECF1FA(krds-bg-primary-faint) + px16/py16 */}
       <div className="bg-krds-bg-primary-faint px-4 py-4">
-        <StepBar orientation="horizontal" items={STEPS} className="bg-transparent" expandable={false} />
+        <StepBar
+          orientation="horizontal"
+          items={STEPS}
+          className="bg-transparent"
+          expandable={false}
+        />
       </div>
 
       {/* 업무도움 — 접힘 기본 */}
       <Infobox
         title="업무도움"
-        items={['입찰참가신청서를 작성하는 화면입니다. 단계별로 정보를 확인하고 다음으로 진행하세요.']}
+        items={[
+          '입찰참가신청서를 작성하는 화면입니다. 단계별로 정보를 확인하고 다음으로 진행하세요.',
+        ]}
       />
 
       {/* 신청서 하위 탭 — 다음/이전 으로 스텝 이동 */}
@@ -312,7 +339,11 @@ export function BidPrtcpAperWrtPage() {
                   variant: 'secondary',
                   // ⚠️ 리포트 코드 미확정(설계서 출력물 코드 확인 후 교체)
                   onClick: () =>
-                    oz.open('MUI-BD-04-P07', { pbancNo: detail.pbancNo }, '입찰참가등록반려 신청서'),
+                    oz.open(
+                      'MUI-BD-04-P07',
+                      { pbancNo: detail.pbancNo },
+                      '입찰참가등록반려 신청서',
+                    ),
                 },
                 { label: '닫기', variant: 'primary', onClick: () => setRjctOpen(false) },
               ]}

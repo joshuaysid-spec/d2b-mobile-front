@@ -18,7 +18,6 @@ import type {
   MockBidRsltRow,
   MockBfrPbancBidCnItem,
   MockBfrPbancInfoItem,
-  MockCabinetFile,
   MockCnstwkLcnsRow,
   MockCrncOption,
   MockElsgnCert,
@@ -874,11 +873,6 @@ const regBzentyList: MockRegBzentyRow[] = [
   { id: 'rb-2', bizRegNo: '234-56-78901', bizNm: '라마바산업' },
 ]
 
-const cabinetFiles: MockCabinetFile[] = [
-  { id: 'cab-1', fileNm: '사업자등록증.pdf', fileSz: 128_000 },
-  { id: 'cab-2', fileNm: '공동수급협정서.pdf', fileSz: 256_000 },
-]
-
 const agreement: MockAgreementDoc = {
   id: 'depsPayCert',
   title: '입찰보증금 지급각서',
@@ -974,7 +968,13 @@ const ovsAtchDocList: MockOvsAtchDoc[] = [
 
 // ── 국외 입찰참가신청서 (MUI-BD-04-M71·M78 컨테이너 · T71~T79 · P75/P76/P82/P83(구 M72~M81 — v1.83 재편)) ────────────────────────────────
 const ovsBidRegRsltList: MockOvsBidRegRsltItem[] = [
-  { no: '1', prchsDmndNo: 'BAD839380-001', bizNm: '500MD부품', cfmtnRslt: '적격', cfmtnYmd: '2025-12-24' },
+  {
+    no: '1',
+    prchsDmndNo: 'BAD839380-001',
+    bizNm: '500MD부품',
+    cfmtnRslt: '적격',
+    cfmtnYmd: '2025-12-24',
+  },
 ]
 
 const ovsBidBizList: MockOvsBidBizItem[] = [
@@ -1364,12 +1364,66 @@ const tmprItitbBidCnList: MockItitbBidCnItem[] = [
     bdngUsdUntprc: '608,000.00',
     bdngUsdAmt: '608,000.00',
   },
-  { frcptlArtclNo: '2', invtNo: 'A000-A0002', prtsNo: '369A5501-3', itemNm: 'MAIN ROTOR BLADE ASSY', unitNm: 'EA', qty: '2', drctnUntprc: '142,500.00', ...TMPR_EMPTY_BID_FIELDS },
-  { frcptlArtclNo: '3', invtNo: 'A000-A0003', prtsNo: '369D2210-11', itemNm: 'TAIL ROTOR ASSY', unitNm: 'EA', qty: '1', drctnUntprc: '86,300.00', ...TMPR_EMPTY_BID_FIELDS },
-  { frcptlArtclNo: '4', invtNo: 'A000-A0004', prtsNo: '369H9020-7', itemNm: 'ENGINE FUEL PUMP', unitNm: 'EA', qty: '4', drctnUntprc: '23,900.00', ...TMPR_EMPTY_BID_FIELDS },
-  { frcptlArtclNo: '5', invtNo: 'A000-A0005', prtsNo: '369A7003-1', itemNm: 'HYDRAULIC ACTUATOR', unitNm: 'EA', qty: '2', drctnUntprc: '51,700.00', ...TMPR_EMPTY_BID_FIELDS },
-  { frcptlArtclNo: '6', invtNo: 'A000-A0006', prtsNo: '369D2911-4', itemNm: 'LANDING GEAR STRUT', unitNm: 'EA', qty: '2', drctnUntprc: '18,200.00', ...TMPR_EMPTY_BID_FIELDS },
-  { frcptlArtclNo: '7', invtNo: 'A000-A0007', prtsNo: '369F1105-9', itemNm: 'MAIN TRANSMISSION GEARBOX', unitNm: 'EA', qty: '1', drctnUntprc: '312,400.00', ...TMPR_EMPTY_BID_FIELDS },
+  {
+    frcptlArtclNo: '2',
+    invtNo: 'A000-A0002',
+    prtsNo: '369A5501-3',
+    itemNm: 'MAIN ROTOR BLADE ASSY',
+    unitNm: 'EA',
+    qty: '2',
+    drctnUntprc: '142,500.00',
+    ...TMPR_EMPTY_BID_FIELDS,
+  },
+  {
+    frcptlArtclNo: '3',
+    invtNo: 'A000-A0003',
+    prtsNo: '369D2210-11',
+    itemNm: 'TAIL ROTOR ASSY',
+    unitNm: 'EA',
+    qty: '1',
+    drctnUntprc: '86,300.00',
+    ...TMPR_EMPTY_BID_FIELDS,
+  },
+  {
+    frcptlArtclNo: '4',
+    invtNo: 'A000-A0004',
+    prtsNo: '369H9020-7',
+    itemNm: 'ENGINE FUEL PUMP',
+    unitNm: 'EA',
+    qty: '4',
+    drctnUntprc: '23,900.00',
+    ...TMPR_EMPTY_BID_FIELDS,
+  },
+  {
+    frcptlArtclNo: '5',
+    invtNo: 'A000-A0005',
+    prtsNo: '369A7003-1',
+    itemNm: 'HYDRAULIC ACTUATOR',
+    unitNm: 'EA',
+    qty: '2',
+    drctnUntprc: '51,700.00',
+    ...TMPR_EMPTY_BID_FIELDS,
+  },
+  {
+    frcptlArtclNo: '6',
+    invtNo: 'A000-A0006',
+    prtsNo: '369D2911-4',
+    itemNm: 'LANDING GEAR STRUT',
+    unitNm: 'EA',
+    qty: '2',
+    drctnUntprc: '18,200.00',
+    ...TMPR_EMPTY_BID_FIELDS,
+  },
+  {
+    frcptlArtclNo: '7',
+    invtNo: 'A000-A0007',
+    prtsNo: '369F1105-9',
+    itemNm: 'MAIN TRANSMISSION GEARBOX',
+    unitNm: 'EA',
+    qty: '1',
+    drctnUntprc: '312,400.00',
+    ...TMPR_EMPTY_BID_FIELDS,
+  },
 ]
 // 총액제 단건(설계서 slide315 예시 — 입찰금액 608,000.00 · USD 1.0000, 입찰업체 미선택 = 작성 중 저장분).
 const tmprAlonbsBidCn: MockAlonbsBidCnInfo = {
@@ -1418,7 +1472,6 @@ export const MOCK_BD = {
   itemList,
   cnstwkList,
   regBzentyList,
-  cabinetFiles,
   agreement,
   wrot,
   // 공통 검색

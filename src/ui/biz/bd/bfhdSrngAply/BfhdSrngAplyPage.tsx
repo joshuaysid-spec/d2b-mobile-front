@@ -3,15 +3,15 @@
 // 구성(설계서 slide93 주석 1~5): ① 업무도움 → ② 공고일반(dmt_bidPbancInfo) → ③ 업체내역(dmt_bzentyInfo)
 //   → ④ 첨부파일(dlt_atchFileList, 파일 추가/삭제) → ⑤ 확약문 + footer(신청하기/취소). 항목명/형식은 데이터영역 그대로.
 //   ⚠️ v1.83 개정(2026-07-01 화면 수정 '주민등록번호 삭제') 반영 — 업체내역은 데이터영역 6항목만.
-// '파일 추가' 클릭 → 파일첨부 방식 선택 바텀시트(MUI-BD-04-P13, CabinetLink) — 직접 업로드/캐비닛 선택.
-//   직접 업로드 = 숨은 <input type=file>(다중) → fbService 업로드(건당 순차) → guid 보관.
+// '파일 추가' 클릭 → [공통] 파일 추가 시트(cm/fileAdd/FileAdd) — 이 페이지가 컨테이너(BottomSheet)·footer 소유.
+//   업로드(파일당 1요청 순차 큐)·10MB 검증·재시도·캐비닛 선택은 FileAdd 안에서 처리되고,
+//   [완료] 시 첨부파일명(adocNm) + 업로드 응답(uploaded)만 이 페이지로 넘어온다.
 // '신청하기' 클릭 → 제출확인 AlertModal → 확인 시 bdQueries.useApplyBfhdSrng(pbancNo, fileGuids) 제출.
-import { useRef, useState, type ChangeEvent } from 'react'
+import { useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import { fbQueries } from '@/queries/tss/fb/fbQueries'
-import { validateFile } from '@/services/tss/fb'
 import { Accordion, AccordionSection } from '@/ui/common/base/Accordion'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
@@ -20,9 +20,10 @@ import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
 import { Infobox } from '@/ui/common/composites/Infobox'
 import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
-import { CabinetLink, type CabinetLinkKind } from '@/ui/biz/bd/bidPrtcpAperWrt/CabinetLink'
+import { FileAdd, type FileAddHandle } from '@/ui/biz/cm/fileAdd/FileAdd'
 import { formatFileSize } from '@/utils/format'
 import type { ApiError } from '@/types/api'
+import type { UploadedFile } from '@/types/file'
 import type { MockBidPrgrsItem } from '@/types/mock/bd'
 
 // 직접 URL 진입(state 없음) 대비 fallback 목업 — 설계서 항목명/형식 그대로.
@@ -52,23 +53,12 @@ const HELP_ITEMS = [
   '신청마감일시 이후에는 신청서를 제출할 수 없습니다.',
 ]
 
-/** 첨부파일 1건 — 설계서 데이터영역 dlt_atchFileList(항목명 영문 그대로) + 제출용 guid. */
+/** 첨부파일 1건 — 설계서 데이터영역 dlt_atchFileList(항목명 영문 그대로) + 업로드 응답. */
 interface BfhdSrngAtchFile {
-  /** 파일 식별자(업로드 GUID) — 신청 제출 시 fileGuids. 목록 key 로도 사용(파일명은 중복 가능). */
-  guid: string
-  /** 첨부서류명 (adocNm) — 첨부파일 구분 */
+  /** 첨부서류명 (adocNm) — 파일 추가 시트에서 입력받은 첨부파일명 */
   adocNm: string
-  /** 첨부파일명 (fileNm) */
-  fileNm: string
-  /** 파일크기 (fileSz) — 표시 문자열(대괄호 없이) */
-  fileSz: string
-}
-
-/** 업로드 진행 중(미완료) 1건 — 완료되면 BfhdSrngAtchFile 로 승격. */
-interface PendingFile {
-  id: string
-  file: File
-  status: 'waiting' | 'uploading' | 'error'
+  /** 업로드 응답 통째 — 제출 시 fileGuids 는 uploaded.guid, 표시(fileNm/fileSz)는 orgnlFileNm/fileSz. */
+  uploaded: UploadedFile
 }
 
 export function BfhdSrngAplyPage() {
@@ -76,15 +66,11 @@ export function BfhdSrngAplyPage() {
   const detail = (useLocation().state as MockBidPrgrsItem | null) ?? MOCK_DETAIL
   // 첨부파일은 사용자가 추가하는 목록 — 설계서 mockup 초기 '총 0건'.
   const [files, setFiles] = useState<BfhdSrngAtchFile[]>([])
-  const [pending, setPending] = useState<PendingFile[]>([])
-  const [addOpen, setAddOpen] = useState(false) // 파일첨부 방식 선택 시트(P13)
+  const [addOpen, setAddOpen] = useState(false) // [공통] 파일 추가 시트
   const [confirmOpen, setConfirmOpen] = useState(false) // 제출확인 모달
-  // 실패 안내 모달(null=닫힘) — 첨부 검증/신청 제출 실패 공용.
+  // 실패 안내 모달(null=닫힘) — 신청 제출 실패 안내.
   const [alert, setAlert] = useState<{ title: string; message: string } | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-  // 순차 업로드 큐 — 프라미스 체인으로 항상 1건씩만 전송(모바일 망 품질 협의사항).
-  const queueRef = useRef(Promise.resolve())
-  const uploadFile = fbQueries.useUploadFile()
+  const fileAddRef = useRef<FileAddHandle>(null)
   const removeFile = fbQueries.useRemoveFile()
   const applyBfhdSrng = bdQueries.useApplyBfhdSrng()
 
@@ -114,74 +100,9 @@ export function BfhdSrngAplyPage() {
     { label: '주소', value: '서울특별시 …' },
   ]
 
-  const setStatus = (id: string, status: PendingFile['status']) =>
-    setPending((prev) => prev.map((p) => (p.id === id ? { ...p, status } : p)))
-
-  // 1건 업로드 — 성공 시 pending 제거 후 첨부목록으로 승격, 실패 시 '실패' 표시(재시도 대기).
-  const uploadOne = async ({ id, file }: PendingFile) => {
-    setStatus(id, 'uploading')
-    try {
-      const uploaded = await uploadFile.mutateAsync(file)
-      setPending((prev) => prev.filter((p) => p.id !== id))
-      setFiles((prev) => [
-        ...prev,
-        {
-          guid: uploaded.guid,
-          // ⚠️ 첨부서류 구분(adocNm) 선택 UI 는 상세설계 예정 — 직접 업로드는 화면 기본 서류명으로 잠정 표기.
-          adocNm: '입찰참가자격심사서류',
-          fileNm: uploaded.orgnlFileNm,
-          fileSz: formatFileSize(uploaded.fileSz),
-        },
-      ])
-    } catch {
-      setStatus(id, 'error')
-    }
-  }
-
-  const enqueue = (item: PendingFile) => {
-    queueRef.current = queueRef.current.then(() => uploadOne(item))
-  }
-
-  // P13 방식 선택 — '직접 업로드'면 시트 닫고 파일 선택기 열기(사용자 제스처 내 호출).
-  const handleSelectMethod = (kind: CabinetLinkKind) => {
-    setAddOpen(false)
-    if (kind === 'direct') {
-      inputRef.current?.click()
-    } else {
-      // 캐비닛 선택 — 미배선(보관함 조회 API 미확정). 추후 API: bdService.linkCabinet
-      console.log('[M01-사전심사] 캐비닛 선택 (미배선)', detail.pbancNo)
-    }
-  }
-
-  // 파일 선택 완료 → 건당 10MB 검증(초과분 제외) → 순차 업로드 큐에 추가.
-  const handleFilesPicked = (e: ChangeEvent<HTMLInputElement>) => {
-    const picked = Array.from(e.target.files ?? [])
-    e.target.value = '' // 같은 파일 재선택 허용
-    if (picked.length === 0) return
-
-    const rejected = picked.map(validateFile).filter((msg): msg is string => msg !== null)
-    const valid = picked.filter((f) => validateFile(f) === null)
-    if (rejected.length > 0) setAlert({ title: '첨부할 수 없는 파일', message: rejected.join('\n') })
-    if (valid.length === 0) return
-
-    const items: PendingFile[] = valid.map((file) => ({
-      id: crypto.randomUUID(),
-      file,
-      status: 'waiting',
-    }))
-    setPending((prev) => [...prev, ...items])
-    items.forEach(enqueue)
-  }
-
-  // 실패 건 재업로드 — 큐 뒤에 이어붙여 순차 유지.
-  const handleRetry = (item: PendingFile) => {
-    setStatus(item.id, 'waiting')
-    enqueue(item)
-  }
-
   const handleRemove = (guid: string) => {
     removeFile.mutate(guid)
-    setFiles((prev) => prev.filter((f) => f.guid !== guid))
+    setFiles((prev) => prev.filter((f) => f.uploaded.guid !== guid))
   }
 
   // 제출확인 모달 확정 → 사전심사 신청 제출. 실패 시 AlertModal 안내.
@@ -189,14 +110,15 @@ export function BfhdSrngAplyPage() {
     try {
       await applyBfhdSrng.mutateAsync({
         pbancNo: detail.pbancNo,
-        fileGuids: files.map((f) => f.guid),
+        fileGuids: files.map((f) => f.uploaded.guid),
       })
       navigate(-1)
     } catch (err) {
       setAlert({
         title: '사전심사 신청 실패',
         message:
-          (err as ApiError | null)?.message ?? '사전심사 신청에 실패했습니다. 잠시 후 다시 시도해주세요.',
+          (err as ApiError | null)?.message ??
+          '사전심사 신청에 실패했습니다. 잠시 후 다시 시도해주세요.',
       })
     }
   }
@@ -228,7 +150,7 @@ export function BfhdSrngAplyPage() {
           <AccordionSection value="bzenty" title="업체내역" variant="blue" flush>
             <Table rows={bzentyRows} />
           </AccordionSection>
-          {/* ④ 첨부파일 — 파일 추가(P13) + 서류명/파일칩 행 */}
+          {/* ④ 첨부파일 — 파일 추가([공통] FileAdd) + 서류명/파일칩 행 */}
           <AccordionSection
             value="file"
             title="첨부파일"
@@ -238,49 +160,35 @@ export function BfhdSrngAplyPage() {
           >
             <div className="flex flex-col gap-krds-8">
               {files.map((file) => (
-                <div key={file.guid} className="flex flex-col gap-krds-3">
+                <div key={file.uploaded.guid} className="flex flex-col gap-krds-3">
                   <span className="text-[17px] font-bold leading-normal text-krds-text-ink wrap-break-word">
                     {file.adocNm}
                   </span>
                   <FileDownloadList
                     files={[
                       {
-                        id: file.guid,
-                        name: file.fileNm,
-                        size: file.fileSz,
-                        onRemove: () => handleRemove(file.guid),
+                        id: file.uploaded.guid,
+                        name: file.uploaded.orgnlFileNm,
+                        size: formatFileSize(file.uploaded.fileSz),
+                        onRemove: () => handleRemove(file.uploaded.guid),
                       },
                     ]}
                   />
                 </div>
               ))}
 
-              {/* 진행 중(대기/업로드중/실패) 건 + '파일 추가' 버튼 */}
-              <FileDownloadList
-                files={pending.map((p) => ({
-                  id: p.id,
-                  name: p.file.name,
-                  size: formatFileSize(p.file.size),
-                  status: p.status,
-                  onRetry: () => handleRetry(p),
-                  // 실패 건만 삭제(취소) 허용 — 서버 미등록이라 로컬 제거만.
-                  onRemove:
-                    p.status === 'error'
-                      ? () => setPending((prev) => prev.filter((x) => x.id !== p.id))
-                      : undefined,
-                }))}
-                onAddFile={() => setAddOpen(true)}
-              />
+              {/* '파일 추가' 버튼 — [공통] 파일 추가 시트 열기 */}
+              <FileDownloadList files={[]} onAddFile={() => setAddOpen(true)} />
             </div>
           </AccordionSection>
         </Accordion>
 
         {/* ⑤ 사전심사 신청 확약문 — 설계서 문구 그대로 */}
         <p className="px-krds-5 text-krds-body-md leading-relaxed text-krds-text-ink">
-          위 공사에 대한 입찰참가자격심사서류를 붙임과 같이 제출하오니 우리회사(공동수급체구성원 포함)에 대하여
-          붙임 자료에 의거 입찰참가자격을 심사(향후 적격심사 포함)하여 주시기 바라며, 만일 제출 서류가 귀 부대
-          심사기준 제10조 제2항의 기준에 저촉되면 귀 부대 심사기준에 따라 조치하여도 아무런 이의를 제기하지 않겠음을
-          확약합니다.
+          위 공사에 대한 입찰참가자격심사서류를 붙임과 같이 제출하오니 우리회사(공동수급체구성원
+          포함)에 대하여 붙임 자료에 의거 입찰참가자격을 심사(향후 적격심사 포함)하여 주시기 바라며,
+          만일 제출 서류가 귀 부대 심사기준 제10조 제2항의 기준에 저촉되면 귀 부대 심사기준에 따라
+          조치하여도 아무런 이의를 제기하지 않겠음을 확약합니다.
         </p>
 
         {/* footer — 신청하기/취소 */}
@@ -293,12 +201,38 @@ export function BfhdSrngAplyPage() {
         />
       </div>
 
-      {/* 숨은 파일 선택기 — '직접 업로드'로 트리거(다중 선택) */}
-      <input ref={inputRef} type="file" multiple className="hidden" onChange={handleFilesPicked} />
-
-      {/* 파일첨부 방식 선택(MUI-BD-04-P13) — 이 페이지가 컨테이너 소유, 콘텐츠는 CabinetLink 재사용 */}
-      <BottomSheet open={addOpen} onOpenChange={setAddOpen} title="파일첨부 방식 선택">
-        <CabinetLink onSelect={handleSelectMethod} />
+      {/* [공통] 파일 추가 — 이 페이지가 컨테이너(BottomSheet)·타이틀·footer 소유, 콘텐츠는 FileAdd.
+          ⚠️ 서류명 목록 확정 시 docNmOptions 로 교체 — 현재는 첨부파일명 직접입력(설계서에 서류명 목록 미정의). */}
+      <BottomSheet
+        open={addOpen}
+        onOpenChange={setAddOpen}
+        title="파일 추가"
+        footer={
+          <ButtonGroup
+            items={[
+              { label: '취소', variant: 'secondary', onClick: () => setAddOpen(false) },
+              {
+                label: '완료',
+                variant: 'primary',
+                onClick: () => {
+                  if (fileAddRef.current?.complete()) setAddOpen(false)
+                },
+              },
+            ]}
+          />
+        }
+      >
+        {addOpen && (
+          <FileAdd
+            ref={fileAddRef}
+            onComplete={({ docNm, files: picked }) =>
+              setFiles((prev) => [
+                ...prev,
+                ...picked.map((p) => ({ adocNm: docNm, uploaded: p.uploaded })),
+              ])
+            }
+          />
+        )}
       </BottomSheet>
 
       {/* 제출확인 */}
