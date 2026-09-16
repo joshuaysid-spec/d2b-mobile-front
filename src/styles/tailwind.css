@@ -41,6 +41,7 @@
   --color-krds-bg-danger-subtle: var(--krds-bg-danger-subtle);
   --color-krds-bg-secondary: var(--krds-bg-secondary);
   --color-krds-bg-inverse: var(--krds-bg-inverse);
+  --color-krds-text-on-inverse: var(--krds-text-on-inverse);
   --color-krds-text-strong: var(--krds-text-strong);
   --color-krds-text-muted: var(--krds-text-muted);
   --color-krds-text-subtle: var(--krds-text-subtle);
@@ -93,8 +94,8 @@
   --color-krds-color-warning-60: var(--krds-color-warning-60);
 
   --font-sans:
-    Pretendard GOV Variable, Pretendard GOV, -apple-system, BlinkMacSystemFont,
-    Apple SD Gothic Neo, Malgun Gothic, sans-serif;
+    Pretendard GOV Variable, Pretendard GOV, -apple-system, BlinkMacSystemFont, Apple SD Gothic Neo,
+    Malgun Gothic, sans-serif;
 
   --text-krds-display-lg: var(--krds-font-size-display-lg);
   --text-krds-display-lg--line-height: var(--krds-line-height-display);

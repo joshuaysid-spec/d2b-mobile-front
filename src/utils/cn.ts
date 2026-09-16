@@ -77,6 +77,7 @@ const KRDS_COLOR_NAMES = [
   'krds-text-disabled-soft',
   'krds-text-disabled-faint',
   'krds-text-unselected',
+  'krds-text-on-inverse',
   'krds-badge-red',
   'krds-badge-red-border',
   'krds-badge-yellow-border',

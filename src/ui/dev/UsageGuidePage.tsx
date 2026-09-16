@@ -1054,10 +1054,27 @@ function Row({ label, children }: RowProps) {
 }
 
 // 코드/다이어그램 블록 — 문법 강조 라이브러리 없이 문자열 그대로.
+// 코드 블록 — 어두운 배경(krds-bg-inverse) + 흰 글자(krds-text-on-inverse), 15px 고정폭.
+//   전체 줄 주석은 흐리게 낮춰 코드가 먼저 읽히게 한다(문법 강조 라이브러리 없이 줄 단위 판정 —
+//   행 시작만 보므로 문자열 안의 '//'(URL 등)는 건드리지 않는다).
+const COMMENT_LINE = /^\s*(\/\/|\/\*|\*)/
+
 function Code({ children }: { children: string }) {
   return (
-    <pre className="w-full overflow-x-auto rounded-krds-sm border border-border bg-muted p-4 font-mono text-krds-label-xs leading-relaxed text-krds-text-ink">
-      <code>{children}</code>
+    <pre className="w-full overflow-x-auto rounded-krds-sm bg-krds-bg-inverse p-5 font-mono text-krds-label-sm leading-relaxed text-krds-text-on-inverse">
+      <code>
+        {/* 정적 문자열을 줄로 분해 — 행 순서가 바뀌지 않아 index key 사용(목록 데이터 아님).
+            줄바꿈은 텍스트 노드로 유지해 빈 줄·복사 붙여넣기가 원본 그대로 나온다. */}
+        {children.split('\n').map((line, i) => (
+          <span
+            key={`${i}:${line}`}
+            className={cn(COMMENT_LINE.test(line) && 'text-krds-text-on-inverse/55')}
+          >
+            {line}
+            {'\n'}
+          </span>
+        ))}
+      </code>
     </pre>
   )
 }
