@@ -10,7 +10,9 @@
 //   → ④ 성공 응답. [완료]는 "전부 업로드된 파일"만 넘긴다(업로드 중/실패 건이 있으면 완료 차단).
 //   응답 필드가 늘어나면 types/file.ts UploadedFile 만 확장(여기·사용처 무수정). 업로드된 파일의 id = 응답 guid.
 //   시트에서 X 삭제 시 이미 올린 파일은 fbQueries.useRemoveFile 로 서버에서도 제거.
-//   캐비닛 업로드는 디지털 캐비닛 팝업 연동 전 목업 스텁(캐비닛 파일은 재업로드 없이 캐비닛 측 응답을 받는 구조 — 현재 임시값).
+//   캐비닛 업로드는 CabinetPickFullPopup(FullPopup 안에서 폴더 → 파일 탐색)에서 고른 파일을 그대로 받는다 —
+//   캐비닛 파일은 이미 서버에 있어 재업로드 없이 done 으로 목록에 들어간다. 라우트(M14/M16)로 보내지 않는 이유는
+//   이 시트가 신청서/마법사 폼 한가운데서 열려 화면을 벗어나면 작성 중인 폼 상태가 유실되기 때문.
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 
 import { fbQueries } from '@/queries/tss/fb/fbQueries'
@@ -22,6 +24,7 @@ import { InputLabel } from '@/ui/common/base/InputLabel'
 import { InputMessage } from '@/ui/common/base/InputMessage'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { FileDownloadList } from '@/ui/common/composites/FileDownloadList'
+import { CabinetPickFullPopup } from '@/ui/biz/cm/digitalCabinet/CabinetPickFullPopup'
 import type { UploadedFile } from '@/types/file'
 
 /**
@@ -75,6 +78,8 @@ const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
     const [docNm, setDocNm] = useState(fixedDocNm ?? '')
     const [files, setFiles] = useState<FileAddFile[]>([])
     const [error, setError] = useState<string | null>(null)
+    // 캐비닛 선택 팝업(FullPopup) 열림 — 시트 위에 겹쳐 뜨고, 닫으면 이 시트가 그대로 남는다.
+    const [cabinetOpen, setCabinetOpen] = useState(false)
     const inputRef = useRef<HTMLInputElement>(null)
     const uploadFile = fbQueries.useUploadFile()
     const removeFile = fbQueries.useRemoveFile()
@@ -90,7 +95,12 @@ const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
       patchFile(item.id, { status: 'uploading' })
       try {
         const uploaded = await uploadFile.mutateAsync(item.file)
-        patchFile(item.id, { id: uploaded.guid, name: uploaded.orgnlFileNm, uploaded, status: 'done' })
+        patchFile(item.id, {
+          id: uploaded.guid,
+          name: uploaded.orgnlFileNm,
+          uploaded,
+          status: 'done',
+        })
       } catch {
         patchFile(item.id, { status: 'error' })
       }
@@ -130,21 +140,20 @@ const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
       toUpload.forEach(enqueue)
     }
 
-    // 캐비닛 업로드 — 디지털 캐비닛 팝업에서 파일 선택(연동 전 목업 스텁).
-    //   캐비닛 파일은 이미 서버에 있어 재업로드 없이 캐비닛 측 응답을 받는 구조 — 임시 응답으로 done 처리.
-    const handlePickCabinet = () => {
-      console.log('[FileAdd] 캐비닛 업로드') // 추후: 디지털 캐비닛 파일 선택 팝업 호출 → 선택분(응답 포함) append
-      const guid = crypto.randomUUID()
-      appendFiles([
-        {
-          id: guid,
-          name: '첨부파일명.hwp',
-          size: '786KB',
-          uploaded: { guid, orgnlFileNm: '첨부파일명.hwp', fileSz: 786 * 1024 },
+    // 캐비닛 업로드 — 디지털 캐비닛 파일 선택 팝업 열기.
+    const handlePickCabinet = () => setCabinetOpen(true)
+
+    // 팝업에서 고른 캐비닛 파일 — 이미 서버에 있어 업로드 없이 바로 done 으로 목록에 추가.
+    const handleCabinetPick = (picked: UploadedFile[]) =>
+      appendFiles(
+        picked.map((f) => ({
+          id: f.guid,
+          name: f.orgnlFileNm,
+          size: formatSize(f.fileSz),
+          uploaded: f,
           status: 'done',
-        },
-      ])
-    }
+        })),
+      )
 
     // X 삭제 — 업로드된 파일은 서버에서도 제거(fire-and-forget), 목록에서 제외.
     const handleRemove = (id: string | number) =>
@@ -166,9 +175,7 @@ const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
         complete: () => {
           const name = docNm.trim()
           if (!name) {
-            setError(
-              docNmOptions ? '첨부파일명을 선택해주세요.' : '첨부파일명을 입력해주세요.',
-            )
+            setError(docNmOptions ? '첨부파일명을 선택해주세요.' : '첨부파일명을 입력해주세요.')
             return false
           }
           if (files.length === 0) {
@@ -186,7 +193,11 @@ const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
           const done = files.filter(
             (f): f is FileAddDoneFile => f.status === 'done' && f.uploaded !== undefined,
           )
-          console.log('[FileAdd] 완료', name, done.map((f) => f.uploaded))
+          console.log(
+            '[FileAdd] 완료',
+            name,
+            done.map((f) => f.uploaded),
+          )
           onComplete({ docNm: name, files: done })
           return true
         },
@@ -198,11 +209,7 @@ const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
       <div className="flex flex-col gap-krds-7 py-krds-5">
         {/* 업로드 방식 — 직접(디바이스 저장소) / 캐비닛(디지털 캐비닛). */}
         <div className="flex gap-krds-5">
-          <Button
-            variant="secondary"
-            className="flex-1"
-            onClick={() => inputRef.current?.click()}
-          >
+          <Button variant="secondary" className="flex-1" onClick={() => inputRef.current?.click()}>
             <Icon name="Upload" size={20} aria-hidden />
             직접 업로드
           </Button>
@@ -224,30 +231,30 @@ const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
 
         {/* 첨부서류명 — 기본 직접입력, 항목 지정(군수품 등) 시 셀렉트. 고정(fixedDocNm)이면 필드 숨김. */}
         {!fixedDocNm && (
-        <div className="flex flex-col gap-krds-5">
-          <InputLabel required>첨부파일명</InputLabel>
-          {docNmOptions ? (
-            <SelectBox
-              placeholder="첨부파일명을 선택해주세요."
-              value={docNm}
-              onValueChange={(v) => {
-                setDocNm(v)
-                setError(null)
-              }}
-              items={docNmOptions.map((t) => ({ value: t, label: t }))}
-            />
-          ) : (
-            <InputBox
-              value={docNm}
-              placeholder="첨부파일명을 입력해주세요."
-              onChange={(e) => {
-                setDocNm(e.target.value)
-                setError(null)
-              }}
-              onClear={() => setDocNm('')}
-            />
-          )}
-        </div>
+          <div className="flex flex-col gap-krds-5">
+            <InputLabel required>첨부파일명</InputLabel>
+            {docNmOptions ? (
+              <SelectBox
+                placeholder="첨부파일명을 선택해주세요."
+                value={docNm}
+                onValueChange={(v) => {
+                  setDocNm(v)
+                  setError(null)
+                }}
+                items={docNmOptions.map((t) => ({ value: t, label: t }))}
+              />
+            ) : (
+              <InputBox
+                value={docNm}
+                placeholder="첨부파일명을 입력해주세요."
+                onChange={(e) => {
+                  setDocNm(e.target.value)
+                  setError(null)
+                }}
+                onClear={() => setDocNm('')}
+              />
+            )}
+          </div>
         )}
 
         {/* 첨부파일 — 파일명·크기 + 업로드 상태(업로드 중/실패→재시도) + 건별 삭제. */}
@@ -272,6 +279,14 @@ const FileAdd = forwardRef<FileAddHandle, FileAddProps>(
         </div>
 
         {error && <InputMessage type="error">{error}</InputMessage>}
+
+        {/* 디지털 캐비닛 파일 선택 — 시트 위에 겹치는 FullPopup(라우트 이동 없이 폴더 → 파일 탐색). */}
+        <CabinetPickFullPopup
+          open={cabinetOpen}
+          onOpenChange={setCabinetOpen}
+          multiple={multiple}
+          onPick={handleCabinetPick}
+        />
       </div>
     )
   },

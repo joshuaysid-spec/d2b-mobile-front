@@ -15,7 +15,9 @@
 //    · 첨부 플로우 진입: navigate(ROUTES.DIGITAL_CABINET_FILES, { state: { mode: 'attach' } })
 //    · 디지털캐비닛(M14) 탐색 진입: state 에 mode 없음 → 조회 전용(체크박스/첨부 버튼 미노출)
 //    · 새로고침 등으로 state 유실 시 조회 모드 폴백(첨부 플로우는 복귀 전제라 무해).
-// 데이터=파일 내 목업(데이터영역 dl_digitalCabinetFileList 항목명/형식), 동작=경계 스텁.
+// 데이터=목업(cabinetMock — 데이터영역 dl_digitalCabinetFileList 항목명/형식), 동작=경계 스텁.
+// ⚠️ 실제 첨부 플로우는 CabinetPickFullPopup(FullPopup) 이 담당한다 — 라우트 이동 시 작성 중인
+//    폼 상태가 유실되기 때문. 이 라우트의 attach 모드는 설계서 정합용으로 유지한다.
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -24,35 +26,15 @@ import { Button } from '@/ui/common/base/Button'
 import { Notice } from '@/ui/common/composites/Notice'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
 import { CabinetHelpDisclosure } from '@/ui/biz/cm/digitalCabinet/CabinetHelpDisclosure'
+import { CabinetFileList } from '@/ui/biz/cm/digitalCabinet/CabinetFileList'
+import { MOCK_CABINET_FILES } from '@/ui/biz/cm/digitalCabinet/cabinetMock'
 import { ROUTES } from '@/constants/routes'
-import { cn } from '@/utils/cn'
 import type { MockDigitalCabinetFile } from '@/types/mock/cm'
-
-// ── 목업 (설계서 slide117 예시 + 데이터영역 dl_digitalCabinetFileList 항목명/형식) ────
-const MOCK_FILES: MockDigitalCabinetFile[] = [
-  { fileId: 'f1', fileNm: '사업자등록증.pdf', fileSz: '369KB', vldPrdEndYmd: '2025-01-31', eldocYn: 'N' },
-  {
-    fileId: 'f2',
-    fileNm: '4대사회보험사업장가입자명부.pdf',
-    fileSz: '20KB',
-    vldPrdEndYmd: '2025-01-31',
-    eldocYn: 'N',
-  },
-  {
-    fileId: 'f3',
-    fileNm: '4대사회보험사업장가입내역확인서.pdf',
-    fileSz: '20KB',
-    vldPrdEndYmd: '2025-01-31',
-    eldocYn: 'N',
-  },
-  { fileId: 'f4', fileNm: '전자문서.pdf', fileSz: '20KB', eldocYn: 'Y' },
-]
 
 export function DigitalCabinetFileListPage() {
   const navigate = useNavigate()
   // 진입 모드 — 파일첨부 플로우에서 왔을 때만 첨부 UI 노출(state.mode === 'attach'). 그 외 = 조회 전용.
-  const attachMode =
-    (useLocation().state as { mode?: 'attach' } | null)?.mode === 'attach'
+  const attachMode = (useLocation().state as { mode?: 'attach' } | null)?.mode === 'attach'
   // 선택한 파일 id 집합(체크박스 — 여러 건 선택). [선택 파일 첨부] 활성 조건도 이 값으로 판정.
   const [selectedIds, setSelectedIds] = useState<string[]>([])
 
@@ -88,7 +70,13 @@ export function DigitalCabinetFileListPage() {
         className="mx-4 mt-4 flex items-center gap-krds-5 rounded-krds-8 border border-krds-border-field p-krds-7 text-left focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2"
       >
         <Icon name="ArrowBack" size={20} aria-hidden className="shrink-0 text-krds-text-ink" />
-        <Icon name="Folder" size={24} fill={1} aria-hidden className="shrink-0 text-krds-text-primary" />
+        <Icon
+          name="Folder"
+          size={24}
+          fill={1}
+          aria-hidden
+          className="shrink-0 text-krds-text-primary"
+        />
         <span className="min-w-px flex-1 text-[17px] font-bold leading-normal text-krds-text-ink">
           상위 폴더 목록 이동
         </span>
@@ -96,62 +84,12 @@ export function DigitalCabinetFileListPage() {
 
       {/* 파일 리스트 — [체크박스] 📄 파일명 [파일크기] / 유효기간.
           체크박스는 카드 좌측 세로중앙(items-center)에 두고, gap-krds-7(12px)로 본문과 띄워 영역이 겹치지 않게 한다. */}
-      <ul className="flex flex-col gap-krds-7 px-4 pb-4 pt-4">
-        {MOCK_FILES.map((file) => {
-          const selected = selectedIds.includes(file.fileId)
-          return (
-            <li key={file.fileId}>
-              <button
-                type="button"
-                onClick={attachMode ? () => handleFileClick(file) : undefined}
-                // 첨부 모드: 행 자체가 선택 토글(체크박스는 시각 표시) / 조회 모드: 상호작용 없음.
-                role={attachMode ? 'checkbox' : undefined}
-                aria-checked={attachMode ? selected : undefined}
-                disabled={!attachMode}
-                className={cn(
-                  'flex w-full items-center gap-krds-7 rounded-[12px] border bg-background p-krds-8 text-left shadow-[0px_0px_5px_0px_rgba(23,43,77,0.1)]',
-                  'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-krds-focus-ring focus-visible:ring-offset-2',
-                  !attachMode && 'cursor-default',
-                  selected
-                    ? 'border-krds-border-primary bg-krds-bg-primary-faint'
-                    : 'border-krds-border-divider',
-                )}
-              >
-                {/* 선택 체크박스(설계서 2026-07-29 개정) — 첨부 모드에서만 노출. */}
-                {attachMode && (
-                  <Icon
-                    name={selected ? 'CheckBox' : 'CheckBoxOutlineBlank'}
-                    size={24}
-                    aria-hidden
-                    className={cn(
-                      'shrink-0',
-                      selected ? 'text-krds-text-primary' : 'text-krds-text-muted',
-                    )}
-                  />
-                )}
-                {/* 파일 정보 — 체크박스 영역과 분리된 본문 컬럼. */}
-                <div className="flex min-w-px flex-1 items-center gap-krds-7">
-                  <Icon
-                    name="Description"
-                    size={28}
-                    aria-hidden
-                    className="shrink-0 text-krds-text-primary-active"
-                  />
-                  <div className="flex min-w-px flex-1 flex-col gap-0.5">
-                    <span className="text-[17px] font-bold leading-normal text-krds-text-ink wrap-break-word">
-                      {file.fileNm}{' '}
-                      <span className="font-normal text-krds-text-muted">[{file.fileSz}]</span>
-                    </span>
-                    <span className="text-[15px] leading-normal text-krds-text-muted">
-                      유효기간 {file.vldPrdEndYmd ?? '-'}
-                    </span>
-                  </div>
-                </div>
-              </button>
-            </li>
-          )
-        })}
-      </ul>
+      <CabinetFileList
+        files={MOCK_CABINET_FILES}
+        attachMode={attachMode}
+        selectedIds={selectedIds}
+        onToggle={handleFileClick}
+      />
 
       {/* [선택 파일 첨부] — 첨부 모드에서만 노출. 선택 0건이면 비활성(설계서 slide117). */}
       {attachMode && (
