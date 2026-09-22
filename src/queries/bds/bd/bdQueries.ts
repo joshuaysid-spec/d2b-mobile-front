@@ -63,6 +63,18 @@ export const bdQueries = {
     })
   },
 
+  /**
+   * 임시입찰내용조회(no.125, OvsTndrSbmsnController) — 국외 입찰서 제출(MUI-BD-06-M71) On-Load(설계서 slide485).
+   * 보관함 입찰내역 작성(ovsTmprBidCnReg)에서 저장해 둔 품목별 입찰단가/입찰금액을 입찰참여품목 탭 초기값으로 채운다.
+   */
+  useSelectOvsTndrSbmsnTmprBidCnList(pbancNo: string, pbancOd: string) {
+    return useQuery({
+      queryKey: bdKeys.selectOvsTndrSbmsnTmprBidCnList(pbancNo, pbancOd),
+      queryFn: () => bdService.selectOvsTndrSbmsnTmprBidCnList(pbancNo, pbancOd),
+      enabled: Boolean(pbancNo),
+    })
+  },
+
   /** 입찰결과정보(no.165) — 목록에서 넘어온 항목을 placeholder 로 즉시 렌더(없으면 id 조회). */
   useSelctBidRsltInfo(id: string, placeholder?: MockBdopnItem) {
     return useQuery({

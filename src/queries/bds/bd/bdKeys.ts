@@ -25,4 +25,7 @@ export const bdKeys = {
   /** 임시입찰내용조회(no.60) — 입찰내역 작성(T75/T76) 진입 시 기존 저장분 로드. */
   selectTmprBidCnList: (intgRfrncNo: string, bidMthdNm?: string) =>
     ['bd', 'selectTmprBidCnList', { intgRfrncNo, bidMthdNm }] as const,
+  /** 임시입찰내용조회(no.125, OvsTndrSbmsnController) — 국외 입찰서 제출(M71) 진입 시 보관함 작성분 로드. */
+  selectOvsTndrSbmsnTmprBidCnList: (pbancNo: string, pbancOd: string) =>
+    ['bd', 'selectOvsTndrSbmsnTmprBidCnList', { pbancNo, pbancOd }] as const,
 }

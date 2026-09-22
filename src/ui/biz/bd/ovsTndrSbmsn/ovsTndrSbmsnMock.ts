@@ -1,5 +1,9 @@
-// 국외 입찰서 제출(M71) 입찰참여품목 목업·폼 초기값 — 컴포넌트 파일에서 상수 export 시 react-refresh 경고라 분리.
-import type { MockOvsAlonbsItem, MockOvsItitbBidCnItem } from '@/types/mock/bd'
+// 국외 입찰서 제출(M71) 입찰참여품목 목업·폼 초기값·금액 포맷 — 컴포넌트 파일에서 상수/함수 export 시 react-refresh 경고라 분리.
+import type {
+  MockOvsAlonbsItem,
+  MockOvsItitbBidCnItem,
+  MockOvsTndrItitbItem,
+} from '@/types/mock/bd'
 import type { OvsTndrItemValues } from '@/ui/biz/bd/ovsTndrSbmsn/OvsTndrSbmsn.schema'
 
 // 서버 총건수(입찰참여품목 조회 결과 total) — 상단 총건수·더보기 분모(설계서 '총 00건'·'더보기(10/100)').
@@ -113,3 +117,40 @@ export const ovsTndrItemDefault = (mode: OvsTndrItemValues['mode']): OvsTndrItem
   items: MOCK_ITITB_ITEMS.map((it) => ({ frcptlArtclNo: it.frcptlArtclNo, bdngTccrUntprc: '' })),
   bdngTccrAmt: '',
 })
+
+/** 금액 입력/표시 포맷 — 천단위 콤마 + 소수점 둘째자리까지(숫자·점 1개만). InputBox format 과 조회 응답 정규화 공용. */
+export function formatDecimal2(raw: string): string {
+  let s = raw.replace(/[^0-9.]/g, '')
+  const dot = s.indexOf('.')
+  if (dot !== -1) s = s.slice(0, dot + 1) + s.slice(dot + 1).replace(/\./g, '') // 점 1개만
+  const [int = '', dec] = s.split('.')
+  const intFmt = int.replace(/^0+(?=\d)/, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  if (dec === undefined) return intFmt
+  return `${intFmt === '' ? '0' : intFmt}.${dec.slice(0, 2)}`
+}
+
+/**
+ * 임시입찰내용조회(no.125) 응답 → T72/T73 폼 값. 입찰서 제출 진입 시 보관함 작성분을 초기값으로 채운다(설계서 slide485).
+ * - 단가제: 품목 목록(MOCK_ITITB_ITEMS) 순서를 유지하고 항목번호(frcptlArtclNo)로 응답 행을 찾아 입찰단가(bdngTccrUntprc)만 주입.
+ *   응답에 없는 품목은 빈값(사용자 입력 대기). 폼 items 는 화면 표시 순서와 1:1 이어야 해서 응답 순서를 쓰지 않는다.
+ * - 총액제: 응답 첫 행의 입찰금액(bdngTccrAmt)을 사용한다. ⚠️ 총액제 임시입찰내용 응답 형식(단건/행 배열)이
+ *   설계서에 없어 잠정 — 실응답 확인 시 교체.
+ * ⚠️ 화폐단위(crncNm)·입찰업체(splyBzentyNm)는 T72/T73 폼 입력 항목이 아니라(읽기전용 표시) 주입 대상에서 제외.
+ */
+export function tmprBidCnToItemValues(
+  mode: OvsTndrItemValues['mode'],
+  rows: MockOvsTndrItitbItem[],
+): OvsTndrItemValues {
+  if (mode === '총액제') {
+    return { ...ovsTndrItemDefault(mode), bdngTccrAmt: formatDecimal2(rows[0]?.bdngTccrAmt ?? '') }
+  }
+  return {
+    ...ovsTndrItemDefault(mode),
+    items: MOCK_ITITB_ITEMS.map((it) => ({
+      frcptlArtclNo: it.frcptlArtclNo,
+      bdngTccrUntprc: formatDecimal2(
+        rows.find((r) => r.frcptlArtclNo === it.frcptlArtclNo)?.bdngTccrUntprc ?? '',
+      ),
+    })),
+  }
+}

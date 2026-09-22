@@ -32,6 +32,7 @@ import {
   type OvsTndrItemValues,
 } from '@/ui/biz/bd/ovsTndrSbmsn/OvsTndrSbmsn.schema'
 import {
+  formatDecimal2,
   MOCK_ALONBS_BID_CN,
   MOCK_ALONBS_ITEMS,
   MOCK_ITITB_ITEMS,
@@ -43,17 +44,7 @@ import { focusField } from '@/utils/focusField'
 import type { MockOvsItitbBidCnItem, MockOvsTndrSbmsnDetail } from '@/types/mock/bd'
 
 // ── 금액 입력/표시 헬퍼 (국내 TndrWrt_Stp3 과 동일 방식) ─────────────────────
-// 천단위 콤마 + 소수점 둘째자리까지 — 숫자·점 1개만 허용.
-function formatDecimal2(raw: string): string {
-  let s = raw.replace(/[^0-9.]/g, '')
-  const dot = s.indexOf('.')
-  if (dot !== -1) s = s.slice(0, dot + 1) + s.slice(dot + 1).replace(/\./g, '') // 점 1개만
-  const [int = '', dec] = s.split('.')
-  const intFmt = int.replace(/^0+(?=\d)/, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-  if (dec === undefined) return intFmt
-  return `${intFmt === '' ? '0' : intFmt}.${dec.slice(0, 2)}`
-}
-
+// 천단위 콤마 포맷(formatDecimal2)은 조회 응답 정규화와 공용이라 ovsTndrSbmsnMock 에 둔다.
 // 콤마 포함 표시 문자열 → 숫자
 const toNumber = (v: string) => Number(v.replace(/,/g, ''))
 
@@ -203,6 +194,7 @@ export const OvsTndrSbmsnPage_Stp2 = React.forwardRef<OvsTndrStp2Handle, OvsTndr
       register,
       control,
       handleSubmit,
+      reset,
       formState: { errors },
     } = useForm<OvsTndrItemValues>({
       resolver: zodResolver(ovsTndrItemSchema),
@@ -211,6 +203,11 @@ export const OvsTndrSbmsnPage_Stp2 = React.forwardRef<OvsTndrStp2Handle, OvsTndr
       shouldFocusError: false, // 첫 에러 포커스는 아래 handleInvalid(focusField) 한 경로로.
       defaultValues,
     })
+    // defaultValues 는 마운트 때만 읽히므로, 탭이 열린 채 페이지 확정값이 바뀌면(임시입찰내용 응답 도착) 재주입한다.
+    //   페이지는 최초 1회만 채우고 사용자 확정 후엔 갱신하지 않아 편집 중 리셋되지 않는다.
+    React.useEffect(() => {
+      reset(defaultValues)
+    }, [defaultValues, reset])
 
     // 더보기 페이징: 현재까지 노출한 건수. 카드 펼침은 탭이 소유(실패 시 에러 카드를 강제로 펼치기 위해).
     const [visibleCount, setVisibleCount] = React.useState(OVS_TNDR_ITEM_PAGE_SIZE)

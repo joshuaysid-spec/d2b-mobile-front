@@ -5,6 +5,7 @@
 //   → 업무도움(Infobox) → 스탭 탭(TabList: 1.일반정보 / 2.입찰참여품목 / 3.첨부파일) → 탭 콘텐츠
 //   → 하단 액션바(이전/다음으로, 마지막 탭=신청하기) + 맨위로 FAB.
 // 스탭1(일반정보)은 페이지 인라인, 스탭2(M72/M73)·스탭3(M74)은 Stp2/Stp3 컴포넌트.
+// 진입 시 임시입찰내용조회(no.125)로 보관함 입찰내역 작성분을 불러와 입찰참여품목 탭 초기값으로 채운다(설계서 slide485 On-Load).
 // 마지막 탭 [신청하기] → 신청완료(M08, 기존 aplyCmptn 재사용).
 //   (설계서 slide369 2026-07-02 화면 수정: '전자서명하기' → '신청하기' — 전자서명 단계 없이 신청완료로 이동)
 // 행정정보 공동이용 사전동의서 영역(2026-09-14, PC 개정 메모 정정분 — 국외 입찰서에만, 국내 입찰서 미적용):
@@ -14,7 +15,7 @@
 // [다음으로] 검증(2026-09-16 사용자 지시, forms.md 스텝 마법사 규칙): 입력 탭(입찰참여품목 T72/T73)은 자기 useForm+zod 를 갖고
 //   ref.submit() 으로 제출, 페이지는 현재 탭만 검증 → 통과 시 확정값(itemValues) 보관 후 다음 탭(되돌아오면 재주입).
 //   조회 탭(일반정보)은 통과, 첨부파일 탭은 서류별 필수 규칙 미기재로 검증 없음(국외 참가신청 선례).
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -34,7 +35,10 @@ import { SummaryInfo } from '@/ui/common/composites/SummaryInfo'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import { OvsTndrSbmsnPage_Stp2, type OvsTndrStp2Handle } from '@/ui/biz/bd/ovsTndrSbmsn/Stp2'
-import { ovsTndrItemDefault } from '@/ui/biz/bd/ovsTndrSbmsn/ovsTndrSbmsnMock'
+import {
+  ovsTndrItemDefault,
+  tmprBidCnToItemValues,
+} from '@/ui/biz/bd/ovsTndrSbmsn/ovsTndrSbmsnMock'
 import { OvsTndrSbmsnPage_Stp3 } from '@/ui/biz/bd/ovsTndrSbmsn/Stp3'
 import {
   ADM_INFO_AGRE_ID,
@@ -42,6 +46,7 @@ import {
   type OvsTndrAgreValues,
   type OvsTndrItemValues,
 } from '@/ui/biz/bd/ovsTndrSbmsn/OvsTndrSbmsn.schema'
+import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import type { MockBidPrgrsItem, MockOvsTndrSbmsnDetail } from '@/types/mock/bd'
 
 // 행정정보 공동이용 사전동의서 — 국외 입찰서 전용(국내 미적용). ⚠️ 본문 문구 미확보: 문구 수령 시 이 상수만 교체.
@@ -107,11 +112,28 @@ export function OvsTndrSbmsnPage() {
   }
 
   const [tab, setTab] = useState('일반정보')
+  // 입찰방식 — T72(단가제)/T73(총액제) 폼 모드.
+  const itemMode: OvsTndrItemValues['mode'] =
+    (detail.bidMthdNm ?? '단가제') === '총액제' ? '총액제' : '단가제'
   // 입찰참여품목 탭 확정값 — 페이지가 보관, 탭이 언마운트돼도 유지(되돌아올 때 defaultValues 로 재주입).
   const [itemValues, setItemValues] = useState<OvsTndrItemValues>(() =>
-    ovsTndrItemDefault((detail.bidMthdNm ?? '단가제') === '단가제' ? '단가제' : '총액제'),
+    ovsTndrItemDefault(itemMode),
   )
   const stp2Ref = useRef<OvsTndrStp2Handle>(null)
+
+  // 임시입찰내용조회(no.125, 설계서 slide485 On-Load) — 보관함 입찰내역 작성(ovsTmprBidCnReg) 저장분을 초기값으로.
+  //   응답이 사용자 입력을 덮지 않도록 최초 1회만 주입(탭에서 [다음으로] 확정 시에도 filled 로 잠근다).
+  //   ⚠️ 탭이 이미 열린 상태에서 응답이 늦게 오면 빈 값이 잠깐 보였다가 채워진다(허용 — 응답은 보통 탭 진입 전 도착).
+  const { data: tmprBidCnRows } = bdQueries.useSelectOvsTndrSbmsnTmprBidCnList(
+    detail.pbancNo,
+    detail.pbancOd,
+  )
+  const filledRef = useRef(false)
+  useEffect(() => {
+    if (filledRef.current || !tmprBidCnRows?.length) return
+    filledRef.current = true
+    setItemValues(tmprBidCnToItemValues(itemMode, tmprBidCnRows))
+  }, [tmprBidCnRows, itemMode])
 
   // ── 사전동의서 동의 폼(페이지 소유) — [신청하기] 때 필수 동의 검증. AgreementList 는 RHF ref 없음 → focusField. ──
   const agreeForm = useForm<OvsTndrAgreValues>({
@@ -234,6 +256,7 @@ export function OvsTndrSbmsnPage() {
             detail={detail}
             defaultValues={itemValues}
             onSubmit={(values) => {
+              filledRef.current = true // 사용자 확정 이후엔 늦게 온 조회 응답이 덮지 않게
               setItemValues(values)
               goTab(tabOrder[tabIdx + 1])
             }}
