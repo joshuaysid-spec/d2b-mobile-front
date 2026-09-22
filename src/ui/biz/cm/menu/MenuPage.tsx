@@ -256,15 +256,25 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
   const [searching, setSearching] = useState(false)
   const searchAll = cmQueries.useSelectSearchAll()
 
+  // 전체메뉴에서 이동 = 새 출발점(기획 요청 2026-09-16 '메뉴 선택 시 이전 히스토리 삭제, 뒤로가기=메인').
+  //   브라우저 히스토리는 지울 수 없으므로 현재 화면을 메인으로 replace 한 뒤 목표 화면을 push 한다
+  //   → 이동한 화면에서 뒤로가기 = 메인. 이후 상세·작성으로 들어간 뒤의 뒤로가기는 평소처럼 한 단계씩.
+  //   메인 이전 항목은 남는다(메인에서 뒤로가기=앱 종료 처리는 네이티브 몫). 하단 탭바 이동에는 적용하지 않는다.
+  //   ⚠️ 두 navigate 를 같은 tick 에 부르면 데이터 라우터가 앞 건을 중단시켜 replace 가 유실된다 — 앞 건 완료 후 push.
+  const goFromMenu = useCallback(
+    (to: string) => {
+      onOpenChange(false) // 전체메뉴 닫고 이동
+      void Promise.resolve(navigate(ROUTES.HOME, { replace: true })).then(() => navigate(to))
+    },
+    [navigate, onOpenChange],
+  )
+
   const quickIcons: QuickIcon[] = [
     {
       id: 'mypage',
       label: '마이페이지',
       icon: <Icon name="LocationAway" size={24} aria-hidden />,
-      onClick: () => {
-        onOpenChange(false) // 전체메뉴 닫고 이동
-        navigate(ROUTES.MYPAGE) // 마이페이지(MUI-CM-06-M01)
-      },
+      onClick: () => goFromMenu(ROUTES.MYPAGE), // 마이페이지(MUI-CM-06-M01)
     },
     {
       id: 'cert',
@@ -284,19 +294,13 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
           <Image src={chatbotImage} alt="" objectFit="contain" className="size-8" />
         </div>
       ),
-      onClick: () => {
-        onOpenChange(false) // 전체메뉴 닫고 이동
-        navigate(ROUTES.CHATBOT) // 챗봇문의(MUI-MS-01-M11)
-      },
+      onClick: () => goFromMenu(ROUTES.CHATBOT), // 챗봇문의(MUI-MS-01-M11)
     },
     {
       id: 'settings',
       label: '설정',
       icon: <Icon name="Settings" size={24} aria-hidden />,
-      onClick: () => {
-        onOpenChange(false)
-        navigate(ROUTES.SETTINGS) // 설정(MUI-MS-02-M01)
-      },
+      onClick: () => goFromMenu(ROUTES.SETTINGS), // 설정(MUI-MS-02-M01)
     },
   ]
 
@@ -323,13 +327,12 @@ function MenuPage({ open, onOpenChange, isLoggedIn, user, onLogin, onLogout }: M
     (node: MenuNode) => {
       const route = MENU_ROUTES[node.id]
       if (route) {
-        onOpenChange(false) // 메뉴(전체메뉴 풀팝업) 닫고 이동
-        navigate(route)
+        goFromMenu(route)
         return
       }
       console.log('[menu]', node.label) // 미구현 화면 — 추후 라우팅
     },
-    [navigate, onOpenChange],
+    [goFromMenu],
   )
   const menuItems = useMemo(() => toMenuItems(MENU_TREE, handleLeafClick), [handleLeafClick])
 
