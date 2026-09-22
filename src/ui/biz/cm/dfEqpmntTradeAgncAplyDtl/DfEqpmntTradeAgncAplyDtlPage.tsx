@@ -3,8 +3,8 @@
 // 구성(위→아래, Figma): 요약(SummaryInfo: 구분 배지 + 접수번호 + 신청일자/처리일자)
 //   → 기본정보(Table: 업태/상호/대표자성명/사업자번호/설립일자/주소)
 //   → 연락처 / 이메일(Table: 연락처/팩스/이메일)
-//   → 반려사유(TextArea ReadOnly — 반려 아니어도 영역 표시, Figma)
 //   → 첨부파일(총 N건 — 서류명·일자 + 다운로드)
+//   → 반려사유(진행상황 '반려'일 때만 최하단, TextArea ReadOnly — v0.87 검토 45(b))
 //   → footer 없음([신청하기]는 검토 45번으로 제외, [등록증 발급]은 목록 M15 상단 큰 버튼으로 이동 — 2026-09-15).
 // 상단은 목록에서 넘어온 항목(navigate state)으로 그리고(service 스텁 없음), 본문/첨부는 페이지 목업(설계서 항목명 준수).
 //   직접 URL 진입(state 없음) 대비 페이지 fallback 목업. 데이터 연동 시 목업만 실제 조회로 교체.
@@ -52,7 +52,7 @@ const MOCK_INFO: MockDfEqpmntTradeAgncAplyInfo = {
   brno: '123-45-67890',
   fndnYmd: '2026-05-22',
   bzentyAddr: '대전광역시 서부 월평중로 21 방위사업청',
-  atrzRjctRsn: '', // 반려 시에만 값 — Figma 는 빈 값이어도 반려사유 영역 표시
+  atrzRjctRsn: '서류 미비(청렴서약서 누락)로 반려되었습니다. 보완 후 재신청 바랍니다.', // 반려 시에만 값 — 목록 항목이 '반려'일 때 노출
 }
 
 // ── 첨부서류(dl_dfEqpmntTradAgncAplyAtchFileList, 설계서 slide184 예시) — 첨부서류명(fileTtl)+첨부파일명(fileNm). ──
@@ -133,19 +133,6 @@ export function DfEqpmntTradeAgncAplyDtlPage() {
         <Table rows={contactRows(MOCK_INFO)} />
       </div>
 
-      {/* 반려사유 — 반려 아니어도 영역 표시(Figma 83224), ReadOnly. */}
-      <SectionTitle topDivider className="mt-krds-8">
-        반려사유
-      </SectionTitle>
-      <div className="px-4 pt-krds-7">
-        <TextArea
-          readOnly
-          value={MOCK_INFO.atrzRjctRsn}
-          placeholder="내용을 입력하세요."
-          aria-label="반려사유"
-        />
-      </div>
-
       {/* 첨부파일 — 총 N건 + 서류명·첨부일자 + 다운로드(Figma 83224). */}
       <SectionTitle topDivider info={`총 ${MOCK_FILES.length}건`} className="mt-krds-8">
         첨부파일
@@ -166,8 +153,19 @@ export function DfEqpmntTradeAgncAplyDtlPage() {
         ))}
       </div>
 
-      {/* 하단 액션 없음 — [신청하기]는 검토 45번으로 제외, [등록증 발급]은 목록(M15) 상단 큰 버튼으로 이동(사용자 지시 2026-09-15).
-          반려사유 위치는 현행(Figma 83224) 유지. */}
+      {/* 반려사유 — 진행상황이 '반려'일 때만, 첨부파일 아래 최하단(v0.87 검토 45(b), 2026-09-22 반영). ReadOnly. */}
+      {item.aprvSecdNm === '반려' && (
+        <>
+          <SectionTitle topDivider className="mt-krds-8">
+            반려사유
+          </SectionTitle>
+          <div className="px-4 pb-4 pt-krds-7">
+            <TextArea readOnly value={MOCK_INFO.atrzRjctRsn} aria-label="반려사유" />
+          </div>
+        </>
+      )}
+
+      {/* 하단 액션 없음 — [신청하기]는 검토 45번으로 제외, [등록증 발급]은 목록(M15) 상단 큰 버튼으로 이동(사용자 지시 2026-09-15). */}
     </div>
   )
 }
