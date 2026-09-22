@@ -199,8 +199,7 @@ const SearchFilter = React.forwardRef<SearchFilterHandle, SearchFilterProps>(fun
     const next = { ...prev, [key]: v }
     const fixed = normalize(next, prev)
     Object.keys(fixed).forEach((k) => {
-      if (!Object.is(fixed[k], next[k]))
-        form.setValue(k as FieldPath<SearchFilterValue>, fixed[k])
+      if (!Object.is(fixed[k], next[k])) form.setValue(k as FieldPath<SearchFilterValue>, fixed[k])
     })
   }
 
@@ -294,10 +293,7 @@ const SearchFilter = React.forwardRef<SearchFilterHandle, SearchFilterProps>(fun
                     control={form.control}
                     name={field.key as FieldPath<SearchFilterValue>}
                     render={({ field: rf, fieldState }) => (
-                      <div
-                        id={`sf-field-${field.key}`}
-                        className="flex flex-col gap-krds-3"
-                      >
+                      <div id={`sf-field-${field.key}`} className="flex flex-col gap-krds-3">
                         <SearchFilterField
                           field={field}
                           value={rf.value as SearchFilterFieldValue | undefined}
@@ -307,6 +303,7 @@ const SearchFilter = React.forwardRef<SearchFilterHandle, SearchFilterProps>(fun
                             applyNormalize(field.key, v, prev)
                           }}
                           onSelectionClick={handleSelectionClick}
+                          error={!!fieldState.error} // 빨간 테두리 — 문구(아래 InputMessage)와 함께
                         />
                         {fieldState.error && (
                           <InputMessage type="error">
@@ -357,11 +354,7 @@ const SearchFilter = React.forwardRef<SearchFilterHandle, SearchFilterProps>(fun
       >
         <RgnSrch ref={regionRef} onSelect={handleSheetSelect} />
       </BottomSheet>
-      <BottomSheet
-        open={sheet?.kind === 'license'}
-        onOpenChange={closeSheet}
-        title="면허정보 검색"
-      >
+      <BottomSheet open={sheet?.kind === 'license'} onOpenChange={closeSheet} title="면허정보 검색">
         {/* 면허정보 검색(P05) — P04 와 동일하게 footer 없음(검색 버튼은 콘텐츠 소유, 닫기는 타이틀 X). */}
         <LcnsInfoSrch ref={licenseRef} onSelect={handleSheetSelect} />
       </BottomSheet>

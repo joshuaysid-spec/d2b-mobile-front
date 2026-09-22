@@ -31,6 +31,8 @@ export interface SearchFilterFieldProps {
   onChange: (value: SearchFilterFieldValue) => void
   /** selectionField 터치 시 페이지로 위임(자체 팝업). 셸→페이지 콜백. */
   onSelectionClick?: (key: string, current: string, commit: (value: string) => void) => void
+  /** 검증 실패 — 셸이 fieldState.error 로 넘김. 지원하는 컨트롤(InputBox·SelectBox·기간·날짜·가격·선택필드)에 빨간 테두리. */
+  error?: boolean
 }
 
 const EMPTY_RANGE: DateRangeValue = { start: '', end: '' }
@@ -62,11 +64,13 @@ function SelectionFieldControl({
   value,
   onChange,
   onSelectionClick,
+  error,
 }: {
   field: SelectionFieldDef
   value: string
   onChange: (value: string) => void
   onSelectionClick?: (key: string, current: string, commit: (value: string) => void) => void
+  error?: boolean
 }) {
   const [open, setOpen] = React.useState(false)
   const items = field.sheetItems ?? []
@@ -86,6 +90,7 @@ function SelectionFieldControl({
       <SelectionFieldBox
         value={value}
         placeholder={field.placeholder}
+        error={error}
         onClick={handleClick}
         onClear={() => onChange('')}
       />
@@ -116,8 +121,11 @@ const SearchFilterField = ({
   value,
   onChange,
   onSelectionClick,
+  error,
 }: SearchFilterFieldProps) => {
   switch (field.type) {
+    // ⚠️ 에러 테두리(error) 미지원 컨트롤: radio·segment·checkbox·monthRange·year — 해당 공통 컴포넌트에 error 프롭이
+    //    없어 문구(셸 InputMessage)만 표시된다. 필요 시 공통 컴포넌트에 error 프롭 추가(사용자 확인 후).
     // 라디오 그룹 — 기본 세로(검색유형). field.direction='horizontal' 이면 가로(예: 신기술여부 예/아니오).
     case 'radio':
       return (
@@ -163,6 +171,7 @@ const SearchFilterField = ({
       return (
         <Field label={field.label} required={field.required}>
           <DateRangeInput
+            error={error}
             value={(value as DateRangeValue) ?? EMPTY_RANGE}
             onChange={(r) => onChange(r)}
             showPresets={field.showPresets}
@@ -201,6 +210,7 @@ const SearchFilterField = ({
       return (
         <Field label={field.label} required={field.required}>
           <DateInput
+            error={error}
             value={(value as string) ?? ''}
             onChange={(s) => onChange(s)}
             placeholder={field.placeholder}
@@ -215,6 +225,7 @@ const SearchFilterField = ({
       return (
         <Field label={field.label} required={field.required}>
           <InputBox
+            error={error}
             value={(value as string) ?? ''}
             placeholder={field.placeholder}
             minLength={field.minLength}
@@ -234,6 +245,7 @@ const SearchFilterField = ({
           value={(value as string) ?? ''}
           onChange={onChange}
           onSelectionClick={onSelectionClick}
+          error={error}
         />
       )
 
@@ -242,6 +254,7 @@ const SearchFilterField = ({
       return (
         <Field label={field.label} required={field.required}>
           <SelectBox
+            error={error}
             value={(value as string) ?? ''}
             onValueChange={(v) => onChange(v)}
             items={field.options}
@@ -259,6 +272,7 @@ const SearchFilterField = ({
       return (
         <Field label={field.label} required={field.required}>
           <RangeSliderInput
+            error={error}
             value={pr}
             onChange={onChange}
             min={field.rangeMin ?? 0}
