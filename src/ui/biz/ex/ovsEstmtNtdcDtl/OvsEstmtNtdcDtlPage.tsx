@@ -1,4 +1,6 @@
 // 견적통보서상세 — MUI-EX-02-M74 OvsEstmtNtdcDtl. 설계서 04.이행 v0.83 slide58~63.
+// 출력 이벤트(v0.85 slide63, R86 견적통보서출력물): SummaryInfo 출력 버튼 → 확인 모달 → OZ 리포트 뷰어
+//   (v0.90 검토 국외 시트 12번 '출력물 모바일 연결' — 견적의뢰서(R85)와 동일 패턴, 2026-09-22).
 // 견적통보서목록(M73) 카드 클릭 → /ex/ovsEstmtNtdcDtl 진입.
 // 구성: 중요 안내 + sticky(요약 + 스텝 + 탭) + 탭(T73 상세정보 · T74 물품목록) — M72 셸 준용.
 import { useState } from 'react'
@@ -13,6 +15,10 @@ import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { buildProgressSheet } from '@/ui/common/composites/stepPresets'
 import { TabList, type TabItem } from '@/ui/common/composites/TabList'
 import { FloatingActionButton } from '@/ui/common/composites/FloatingActionButton'
+import { AlertModal } from '@/ui/common/composites/AlertModal'
+import { SummaryUtilButton } from '@/ui/common/composites/SummaryUtilButton'
+import { OzReportFullPopup } from '@/ui/biz/cm/ozReport/OzReportFullPopup'
+import { useOzReport } from '@/ui/biz/cm/ozReport/useOzReport'
 import { OvsEstmtNtdcDtl } from '@/ui/biz/ex/ovsEstmtNtdcDtl/OvsEstmtNtdcDtl'
 import { OvsEstmtNtdcDtl_CmdtyList } from '@/ui/biz/ex/ovsEstmtNtdcDtl/OvsEstmtNtdcDtl_CmdtyList'
 
@@ -37,6 +43,8 @@ export function OvsEstmtNtdcDtlPage() {
   // 목록 → 상세: 식별자는 URL 이 아니라 navigate state(클릭 항목)로 받는다.
   const id = (useLocation().state as { id: string } | null)?.id ?? ''
   const [tab, setTab] = useState('detail')
+  const [printModalOpen, setPrintModalOpen] = useState(false)
+  const oz = useOzReport()
   const { collapsed, rootRef, scrollToTop, goToContentTop } = useCollapsibleHeader()
 
   const { data: detail } = exQueries.useSelectOvsEstmtNtdcDtl(id)
@@ -60,6 +68,10 @@ export function OvsEstmtNtdcDtlPage() {
           badges={[{ label: detail.docSttsCd }].filter((b) => b.label)}
           subtitle={`RQ No ${detail.clmSeq}`}
           title={detail.bizNm}
+          actions={
+            // 출력(slide63) — 견적통보서출력물(R86) → 확인 모달 → OZ 리포트 뷰어.
+            <SummaryUtilButton icon="Print" label="출력" onClick={() => setPrintModalOpen(true)} />
+          }
           rows={[
             { label: '항목 수', value: `${detail.itemSeq.toLocaleString()} 개` },
             { label: '무역대리점', value: detail.bzentyCd },
@@ -104,6 +116,21 @@ export function OvsEstmtNtdcDtlPage() {
         {tab === 'detail' && <OvsEstmtNtdcDtl detail={detail} />}
         {tab === 'cmdty' && <OvsEstmtNtdcDtl_CmdtyList id={id} detail={detail} />}
       </div>
+
+      {/* 출력(R86) — 확인 모달 → OZ 리포트 뷰어(실연동은 OzReportFullPopup 안에서) */}
+      <AlertModal
+        open={printModalOpen}
+        onOpenChange={setPrintModalOpen}
+        variant="info"
+        title="서류 출력 확인"
+        description="OZ 리포트가 실행되며, 로딩에 약간의 시간이 소요됩니다. 서류 출력을 진행할까요?"
+        secondaryAction={{ label: '취소' }}
+        primaryAction={{
+          label: '확인',
+          onClick: () => oz.open('R86', { clmSeq: detail.clmSeq }, '견적통보서'),
+        }}
+      />
+      <OzReportFullPopup {...oz.popupProps} />
 
       <FloatingActionButton className="fixed bottom-0 right-4 z-40" onTop={scrollToTop} />
     </div>
