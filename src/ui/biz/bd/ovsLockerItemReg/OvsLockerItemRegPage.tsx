@@ -105,20 +105,43 @@ const ITEM_FILTER_SCHEMA: SearchFilterSchema = {
       key: 'keyword',
       title: '검색어 (일부 입력 가능)',
       fields: [
+        // 형식 검사(2026-09-22): 일부 입력 검색이라 전체 형식이 아니라 허용 문자만 본다. 값 있을 때만 검사.
+        //   자릿수는 설계서 데이터영역(통합참조번호 30 · 부품번호 32). 구매요청번호(10)·재고번호(9)는 목업·실데이터가
+        //   더 길어(19자·13자) maxLength 미적용 — ⚠️ 자릿수 확정 후 반영.
         {
           type: 'text',
           key: 'intgRfrncNo',
           label: '통합참조번호',
           placeholder: '번호를 입력하세요.',
+          maxLength: 30,
+          pattern: { regex: /^[A-Z0-9]+$/i, message: '영문·숫자만 입력할 수 있습니다.' },
         },
         {
           type: 'text',
           key: 'prchsDmndNo',
           label: '구매요청번호',
           placeholder: '번호를 입력하세요.',
+          pattern: { regex: /^[A-Z0-9-]+$/i, message: '영문·숫자·하이픈(-)만 입력할 수 있습니다.' },
         },
-        { type: 'text', key: 'invtNo', label: '재고번호', placeholder: '번호를 입력하세요.' },
-        { type: 'text', key: 'prtsNo', label: '부품번호', placeholder: '번호를 입력하세요.' },
+        {
+          type: 'text',
+          key: 'invtNo',
+          label: '재고번호',
+          placeholder: '번호를 입력하세요.',
+          pattern: { regex: /^[A-Z0-9-]+$/i, message: '영문·숫자·하이픈(-)만 입력할 수 있습니다.' },
+        },
+        {
+          type: 'text',
+          key: 'prtsNo',
+          label: '부품번호',
+          placeholder: '번호를 입력하세요.',
+          maxLength: 32,
+          // 부품번호는 'T-80U/TBE-3' · '000-A0000 0000' 처럼 슬래시·공백·점을 포함한다.
+          pattern: {
+            regex: /^[A-Z0-9\-/ .]+$/i,
+            message: '영문·숫자·하이픈(-)·슬래시(/)·공백만 입력할 수 있습니다.',
+          },
+        },
       ],
     },
     {

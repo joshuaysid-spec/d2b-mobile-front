@@ -66,8 +66,24 @@ const LOCKER_FILTER_SCHEMA: SearchFilterSchema = {
       key: 'keyword',
       title: '검색어 (일부 입력 가능)',
       fields: [
-        { type: 'text', key: 'intgRfrncNo', label: '통합참조번호', placeholder: '번호를 입력하세요.' },
-        { type: 'text', key: 'prchsDmndNo', label: '구매요청번호', placeholder: '번호를 입력하세요.' },
+        // 형식 검사(2026-09-22): 일부 입력 검색이라 전체 형식(^…$ 고정)이 아니라 허용 문자만 본다. 값 있을 때만 검사.
+        //   자릿수는 설계서 slide402 데이터영역(통합참조번호 30).
+        {
+          type: 'text',
+          key: 'intgRfrncNo',
+          label: '통합참조번호',
+          placeholder: '번호를 입력하세요.',
+          maxLength: 30,
+          pattern: { regex: /^[A-Z0-9]+$/i, message: '영문·숫자만 입력할 수 있습니다.' },
+        },
+        {
+          type: 'text',
+          key: 'prchsDmndNo',
+          label: '구매요청번호',
+          placeholder: '번호를 입력하세요.',
+          // ⚠️ 설계서 자릿수 10 이나 목업·실데이터가 '2026LGM000598220-01'(19자) — maxLength 는 확정 후.
+          pattern: { regex: /^[A-Z0-9-]+$/i, message: '영문·숫자·하이픈(-)만 입력할 수 있습니다.' },
+        },
       ],
     },
     {
@@ -221,7 +237,8 @@ const TOTAL = 258 // 총 건수(목업 — 설계서 slide301 '더보기(10/258)
 // 목업 확장 — 보유 4건을 인덱스로 복제해 TOTAL 건 구성(통합참조번호·id 는 고유하게).
 const MOCK_LIST: MockOvsLockerPbanItem[] = Array.from({ length: TOTAL }, (_, i) => {
   const base = dl_resultList[i % dl_resultList.length]
-  const intgRfrncNo = i < dl_resultList.length ? base.intgRfrncNo : `BDF${String(1823 + i).padStart(5, '0')}EFE`
+  const intgRfrncNo =
+    i < dl_resultList.length ? base.intgRfrncNo : `BDF${String(1823 + i).padStart(5, '0')}EFE`
   return { ...base, id: intgRfrncNo, intgRfrncNo }
 })
 
@@ -320,7 +337,6 @@ export function OvsLockerPbanListPage() {
   const loaded = Math.min(page * pageSize, total)
   const visibleList = filteredList.slice(0, loaded)
 
-
   // 카드 클릭 바텀시트 — 타이틀 = 카드 사업명(bizNm), 설계서 slide409 그대로(사용자 확정 2026-08-25,
   //   구 [+ 공고 신청] footer 버튼 대체). 컨테이너는 페이지 소유(*Sheet 래퍼 금지), null 이면 닫힘.
   const [sheetItem, setSheetItem] = useState<MockOvsLockerPbanItem | null>(null)
@@ -367,16 +383,26 @@ export function OvsLockerPbanListPage() {
     badges: (
       <>
         {it.tmprBidCnStts === '완료' ? (
-          <Badge type="solid" color="green">입찰내역 완료</Badge>
+          <Badge type="solid" color="green">
+            입찰내역 완료
+          </Badge>
         ) : it.tmprBidCnStts === '작성' ? (
-          <Badge type="pastel" color="blue">입찰내역 작성</Badge>
+          <Badge type="pastel" color="blue">
+            입찰내역 작성
+          </Badge>
         ) : (
-          <Badge type="pastel" color="yellow">입찰내역 미작성</Badge>
+          <Badge type="pastel" color="yellow">
+            입찰내역 미작성
+          </Badge>
         )}
         {it.bidPrtcpAply === 'Y' ? (
-          <Badge type="solid" color="blue">입찰참가 신청</Badge>
+          <Badge type="solid" color="blue">
+            입찰참가 신청
+          </Badge>
         ) : (
-          <Badge type="pastel" color="red">입찰참가 미신청</Badge>
+          <Badge type="pastel" color="red">
+            입찰참가 미신청
+          </Badge>
         )}
       </>
     ),

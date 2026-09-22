@@ -14,6 +14,16 @@ export const isEmptyLike = (v: unknown): boolean =>
 
 const REQUIRED_MSG = '필수 입력 항목입니다.'
 
+// pattern 검사 — g/y 플래그가 붙은 정규식은 lastIndex(마지막 매치 위치)를 기억해 같은 객체로 반복 검사하면
+//   결과가 참/거짓/참… 으로 번갈아 어긋난다. 스키마 상수에 실수로 붙여도 안전하도록 플래그를 떼고 검사한다.
+//   (i 등 다른 플래그는 위치를 기억하지 않아 그대로 둔다.)
+const patternTest = (re: RegExp, v: string) => {
+  if (!re.global && !re.sticky) return re.test(v)
+  if (import.meta.env.DEV)
+    console.warn('[SearchFilter] pattern 정규식의 g/y 플래그는 검사에서 제거됩니다:', re)
+  return new RegExp(re.source, re.flags.replace(/[gy]/g, '')).test(v)
+}
+
 // text 필드 규칙 — 빈값은 required 만 검사, 길이/형식은 입력이 있을 때만(선택 항목을 비워 두면 통과).
 const textRule = (f: TextFieldDef) =>
   z
@@ -28,7 +38,7 @@ const textRule = (f: TextFieldDef) =>
         ctx.addIssue({ code: 'custom', message: `${f.minLength}자 이상 입력해주세요.` })
       if (f.maxLength && v.length > f.maxLength)
         ctx.addIssue({ code: 'custom', message: `${f.maxLength}자 이내로 입력해주세요.` })
-      if (f.pattern && !f.pattern.regex.test(v))
+      if (f.pattern && !patternTest(f.pattern.regex, v))
         ctx.addIssue({ code: 'custom', message: f.pattern.message })
     })
 

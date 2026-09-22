@@ -133,6 +133,9 @@ export function UsageGuidePage() {
               '빠른검색(SearchCondition)은 입력 중 거르지 않고 검색 실행 시에만 appliedSearch 로 확정한다.',
               '페이지→셸 명령형 제어가 필요하면 SearchFilterHandle(ref — submit/reset)을 쓴다.',
               '[검색] 버튼은 draft 가 defaultValue 와 다를 때만 활성된다 — defaultValue 를 실제 초기 상태와 맞춰 둔다.',
+              'text 필드 형식 검사는 pattern: { regex, message } 로 선언한다. 값이 있을 때만 검사하고 빈값은 required 만 본다(선택 항목을 비워 두면 통과).',
+              '정규식에 g/y 플래그를 붙이지 말 것 — 마지막 매치 위치를 기억해 같은 객체로 반복 검사하면 결과가 번갈아 어긋난다(셸이 떼고 DEV 경고). i 는 괜찮다.',
+              '검색어 필드는 일부 입력이 가능하므로 전체 형식(^…$ 고정)보다 허용 문자 집합으로 거는 편이 안전하다 — 적용 예: 국외 보관함 목록·품목 관리의 번호 필드.',
             ]}
             refs={[
               'src/ui/biz/cm/search/SearchFilter.tsx',
@@ -352,7 +355,11 @@ export function UsageGuidePage() {
 
 /* ── 1. SearchFilter 데모 ──────────────────────────────────────────── */
 
-const SF_DEFAULT: SearchFilterValue = { pbancDt: { start: '', end: '' }, pbancNm: '' }
+const SF_DEFAULT: SearchFilterValue = {
+  pbancDt: { start: '', end: '' },
+  pbancNm: '',
+  pbancNo: '',
+}
 const SF_SCHEMA: SearchFilterSchema = {
   title: '입찰공고 검색필터',
   sections: [
@@ -368,6 +375,13 @@ const SF_SCHEMA: SearchFilterSchema = {
           placeholder: '공고명을 입력하세요.',
           minLength: 2,
           maxLength: 50,
+        },
+        {
+          key: 'pbancNo',
+          type: 'text',
+          label: '공고번호',
+          placeholder: '영문·숫자·하이픈만 통과 (예: 2026LGM-01)',
+          pattern: { regex: /^[A-Z0-9-]+$/i, message: '영문·숫자·하이픈(-)만 입력할 수 있습니다.' },
         },
       ],
     },
