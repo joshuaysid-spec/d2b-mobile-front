@@ -24,6 +24,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { ROUTES } from '@/constants/routes'
 import { cn } from '@/utils/cn'
 import type { MockMyPageSchedule } from '@/types/mock/cm'
+import { toBidPbancState } from '@/ui/biz/bd/bidPbancDtl/bidPbancState'
 
 // ── 목업 (설계서 데이터영역 형식 — API 연동 시 교체) ─────────────────────────
 const MOCK_BZENTY_NM = '가온산업' // 추후: 업체 정보 API(로그인 업체)
@@ -101,7 +102,8 @@ const MOCK_SCHEDULES: MockMyPageSchedule[] = [
 
 // ── 행 프리미티브 (Figma 실측 1:1) ───────────────────────────────────────────
 // 공통 행 — min-h 56 · px16 · gap16 · border-top 1px.
-const ROW = 'flex min-h-[56px] w-full items-center gap-krds-8 border-t border-krds-border-divider px-krds-8'
+const ROW =
+  'flex min-h-[56px] w-full items-center gap-krds-8 border-t border-krds-border-divider px-krds-8'
 
 // 건수 배지 — '숫자'만 underline + 'N 건'. tone: section=navy(primary-active) / nav=blue(primary).
 function CountBadge({ count, tone }: { count: number; tone: 'section' | 'nav' }) {
@@ -201,7 +203,12 @@ function SubMenuGroup({
           {it.count != null ? (
             <CountBadge count={it.count} tone="nav" />
           ) : (
-            <Icon name="ArrowForwardIos" size={20} aria-hidden className="shrink-0 text-krds-text-ink" />
+            <Icon
+              name="ArrowForwardIos"
+              size={20}
+              aria-hidden
+              className="shrink-0 text-krds-text-ink"
+            />
           )}
         </button>
       ))}
@@ -266,9 +273,13 @@ export function MyPage() {
       setDetail(s)
       return
     }
-    // 관심(찜)한 입찰공고 → 해당 입찰공고 상세(MUI-BD-01-M02). URL 에 식별자를 두지 않아 일정 항목을 state 로 넘긴다
-    // (⚠️ 일정 항목은 공고 상세가 기대하는 아이템 타입이 아니라 상단 요약 일부가 빈다 — API 연동 시 공고 조회로 대체).
-    navigate('/bd/bidPbancDtl', { state: s })
+    // 관심(찜)한 입찰공고 → 해당 입찰공고 상세(MUI-BD-01-M02). URL 에 식별자를 두지 않아 일정 항목을 state 로 넘긴다.
+    // 상세는 MockBidPbancItem 을 단정하므로 일정 항목을 그 형태로 변환한다 — 일정엔 공고번호·공고명만 있어
+    // 나머지 요약 필드는 빈 값 placeholder 이고 상세 조회(selectPbancGnrlInfo) 응답이 덮는다.
+    // ⚠️ 목업 pbancNo 는 Figma 더미('공고번호 000 00 0000') — 실응답에선 실제 공고번호가 들어온다.
+    navigate('/bd/bidPbancDtl', {
+      state: toBidPbancState({ pbancNo: s.pbancNo ?? '', bizNm: s.pbancNm ?? '' }),
+    })
   }
 
   // 하단 바로가기 — 설계서 v0.84 slide82(2026-07-13 수정: 국외보관함 추가) + Figma 10020:83891(회원탈퇴 행) 구성.
@@ -282,7 +293,11 @@ export function MyPage() {
     { id: 'userInfo', label: '사용자 정보관리', onClick: () => navigate(ROUTES.INDV_INFO_MNG) },
     { id: 'cabinet', label: '디지털 캐비닛', onClick: () => navigate(ROUTES.DIGITAL_CABINET) },
     // 알림 서비스 신청 및 해지(MUI-CM-02-M09).
-    { id: 'noti', label: '알림 서비스 신청 및 해지', onClick: () => navigate(ROUTES.NOTI_SRVC_APLY) },
+    {
+      id: 'noti',
+      label: '알림 서비스 신청 및 해지',
+      onClick: () => navigate(ROUTES.NOTI_SRVC_APLY),
+    },
     // 회원탈퇴(MUI-CM-02-P10) 행은 2026-08-05 요청으로 제거 — 사용자정보관리(MUI-CM-02-M01) 경유로만 진입.
   ]
 
@@ -341,12 +356,7 @@ export function MyPage() {
 
       {/* 9) 하단 바로가기 — 19px Bold + ArrowForwardIos, 마지막 행 하단선 */}
       {shortcuts.map((s, i) => (
-        <LinkRow
-          key={s.id}
-          label={s.label}
-          onClick={s.onClick}
-          last={i === shortcuts.length - 1}
-        />
+        <LinkRow key={s.id} label={s.label} onClick={s.onClick} last={i === shortcuts.length - 1} />
       ))}
 
       {/* 맨 위로 FAB — 스크롤 주체는 AppLayout 의 #app-scroll(main).

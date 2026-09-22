@@ -13,6 +13,7 @@ import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { buildAnlProgressSheet, stageOfSubstep } from '@/ui/common/composites/stepPresets'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
+import { toBidPbancState, splitPbancNoOd } from '@/ui/biz/bd/bidPbancDtl/bidPbancState'
 
 // 가로 스텝바 — 기존 상세와 동일한 대단계 5칩(조달/입찰/계약/이행/대금청구).
 // 표시 규칙(260710 확정): **doing(빨강) = 지금 보고 있는 단계 · done(체크) = 기준 건이 진행한 단계(prgrsStg 이하)**.
@@ -40,6 +41,26 @@ interface AnlPrgrsItem {
   bizNm: string
   /** 정보행(라벨/값) — 세부단계별로 주요 일자·번호를 표시 */
   rows: { label: string; value: string }[]
+}
+
+/**
+ * 연관 건(입찰공고 단계) → 입찰공고 상세가 기대하는 아이템(MockBidPbancItem).
+ * 연관 건은 표시용 rows 구조라 공고번호·마감일시를 라벨로 찾아 꺼낸다.
+ * 채우지 못한 필드는 빈 값 placeholder 로 두고 상세 조회(selectPbancGnrlInfo) 응답이 덮는다.
+ * ⚠️ 연관 건 조회 API 확정 시 rows 대신 도메인 아이템을 그대로 넘기고 이 변환을 제거.
+ */
+const toPbancState = (it: AnlPrgrsItem) => {
+  const row = (label: string) => it.rows.find((r) => r.label === label)?.value ?? ''
+  return toBidPbancState({
+    ...splitPbancNoOd(row('공고번호')), // 'LDG0097-1' → pbancNo/pbancOd/g2bPbancNoOd
+    taskSeNm: it.taskSeNm,
+    bizNm: it.bizNm,
+    intgRfrncNo: it.rfrncNo,
+    bidRegDdlnDt: row('입찰참가등록마감일시'),
+    bidRegDdlnDtText: row('입찰참가등록마감일시'),
+    tndrSbmsnDdlnDt: row('입찰서제출마감일시'),
+    bdopnDt: row('개찰일시'),
+  })
 }
 
 // 연관 건 목업 — 기준 건(통합참조번호 2025LDG56349 계열)과 엮인 건들. 대체로 단건, 입찰공고만 2건(정정 재공고) 예시.
@@ -188,7 +209,8 @@ export function AnlPrgrsListPage() {
         navigate('/op/bfhdSpcfctDtl', { state: it })
         break
       case '입찰공고':
-        navigate('/bd/bidPbancDtl', { state: it })
+        // 상세는 MockBidPbancItem 을 단정하므로 연관 건을 그 형태로 변환해 넘긴다(bidPbancState).
+        navigate('/bd/bidPbancDtl', { state: toPbancState(it) })
         break
       case '입찰진행':
         navigate('/bd/bidPrgsDtlInq', { state: it })
@@ -207,7 +229,9 @@ export function AnlPrgrsListPage() {
     badges: (
       <>
         <Badge>{it.taskSeNm}</Badge>
-        <Badge type="pastel" color="blue">{substep}</Badge>
+        <Badge type="pastel" color="blue">
+          {substep}
+        </Badge>
       </>
     ),
     subtitle: `통합참조번호 ${it.rfrncNo}`,

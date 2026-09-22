@@ -24,11 +24,8 @@ import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { CardList, type CardListItem } from '@/ui/common/composites/CardList'
 import { SearchFilter } from '@/ui/biz/cm/search/SearchFilter'
-import type {
-  DateRangeValue,
-  SearchFilterSchema,
-  SearchFilterValue,
-} from '@/types/search-filter'
+import { toBidPbancState, splitPbancNoOd } from '@/ui/biz/bd/bidPbancDtl/bidPbancState'
+import type { DateRangeValue, SearchFilterSchema, SearchFilterValue } from '@/types/search-filter'
 
 export interface IntgSrch_RsltProps {
   /** 실행된 검색어 — 결과 타이틀("{keyword} 검색결과")·목업 컨텍스트. */
@@ -179,6 +176,27 @@ const SORT_OPTIONS = [
 // 한 카테고리에서 처음 노출 + 더보기 1회당 추가되는 카드 수(Figma: 3장 후 더보기).
 const GROUP_PAGE_SIZE = 3
 
+/**
+ * 검색결과 항목 → 입찰공고 상세가 기대하는 아이템(MockBidPbancItem).
+ * 채우지 못한 필드는 빈 값 placeholder 로 두고 상세 조회(selectPbancGnrlInfo) 응답이 덮는다.
+ * ⚠️ M10 데이터영역 미확정(파일 상단 TODO) — pbancNo 는 BD 설계서 형식('LDG0097-1')을 가정해 차수를 분해한다.
+ */
+const toPbancState = (item: IntgSrchRsltItem) =>
+  toBidPbancState({
+    ...splitPbancNoOd(item.pbancNo),
+    taskSeNm: item.taskSeNm,
+    bidMthdNm: item.bidMthdNm,
+    pbancSeNm: item.pbancTpcd,
+    bizNm: item.bidPbancNm,
+    pbancYmd: item.pbancDt,
+    pbancYmdText: item.pbancDt,
+    bidRegDdlnDt: item.bidClrsDt,
+    bidRegDdlnDtText: item.bidClrsDt,
+    tndrSbmsnDdlnDt: item.tndrSbmsnDdlnDt,
+    bdopnDt: item.opbidDt,
+    g2bPbancNoOdText: item.pbancNo,
+  })
+
 // ── 검색필터 schema — 설계서 v0.87 인쇄본 27쪽(검색필터 설정 화면) + 기간검색(사용자 추가).
 //   검색대상: 체크박스(체크 시 결과 영역 반영 — 셸 규격상 [검색] 실행 시 일괄 적용).
 //   결과 내 재검색: 검색어 포함(현재 검색어 + 추가어) / 검색어 제외(입력어 제외 처리) + 입력.
@@ -269,7 +287,8 @@ function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProp
     console.log('[intgSrchRslt] 카드 이동', group.key, item.id)
     onNavigate?.() // 통합검색 오버레이 닫기
     // 클릭 항목을 state 로 전달(목록 → 상세 표준). ⚠️ TODO(라우트 확인): 카테고리별 상세 경로 확정 필요.
-    navigate(group.detailPath, { state: item })
+    // 상세(입찰공고)는 MockBidPbancItem 을 단정하므로 결과 항목을 그 형태로 변환해 넘긴다.
+    navigate(group.detailPath, { state: toPbancState(item) })
   }
 
   // 검색필터 적용(클라이언트, 목업) — 서버 페이징 전환 시 API 파라미터로 이행.
@@ -296,24 +315,27 @@ function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProp
   // 카드 props 매핑(Figma m_card): 배지(업무구분·입찰방식) + subtitle(공고구분 공고번호) + title(입찰건명) + 4행.
   const toCardItems = (group: IntgSrchRsltGroup): CardListItem[] => {
     const loaded = (pages[group.key] ?? 1) * GROUP_PAGE_SIZE
-    return group.items.filter(matchesFilter).slice(0, loaded).map((it) => ({
-      id: it.id,
-      badges: (
-        <>
-          <Badge>{it.taskSeNm}</Badge>
-          <Badge>{it.bidMthdNm}</Badge>
-        </>
-      ),
-      subtitle: `${it.pbancTpcd} ${it.pbancNo}`,
-      title: it.bidPbancNm,
-      rows: [
-        { label: '공고일자', value: it.pbancDt },
-        { label: '입찰참가신청 마감일시', value: it.bidClrsDt },
-        { label: '입찰서제출 마감일시', value: it.tndrSbmsnDdlnDt },
-        { label: '개찰일시', value: it.opbidDt },
-      ],
-      onClick: () => handleCardClick(group, it),
-    }))
+    return group.items
+      .filter(matchesFilter)
+      .slice(0, loaded)
+      .map((it) => ({
+        id: it.id,
+        badges: (
+          <>
+            <Badge>{it.taskSeNm}</Badge>
+            <Badge>{it.bidMthdNm}</Badge>
+          </>
+        ),
+        subtitle: `${it.pbancTpcd} ${it.pbancNo}`,
+        title: it.bidPbancNm,
+        rows: [
+          { label: '공고일자', value: it.pbancDt },
+          { label: '입찰참가신청 마감일시', value: it.bidClrsDt },
+          { label: '입찰서제출 마감일시', value: it.tndrSbmsnDdlnDt },
+          { label: '개찰일시', value: it.opbidDt },
+        ],
+        onClick: () => handleCardClick(group, it),
+      }))
   }
 
   return (
@@ -346,9 +368,7 @@ function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProp
         const hasMore = cardItems.length < group.items.filter(matchesFilter).length
         return (
           <section key={group.key} className="flex w-full flex-col">
-            <SectionTitle info={`총 ${group.total.toLocaleString()}건`}>
-              {group.title}
-            </SectionTitle>
+            <SectionTitle info={`총 ${group.total.toLocaleString()}건`}>{group.title}</SectionTitle>
             <div className="flex flex-col gap-krds-7 px-4 pb-4 pt-krds-7">
               <CardList items={cardItems} />
               {hasMore && (

@@ -23,6 +23,7 @@ import type {
   DateRangePresetDef,
 } from '@/types/search-filter'
 import type { MockItrstBidPbancItem } from '@/types/mock/cm'
+import { toBidPbancState, splitPbancNoOd } from '@/ui/biz/bd/bidPbancDtl/bidPbancState'
 import { TASK_SE_CD } from '@/constants/codes'
 import { bdQueries } from '@/queries/bds/bd/bdQueries'
 import { cmQueries } from '@/queries/cbs/cm/cmQueries'
@@ -139,6 +140,25 @@ const MOCK_LIST: MockItrstBidPbancItem[] = Array.from({ length: TOTAL }, (_, i) 
   return { ...base, id: String(i + 1) }
 })
 
+/**
+ * 관심공고 항목 → 입찰공고 상세가 기대하는 아이템(MockBidPbancItem).
+ * 채우지 못한 필드는 빈 값 placeholder 로 두고 상세 조회(selectPbancGnrlInfo) 응답이 덮는다.
+ * 예산금액(bdgtAmt)은 기초예가금액(bsicExpt)과 다른 값이라 매핑하지 않는다(⚠️ 상세 조회로 확정).
+ */
+const toPbancState = (item: MockItrstBidPbancItem) =>
+  toBidPbancState({
+    ...splitPbancNoOd(item.pbancNoCycl), // '2026LGM000604191-01' → pbancNo/pbancOd/g2bPbancNoOd
+    taskSeCd: item.taskSeCd,
+    taskSeNm: item.taskSeNm,
+    ctrtMthdNm: item.ctrtMthd,
+    ctrtMthdNmText: item.ctrtMthd,
+    pbancSeNm: item.pbancStasNm, // 공고상태(정상/정정공고) = 상세 요약 공고구분 뱃지
+    bidMthdNm: item.bidMthd,
+    bizNm: item.bidNm,
+    deptNm: item.orderInstNm,
+    g2bPbancNoOdText: item.pbancNoCycl,
+  })
+
 // '다음부터 묻지 않기' — 계정별 localStorage 저장(2026-09-01 사용자 확인: 기기+계정 단위).
 //   서버 사용자 설정 API 미확정이라 로컬 저장에 계정키(customerNo)를 붙인다. API 확정 시 서버 저장으로 이관.
 const dontAskKey = (customerNo?: string) =>
@@ -182,8 +202,9 @@ export function ItrstBidPbancPage() {
   }
   const handleOpen = (item: MockItrstBidPbancItem) => {
     // 클릭한 항목을 state 로 전달 — 업무구분코드(GTSA0001)로 국내(M02)/국외(M71) 상세 분기(통합목록과 동일 규칙).
+    // 상세는 MockBidPbancItem 을 단정하므로 관심공고 항목을 그 형태로 변환해 넘긴다(bidPbancState).
     const to = item.taskSeCd === TASK_SE_CD.OVERSEAS ? '/bd/ovsBidPbancDtl' : '/bd/bidPbancDtl'
-    navigate(to, { state: item })
+    navigate(to, { state: toPbancState(item) })
   }
 
   // 별 토글 API — 해제 = cm no.758(분기 없음) · 재등록 = 업무구분코드(GTSA0001)로 국내/국외 분기(no.30/51).

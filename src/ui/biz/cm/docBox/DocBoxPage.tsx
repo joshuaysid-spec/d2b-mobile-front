@@ -42,7 +42,7 @@ import type {
   SearchFilterValue,
 } from '@/types/search-filter'
 import type { MockDocBoxItem, MockDocBoxSeCd, MockDocBoxAtchFile } from '@/types/mock/cm'
-import type { MockBidPbancItem } from '@/types/mock/bd'
+import { toBidPbancState } from '@/ui/biz/bd/bidPbancDtl/bidPbancState'
 
 // 상단 분기 탭 — 문서구분 4가지(받은/보낸/반려/임시저장). docSeCd 로 목록 필터.
 const DOC_TABS: TabItem[] = [
@@ -285,9 +285,13 @@ export function DocBoxPage() {
   //   ⚠️ 개발계 실응답(260825)에는 공고 식별자가 없음 — 문서유형 ctgrIden(예: DP201Z)·catName 과
   //   mainNumb/subNumb(문서번호)만 존재. 이동처 매핑(ctgrIden→화면)과 공고 조회키 확보는
   //   백엔드 확인 필요(closed-network-checklist). 그때까지 pbancNo·taskSeCd 는 임시키.
+  //   ⚠️ pbancNo 는 '2026-0179' 처럼 차수가 붙지 않는 임시키라 분해하지 않고 그대로 조회키로 넘긴다.
+  //   문서명(docNm)은 입찰건명이 아니므로 매핑하지 않는다 — 요약 상단은 상세 조회 응답이 채운다.
   const handleCardClick = (it: MockDocBoxItem) => {
     const to = it.taskSeCd === TASK_SE_CD.OVERSEAS ? '/bd/ovsBidPbancDtl' : '/bd/bidPbancDtl'
-    navigate(to, { state: { pbancNo: it.pbancNo, taskSeCd: it.taskSeCd } as MockBidPbancItem })
+    navigate(to, {
+      state: toBidPbancState({ pbancNo: it.pbancNo ?? '', taskSeCd: it.taskSeCd ?? '' }),
+    })
   }
 
   const cardItems: CardListItem[] = visible.map((it) => ({

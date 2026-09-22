@@ -26,9 +26,13 @@ import { TaskCldrReg, type TaskCldrRegHandle } from '@/ui/biz/cm/taskCldr/TaskCl
 import type { TaskCldrRegSchemaValues } from '@/ui/biz/cm/taskCldr/TaskCldrReg.schema'
 import { cn } from '@/utils/cn'
 import type { MockTaskCldrItem, MockMyPageSchdlSeCd } from '@/types/mock/cm'
+import { toBidPbancState } from '@/ui/biz/bd/bidPbancDtl/bidPbancState'
 
 // 구분별 배지 — 물품=blue · 공사=green · 개인=yellow(근사, MyPage_Calendar 와 동일 관례).
-const SCHDL_BADGE: Record<MockMyPageSchdlSeCd, { label: string; color: 'blue' | 'green' | 'yellow' }> = {
+const SCHDL_BADGE: Record<
+  MockMyPageSchdlSeCd,
+  { label: string; color: 'blue' | 'green' | 'yellow' }
+> = {
   goods: { label: '물품', color: 'blue' },
   construction: { label: '공사', color: 'green' },
   personal: { label: '개인', color: 'yellow' },
@@ -128,7 +132,10 @@ export function TaskCldrPage() {
 
   // 바텀시트/모달/토스트 상태.
   const [detailItem, setDetailItem] = useState<MockTaskCldrItem | null>(null) // M07 상세
-  const [regSheet, setRegSheet] = useState<{ mode: 'reg' | 'edit'; target: MockTaskCldrItem | null } | null>(null) // M08 등록/수정
+  const [regSheet, setRegSheet] = useState<{
+    mode: 'reg' | 'edit'
+    target: MockTaskCldrItem | null
+  } | null>(null) // M08 등록/수정
   const [deleteTarget, setDeleteTarget] = useState<MockTaskCldrItem | null>(null) // M09 삭제 확인
   const regRef = useRef<TaskCldrRegHandle>(null)
 
@@ -143,9 +150,13 @@ export function TaskCldrPage() {
       setDetailItem(item)
       return
     }
-    // 관심(찜) 입찰공고 → 입찰공고 상세(MUI-BD-01-M02). URL 에 식별자를 두지 않아 일정 항목을 state 로 넘긴다
-    // (⚠️ 일정 항목은 공고 상세가 기대하는 아이템 타입이 아니라 상단 요약 일부가 빈다 — API 연동 시 공고 조회로 대체).
-    navigate('/bd/bidPbancDtl', { state: item })
+    // 관심(찜) 입찰공고 → 입찰공고 상세(MUI-BD-01-M02). URL 에 식별자를 두지 않아 일정 항목을 state 로 넘긴다.
+    // 상세는 MockBidPbancItem 을 단정하므로 일정 항목을 그 형태로 변환한다 — 일정엔 공고번호·공고명만 있어
+    // 나머지 요약 필드는 빈 값 placeholder 이고 상세 조회(selectPbancGnrlInfo) 응답이 덮는다.
+    // ⚠️ 목업 pbancNo 는 Figma 더미('공고번호 000 00 0000') — 실응답에선 실제 공고번호가 들어온다.
+    navigate('/bd/bidPbancDtl', {
+      state: toBidPbancState({ pbancNo: item.pbancNo ?? '', bizNm: item.pbancNm ?? '' }),
+    })
   }
 
   // 등록 시트 열기 — 선택 날짜를 기본값으로.
@@ -162,7 +173,9 @@ export function TaskCldrPage() {
       const id = regSheet.target.id
       setItems((prev) =>
         prev.map((it) =>
-          it.id === id ? { ...it, schdlDt: values.schdlDt, schdlTtl: values.schdlTtl, schdlCn: values.schdlCn } : it,
+          it.id === id
+            ? { ...it, schdlDt: values.schdlDt, schdlTtl: values.schdlTtl, schdlCn: values.schdlCn }
+            : it,
         ),
       )
       console.log('[TaskCldr] 일정 수정', id, values) // 추후: cmService.updateSchdl(id, values)
@@ -218,13 +231,17 @@ export function TaskCldrPage() {
 
       {/* ② 선택 날짜 헤더 — bg-primary-faint. */}
       <div className="flex min-h-[56px] w-full items-center border-t border-krds-border-divider bg-krds-bg-primary-faint px-krds-8">
-        <h2 className="text-krds-body-lg font-bold leading-normal text-krds-text-ink">{dateHeader}</h2>
+        <h2 className="text-krds-body-lg font-bold leading-normal text-krds-text-ink">
+          {dateHeader}
+        </h2>
       </div>
 
       {/* ③ 선택 날짜 일정 카드(전체) / 없으면 안내. ④ 일정 등록하기 버튼. */}
       <div className="flex flex-col gap-krds-8 px-krds-8 pb-krds-8 pt-krds-8">
         {dayItems.length > 0 ? (
-          dayItems.map((it) => <ScheduleCard key={it.id} item={it} onClick={() => handleCardClick(it)} />)
+          dayItems.map((it) => (
+            <ScheduleCard key={it.id} item={it} onClick={() => handleCardClick(it)} />
+          ))
         ) : (
           <p className="py-krds-8 text-center text-krds-body-md text-krds-text-muted">
             표시할 일정이 없습니다.
@@ -291,7 +308,9 @@ export function TaskCldrPage() {
         title="일정 삭제"
         description={
           <span className="whitespace-pre-line">
-            {'업무 캘린더에 등록된 일정을 삭제합니다. 삭제된 일정은 복구할 수 없습니다.\n정말 삭제할까요?'}
+            {
+              '업무 캘린더에 등록된 일정을 삭제합니다. 삭제된 일정은 복구할 수 없습니다.\n정말 삭제할까요?'
+            }
           </span>
         }
         secondaryAction={{ label: '취소' }}
