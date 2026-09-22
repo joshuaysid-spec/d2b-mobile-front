@@ -359,6 +359,7 @@ const SF_DEFAULT: SearchFilterValue = {
   pbancDt: { start: '', end: '' },
   pbancNm: '',
   pbancNo: '',
+  pbancNoFull: '',
 }
 const SF_SCHEMA: SearchFilterSchema = {
   title: '입찰공고 검색필터',
@@ -382,6 +383,18 @@ const SF_SCHEMA: SearchFilterSchema = {
           label: '공고번호',
           placeholder: '영문·숫자·하이픈만 통과 (예: 2026LGM-01)',
           pattern: { regex: /^[A-Z0-9-]+$/i, message: '영문·숫자·하이픈(-)만 입력할 수 있습니다.' },
+        },
+        {
+          // 전체 형식 고정 예 — 4자리 연도 + 영문 3 + 숫자 9(국내 공고번호 '2026LGM000604191').
+          //   ^…$ 로 고정하면 일부 입력('2026LGM')은 통과하지 못한다 — 정확한 번호를 요구하는 자리에만.
+          key: 'pbancNoFull',
+          type: 'text',
+          label: '공고번호(전체 형식)',
+          placeholder: '2026LGM000604191 형식만 통과',
+          pattern: {
+            regex: /^\d{4}[A-Z]{3}\d{9}$/,
+            message: "공고번호는 '2026LGM000604191' 형식(연도4+영문3+숫자9)으로 입력해주세요.",
+          },
         },
       ],
     },

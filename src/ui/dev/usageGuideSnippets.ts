@@ -4,7 +4,7 @@
 
 /** 1. SearchFilter + SearchCondition — 근거: cm/search/SearchFilter.tsx · types/search-filter.ts · op/prcmPlanIntgList/PrcmPlanIntgListPage.tsx */
 export const SNIPPET_SEARCH_FILTER = `// 1) 검색조건 선언 — 페이지는 schema(데이터)만. 검증은 셸이 자동 생성(buildZodSchema).
-const DEFAULT: SearchFilterValue = { pbancDt: { start: '', end: '' }, pbancNm: '', pbancNo: '' }
+const DEFAULT: SearchFilterValue = { pbancDt: { start: '', end: '' }, pbancNm: '', pbancNo: '', pbancNoFull: '' }
 const SCHEMA: SearchFilterSchema = {
   title: '입찰공고 검색필터',
   sections: [
@@ -19,6 +19,11 @@ const SCHEMA: SearchFilterSchema = {
         {
           key: 'pbancNo', type: 'text', label: '공고번호',
           pattern: { regex: /^[A-Z0-9-]+$/i, message: '영문·숫자·하이픈(-)만 입력할 수 있습니다.' },
+        },
+        // 전체 형식을 강제해야 하는 자리(정확한 번호 입력)는 ^…$ 로 고정 — 일부 입력은 통과 못 함.
+        {
+          key: 'pbancNoFull', type: 'text', label: '공고번호(전체 형식)',
+          pattern: { regex: /^\\d{4}[A-Z]{3}\\d{9}$/, message: '연도4+영문3+숫자9 형식으로 입력해주세요.' },
         },
       ],
     },
