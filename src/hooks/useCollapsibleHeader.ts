@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type RefObject } from 'react'
+import { useCallback, useEffect, useRef, useState, type RefCallback } from 'react'
 
 // 스크롤 시 상단 헤더(요약 등)를 축소(collapse)하고 sticky 로 고정하기 위한 동작 훅.
 //
@@ -7,6 +7,14 @@ import { useCallback, useEffect, useRef, useState, type RefObject } from 'react'
 //   - 스크롤 위치 임계값(히스테리시스)으로 collapsed 토글.
 //   - scroll-anchoring 진동 차단(rootRef 에 overflow-anchor:none 자동 적용).
 //   - 맨위로(scrollToTop).
+//
+// 2026-09-22 수정 — API 연동 후 상단 고정/접힘이 안 되던 원인 2가지:
+//   ① 스크롤 컨테이너를 "지금 내용이 넘치는 조상"으로 찾았다. 목업은 첫 렌더부터 넘쳐 main#app-scroll 을 찾지만,
+//      API 는 첫 렌더가 로딩/빈 화면이라 넘치는 조상이 없어 window 에 붙었고, 실제 스크롤은 main 에서 나므로
+//      collapsed 가 영영 안 바뀌었다(데이터가 와도 effect 는 재실행 안 됨). → 프로젝트 규칙대로 main#app-scroll 을
+//      id 로 바로 잡고(데이터 전 빈 화면이어도 존재), 셸 밖에서만 window.
+//   ② `if (!detail) return <PageLoading/>` 처럼 데이터 도착 전 early return 하면 첫 effect 때 rootRef 가 null 이라
+//      overflow-anchor 가 적용되지 않았다. → rootRef 를 콜백 ref 로 바꿔 루트가 나중에 붙어도 그때 적용.
 //
 // 사용:
 //   const { collapsed, rootRef, scrollToTop } = useCollapsibleHeader()
@@ -29,8 +37,8 @@ export interface UseCollapsibleHeaderOptions {
 export interface UseCollapsibleHeaderReturn {
   /** 스크롤되어 축소 상태인지. <SummaryInfo collapsed={...}> 등에 전달. */
   collapsed: boolean
-  /** 루트 요소에 부착 — 스크롤 컨테이너 탐지 기준점 + overflow-anchor 적용 대상. */
-  rootRef: RefObject<HTMLDivElement>
+  /** 루트 요소에 부착(콜백 ref) — 붙는 시점에 overflow-anchor:none 적용(데이터 도착 후 늦게 붙어도 동작). */
+  rootRef: RefCallback<HTMLDivElement>
   /** 스크롤 컨테이너를 최상단으로 + 헤더 펼침(맨위로 FAB). */
   scrollToTop: () => void
   /**
@@ -46,8 +54,12 @@ export function useCollapsibleHeader(
 ): UseCollapsibleHeaderReturn {
   const { collapseAt = 80, expandAt = 16 } = options
   const [collapsed, setCollapsed] = useState(false)
-  const rootRef = useRef<HTMLDivElement>(null)
   const scrollerRef = useRef<HTMLElement | Window | null>(null)
+  // 루트 콜백 ref — 축소 시 높이 변화로 브라우저가 스크롤 위치를 보정(scroll anchoring)하면서 임계값을
+  //   다시 넘나들어 collapse 가 진동하던 문제 차단. 루트가 언제 붙든(early return 후 포함) 그때 적용된다.
+  const rootRef = useCallback<RefCallback<HTMLDivElement>>((el) => {
+    el?.style.setProperty('overflow-anchor', 'none')
+  }, [])
   // 콜백에서 최신 collapsed 를 읽기 위한 미러 ref.
   const collapsedRef = useRef(false)
   // 접힘 핀 — true 동안은 top 이 작아도(=top 으로 올라가도) 펼치지 않고 접힘 유지.
@@ -58,19 +70,10 @@ export function useCollapsibleHeader(
   }, [collapsed])
 
   useEffect(() => {
-    // 축소 시 높이 변화로 브라우저가 스크롤 위치를 보정(scroll anchoring)하면서 임계값을 다시
-    // 넘나들어 collapse 가 진동(겹침·깜빡임)하던 문제 차단 — 루트에서 anchoring 끔.
-    rootRef.current?.style.setProperty('overflow-anchor', 'none')
-
-    // 실제로 스크롤되는 조상 탐지 — overflow-y auto/scroll 이고 내용이 넘치는(scrollHeight>clientHeight)
-    // 요소. 없으면 window(AppLayout 구조에 따라 둘 중 하나가 스크롤됨).
-    let node: HTMLElement | null | undefined = rootRef.current?.parentElement
-    while (node) {
-      const oy = getComputedStyle(node).overflowY
-      if ((oy === 'auto' || oy === 'scroll') && node.scrollHeight > node.clientHeight) break
-      node = node.parentElement
-    }
-    const scroller: HTMLElement | Window = node ?? window
+    // 스크롤 컨테이너 — 프로젝트 규칙상 main#app-scroll(AppLayout 내부 스크롤)이 스크롤 주체.
+    //   id 로 바로 잡는다(데이터 도착 전 빈 화면이어도 존재). 셸 밖에서만 window.
+    //   ("지금 내용이 넘치는 조상" 탐색은 폐기 — 넘침은 데이터 도착 후에야 생겨 API 화면에서 window 로 빠졌다.)
+    const scroller: HTMLElement | Window = document.getElementById('app-scroll') ?? window
     scrollerRef.current = scroller
     const getTop = () =>
       scroller === window ? window.scrollY : (scroller as HTMLElement).scrollTop
