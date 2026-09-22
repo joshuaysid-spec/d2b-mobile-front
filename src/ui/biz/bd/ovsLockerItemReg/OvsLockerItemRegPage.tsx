@@ -114,13 +114,15 @@ const ITEM_FILTER_SCHEMA: SearchFilterSchema = {
           label: '통합참조번호',
           placeholder: '번호를 입력하세요.',
           maxLength: 30,
-          pattern: { regex: /^[A-Z0-9]+$/i, message: '영문·숫자만 입력할 수 있습니다.' },
+          allowedChars: /[A-Z0-9]/i, // 입력 즉시 차단
+          pattern: { regex: /^[A-Z0-9]+$/i, message: '영문·숫자만 입력할 수 있습니다.' }, // 검색 시 검사
         },
         {
           type: 'text',
           key: 'prchsDmndNo',
           label: '구매요청번호',
           placeholder: '번호를 입력하세요.',
+          allowedChars: /[A-Z0-9-]/i,
           pattern: { regex: /^[A-Z0-9-]+$/i, message: '영문·숫자·하이픈(-)만 입력할 수 있습니다.' },
         },
         {
@@ -128,6 +130,7 @@ const ITEM_FILTER_SCHEMA: SearchFilterSchema = {
           key: 'invtNo',
           label: '재고번호',
           placeholder: '번호를 입력하세요.',
+          allowedChars: /[A-Z0-9-]/i,
           pattern: { regex: /^[A-Z0-9-]+$/i, message: '영문·숫자·하이픈(-)만 입력할 수 있습니다.' },
         },
         {
@@ -137,6 +140,7 @@ const ITEM_FILTER_SCHEMA: SearchFilterSchema = {
           placeholder: '번호를 입력하세요.',
           maxLength: 32,
           // 부품번호는 'T-80U/TBE-3' · '000-A0000 0000' 처럼 슬래시·공백·점을 포함한다.
+          allowedChars: /[A-Z0-9\-/ .]/i,
           pattern: {
             regex: /^[A-Z0-9\-/ .]+$/i,
             message: '영문·숫자·하이픈(-)·슬래시(/)·공백만 입력할 수 있습니다.',

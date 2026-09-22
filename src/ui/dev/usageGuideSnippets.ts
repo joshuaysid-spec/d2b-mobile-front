@@ -18,7 +18,8 @@ const SCHEMA: SearchFilterSchema = {
         // 전체 형식(^…$)보다 허용 문자 집합으로 거는 편이 안전하다.
         {
           key: 'pbancNo', type: 'text', label: '공고번호',
-          pattern: { regex: /^[A-Z0-9-]+$/i, message: '영문·숫자·하이픈(-)만 입력할 수 있습니다.' },
+          allowedChars: /[A-Z0-9-]/i,   // 타이핑 즉시 차단(문자 클래스)
+          pattern: { regex: /^[A-Z0-9-]+$/i, message: '영문·숫자·하이픈(-)만 입력할 수 있습니다.' }, // [검색] 시 검사
         },
         // 전체 형식을 강제해야 하는 자리(정확한 번호 입력)는 ^…$ 로 고정 — 일부 입력은 통과 못 함.
         {

@@ -3,6 +3,7 @@
 import * as React from 'react'
 
 import { InputBox } from '@/ui/common/base/InputBox'
+import { charFilter } from '@/ui/biz/cm/search/searchFilterSchema'
 import { InputLabel } from '@/ui/common/base/InputLabel'
 import { SegmentedControl } from '@/ui/common/base/SegmentedControl'
 import { SelectBox } from '@/ui/common/base/SelectBox'
@@ -209,6 +210,7 @@ const SearchFilterField = ({
 
     // 제목/판단번호/담당자 등 — 자유 입력. minLength/maxLength 는 native 속성으로도 전달(maxLength 는 타이핑 차단,
     // 미지정 시 InputBox 기본 100). 실제 검사는 셸의 zod 매핑(buildZodSchema).
+    // allowedChars 가 있으면 InputBox format 으로 입력 즉시 비허용 문자 제거(IME 가드 포함) — pattern 은 검색 시점 검사.
     case 'text':
       return (
         <Field label={field.label} required={field.required}>
@@ -217,6 +219,7 @@ const SearchFilterField = ({
             placeholder={field.placeholder}
             minLength={field.minLength}
             maxLength={field.maxLength}
+            format={field.allowedChars ? charFilter(field.allowedChars) : undefined}
             onChange={(e) => onChange(e.target.value)}
             onClear={() => onChange('')}
           />

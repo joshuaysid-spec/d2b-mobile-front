@@ -24,6 +24,18 @@ const patternTest = (re: RegExp, v: string) => {
   return new RegExp(re.source, re.flags.replace(/[gy]/g, '')).test(v)
 }
 
+/** allowedChars → InputBox format: 허용 문자 클래스에 안 맞는 글자를 입력 즉시 제거. g/y 플래그는 떼고 판정. */
+export const charFilter = (allowed: RegExp) => {
+  const re =
+    allowed.global || allowed.sticky
+      ? new RegExp(allowed.source, allowed.flags.replace(/[gy]/g, ''))
+      : allowed
+  return (v: string) =>
+    Array.from(v)
+      .filter((ch) => re.test(ch))
+      .join('')
+}
+
 // text 필드 규칙 — 빈값은 required 만 검사, 길이/형식은 입력이 있을 때만(선택 항목을 비워 두면 통과).
 const textRule = (f: TextFieldDef) =>
   z

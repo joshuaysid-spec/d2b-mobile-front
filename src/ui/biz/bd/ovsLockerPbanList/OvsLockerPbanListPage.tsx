@@ -74,7 +74,8 @@ const LOCKER_FILTER_SCHEMA: SearchFilterSchema = {
           label: '통합참조번호',
           placeholder: '번호를 입력하세요.',
           maxLength: 30,
-          pattern: { regex: /^[A-Z0-9]+$/i, message: '영문·숫자만 입력할 수 있습니다.' },
+          allowedChars: /[A-Z0-9]/i, // 입력 즉시 차단
+          pattern: { regex: /^[A-Z0-9]+$/i, message: '영문·숫자만 입력할 수 있습니다.' }, // 검색 시 검사
         },
         {
           type: 'text',
@@ -82,6 +83,7 @@ const LOCKER_FILTER_SCHEMA: SearchFilterSchema = {
           label: '구매요청번호',
           placeholder: '번호를 입력하세요.',
           // ⚠️ 설계서 자릿수 10 이나 목업·실데이터가 '2026LGM000598220-01'(19자) — maxLength 는 확정 후.
+          allowedChars: /[A-Z0-9-]/i,
           pattern: { regex: /^[A-Z0-9-]+$/i, message: '영문·숫자·하이픈(-)만 입력할 수 있습니다.' },
         },
       ],

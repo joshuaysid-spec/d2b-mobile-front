@@ -134,6 +134,7 @@ export function UsageGuidePage() {
               '페이지→셸 명령형 제어가 필요하면 SearchFilterHandle(ref — submit/reset)을 쓴다.',
               '[검색] 버튼은 draft 가 defaultValue 와 다를 때만 활성된다 — defaultValue 를 실제 초기 상태와 맞춰 둔다.',
               'text 필드 형식 검사는 pattern: { regex, message } 로 선언한다. 값이 있을 때만 검사하고 빈값은 required 만 본다(선택 항목을 비워 두면 통과).',
+              '검사 시점은 두 가지다 — pattern 은 [검색] 누를 때, allowedChars(문자 클래스 /[A-Z0-9-]/i)는 타이핑 즉시 차단. 보통 같은 문자 집합으로 둘 다 준다. 전체 형식(^…$)은 타이핑 중 판정이 불가하니 pattern 에만.',
               '정규식에 g/y 플래그를 붙이지 말 것 — 마지막 매치 위치를 기억해 같은 객체로 반복 검사하면 결과가 번갈아 어긋난다(셸이 떼고 DEV 경고). i 는 괜찮다.',
               '검색어 필드는 일부 입력이 가능하므로 전체 형식(^…$ 고정)보다 허용 문자 집합으로 거는 편이 안전하다 — 적용 예: 국외 보관함 목록·품목 관리의 번호 필드.',
             ]}
@@ -382,6 +383,7 @@ const SF_SCHEMA: SearchFilterSchema = {
           type: 'text',
           label: '공고번호',
           placeholder: '영문·숫자·하이픈만 통과 (예: 2026LGM-01)',
+          allowedChars: /[A-Z0-9-]/i, // 타이핑 즉시 차단 — 한글·특수문자는 입력이 안 된다
           pattern: { regex: /^[A-Z0-9-]+$/i, message: '영문·숫자·하이픈(-)만 입력할 수 있습니다.' },
         },
         {

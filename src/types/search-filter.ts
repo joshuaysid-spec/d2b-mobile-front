@@ -87,9 +87,7 @@ export interface CheckboxFieldDef extends BaseField {
   selectAll?: boolean | { label?: ReactNode; disabled?: boolean; value?: string }
 }
 /** DateRangeInput 프리셋 칩 정의 — DateRangePreset 와 구조 호환(레이어링 위해 inline). */
-export type DateRangePresetDef =
-  | { label: string; days: number }
-  | { label: string; months: number }
+export type DateRangePresetDef = { label: string; days: number } | { label: string; months: number }
 export interface DateRangeFieldDef extends BaseField {
   type: 'dateRange' // 기간(DateRangeInput) — value: DateRangeValue
   /** 빠른선택 프리셋 칩(1주일/1개월/…) 표시 여부. 기본 true. */
@@ -122,6 +120,12 @@ export interface TextFieldDef extends BaseField {
   maxLength?: number
   /** 형식 검사 — 정규식 + 실패 문구(예: 공고번호 `/^\d{4}[A-Z]\d{2}/`). 입력이 있을 때만 검사. */
   pattern?: { regex: RegExp; message: string }
+  /**
+   * 타이핑 차단 — 허용 문자 클래스(예: `/[A-Z0-9-]/i`). 입력 즉시 그 외 문자를 제거한다(InputBox format).
+   * pattern 은 [검색] 시점 검사, allowedChars 는 입력 시점 차단 — 보통 둘을 같은 문자 집합으로 함께 준다.
+   * 전체 형식(^…$)은 타이핑 중엔 판정할 수 없으므로 여기엔 문자 클래스만.
+   */
+  allowedChars?: RegExp
 }
 export interface SelectionFieldDef extends BaseField {
   type: 'selectionField' // 선택 트리거(SelectionFieldBox, `>`) — value: string
