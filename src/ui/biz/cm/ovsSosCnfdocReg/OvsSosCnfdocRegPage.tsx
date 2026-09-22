@@ -6,6 +6,7 @@
 // [신청하기] → 검증 통과 시 완료 토스트 "신청 되었습니다." → 목록(M21) 이동. [취소] → 뒤로.
 // Figma 전용 프레임 없음 → 내부 폼 컨벤션(RHF+zod, InputBox/SelectionFieldBox/TextArea/InputLabel/InputMessage).
 import { useMemo, useState } from 'react'
+import { showToast } from '@/stores/authStore'
 import { useNavigate } from 'react-router-dom'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,7 +19,6 @@ import { SelectionFieldBox } from '@/ui/common/base/SelectionFieldBox'
 import { TextArea } from '@/ui/common/base/TextArea'
 import { BottomSheet } from '@/ui/common/composites/BottomSheet'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
-import { Toast } from '@/ui/common/composites/Toast'
 import { OvsSosCnfdocChc } from '@/ui/biz/cm/ovsSosCnfdocReg/OvsSosCnfdocChc'
 import {
   ovsSosCnfdocRegSchema,
@@ -44,7 +44,6 @@ export function OvsSosCnfdocRegPage() {
   const navigate = useNavigate()
   const [sheetOpen, setSheetOpen] = useState(false)
   const [activeField, setActiveField] = useState<CompanyField>('bzentyNm1')
-  const [toastOpen, setToastOpen] = useState(false)
 
   const form = useForm<OvsSosCnfdocRegForm>({
     resolver: zodResolver(ovsSosCnfdocRegSchema),
@@ -73,7 +72,11 @@ export function OvsSosCnfdocRegPage() {
   const onSubmit = handleSubmit(
     () => {
       // TODO(백엔드 확정): scwin.btn_aply — 국외조달원 등록증 신청 전송(services/cm.ts EP 추가 후 await).
-      setToastOpen(true) // 완료 토스트 → onClose 에서 목록 이동
+      // 완료 토스트 → 닫히면 목록(M21) 이동(slide340 — 신청 후 신청목록으로 이동).
+      showToast('신청 되었습니다.', {
+        duration: 1500,
+        onClose: () => navigate(ROUTES.SUPPORT_OVS_SOS_CNFDOC),
+      })
     },
     (errors) => {
       // 첫 에러 필드로 스크롤(입력류는 RHF 자동 포커스, SelectionField/TextArea 안전용).
@@ -252,18 +255,6 @@ export function OvsSosCnfdocRegPage() {
       <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen} title={sheetTitle}>
         <OvsSosCnfdocChc onSelect={handleSelectCompany} />
       </BottomSheet>
-
-      {/* 완료 토스트 → 닫힘 시 목록(M21) 이동 (slide340 — 신청 후 신청목록으로 이동) */}
-      <Toast
-        open={toastOpen}
-        duration={1500}
-        onClose={() => {
-          setToastOpen(false)
-          navigate(ROUTES.SUPPORT_OVS_SOS_CNFDOC)
-        }}
-      >
-        신청 되었습니다.
-      </Toast>
     </div>
   )
 }

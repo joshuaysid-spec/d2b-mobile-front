@@ -30,15 +30,20 @@ interface AuthState {
   // --- 전역 토스트 ---
   /** 현재 안내 토스트(null=없음). 렌더는 App 최상위의 GlobalToast 하나가 담당. */
   toast: ToastState | null
-  /** 토스트 띄우기 — 화면·훅 어디서든. 모듈 함수 showToast 로도 호출된다. */
-  showToast: (message: string, duration?: number) => void
+  /** 토스트 띄우기 — 화면·훅 어디서든. 모듈 함수 showToast 로도 호출된다. opts.onClose 는 닫힌 뒤 후속 동작(목록 이동 등). */
+  showToast: (message: string, opts?: ToastOptions) => void
   hideToast: () => void
 }
 
 /** 전역 토스트 1건. seq 는 같은 문구 연속 호출도 다시 뜨게 하는 구분자. */
-interface ToastState {
-  message: string
+/** showToast 옵션 — duration(ms, 기본 2000) · onClose(토스트가 닫힌 뒤 실행: 목록 이동·콜백 등). */
+export interface ToastOptions {
   duration?: number
+  onClose?: () => void
+}
+
+interface ToastState extends ToastOptions {
+  message: string
   seq: number
 }
 
@@ -76,15 +81,16 @@ export const useAuthStore = create<AuthState>((set) => ({
   markAllRead: () => set({ hasUnread: false }),
 
   toast: null,
-  showToast: (message, duration) =>
-    set((s) => ({ toast: { message, duration, seq: (s.toast?.seq ?? 0) + 1 } })),
+  showToast: (message, opts) =>
+    set((s) => ({ toast: { message, ...opts, seq: (s.toast?.seq ?? 0) + 1 } })),
   hideToast: () => set({ toast: null }),
 }))
 
 /**
  * 전역 토스트 단축 호출 — React 컴포넌트 밖(쿼리 훅 onSuccess, 이벤트 핸들러)에서도 쓴다.
  *   showToast('저장되었습니다.')
+ *   showToast('저장되었습니다.', { onClose: () => navigate('/list') })  // 닫힌 뒤 후속 동작
  * 화면마다 useState + <Toast> 를 두지 않는다(렌더는 GlobalToast 하나).
  */
-export const showToast = (message: string, duration?: number) =>
-  useAuthStore.getState().showToast(message, duration)
+export const showToast = (message: string, opts?: ToastOptions) =>
+  useAuthStore.getState().showToast(message, opts)

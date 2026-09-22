@@ -5,6 +5,7 @@
 // 부대+비시설공사 분기는 미구현(요청 범위: unitB 까지) — 안내 스텁.
 // 팝업/토스트(slide286·289): 취소/계약변경 확인 AlertModal · 저장/신청 Toast(신청 후 목록 복귀).
 import { useRef, useState } from 'react'
+import { showToast } from '@/stores/authStore'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -13,7 +14,6 @@ import { ROUTES } from '@/constants/routes'
 import { StepBar, type StepItem } from '@/ui/common/composites/StepBar'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
-import { Toast } from '@/ui/common/composites/Toast'
 import { CtrtInfoChc } from '@/ui/biz/cm/prfmncPrdocReg/CtrtInfoChc'
 import { PrfmncPrdocReg_AplyInpt } from '@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocReg_AplyInpt'
 import { PrfmncPrdocReg_D2b } from '@/ui/biz/cm/prfmncPrdocReg/PrfmncPrdocReg_D2b'
@@ -73,7 +73,6 @@ export function PrfmncPrdocRegPage() {
   const [cancelOpen, setCancelOpen] = useState(false) // 취소 확인(작성 내용 有)
   const [changeOpen, setChangeOpen] = useState(false) // 계약 변경/해제 확인(작성 내용 有)
   const pendingCtrtRef = useRef<MockPrfmncPrdocCtrtInfo | null>(null)
-  const [toast, setToast] = useState<{ msg: string; then?: () => void } | null>(null)
 
   // 신청정보(M12) 폼 — 페이지가 useForm 소유(폼 표준), 콘텐츠는 control 로 연결.
   const form = useForm<AplyInptForm>({
@@ -98,9 +97,17 @@ export function PrfmncPrdocRegPage() {
     | 'unitI'
     | 'aplyInfo'
   const facilityUnit: RegBranch =
-    ({ '3': 'unitC', '4': 'unitD', '6': 'unitE', '7': 'unitF', '8': 'unitG', '9': 'unitH', '10': 'unitI' } as const)[
-      selectedCtrt?.sbmsnTyCd ?? ''
-    ] ?? 'unitB'
+    (
+      {
+        '3': 'unitC',
+        '4': 'unitD',
+        '6': 'unitE',
+        '7': 'unitF',
+        '8': 'unitG',
+        '9': 'unitH',
+        '10': 'unitI',
+      } as const
+    )[selectedCtrt?.sbmsnTyCd ?? ''] ?? 'unitB'
   const branch: RegBranch =
     !selectedCtrt || selectedCtrt.orderInstNm === '방위사업청'
       ? 'd2b'
@@ -158,11 +165,12 @@ export function PrfmncPrdocRegPage() {
   // step3 저장/신청 — API 미연동 스텁 + 토스트(slide289). 신청 완료 시 목록 복귀.
   const handleSave = () => {
     console.log('[PrfmncPrdocReg] 저장(API 미연동)', { ctrt: selectedCtrt, aply: form.getValues() })
-    setToast({ msg: '저장 되었습니다.' })
+    showToast('저장 되었습니다.')
   }
   const handleApply = () => {
     console.log('[PrfmncPrdocReg] 신청(API 미연동)', { ctrt: selectedCtrt, aply: form.getValues() })
-    setToast({ msg: '신청이 완료되었습니다.', then: () => navigate(ROUTES.SUPPORT_PRFMNC_PRDOC) })
+    // 신청 완료 토스트 → 닫히면 목록 복귀(slide289).
+    showToast('신청이 완료되었습니다.', { onClose: () => navigate(ROUTES.SUPPORT_PRFMNC_PRDOC) })
   }
 
   const steps: StepItem[] = STEP_LABELS.map((label, i) => ({
@@ -255,18 +263,6 @@ export function PrfmncPrdocRegPage() {
         secondaryAction={{ label: '아니오' }}
         primaryAction={{ label: '예', onClick: () => navigate(-1) }}
       />
-
-      {/* 저장/신청 토스트 — 닫힌 뒤 후속 동작(신청=목록 복귀) */}
-      <Toast
-        open={toast !== null}
-        onClose={() => {
-          const t = toast
-          setToast(null)
-          t?.then?.()
-        }}
-      >
-        {toast?.msg}
-      </Toast>
     </div>
   )
 }

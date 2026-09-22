@@ -10,6 +10,7 @@
 //   (폼 값이 아니라 입력값에서 매 렌더 파생 계산 — calcAlonbsBidCn).
 import * as React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { showToast } from '@/stores/authStore'
 import { Controller, useForm, type FieldErrors } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -23,7 +24,6 @@ import { PageTitle } from '@/ui/common/base/PageTitle'
 import { SectionTitle } from '@/ui/common/base/SectionTitle'
 import { SelectBox } from '@/ui/common/base/SelectBox'
 import { AlertModal } from '@/ui/common/composites/AlertModal'
-import { Toast } from '@/ui/common/composites/Toast'
 import { ButtonGroup } from '@/ui/common/composites/ButtonGroup'
 import { Table, type TableRow } from '@/ui/common/composites/Table'
 import {
@@ -102,8 +102,6 @@ export function BidDsctn2({ detail }: { detail: MockBscPbancInfo }) {
   }, [saved, reset])
 
   const navigate = useNavigate()
-  // 저장 완료 토스트 — 닫히면 국외 보관함 목록으로(설계서 slide424 '토스트 후 목록 이동').
-  const [savedToast, setSavedToast] = React.useState(false)
   const [deleteOpen, setDeleteOpen] = React.useState(false)
 
   // 파생값(ReadOnly) — 입찰금액/화폐단위에서 매 렌더 계산(slide319 이벤트).
@@ -138,7 +136,8 @@ export function BidDsctn2({ detail }: { detail: MockBscPbancInfo }) {
     }
     console.log('[T76] 입찰내역 저장(암호화)', detail.intgRfrncNo, payload)
     // 추후 API: bdService.saveTmprBidCn(intgRfrncNo, payload) — 임시입찰내용저장
-    setSavedToast(true)
+    // 설계서 slide424: 토스트 '저장되었습니다' → 닫히면 국외 보관함 목록(MUI-CM-01-M71)으로 이동.
+    showToast('저장되었습니다.', { duration: 1500, onClose: () => navigate('/bd/ovs/locker') })
   }
 
   // 실패 시 화면 순서대로 첫 에러 필드 포커스+스크롤.
@@ -246,18 +245,6 @@ export function BidDsctn2({ detail }: { detail: MockBscPbancInfo }) {
           ]}
         />
       </div>
-
-      {/* 저장완료 — 설계서 slide423·424: 토스트 '저장되었습니다' 후 국외 보관함 목록(MUI-CM-01-M71)으로 이동. */}
-      <Toast
-        open={savedToast}
-        onClose={() => {
-          setSavedToast(false)
-          navigate('/bd/ovs/locker')
-        }}
-        duration={1500}
-      >
-        저장되었습니다.
-      </Toast>
 
       {/* 삭제 확인 모달 — 작성한 입찰내역 초기화 */}
       <AlertModal

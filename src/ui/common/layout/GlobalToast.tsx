@@ -17,13 +17,19 @@ import { useAuthStore } from '@/stores/authStore'
 export function GlobalToast() {
   const toast = useAuthStore((s) => s.toast)
   const hideToast = useAuthStore((s) => s.hideToast)
+  // 닫힌 뒤 후속 동작(onClose) — 먼저 숨기고 나서 실행(콜백이 navigate 해도 토스트 상태가 남지 않게).
+  const handleClose = () => {
+    const after = toast?.onClose
+    hideToast()
+    after?.()
+  }
 
   return (
     // key=seq — 같은 문구를 연달아 띄워도 자동 닫힘 타이머가 다시 시작된다.
     <Toast
       key={toast?.seq}
       open={toast !== null}
-      onClose={hideToast}
+      onClose={handleClose}
       duration={toast?.duration ?? 2000}
     >
       {toast?.message}
