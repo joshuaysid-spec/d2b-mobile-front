@@ -57,8 +57,14 @@ export function useCollapsibleHeader(
   const scrollerRef = useRef<HTMLElement | Window | null>(null)
   // 루트 콜백 ref — 축소 시 높이 변화로 브라우저가 스크롤 위치를 보정(scroll anchoring)하면서 임계값을
   //   다시 넘나들어 collapse 가 진동하던 문제 차단. 루트가 언제 붙든(early return 후 포함) 그때 적용된다.
+  // 루트 요소·ResizeObserver 미러 — 루트가 늦게 붙어도(early return 후) 그때 관찰을 시작하기 위해 ref 로 공유.
+  const rootElRef = useRef<HTMLDivElement | null>(null)
+  const resizeObserverRef = useRef<ResizeObserver | null>(null)
   const rootRef = useCallback<RefCallback<HTMLDivElement>>((el) => {
-    el?.style.setProperty('overflow-anchor', 'none')
+    rootElRef.current = el
+    if (!el) return
+    el.style.setProperty('overflow-anchor', 'none')
+    resizeObserverRef.current?.observe(el)
   }, [])
   // 콜백에서 최신 collapsed 를 읽기 위한 미러 ref.
   const collapsedRef = useRef(false)
@@ -90,7 +96,18 @@ export function useCollapsibleHeader(
     }
     onScroll()
     scroller.addEventListener('scroll', onScroll, { passive: true })
-    return () => scroller.removeEventListener('scroll', onScroll)
+    // 페이지 루트(rootRef) 높이 변화(API 응답 도착·탭 전환·더보기 등) 때도 판정을 한 번 더 돌린다 — 내용이 줄어
+    //   브라우저가 scrollTop 을 당겨 올릴 때 scroll 이벤트를 안 주는 WebView 가 있어, 접힘/펼침이 실제 위치와
+    //   어긋나는 것을 막는다. 판정식은 스크롤 위치만 보므로 높이 자체를 계산하진 않는다(높이 변화 = 재판정 트리거).
+    //   루트가 아직 없으면(데이터 전 early return) rootRef 콜백이 붙는 시점에 observe 한다.
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(onScroll) : null
+    resizeObserverRef.current = ro
+    if (ro && rootElRef.current) ro.observe(rootElRef.current)
+    return () => {
+      scroller.removeEventListener('scroll', onScroll)
+      ro?.disconnect()
+      resizeObserverRef.current = null
+    }
   }, [collapseAt, expandAt])
 
   const scrollToTop = useCallback(() => {
