@@ -841,6 +841,10 @@ const AppStngPage = lazy(() =>
 const ChatbotPage = lazy(() =>
   import('@/ui/biz/cm/chatbot/ChatbotPage').then((m) => ({ default: m.ChatbotPage })),
 )
+// 통합검색(MUI-MS-01-M09/M10, /search) — biz/cm/intgSrch. BottomNav 통합검색 탭 진입(구 AppLayout 오버레이 → 페이지 전환).
+const IntgSrchPage = lazy(() =>
+  import('@/ui/biz/cm/intgSrch/IntgSrchPage').then((m) => ({ default: m.IntgSrchPage })),
+)
 // 이용문의(MUI-CM-05-M06, /intro/inquiry) — biz/cm/inquiry.
 const InquiryPage = lazy(() =>
   import('@/ui/biz/cm/inquiry/InquiryPage').then((m) => ({ default: m.InquiryPage })),
@@ -2031,6 +2035,17 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         handle: {
           header: { variant: 'sub', title: '챗봇문의' },
+        },
+      },
+      {
+        // 통합검색 (MUI-MS-01-M09/M10) — BottomNav 통합검색 탭. 뒤로가기 sub 헤더(우측 '초기화'는 페이지가 portal).
+        // scrollReset 없음: 상세 → 뒤로 복귀 시 검색 상태(sessionStorage)와 스크롤을 함께 복원한다.
+        path: 'search',
+        element: <IntgSrchPage />,
+        errorElement: <ErrorPage />,
+        handle: {
+          header: { variant: 'sub', title: '통합검색' },
+          showBottomNav: true,
         },
       },
       // 게시판 상세 — 목록 카드 클릭 진입. 정적 목록경로(dapa/dmdfrc/ctrt 등)가 RRv6 랭킹으로 우선 매칭됨.

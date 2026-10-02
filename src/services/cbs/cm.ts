@@ -34,7 +34,6 @@ import type {
   // 통합검색
   MockSearchResult,
   MockRecentSearch,
-  MockSearchServiceLink,
   // 업체정보 추가등록
   MockAddRegItemRow,
   MockAddRegPayload,
@@ -107,19 +106,14 @@ import type {
 
 export const cmService = {
   // ── 통합검색 (MUI-MS-01-M09/M10 IntgSrch·menu/MenuPage) ───────────────────
-  // TODO(백엔드 확정): 통합검색·자동완성·최근검색어는 실 API 목록에 대응 메서드가 없다(모바일 전용 추정).
-  //   아래 7개 함수 URL 은 전부 임시 — 반입 전 확인 필요.
+  // TODO(백엔드 확정): 통합검색·최근검색어는 실 API 목록에 대응 메서드가 없다(모바일 전용 추정).
+  //   아래 4개 함수 URL 은 전부 임시 — 반입 전 확인 필요.
+  //   (자동완성·자주 찾는 서비스·연관 서비스는 2026-10-02 화면에서 삭제되어 서비스도 제거)
 
   /** 통합검색 — 키워드로 결과 조회. */
   async selectSearchAll(keyword: string): Promise<MockSearchResult[]> {
     if (USE_MOCK) return mockDelay(MOCK_CM.searchResults)
     return apiClient.post<MockSearchResult[], MockSearchResult[]>('/v1/cms/search', { keyword })
-  },
-
-  /** 자동완성 — 키워드 부분일치 메뉴명. */
-  async selectAutocomplete(keyword: string): Promise<string[]> {
-    if (USE_MOCK) return mockDelay(MOCK_CM.autocomplete)
-    return apiClient.post<string[], string[]>('/v1/cms/search/autocomplete', { keyword })
   },
 
   /** 최근 검색어 목록. */
@@ -138,20 +132,6 @@ export const cmService = {
   async clearRecentSearches(): Promise<void> {
     if (USE_MOCK) return mockDelay(undefined)
     await apiClient.post<void, void>('/v1/cms/search/recent')
-  },
-
-  /** 자주 찾는 서비스 목록. */
-  async selectFrequentServices(): Promise<MockSearchServiceLink[]> {
-    if (USE_MOCK) return mockDelay(MOCK_CM.frequentServices)
-    return apiClient.post<MockSearchServiceLink[], MockSearchServiceLink[]>('/v1/cms/search/frequent')
-  },
-
-  /** 연관 서비스 목록. */
-  async selectRelatedServices(keyword: string): Promise<MockSearchServiceLink[]> {
-    if (USE_MOCK) return mockDelay(MOCK_CM.relatedServices)
-    return apiClient.post<MockSearchServiceLink[], MockSearchServiceLink[]>('/v1/cms/search/related', {
-      keyword,
-    })
   },
 
   // ── 게시판/FAQ 는 URL 이 /tss/cm/board/* 라 대메뉴 규칙에 따라 services/tss/cm.ts

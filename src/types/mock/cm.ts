@@ -2033,14 +2033,6 @@ export interface MockRecentSearch {
   keyword: string
 }
 
-/** 자주 찾는/연관 서비스 링크 1건 — NavigationItemList 로 표시. */
-export interface MockSearchServiceLink {
-  /** 안정적 고유 식별자. */
-  id: string
-  /** 서비스(메뉴)명. */
-  label: string
-}
-
 // ── 연관진행현황 (MUI-CM 연관 건 조회, AnlPrgrsListPage) ──
 /** 연관진행현황 1건 — ⚠️ 설계서 데이터영역 미정의(화면 표기 기준 잠정). */
 export interface MockAnlPrgrsItem {

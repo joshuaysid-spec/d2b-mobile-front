@@ -1,6 +1,6 @@
 // MUI-MS-01-M10 통합검색 결과목록(IntgSrch_Rslt). 설계서 00공통 / Figma 10020-84644(결과목록).
-// M09 통합검색(IntgSrchPage)의 FullPopup 오버레이 안에서 "검색 실행 후" 본문에 렌더되는 결과목록
-//   콘텐츠 컴포넌트다(라우트 아님 — 검색바/헤더는 부모 FullPopup 이 소유). 검색바 아래부터를 그린다:
+// M09 통합검색(IntgSrchPage, /search 페이지) 안에서 "검색 실행 후" 본문에 렌더되는 결과목록
+//   콘텐츠 컴포넌트다(라우트 아님 — 검색바는 부모 페이지가 소유). 검색바 아래부터를 그린다:
 //   ① {검색어} 검색결과 총 N개(SectionTitle) → ② 검색필터 버튼 + 정렬 셀렉트 →
 //   ③ 결과 카테고리별(입찰공고·개찰결과) 섹션: 카테고리 총건수 + 카드 리스트 + 더보기.
 // 검색필터: 공통 SearchFilter 셸 재사용 — 검색대상(체크박스 7종, 체크 카테고리만 섹션 노출) +
@@ -9,14 +9,39 @@
 // 데이터는 파일 내 목업 상수, 핸들러는 console.log + // 추후 API 주석으로 경계 표시.
 //   실제 검색결과는 cmService.selectSearchAll(keyword) → 카테고리별 목록/총건수 반환.
 // common/(base·composites)만 조립 — 신규 공통 컴포넌트 없음(정렬 셀렉트는 base SelectBox 로 근사).
+// 상태 보존: 정렬·더보기·필터는 sessionStorage(useSessionState) — 상세 → 뒤로(POP) 복귀 시 부모가 restore=true 로
+//   마운트해 되살린다. 새 검색/초기화 뒤 마운트는 restore=false(빈 상태).
+//
+// ═══ 검색 솔루션 연동 업체 안내 (2026-10-02) ═══════════════════════════════════════════════════
+//  이 파일은 "스타일 예시"다. 통합검색 API 배선(검색 호출·결과 봉투·페이징·정렬·필터 파라미터)은 연동 업체가 한다.
+//  갈아끼울 지점:
+//   ① RESULT_GROUPS / mockItems() — 파일 내 목업 상수. 실 응답(카테고리별 items/total)으로 교체.
+//      카드 1건 필드는 IntgSrchRsltItem(taskSeNm·bidMthdNm·pbancTpcd·pbancNo·bidPbancNm·날짜 4종·atchFiles).
+//   ② handleSort / handleFilterSearch / handleLoadMore — 지금은 console.log + 클라이언트 필터(matchesFilter).
+//      실 API 는 sort·period·rsrch(결과 내 재검색)·targets(검색대상)·page 를 파라미터로 보내고 응답으로 교체.
+//   ③ 하이라이트 — toCardItems 의 hl() 하나로 제목·부제·행 값·첨부파일명에 적용.
+//      hl = highlightText(htmlToText(text), terms). 매칭 규칙·스타일은 src/utils/highlightText.tsx 한 곳(HIGHLIGHT_CLASS).
+//      응답 텍스트에 <br> 등 HTML 이 섞여도 htmlToText(src/utils/sanitizeHtml.ts)가 평문화하므로 그대로 넘기면 된다.
+//      백엔드가 검색어를 <b>…</b> 같은 태그로 감싸 내려주면 htmlToText 가 태그를 제거하므로 프론트 하이라이트만 남는다.
+//   ④ 첨부파일 영역 — item.atchFiles 가 비어 있지 않으면 카드 footer 에 "– 첨부파일" + 파일명(강조)·용량 노출, 비면 미노출.
+//      "검색어가 첨부파일 내용에 걸린 건"에만 atchFiles 를 내려주는 것은 백엔드 책임(프론트 매칭 로직 없음).
+//      파일명 클릭 이벤트 없음(설계서 v0.92 slide27 특이사항 2). 용량은 byte → formatFileSize.
+//   ⑤ 카드 클릭 → 상세: handleCardClick 이 카테고리별 detailPath 로 navigate(state) — 개찰결과 경로는 미확정(TODO).
+//  상태 보존(sessionStorage, useSessionState)·검색필터 셸(SearchFilter)은 그대로 두면 된다.
+// ═══════════════════════════════════════════════════════════════════════════════════════════
 //
 // ⚠️ TODO(설계서 확인): M10 데이터영역의 영문 항목ID(카드 필드)가 설계서에서 미확정이라, 아래 목업은
 //   입찰(BD) 설계서(src/types/bd.ts, dlt_bidPbancIntgList · 개찰목록)의 항목명을 그대로 재사용했다.
 //   (taskSeNm · bidMthdNm · pbancTpcd · pbancNo · bidPbancNm · pbancDt · bidClrsDt · tndrSbmsnDdlnDt · opbidDt)
 //   M10 설계서 데이터영역이 확정되면 키/라벨을 그에 맞춰 교체.
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { useSessionState } from '@/hooks/useSessionState'
+import { ROUTES } from '@/constants/routes'
+import { formatFileSize } from '@/utils/format'
+import { highlightText } from '@/utils/highlightText'
+import { htmlToText } from '@/utils/sanitizeHtml'
 import { Badge } from '@/ui/common/base/Badge'
 import { Button } from '@/ui/common/base/Button'
 import { Icon } from '@/ui/common/base/Icon'
@@ -30,10 +55,8 @@ import type { DateRangeValue, SearchFilterSchema, SearchFilterValue } from '@/ty
 export interface IntgSrch_RsltProps {
   /** 실행된 검색어 — 결과 타이틀("{keyword} 검색결과")·목업 컨텍스트. */
   keyword: string
-  /** 검색필터 버튼 클릭 → 상세필터(통합검색 필터, Figma 10020-84840) open. 부모 위임(옵션). */
-  onFilterClick?: () => void
-  /** 카드 이동 시 통합검색 FullPopup 오버레이를 닫는 훅(옵션). */
-  onNavigate?: () => void
+  /** true 면 마운트 시 sessionStorage 의 정렬·필터·더보기 상태를 복원(뒤로가기 복귀). */
+  restore: boolean
 }
 
 // ─── 목업 데이터 ──────────────────────────────────────────────────────────────
@@ -58,6 +81,17 @@ interface IntgSrchRsltItem {
   tndrSbmsnDdlnDt: string
   /** 개찰일시(opbidDt) */
   opbidDt: string
+  /**
+   * 첨부파일(설계서 v0.92 slide27 2026-09-30 추가) — 검색어가 첨부파일 내용에 걸린 건만 백엔드가 내려준다.
+   * 비어 있으면 첨부파일 영역 미노출. 클릭 이벤트 없음(설계서 특이사항 2). 키는 기존 첨부 관례(fileId/fileNm/fileSz byte).
+   * ⚠️ TODO(설계서 확인): M10 데이터영역 영문 항목ID 미확정 — 확정 시 교체.
+   */
+  atchFiles?: IntgSrchAtchFile[]
+}
+interface IntgSrchAtchFile {
+  fileId: string
+  fileNm: string
+  fileSz: number
 }
 
 // 결과 카테고리(입찰공고·개찰결과 …). 카테고리별로 총건수·상세경로가 다르다.
@@ -74,6 +108,8 @@ interface IntgSrchRsltGroup {
 }
 
 // 카테고리별 목업 6건씩 — 추후 API: cmService.selectSearchAll(keyword).category(items/total).
+//   첨부파일(atchFiles)은 실 API 가 검색어가 걸린 건에만 내려준다 — 목업은 스타일 예시로 1·2번 건에만 심음.
+//   (통합검색 실배선은 타업체 담당 — 여기 목업·하이라이트·첨부 영역은 스타일 예시)
 function mockItems(prefix: string): IntgSrchRsltItem[] {
   const seed: Omit<IntgSrchRsltItem, 'id' | 'pbancNo'>[] = [
     {
@@ -85,12 +121,18 @@ function mockItems(prefix: string): IntgSrchRsltItem[] {
       bidClrsDt: '2025-12-23 17:00',
       tndrSbmsnDdlnDt: '2025-12-24 10:00',
       opbidDt: '2025-12-24 10:30',
+      atchFiles: [
+        { fileId: `${prefix}-f1`, fileNm: '특수작전용 무인항공기 제안요청서.hwp', fileSz: 54272 },
+        { fileId: `${prefix}-f2`, fileNm: '무인항공기 규격서.pdf', fileSz: 182272 },
+      ],
     },
     {
       taskSeNm: '용역',
       bidMthdNm: '공개수의',
       pbancTpcd: '정상공고',
-      bidPbancNm: '2026년 정보체계 유지보수 용역',
+      // HTML 섞인 응답 예시(<br>) — htmlToText 로 평문화되어 한 줄로 표시된다.
+      bidPbancNm: '2026년 정보체계<br>유지보수 용역',
+      atchFiles: [{ fileId: `${prefix}-f3`, fileNm: '정보체계 유지보수 과업지시서.hwp', fileSz: 566272 }],
       pbancDt: '2025-12-20',
       bidClrsDt: '2025-12-22 18:00',
       tndrSbmsnDdlnDt: '2025-12-23 10:00',
@@ -150,7 +192,7 @@ const RESULT_GROUPS: IntgSrchRsltGroup[] = [
     key: 'bidPbanc',
     title: '입찰공고',
     total: 533,
-    detailPath: '/bd/bidPbancDtl',
+    detailPath: ROUTES.BD_DETAIL,
     items: mockItems('bp'),
   },
   {
@@ -158,7 +200,7 @@ const RESULT_GROUPS: IntgSrchRsltGroup[] = [
     title: '개찰결과',
     total: 27,
     // ⚠️ TODO(라우트 확인): 개찰결과 상세 경로 미확정 — 입찰공고 상세로 임시 라우팅.
-    detailPath: '/bd/bidPbancDtl',
+    detailPath: ROUTES.BD_DETAIL,
     items: mockItems('bo'),
   },
 ]
@@ -216,7 +258,7 @@ const INTG_SRCH_FILTER: SearchFilterSchema = {
       key: 'targets',
       title: '검색대상',
       fields: [
-        { key: 'targets', type: 'checkbox', options: SEARCH_TARGET_OPTIONS, selectAll: true },
+        { key: 'targets', type: 'checkbox', options: SEARCH_TARGET_OPTIONS, selectAll: { value: '0' } },
       ],
     },
     {
@@ -250,42 +292,76 @@ const DEFAULT_FILTER: SearchFilterValue = {
   period: { start: '', end: '' },
 }
 
-function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProps) {
+// 첨부파일 영역 — 설계서 모바일 목업(v0.92 slide27: 파일명 좌 · 용량 우) + PC 통합검색 카드의 연한 배경 박스 절충(2026-10-02 확정).
+//   헤더 "첨부파일"(15 bold) + 행 = 파일명(17 ink, 1줄 말줄임) 좌측 / 용량(15 muted) 우측. 불릿·밑줄·링크색 없음.
+//   파일명 클릭 이벤트 없음(설계서 특이사항 2) — a/button 아님. 카드 자체가 button 이라 접기 토글도 중첩하지 않는다.
+//   검색어는 파일명 안에서만 강조(highlight). 사용법은 /guide/usage 8번 "카드 안 첨부파일 목록" 참고.
+function AtchFileBox({
+  files,
+  highlight,
+}: {
+  files: IntgSrchAtchFile[]
+  highlight: (text: string) => ReactNode
+}) {
+  return (
+    <div className="flex w-full flex-col gap-krds-3 rounded-krds-8 bg-krds-bg-primary-faint px-krds-5 py-krds-4">
+      <span className="text-[15px] font-bold leading-normal text-krds-text-ink">첨부파일</span>
+      <ul className="flex w-full flex-col gap-1" aria-label="첨부파일">
+        {files.map((f) => (
+          <li key={f.fileId} className="flex items-baseline gap-krds-7">
+            <span className="min-w-px flex-1 truncate text-[17px] leading-normal text-krds-text-ink">
+              {highlight(f.fileNm)}
+            </span>
+            <span className="shrink-0 text-[15px] leading-normal text-krds-text-muted">
+              {formatFileSize(f.fileSz)}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+// 뒤로가기 복원 대상 상태(sessionStorage 한 블록). pages = 카테고리별 더보기 페이지(기본 1 = GROUP_PAGE_SIZE 장).
+interface IntgSrchRsltState {
+  sort: string
+  pages: Record<string, number>
+  filterValue: SearchFilterValue
+}
+const INITIAL_STATE: IntgSrchRsltState = { sort: 'relevance', pages: {}, filterValue: DEFAULT_FILTER }
+const STATE_KEY = 'intgSrch:rslt'
+
+function IntgSrch_Rslt({ keyword, restore }: IntgSrch_RsltProps) {
   const navigate = useNavigate()
-  const [sort, setSort] = useState('relevance')
-  // 카테고리별 더보기 페이지(기본 1 = GROUP_PAGE_SIZE 장). key → page.
-  const [pages, setPages] = useState<Record<string, number>>({})
-  // 검색필터(기간검색) 풀팝업 + 확정값.
+  const [{ sort, pages, filterValue }, setState] = useSessionState<IntgSrchRsltState>(
+    STATE_KEY,
+    INITIAL_STATE,
+    restore,
+  )
+  const patch = (p: Partial<IntgSrchRsltState>) => setState((prev) => ({ ...prev, ...p }))
+  // 검색필터(기간검색) 풀팝업 열림 — 복원 대상 아님.
   const [filterOpen, setFilterOpen] = useState(false)
-  const [filterValue, setFilterValue] = useState<SearchFilterValue>(DEFAULT_FILTER)
 
   const handleSort = (value: string) => {
-    setSort(value)
+    patch({ sort: value })
     console.log('[intgSrchRslt] 정렬', value)
     // 추후 API: cmService.selectSearchAll(keyword, { sort: value }) 재조회
   }
 
-  const handleFilter = () => {
-    onFilterClick?.()
-    setFilterOpen(true) // 검색필터 풀팝업(기간검색)
-  }
-
   const handleFilterSearch = (value: SearchFilterValue) => {
-    setFilterValue(value)
-    setPages({}) // 조건이 바뀌면 더보기 페이징 초기화
+    patch({ filterValue: value, pages: {} }) // 조건이 바뀌면 더보기 페이징 초기화
     console.log('[intgSrchRslt] 검색필터 적용', value)
     // 추후 API: cmService.selectSearchAll(keyword, { period }) 재조회
   }
 
   const handleLoadMore = (group: IntgSrchRsltGroup) => {
-    setPages((prev) => ({ ...prev, [group.key]: (prev[group.key] ?? 1) + 1 }))
+    patch({ pages: { ...pages, [group.key]: (pages[group.key] ?? 1) + 1 } })
     console.log('[intgSrchRslt] 더보기', group.key)
     // 추후 API: cmService.selectSearchAll(keyword).category(group.key).nextPage() 누적
   }
 
   const handleCardClick = (group: IntgSrchRsltGroup, item: IntgSrchRsltItem) => {
     console.log('[intgSrchRslt] 카드 이동', group.key, item.id)
-    onNavigate?.() // 통합검색 오버레이 닫기
     // 클릭 항목을 state 로 전달(목록 → 상세 표준). ⚠️ TODO(라우트 확인): 카테고리별 상세 경로 확정 필요.
     // 상세(입찰공고)는 MockBidPbancItem 을 단정하므로 결과 항목을 그 형태로 변환해 넘긴다.
     navigate(group.detailPath, { state: toPbancState(item) })
@@ -312,30 +388,41 @@ function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProp
   }
   const visibleGroups = RESULT_GROUPS.filter((g) => targets.includes(g.key))
 
-  // 카드 props 매핑(Figma m_card): 배지(업무구분·입찰방식) + subtitle(공고구분 공고번호) + title(입찰건명) + 4행.
+  // 하이라이트 대상 검색어 — 실행 검색어 + 결과 내 재검색 '포함' 추가어. 텍스트는 htmlToText 로 평문화 후 강조.
+  const terms = [keyword, rsrchExclude ? '' : rsrchKeyword]
+  const hl = (text: string) => highlightText(htmlToText(text), terms)
+
+
+  // 카드 props 매핑(Figma m_card): 배지(업무구분·입찰방식) + subtitle(공고구분 공고번호) + title(입찰건명) + 4행
+  //   + footer(첨부파일 — 검색어가 걸린 건만). 제목·부제·행 값·파일명에 검색어 하이라이트.
   const toCardItems = (group: IntgSrchRsltGroup): CardListItem[] => {
     const loaded = (pages[group.key] ?? 1) * GROUP_PAGE_SIZE
     return group.items
       .filter(matchesFilter)
       .slice(0, loaded)
-      .map((it) => ({
-        id: it.id,
-        badges: (
-          <>
-            <Badge>{it.taskSeNm}</Badge>
-            <Badge>{it.bidMthdNm}</Badge>
-          </>
-        ),
-        subtitle: `${it.pbancTpcd} ${it.pbancNo}`,
-        title: it.bidPbancNm,
-        rows: [
-          { label: '공고일자', value: it.pbancDt },
-          { label: '입찰참가신청 마감일시', value: it.bidClrsDt },
-          { label: '입찰서제출 마감일시', value: it.tndrSbmsnDdlnDt },
-          { label: '개찰일시', value: it.opbidDt },
-        ],
-        onClick: () => handleCardClick(group, it),
-      }))
+      .map((it) => {
+        // 스타일 예시 — 첨부파일은 실 API 가 "검색어가 걸린 건"에만 내려주므로 있으면 그대로 노출(매칭 로직 없음).
+        const atchFiles = it.atchFiles ?? []
+        return {
+          id: it.id,
+          badges: (
+            <>
+              <Badge>{it.taskSeNm}</Badge>
+              <Badge>{it.bidMthdNm}</Badge>
+            </>
+          ),
+          subtitle: hl(`${it.pbancTpcd} ${it.pbancNo}`),
+          title: hl(it.bidPbancNm),
+          rows: [
+            { label: '공고일자', value: hl(it.pbancDt) },
+            { label: '입찰참가신청 마감일시', value: hl(it.bidClrsDt) },
+            { label: '입찰서제출 마감일시', value: hl(it.tndrSbmsnDdlnDt) },
+            { label: '개찰일시', value: hl(it.opbidDt) },
+          ],
+          footer: atchFiles.length > 0 ? <AtchFileBox files={atchFiles} highlight={hl} /> : undefined,
+          onClick: () => handleCardClick(group, it),
+        }
+      })
   }
 
   return (
@@ -347,7 +434,12 @@ function IntgSrch_Rslt({ keyword, onFilterClick, onNavigate }: IntgSrch_RsltProp
 
       {/* 검색필터 버튼 + 정렬 셀렉트 바 */}
       <div className="flex items-center justify-between gap-krds-5 px-4 py-krds-6">
-        <Button variant="secondary" size="icon" aria-label="검색필터" onClick={handleFilter}>
+        <Button
+          variant="secondary"
+          size="icon"
+          aria-label="검색필터"
+          onClick={() => setFilterOpen(true)}
+        >
           <Icon name="Tune" aria-hidden />
         </Button>
         {/* Figma 정렬은 컴팩트 네이비 pill(m_select_text) — 전용 공통 컴포넌트가 없어 base SelectBox 로 근사. */}

@@ -7,7 +7,6 @@ import { PageLoading } from '@/ui/common/feedback/PageLoading'
 import { BottomNavVisibleContext } from '@/ui/common/layout/bottomNavContext'
 // AppLayout 이 직접 마운트하는 cm 오버레이(헤더 유틸로 열림 · 라우트 아님).
 import { MenuPage } from '@/ui/biz/cm/menu/MenuPage'
-import { IntgSrchPage } from '@/ui/biz/cm/intgSrch/IntgSrchPage'
 import { LgoInfo } from '@/ui/biz/cm/lgoInfo/LgoInfo'
 import { AppSrvcExplnIdx } from '@/ui/biz/cm/appSrvcExpln/AppSrvcExplnIdx'
 import { AppSrvcExplnCoach } from '@/ui/biz/cm/appSrvcExpln/AppSrvcExplnCoach'
@@ -52,8 +51,6 @@ export function AppLayout() {
   const user = useAuthStore((s) => s.user)
   const logout = useAuthStore((s) => s.logout)
   const [menuOpen, setMenuOpen] = useState(false)
-  // 통합검색(MUI-MS-01-M09) 오버레이 — 헤더 통합검색(util='search') 클릭 시 열림. MenuPage 와 동일 패턴.
-  const [searchOpen, setSearchOpen] = useState(false)
   // 로그아웃 안내(MUI-CM-03-P18) — 로그아웃 시 노출, 확인하면 홈으로.
   const [logoutInfoOpen, setLogoutInfoOpen] = useState(false)
 
@@ -150,7 +147,7 @@ export function AppLayout() {
         }}
         onBack={handleBack}
         onLogo={() => navigate(ROUTES.HOME)}
-        // 통합검색↔알림현황 위치 스왑 — 헤더 유틸=알림현황 이동, 통합검색은 BottomNav 탭.
+        // 통합검색↔알림현황 위치 스왑 — 헤더 유틸=알림현황 이동, 통합검색은 BottomNav 탭(/search).
         onNotification={() => navigate(ROUTES.NOTIFICATION)}
         hasNotification={hasUnread}
         onMenu={() => setMenuOpen(true)}
@@ -170,12 +167,11 @@ export function AppLayout() {
           <Outlet />
         </Suspense>
       </main>
-      {/* 알림 dot 은 헤더 알림 버튼으로 이동(위치 스왑). 액션 탭(통합검색/챗봇)은 id 로 분기. */}
+      {/* 알림 dot 은 헤더 알림 버튼으로 이동(위치 스왑). 통합검색은 라우트 탭(/search), 액션 탭(챗봇)만 id 로 분기. */}
       {showBottomNav && (
         <BottomNav
           hidden={navHidden}
           onAction={(id) => {
-            if (id === 'search') setSearchOpen(true)
             if (id === 'chatbot') navigate(ROUTES.CHATBOT) // 챗봇문의(MUI-MS-01-M11)
           }}
         />
@@ -196,8 +192,6 @@ export function AppLayout() {
           setLogoutInfoOpen(true) // P18 로그아웃 안내
         }}
       />
-      {/* 통합검색 오버레이 — 헤더 통합검색 클릭으로 열림(메인/서브 공통). */}
-      <IntgSrchPage open={searchOpen} onOpenChange={setSearchOpen} />
       {/* 앱 이용안내(MUI-CM-05-M16) — ?appGuide= 쿼리로 구동되는 인덱스 모달 + 코치마크 오버레이. */}
       <AppSrvcExplnIdx />
       <AppSrvcExplnCoach />

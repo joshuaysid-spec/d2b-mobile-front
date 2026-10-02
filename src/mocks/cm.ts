@@ -9,7 +9,6 @@ import type {
   // 통합검색
   MockSearchResult,
   MockRecentSearch,
-  MockSearchServiceLink,
   // FAQ / 게시판
   MockFaqListItem,
   MockNoticeListItem,
@@ -70,16 +69,6 @@ const RECENT_SEARCHES: MockRecentSearch[] = [
   { id: 'r1', keyword: '방독면' },
   { id: 'r2', keyword: '통신장비' },
 ]
-const FREQUENT_SERVICES: MockSearchServiceLink[] = [
-  { id: 'f1', label: '입찰공고' },
-  { id: 'f2', label: '조달계획' },
-  { id: 'f3', label: '계약통합목록' },
-]
-const RELATED_SERVICES: MockSearchServiceLink[] = [
-  { id: 'rs1', label: '입찰진행현황' },
-  { id: 'rs2', label: '개찰결과' },
-]
-const AUTOCOMPLETE: string[] = ['입찰공고', '입찰진행', '입찰결과']
 
 // ── FAQ / 게시판 ──
 const FAQ_LIST: MockFaqListItem[] = [
@@ -663,9 +652,6 @@ export const MOCK_CM = {
   // 통합검색
   searchResults: SEARCH_RESULTS,
   recentSearches: RECENT_SEARCHES,
-  frequentServices: FREQUENT_SERVICES,
-  relatedServices: RELATED_SERVICES,
-  autocomplete: AUTOCOMPLETE,
   // FAQ / 게시판
   faqList: FAQ_LIST,
   noticeList: NOTICE_LIST_FULL,

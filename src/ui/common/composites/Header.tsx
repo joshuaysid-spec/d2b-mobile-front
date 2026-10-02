@@ -40,6 +40,13 @@ import { Icon, type IconName } from '@/ui/common/base/Icon'
 import { Logo } from '@/ui/common/base/Logo'
 import { cn } from '@/utils/cn'
 
+/**
+ * sub 타이틀바 우측 셀의 portal 타깃 id. 페이지가 헤더에 액션 버튼(예: 통합검색 '초기화')을 꽂을 때
+ * `createPortal(<button/>, document.getElementById(HEADER_ACTION_SLOT_ID))` 로 사용한다.
+ * 헤더는 라우트 handle(정적) 로만 제어되므로 페이지 상태에 묶인 핸들러는 이 슬롯으로만 전달 가능.
+ */
+export const HEADER_ACTION_SLOT_ID = 'header-action-slot'
+
 export interface HeaderProps {
   /** 헤더 모드. 기본 'main'. 'sub' 면 메인바 아래 타이틀바(뒤로+타이틀)가 한 줄 추가된다. */
   variant?: 'main' | 'sub'
@@ -208,10 +215,10 @@ const Header = ({
       </div>
 
       {/* 타이틀바(sub 전용) — 뒤로가기 + 가운데 타이틀. 메인바 바로 아래 한 줄 추가(카톡 기획 이미지).
-          그리드 [44px|1fr|44px] 로 타이틀을 광학적 가운데 고정(우측 스페이서 = 뒤로가기와 동일 폭).
+          그리드 [44px|1fr|≥44px] 로 타이틀을 광학적 가운데 고정(우측 = 페이지 액션 portal 슬롯, 비면 뒤로가기와 동일 폭).
           높이 56px: Figma 미확정 — 뒤로가기 터치 타깃(44px) + 상하 여백 근사값(원본 확정 시 조정). */}
       {variant === 'sub' && (
-        <div className="grid h-[56px] grid-cols-[44px_minmax(0,1fr)_44px] items-center border-b border-krds-border-divider px-1">
+        <div className="grid h-[56px] grid-cols-[44px_minmax(0,1fr)_minmax(44px,auto)] items-center border-b border-krds-border-divider px-1">
           <button
             type="button"
             onClick={onBack}
@@ -231,6 +238,9 @@ const Header = ({
           <span className="min-w-0 truncate text-center text-[19px] font-bold leading-normal text-krds-text-ink">
             {title}
           </span>
+
+          {/* 페이지 액션 슬롯 — 페이지가 createPortal 로 채움(HEADER_ACTION_SLOT_ID). 비면 스페이서. */}
+          <div id={HEADER_ACTION_SLOT_ID} className="flex h-[44px] items-center justify-end" />
         </div>
       )}
     </header>

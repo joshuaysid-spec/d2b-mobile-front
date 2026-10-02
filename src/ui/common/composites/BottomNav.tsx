@@ -11,7 +11,7 @@
 //   - 비선택: 투명 border · 아이콘/라벨 ink(#1d1d1d)
 //   - 알림(hasNotification): notificationTabId 탭 아이콘 우상단 빨강 dot 배지
 //
-// ※ 위치 스왑: 통합검색(헤더)↔알림현황(탭바). 알림 탭 자리에 통합검색 탭(오버레이 열기),
+// ※ 위치 스왑: 통합검색(헤더)↔알림현황(탭바). 알림 탭 자리에 통합검색 탭(/search 페이지),
 //   알림현황 진입은 헤더 우측 알림 버튼. 고객센터 탭은 챗봇으로 교체(스텁).
 //   라우트 없는 액션 탭(to 미지정)은 NavLink 대신 button 으로 렌더 → onAction(id) 호출.
 //
@@ -58,7 +58,7 @@ interface BottomNavProps {
   activeId?: string
   /**
    * 액션 탭(to 미지정) 클릭 핸들러. BottomNav 은 범용이라 오버레이/챗봇을 모름 —
-   * AppLayout 이 id 로 분기해 주입(search→통합검색 오버레이, chatbot→챗봇).
+   * AppLayout 이 id 로 분기해 주입(chatbot→챗봇).
    */
   onAction?: (id: string) => void
   /**
@@ -68,11 +68,11 @@ interface BottomNavProps {
   hidden?: boolean
 }
 
-// 기본 4탭. 라우트 탭은 to, 액션 탭(통합검색·챗봇)은 to 없이 onAction 으로 처리.
+// 기본 4탭. 라우트 탭은 to, 액션 탭(챗봇)은 to 없이 onAction 으로 처리.
 const DEFAULT_ITEMS: NavItem[] = [
   { id: 'home', label: '홈', iconName: 'Home', to: ROUTES.HOME },
-  // 통합검색↔알림현황 위치 스왑 — 알림 탭 자리에 통합검색(오버레이 열기, 라우트 아님).
-  { id: 'search', label: '통합검색', iconName: 'Search' },
+  // 통합검색↔알림현황 위치 스왑 — 알림 탭 자리에 통합검색(/search 페이지, MUI-MS-01-M09).
+  { id: 'search', label: '통합검색', iconName: 'Search', to: ROUTES.SEARCH },
   // 고객센터 → 챗봇 교체(라우트 미정 스텁 — onAction('chatbot')).
   // 챗봇 마스코트는 햄버거메뉴 챗봇상담과 동일한 Figma 추출 PNG(9300-27501) —
   // 써클(overflow-hidden rounded-full) 안에 이미지를 크게 넣어 크롭하는 구조(MenuPage 퀵아이콘과 동일).
@@ -141,7 +141,7 @@ function NavTab({
     </>
   )
 
-  // 액션 탭(통합검색 오버레이·챗봇 등) — 라우트 이동이 아니므로 button.
+  // 액션 탭(챗봇 등) — 라우트 이동이 아니므로 button.
   if (!item.to) {
     const active = activeOverride ?? false
     return (
