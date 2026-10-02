@@ -16,6 +16,7 @@ import { ROUTES } from '@/constants/routes'
 import { cn } from '@/utils/cn'
 import { focusField } from '@/utils/focusField'
 import { formatFileSize } from '@/utils/format'
+import { highlightText } from '@/utils/highlightText'
 import { saveBlob } from '@/utils/download'
 import { fbQueries } from '@/queries/tss/fb/fbQueries'
 import { Badge } from '@/ui/common/base/Badge'
@@ -291,11 +292,16 @@ export function UsageGuidePage() {
               'loading 과 emptyText 는 CardList 가 같은 안내 화면으로 처리한다(페이지에서 빈 목록 분기를 다시 짜지 말 것).',
               '카드 클릭 라우팅은 데이터 필드로 분기한다 — 라벨 문자열 비교 분기 금지.',
               '다중 선택 카드는 Card 의 titleTrailing 슬롯에 Checkbox 를 넣는 형태 하나로 통일한다.',
+              '카드 안 첨부파일 목록은 footer 슬롯에 로컬 마크업으로 넣는다(연한 배경 박스 + "첨부파일" 헤더 + 행: 파일명 좌 1줄 말줄임 · 용량 우). 불릿·밑줄·링크색 없음. 첨부가 없으면 footer 를 undefined 로 — 빈 박스를 그리지 않는다.',
+              '카드가 button 이므로 footer 안에 a/button(다운로드 · 접기 토글)을 중첩하지 않는다. 내려받기가 필요하면 상세 화면의 FileDownloadList 로 보낸다.',
+              '검색어 강조는 utils/highlightText 의 highlightText 하나로, 응답 텍스트에 HTML 이 섞이면 utils/sanitizeHtml 의 htmlToText 로 평문화한 뒤 넘긴다.',
             ]}
             refs={[
               'src/ui/common/composites/Table.tsx',
               'src/ui/common/composites/CardList.tsx',
               'src/ui/biz/op/prcmPlanIntgList/PrcmPlanIntgListPage.tsx',
+              'src/ui/biz/cm/intgSrch/IntgSrch_Rslt.tsx (첨부파일 footer · 하이라이트)',
+              'src/utils/highlightText.tsx · src/utils/sanitizeHtml.ts(htmlToText)',
             ]}
           >
             <DataViewsDemo />
@@ -873,25 +879,54 @@ const DEMO_PBANC_LIST: DemoPbanc[] = [
     clsgDt: '2026-03-30 11:00',
   },
 ]
-const toCard = (it: DemoPbanc): CardListItem => ({
-  id: it.pbancNo,
-  badges: (
-    <Badge type="pastel" color={it.taskSeNm === '국외' ? 'red' : 'blue'}>
-      {it.taskSeNm}
-    </Badge>
-  ),
-  subtitle: `공고번호 ${it.pbancNo}`,
-  title: it.pbancNm,
-  rows: [
-    { label: '공고일자', value: it.pbancDt },
-    { label: '마감일시', value: it.clsgDt },
+// 첨부파일 데모 — 첫 카드에만 첨부를 심어 "있으면 footer 박스, 없으면 미노출"을 보여준다. 검색어 '방독면' 강조 예시.
+const DEMO_ATCH_FILES: Record<string, { fileId: string; fileNm: string; fileSz: number }[]> = {
+  '2026A1200042': [
+    { fileId: 'g1', fileNm: 'K5 방독면 수리부속 규격서.hwp', fileSz: 103014 },
+    { fileId: 'g2', fileNm: '입찰유의서.pdf', fileSz: 54272 },
   ],
-})
+}
+const DEMO_KEYWORD = '방독면'
+const toCard = (it: DemoPbanc): CardListItem => {
+  const atchFiles = DEMO_ATCH_FILES[it.pbancNo]
+  return {
+    id: it.pbancNo,
+    badges: (
+      <Badge type="pastel" color={it.taskSeNm === '국외' ? 'red' : 'blue'}>
+        {it.taskSeNm}
+      </Badge>
+    ),
+    subtitle: `공고번호 ${it.pbancNo}`,
+    title: highlightText(it.pbancNm, DEMO_KEYWORD),
+    rows: [
+      { label: '공고일자', value: it.pbancDt },
+      { label: '마감일시', value: it.clsgDt },
+    ],
+    // 카드 안 첨부파일 목록 — footer 슬롯. 첨부 없으면 undefined(빈 박스 금지). 클릭 없음(a/button 중첩 금지).
+    footer: atchFiles?.length ? (
+      <div className="flex w-full flex-col gap-krds-3 rounded-krds-8 bg-krds-bg-primary-faint px-krds-5 py-krds-4">
+        <span className="text-[15px] font-bold leading-normal text-krds-text-ink">첨부파일</span>
+        <ul className="flex w-full flex-col gap-1" aria-label="첨부파일">
+          {atchFiles.map((f) => (
+            <li key={f.fileId} className="flex items-baseline gap-krds-7">
+              <span className="min-w-px flex-1 truncate text-[17px] leading-normal text-krds-text-ink">
+                {highlightText(f.fileNm, DEMO_KEYWORD)}
+              </span>
+              <span className="shrink-0 text-[15px] leading-normal text-krds-text-muted">
+                {formatFileSize(f.fileSz)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ) : undefined,
+  }
+}
 
 function DataViewsDemo() {
   const [loading, setLoading] = useState(false)
   return (
-    <DemoFrame note="같은 데이터 배열이 Table · CardList · SummaryInfo 세 표현을 모두 구동한다. [로딩 전환]은 CardList 의 loading 안내를 보여준다.">
+    <DemoFrame note="같은 데이터 배열이 Table · CardList · SummaryInfo 세 표현을 모두 구동한다. [로딩 전환]은 CardList 의 loading 안내를 보여준다. 첫 카드는 footer 첨부파일 박스 + 검색어('방독면') 강조 예시, 둘째 카드는 첨부가 없어 박스가 안 그려진다.">
       <SummaryInfo
         badges={[
           { key: 'task', label: '국내' },

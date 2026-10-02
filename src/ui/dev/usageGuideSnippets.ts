@@ -244,6 +244,33 @@ const toCard = (it: BidPbancItem): CardListItem => ({
 
 <CardList items={list.map(toCard)} loading={isLoading} emptyText="조회된 공고가 없습니다." />
 
+// 카드 안 첨부파일 목록(통합검색 결과 카드 등) — Card 의 footer 슬롯에 넣는다. 전용 공통 컴포넌트 없음(페이지 로컬 마크업).
+//   연한 배경 박스 + "첨부파일" 헤더(15 bold) + 행 = 파일명(17 ink, 1줄 말줄임) 좌측 / 용량(15 muted) 우측.
+//   불릿·밑줄·링크색 없음 — 파일명 클릭 이벤트 없음(설계서 00공통 v0.92 slide27). 카드가 button 이라 a/button·접기 토글 중첩 금지.
+//   검색어 강조는 highlightText(utils/highlightText) — 응답에 <br> 등 HTML 이 섞이면 htmlToText 로 평문화 후 넘긴다.
+const toCard = (it: IntgSrchItem): CardListItem => ({
+  id: it.id,
+  title: highlightText(htmlToText(it.bidPbancNm), keyword),
+  rows: [...],
+  footer: it.atchFiles?.length ? (
+    <div className="flex w-full flex-col gap-krds-3 rounded-krds-8 bg-krds-bg-primary-faint px-krds-5 py-krds-4">
+      <span className="text-[15px] font-bold leading-normal text-krds-text-ink">첨부파일</span>
+      <ul className="flex w-full flex-col gap-1" aria-label="첨부파일">
+        {it.atchFiles.map((f) => (
+          <li key={f.fileId} className="flex items-baseline gap-krds-7">
+            <span className="min-w-px flex-1 truncate text-[17px] leading-normal text-krds-text-ink">
+              {highlightText(f.fileNm, keyword)}
+            </span>
+            <span className="shrink-0 text-[15px] leading-normal text-krds-text-muted">
+              {formatFileSize(f.fileSz)}                {/* fileSz 는 byte */}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ) : undefined,                                    // 첨부 없으면 영역 자체를 그리지 않는다
+})
+
 <SummaryInfo
   badges={[{ key: 'task', label: '국내' }, { key: 'ctrt', label: '수의계약', color: 'red' }]}
   subtitle="판단번호 4000A" title="2026 K5 방독면 수리부속(구매)"
